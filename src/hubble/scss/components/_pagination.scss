@@ -1,0 +1,104 @@
+.pagination {
+    @extend %list-style-none;
+    @extend %inline-block;
+    @extend %no-padding;
+    @extend %no-margin;
+    @extend %border-radius-3;
+    @extend %hide-overflow;
+}
+.pagination > li {
+    display: inline;
+}
+.pagination>li>a, .pagination>li>span {
+    position: relative;
+    float: left;
+    padding: 6px 15px;
+    margin-left: -1px;
+    line-height: 1.57142857;
+    color: #76838f;
+    text-decoration: none;
+    background-color: transparent;
+    border: 1px solid #e4eaec;
+}
+.pagination>.active>a, 
+.pagination>.active>a:focus,
+.pagination>.active>a:hover,
+.pagination>.active>span,
+.pagination>.active>span:focus,
+.pagination>.active>span:hover {
+    z-index: 3;
+    color: #fff;
+    cursor: default;
+    @extend %bg-primary;
+    border-color: $brand-primary;
+}
+
+.pagination>li>a:focus, 
+.pagination>li>a:hover, 
+.pagination>li>span:focus, 
+.pagination>li>span:hover {
+    @extend %color-primary;
+    background-color: $gray-lighter;
+}
+.pagination>li.elips>span:focus,
+.pagination>li.elips>span:hover {
+    color: #76838f;
+    background-color: #fff;
+}
+.pagination>.disabled>a, 
+.pagination>.disabled>a:focus, 
+.pagination>.disabled>a:hover, 
+.pagination>.disabled>span, 
+.pagination>.disabled>span:focus, 
+.pagination>.disabled>span:hover {
+    color: #76838f;
+    text-decoration: none;
+    background-color: transparent;
+    border: 1px solid #e4eaec;
+    cursor: not-allowed;
+}
+.pagination>li:first-child>a, .pagination>li:first-child>span {
+    margin-left: 0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+.pagination>li:last-child>a, .pagination>li:last-child>span {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+.pagination li>a, .pagination li>span {
+    padding: 9px 15px;
+    -webkit-transition: background .1s ease,border-color 0s ease-out,color .1s ease;
+    -o-transition: background .1s ease,border-color 0s ease-out,color .1s ease;
+    transition: background .1s ease,border-color 0s ease-out,color .1s ease;
+}
+.pagination-btns {
+    > li {
+        display: inline-block;
+        > a,
+        > span {
+            @extend %border-radius;
+        }
+    }
+}
+.pagination-borderless {
+    > li.elips > span,
+    > li.elips > span:focus,
+    > li.elips > span:hover,
+    > li.disabled > span,
+    > li.disabled > span:hover,
+    > li.active > span,
+    > li.active > span:hover,
+    > li > a {
+        border: 1px solid transparent;
+    }
+    > li > a:hover,
+    > li > span:hover {
+        background-color: transparent;
+    }
+    > li.active > span,
+    > li.active > span:hover {
+        background-color: transparent;
+        color: $brand-primary;
+    }
+}

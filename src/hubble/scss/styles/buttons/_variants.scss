@@ -1,0 +1,78 @@
+// Color variants
+.btn-primary {
+    @include button(#fff, $brand-primary);
+}
+.btn-secondary {
+    @include button(#fff, $brand-secondary);
+}
+.btn-success {
+    @include button(#fff, $brand-success);
+}
+.btn-info {
+    @include button(#fff, $brand-info);
+}
+.btn-warning {
+    @include button(#fff, $brand-warning);
+}
+.btn-danger {
+    @include button(#fff, $brand-danger);
+}
+.btn-white {
+    @include button($black, #fff);
+}
+
+// Outline variants
+.btn.btn-outline {
+    @include button-outline(#76838f);
+}
+.btn-primary.btn-outline {
+    @include button-outline($brand-primary);
+}
+.btn-secondary.btn-outline {
+    @include button-outline($brand-secondary);
+}
+.btn-success.btn-outline {
+    @include button-outline($brand-success);
+}
+.btn-info.btn-outline {
+    @include button-outline($brand-info);
+}
+.btn-warning.btn-outline {
+    @include button-outline($brand-warning);
+}
+.btn-danger.btn-outline {
+    @include button-outline($brand-danger);
+}
+.btn-white.btn-outline {
+    @include button-outline(#fff);
+}
+
+// Pure variants
+.btn.btn-pure {
+    @include button-pure(#76838f);
+}
+.btn-primary.btn-pure {
+    @include button-pure($brand-primary);
+}
+.btn-secondary.btn-pure {
+    @include button-pure($brand-secondary);
+}
+.btn-success.btn-pure {
+    @include button-pure($brand-success);
+}
+.btn-info.btn-pure {
+    @include button-pure($brand-info);
+}
+.btn-warning.btn-pure {
+    @include button-pure($brand-warning);
+}
+.btn-danger.btn-pure {
+    @include button-pure($brand-danger);
+}
+.btn-white.btn-pure {
+    @include button-pure(#fff);
+    &:hover,
+    &.hover {
+        opacity: 0.8;
+    }
+}

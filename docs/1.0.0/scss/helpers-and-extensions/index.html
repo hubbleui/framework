@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Documentation | Hubble UI</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="http://hubbleui.github.io/build/img/favicon.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="57x57" href="http://hubbleui.github.io/build/img/apple-touch-icon.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="72x72" href="http://hubbleui.github.io/build/img/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="114x114" href="http://hubbleui.github.io/build/img/apple-touch-icon-114x114.png">
+
+
+    <link rel="stylesheet" href="/build/css/hubble.css">
+    <link rel="stylesheet" href="/build/css/theme.css">
+</head>
+
+<body>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" style="display:none" xml:space="preserve">
+    <g id="logo">
+        <path fill="#FF3366" d="M26.002,468.48c-7.372-0.193-11.097-6.621-8.215-11.615c0.814-1.41,2.081-2.588,3.253-3.762c41.353-41.369,82.719-82.727,124.087-124.08c0.942-0.943,1.841-1.965,2.918-2.727c3.436-2.428,6.943-2.375,10.003,0.531c3.071,2.916,3.197,6.461,1.041,9.99c-0.765,1.252-1.949,2.262-3.005,3.318c-41.24,41.248-82.472,82.504-123.776,123.688C30.178,465.947,27.425,467.447,26.002,468.48z"/>
+        <path fill="#FF3366" d="M250.2,390.188c-1.786,2.867-2.73,5.252-4.393,6.924c-26.527,26.668-53.129,53.262-79.761,79.826c-3.969,3.959-8.677,4.15-11.909,0.803c-3.282-3.398-2.99-7.865,1.045-11.908c26.571-26.623,53.182-53.209,79.784-79.803c2.655-2.654,5.843-4.506,9.337-2.287C246.58,385.189,248.104,387.822,250.2,390.188z"/>
+        <path fill="#FF3366" d="M37.666,408.586c-2.604-1.848-5.535-2.893-6.502-4.891c-1.062-2.191-0.689-5.332-0.201-7.918c0.263-1.395,2.021-2.549,3.193-3.723c22.109-22.129,44.23-44.248,66.354-66.361c0.94-0.939,1.838-1.971,2.929-2.699c3.27-2.188,6.734-2.205,9.666,0.365c3.146,2.756,3.395,6.363,1.359,9.957c-0.718,1.266-1.894,2.297-2.945,3.35c-22.109,22.129-44.208,44.27-66.389,66.326C43.103,405.008,40.524,406.471,37.666,408.586z"/>
+        <path fill="#FF3366" d="M84.153,319.375c-2.371-2.1-5.721-3.666-6.256-5.904c-0.647-2.705,0.15-6.812,1.963-8.859c6.384-7.213,13.47-13.803,20.292-20.627c5.646-5.648,11.25-11.338,16.958-16.922c4.094-4.006,8.501-4.307,11.881-1.01c3.295,3.215,3.075,7.943-0.834,11.887c-12.299,12.404-24.635,24.773-37.078,37.033C89.398,316.629,87.025,317.584,84.153,319.375z"/>
+        <path fill="#FF3366" d="M196.954,343.754c-1.677,2.779-2.524,5.039-4.071,6.611c-11.922,12.107-23.94,24.119-36.017,36.072c-3.892,3.852-8.161,3.977-11.489,0.707c-3.206-3.148-3.154-7.887,0.465-11.543c12.07-12.195,24.089-24.449,36.523-36.264c1.943-1.848,6.206-2.568,8.911-1.885C193.496,338.014,194.994,341.434,196.954,343.754z"/>
+        <path fill="#FF3366" d="M119.436,434.48c-1.536,2.752-2.267,5.049-3.769,6.594c-8.215,8.451-16.56,16.779-24.988,25.018c-3.605,3.523-8.493,3.469-11.518,0.246c-2.88-3.068-2.813-7.803,0.513-11.188c8.376-8.525,16.674-17.152,25.502-25.189c1.954-1.779,6.195-2.211,8.965-1.539C116.195,428.92,117.572,432.209,119.436,434.48z"/>
+        <path fill="#FF3366" d="M185.987,400.826c-1.627,2.77-2.449,5.031-3.974,6.615c-6.577,6.83-13.299,13.525-20.09,20.145c-3.826,3.729-8.184,3.811-11.488,0.539c-3.101-3.07-2.933-7.904,0.639-11.545c6.758-6.889,13.403-13.92,20.599-20.324c1.926-1.715,5.98-2.422,8.495-1.682C182.45,395.246,183.969,398.516,185.987,400.826z"/>
+        <path fill="#FF3366" d="M66.849,335.689c-4.347-0.08-7.447-3.266-7.433-7.635c0.015-4.592,3.305-7.637,8.044-7.441c4.466,0.184,7.384,3.334,7.215,7.789C74.512,332.701,71.217,335.77,66.849,335.689z"/>
+        <path fill="#FF3366" d="M67.764,485.549c-4.483-0.115-7.68-3.635-7.444-8.193c0.223-4.309,3.573-7.221,8.032-6.984c4.447,0.236,7.345,3.398,7.198,7.857C75.409,482.525,72.074,485.66,67.764,485.549z"/>
+        <path fill="#FF3366" d="M319.214,431.422c-2.783-18.361-5.289-34.789-7.756-51.223c-1.458-9.709-2.641-19.469-4.411-29.119c-0.529-2.885-2.061-6.033-4.094-8.127c-42.591-43.871-85.298-87.628-128.097-131.294c-1.693-1.729-4.417-2.937-6.844-3.38c-26.18-4.789-52.395-9.375-79.33-14.146c1.334-2.67,2.238-5.112,3.652-7.212c21.341-31.688,50.848-48.183,89.352-46.87c9.391,0.32,18.75,2.526,28.039,4.304c3.004,0.575,4.708,0.121,6.816-2.109c30.264-32.007,63.849-59.926,102.032-82.091c25.356-14.718,52.047-26.062,81.099-31.157c27.292-4.787,54.013-3.062,80.014,7.141c3.598,1.412,5.687,3.508,6.986,7.077c11.244,30.875,10.732,62.021,2.105,93.29c-10.354,37.521-29.847,70.299-53.221,100.963c-18.328,24.045-38.809,46.145-61.408,66.239c-2.468,2.193-2.938,4.004-2.181,7.258c9.756,41.99,0.182,78.223-32.94,106.953C333.348,422.846,326.547,426.482,319.214,431.422z M352.15,218.871c27.575-0.42,49.368-22.591,49.117-49.969c-0.253-27.571-24.643-51.032-52.592-50.589c-26.268,0.418-48.395,23.185-48.136,49.528C300.813,195.635,324.734,219.288,352.15,218.871z M393.158,101.671c-0.032,13.838,12.77,26.66,26.502,26.543c13.6-0.116,24.72-11.312,24.735-24.905c0.017-13.836-12.739-26.479-26.624-26.388C403.896,77.013,393.19,87.778,393.158,101.671z"/>
+        <path fill="#FF3366" d="M269.359,379.43c-43.858-44.949-87.451-89.627-131.02-134.28c11.728-14.034,33.909-14.533,47.845-1.13c6.6,6.347,12.818,13.087,19.217,19.642c21.637,22.17,43.324,44.289,64.898,66.518C284.354,344.662,284.035,366.443,269.359,379.43z"/>
+    </g>
+</svg>
+<div class="page-wrapper">
+
+    <header class="site-header" data-waypoint="header">
+        
+            <nav class="desktop-nav sm md lg xl">
+
+    <div class="container-fluid clearfix">
+
+        <a class="float-left inline-block logo" href="/">
+            <svg viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
+        </a>
+
+        <ul class="nav-right float-right list-inline text-right uppercase">
+            <li><a class="fancy-link" href="/docs/1.0.0/">Documentation</a></li>
+            <li><a class="fancy-link" href="https://github.com/hubble-ui/ui/issues" target="_blank">Issues</a></li>
+            <li><a class="fancy-link" href="https://github.com/hubble-ui/" target="_blank">GitHub</a></li>
+            <li><a class="fancy-link" href="https://github.com/hubble-ui/ui/archive/master.zip" target="_blank">Download</a></li>
+        </ul>
+
+    </div>
+
+</nav> 
+            <nav class="mobile-nav xs">      
+    <div class="container-fluid clearfix">
+
+        <a class="float-left inline-block logo" href="/">
+            <svg viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
+        </a>
+
+        <a href="#" class="xs hamburger float-right js-collapse" data-collapse-target="mobile-menu" role="button" title="Toggle navigation">
+		    <span class="hamburger-bun  hamburger-bun--top"></span>
+		    <span class="hamburger-patty"></span>
+		    <span class="hamburger-bun  hamburger-bun--btm"></span>
+		</a>
+
+    </div>
+
+</nav>
+
+<div class="mobile-nav-drop xs collapsed" id="mobile-menu">
+	<ul class="list-unstyled">
+	    <li><a href="/docs/1.0.0/">Documentation</a></li>
+        <li><a href="https://github.com/hubble-ui/ui/issues" target="_blank">Issues</a></li>
+        <li><a href="https://github.com/hubble-ui/" target="_blank">GitHub</a></li>
+        <li><a href="https://github.com/hubble-ui/ui/archive/master.zip" target="_blank">Download</a></li>
+	</ul>
+</div>        
+    </header>
+
+   <div class="container-fluid main-container">
+	<div class="col col-12 col-md-3 gutter-md-xl gutter-md-r">
+	<div class="doc-menu js-docs-menu">
+							    <div class="title-wrap js-collapse " data-collapse-target="getting-started">
+		        <h6>Getting started</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="getting-started">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/getting-started/introduction/">
+		    			Introduction		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/getting-started/download/">
+		    			Download		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/getting-started/project-setup/">
+		    			Project setup		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/getting-started/boilerplate/">
+		    			Boilerplate		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="css">
+		        <h6>CSS</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="css">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/overview/">
+		    			Overview		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/grid/">
+		    			Grid		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/typography/">
+		    			Typography		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/tables/">
+		    			Tables		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/forms/">
+		    			Forms		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/buttons/">
+		    			Buttons		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="components">
+		        <h6>Components</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="components">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/badges/">
+		    			Badges		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/cards/">
+		    			Cards		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/carets/">
+		    			Carets		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/carousel/">
+		    			Carousel		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/collapse/">
+		    			Collapse		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/dropdowns/">
+		    			Dropdowns		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/fancylink/">
+		    			Fancylink		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/hamburger/">
+		    			Hamburger		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/icons/">
+		    			Icons		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/input-mask/">
+		    			Input mask		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/labels/">
+		    			Labels		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/media/">
+		    			Media		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/messages/">
+		    			Messages		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/modals/">
+		    			Modals		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/notifications/">
+		    			Notifications		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/pagination/">
+		    			Pagination		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/popovers/">
+		    			Popovers		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/scrollbars/">
+		    			Scrollbars		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/spinners/">
+		    			Spinners		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/tabs/">
+		    			Tabs		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/tooltips/">
+		    			Tooltips		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/waypoints/">
+		    			Waypoints		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="javascript">
+		        <h6>JavaScript</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="javascript">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/introduction/">
+		    			Introduction		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/modules/">
+		    			Modules		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/helperjs/">
+		    			HelperJS		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/events/">
+		    			Events		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/ajax/">
+		    			Ajax		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/input-masker/">
+		    			Input masker		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/form-validation/">
+		    			Form validation		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse active" data-collapse-target="scss">
+		        <h6>SCSS</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled " id="scss">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/scss/helpers-and-extensions/">
+		    			Helpers and Extensions		    		</a>
+		    	</li>
+		     
+		    </ul>
+		  
+	</div>
+</div>	<div class="col col-12 col-md-9">
+	<div class="xs sm row floor-sm">
+	    <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger">
+	    	Documentation Menu
+	    </button>
+	</div>
+	<article class="docs-body">
+		<h1>Helpers &amp; Extensions</h1>
+
+<hr>
+
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="backgrounds" data-waypoint-speed="400">Backgrounds</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="borders" data-waypoint-speed="400">Borders</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="centering" data-waypoint-speed="400">Centering</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="colors" data-waypoint-speed="400">Colors</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="displays" data-waypoint-speed="400">Displays</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="flex" data-waypoint-speed="400">Flex</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="floats" data-waypoint-speed="400">Floats</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="lists" data-waypoint-speed="400">Lists</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="margins" data-waypoint-speed="400">Margins</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="paddings" data-waypoint-speed="400">Paddings</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="positions" data-waypoint-speed="400">Positions</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="resets" data-waypoint-speed="400">Resets</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="transitions" data-waypoint-speed="400">Transitions</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="typography" data-waypoint-speed="400">Typography</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-xs floor-xs">
+    <p>
+        Hubble comes with a load of helpers and extensions so you can easily apply styles no matter your workflow. 
+        Helper classes allow you to apply styles via <code>HTML</code>, while extensions keep your <code>CSS</code> 
+        stylesheets compact.
+    </p>
+    <p>
+        Hubble contains the following helpers and extensions.
+    </p>
+
+    <h4 data-waypoint="backgrounds">Backgrounds</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>.bg-primary</code></th> <td><code>background-color: $brand-primary</code></td></tr>
+                <tr><th><code>.bg-secondary</code></th> <td><code>background-color: $brand-secondary</code></td></tr>
+                <tr><th><code>.bg-gray-dark</code></th> <td><code>background-color: $gray-dark</code></td></tr>
+                <tr><th><code>.bg-gray</code></th> <td><code>background-color: $gray</code></td></tr>
+                <tr><th><code>.bg-gray-light</code></th> <td><code>background-color: $gray-light</code></td></tr>
+                <tr><th><code>.bg-gray-lighter</code></th>  <td><code>background-color: $gray-lighter</code></td></tr>
+                <tr><th><code>.bg-gray-lightest</code></th> <td><code>background-color: $gray-lightest</code></td></tr> 
+
+                <tr><th><code>.bg-success</code></th> <td><code>background-color: $brand-success </code></td></tr></code></th>
+                <tr><th><code>.bg-info</code></th> <td><code>background-color: $brand-info </code></td></tr>
+                <tr><th><code>.bg-danger</code></th> <td><code>background-color: $brand-danger </code></td></tr>
+                <tr><th><code>.bg-warning</code></th> <td><code>background-color: $brand-warning </code></td></tr>
+
+                <tr><th><code>.bg-transparent</code></th>  <td><code>background-color: transparent </code></td></tr>
+                <tr><th><code>.bg-white</code></th> <td><code>background-color: #fff </code></td></tr>
+                <tr><th><code>.bg-black</code></th> <td><code>background-color: $black </code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="borders">Borders</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>border-primary</code></th> <td><code>border-color: $brand-primary</code></td></tr>
+                <tr><th><code>border-secondary</code></th> <td><code>border-color: $brand-secondary</code></td></tr>
+                <tr><th><code>border-gray-dark</code></th> <td><code>border-color: $gray-dark</code></td></tr>
+                <tr><th><code>border-gray</code></th> <td><code>border-color: $gray</code></td></tr>
+                <tr><th><code>border-gray-light</code></th> <td><code>border-color: $gray-light</code></td></tr>
+                <tr><th><code>border-gray-lighter</code></th> <td><code>border-color: $gray-lighter</code></td></tr>
+                <tr><th><code>border-gray-lightest</code></th> <td><code>border-color: $gray-lightest</code></td></tr>
+                <tr><th><code>border-transparent</code></th> <td><code>border-color: transparent</code></td></tr>
+                <tr><th><code>border-success</code></th> <td><code>border-color: $brand-success</code></td></tr>                            
+                <tr><th><code>border-info</code></th> <td><code>border-color: $brand-info</code></td></tr>
+                <tr><th><code>border-danger</code></th> <td><code>border-color: $brand-danger</code></td></tr>
+                <tr><th><code>border-warning</code></th> <td><code>border-color: $brand-warning</code></td></tr>
+                <tr><th><code>border-size-1</code></th> <td><code>border-width: 1px</code></td></tr>
+                <tr><th><code>border-size-2</code></th> <td><code>border-width: 2px</code></td></tr>
+                <tr><th><code>border-size-3</code></th> <td><code>border-width: 3px</code></td></tr>
+                <tr><th><code>border-solid</code></th> <td><code>border-style: solid</code></td></tr>
+                <tr><th><code>border-dashed</code></th> <td><code>border-style: dashed</code></td></tr>
+                <tr><th><code>border-dotted</code></th> <td><code>border-style: dotted</code></td></tr>
+                <tr><th><code>circle</code></th> <td><code>border-radius: 50%</code></td></tr>
+                <tr><th><code>border-radius</code></th> <td><code>border-radius: $border-radius</code></td></tr>
+                <tr><th><code>border-radius-0</code></th> <td><code>border-radius: 0</code></td></tr>
+                <tr><th><code>border-radius-1</code></th> <td><code>border-radius: 1px</code></td></tr>
+                <tr><th><code>border-radius-2</code></th> <td><code>border-radius: 2px</code></td></tr>
+                <tr><th><code>border-radius-3</code></th> <td><code>border-radius: 3px</code></td></tr>
+                <tr><th><code>border-radius-4</code></th> <td><code>border-radius: 4px</code></td></tr>
+                <tr><th><code>border-radius-5</code></th> <td><code>border-radius: 5px</code></td></tr>
+                <tr><th><code>shadow-out</code></th> <td><code>box-shadow: $box-shadow-out</code></td></tr>
+                <tr><th><code>shadow-in</code></th> <td><code>box-shadow: $box-shadow-in</code></td></tr>
+                <tr><th><code>shadow-none</code></th> <td><code>box-shadow: none</code></td></tr>
+                <tr><th><code>border-s</code></th> <td><code>border-left: none; border-right: none</code></td></tr>
+                <tr><th><code>border-n</code></th> <td><code>border-left: none; border-right: none</code></td></tr>
+                <tr><th><code>border-e</code></th> <td><code>border-top: none; border-bottom: none</code></td></tr>
+                <tr><th><code>border-w</code></th> <td><code>border-top: none; border-bottom: none</code></td></tr>
+                <tr><th><code>border-s</code></th> <td><code>border-top: none</code></td></tr>
+                <tr><th><code>border-n</code></th> <td><code>border-bottom: none</code></td></tr>
+                <tr><th><code>border-e</code></th> <td><code>border-left: none</code></td></tr>
+                <tr><th><code>border-w</code></th> <td><code>border-right: none</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="centering">Centering</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th><code>.center-horizontal</code></th>
+                    <td><code>
+                    float: none;
+                    margin-left: auto;
+                    margin-right: auto;
+                    </code></td>
+                </tr>
+                <tr><th><code>.center-vertical</code></th>
+                    <td><code>
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    </code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="colors">Colors</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>color-primary</code></th> <td><code>color: $brand-primary</code></td></tr>
+                <tr><th><code>color-secondary</code></th> <td><code>color: $brand-secondary</code></td></tr>
+
+                <tr><th><code>color-gray-dark</code></th> <td><code>color: $gray-dark</code></td></tr>
+                <tr><th><code>color-gray</code></th> <td><code>color: $gray</code></td></tr>
+                <tr><th><code>color-gray-light</code></th> <td><code>color: $gray-light</code></td></tr>
+                <tr><th><code>color-gray-lighter</code></th> <td><code>color: $gray-lighter</code></td></tr>
+                <tr><th><code>color-gray-lightest</code></th> <td><code>color: $gray-lightest</code></td></tr>
+
+                <tr><th><code>color-success</code></th> <td><code>color: $brand-success </code></td></tr>                           
+                <tr><th><code>color-info</code></th> <td><code>color: $brand-info </code></td></tr>
+                <tr><th><code>color-danger</code></th> <td><code>color: $brand-danger </code></td></tr>
+                <tr><th><code>color-warning</code></th> <td><code>color: $brand-warning </code></td></tr>
+                <tr><th><code>color-gold</code></th> <td><code>color: #d5b245;</code></td></tr>
+
+                <tr><th><code>color-transparent</code></th> <td><code>color: transparent </code></td></tr>
+                <tr><th><code>color-white</code></th> <td><code>color: #fff </code></td></tr>
+                <tr><th><code>color-black</code></th> <td><code>color: $black; </code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="displays">Displays</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>hide-overflow</code></th> <td><code>overflow: hidden</code></td></tr>
+                <tr><th><code>show-overflow</code></th> <td><code>overflow: visible</code></td></tr>
+                <tr><th><code>scroll-overflow</code></th> <td><code>overflow: scroll</code></td></tr>
+                <tr><th><code>block</code></th> <td><code>display: block</code></td></tr>
+                <tr><th><code>inline-block</code></th> <td><code>display: inline-block</code></td></tr>
+                <tr><th><code>table</code></th> <td><code>display: table</code></td></tr>
+                <tr><th><code>table-cell</code></th> <td><code>display: table-cell</code></td></tr>
+                <tr><th><code>no-display</code></th> <td><code>display: none</code></td></tr>
+                <tr><th><code>visibility-show</code></th> <td><code>visibility: visible</code></td></tr>
+                <tr><th><code>visibility-hide</code></th> <td><code>visibility: hidden</code></td></tr>
+                <tr><th><code>opacity-hide</code></th> <td><code>opacity: 0</code></td></tr>
+                <tr><th><code>opacity-show</code></th> <td><code>opacity: 1</code></td></tr>
+                <tr><th><code>sr-only</code></th> <td><code>display: none</code></td></tr>
+                <tr><th><code>hidden</code></th> <td><code>display: none</code></td></tr>
+                <tr><th><code>no-select</code></th> <td><code>user-select: none</code></td></tr>
+                <tr><th><code>img-responsive</code></th><td><code>  display: block;width: 100%;height: auto</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="flex">Flex</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>flex</code></th> <td><code>display: flex</code></td></tr>
+                <tr><th><code>flex-row</code></th> <td><code>flex-direction: row</code></td></tr>
+                <tr><th><code>flex-column</code></th> <td><code>flex-direction: column</code></td></tr>
+                <tr><th><code>flex-space-around</code></th> <td><code>justify-content: space-around</code></td></tr>
+                <tr><th><code>flex-space-between</code></th> <td><code>justify-content: space-between</code></td></tr>
+                <tr><th><code>flex-start</code></th> <td><code>justify-content: flex-start</code></td></tr>
+                <tr><th><code>flex-center</code></th> <td><code>justify-content: center</code></td></tr>
+                <tr><th><code>flex-end</code></th> <td><code>justify-content: flex-end</code></td></tr>
+                <tr><th><code>flex-wrap</code></th> <td><code>flex-wrap: wrap</code></td></tr>
+                <tr><th><code>flex-nowrap</code></th> <td><code>flex-wrap: nowrap</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="floats">Floats</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>float-left</code></th> <td><code>float: left</code></td></tr>
+                <tr><th><code>float-right</code></th> <td><code>float: right</code></td></tr>
+                <tr><th><code>float-none</code></th> <td><code>float: none</code></td></tr>
+                <tr><th><code>clear</code></th> <td><code>clear: both</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="lists">Lists</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>list-style-none</code></th> <td><code>list-style: none</code></td></tr>
+                <tr><th><code>list-style-bullet</code></th> <td><code>list-style-type: disc</code></td></tr>
+                <tr><th><code>list-style-empty-bullet</code></th> <td><code>list-style-type: circle</code></td></tr>
+                <tr><th><code>list-style-numbers</code></th> <td><code>list-style-type:decimal-leading-zero</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="margins">Margins</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>margin-center</code></th> <td><code>margin: 0 auto</code></td></tr>
+                <tr><th><code>no-margin</code></th> <td><code>margin: 0</code></td></tr>
+
+                <tr><th><code>margin-sm-n</code></th> <td><code>margin-top: map-get($margin-sizes, sm)</code></td></tr>
+                <tr><th><code>margin-sm-e</code></th> <td><code>margin-right: map-get($margin-sizes, sm)</code></td></tr>
+                <tr><th><code>margin-sm-s</code></th> <td><code>margin-bottom: map-get($margin-sizes, sm)</code></td></tr>
+                <tr><th><code>margin-sm-w</code></th> <td><code>margin-left: map-get($margin-sizes, sm)</code></td></tr>
+
+                <tr><th><code>margin-md-n</code></th> <td><code>margin-top: map-get($margin-sizes, md)</code></td></tr>
+                <tr><th><code>margin-md-e</code></th> <td><code>margin-right: map-get($margin-sizes, md)</code></td></tr>
+                <tr><th><code>margin-md-s</code></th> <td><code>margin-bottom: map-get($margin-sizes, md)</code></td></tr>
+                <tr><th><code>margin-md-w</code></th> <td><code>margin-left: map-get($margin-sizes, md)</code></td></tr>
+
+                <tr><th><code>margin-lg-n</code></th> <td><code>margin-top: map-get($margin-sizes, lg)</code></td></tr>
+                <tr><th><code>margin-lg-e</code></th> <td><code>margin-right: map-get($margin-sizes, lg)</code></td></tr>
+                <tr><th><code>margin-lg-s</code></th> <td><code>margin-bottom: map-get($margin-sizes, lg)</code></td></tr>
+                <tr><th><code>margin-lg-w</code></th> <td><code>margin-left: map-get($margin-sizes, lg)</code></td></tr>
+
+                <tr><th><code>margin-xl-n</code></th> <td><code>margin-top: map-get($margin-sizes, xl)</code></td></tr>
+                <tr><th><code>margin-xl-e</code></th> <td><code>margin-right: map-get($margin-sizes, xl)</code></td></tr>
+                <tr><th><code>margin-xl-s</code></th> <td><code>margin-bottom: map-get($margin-sizes, xl)</code></td></tr>
+                <tr><th><code>margin-xl-w</code></th> <td><code>margin-left: map-get($margin-sizes, xl)</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="paddings">Paddings</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>no-padding</code></th> <td><code>padding: 0</code></td></tr>
+                <tr><th><code>pad-5</code></th> <td><code>padding: 5px</code></td></tr>
+                <tr><th><code>pad-10</code></th> <td><code>padding: 10px</code></td></tr>
+                <tr><th><code>pad-15</code></th> <td><code>padding: 15px</code></td></tr>
+                <tr><th><code>pad-20</code></th> <td><code>padding: 20px</code></td></tr>
+                <tr><th><code>pad-25</code></th> <td><code>padding: 25px</code></td></tr>
+                <tr><th><code>pad-30</code></th> <td><code>padding: 30px</code></td></tr>
+                <tr><th><code>pad-35</code></th> <td><code>padding: 35px</code></td></tr>
+                <tr><th><code>pad-40</code></th> <td><code>padding: 40px</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="positions">Positions</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>no-padding</code></th> <td><code>padding: 0</code></td></tr>
+                <tr><th><code>pad-5</code></th> <td><code>padding: 5px</code></td></tr>
+                <tr><th><code>pad-10</code></th> <td><code>padding: 10px</code></td></tr>
+                <tr><th><code>pad-15</code></th> <td><code>padding: 15px</code></td></tr>
+                <tr><th><code>pad-20</code></th> <td><code>padding: 20px</code></td></tr>
+                <tr><th><code>pad-25</code></th> <td><code>padding: 25px</code></td></tr>
+                <tr><th><code>pad-30</code></th> <td><code>padding: 30px</code></td></tr>
+                <tr><th><code>pad-35</code></th> <td><code>padding: 35px</code></td></tr>
+                <tr><th><code>pad-40</code></th> <td><code>padding: 40px</code></td></tr>
+
+                <tr><th><code>relative</code></th> <td><code>position: relative</code></td></tr>
+                <tr><th><code>absolute</code></th> <td><code>position: absolute</code></td></tr>
+                <tr><th><code>static</code></th> <td><code>position: static</code></td></tr>
+                <tr><th><code>fixed</code></th> <td><code>position: fixed</code></td></tr>
+
+                <tr><th><code>top-0</code></th> <td><code>top: 0</code></td></tr>
+                <tr><th><code>bottom-0</code></th> <td><code>bottom: 0</code></td></tr>
+                <tr><th><code>right-0</code></th> <td><code>right: 0</code></td></tr>
+                <tr><th><code>left-0</code></th> <td><code>left: 0</code></td></tr>
+
+                <tr><th><code>top-50</code></th> <td><code>top: 50%</code></td></tr>
+                <tr><th><code>bottom-50</code></th> <td><code>bottom: 50%</code></td></tr>
+                <tr><th><code>right-50</code></th> <td><code>right: 50%</code></td></tr>
+                <tr><th><code>left-50</code></th> <td><code>left: 50%</code></td></tr>
+
+                <tr><th><code>full-width</code></th> <td><code>width: 100%</code></td></tr>
+                <tr><th><code>full-height</code></th> <td><code>height: 100%</code></td></tr>
+                <tr><th><code>width-50</code></th> <td><code>width: 50%</code></td></tr>
+                <tr><th><code>width-0</code></th> <td><code>width: 0</code></td></tr>
+                <tr><th><code>width-auto</code></th> <td><code>width: auto</code></td></tr>
+                <tr><th><code>height-auto</code></th> <td><code>height: auto</code></td></tr>
+                <tr><th><code>v-middle</code></th> <td><code>vertical-align: middle</code></td></tr>
+                <tr><th><code>v-sub</code></th> <td><code>vertical-align: sub</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="resets">Resets</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>no-margin</code></th> <td><code> margin: 0</code></td></tr>
+                <tr><th><code>no-padding</code></th> <td><code> padding: 0</code></td></tr>
+                <tr><th><code>no-float</code></th> <td><code> float: none</code></td></tr>
+                <tr><th><code>no-background</code></th> <td><code> background: transparent</code></td></tr>
+                <tr><th><code>no-border</code></th> <td><code> border: 0</code></td></tr>
+                <tr><th><code>hide-overflow</code></th> <td><code>overflow: hidden</code></td></tr>
+                <tr><th><code>show-overflow</code></th> <td><code>overflow: visible</code></td></tr>
+                <tr><th><code>no-select</code></th> <td><code>user-select: none;cursor: default</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="transitions">Transitions</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>webkit-gl</code></th> <td><code>-webkit-transform: translate3d(0,0,0)</code></td></tr>
+                <tr><th><code>ease-xs</code></th> <td><code>transition: 0.2s ease</code></td></tr>
+                <tr><th><code>ease</code></th> <td><code>transition: 0.3s ease</code></td></tr>
+                <tr><th><code>ease-md</code></th> <td><code>transition: 0.5s ease</code></td></tr>
+                <tr><th><code>ease-xl</code></th> <td><code>transition: 1.5s ease</code></td></tr>
+                <tr><th><code>no-transition</code></th> <td><code>transition: 0s linear</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <h4 data-waypoint="typography">Typography</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>CSS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th><code>no-margin</code></th> <td><code> margin: 0</code></td></tr>
+                <tr><th><code>sans-serif</code></th> <td><code>font-family: $font-family-sans-serif</code></td></tr>
+                <tr><th><code>monospace</code></th> <td><code>font-family: $font-family-monospace</code></td></tr>
+                <tr><th><code>serif</code></th> <td><code>font-family: $font-family-monospace</code></td></tr>
+                <tr><th><code>heading-font</code></th> <td><code>font-family: $headings-font-family</code></td></tr>
+
+
+                <tr><th><code>font-lightest</code></th> <td><code>font-weight: $text-lightest</code></td></tr>
+                <tr><th><code>font-light</code></th> <td><code>font-weight: $text-light</code></td></tr>
+                <tr><th><code>font-normal</code></th> <td><code>font-weight: $text-normal</code></td></tr>
+                <tr><th><code>font-bold</code></th> <td><code>font-weight: $text-bold</code></td></tr>
+                <tr><th><code>font-bolder</code></th> <td><code>font-weight: $text-bolder</code></td></tr>
+                <tr><th><code>font-boldest</code></th> <td><code>font-weight: $text-boldest</code></td></tr>
+
+                <tr><th><code>text-normal</code></th> <td><code>font-style: normal</code></td></tr>
+                <tr><th><code>text-italic</code></th> <td><code>font-style: italic</code></td></tr>
+                <tr><th><code>text-ellipses</code></th> <td><code>@include ellipses</code></td></tr>
+                <tr><th><code>text-strike</code></th> <td><code>text-decoration: line-through</code></td></tr>
+
+                <tr><th><code>uppercase</code></th> <td><code>text-transform: uppercase</code></td></tr>
+                <tr><th><code>lowercase</code></th> <td><code>text-transform: lowercase</code></td></tr>
+                <tr><th><code>capitalize</code></th> <td><code>text-transform: capitalize</code></td></tr>
+                <tr><th><code>no-text-decoration</code></th> <td><code>text-decoration: none</code></td></tr>
+
+                <tr><th><code>text-left</code></th> <td><code>text-align: left</code></td></tr>
+                <tr><th><code>text-right</code></th> <td><code>text-align: right</code></td></tr>
+                <tr><th><code>text-center</code></th> <td><code>text-align: center</code></td></tr>
+                <tr><th><code>text-justify</code></th> <td><code>text-align: justify</code></td></tr>
+
+                <tr><th><code>text-black</code></th> <td><code>color: #000</code></td></tr>
+                <tr><th><code>text-warning</code></th> <td><code>color: $brand-warning</code></td></tr>
+                <tr><th><code>text-info</code></th> <td><code>color: $brand-info   </code></td></tr>
+                <tr><th><code>text-danger</code></th> <td><code>color: $brand-danger </code></td></tr>
+                <tr><th><code>text-success</code></th> <td><code>color: $brand-success</code></td></tr>
+                <tr><th><code>text-muted</code></th> <td><code>color:  $gray-light  </code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+</div>
+	</article>
+</div></div>
+</div>
+
+<footer class="site-footer">
+	<div class="container-fluid clearfix">
+
+        <div class="col col-12 col-sm-7 gutter-sm-r">
+
+            <div class="row sitemap roof-sm floor-sm">
+
+                <ul class="list-inline">
+                    <li>
+                        <a href="/docs/0.0.01">Documentation</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/kanso-cms/cms/issues">Issues</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/kanso-cms/cms">GitHub</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/kanso-cms/cms/archive/master.zip">Download</a>
+                    </li>
+                </ul>
+
+            </div>
+
+            <div class="row">
+                <a href="/" title="Home" class="logo-link">
+                    <svg class="logo" viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
+                </a>
+                <small>
+                    © Hubble UI 2016.
+                    <br> Designed &amp; developed with
+                    <span style="font-size:13px;color:#F36B5C;">♥</span> by Joe Howard.
+                </small>
+            </div>
+        </div>
+        <div class="col col-12 col-sm-4 gutter-sm-l">
+
+            <ul class="list-inline social-links">
+                <li>
+                    <a class="icon-wrap social-share github" target="_blank" href="https://github.com/kanso-cms/cms">
+                        <span class="icon icon-social glyph-icon glyph-icon-github"></span>
+                    </a>
+                </li>
+                <li>
+                    <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
+                        <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
+                    </a>
+                </li>
+                <li>
+                    <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
+                        <span class="icon glyph-icon glyph-icon-chevron-up"></span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+	</div>
+	
+</footer>
+
+<div class="sidebar-overlay js-sidebar-overlay"></div>
+<script src="/build/js/hubble.js"></script>
+<script src="/build/js/theme.js"></script>
+
+</body>
+
+</html>

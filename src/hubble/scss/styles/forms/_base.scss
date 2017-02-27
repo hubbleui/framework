@@ -1,0 +1,85 @@
+.form-field {
+    @extend %relative;
+    @extend %inline-block;    
+    input,textarea, select {
+        @extend %block;
+        @extend %full-width;
+        font-size: $input-font-size;
+        padding: $input-pad-y $input-pad-x;
+        border-radius: $border-radius;
+        outline: none;
+        font-weight: $text-normal;
+        line-height: $input-line-height;
+        color: $input-color;
+        background-color: $input-bg;
+        border: 1px solid $input-border-color;
+        transition: background-color $base-easing-time $base-easing, border-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
+        &:focus,
+        &.focus {
+            background-color: $input-bg-hover;
+            border-color: $input-hover-border-color;
+        }
+        &.disabled,
+        &:disabled {
+            @extend %bg-gray-light;
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    }
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding: 9px 50px 9px 16px;
+        background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%), linear-gradient(to right, #ccc, #ccc);
+        background-position: calc(100% - 20px) calc(1em + 6px), calc(100% - 15px) calc(1em + 6px), calc(100% - 37px) 11px;
+        background-size: 5px 5px, 5px 5px, 0px 1.5em;
+        background-repeat: no-repeat;
+    }
+    label {
+        @extend %block;
+        @extend %full-width;
+        font-size: 1.3rem;
+        margin-bottom: 5px;
+        font-weight: $text-bolder;
+        line-height: $input-line-height;
+        color: $input-color;
+        white-space: nowrap;
+        transition: all $base-easing-time $base-easing;
+        &.color-inherit {
+            color:inherit;
+        }
+    }
+    .help-danger,
+    .help-warning {
+        @extend %hide-overflow;
+        @extend %no-margin;
+        @extend %font-bold;
+        max-height: 0;
+        transition: max-height $base-easing-time $base-easing;
+    }
+    .help-danger {
+        @extend %color-danger;
+    }
+    .help-warning {
+        @extend %color-warning;
+    }
+    &.danger {
+        input,textarea, select {
+            border-color: $brand-danger;
+        }
+        input + .help-danger {
+            max-height: 50px;
+            transition: max-height $base-easing-time $base-easing;
+        }
+    }
+    &.warning {
+        input,textarea, select {
+            border-color: $brand-warning;
+        }
+        input + .help-warning {
+            max-height: 50px;
+            transition: max-height $base-easing-time $base-easing;
+        }
+    }
+}

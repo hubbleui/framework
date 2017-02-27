@@ -1,0 +1,201 @@
+<h1>Popovers</h1>
+
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Basic example</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="attributes" data-waypoint-speed="500">Data attributes</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="templates" data-waypoint-speed="500">Templates</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="example">
+    <h2>Basic example</h2>
+    <p>
+        Popovers use a combination of both <code>JavaScript</code> and <code>CSS</code> to display. 
+        The in initialization however is done entirely through HTML through classes and data attributes.
+    </p>
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <span class="js-popover"
+                  data-popover-title="Popover Title" 
+                  data-popover-content="This is the content!" 
+                  data-popover-direction="top"
+            >
+                I have a popover!
+            </span>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<span
+class="js-popover"
+data-popover-title="Popover Title" 
+data-popover-content="This is the content!" 
+data-popover-direction="top">
+I have a popover!
+</span>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+
+<div class="row roof-sm foor-sm" data-waypoint="attributes">
+    <h2>Data attributes</h2>
+    <p>
+        Data attributes placed on the target element define various behavior of the popover. 
+        The <code>data-popover-direction</code>, <code>data-popover-content</code>, <code>data-popover-title</code> must be used for 
+        the popover to be displayed correctly - All other <code>data-attributes</code> are optional.
+    </p>
+    <table class="table table-bordered">
+        <thead>
+            <tr><th>Attribute</th> <th>Values</th> <th>Behavior</th></tr>
+        </thead>
+        <tbody>
+            <tr> 
+                <th><code>data-popover-direction</code></th>
+                <th><code>top|bottom|left|right</code></th>
+                <th>Changes the direction of the popover.</th>
+            </tr>
+            <tr> 
+                <th><code>data-popover-title</code></th>
+                <th><code>string</code></th>
+                <th>The string to placed as the popover title.</th>
+            </tr>
+            <tr> 
+                <th><code>data-popover-content</code></th>
+                <th><code>string</code></th>
+                <th>The string to placed as the popover text content.</th>
+            </tr>
+            <tr> 
+                <th><code>data-popover-type</code></th>
+                <th><code>popover-primary|popover-info|popover-success|popover-warning|popover-danger</code></th>
+                <th>The contextual classname. Changes the background color of the popover title.</th>
+            </tr>
+            <tr> 
+                <th><code>data-popover-event</code></th>
+                <th><code>click|hover</code></th>
+                <th>Defines whether the popover is displayed on <code>:hover</code>, or toggled with a click.</th>
+            </tr>
+            <tr> 
+                <th><code>data-popover-animate</code></th>
+                <th><code>pop|fade</code></th>
+                <th>Changes the popover animation when it is displayed.</th>
+            </tr>
+            <tr> 
+                <th><code>data-popover-target</code></th>
+                <th><code>string (node id)</code></th>
+                <th>Optional node id to clone and copy into the popover</th>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <button class="btn btn-default js-popover"
+                  data-popover-title="Popover Title" 
+                  data-popover-content="This is the content!"  
+                  data-popover-direction="top" 
+                  data-popover-type="popover-primary" 
+                  data-popover-event="click" 
+                  data-popover-animate="pop"
+            >
+                Click Me!
+            </button>
+            <button class="btn btn-default js-popover"
+                  data-popover-title="Popover Title" 
+                  data-popover-content="This is the content!"  
+                  data-popover-direction="top" 
+                  data-popover-type="popover-primary" 
+                  data-popover-event="hover" 
+                  data-popover-animate="fade"
+            >
+                Hover Me!
+            </button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+ <button class="btn btn-default js-popover"
+data-popover-title="Popover Title" 
+data-popover-content="This is the content!"  
+data-popover-direction="top" 
+data-popover-type="popover-primary" 
+data-popover-event="click" 
+data-popover-animate="pop"
+>
+Click Me!
+</button>
+<button class="btn btn-default js-popover"
+data-popover-title="Popover Title" 
+data-popover-content="This is the content!"  
+data-popover-direction="top" 
+data-popover-type="popover-primary" 
+data-popover-event="hover" 
+data-popover-animate="fade"
+>
+Hover Me!
+</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+
+<div class="row roof-sm foor-sm" data-waypoint="templates">
+    <h2>Templates</h2>
+    <p>
+        If you would prefer to customize the popover markup further, you can specify a DOM node by <code>id</code> 
+        in the <code>data-popover-target</code>. 
+    </p>
+    <p>
+        The library will clone the target node and insert the copy into the popover's contents.
+    </p>
+
+    <blockquote>
+        <p>
+            Use the <em>.hidden</em> class on the target element to hide it so that it's not visible on the page.
+        </p>
+    </blockquote>
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <button class="btn btn-default js-popover"
+                data-popover-target="target-node" 
+                data-popover-event="click" 
+                data-popover-animate="pop"
+                data-popover-direction="top" 
+            >
+                Click Me!
+            </button>
+            
+            <div id="target-node" class="hidden pad-20">
+                <p>This node is cloned and inserted into the popover!</p>
+            </div>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn btn-default js-popover"
+    data-popover-target="target-node" 
+    data-popover-event="click" 
+    data-popover-animate="pop"
+    data-popover-direction="top" 
+>Click Me!
+</button>
+
+<div id="target-node" class="hidden pad-20">
+    <p>This node is cloned and inserted into the popover!</p>
+</div>
+
+-->
+</code></pre>
+
+</div>

@@ -1,0 +1,57 @@
+// Spinner keyframes
+@keyframes loadingrotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes loadingdash {
+    0% {
+        stroke-dasharray: 1,200;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 150,200;
+        stroke-dashoffset: -50;
+    }
+
+    100% {
+        stroke-dasharray: 150,200;
+        stroke-dashoffset: -185;
+    }
+}
+
+// Spinner defaults
+.loading-spinner {
+    animation: loadingrotate 2s linear infinite;
+    height: 64px;
+    width: 65px;
+}
+.loading-spinner .path {
+    stroke-dasharray: 1,200;
+    stroke-dashoffset: 0;
+    -webkit-animation: loadingdash 1.5s ease-in-out infinite;
+    animation: loadingdash 1.5s ease-in-out infinite;
+    stroke-linecap: round;
+    stroke: #76838f;
+}
+
+
+.spinner-default .path {
+    stroke: $gray;
+}
+.spinner-primary .path {
+    stroke: $brand-primary;
+}
+.spinner-success .path {
+    stroke: $brand-success;
+}
+.spinner-info .path {
+    stroke: $brand-info;
+}
+.spinner-warning .path {
+    stroke: $brand-warning;
+}
+.spinner-danger .path {
+    stroke: $brand-danger;
+}

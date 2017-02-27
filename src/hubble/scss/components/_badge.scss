@@ -1,0 +1,82 @@
+.badge {
+	@extend %font-normal;
+    @extend %inline-block;
+    @extend %text-center;
+    padding: $badge-pad-y $badge-pad-x;
+    color: $badge-default-color;
+    background-color: $badge-default-bg;
+    font-size: $badge-font-size;
+    line-height: $badge-line-height;
+    border-radius: 50%;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    // Colors
+    &.badge-primary {
+        color: #fff;
+        background-color: $brand-primary;
+    }
+    &.badge-success {
+        color: #fff;
+        background-color: $brand-success;
+    }
+    &.badge-info {
+        color: #fff;
+        background-color: $brand-info;
+    }
+    &.badge-warning {
+       color: #fff;
+        background-color: $brand-warning;
+    }
+    &.badge-danger {
+        color: #fff;
+        background-color: $brand-danger;
+    }
+    &.badge-white {
+        color: $black;
+        background-color: $white;
+    }
+
+    // Positioning
+    &.badge-up {
+        position: relative;
+        top: -10px;
+        margin: 0 -.8em;
+        border-radius: 15px;
+    }
+}
+
+
+// In buttons
+.btn {
+    &.btn-primary .badge {
+        @extend %color-primary;
+    }
+    &.btn-info .badge {
+        @extend %color-info;
+    }
+    &.btn-success .badge {
+        @extend %color-success;
+    }
+    &.btn-warning .badge {
+        @extend %color-warning;
+    }
+    &.btn-danger .badge {
+        @extend %color-danger;
+    }
+    &.with-badge {
+        overflow: visible;
+        position: relative;
+        .badge {
+            position: absolute;
+            top: -9px;
+            right: -7px;
+        }
+    }
+    &.btn-pure {
+        .badge {
+            top: 0;
+            right: 4px;
+        }
+    }
+}

@@ -1,0 +1,35 @@
+.hide-overflow   { overflow: hidden }
+.show-overflow 	 { overflow: visible }
+.scroll-overflow { overflow: scroll }
+.block 			 { display: block }
+.inline          { display: inline }
+.inline-block 	 { display: inline-block }
+.table 			 { display: table }
+.table-cell 	 { display: table-cell }
+.no-display		 { display: none }
+.visibility-show { visibility: visible }
+.visibility-hide { visibility: hidden }
+.opacity-hide 	 { opacity: 0 }
+.opacity-show 	 { opacity: 1 }
+.sr-only		 { 
+	position: absolute;
+  	width: 1px;
+  	height: 1px;
+  	padding: 0;
+  	margin: -1px;
+  	overflow: hidden;
+  	clip: rect(0,0,0,0);
+  	border: 0;
+}
+.hidden    { display: none }
+.no-select {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.img-responsive {
+	display: block;
+	width: 100%;
+    height: auto;
+}

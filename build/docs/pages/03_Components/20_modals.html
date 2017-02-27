@@ -1,0 +1,231 @@
+<h1>Modals</h1>
+
+<p>
+    Modals are handy <code>JavaScript</code> component for displaying messages to the user 
+    while hiding the rest of the page. Modals are highligy customizable from both a <code>CSS</code> and 
+    <code>JavaScript</code> perspective.
+</p>
+
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Example</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="options" data-waypoint-speed="500">Options</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-sm floor-sm" data-waypoint="example">
+    <h2>Example</h2>
+    <p>
+        To display a modal, call the <code>Modals</code> module with your options via the 
+        module loader.
+    </p>
+    <div class="code-content-example">
+        <button class="js-modal-trigger-1 btn btn-success">
+            Show Modal
+        </button>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelector('.js-modal-trigger-1').addEventListener('click', function () {
+                    Modules.require('Modal', {
+                        type           : 'success',
+                        title          : 'Well done',
+                        message        : 'Thanks for doing something!',
+                    });
+                });
+            });
+        </script>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Modules.require('Modal', {
+    type           : 'success',
+    title          : 'Well done',
+    message        : 'Thanks for doing something!',
+});
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm floor-sm" data-waypoint="options">
+    <h2>Options</h2>
+    <p>
+        Modals can also be used to confirm a user action via callbacks. 
+        Below is an example of a notification with all options. Please see the table for full details details.
+    </p>
+    <div class="code-content-example">
+        <button class="js-notif-trigger-2 btn btn-success">
+            Show Modal
+        </button>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelector('.js-notif-trigger-2').addEventListener('click', function () {
+                    Modules.require('Modal', {
+                        type             : 'success',
+                        header           : 'success',
+                        icon             : 'check',
+                        title            : 'Hello There!',
+                        message          : 'Are you POSITIVE you want to that?',
+                        extras           : '',
+                        closeText        : 'Cancel',
+                        closeClass       : 'btn-default',
+                        confirmClass     : 'btn-success',
+                        confirmText      : 'Yes',
+                        overlay          : 'dark',
+                        
+                        validateConfirm  : function() { return true; },
+
+                        closeAnywhere    :  false,
+                        
+                        onBuilt        : function(args) {var modal = this; console.log(args);},
+                        onBuiltArgs    : ['var1', 'var2', 'var3'],
+
+                        onRender       : function(args) {var modal = this; console.log(args);},
+                        onRenderArgs   : ['var1', 'var2', 'var3'],
+
+                        onClose        : function(args) {var modal = this; console.log(args);},
+                        onCloseArgs    : ['var1', 'var2', 'var3'],  
+                    });
+                });
+            });
+        </script>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Modules.require('Modal', {
+    type             : 'success',
+    header           : 'success',
+    icon             : 'check',
+    title            : 'Hello There!',
+    message          : 'Are you POSITIVE you want to that?',
+    closeText        : 'Cancel',
+    closeClass       : 'btn-default',
+    confirmClass     : 'btn-success',
+    confirmText      : 'Yes',
+    overlay          : 'dark',
+    extras           : '',
+    validateConfirm  : function() { return true; },
+
+    closeAnywhere    :  false,
+    
+    onBuilt        : function(args) {var modal = this; console.log(args);},
+    onBuiltArgs    : ['var1', 'var2', 'var3'],
+
+    onRender       : function(args) {var modal = this; console.log(args);},
+    onRenderArgs   : ['var1', 'var2', 'var3'],
+
+    onClose        : function(args) {var modal = this; console.log(args);},
+    onCloseArgs    : ['var1', 'var2', 'var3'],  
+});
+-->
+</code></pre>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Option key</th>
+                <th>Value</th>
+                <th>Behaviour</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">type</th>
+                <td><code>string</code><code>primary|info|success|warning|danger</code></td>
+                <td>Contextualizes card styling.</td>
+            </tr>
+            <tr>
+                <th scope="row">header</th>
+                <td><code>string</code><code>primary|info|success|warning|danger</code></td>
+                <td>Contextualizes card header styling.</td>
+            </tr>
+            <tr>
+                <th scope="row">icon</th>
+                <td><code>string</code></td>
+                <td>Icon suffix text for displaying an icon.</td>
+            </tr>
+            <tr>
+                <th scope="row">title</th>
+                <td><code>string</code></td>
+                <td>Text to be displayed inside the title.</td>
+            </tr>
+            <tr>
+                <th scope="row">message</th>
+                <td><code>string</code></td>
+                <td>Text to be displayed inside the title.</td>
+            </tr>
+            <tr>
+                <th scope="row">extras</th>
+                <td><code>string</code></td>
+                <td>Any extra HTML in string format to insert into the modal below the opening text.</td>
+            </tr>
+            <tr>
+                <th scope="row">closeAnywhere</th>
+                <td><code>boolean</code></td>
+                <td>Can the user click anywhere outside the modal to close it.</td>
+            </tr>
+            <tr>
+                <th scope="row">closeText</th>
+                <td><code>string</code></td>
+                <td>Text to be displayed in cancel button.</td>
+            </tr>
+            <tr>
+                <th scope="row">closeClass</th>
+                <td><code>string</code></td>
+                <td>Classname to be applied to cancel button.</td>
+            </tr>
+            <tr>
+                <th scope="row">confirmText</th>
+                <td><code>string</code></td>
+                <td>Text to be displayed in comfirm button.</td>
+            </tr>
+            <tr>
+                <th scope="row">confirmClass</th>
+                <td><code>string</code></td>
+                <td>Classname to be applied to comfirm button.</td>
+            </tr>
+            <tr>
+                <th scope="row">onBuilt</th>
+                <td><code>function</code></td>
+                <td>Javascript function to be called when the modal element is built, but not yet inserted into the DOM. <code>this</code> is the modal element.</td>
+            </tr>
+            <tr>
+                <th scope="row">onBuiltArgs</th>
+                <td><code>array</code></td>
+                <td>Array of arguements to be passed to the onBuilt callback.</td>
+            </tr>
+            <tr>
+                <th scope="row">onRender</th>
+                <td><code>function</code></td>
+                <td>Javascript function to be called when the modal element is built and inserted into the DOM. <code>this</code> is the modal element.</td>
+            </tr>
+            <tr>
+                <th scope="row">onRenderArgs</th>
+                <td><code>array</code></td>
+                <td>Array of arguements to be passed to the onRender callback.</td>
+            </tr>
+            <tr>
+                <th scope="row">onClose</th>
+                <td><code>function</code></td>
+                <td>Javascript function to be called when the modal is being closed. <code>this</code> is the modal element.</td>
+            </tr>
+            <tr>
+                <th scope="row">onCloseArgs</th>
+                <td><code>array</code></td>
+                <td>Array of arguements to be passed to the onClose callback.</td>
+            </tr>
+            <tr>
+                <th scope="row">validateConfirm</th>
+                <td><code>function</code></td>
+                <td>Javascript function to be called when the confirm button is clicked. Return a <code>boolean</code> to close or keep the modal. This can be usefull for validating forms inside more complex modals.</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+</div>
+

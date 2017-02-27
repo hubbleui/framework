@@ -1,0 +1,251 @@
+// Colors
+$white:                     #ffffff !default;
+$black:                     #2A2A2A !default;
+$gray-dark:                 #585858 !default;
+$gray:                      #76838f !default;
+$gray-light:                #DADADA !default;
+$gray-lighter:              #e9e9e9 !default;
+$gray-lightest:             #f4f4f4 !default;
+
+$brand-primary:             #ff3366 !default;
+$brand-secondary:           #01aef0 !default;
+$brand-success:             #70de99 !default;
+$brand-info:                #76afe1 !default;
+$brand-warning:             #ffde66 !default;
+$brand-danger:              #ff6666 !default;
+
+// Body
+$body-bg:                   #ffffff !default;
+$body-color:                #1d1d1d !default;
+
+// Links
+$link-color:                $brand-primary !default;
+$link-decoration:           none !default;
+$link-hover-color:          darken($link-color, 10%) !default;
+$link-hover-decoration:     underline !default;
+
+// Global font families
+$font-family-sans-serif:    -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !default;
+$font-family-serif:         Georgia, "Times New Roman", Times, serif !default;
+$font-family-monospace:     Menlo, Monaco, Consolas, "Courier New", monospace !default;
+$base-font-family:          $font-family-sans-serif !default;
+$font-family-headings:      $font-family-sans-serif !default;
+
+
+// If you are using custom please overide the font family above
+// and uncomment the below example.
+// The path is the full path to the font files (including the font-file) but without the extension
+// All font files formats should have the same name with different extensions
+
+// $custom-font-path:        '../fonts/Helvetica';
+// $custom-font-family-name: 'Helvetica';
+
+// Default font weights
+$text-lightest:             100;
+$text-light:                300;
+$text-normal:               400;
+$text-bold:                 500;
+$text-bolder:               600;
+$text-boldest:              900;
+
+// Global base font styles
+$base-font-size:            1.45rem !default;
+$base-line-height:          1.8 !default;
+$base-font-weight:          $text-normal !default;
+$font-smoothing:            true;
+
+// Headings sizes
+$text-size-h1:              ($base-font-size * 3.1) !default;
+$text-size-h2:              ($base-font-size * 2.8) !default;
+$text-size-h3:              ($base-font-size * 2.5) !default;
+$text-size-h4:              ($base-font-size * 2.0) !default;
+$text-size-h5:              ($base-font-size * 1.5) !default;
+$text-size-h6:              $base-font-size !default;
+
+// Paragraph sizes
+$text-size-p1:              ($base-font-size * 2.5) !default;
+$text-size-p2:              ($base-font-size * 2.0) !default;
+$text-size-p3:              ($base-font-size * 1.75) !default;
+$text-size-p4:              ($base-font-size * 1.5) !default;
+$text-size-p5:              ($base-font-size * 1.3) !default;
+$text-size-p6:              $base-font-size !default;
+
+// Heading styles
+$headings-font-family:      -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !default;
+$headings-font-weight:      $text-normal !default;
+$headings-line-height:      1.1 !default;
+
+// Base aesthetics
+$border-radius:             2px !default;
+$box-shadow-out:            0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12) !default;
+$box-shadow-in:             inset 0 5px 8px -2px rgba(0,0,0,.13) !default;
+
+// Base transitions
+$base-easing:               $ease;
+$base-easing-time:          .2s;
+
+// Grid breakpoints
+$breakpoint-xs:             0 !default;
+$breakpoint-sm:             576px !default;
+$breakpoint-md:             768px !default;
+$breakpoint-lg:             992px !default;
+$breakpoint-xl:             1200px !default;
+
+// Responsive breakpoints
+$breakpoints: (
+    xs: $breakpoint-xs,
+    sm: $breakpoint-sm,
+    md: $breakpoint-md,
+    lg: $breakpoint-lg,
+    xl: $breakpoint-xl,
+) !default;
+
+// Grid gutters
+$grid-gutters: (
+    xs: 1.5rem,
+    sm: 2.0rem,
+    md: 2.5rem,
+    lg: 3.0rem,
+    xl: 3.5rem,
+) !default;
+
+// Grid roof and floors
+$grid-v-gutters: (
+    xs: 1.5rem,
+    sm: 3.0rem,
+    md: 6.0rem,
+    lg: 8.0rem,
+    xl: 10.0rem,
+) !default;
+
+// Container gutters
+$container-gutters: (
+    xs: 3.0rem,
+    sm: 3.0rem,
+    md: 3.0rem,
+    lg: 3.0rem,
+    xl: 3.0rem,
+) !default;
+
+// Margin sizes
+$margin-sizes: (
+    xs: 1.5rem,
+    sm: 3.0rem,
+    md: 4.5rem,
+    lg: 6.0rem,
+    xl: 8.0rem,
+) !default;
+
+// Sticky footer
+$footerHeight:              500px;
+
+// Blockquote
+$bq-color:                  $body-color;
+$bq-bg:                     $body-bg;
+$bq-box-shadow:             $box-shadow-out;
+$bq-border-left:            $brand-primary;
+$bq-padding:                2rem;
+
+// Button
+$btn-text-transform:        uppercase !default;
+$btn-pad-x:                 1.95rem !default;
+$btn-pad-y:                 1.3rem !default;
+$btn-font-size:             1.1rem !default;
+$btn-font-weight:           $text-bolder !default;
+
+$btn-xs-pad-x:              minusPercent($btn-pad-x, 30) !default;
+$btn-xs-pad-y:              minusPercent($btn-pad-y, 30) !default;
+
+$btn-sm-pad-x:              minusPercent($btn-pad-x, 20) !default;
+$btn-sm-pad-y:              minusPercent($btn-pad-y, 20) !default;
+
+$btn-lg-pad-x:              addPercent($btn-pad-x, 30) !default;
+$btn-lg-pad-y:              addPercent($btn-pad-y, 30) !default;
+
+$btn-xl-pad-x:              addPercent($btn-pad-x, 50) !default;
+$btn-xl-pad-y:              addPercent($btn-pad-y, 50) !default;
+
+$btn-default-bg:            $gray-light !default;
+$btn-default-bg-hover:      darken($gray-light, 10);
+$btn-default-color:         $gray !default;
+$btn-default-color-hover:   $brand-primary !default;
+
+$circle-btn-font-size:      2.0rem;
+
+// Dropdown
+$dropdown-bg:               #fff !default;
+$dropdown-color:            $body-color !default;
+$dropdown-font-size:        1.2rem;
+$dropdown-width:            160px !default;
+$dropdown-tick-color:       $brand-primary !default;
+$dropdown-hover-bg:         $gray-lighter !default;
+$dropdown-border-color:     transparent !default;
+$dropdown-divider-color:    $gray-lighter !default;
+
+// Arrow
+$arrow-color:               $gray-lighter !default;
+
+// Badge
+$badge-default-bg:          $gray !default; 
+$badge-default-color:       #fff !default;
+$badge-font-size:           1.4rem !default;
+$badge-pad-x:               0.6rem !default;
+$badge-pad-y:               0 !default;
+$badge-line-height:         2rem;
+
+// Label
+$label-default-bg:          $gray !default; 
+$label-default-color:       #fff !default;
+$label-font-size:           1.1rem !default;
+$label-pad-x:               0.8rem !default;
+$label-pad-y:               0.4rem !default;
+
+// Table
+$table-font-size:           1.3rem !default;
+$table-bg:                  #fff !default;
+$table-color:               inherit !default;
+$table-border-color:        $gray-lighter !default;
+$table-hover-bg:            rgba(0, 0, 0, 0.08) !default;
+$table-cell-pad-y:          1.2rem !default;
+$table-cell-pad-x:          1.8rem !default;
+
+// Message
+$msg-default-bg:            $gray-lightest;
+$msg-default-icon-color:    $brand-primary;
+$msg-default-icon-bg:       $gray-light;
+
+// Popovers
+$popover-bg:                #fff;
+$popover-max-width:         270px;
+$popover-title-bg:          $gray-light;
+$popover-content-padding:   8px 14px;
+
+// Card
+$card-bg:                   #ffffff;
+$card-border-width:         1px;
+$card-border-color:         $gray-light;
+$card-spacer-x:             1.25rem;
+$card-spacer-y:             0.75rem;
+$card-cap-bg:               $gray-lighter;
+$card-img-overlay-padding:  1.25rem;
+$card-deck-margin:          1.25rem;
+
+// Forms
+$input-font-size:             1.3rem !default;
+$input-line-height:           $base-line-height !default;
+$input-color:                 $gray-dark !default;
+$input-border-color:          #ccd5db !default;
+$input-hover-border-color:    $brand-secondary !default;
+$input-bg:                    transparent !default;
+$input-bg-hover:              transparent !default;
+$input-pad-y:                 0.9rem !default;
+$input-pad-x:                 1.2rem !default;
+$input-addon-bg:              $gray-lightest !default;
+$input-addon-color:           $gray-dark !default;
+
+// Zindexs
+$z-index-tooltip:             100;
+$z-index-popover:             200;
+$z-index-dropdown:            300;
+$z-index-notification:        400;
+$z-index-modal:               500;

@@ -1,0 +1,23 @@
+.fancy-link {
+	position: relative;
+	transition: .2s ease;
+	&:after {
+		content: "";
+	    bottom: -8px;
+	    height: 1px;
+		width: 0;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		position: absolute;
+		background-color: $brand-primary;
+		transition: .2s ease;
+	}
+	&:hover {
+		text-decoration: none;
+		color: $brand-primary;
+		&:after {
+			width: 100%;
+		}
+	}
+}

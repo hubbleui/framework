@@ -1,0 +1,138 @@
+.btn {
+    @extend %inline-block;
+    @extend %font-normal;
+    @extend %text-center;
+    @extend %relative;
+    @extend %hide-overflow;
+    @extend %border-radius;
+    font-size: $btn-font-size;
+    line-height: $btn-font-size + .3;
+    background-color: $btn-default-bg;
+    border: 1px solid $btn-default-bg;
+    color: $btn-default-color;
+    font-weight: $btn-font-weight;
+    text-transform: $btn-text-transform;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color $base-easing-time $base-easing, border-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
+    padding: $btn-pad-y $btn-pad-x;
+    padding: $btn-pad-y $btn-pad-x;
+    
+    // Default hover styles
+    &:hover {
+        background-color: $btn-default-bg-hover;
+        border-color: $btn-default-bg-hover;
+        color: $btn-default-color-hover;
+
+    }
+
+    // Not raised has no box shadow
+    &:not(.raised) {
+        box-shadow: none;
+    }
+
+    // Hover/active/focus resets
+    &:hover,
+    &.hover,
+    &:active,
+    &.active,
+    &:focus,
+    &.focus {
+        text-decoration: none;
+        outline: none;
+    }
+
+    // Active boxshadow inset
+    &:active,
+    &.active {
+        box-shadow: $box-shadow-in;
+    }
+
+    // Disabled
+    &:disabled,
+    &.disabled,
+    &:disabled:hover,
+    &.disabled.hover,
+    &:disabled:active,
+    &:disabled.active,
+    &:disabled:focus,
+    &.disabled.focus {
+        box-shadow: none;
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    // Raised base style
+    &.raised:active,
+    &.raised.active {
+        box-shadow: 0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+    }
+
+    // Pure base styles
+    &.btn-pure {
+        &:hover,
+        &.hover,
+        &:active,
+        &.active,
+        &:focus,
+        &.focus{
+            border-color: transparent;
+            box-shadow: none;
+            background-color: transparent;
+        }
+    }
+}
+
+// Sizes
+.btn-xs {
+    padding: $btn-xs-pad-y $btn-xs-pad-x;
+}
+.btn-sm {
+    padding: $btn-sm-pad-y $btn-sm-pad-x;
+}
+.btn-lg {
+    padding: $btn-lg-pad-y $btn-lg-pad-x;
+}
+.btn-xl {
+    padding: $btn-xl-pad-y $btn-xl-pad-x;
+}
+
+// Circle default and sizes 
+.btn-circle {
+    border-radius: 50%;
+    font-size: $circle-btn-font-size;
+    line-height:  $circle-btn-font-size;
+    padding: $btn-font-size;
+    &.btn-xs {
+       padding: minusPercent($btn-font-size, 20);
+    }
+    &.btn-sm {
+        padding: minusPercent($btn-font-size, 10);
+    }
+    &.btn-lg {
+        padding: addPercent($btn-font-size, 30);
+    }
+    &.btn-xl {
+       padding: addPercent($btn-font-size, 50);
+    }
+}
+
+// Block buttons
+.btn-block {
+    display: block;
+    width: 100%;
+}
+.btn-block + .btn-block {
+    margin-top: 5px;
+}
+
+// Override input buttons
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+    &.btn-block {
+        width: 100%;
+    }
+}

@@ -1,0 +1,14 @@
+html, body {
+	height: 100%;
+}
+.page-container {
+	min-height: 100%;
+	margin-bottom: -$footerHeight; 
+}
+.page-container:after {
+	content: "";
+	display: block;
+}
+.sticky-footer, .page-container:after {
+	height: $footerHeight; 
+}

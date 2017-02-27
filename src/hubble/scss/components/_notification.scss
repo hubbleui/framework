@@ -1,0 +1,68 @@
+.notification-wrap {
+	@extend %fixed;
+	@extend %right-0;
+	@extend %left-0;
+	@extend %margin-center;
+	@extend %no-display;
+	z-index: $z-index-notification;
+	top: -2px;
+	width: 100%;
+	.msg-buttons {
+		@extend %text-center;
+	}
+}
+.notification-wrap.active {
+	@extend %block;
+}
+.notification-wrap .msg {
+	cursor: pointer;
+	opacity: 0.9;
+	margin-bottom: 15px;
+}
+.notification-wrap .msg.msg-confirm {
+	cursor: default;
+}
+.notification-wrap .msg.msg-confirm .msg-body {
+	padding: 15px 20px 15px 30px;
+}
+@include media-breakpoint-up(sm) {
+	.notification-wrap {
+		width: 450px;
+	}
+}
+
+
+
+@-webkit-keyframes fadeInDown {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -100%, 0);
+    transform: translate3d(0, -100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -100%, 0);
+    transform: translate3d(0, -100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+.animate-notif {
+	animation-duration: .3s;
+ 	animation-fill-mode: both;
+  	animation-name: fadeInDown;
+}

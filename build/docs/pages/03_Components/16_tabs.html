@@ -1,0 +1,133 @@
+<h1>Tabs</h1>
+
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Basic example</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="styling" data-waypoint-speed="500">Styling</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-sm floor-sm" data-waypoint="example">
+    <h2>Basic example</h2>
+    <p>
+        Tabs are really easy to setup and use very little markup.
+    </p>
+    <div class="code-content-example">
+        <ul class="tab-nav js-tab-nav">
+            <li><a href="#" class="active" data-tab="panel-1">Tab 1</a></li>
+            <li><a href="#" data-tab="panel-2">Tab 2</a></li>
+            <li><a href="#" data-tab="panel-3">Tab 3</a></li>
+        </ul>
+        <div class="tab-panels-wrap js-tab-panels-wrap">
+            <div class="tab-panel active" data-tab-panel="panel-1">
+                <h3>Panel 1</h3>
+                <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
+                totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
+                dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
+                sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                </p>
+            </div>
+            <div class="tab-panel" data-tab-panel="panel-2">
+                <h3>Panel 2</h3>
+                <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
+                totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
+                dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
+                sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                </p>
+            </div>
+            <div class="tab-panel" data-tab-panel="panel-3">
+                <h3>Panel 3</h3>
+                <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
+                totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
+                dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
+                sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                </p>
+            </div>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+ <ul class="tab-nav js-tab-nav">
+    <li><a href="#" class="active" data-tab="panel-1">Tab 1</a></li>
+    <li><a href="#" data-tab="panel-2">Tab 2</a></li>
+    <li><a href="#" data-tab="panel-3">Tab 3</a></li>
+</ul>
+<div class="tab-panels-wrap js-tab-panels-wrap">
+    <div class="tab-panel active" data-tab-panel="panel-1">
+        ...
+    </div>
+    <div class="tab-panel" data-tab-panel="panel-2">
+        ...
+    </div>
+    <div class="tab-panel" data-tab-panel="panel-3">
+       ...
+    </div>
+</div>
+-->
+</code></pre>
+
+<blockquote class="bq-info">
+    <p>
+    The <code>.js-*</code> classnames are required for the Javascript component to function, 
+    other classnames are used for styling.</p>
+</blockquote>
+
+</div>
+
+<hr>
+
+
+<div class="row roof-sm floor-sm" data-waypoint="styling">
+    <h2>Styling</h2>
+    <p>
+        Tabs come in a a few different variants, use the <code>.tab-pill</code> class for pill style buttons:
+    </p>
+    <div class="code-content-example">
+        <ul class="tab-nav tab-pill js-tab-nav">
+            <li><a href="#" class="active" data-tab="panel-1">Tab 1</a></li>
+            <li><a href="#" data-tab="panel-2">Tab 2</a></li>
+            <li><a href="#" data-tab="panel-3">Tab 3</a></li>
+        </ul>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+ <ul class="tab-nav tab-pill js-tab-nav">
+    <li><a href="#" class="active" data-tab="panel-1">Tab 1</a></li>
+    <li><a href="#" data-tab="panel-2">Tab 2</a></li>
+    <li><a href="#" data-tab="panel-3">Tab 3</a></li>
+</ul>
+-->
+</code></pre>
+
+    <p>
+        Or try <code>.tab-border</code> for more traditional styled tabs
+    </p>
+    <div class="code-content-example">
+        <ul class="tab-nav tab-border js-tab-nav">
+            <li><a href="#" class="active" data-tab="panel-1">Tab 1</a></li>
+            <li><a href="#" data-tab="panel-2">Tab 2</a></li>
+            <li><a href="#" data-tab="panel-3">Tab 3</a></li>
+        </ul>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+ <ul class="tab-nav tab-pill js-tab-nav">
+    <li><a href="#" class="active" data-tab="panel-1">Tab 1</a></li>
+    <li><a href="#" data-tab="panel-2">Tab 2</a></li>
+    <li><a href="#" data-tab="panel-3">Tab 3</a></li>
+</ul>
+-->
+</code></pre>
+
+<blockquote class="bq-info">
+    <p>
+    The <code>.js-*</code> classnames are required for the Javascript component to function, 
+    other classnames are used for styling.</p>
+</blockquote>
+
+</div>

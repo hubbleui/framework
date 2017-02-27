@@ -1,0 +1,155 @@
+<h1>Pagination</h1>
+
+<p>
+    Provide pagination links for your site or app with the multi-page pagination component.
+</p>
+
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Basic example</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="states" data-waypoint-speed="500">States</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="styles" data-waypoint-speed="600">Styles</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="example">
+    <h2>Basic example</h2>
+    <p>
+        This simple pagination layout is great for apps and search results. 
+        The large block is hard to miss, easily scalable, and provides large click areas.
+    </p>
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <li class="disabled"><span aria-hidden="true">«</span></li>
+                    <li class="active"><span>1</span></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li class="elips"><span>...</span></li>
+                    <li><a href="#">22</a></li>
+                    <li><a href="#">23</a></li>
+                    <li><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<nav aria-label="...">
+    <ul class="pagination">
+        <li class="disabled"><span aria-hidden="true">«</span></li>
+        <li class="active"><span>1</span></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li class="elips"><span>...</span></li>
+        <li><a href="#">22</a></li>
+        <li><a href="#">23</a></li>
+        <li><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+    </ul>
+</nav>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+
+<div class="row roof-sm foor-sm" data-waypoint="states">
+    <h2>States</h2>
+    <p>
+        Links are customizable for different circumstances. Use <code>.disabled</code> for unclickable links, 
+        <code>.active</code> to indicate the current page 
+        and <code>.elips</code> to indicate a number of pages have been skipped.
+    </p>
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <li class="disabled"><span aria-hidden="true">«</span></li>
+                    <li class="active"><span>1</span></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li class="elips"><span>...</span></li>
+                    <li><a href="#">22</a></li>
+                    <li><a href="#">23</a></li>
+                    <li><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<nav aria-label="...">
+    <ul class="pagination">
+        <li class="disabled"><span aria-hidden="true">«</span></li>
+        <li class="active"><span>1</span></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li class="elips"><span>...</span></li>
+        <li><a href="#">22</a></li>
+        <li><a href="#">23</a></li>
+        <li><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+    </ul>
+</nav>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="styles">
+    <h2>Styles</h2>
+    <p>
+        The pagination component can be easily styled a few different ways by simply adding an extra class. 
+        Use the <code>.pagination-btns</code> class to style them as individual buttons or 
+        the <code>.pagination-borderless</code> for a text-only style.</p>
+    </p>
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <nav aria-label="...">
+                <ul class="pagination pagination-btns">
+                    <li class="disabled"><span aria-hidden="true">«</span></li>
+                    <li class="active"><span>1</span></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li class="elips"><span>...</span></li>
+                    <li><a href="#">22</a></li>
+                    <li><a href="#">23</a></li>
+                    <li><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+                </ul>
+            </nav>
+            <nav aria-label="...">
+                <ul class="pagination pagination-borderless">
+                    <li class="disabled"><span aria-hidden="true">«</span></li>
+                    <li class="active"><span>1</span></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li class="elips"><span>...</span></li>
+                    <li><a href="#">22</a></li>
+                    <li><a href="#">23</a></li>
+                    <li><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<ul class="pagination pagination-btns">
+...
+</ul>
+<ul class="pagination pagination-borderless">
+...
+</ul>
+-->
+</code></pre>
+
+</div>

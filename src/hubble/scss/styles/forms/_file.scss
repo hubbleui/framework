@@ -1,0 +1,30 @@
+// File upload button
+.file-field.form-field,
+.file-field {
+	.file-text {
+		opacity: 1;
+    	cursor: default;
+    	background-color: $input-bg;
+	}
+}
+.btn-upload {
+	@extend %relative;
+	cursor: pointer;
+}
+.btn-upload .upload-cover {
+	@extend %absolute;
+	@extend %left-0;
+	@extend %top-0;
+	@extend %full-width;
+	cursor: pointer;
+}
+.btn-upload input {
+	@extend %opacity-hide;
+	@extend %block;
+	@extend %full-width;
+	cursor: pointer;
+}
+.btn-upload.btn-sm,
+.btn-upload.btn-xs .upload-cover {
+	line-height: 19px;
+}

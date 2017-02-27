@@ -1,0 +1,105 @@
+// Message color variants
+.msg {
+    position: relative;
+    overflow: hidden;
+    border-radius: $border-radius;
+    background-color: $msg-default-bg;
+    .msg-icon {
+        background-color: $msg-default-icon-bg;
+        color: $msg-default-icon-color;
+    }
+    
+    // Layout
+    .msg-icon,
+    .msg-body {
+        display: table-cell;
+    }
+
+    // Message Icon
+    .msg-icon {
+        text-align: center;
+        vertical-align: middle;
+        padding: 30px;
+        width: 60px;
+        background-color: rgba(0, 0, 0, 0.25);
+        .icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    // Message Body
+    .msg-body {
+        vertical-align: middle;
+        padding: 30px 20px 30px 30px;
+
+        p {
+            font-size: 1.4rem;
+            font-weight: $text-bold;
+            margin: 0;
+            a {
+                color: rgba(0,0,0,0.3);
+                &:hover {
+                    color: rgba(0,0,0,0.5);
+                }
+            }
+        }
+    }
+
+    // Close button
+    .closer-trigger {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #ffffff;
+        opacity: 0.5;
+        transition: opacity $base-easing-time $base-easing;
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    &.msg-primary {
+        color: #ffffff;
+        background-color: $brand-primary;
+        .msg-icon {
+            color: #fff;
+        }
+    }
+    &.msg-secondary {
+        color: #ffffff;
+        background-color: $brand-secondary;
+        .msg-icon {
+            color: #fff;
+        }
+    }
+    &.msg-info {
+        color: #ffffff;
+        background-color: $brand-info;
+        .msg-icon {
+            color: #fff;
+        }
+    }
+    &.msg-success {
+        color: #ffffff;
+        background-color: $brand-success;
+        .msg-icon {
+            color: #fff;
+        }
+    }
+    &.msg-warning {
+        color: #ffffff;
+        background-color: $brand-warning;
+        .msg-icon {
+            color: #fff;
+        }
+    }
+    &.msg-danger {
+        color: #ffffff;
+        background-color: $brand-danger;
+        .msg-icon {
+            color: #fff;
+        }
+    }
+}

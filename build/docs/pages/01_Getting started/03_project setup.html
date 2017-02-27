@@ -1,0 +1,147 @@
+<h1>What's Included</h1>
+<hr>
+
+<p>Hubble is downloadable in two forms, within which you'll find the following directories and files, logically grouping common resources and providing both compiled and minified variations.</p>
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="precompiled" data-waypoint-speed="400">Precompiled Hubble</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="source" data-waypoint-speed="600">Hubble source code</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="compiling" data-waypoint-speed="700">Compiling with Grunt</a></li>
+</ul>
+
+<hr>
+
+<blockquote class="info">
+    <p>jQuery NOT required!</p>
+    <p> 
+        Please note that no JavaScript components require jQuery to be included. All JavaScript is written in Vanilla and dependency free!
+    </p>
+</blockquote>
+
+
+<div class="row xs-roof xs-floor" data-waypoint="precompiled">
+    <h2>Precompiled Hubble</h2>
+
+    <p>
+        Once downloaded, unzip the compressed folder to see the structure of (the compiled) Hubble. You'll see something like this:
+    </p>
+<pre class="highlight-wrap"><code class="js-highlight">
+hubble/
+├── css/
+│   ├── hubble.css
+│   ├── hubble.css.map
+│   ├── hubble.min.css
+│   ├── hubble.min.css.map
+│   ├── hubble-theme.css
+│   ├── hubble-theme.css.map
+│   ├── hubble-theme.min.css
+│   └── hubble-theme.min.css.map
+├── js/
+│   ├── hubble.js
+│   ├── hubble.min.js
+│   ├── hubble-theme.js
+│   └── hubble-theme.min.js
+└── fonts/
+    ├── fontawesome-webfont.eot
+    ├── fontawesome-webfont.svg
+    ├── fontawesome-webfont.ttf
+    ├── fontawesome-webfont.woff
+    ├── fontawesome-webfont.woff2
+    └── fontawesome-webfont.otf
+</code></pre>
+
+    <p>
+    This is the most basic form of Hubble: precompiled files for quick drop-in usage in nearly any web project. We provide compiled CSS and JS (hubble.*), as well as compiled and minified CSS and JS (hubble.min.*). CSS source maps (hubble.*.map) are available for use with certain browsers' developer tools. Fonts from FontAwesome are included, as is the optional Hubble theme.
+    </p>
+
+</div>
+
+<hr>
+
+<div class="row xs-roof xs-floor" data-waypoint="source">
+    <h2>Hubble source code</h2>
+
+    <p>
+        The Hubble source code download includes the precompiled CSS, JavaScript, and font assets, along with source Sass, JavaScript, and documentation. More specifically, it includes the following and more:
+    </p>
+    <p>
+        Hubble uses <a href="http://gruntjs.com/" target="_blank">Grunt</a> to compile. If you're unfamiliar with Grunt you should head over to they're <a href="http://gruntjs.com/" target="_blank">website</a> to get an understanding of how it works as well as read through they're documentation.
+    </p>
+    <p>
+        A Hubble project has the following setup:
+    </p>
+<pre class="highlight-wrap"><code class="js-highlight">
+Hubble
+├── Gruntfile.js
+├── package.json
+├── src
+│   ├── hubble
+│   │   ├── js
+│   │   └── scss
+│   │ 
+│   └── theme
+│       ├── js
+│       └── scss
+│
+└── build
+    ├── css
+    ├── js
+    └── fonts
+</code></pre>
+    <p>
+        This is just the basic directory structure, there are many more files and directory within the project. To familiarize yourself with more detail on specific files, please explore the codebase and read this documentation from start to finish.
+    </p>
+    <p>
+        The <code>src</code> directory holds all the pre-compiled <code>Sass</code> and <code>JavaScript</code>. When <code>Grunt</code> runs, the JavaScript and CSS is compiled into the <code>build</code> directory. The build directory serves as your <code>assets</code> directory in a typical front-end project setup.
+    </p>
+<pre class="highlight-wrap"><code class="js-highlight">
+Hubble
+└── build
+    ├── css
+    │   ├── hubble.css
+    │   ├── hubble.min.css
+    │   ├── theme.css
+    │   └── theme.min.css
+    ├── js
+    │    ├── hubble.js
+    │    ├── hubble.min.js
+    │    ├── theme.js
+    │    └── theme.min.js
+    └── fonts
+        └── fonts...
+</code></pre>
+</div>
+
+<hr>
+
+<div class="row" data-waypoint="compiling">
+    <h2>Compiling with Grunt</h2>
+    <p>
+        <strong>Node.js</strong><br>
+        If you don't have <code>Node.js</code> installed on your system, head over to <a href="https://nodejs.org/en/">nodejs.org</a> and install it as per the Node.js documentation.
+    </p>
+
+    <p>
+        <strong>Sass</strong><br>
+        If you don't have <code>Sass</code> installed on your system, head over to <a href="http://sass-lang.com/ ">sass-lang.com</a> and install it as per the Grunt documentation.
+    </p>
+
+
+    <p>
+        <strong>Grunt</strong><br>
+        If you don't have <code>Grunt</code> installed on your system, head over to <a href="http://gruntjs.com/">gruntjs.com</a> and install it as per the Grunt documentation.
+    </p>
+
+    <p>
+        Once you have the prerequisites above, to get started with your project <a href="">download</a> the latest Hubble source code, unzip the package and drop the contents into your project folder.
+    </p>
+
+    <ol>
+        <li>Change to the project's root directory.</li>
+        <li>Install project dependencies with npm install.</li>
+        <li>Run Grunt with <code>grunt</code> or <code>grunt watch</code>.</li>
+    </ol>
+</div>
+
+<hr>

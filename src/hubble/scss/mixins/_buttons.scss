@@ -1,0 +1,71 @@
+// Standard buttons
+@mixin button($color, $background) {
+	
+	$active-background: darken($background, 5%);
+  	
+  	color: $color;
+    background-color: $background;
+    border-color: darken($background, 1.5%);
+
+	&:hover,
+    &.hover,
+    &:active,
+    &.active {
+        color: $color;
+    	background-color: $active-background;
+		border-color: $active-background;
+    }
+
+    .loading-spinner .path {
+        stroke: $color;
+    }
+}
+
+// Outline buttons
+@mixin button-outline($color) {
+  	color: $color;
+    background-color: transparent;
+    border-color: $color;
+
+	&:hover,
+    &.hover,
+    &:active,
+    &.active {
+    	color: #fff;
+    	background-color: $color;
+    	border-color: $color;
+    }
+    .loading-spinner .path {
+        stroke: #fff;
+    }
+}
+
+// Pure buttons
+@mixin button-pure($color) {
+  	color: $color;
+    background-color: transparent;
+    border-color: transparent;
+
+	&:hover,
+    &.hover,
+    &:active,
+    &.active {
+    	color: darken($color, 3%);
+    }
+}
+
+@mixin button-unstyled() {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+
+    &:hover,
+    &.hover,
+    &:active,
+    &.active {
+        background-color: transparent;
+        border: none;
+        outline: none;
+    }
+}

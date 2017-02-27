@@ -1,0 +1,62 @@
+// Colors
+%border-primary        { border-color: $brand-primary }
+%border-secondary      { border-color: $brand-secondary }
+%border-gray-dark 	   { border-color: $gray-dark }
+%border-gray 	 	   { border-color: $gray }
+%border-gray-light 	   { border-color: $gray-light }
+%border-gray-lighter   { border-color: $gray-lighter }
+%border-gray-lightest  { border-color: $gray-lightest }
+%border-transparent    { border-color: transparent }
+%border-success        { border-color: $brand-success }							
+%border-info           { border-color: $brand-info }
+%border-danger         { border-color: $brand-danger }
+%border-warning        { border-color: $brand-warning }
+
+// Sizes
+%border-size-1         { border-width: 1px }
+%border-size-2         { border-width: 2px }
+%border-size-3         { border-width: 3px }
+
+// Styles
+%border-solid          { border-style: solid }
+%border-dashed         { border-style: dashed }
+%border-dotted         { border-style: dotted }
+
+// Radius
+%circle 			   { border-radius: 50% }
+%border-radius 		   { border-radius: $border-radius }
+%border-radius-0 	   { border-radius: 0 }
+%border-radius-1 	   { border-radius: 1px }
+%border-radius-2 	   { border-radius: 2px }
+%border-radius-3 	   { border-radius: 3px }
+%border-radius-4 	   { border-radius: 4px }
+%border-radius-5 	   { border-radius: 5px }
+
+// Box shadows 
+%shadow-out  		   { box-shadow: $box-shadow-out }
+%shadow-in   		   { box-shadow: $box-shadow-in }
+%shadow-none 		   { box-shadow: none }
+
+// Positions
+%border-s,
+%border-n {
+	border-left:  none;
+	border-right: none;
+}
+%border-e,
+%border-w { 
+	border-top:    none;
+	border-bottom: none;
+}
+%border-s {
+	border-top: none;
+}
+%border-n {
+	border-bottom: none;
+}
+%border-e {
+	border-left: none;
+}
+%border-w {
+	border-right: none;
+}

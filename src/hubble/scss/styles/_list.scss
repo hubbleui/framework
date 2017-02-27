@@ -1,0 +1,72 @@
+// Basic list
+ul, ol {
+    margin: 1em 0 2em 0;
+    padding: 0 0 0 4rem;
+    list-style: initial;
+    li {
+        margin-bottom: 0.5rem;
+    }
+}
+
+// Lists 
+ol {
+    list-style-type: decimal;
+}
+
+
+// Nested lists
+ol ol, ol ul, ul ol, ul ul {
+    margin: 1rem 0 1rem 0;
+}
+
+// Basic definition list
+dl {
+    margin-top: 0;
+    margin-bottom: 2.2rem;
+}
+dt {
+    font-weight: $text-bolder;
+}
+dd {
+    margin-left: 0;
+}
+dl dt + dd {
+    margin-bottom: 0.5rem;
+}
+dl dd:last-child {
+    margin-bottom: 0;
+}
+.dl-horizontal dt {
+    @extend %float-left;
+    @extend %text-right;
+    @extend %text-ellipses;
+    width: 160px;
+    clear: left;
+}
+.dl-horizontal dd {
+    margin-left: 18rem;
+}
+
+// Unstyled list
+.list-unstyled {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li {
+        margin: 0;
+        padding: 0;
+    }
+}
+
+// inline list
+.list-inline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li {
+        margin: 0;
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
+        display: inline-block;
+    }
+}

@@ -1,0 +1,90 @@
+.tab-nav {
+    @extend %no-padding;
+    @extend %no-margin;
+    margin-bottom: 10px;
+    height: 41px;
+    border-bottom: 1px solid #DEDEDE;
+    list-style: none;
+}
+.tab-nav > li {
+    @extend %inline-block;
+    @extend %float-left;
+    padding-right: 20px;
+    margin: 0;
+}
+.tab-nav > li:last-of-type {
+    padding-right:0;
+}
+.tab-nav > li a {
+    @extend %relative;
+    @extend %no-text-decoration;
+    @extend %block;
+    @extend %text-center;
+    @extend %color-gray-dark;
+    font-size: 13px;
+    border-bottom: 2px solid transparent;
+    background-color: transparent;
+    padding: 8px 4px 14px 4px;
+    min-width: 64px;
+}
+.tab-nav > li a.inline-block {
+    display: inline-block;
+}
+
+.tab-nav > li a:hover {
+    border-bottom: 2px solid $gray;
+}
+
+.tab-nav > li a.active {
+    @extend %color-black;
+    border-bottom: 2px solid $gray;
+}
+
+.tab-panels-wrap .tab-panel {
+    @extend %visibility-hide;
+    @extend %opacity-hide;
+    @extend %ease-mini;
+    @extend %hide-overflow;
+    height: 0;
+}
+.tab-panels-wrap .tab-panel.active {
+    @extend %visibility-show;
+    @extend %opacity-show;
+    height: auto;
+}
+
+// align right
+.tab-nav.tab-nav-reverse > li {
+    @extend %float-right;
+}
+
+// With icons
+.tab-nav > li.with-icon {
+    padding-right: 30px;
+    margin: 0;
+}
+.tab-nav > li.with-icon a {
+    padding-left: 22px;
+}
+.tab-nav > li .icon {
+    font-size: 16px;
+    @extend %absolute;
+    @extend %left-0;
+    top: 6px;
+}
+
+
+// dark
+.tab-nav.dark {
+    border-bottom: none;
+    > li > a {
+        color: #fff;
+        &.active {
+            border-bottom: 2px solid #a1a1a1
+        }
+    }
+}
+.tab-nav.info > li > a.active {
+    color: $brand-info;
+    border-bottom: 2px solid $brand-info;
+}

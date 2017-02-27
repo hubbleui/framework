@@ -1,0 +1,3 @@
+	Modules.singleton('JSHelper', JSHelper);
+
+})();

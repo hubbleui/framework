@@ -1,0 +1,34 @@
+<h1>Hamburger</h1>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="example">
+    <p>
+        The hamburger button can be used for menu triggering on mobile or desktop.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="hamburger js-hamburger" title="">
+			    <span class="hamburger-bun  hamburger-bun--top"></span>
+			    <span class="hamburger-patty"></span>
+			    <span class="hamburger-bun  hamburger-bun--btm"></span>
+			</button>
+			<script type="text/javascript">
+				document.querySelector('.js-hamburger').addEventListener('click', function(e) {
+					this.classList.toggle('active');
+				});
+			</script>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="hamburger" title="hamburger" type="button">
+    <span class="hamburger-bun  hamburger-bun--top"></span>
+    <span class="hamburger-patty"></span>
+    <span class="hamburger-bun  hamburger-bun--btm"></span>
+</button>
+-->
+</code></pre>
+
+</div>
+

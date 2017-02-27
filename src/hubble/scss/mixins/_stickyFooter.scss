@@ -1,0 +1,8 @@
+@mixin stickyFooter($footerheight) {
+  	.page-container {
+		margin-bottom: -$footerheight; 
+	}
+	.sticky-footer, .page-container:after {
+		height: $footerheight; 
+	}
+}

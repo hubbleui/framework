@@ -1,0 +1,83 @@
+<h1>Spinners</h1>
+
+<p>
+    Loading spinners come in handy for everything from a page-loading animation to Ajax requests.
+</p>
+
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Basic example</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="styles" data-waypoint-speed="500">Styles</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-sm floor" data-waypoint="example">
+    <h2>Basic example</h2>
+    <p>
+        Loading spinners use <code>SVG</code> and some simple <code>CSS</code> animations. 
+        As such, the markup is very minimalist.
+    </p>
+    <blockquote>
+        <p>
+            Use <code>.hidden</code> class to hide any element when it doesn't need to be visible.
+        </p>
+    </blockquote>
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<svg viewBox="0 0 64 64" class="loading-spinner">
+    <circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle>
+</svg>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+
+<div class="row roof-sm floor" data-waypoint="styles">
+    <h2>Styles</h2>
+    <p>
+        Use the contextual classes to change the spinner color.
+    </p>
+    <ul class="color-gray">
+        <li><code>.spinner-default</code></li>
+        <li><code>.spinner-primary</code></li>
+        <li><code>.spinner-info</code></li>
+        <li><code>.spinner-success</code></li>
+        <li><code>.spinner-warning</code></li>
+        <li><code>.spinner-danger</code></li>
+    </ul>
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+            <svg viewBox="0 0 64 64" class="loading-spinner spinner-default"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+            <svg viewBox="0 0 64 64" class="loading-spinner spinner-primary"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+            <svg viewBox="0 0 64 64" class="loading-spinner spinner-info"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+            <svg viewBox="0 0 64 64" class="loading-spinner spinner-success"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+            <svg viewBox="0 0 64 64" class="loading-spinner spinner-warning"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+            <svg viewBox="0 0 64 64" class="loading-spinner spinner-danger"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<svg class="loading-spinner">...</svg>
+<svg class="loading-spinner spinner-default">...</svg>
+<svg class="loading-spinner spinner-primary">...</svg>
+<svg class="loading-spinner spinner-info">...</svg>
+<svg class="loading-spinner spinner-success">...</svg>
+<svg class="loading-spinner spinner-warning">...</svg>
+<svg class="loading-spinner spinner-danger">...</svg>
+-->
+</code></pre>
+
+</div>
+
+<hr>

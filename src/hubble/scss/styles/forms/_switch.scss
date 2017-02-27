@@ -1,0 +1,125 @@
+input[type=checkbox].switch {
+    display: none;
+
+    + label {
+        @extend %relative;
+        @extend %inline-block;
+        padding-left: 46px;
+        cursor: pointer;
+        &:before, 
+        &:after {
+            @extend %empty-content;
+            @extend %absolute;
+            @extend %no-margin;
+            @extend %top-50;
+            outline: none;
+            transform: translate(0, -50%);
+            transition: all 0.3s ease;
+        }
+        &:before {
+            @extend %bg-gray;
+            left: 1px;
+            width: 34px;
+            height: 14px;
+            border-radius: 8px;
+        }
+        &:after {
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #FAFAFA;
+            border-radius: 50%;
+            box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084);
+        }
+        .toggle-on {
+            display: none;
+        }
+        .toggle-off {
+            display: inline-block;
+        }
+    }
+    &:checked + label {
+        &:before {
+            background-color: #9ca7b1;
+        }
+        &:after {
+            background-color: #76838f;
+            transform: translate(80%, -50%);
+        }
+        .toggle-on {
+            display: inline-block;
+        }
+        .toggle-off {
+            display: none;
+        }
+    }
+
+    // contextuals
+    &.switch-default {
+        + label {
+            &:before {
+                background: #fff;
+                border: 1px solid #e7edee;
+            }
+            &:after {
+                background-color: $gray;
+            }
+        }
+        &:checked + label {
+            &:after {
+                background-color: $brand-primary;
+            }
+        }
+    }
+    &.switch-primary {
+        &:checked + label {
+            &:before {
+                background-color: lighten($brand-primary, 10);
+            }
+            &:after {
+                background-color: $brand-primary;
+            }
+        }
+    }
+    &.switch-info {
+        &:checked + label {
+            &:before {
+                background-color: lighten($brand-info, 10);
+            }
+            &:after {
+                background-color: $brand-info;
+            }
+        }
+    }
+    &.switch-success {
+        &:checked + label {
+            &:before {
+                background-color: lighten($brand-success, 10);
+            }
+            &:after {
+                background-color: $brand-success;
+            }
+        }
+    }
+    &.switch-warning {
+        &:checked + label {
+            &:before {
+                background-color: lighten($brand-warning, 10);
+            }
+            &:after {
+                background-color: $brand-warning;
+            }
+        }
+    }
+    &.switch-danger {
+        &:checked + label {
+            &:before {
+                background-color: lighten($brand-danger, 10);
+            }
+            &:after {
+                background-color: $brand-danger;
+            }
+        }
+    }
+
+}

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Documentation | Hubble UI</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="http://hubbleui.github.io/build/img/favicon.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="57x57" href="http://hubbleui.github.io/build/img/apple-touch-icon.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="72x72" href="http://hubbleui.github.io/build/img/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="114x114" href="http://hubbleui.github.io/build/img/apple-touch-icon-114x114.png">
+
+
+    <link rel="stylesheet" href="/build/css/hubble.css">
+    <link rel="stylesheet" href="/build/css/theme.css">
+</head>
+
+<body>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" style="display:none" xml:space="preserve">
+    <g id="logo">
+        <path fill="#FF3366" d="M26.002,468.48c-7.372-0.193-11.097-6.621-8.215-11.615c0.814-1.41,2.081-2.588,3.253-3.762c41.353-41.369,82.719-82.727,124.087-124.08c0.942-0.943,1.841-1.965,2.918-2.727c3.436-2.428,6.943-2.375,10.003,0.531c3.071,2.916,3.197,6.461,1.041,9.99c-0.765,1.252-1.949,2.262-3.005,3.318c-41.24,41.248-82.472,82.504-123.776,123.688C30.178,465.947,27.425,467.447,26.002,468.48z"/>
+        <path fill="#FF3366" d="M250.2,390.188c-1.786,2.867-2.73,5.252-4.393,6.924c-26.527,26.668-53.129,53.262-79.761,79.826c-3.969,3.959-8.677,4.15-11.909,0.803c-3.282-3.398-2.99-7.865,1.045-11.908c26.571-26.623,53.182-53.209,79.784-79.803c2.655-2.654,5.843-4.506,9.337-2.287C246.58,385.189,248.104,387.822,250.2,390.188z"/>
+        <path fill="#FF3366" d="M37.666,408.586c-2.604-1.848-5.535-2.893-6.502-4.891c-1.062-2.191-0.689-5.332-0.201-7.918c0.263-1.395,2.021-2.549,3.193-3.723c22.109-22.129,44.23-44.248,66.354-66.361c0.94-0.939,1.838-1.971,2.929-2.699c3.27-2.188,6.734-2.205,9.666,0.365c3.146,2.756,3.395,6.363,1.359,9.957c-0.718,1.266-1.894,2.297-2.945,3.35c-22.109,22.129-44.208,44.27-66.389,66.326C43.103,405.008,40.524,406.471,37.666,408.586z"/>
+        <path fill="#FF3366" d="M84.153,319.375c-2.371-2.1-5.721-3.666-6.256-5.904c-0.647-2.705,0.15-6.812,1.963-8.859c6.384-7.213,13.47-13.803,20.292-20.627c5.646-5.648,11.25-11.338,16.958-16.922c4.094-4.006,8.501-4.307,11.881-1.01c3.295,3.215,3.075,7.943-0.834,11.887c-12.299,12.404-24.635,24.773-37.078,37.033C89.398,316.629,87.025,317.584,84.153,319.375z"/>
+        <path fill="#FF3366" d="M196.954,343.754c-1.677,2.779-2.524,5.039-4.071,6.611c-11.922,12.107-23.94,24.119-36.017,36.072c-3.892,3.852-8.161,3.977-11.489,0.707c-3.206-3.148-3.154-7.887,0.465-11.543c12.07-12.195,24.089-24.449,36.523-36.264c1.943-1.848,6.206-2.568,8.911-1.885C193.496,338.014,194.994,341.434,196.954,343.754z"/>
+        <path fill="#FF3366" d="M119.436,434.48c-1.536,2.752-2.267,5.049-3.769,6.594c-8.215,8.451-16.56,16.779-24.988,25.018c-3.605,3.523-8.493,3.469-11.518,0.246c-2.88-3.068-2.813-7.803,0.513-11.188c8.376-8.525,16.674-17.152,25.502-25.189c1.954-1.779,6.195-2.211,8.965-1.539C116.195,428.92,117.572,432.209,119.436,434.48z"/>
+        <path fill="#FF3366" d="M185.987,400.826c-1.627,2.77-2.449,5.031-3.974,6.615c-6.577,6.83-13.299,13.525-20.09,20.145c-3.826,3.729-8.184,3.811-11.488,0.539c-3.101-3.07-2.933-7.904,0.639-11.545c6.758-6.889,13.403-13.92,20.599-20.324c1.926-1.715,5.98-2.422,8.495-1.682C182.45,395.246,183.969,398.516,185.987,400.826z"/>
+        <path fill="#FF3366" d="M66.849,335.689c-4.347-0.08-7.447-3.266-7.433-7.635c0.015-4.592,3.305-7.637,8.044-7.441c4.466,0.184,7.384,3.334,7.215,7.789C74.512,332.701,71.217,335.77,66.849,335.689z"/>
+        <path fill="#FF3366" d="M67.764,485.549c-4.483-0.115-7.68-3.635-7.444-8.193c0.223-4.309,3.573-7.221,8.032-6.984c4.447,0.236,7.345,3.398,7.198,7.857C75.409,482.525,72.074,485.66,67.764,485.549z"/>
+        <path fill="#FF3366" d="M319.214,431.422c-2.783-18.361-5.289-34.789-7.756-51.223c-1.458-9.709-2.641-19.469-4.411-29.119c-0.529-2.885-2.061-6.033-4.094-8.127c-42.591-43.871-85.298-87.628-128.097-131.294c-1.693-1.729-4.417-2.937-6.844-3.38c-26.18-4.789-52.395-9.375-79.33-14.146c1.334-2.67,2.238-5.112,3.652-7.212c21.341-31.688,50.848-48.183,89.352-46.87c9.391,0.32,18.75,2.526,28.039,4.304c3.004,0.575,4.708,0.121,6.816-2.109c30.264-32.007,63.849-59.926,102.032-82.091c25.356-14.718,52.047-26.062,81.099-31.157c27.292-4.787,54.013-3.062,80.014,7.141c3.598,1.412,5.687,3.508,6.986,7.077c11.244,30.875,10.732,62.021,2.105,93.29c-10.354,37.521-29.847,70.299-53.221,100.963c-18.328,24.045-38.809,46.145-61.408,66.239c-2.468,2.193-2.938,4.004-2.181,7.258c9.756,41.99,0.182,78.223-32.94,106.953C333.348,422.846,326.547,426.482,319.214,431.422z M352.15,218.871c27.575-0.42,49.368-22.591,49.117-49.969c-0.253-27.571-24.643-51.032-52.592-50.589c-26.268,0.418-48.395,23.185-48.136,49.528C300.813,195.635,324.734,219.288,352.15,218.871z M393.158,101.671c-0.032,13.838,12.77,26.66,26.502,26.543c13.6-0.116,24.72-11.312,24.735-24.905c0.017-13.836-12.739-26.479-26.624-26.388C403.896,77.013,393.19,87.778,393.158,101.671z"/>
+        <path fill="#FF3366" d="M269.359,379.43c-43.858-44.949-87.451-89.627-131.02-134.28c11.728-14.034,33.909-14.533,47.845-1.13c6.6,6.347,12.818,13.087,19.217,19.642c21.637,22.17,43.324,44.289,64.898,66.518C284.354,344.662,284.035,366.443,269.359,379.43z"/>
+    </g>
+</svg>
+<div class="page-wrapper">
+
+    <header class="site-header" data-waypoint="header">
+        
+            <nav class="desktop-nav sm md lg xl">
+
+    <div class="container-fluid clearfix">
+
+        <a class="float-left inline-block logo" href="/">
+            <svg viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
+        </a>
+
+        <ul class="nav-right float-right list-inline text-right uppercase">
+            <li><a class="fancy-link" href="/docs/1.0.0/">Documentation</a></li>
+            <li><a class="fancy-link" href="https://github.com/hubble-ui/ui/issues" target="_blank">Issues</a></li>
+            <li><a class="fancy-link" href="https://github.com/hubble-ui/" target="_blank">GitHub</a></li>
+            <li><a class="fancy-link" href="https://github.com/hubble-ui/ui/archive/master.zip" target="_blank">Download</a></li>
+        </ul>
+
+    </div>
+
+</nav> 
+            <nav class="mobile-nav xs">      
+    <div class="container-fluid clearfix">
+
+        <a class="float-left inline-block logo" href="/">
+            <svg viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
+        </a>
+
+        <a href="#" class="xs hamburger float-right js-collapse" data-collapse-target="mobile-menu" role="button" title="Toggle navigation">
+		    <span class="hamburger-bun  hamburger-bun--top"></span>
+		    <span class="hamburger-patty"></span>
+		    <span class="hamburger-bun  hamburger-bun--btm"></span>
+		</a>
+
+    </div>
+
+</nav>
+
+<div class="mobile-nav-drop xs collapsed" id="mobile-menu">
+	<ul class="list-unstyled">
+	    <li><a href="/docs/1.0.0/">Documentation</a></li>
+        <li><a href="https://github.com/hubble-ui/ui/issues" target="_blank">Issues</a></li>
+        <li><a href="https://github.com/hubble-ui/" target="_blank">GitHub</a></li>
+        <li><a href="https://github.com/hubble-ui/ui/archive/master.zip" target="_blank">Download</a></li>
+	</ul>
+</div>        
+    </header>
+
+   <div class="container-fluid main-container">
+	<div class="col col-12 col-md-3 gutter-md-xl gutter-md-r">
+	<div class="doc-menu js-docs-menu">
+							    <div class="title-wrap js-collapse " data-collapse-target="getting-started">
+		        <h6>Getting started</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="getting-started">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/getting-started/introduction/">
+		    			Introduction		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/getting-started/download/">
+		    			Download		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/getting-started/project-setup/">
+		    			Project setup		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/getting-started/boilerplate/">
+		    			Boilerplate		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="css">
+		        <h6>CSS</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="css">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/overview/">
+		    			Overview		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/grid/">
+		    			Grid		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/typography/">
+		    			Typography		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/tables/">
+		    			Tables		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/forms/">
+		    			Forms		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/css/buttons/">
+		    			Buttons		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse active" data-collapse-target="components">
+		        <h6>Components</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled " id="components">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/badges/">
+		    			Badges		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/cards/">
+		    			Cards		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/carets/">
+		    			Carets		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/carousel/">
+		    			Carousel		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/collapse/">
+		    			Collapse		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/dropdowns/">
+		    			Dropdowns		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/fancylink/">
+		    			Fancylink		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="active" href="/docs/1.0.0/components/hamburger/">
+		    			Hamburger		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/icons/">
+		    			Icons		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/input-mask/">
+		    			Input mask		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/labels/">
+		    			Labels		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/media/">
+		    			Media		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/messages/">
+		    			Messages		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/modals/">
+		    			Modals		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/notifications/">
+		    			Notifications		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/pagination/">
+		    			Pagination		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/popovers/">
+		    			Popovers		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/scrollbars/">
+		    			Scrollbars		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/spinners/">
+		    			Spinners		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/tabs/">
+		    			Tabs		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/tooltips/">
+		    			Tooltips		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/waypoints/">
+		    			Waypoints		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="javascript">
+		        <h6>JavaScript</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="javascript">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/introduction/">
+		    			Introduction		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/modules/">
+		    			Modules		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/helperjs/">
+		    			HelperJS		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/events/">
+		    			Events		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/ajax/">
+		    			Ajax		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/input-masker/">
+		    			Input masker		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/javascript/form-validation/">
+		    			Form validation		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="scss">
+		        <h6>SCSS</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="scss">
+		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/scss/helpers-and-extensions/">
+		    			Helpers and Extensions		    		</a>
+		    	</li>
+		     
+		    </ul>
+		  
+	</div>
+</div>	<div class="col col-12 col-md-9">
+	<div class="xs sm row floor-sm">
+	    <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger">
+	    	Documentation Menu
+	    </button>
+	</div>
+	<article class="docs-body">
+		<h1>Hamburger</h1>
+
+<hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="example">
+    <p>
+        The hamburger button can be used for triggering a menu on mobile or desktop.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="hamburger js-hamburger" title="">
+			    <span class="hamburger-bun  hamburger-bun--top"></span>
+			    <span class="hamburger-patty"></span>
+			    <span class="hamburger-bun  hamburger-bun--btm"></span>
+			</button>
+			<script type="text/javascript">
+				document.querySelector('.js-hamburger').addEventListener('click', function(e) {
+					this.classList.toggle('active');
+				});
+			</script>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="hamburger js-hamburger" title="">
+    <span class="hamburger-bun  hamburger-bun--top"></span>
+    <span class="hamburger-patty"></span>
+    <span class="hamburger-bun  hamburger-bun--btm"></span>
+</button>
+<script type="text/javascript">
+    document.querySelector('.js-hamburger').addEventListener('click', function(e) {
+        this.classList.toggle('active');
+    });
+</script>
+-->
+</code></pre>
+
+</div>
+
+	</article>
+</div></div>
+</div>
+
+<footer class="site-footer">
+	<div class="container-fluid clearfix">
+
+        <div class="col col-12 col-sm-7 gutter-sm-r">
+
+            <div class="row sitemap roof-sm floor-sm">
+
+                <ul class="list-inline">
+                    <li>
+                        <a href="/docs/0.0.01">Documentation</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/kanso-cms/cms/issues">Issues</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/kanso-cms/cms">GitHub</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/kanso-cms/cms/archive/master.zip">Download</a>
+                    </li>
+                </ul>
+
+            </div>
+
+            <div class="row">
+                <a href="/" title="Home" class="logo-link">
+                    <svg class="logo" viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
+                </a>
+                <small>
+                    © Hubble UI 2016.
+                    <br> Designed &amp; developed with
+                    <span style="font-size:13px;color:#F36B5C;">♥</span> by Joe Howard.
+                </small>
+            </div>
+        </div>
+        <div class="col col-12 col-sm-4 gutter-sm-l">
+
+            <ul class="list-inline social-links">
+                <li>
+                    <a class="icon-wrap social-share github" target="_blank" href="https://github.com/kanso-cms/cms">
+                        <span class="icon icon-social glyph-icon glyph-icon-github"></span>
+                    </a>
+                </li>
+                <li>
+                    <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
+                        <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
+                    </a>
+                </li>
+                <li>
+                    <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
+                        <span class="icon glyph-icon glyph-icon-chevron-up"></span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+	</div>
+	
+</footer>
+
+<div class="sidebar-overlay js-sidebar-overlay"></div>
+<script src="/build/js/hubble.js"></script>
+<script src="/build/js/theme.js"></script>
+
+</body>
+
+</html>

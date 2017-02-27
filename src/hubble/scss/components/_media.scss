@@ -1,0 +1,20 @@
+// Media lists
+.media-body {
+    width: 10000px;
+}
+.media, .media-body {
+    overflow: hidden;
+    zoom: 1;
+    :last-child {
+        margin-bottom: 0;
+    }
+}
+.media-body, 
+.media-left, 
+.media-right {
+    display: table-cell;
+     vertical-align: middle;
+    img {
+        display: block;
+    }
+}

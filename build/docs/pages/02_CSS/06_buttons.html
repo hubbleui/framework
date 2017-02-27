@@ -1,0 +1,419 @@
+<h1>Forms</h1>
+
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="basic" data-waypoint-speed="400">Basic buttons</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="contextual" data-waypoint-speed="500">Contextual buttons</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="outline" data-waypoint-speed="600">Outline buttons</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="circle" data-waypoint-speed="700">Circle buttons</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="raised" data-waypoint-speed="800">Raised buttons</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="pure" data-waypoint-speed="900">Pure buttons</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="icons" data-waypoint-speed="1000">Icon buttons</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="sizes" data-waypoint-speed="1100">Button sizes</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="click" data-waypoint-speed="1100">Click effect</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="spinners" data-waypoint-speed="1200">Spinners</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="groups" data-waypoint-speed="1300">Button groups</a></li>
+
+</ul>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="basic">
+    <h2>Basic buttons</h2>
+    <p>
+        Buttons can be created by simply adding the <code>.btn</code> class to a <code>&lt;a&gt;</code> or <code>&lt;button&gt;</code> element.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn" type="button">Button</button>
+            <a class="btn" href="#" >Button</a>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn" type="button">Button</button>
+<a class="btn" href="#" >Button</a>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="contextual">
+    <h2>Contextual buttons</h2>
+    <p>
+        Add the contextual classes <code>.btn-default</code>, <code>.btn-primary</code>, <code>.btn-info</code>, <code>.btn-success</code>, <code>.btn-warning</code> and <code>.btn-danger</code> 
+        to contextualise button styling.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn" type="button">.btn</button>
+            <button class="btn btn-default" type="button">.btn</button>
+            <button class="btn btn-primary" type="button">.btn-primary</button>
+            <button class="btn btn-info" type="button">.btn-info</button>
+            <button class="btn btn-success" type="button">.btn-success</button>
+            <button class="btn btn-warning" type="button">.btn-warning</button>
+            <button class="btn btn-danger" type="button">.btn-danger</button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn" type="button">.btn</button>
+<button class="btn btn-default" type="button">.btn</button>
+<button class="btn btn-primary" type="button">.btn-primary</button>
+<button class="btn btn-info" type="button">.btn-info</button>
+<button class="btn btn-success" type="button">.btn-success</button>
+<button class="btn btn-warning" type="button">.btn-warning</button>
+<button class="btn btn-danger" type="button">.btn-danger</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="contextual">
+    <h2>Outline buttons</h2>
+    <p>
+        Add the <code>.btn-outline</code> to any button to change the style to an outlined type.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn btn-outline" type="button">.btn</button>
+            <button class="btn btn-default btn-outline" type="button">.btn</button>
+            <button class="btn btn-primary btn-outline" type="button">.btn-primary</button>
+            <button class="btn btn-info btn-outline" type="button">.btn-info</button>
+            <button class="btn btn-success btn-outline" type="button">.btn-success</button>
+            <button class="btn btn-warning btn-outline" type="button">.btn-warning</button>
+            <button class="btn btn-danger btn-outline" type="button">.btn-danger</button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn" type="button">.btn</button>
+<button class="btn btn-default" type="button">.btn</button>
+<button class="btn btn-primary" type="button">.btn-primary</button>
+<button class="btn btn-info" type="button">.btn-info</button>
+<button class="btn btn-success" type="button">.btn-success</button>
+<button class="btn btn-warning" type="button">.btn-warning</button>
+<button class="btn btn-danger" type="button">.btn-danger</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="circle">
+    <h2>Circle buttons</h2>
+    <p>
+        Add the <code>.btn-circle</code> class to any button to change the style to a circled type.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn btn-circle" type="button">
+                <span class="glyph-icon glyph-icon-superpowers"></span>
+            </button>
+            <button class="btn btn-default btn-circle" type="button"> 
+                <span class="glyph-icon glyph-icon-superpowers"></span>
+            </button>
+            <button class="btn btn-primary btn-circle" type="button">
+                <span class="glyph-icon glyph-icon-superpowers"></span>
+            </button>
+            <button class="btn btn-info btn-circle" type="button">
+                <span class="glyph-icon glyph-icon-superpowers"></span>
+            </button>
+            <button class="btn btn-success btn-circle" type="button">
+                <span class="glyph-icon glyph-icon-superpowers"></span>
+            </button>
+            <button class="btn btn-warning btn-circle" type="button">
+                <span class="glyph-icon glyph-icon-superpowers"></span>
+            </button>
+            <button class="btn btn-danger btn-circle" type="button">
+                <span class="glyph-icon glyph-icon-superpowers"></span>
+            </button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn" type="button">.btn</button>
+<button class="btn btn-default" type="button">.btn</button>
+<button class="btn btn-primary" type="button">.btn-primary</button>
+<button class="btn btn-info" type="button">.btn-info</button>
+<button class="btn btn-success" type="button">.btn-success</button>
+<button class="btn btn-warning" type="button">.btn-warning</button>
+<button class="btn btn-danger" type="button">.btn-danger</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="raised">
+    <h2>Raised buttons</h2>
+    <p>
+        Add the <code>.raised</code> class to any button to create a subtle drop shadow effect.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn raised" type="button">.btn</button>
+            <button class="btn btn-default raised" type="button">.btn</button>
+            <button class="btn btn-primary raised" type="button">.btn-primary</button>
+            <button class="btn btn-info raised" type="button">.btn-info</button>
+            <button class="btn btn-success raised" type="button">.btn-success</button>
+            <button class="btn btn-warning raised" type="button">.btn-warning</button>
+            <button class="btn btn-danger raised" type="button">.btn-danger</button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn" type="button">.btn</button>
+<button class="btn btn-default" type="button">.btn</button>
+<button class="btn btn-primary" type="button">.btn-primary</button>
+<button class="btn btn-info" type="button">.btn-info</button>
+<button class="btn btn-success" type="button">.btn-success</button>
+<button class="btn btn-warning" type="button">.btn-warning</button>
+<button class="btn btn-danger" type="button">.btn-danger</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="pure">
+    <h2>Pure buttons</h2>
+    <p>
+        Add the <code>.pure</code> class to any button to remove all borders and drop shadows.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn btn-pure" type="button">.btn</button>
+            <button class="btn btn-default btn-pure" type="button">.btn</button>
+            <button class="btn btn-primary btn-pure" type="button">.btn-primary</button>
+            <button class="btn btn-info btn-pure" type="button">.btn-info</button>
+            <button class="btn btn-success btn-pure" type="button">.btn-success</button>
+            <button class="btn btn-warning btn-pure" type="button">.btn-warning</button>
+            <button class="btn btn-danger btn-pure" type="button">.btn-danger</button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn" type="button">.btn</button>
+<button class="btn btn-default" type="button">.btn</button>
+<button class="btn btn-primary" type="button">.btn-primary</button>
+<button class="btn btn-info" type="button">.btn-info</button>
+<button class="btn btn-success" type="button">.btn-success</button>
+<button class="btn btn-warning" type="button">.btn-warning</button>
+<button class="btn btn-danger" type="button">.btn-danger</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="icons">
+    <h2>Icon buttons</h2>
+    <p>
+        You can add icons to buttons using the font awesome icon library.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn btn-primary" type="button">
+                <span class="glyph-icon glyph-icon-superpowers"></span>
+                .btn
+            </button>
+            <button class="btn btn-primary btn-icon" type="button">
+                <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+            </button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn btn-primary" type="button">
+    <span class="glyph-icon glyph-icon-superpowers"></span>
+    .btn
+</button>
+<button class="btn btn-primary btn-icon" type="button">
+    <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="sizes">
+    <h2>Button sizes</h2>
+    <p>
+        Buttons can be sized using 3 different sizing classes <code>.btn-xs</code>, <code>.btn-sm</code>, <code>.btn-lg</code>
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn btn-primary btn-xs" type="button">.btn-xs</button>
+            <button class="btn btn-primary btn-sm" type="button">.btn-sm</button>
+            <button class="btn btn-primary" type="button">.btn</button>
+            <button class="btn btn-primary btn-lg" type="button">.btn-lg</button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn btn-primary btn-xs" type="button">.btn-xs</button>
+<button class="btn btn-primary btn-sm" type="button">.btn-sm</button>
+<button class="btn btn-primary" type="button">.btn</button>
+<button class="btn btn-primary btn-lg" type="button">.btn-lg</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="cick">
+    <h2>Click effect</h2>
+    <p>
+        Add the <code>.js-ripple</code> class to any button to make a ripple effect when the button is clicked.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn js-ripple" type="button">.btn</button>
+            <button class="btn btn-default js-ripple" type="button">.btn</button>
+            <button class="btn btn-primary js-ripple" type="button">.btn-primary</button>
+            <button class="btn btn-info js-ripple" type="button">.btn-info</button>
+            <button class="btn btn-success js-ripple" type="button">.btn-success</button>
+            <button class="btn btn-warning js-ripple" type="button">.btn-warning</button>
+            <button class="btn btn-danger js-ripple" type="button">.btn-danger</button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn js-ripple" type="button">.btn</button>
+<button class="btn btn-default js-ripple" type="button">.btn</button>
+<button class="btn btn-primary js-ripple" type="button">.btn-primary</button>
+<button class="btn btn-info js-ripple" type="button">.btn-info</button>
+<button class="btn btn-success js-ripple" type="button">.btn-success</button>
+<button class="btn btn-warning js-ripple" type="button">.btn-warning</button>
+<button class="btn btn-danger js-ripple" type="button">.btn-danger</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="spinners">
+    <h2>Spinners</h2>
+    <p>
+        Add the svg code below inside any button and give the button a <code>.with-spinner</code> class. When the button 
+        has the <code>.active</code> class the spinner will show
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn with-spinner active" type="button">
+                <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+                Spin!
+            </button>
+            <button class="btn btn-default with-spinner active" type="button">
+                <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+                Spin!
+            </button>
+            <button class="btn btn-primary with-spinner active" type="button">
+                <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+                Spin!
+            </button>
+            <button class="btn btn-info with-spinner active" type="button">
+                <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+                Spin!
+            </button>
+            <button class="btn btn-success with-spinner active" type="button">
+                <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+                Spin!
+            </button>
+            <button class="btn btn-warning with-spinner active" type="button">
+                <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+                Spin!
+            </button>
+            <button class="btn btn-danger with-spinner active" type="button">
+                <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
+                Spin!
+            </button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn js-ripple" type="button">.btn</button>
+<button class="btn btn-default js-ripple" type="button">.btn</button>
+<button class="btn btn-primary js-ripple" type="button">.btn-primary</button>
+<button class="btn btn-info js-ripple" type="button">.btn-info</button>
+<button class="btn btn-success js-ripple" type="button">.btn-success</button>
+<button class="btn btn-warning js-ripple" type="button">.btn-warning</button>
+<button class="btn btn-danger js-ripple" type="button">.btn-danger</button>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="groups">
+    <h2>Button groups</h2>
+    <p>
+        Create groups by wrapping a set of buttons in a <code>.btn-group</code> classed element.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <div class="btn-group floor-xs">
+                <button class="btn btn-primary btn-icon" type="button">
+                    <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+                </button>
+                <button class="btn btn-primary btn-icon" type="button">
+                    <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+                </button>
+                <button class="btn btn-primary btn-icon" type="button">
+                    <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+                </button>
+                <button class="btn btn-primary btn-icon" type="button">
+                    <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+                </button>
+            </div>
+            <div class="btn-group btn-pill">
+                <button class="btn btn-primary btn-outline" type="button">
+                    <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+                </button>
+                <button class="btn btn-primary btn-outline" type="button">
+                    <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+                </button>
+                <button class="btn btn-primary btn-outline" type="button">
+                    <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+                </button>
+                <button class="btn btn-primary btn-outline" type="button">
+                    <span class="glyph-icon glyph-icon-superpowers icon-md"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<div class="btn-group">
+    <button class="btn btn-primary btn-icon" type="button">...</button>
+    <button class="btn btn-primary btn-icon" type="button">...</button>
+    <button class="btn btn-primary btn-icon" type="button">...</button>
+    <button class="btn btn-primary btn-icon" type="button">...</button>
+</div>
+<div class="btn-group btn-pill">
+    <button class="btn btn-primary btn-outline" type="button">...</button>
+    <button class="btn btn-primary btn-outline" type="button">...</button>
+    <button class="btn btn-primary btn-outline" type="button">...</button>
+    <button class="btn btn-primary btn-outline" type="button">...</button>
+</div>
+-->
+</code></pre>
+
+</div>
+
+<hr>

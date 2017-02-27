@@ -1,0 +1,162 @@
+
+// Hide previous breakpoint
+@if $prev-breakpoint {
+    .#{$prev-breakpoint} {
+        display: none;
+    }   
+}
+
+// Show current breakpoint
+@if $curr-grid {
+    .#{$curr-grid} {
+        display: block;
+    }   
+}
+
+// Rows
+@if $curr-grid == null {
+    .row {
+        @include clearfix;
+    }
+}
+@else {
+    .row-#{$curr-grid} {
+        @include clearfix;
+    }
+}
+
+// colums
+@for $i from 1 through 12 {
+    @if $curr-grid == null {
+        .col-#{$i} {
+            width: unquote('#{100 / 12 * $i}%');
+        }
+    }
+    @else {
+        .col-#{$curr-grid}-#{$i} {
+            width: unquote('#{100 / 12 * $i}%');
+        }
+    }
+}
+
+// Pushers
+@for $i from 1 through 12 {
+    @if $curr-grid == null {
+        .col-#{$i}-push-r {
+            margin-left: unquote('#{100 / 12 * (12-$i)}%');
+        }
+    }
+    @else {
+        .col-#{$curr-grid}-#{$i}-push-r {
+            margin-left: unquote('#{100 / 12 * (12-$i)}%');
+        }
+    }
+}
+@for $i from 1 through 12 {
+    @if $curr-grid == null {
+        .col-#{$i}-push-l {
+            margin-right: unquote('#{100 / 12 * (12-$i)}%');
+        }
+    }
+    @else {
+        .col-#{$curr-grid}-#{$i}-push-l {
+            margin-right: unquote('#{100 / 12 * (12-$i)}%');
+        }
+    }
+}
+
+// Gutters
+@each $grid-class in $grid-gutters {
+    $class: nth($grid-class, 1);
+    $size:  nth($grid-class, 2);
+
+    @if $curr-grid == null {
+        .gutter-#{$class} {
+            padding-left: $size;
+            padding-right: $size;
+            
+        }
+    }
+    @else {
+        .gutter-#{$curr-grid}-#{$class} {
+            padding-left: $size;
+            padding-right: $size;
+        }
+    }
+}
+@if $curr-grid == null {
+    .gutter-r {
+        padding-left: 0;
+    }
+    .gutter-l {
+        padding-right: 0;
+    }
+    .no-gutter {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+@else {
+    .gutter-#{$curr-grid}-r {
+        padding-left: 0;
+    }
+    .gutter-#{$curr-grid}-l {
+        padding-right: 0;
+    }
+    .no-gutter-#{$curr-grid} {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+// Roofs
+@each $grid-class in $grid-v-gutters {
+    $class: nth($grid-class, 1);
+    $size:  nth($grid-class, 2);
+    @if $curr-grid == null {
+        .roof-#{$class} {
+            padding-top: $size;
+        }
+    }
+    @else {
+        .roof-#{$curr-grid}-#{$class} {
+            padding-top: $size;
+        }
+    }
+}
+@if $curr-grid == null {
+    .no-roof {
+        padding-top: 0;
+    }
+}
+@else {
+    .no-roof-#{$curr-grid} {
+        padding-top: 0;
+    }
+}
+
+// floors
+@each $grid-class in $grid-v-gutters {
+    $class: nth($grid-class, 1);
+    $size:  nth($grid-class, 2);
+    @if $curr-grid == null {
+        .floor-#{$class} {
+            padding-bottom: $size;
+        }
+    }
+    @else {
+        .floor-#{$curr-grid}-#{$class} {
+            padding-bottom: $size;
+        }
+    }
+}
+@if $curr-grid == null {
+    .no-floor {
+        padding-bottom: 0;
+    }
+}
+@else {
+    .no-floor-#{$curr-grid} {
+        padding-bottom: 0;
+    }
+}

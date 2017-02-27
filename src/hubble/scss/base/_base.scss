@@ -1,0 +1,58 @@
+// universal box sizing fix
+// https://css-tricks.com/box-sizing/
+*,:after,:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+// html font size at 62.5% allows for 
+// rem style px sizes 
+// e.g body { font-size: 1.4rem; } /* = 14px */
+// https://snook.ca/archives/html_and_css/font-size-with-rem
+html {
+    font-size: 62.5%;
+}
+
+html, body {
+    background-color: $body-bg;
+    color:            $body-color;
+}
+body {
+    font-family:      $base-font-family;
+    font-weight:      $base-font-weight;
+    line-height:      $base-line-height;
+    font-size:        1.45rem;
+    @include fontSmooth;
+}
+input, select, label, button, textarea {
+    font-family: $base-font-family;
+    font-size:   $base-font-size;
+    @include fontSmooth;
+}
+
+// Links
+a {
+    color: $link-color;
+    text-decoration: $link-decoration;
+    background: transparent;
+    &:active,
+    &:hover {
+        outline: 0;
+        color: $link-hover-color;
+        text-decoration: $link-hover-decoration;
+    }
+    &.no-link:hover {
+        text-decoration: none;
+    }
+}
+
+// Raised
+.raised {
+    box-shadow: $box-shadow-out;
+}
+
+// Clearfix
+.clearfix {
+    @extend %clearfix;
+}

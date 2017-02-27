@@ -1,0 +1,789 @@
+<h1>Forms</h1>
+
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="basic" data-waypoint-speed="400">Basic form</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="block" data-waypoint-speed="500">Block form</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="groups" data-waypoint-speed="600">Input groups</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="states" data-waypoint-speed="700">Input states</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="checkbox" data-waypoint-speed="800">Checkbox</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="radio" data-waypoint-speed="900">Radio</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="switch" data-waypoint-speed="1000">Switch</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="progress" data-waypoint-speed="1100">Progress</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="errors" data-waypoint-speed="1200">Errors &amp; warning</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="results" data-waypoint-speed="1300">Form results</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="basic">
+    <h2>Basic form</h2>
+    <p>
+        Hubble's forms and form elements come pre-styled out of the box. 
+        Inputs are wrapped in <code>.form-field</code> <code>div</code> to maintain consistency and spacing. 
+        By default, form elements will be displayed as inline elements, however your can make them span full width by adding the <code>.row</code> class.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <form>
+                <div class="form-field">
+                    <label for="firstname1">First Name</label>
+                    <input type="text" name="firstname1" id="firstname1" placeholder="Joe">
+                </div>
+                
+                <div class="form-field">
+                    <label for="lastname1">Last Name</label>
+                    <input type="password" name="lastname1" id="lastname1" placeholder="Howard">
+                </div>
+                
+                <div class="form-field">
+                    <span class="checkbox">
+                        <input type="checkbox" name="checkboxexample1" id="checkboxexample1" checked="true" />
+                        <label for="checkboxexample1">Check me out</label>
+                    </span>
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="form-field">
+        <label for="firstname1">First Name</label>
+        <input type="text" name="firstname1" id="firstname1" placeholder="Joe">
+    </div>
+    
+    <div class="form-field">
+        <label for="lastname1">Last Name</label>
+        <input type="password" name="lastname1" id="lastname1" placeholder="Howard">
+    </div>
+    
+    <div class="form-field">
+        <span class="checkbox">
+            <input type="checkbox" name="checkboxexample1" id="checkboxexample1" checked="true" />
+            <label for="checkboxexample1">Check me out</label>
+        </span>
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="block">
+    <h2>Block form</h2>
+    <p>
+        The example below illustrates a basic example of a form with block level input elements 
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <form>
+                <div class="form-field row floor-xs">
+                    <label for="firstname2">First Name</label>
+                    <input type="text" name="firstname2" id="firstname2" placeholder="Joe">
+                </div>
+                
+                <div class="form-field row floor-xs">
+                    <label for="lastname2">Last Name</label>
+                    <input type="text" name="lastname2" id="lastname2" placeholder="Howard">
+                </div>
+                
+                <div class="form-field row floor-xs">
+                    <span class="checkbox">
+                        <input type="checkbox" name="checkboxexample2" id="checkboxexample2" checked="true" />
+                        <label for="checkboxexample2">Check me out</label>
+                    </span>
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="form-field row floor-xs">
+        <label for="firstname2">First Name</label>
+        <input type="text" name="firstname2" id="firstname2" placeholder="Joe">
+    </div>
+    
+    <div class="form-field row floor-xs">
+        <label for="lastname2">Last Name</label>
+        <input type="password" name="lastname2" id="lastname2" placeholder="Howard">
+    </div>
+    
+    <div class="form-field row floor-xs">
+        <span class="checkbox">
+            <input type="checkbox" name="checkboxexample2" id="checkboxexample2" checked="true" />
+            <label for="checkboxexample2">Check me out</label>
+        </span>
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="groups">
+    <h2>Input groups</h2>
+    <p>
+        Group inputs with a label or a button (or both) adding the <code>.field-group</code> class to the <code>.form-field</code> wrapper.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <form>
+                <div class="form-field field-group row floor-xs">
+                    <label class="input-addon" for="firstname3">First Name</label>
+                    <input type="text" name="firstname3" id="firstname3" placeholder="Joe">
+                </div>
+                
+                <div class="form-field field-group row floor-xs">
+                    <label class="input-addon" for="middlename">Last Name</label>
+                    <input type="text" name="middlename" id="middlename" placeholder="Howard">
+                    <span class="input-addon">Hint</span>
+                </div>
+
+                <div class="form-field field-group row floor-xs">
+                    <label class="input-addon" for="lastname3">Last Name</label>
+                    <input type="text" name="lastname3" id="lastname3" placeholder="Howard">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="form-field field-group row floor-xs">
+        <label class="input-addon" for="firstname3">First Name</label>
+        <input type="text" name="firstname3" id="firstname3" placeholder="Joe">
+    </div>
+    
+    <div class="form-field field-group row floor-xs">
+        <label class="input-addon" for="middlename">Last Name</label>
+        <input type="text" name="middlename" id="middlename" placeholder="Howard">
+        <span class="input-addon">Hint</span>
+    </div>
+
+    <div class="form-field field-group row floor-xs">
+        <label class="input-addon" for="lastname3">Last Name</label>
+        <input type="text" name="lastname3" id="lastname3" placeholder="Howard">
+        <button type="submit" class="btn btn-default">Submit</button>
+    </div>
+</form>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="states">
+    <h2>Input states</h2>
+    <p>
+        Input states are styled with the psuedo classes <code>:active, :focus, :disabled</code>
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <form>
+                <div class="form-field row floor-xs">
+                    <label for="input_11">First Name</label>
+                    <input type="text" name="input_11" id="input_11" placeholder="Joe" disabled>
+                </div>
+                <div class="form-field row floor-xs">
+                    <label for="firstname2">First Name</label>
+                    <input class="focus" type="text" name="firstname2" id="firstname2" placeholder="Joe">
+                </div>
+            </form>
+
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="form-field row floor-xs">
+        <label for="firstname2">First Name</label>
+        <input type="text" name="firstname2" id="firstname2" placeholder="Joe">
+    </div>
+    
+    <div class="form-field row floor-xs">
+        <label for="lastname2">Last Name</label>
+        <input type="password" name="lastname2" id="lastname2" placeholder="Howard">
+    </div>
+    
+    <div class="form-field row floor-xs">
+        <span class="checkbox">
+            <input type="checkbox" name="checkboxexample2" id="checkboxexample2" checked="true" />
+            <label for="checkboxexample2">Check me out</label>
+        </span>
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="checkbox">
+    <h2>Checkbox</h2>
+    <p>
+        Custom styled checkboxes can be used by simply wrapping the label and input in <code>.checkbox</code> classed element.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <form>
+                <div class="form-field">
+                    <span class="checkbox">
+                        <input type="checkbox" name="checkbox_5" id="checkbox_5" checked="true" />
+                        <label for="checkbox_5">Check me out</label>
+                    </span>
+                    <span class="checkbox checkbox-default">
+                        <input type="checkbox" name="checkbox_6" id="checkbox_6" checked="true" />
+                        <label for="checkbox_6">Check me out</label>
+                    </span>
+                    <span class="checkbox checkbox-primary">
+                        <input type="checkbox" name="checkbox_7" id="checkbox_7" checked="true" />
+                        <label for="checkbox_7">Check me out</label>
+                    </span>
+                    <span class="checkbox checkbox-info">
+                        <input type="checkbox" name="checkbox_8" id="checkbox_8" checked="true" />
+                        <label for="checkbox_8">Check me out</label>
+                    </span>
+                    <span class="checkbox checkbox-warning">
+                        <input type="checkbox" name="checkbox_9" id="checkbox_9" checked="true" />
+                        <label for="checkbox_9">Check me out</label>
+                    </span>
+                    <span class="checkbox checkbox-danger">
+                        <input type="checkbox" name="checkbox_10" id="checkbox_10" checked="true" />
+                        <label for="checkbox_10">Check me out</label>
+                    </span>
+                    
+                </div>
+            </form>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="form-field">
+        <span class="checkbox">
+            <input type="checkbox" name="checkbox_5" id="checkbox_5" checked="true" />
+            <label for="checkbox_5">Check me out</label>
+        </span>
+        <span class="checkbox checkbox-default">
+            <input type="checkbox" name="checkbox_5" id="checkbox_6" checked="true" />
+            <label for="checkbox_6">Check me out</label>
+        </span>
+        <span class="checkbox checkbox-primary">
+            <input type="checkbox" name="checkbox_5" id="checkbox_6" checked="true" />
+            <label for="checkbox_6">Check me out</label>
+        </span>
+        <span class="checkbox checkbox-info">
+            <input type="checkbox" name="checkbox_5" id="checkbox_6" checked="true" />
+            <label for="checkbox_6">Check me out</label>
+        </span>
+        <span class="checkbox checkbox-warning">
+            <input type="checkbox" name="checkbox_5" id="checkbox_6" checked="true" />
+            <label for="checkbox_6">Check me out</label>
+        </span>
+        <span class="checkbox checkbox-danger">
+            <input type="checkbox" name="checkbox_5" id="checkbox_6" checked="true" />
+            <label for="checkbox_6">Check me out</label>
+        </span>
+        
+    </div>
+</form>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="radio">
+    <h2>Radio</h2>
+    <p>
+        Custom styled radios can be used by simply wrapping the label and input in <code>.radio</code> classed element.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <form>
+                <div class="form-field">
+                    <span class="radio">
+                        <input type="radio" name="radio_1" id="radio_5" checked="true" />
+                        <label for="radio_5">Check me out</label>
+                    </span>
+                    <span class="radio radio-default">
+                        <input type="radio" name="radio_1" id="radio_6" checked="true" />
+                        <label for="radio_6">Check me out</label>
+                    </span>
+                    <span class="radio radio-primary">
+                        <input type="radio" name="radio_1" id="radio_7" checked="true" />
+                        <label for="radio_7">Check me out</label>
+                    </span>
+                    <span class="radio radio-info">
+                        <input type="radio" name="radio_1" id="radio_8" checked="true" />
+                        <label for="radio_8">Check me out</label>
+                    </span>
+                    <span class="radio radio-warning">
+                        <input type="radio" name="radio_1" id="radio_9" checked="true" />
+                        <label for="radio_9">Check me out</label>
+                    </span>
+                    <span class="radio radio-danger">
+                        <input type="radio" name="radio_1" id="radio_10" checked="true" />
+                        <label for="radio_10">Check me out</label>
+                    </span>
+                    
+                </div>
+            </form>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="form-field">
+        <span class="radio">
+            <input type="radio" name="radio_5" id="radio_5" checked="true" />
+            <label for="radio_5">Check me out</label>
+        </span>
+        <span class="radio radio-default">
+            <input type="radio" name="radio_5" id="radio_6" checked="true" />
+            <label for="radio_6">Check me out</label>
+        </span>
+        <span class="radio radio-primary">
+            <input type="radio" name="radio_5" id="radio_6" checked="true" />
+            <label for="radio_6">Check me out</label>
+        </span>
+        <span class="radio radio-info">
+            <input type="radio" name="radio_5" id="radio_6" checked="true" />
+            <label for="radio_6">Check me out</label>
+        </span>
+        <span class="radio radio-warning">
+            <input type="radio" name="radio_5" id="radio_6" checked="true" />
+            <label for="radio_6">Check me out</label>
+        </span>
+        <span class="radio radio-danger">
+            <input type="radio" name="radio_5" id="radio_6" checked="true" />
+            <label for="radio_6">Check me out</label>
+        </span>
+        
+    </div>
+</form>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="switch">
+    <h2>Switch</h2>
+    <p>
+        Switches are a custom styled <code>checkbox</code> element.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <form>
+                <div class="form-field">
+                    <input type="checkbox" id="switch_1" name="set-name" class="switch" checked>
+                    <label for="switch_1">
+                        Switch 
+                        <span class="toggle-on">On</span>
+                        <span class="toggle-off">Off</span>
+                    </label>
+
+                    <input type="checkbox" id="switch_2" name="set-name" class="switch switch-default" checked>
+                    <label for="switch_2">
+                        Switch 
+                        <span class="toggle-on">On</span>
+                        <span class="toggle-off">Off</span>
+                    </label>
+
+                    <input type="checkbox" id="switch_3" name="set-name" class="switch switch-primary" checked>
+                    <label for="switch_3">
+                        Switch 
+                        <span class="toggle-on">On</span>
+                        <span class="toggle-off">Off</span>
+                    </label>
+
+                    <input type="checkbox" id="switch_4" name="set-name" class="switch switch-info" checked>
+                    <label for="switch_4">
+                        Switch 
+                        <span class="toggle-on">On</span>
+                        <span class="toggle-off">Off</span>
+                    </label>
+
+                    <input type="checkbox" id="switch_5" name="set-name" class="switch switch-success" checked>
+                    <label for="switch_5">
+                        Switch 
+                        <span class="toggle-on">On</span>
+                        <span class="toggle-off">Off</span>
+                    </label>
+
+                    <input type="checkbox" id="switch_6" name="set-name" class="switch switch-warning" checked>
+                    <label for="switch_6">
+                        Switch 
+                        <span class="toggle-on">On</span>
+                        <span class="toggle-off">Off</span>
+                    </label>
+
+                    <input type="checkbox" id="switch_7" name="set-name" class="switch switch-danger" checked>
+                    <label for="switch_7">
+                        Switch 
+                        <span class="toggle-on">On</span>
+                        <span class="toggle-off">Off</span>
+                    </label>
+                </div>
+            </form>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="form-field">
+    <input type="checkbox" id="switch_1" name="set-name" class="switch" checked>
+    <label for="switch_1">
+        Switch 
+        <span class="toggle-on">On</span>
+        <span class="toggle-off">Off</span>
+    </label>
+
+    <input type="checkbox" id="switch_2" name="set-name" class="switch switch-default" checked>
+    <label for="switch_2">
+        Switch 
+        <span class="toggle-on">On</span>
+        <span class="toggle-off">Off</span>
+    </label>
+
+    <input type="checkbox" id="switch_3" name="set-name" class="switch switch-primary" checked>
+    <label for="switch_3">
+        Switch 
+        <span class="toggle-on">On</span>
+        <span class="toggle-off">Off</span>
+    </label>
+
+    <input type="checkbox" id="switch_4" name="set-name" class="switch switch-info" checked>
+    <label for="switch_4">
+        Switch 
+        <span class="toggle-on">On</span>
+        <span class="toggle-off">Off</span>
+    </label>
+
+    <input type="checkbox" id="switch_5" name="set-name" class="switch switch-success" checked>
+    <label for="switch_5">
+        Switch 
+        <span class="toggle-on">On</span>
+        <span class="toggle-off">Off</span>
+    </label>
+
+    <input type="checkbox" id="switch_6" name="set-name" class="switch switch-warning" checked>
+    <label for="switch_6">
+        Switch 
+        <span class="toggle-on">On</span>
+        <span class="toggle-off">Off</span>
+    </label>
+
+    <input type="checkbox" id="switch_7" name="set-name" class="switch switch-danger" checked>
+    <label for="switch_7">
+        Switch 
+        <span class="toggle-on">On</span>
+        <span class="toggle-off">Off</span>
+    </label>
+    </div>
+</form>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="progress">
+    <h2>Progress</h2>
+    <p>
+        Custom styled progress bars can be used in upload forms or Ajax tasks.
+    </p>
+
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <div class="row floor-xs">
+                <span class="progress-bar">
+                    <span class="progress" style="width: 30%"></span>
+                </span>
+            </div>
+            
+            <div class="row floor-xs">
+                <span class="progress-bar progress-default">
+                    <span class="progress" style="width: 30%"></span>
+                </span>
+            </div>
+
+            <div class="row floor-xs">
+                <span class="progress-bar progress-info">
+                    <span class="progress" style="width: 30%"></span>
+                </span>
+            </div>
+
+            <div class="row floor-xs">
+                <span class="progress-bar progress-success">
+                    <span class="progress" style="width: 30%"></span>
+                </span>
+            </div>
+
+            <div class="row floor-xs">
+                <span class="progress-bar progress-warning">
+                    <span class="progress" style="width: 30%"></span>
+                </span>
+            </div>
+
+            <div class="row floor-xs">
+                <span class="progress-bar progress-danger">
+                    <span class="progress" style="width: 30%"></span>
+                </span>
+            </div>
+
+            <div class="row floor-xs">
+                <span class="progress-bar bg-gradient">
+                    <span class="progress" style="width: 70%"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<div class="row floor-xs">
+    <span class="progress-bar">
+        <span class="progress" style="width: 30%"></span>
+    </span>
+</div>
+
+<div class="row floor-xs">
+    <span class="progress-bar progress-default">
+        <span class="progress" style="width: 30%"></span>
+    </span>
+</div>
+
+<div class="row floor-xs">
+    <span class="progress-bar progress-info">
+        <span class="progress" style="width: 30%"></span>
+    </span>
+</div>
+
+<div class="row floor-xs">
+    <span class="progress-bar progress-success">
+        <span class="progress" style="width: 30%"></span>
+    </span>
+</div>
+
+<div class="row floor-xs">
+    <span class="progress-bar progress-warning">
+        <span class="progress" style="width: 30%"></span>
+    </span>
+</div>
+
+<div class="row floor-xs">
+    <span class="progress-bar progress-danger">
+        <span class="progress" style="width: 30%"></span>
+    </span>
+</div>
+
+<div class="row floor-xs">
+    <span class="progress-bar bg-gradient">
+        <span class="progress" style="width: 70%"></span>
+    </span>
+</div>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm foor-sm" data-waypoint="validation">
+    <h2>Validation</h2>
+    <p>
+        Input errors and warning help text can be helpful when running form validations. 
+        They're hidden by default and will display when the the wrapping <code>.form-field</code> has a class of 
+        <code>.danger</code> or <code>.warning</code>
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <form>
+                <div class="form-field danger row floor-xs">
+                    <label for="input_1">First Name</label>
+                    <input type="text" name="input_1" id="input_1" placeholder="Joe">
+                    <p class="help-danger">* You need to enter your name</p>
+                </div>
+
+                <div class="form-field warning row floor-xs">
+                    <label for="input_1">First Name</label>
+                    <input type="text" name="input_1" id="input_1" placeholder="Joe">
+                    <p class="help-warning">* Make sure your name is real</p>
+                </div>
+            </form>
+
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="form-field row floor-xs">
+        <label for="firstname2">First Name</label>
+        <input type="text" name="firstname2" id="firstname2" placeholder="Joe">
+    </div>
+    
+    <div class="form-field row floor-xs">
+        <label for="lastname2">Last Name</label>
+        <input type="password" name="lastname2" id="lastname2" placeholder="Howard">
+    </div>
+    
+    <div class="form-field row floor-xs">
+        <span class="checkbox">
+            <input type="checkbox" name="checkboxexample2" id="checkboxexample2" checked="true" />
+            <label for="checkboxexample2">Check me out</label>
+        </span>
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+
+<div class="row roof-sm foor-sm" data-waypoint="results">
+    <h2>Form results</h2>
+    <p>
+        Form results can be displayed as a message by simply adding a contextual class to the <code>&lt;form&gt;</code> element.  
+        The classes are <code>.info, .success, .warning, .danger</code>
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <form class="info">
+                <div class="form-result">
+                    <div class="msg msg-info" aria-hidden="true">
+                        <div class="msg-icon">
+                            <span class="glyph-icon glyph-icon-info icon"></span>
+                        </div>
+                        <div class="msg-body">
+                            <p>Did you know you can use this for Ajax?</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <form class="success">
+                <div class="form-result">
+                    <div class="msg msg-success" aria-hidden="true">
+                        <div class="msg-icon">
+                            <span class="glyph-icon glyph-icon-check icon"></span>
+                        </div>
+                        <div class="msg-body">
+                            <p>Did you know you can use this for Ajax?</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <form class="warning">
+                <div class="form-result">
+                    <div class="msg msg-warning" aria-hidden="true">
+                        <div class="msg-icon">
+                            <span class="glyph-icon glyph-icon-exclamation-triangle icon"></span>
+                        </div>
+                        <div class="msg-body">
+                            <p>Did you know you can use this for Ajax?</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <form class="danger">
+                <div class="form-result">
+                    <div class="msg msg-danger" aria-hidden="true">
+                        <div class="msg-icon">
+                            <span class="glyph-icon glyph-icon-times icon"></span>
+                        </div>
+                        <div class="msg-body">
+                            <p>There was an error processing your request. Please try again later.</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form class="info">
+    <div class="form-result">
+        <div class="msg msg-info" aria-hidden="true">
+            <div class="msg-icon">
+                <span class="glyph-icon glyph-icon-info icon"></span>
+            </div>
+            <div class="msg-body">
+                <p>Did you know you can use this for Ajax?</p>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form class="success">
+    <div class="form-result">
+        <div class="msg msg-success" aria-hidden="true">
+            <div class="msg-icon">
+                <span class="glyph-icon glyph-icon-check icon"></span>
+            </div>
+            <div class="msg-body">
+                <p>Did you know you can use this for Ajax?</p>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form class="warning">
+    <div class="form-result">
+        <div class="msg msg-warning" aria-hidden="true">
+            <div class="msg-icon">
+                <span class="glyph-icon glyph-icon-exclamation-triangle icon"></span>
+            </div>
+            <div class="msg-body">
+                <p>Did you know you can use this for Ajax?</p>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form class="danger">
+    <div class="form-result">
+        <div class="msg msg-danger" aria-hidden="true">
+            <div class="msg-icon">
+                <span class="glyph-icon glyph-icon-times icon"></span>
+            </div>
+            <div class="msg-body">
+                <p>There was an error processing your request. Please try again later.</p>
+            </div>
+        </div>
+    </div>
+</form>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+
+

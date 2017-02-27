@@ -1,0 +1,56 @@
+.field-group {
+	input,
+	select,
+	textarea {
+		@extend %float-left;
+		width: initial;
+	    display: table-cell;
+	    &:last-child {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+		&:not(:first-child):not(:last-child) {
+			border-radius: 0;
+		}
+		&:first-child {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+	}
+	.input-addon {
+		@extend %float-left;
+		@extend %text-center;
+		font-size: $input-font-size;
+		padding: $input-pad-y $input-pad-x;
+        border-radius: $border-radius;
+        background-color: $input-addon-bg;
+        font-weight: $text-bolder;
+        line-height: $input-line-height;
+        color: $input-color;
+        border: 1px solid $input-border-color;
+        transition: background-color $base-easing-time $base-easing, border-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
+		display: inline-block;
+		width: auto;
+		&:first-child {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+			border-right: none;
+		}
+		&:last-child {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+			border-left: none;
+		}
+	}
+	.btn {
+		margin: 0;
+		line-height: $input-line-height;
+		font-size: $input-font-size;
+		padding: $input-pad-y $input-pad-x;
+        &:last-child {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+	}
+	
+}

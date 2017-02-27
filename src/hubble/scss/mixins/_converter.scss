@@ -1,0 +1,9 @@
+// Percentages
+@function minusPercent($value, $percentage) {
+	$diff: $value * ($percentage / 100);
+	@return $value - $diff;
+}
+@function addPercent($value, $percentage) {
+	$diff: $value * ($percentage / 100);
+	@return $value + $diff;
+}

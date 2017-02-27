@@ -1,0 +1,165 @@
+// Headings
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: $headings-font-family;
+    font-weight: $headings-font-weight;
+    line-height: $headings-line-height;
+    margin-bottom: 1rem;
+}
+
+h1 { 
+    font-size: $text-size-h1;
+}
+h2 { 
+    font-size: $text-size-h2;
+}
+h3 { 
+    font-size: $text-size-h3;
+}
+h4 { 
+    font-size: $text-size-h4;
+}
+h5 { 
+    font-size: $text-size-h5;
+}
+h6 { 
+    font-size:$text-size-h6;
+}
+.h1 { 
+    font-size: $text-size-h1;
+}
+.h2 { 
+    font-size: $text-size-h2;
+}
+.h3 { 
+    font-size: $text-size-h3;
+}
+.h4 { 
+    font-size: $text-size-h4;
+}
+.h5 { 
+    font-size: $text-size-h5;
+}
+.h6 { 
+    font-size: $text-size-h6;
+}
+
+
+// Text sizes
+// Paragraph
+p { 
+    margin: 0 0 1rem 0; 
+    font-size: $base-font-size;
+}
+.p1 {
+    font-size: $text-size-p1;
+}
+.p2 {
+    font-size: $text-size-p2;
+}
+.p3 {
+    font-size: $text-size-p3;
+}
+.p4 {
+    font-size: $text-size-p4;
+}
+.p5 {
+    font-size: $text-size-p5;
+}
+.p6 {
+    font-size: $text-size-p6;
+}
+
+// Bold and Italics
+b,
+strong,
+.strong {
+    font-weight: $text-bolder;
+}
+em,
+.em {
+    font-style: italic;
+}
+
+// Small
+small,
+.small {
+  font-size: 80%;
+  font-weight: normal;
+}
+
+// Horizontal rules
+hr,
+.hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 1px;
+    border: 0;
+    margin-top: 1em;
+}
+
+// Abbreviation
+abbr[title], .abbr[title] { border-bottom: 1px dotted; }
+
+// Definition
+dfn { font-style: italic; }
+
+// Mark
+mark,
+.mark {
+    background: #ff0;
+    color: $black;
+}
+
+// Sub and Sup
+sub,
+.sub,
+sup,
+.sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+sup, .sup { top: -0.5em; }
+sub, .sub { bottom: -0.25em; }
+
+// Del
+del, .del { text-decoration: line-through; }
+
+// address
+address,
+.address {
+    font-family:      $base-font-family;
+    font-weight:      $base-font-weight;
+    line-height:      $base-line-height;
+    color:            $body-color;
+    font-size: $base-font-size;
+    margin: 0 0 1rem 0;
+}
+
+// Very basic code/pre
+code, pre {
+    font-family: $font-family-monospace;
+    line-height: $base-line-height;
+    font-size: 1.2rem;
+    -webkit-font-smoothing: initial;
+    -moz-osx-font-smoothing: initial;
+    background-color: $gray-lightest;
+    border-radius: $border-radius;
+    border: 1px solid darken($gray-lightest, 10);
+}
+code {
+    padding: .2rem .4rem;
+    color: #c7254e;
+}
+pre {
+    padding: 1.5rem 2rem;
+    overflow: auto;
+    color: $black;
+}
+pre > code {
+    color: $black;
+    border: none;
+    background-color: transparent;
+}

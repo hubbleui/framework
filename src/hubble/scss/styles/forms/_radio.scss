@@ -1,0 +1,175 @@
+// resets 
+input[type=radio] {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+}
+input[type=radio] {
+    margin: 4px 0 0;
+    margin-top: 1px\9;
+    line-height: normal;
+    outline: none;
+}
+input[type=radio]:focus {
+    outline:0;
+}
+
+// styles
+.radio {
+    padding-left: 20px;
+    
+    label {
+        @extend %inline-block;
+        @extend %relative;
+        cursor: pointer;
+        vertical-align: middle;
+        position: relative;
+        padding-left: 10px;
+        min-height: 22px;
+        margin-bottom: 0;
+        &:before {
+            @extend %empty-content;
+            @extend %inline-block;
+            @extend %absolute;
+            @extend %left-0;
+            @extend %circle;
+            @extend %bg-white;
+            width: 20px;
+            height: 20px;
+            margin-left: -20px;
+            border: 1px solid #e4eaec;
+            transition: all .15s ease-in-out 0s;
+        }
+        &:after {
+            @extend %empty-content;
+            @extend %inline-block;
+            @extend %absolute;
+            @extend %circle;
+            @extend %bg-white;
+            background-color: #76838f;
+            left: -15px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            transition: all .15s ease-in-out 0s;
+            transform: scale(0);
+        }
+    }
+
+    input[type=radio] {
+        @extend %absolute;
+        @extend %no-display;
+        @extend %opacity-hide;
+        margin-left: -20px;
+        margin-top: 0;
+        margin-bottom: 0;
+        z-index: 1;
+        width: 20px;
+        height: 20px;
+        &:checked {
+            + label:before {
+                border-color: #e4eaec;
+                border-width: 10px;
+                transition: all .15s ease-in-out 0s;
+            }
+            + label:after {
+                transition: all .15s ease-in-out 0s;
+                transform: scale(1);
+            }
+        }
+        &:focus {
+            + label:before {
+                border-color: #e4eaec;
+                border-width: 10px;
+                transition: all .15s ease-in-out 0s;
+                outline: thin dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+                outline-offset: -2px;
+            }
+        }
+        &.disabled,
+        &[disabled] {
+            cursor: not-allowed;
+            + label {
+                opacity: .65;
+                cursor: not-allowed;
+                &:before {
+                    background-color: #f3f7f9;
+                    border-color: #e4eaec;
+                    border-width: 1px;
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+
+    // Contextual
+    &.radio-primary {
+        input[type=radio] {
+            &:checked + label:before {
+                @extend %bg-primary;
+                border-color: $brand-primary;
+            }
+            &:checked + label:after {
+                background-color: #fff;
+            }
+        }
+    }
+    &.radio-info {
+        input[type=radio] {
+            &:checked + label:before {
+                @extend %bg-info;
+                border-color: $brand-info;
+            }
+            &:checked + label:after {
+                background-color: #fff;
+            }
+        }
+    }
+    &.radio-success {
+        input[type=radio] {
+            &:checked + label:before {
+                @extend %bg-success;
+                border-color: $brand-success;
+            }
+            &:checked + label:after {
+                background-color: #fff;
+            }
+        }
+    }
+    &.radio-warning {
+        input[type=radio] {
+            &:checked + label:before {
+                @extend %bg-warning;
+                border-color: $brand-warning;
+            }
+            &:checked + label:after {
+                background-color: #fff;
+            }
+        }
+    }
+    &.radio-danger {
+        input[type=radio] {
+            &:checked + label:before {
+                @extend %bg-danger;
+                border-color: $brand-danger;
+            }
+            &:checked + label:after {
+                background-color: #fff;
+            }
+        }
+    }
+    &.radio-default {
+        input[type=radio] {
+            &:checked + label:before {
+                background-color: #fff;
+                border-color: $gray-light;
+                border-width: 1px;
+            }
+            &:checked + label:after {
+                background-color: $brand-primary;
+            }
+        }
+    }
+}

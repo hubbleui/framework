@@ -1,0 +1,193 @@
+// base
+.arrow:before,
+.arrow:after {
+	position: absolute;
+    display: inline-block;
+    content: "";
+}
+.arrow:before {
+	border: 8px solid transparent;
+}
+.arrow:after {
+    border: 8px solid transparent;
+}
+
+// west general
+.arrow-wn:before,
+.arrow-w:before,
+.arrow-ws:before {
+	border-right-color: $arrow-color;
+	left: -16px;
+    margin-top: -5px;
+    width:8px;
+    height: 8px;
+}
+.arrow-wn:after,
+.arrow-w:after,
+.arrow-ws:after {
+	border-right-color: #FFFFFF;
+	left: -14px;
+    margin-top: -4px;
+    width:7px;
+    height: 7px;
+}
+// west
+.arrow-w:before,
+.arrow-w:after{
+    top: 50%;
+    bottom: 50%;
+}
+// west north
+.arrow-wn:before,
+.arrow-wn:after {
+    top: 15%;
+}
+// west south
+.arrow-wn:before,
+.arrow-wn:after  {
+    bottom: 15%;
+}
+
+// north general
+.arrow-nw:before,
+.arrow-n:before,
+.arrow-ne:before {
+	border-bottom-color: $arrow-color;
+	top: -16px;
+	margin-left: -4px;
+}
+.arrow-nw:after,
+.arrow-n:after,
+.arrow-ne:after {
+	border-bottom-color: #fff;
+	top: -14px;
+	margin-left: -4px;
+}
+// north
+.arrow-n:before,
+.arrow-n:after{
+    left: 50%;
+    right: 50%;
+}
+// north east
+.arrow-nw:before,
+.arrow-nw:after {
+    left: 15%;
+}
+// north west
+.arrow-ne:before,
+.arrow-ne:after  {
+    right: 15%;
+}
+
+// east general
+.arrow-en:before,
+.arrow-e:before,
+.arrow-es:before {
+	border-left-color: $arrow-color;
+	right: -16px;
+    margin-top: -5px;
+}
+.arrow-en:after,
+.arrow-e:after,
+.arrow-es:after {
+	border-left-color: #FFFFFF;
+	right: -14px;
+    margin-top: -4px;
+}
+// east
+.arrow-e:before,
+.arrow-e:after{
+    top: 50%;
+    bottom: 50%;
+}
+// east north
+.arrow-en:before,
+.arrow-en:after {
+    top: 15%;
+}
+// east south
+.arrow-en:before,
+.arrow-en:after  {
+    bottom: 15%;
+}
+
+// south general
+.arrow-sw:before,
+.arrow-s:before,
+.arrow-se:before {
+	border-top-color: $arrow-color;
+	bottom: -16px;
+	margin-left: -5px;
+}
+.arrow-sw:after,
+.arrow-s:after,
+.arrow-se:after {
+	border-top-color: #fff;
+	bottom: -14px;
+	margin-left: -5px;
+}
+// south
+.arrow-s:before,
+.arrow-s:after{
+    left: 50%;
+    right: 50%;
+}
+// south east
+.arrow-sw:before,
+.arrow-sw:after {
+    left: 15%;
+}
+// south west
+.arrow-se:before,
+.arrow-se:after  {
+    right: 15%;
+}
+
+
+// Primary
+.arrow-primary.arrow-nw:after,
+.arrow-primary.arrow-n:after,
+.arrow-primary.arrow-ne:after {
+    border-bottom-color: $brand-primary;
+}
+
+// Success
+.arrow-success.arrow-nw:after,
+.arrow-success.arrow-n:after,
+.arrow-success.arrow-ne:after {
+    border-bottom-color: $brand-success;
+}
+
+// Info
+.arrow-info.arrow-nw:after,
+.arrow-info.arrow-n:after,
+.arrow-info.arrow-ne:after {
+    border-bottom-color: $brand-info;
+}
+
+// Warning
+.arrow-warning.arrow-nw:after,
+.arrow-warning.arrow-n:after,
+.arrow-warning.arrow-ne:after {
+    border-bottom-color: $brand-warning;
+}
+
+// Danger
+.arrow-danger.arrow-nw:after,
+.arrow-danger.arrow-n:after,
+.arrow-danger.arrow-ne:after {
+    border-bottom-color: $brand-danger;
+}
+
+// dark
+.arrow-gray.arrow-nw:after,
+.arrow-gray.arrow-n:after,
+.arrow-gray.arrow-ne:after {
+    border-bottom-color: $gray;
+}
+.arrow-gray.arrow-nw:before,
+.arrow-gray.arrow-n:before,
+.arrow-gray.arrow-ne:before {
+    border-bottom-color: transparent;
+}

@@ -1,0 +1,166 @@
+<h1>Carousel</h1>
+
+<p>
+    Hubble's carousel component uses an open source library called <a href="http://flickity.metafizzy.co/">flickity.js</a>. 
+    The library uses a combination <code>JavaScript</code> and <code>CSS</code> to produce cross-browser, responsive, 
+    mobile and touch enabled carousels.
+</p>
+
+<blockquote class="bq-info">
+    <p>
+        This documentation only shows some very simple usage examples. For more in-depth documentation please see the 
+        <a href="http://flickity.metafizzy.co/">flickity.js</a> website.
+    </p>
+</blockquote>
+
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Basic example</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="initialization" data-waypoint-speed="500">Initialization</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="styling" data-waypoint-speed="600">Styling</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-sm floor-sm" data-waypoint="example">
+    <h2>Basic example</h2>
+    <p>
+        Carousels can be enabled through <code>HTML</code> markup rather than manually via <code>JavaScript</code>. 
+        The options are stored as <code>JSON</code> in the <code>data-flickity</code> attribute.
+    </p>
+    <p>
+        Below is an example of a basic media block.
+    </p>
+    <div class="code-content-example">
+        <div class="carousel"
+            data-flickity='{ "wrapAround": true }'>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<div class="carousel"
+    data-flickity='{ "wrapAround": true }'>
+    <div class="carousel-cell"></div>
+    <div class="carousel-cell"></div>
+    <div class="carousel-cell"></div>
+    <div class="carousel-cell"></div>
+    <div class="carousel-cell"></div>
+</div>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-sm floor-sm" data-waypoint="initialization">
+    <h2>Initialization</h2>
+    <p>
+        There are two ways to initialize Flickity.
+    </p>
+
+    <br>
+    <h4>Initialize with JavaScript</h4>
+    <p>
+        To reitreve the Flickity object, simply call it from the Module loader with <code>Modules.require('Flickity');</code>. 
+        The constructor accepts two arguments: the carousel element and an options object.
+    </p>
+
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+var elem = document.querySelector('.main-carousel');
+var flkty = Modules.require('Flickity', elem, {
+  // options
+  cellAlign: 'left',
+  contain: true
+});
+
+// element argument can be a selector string
+//   for an individual element
+var flkty = Modules.require('Flickity', '.main-carousel', {
+  // options
+  cellAlign: 'left',
+  contain: true
+});
+-->
+</code></pre>
+    <br>
+
+    <h4>Initialize with HTML</h4>
+    <p>
+       You can initialize Flickity in HTML, without writing any JavaScript. 
+       Add data-flickity attribute to the carousel element. Options can be set in its value.
+    </p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<div data-flickity='{ "cellAlign": "left", "contain": true }'>
+-->
+</code></pre>
+    <br>
+
+    <blockquote class="bq-warning">
+        <p>
+            Options set in HTML must be valid <code>JSON</code>. 
+            Keys need to be quoted, for example <code>"cellAlign":</code>. 
+            Note that the attribute value uses single quotes <code>'</code>, but the JSON entities use double-quotes <code>"</code>.
+        </p>
+    </blockquote>
+
+</div>
+
+
+<div class="row roof-sm floor-sm" data-waypoint="styling">
+    <h2>Styling</h2>
+    <p>
+        To provide as much customization as possible, Flickity provides only the styles nessasary for the carousel to function. 
+        All sizing and styling of the cells are handled by your own CSS. 
+        The height of the carousel is set to the maximum height of the cells.
+    </p>
+
+    <div class="code-content-example">
+        <div class="carousel carousel-full" data-flickity>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="css">
+<!--
+.carousel-cell {
+  width: 100%; /* full width */
+  height: 160px; /* height of carousel */
+  margin-right: 10px;
+}
+-->
+</code></pre>
+
+    <div class="code-content-example">
+        <div class="carousel carousel-half" data-flickity>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+            <div class="carousel-cell"></div>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="css">
+<!--
+.carousel-cell {
+  width: 50%; /* half-width */
+  height: 160px;
+  margin-right: 10px;
+}
+-->
+</code></pre>
+
+
+
+</div>

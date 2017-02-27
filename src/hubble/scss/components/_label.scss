@@ -1,0 +1,35 @@
+// Labels
+.label {
+    @extend %text-center;
+    @extend %font-normal;
+    @extend %border-radius;
+	@extend %inline;
+    background-color: $label-default-bg;
+    color: $label-default-color;
+    font-size: $label-font-size;
+    padding: $label-pad-y $label-pad-x;
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: baseline;
+    &.label-primary {
+        @extend %color-white;
+        @extend %bg-primary;
+    }
+    &.label-success {
+        @extend %color-white;
+        @extend %bg-success;
+    }
+    &.label-info {
+        @extend %color-white;
+        @extend %bg-info;
+    }
+    &.label-warning {
+        @extend %color-white;
+        @extend %bg-warning;
+    }
+    &.label-danger {
+        @extend %color-white;
+        @extend %bg-danger;
+    }
+
+}

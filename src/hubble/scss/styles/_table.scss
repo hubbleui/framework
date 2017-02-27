@@ -1,0 +1,165 @@
+.table {
+
+	caption {
+		@extend %color-gray;
+		@extend %text-left;
+	    padding-top: 8px;
+	    padding-bottom: 8px;
+	}
+
+	@extend %full-width;
+	font-size: $table-font-size;
+	color: $table-color;
+	background-color: $table-bg;
+	thead,
+	tfoot {		
+		th {
+			@extend %font-bolder;
+			@extend %text-left;
+			padding: $table-cell-pad-y $table-cell-pad-x;
+    		background-color: $gray;
+    		border-color: $gray;
+		    color: #fff;
+		}
+	}
+
+	> tfoot > tr:first-child > th,
+	> thead > tr:first-child > th,
+	> tbody > tr:first-child > th {
+		@extend %font-bold;
+	}
+
+	> tbody > tr > td,
+	> tbody > tr > th,
+	> tfoot > tr > td, 
+	> tfoot > tr > th,
+	> thead > tr > td,
+	> thead > tr > th {
+		padding: $table-cell-pad-y $table-cell-pad-x;
+		@extend %text-left;
+		border-bottom: 1px solid $table-border-color;
+	}
+	&.table-bordered {
+		td, th {
+			border: 1px solid $table-border-color;
+		}
+		thead th,
+		tfoot th {
+			border-color: $gray;
+		}
+	}
+	&.table-hover {
+		tbody tr:hover {
+			background-color:$table-hover-bg;
+		}
+	}
+	&.table-transparent {
+		@extend %bg-transparent;
+	}
+
+
+	// Contextual classes
+	thead.info th,
+	thead.success th,
+	thead.warning th, 
+	thead.danger th,
+	tfoot.info th,
+	tfoot.success th,
+	tfoot.warning th, 
+	tfoot.danger th {
+		color: rgba(0, 0, 0, 0.57);
+		a {
+    		font-weight: $text-bold;
+    		color: rgba(0, 0, 0, 0.6);
+    	}
+	}
+
+	// Success
+	thead.success th,
+	tfoot.success th {
+		background-color: lighten($brand-success, 20);
+		border-color: lighten($brand-success, 20);
+	}
+	tbody > tr.success,
+	tbody > tr.success > th,
+	tbody > tr.success > td,
+	tbody > tr > th.success,
+	tbody > tr > td.success {
+		background-color: lighten($brand-success, 20);
+	}
+
+	// Info
+	thead.info th,
+	tfoot.info th {
+		background-color: lighten($brand-info, 20);
+		border-color: lighten($brand-info, 20);
+	}
+	tbody > tr.info,
+	tbody > tr.info > th,
+	tbody > tr.info > td,
+	tbody > tr > th.info,
+	tbody > tr > td.info {
+		background-color: lighten($brand-info, 20);
+	}
+
+	// warning
+	thead.warning th,
+	tfoot.warning th {
+		background-color: lighten($brand-warning, 20);
+		border-color: lighten($brand-warning, 20);
+	}
+	tbody > tr.warning,
+	tbody > tr.warning > th,
+	tbody > tr.warning > td,
+	tbody > tr > th.warning,
+	tbody > tr > td.warning {
+		background-color: lighten($brand-warning, 20);
+	}
+
+	// danger
+	thead.danger th,
+	tfoot.danger th {
+		background-color: lighten($brand-danger, 20);
+		border-color: lighten($brand-danger, 20);
+	}
+	tbody > tr.danger,
+	tbody > tr.danger > th,
+	tbody > tr.danger > td,
+	tbody > tr > th.danger,
+	tbody > tr > td.danger {
+		background-color: lighten($brand-danger, 20);
+	}
+
+	// brand
+	thead.brand th,
+	tfoot.brand th {
+		background-color: $brand-primary;
+		border-color: $brand-primary;
+	}
+	tbody > tr.brand,
+	tbody > tr.brand > th,
+	tbody > tr.brand > td,
+	tbody > tr > th.brand,
+	tbody > tr > td.brand {
+		background-color: $brand-primary;
+	}
+}
+
+// Responsive table wrapped
+@include media-breakpoint-down(md) {
+	.table-responsive {
+		width: 100%;
+	    margin-bottom: 15px;
+	    overflow-y: hidden;
+	    -ms-overflow-style: -ms-autohiding-scrollbar;
+	    min-height: .01%;
+	    overflow-x: auto;
+	    .table {
+	    	white-space: nowrap;
+	    }
+	    &.bordered {
+	    	border: 1px solid $table-border-color;
+	    }
+	}
+
+}

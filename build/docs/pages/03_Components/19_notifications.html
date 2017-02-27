@@ -1,0 +1,181 @@
+<h1>Notifications</h1>
+
+<p>
+    Notifications are handy <code>JavaScript</code> component for displaying messages to the user 
+    for whatever reason. Notifications are highligy customizable from both a <code>CSS</code> and 
+    <code>JavaScript</code> perspective.
+</p>
+
+<hr>
+
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Example</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="options" data-waypoint-speed="500">Options</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-sm floor-sm" data-waypoint="example">
+    <h2>Example</h2>
+    <p>
+        To display a notification, call the <code>Notifications</code> module with your options via the 
+        module loader.
+    </p>
+    <div class="code-content-example">
+        <button class="js-notif-trigger-1 btn btn-success">
+            Show Notification
+        </button>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelector('.js-notif-trigger-1').addEventListener('click', function () {
+                    Modules.require('Notifications', {
+                        type : 'success',
+                        msg  : 'Hello! I\'m a notification.',
+                    });
+                });
+            });
+        </script>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Modules.require('Notifications', {
+    type : 'success',
+    msg  : 'Hello! I\'m a notification.',
+});
+-->
+</code></pre>
+
+</div>
+
+<blockquote>
+    <p>
+        Don't forget to create the global notifcation wrap on all your pages! 
+        This should be an empty div before the closing body tag with the classname as 
+        <code>.notification-wrap .js-nofification-wrap</code>.
+    </p>
+</blockquote>
+
+<hr>
+
+<div class="row roof-sm floor-sm" data-waypoint="options">
+    <h2>Options</h2>
+    <p>
+        Notifications can also be used to confirm a user action via callbacks. 
+        Below is an example of a notification with all options. Please see the table for full details details.
+    </p>
+    <div class="code-content-example">
+        <button class="js-notif-trigger-2 btn btn-success">
+            Show Notification
+        </button>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelector('.js-notif-trigger-2').addEventListener('click', function () {
+                    Modules.require('Notifications', {
+                        type           : 'default',
+                        msg            : 'Are you POSITIVE you want to do this?',
+                        isCallback     :  true,
+
+                        cancelText     : 'No thanks',
+                        cancelClass    : 'btn-default',
+                        onCancel       :  function(args) { console.log(args); },
+                        onCancelArgs   : ['variable1', 'variable2', 'variable3'],
+                        
+                        confirmText    : 'Yes do something',
+                        confirmClass   : 'btn-success',
+                        onConfirm      : function(args) { console.log(args); },
+                        onConfirmArgs  : ['variable1', 'variable2', 'variable3'],
+                    });
+                });
+            });
+        </script>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Modules.require('Notifications', {
+    type           : 'primary',
+    msg            : 'Are you POSITIVE you want to do this?',
+    isCallback     :  true,
+
+    cancelText     : 'No thanks',
+    cancelClass    : 'btn-default',
+    onCancel       :  function(args) { console.log(args); },
+    onCancelArgs   : ['variable1', 'variable2', 'variable3'],
+    
+    confirmText    : 'Yes do something',
+    confirmClass   : 'btn-success',
+    onConfirm      : function(args) { console.log(args); },
+    onConfirmArgs  : ['variable1', 'variable2', 'variable3'],
+});
+-->
+</code></pre>
+
+    <br>
+    <h4>Constructor Arguements</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Option key</th>
+                <th>Value</th>
+                <th>Behavior</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">type</th>
+                <td><code>string</code><code>primary|info|success|warning|danger</code></td>
+                <td>Contextualizes styling.</td>
+            </tr>
+            <tr>
+                <th scope="row">msg</th>
+                <td><code>string</code></td>
+                <td>Text to be displayed inside the notification.</td>
+            </tr>
+            <tr>
+                <th scope="row">isCallback</th>
+                <td><code>boolean</code></td>
+                <td>Does the notification have a callback when it is closed by the user?</td>
+            </tr>
+            <tr>
+                <th scope="row">cancelText</th>
+                <td><code>string</code></td>
+                <td>Text to be displayed in cancel button.</td>
+            </tr>
+            <tr>
+                <th scope="row">confirmText</th>
+                <td><code>string</code></td>
+                <td>Text to be displayed in comfirm button.</td>
+            </tr>
+            <tr>
+                <th scope="row">cancelClass</th>
+                <td><code>string</code></td>
+                <td>Classname to be applied to cancel button.</td>
+            </tr>
+            <tr>
+                <th scope="row">confirmClass</th>
+                <td><code>string</code></td>
+                <td>Classname to be applied to comfirm button.</td>
+            </tr>
+            <tr>
+                <th scope="row">onCancel</th>
+                <td><code>function</code></td>
+                <td>Javascript function to be called when the cancel button is clicked.</td>
+            </tr>
+            <tr>
+                <th scope="row">onCancelArgs</th>
+                <td><code>array</code></td>
+                <td>Array of arguements to be passed to the cancel callback.</td>
+            </tr>
+            <tr>
+                <th scope="row">onConfirm</th>
+                <td><code>string</code></td>
+                <td>Javascript function to be called when the confirm button is clicked.</td>
+            </tr>
+            <tr>
+                <th scope="row">onConfirmArgs</th>
+                <td><code>array</code></td>
+                <td>Array of arguements to be passed to the confirm callback.</td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>

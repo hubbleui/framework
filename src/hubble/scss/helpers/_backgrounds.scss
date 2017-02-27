@@ -1,0 +1,21 @@
+// Brand
+.bg-primary      { background-color: $brand-primary}
+.bg-secondary    { background-color: $brand-secondary}
+
+// Greys
+.bg-gray-dark 	  { background-color: $gray-dark}
+.bg-gray 	 	  { background-color: $gray}
+.bg-gray-light 	  { background-color: $gray-light}
+.bg-gray-lighter  { background-color: $gray-lighter}
+.bg-gray-lightest { background-color: $gray-lightest}	
+
+// Accents
+.bg-success      { background-color: $brand-success }							
+.bg-info         { background-color: $brand-info }
+.bg-danger       { background-color: $brand-danger }
+.bg-warning      { background-color: $brand-warning }
+
+// Defaults
+.bg-transparent  { background-color: transparent }
+.bg-white        { background-color: #fff }
+.bg-black        { background-color: $black }
