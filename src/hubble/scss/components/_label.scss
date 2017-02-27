@@ -1,9 +1,8 @@
 // Labels
 .label {
-    @extend %text-center;
-    @extend %font-normal;
-    @extend %border-radius;
-	@extend %inline;
+    text-align: center;
+    border-radius: $border-radius;
+	display: inline;
     background-color: $label-default-bg;
     color: $label-default-color;
     font-size: $label-font-size;
@@ -12,24 +11,24 @@
     white-space: nowrap;
     vertical-align: baseline;
     &.label-primary {
-        @extend %color-white;
-        @extend %bg-primary;
+        color: $white;
+        background-color: $brand-primary;
     }
     &.label-success {
-        @extend %color-white;
-        @extend %bg-success;
+        color: $white;
+        background-color: $brand-success;
     }
     &.label-info {
-        @extend %color-white;
-        @extend %bg-info;
+        color: $white;
+        background-color: $brand-info;
     }
     &.label-warning {
-        @extend %color-white;
-        @extend %bg-warning;
+        color: $white;
+        background-color: $brand-warning;
     }
     &.label-danger {
-        @extend %color-white;
-        @extend %bg-danger;
+        color: $white;
+        background-color: $brand-danger;
     }
 
 }

@@ -8,20 +8,20 @@
 	}
 }
 .btn-upload {
-	@extend %relative;
+	position: relative;
 	cursor: pointer;
 }
 .btn-upload .upload-cover {
-	@extend %absolute;
-	@extend %left-0;
-	@extend %top-0;
-	@extend %full-width;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
 	cursor: pointer;
 }
 .btn-upload input {
-	@extend %opacity-hide;
-	@extend %block;
-	@extend %full-width;
+	opacity: 0;
+	display: block;
+	width: 100%;
 	cursor: pointer;
 }
 .btn-upload.btn-sm,

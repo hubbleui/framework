@@ -1,13 +1,13 @@
 .form-result {
-    @extend %no-display;
-    @extend %hide-overflow;
+    display: none;
+    overflow: hidden;
     padding-top: 20px;
     backface-visibility: visible !important;
     animation-name: flipInX;
     .msg {
-        @extend %full-width;
-        @extend %opacity-hide;
-        @extend %no-display;
+        width: 100%;
+        opacity: 0;
+        display: none;
         margin-bottom: 0;
     }
 }
@@ -16,7 +16,7 @@ form.danger  .form-result,
 form.info    .form-result,
 form.warning .form-result,
 form.success .form-result {
-    @extend %block;
+    display: block;
     animation-duration: .5s;
     animation-fill-mode: both;
 }
@@ -24,8 +24,8 @@ form.danger .msg-danger,
 form.info .msg-info,
 form.warning .msg-warning,
 form.success .msg-success {
-    @extend %block;
-    @extend %opacity-show;
+    display: block;
+    opacity: 1;
 }
 
 

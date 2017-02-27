@@ -1,10 +1,10 @@
 .pagination {
-    @extend %list-style-none;
-    @extend %inline-block;
-    @extend %no-padding;
-    @extend %no-margin;
-    @extend %border-radius-3;
-    @extend %hide-overflow;
+    list-style: none;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    border-radius: $border-radius;
+    overflow: hidden;
 }
 .pagination > li {
     display: inline;
@@ -29,7 +29,7 @@
     z-index: 3;
     color: #fff;
     cursor: default;
-    @extend %bg-primary;
+    background-color: $brand-primary;
     border-color: $brand-primary;
 }
 
@@ -37,7 +37,7 @@
 .pagination>li>a:hover, 
 .pagination>li>span:focus, 
 .pagination>li>span:hover {
-    @extend %color-primary;
+    color: $brand-primary;
     background-color: $gray-lighter;
 }
 .pagination>li.elips>span:focus,
@@ -77,7 +77,7 @@
         display: inline-block;
         > a,
         > span {
-            @extend %border-radius;
+            border-radius: $border-radius;
         }
     }
 }

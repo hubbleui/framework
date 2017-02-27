@@ -1,34 +1,33 @@
 // Hamburger
 .hamburger {
-    @extend %no-margin;
-    @extend %bg-primary;
-    @extend %color-white;
-    @extend %hide-overflow;
-    @extend %border-radius-1;
-    @extend %bg-transparent;
-    @extend %inline-block;
-    @include button-unstyled();
+    margin: 0;
+    background-color: $brand-primary;
+    color: $white;
+    overflow: hidden;
+    border-radius: $border-radius;
+    background-color: transparent;
+    display: inline-block;
     padding-top: 10px;
     padding-bottom: 10px;
     height: 35px;
     width: 40px;
     text-indent: -60px;
     line-height: 23px;
+    @include button-unstyled();
 }
 .hamburger .hamburger-bun,
 .hamburger .hamburger-patty {
-    @extend %block;
-    @extend %ease;
-    @extend %bg-primary;
+    display: block;
+    background-color: $brand-primary;
     width: 20px;
     height: 1px;
     margin: 0 auto 6px;
-   
+    transition: $base-easing-time $base-easing;
 }
 .hamburger.active .hamburger-bun,
 .hamburger.active .hamburger-patty {
     background-color: $brand-primary;
-    @extend %relative;
+    position: relative;
 }
 .hamburger.active .hamburger-bun--top {
     top: 6px;

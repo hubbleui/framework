@@ -1,10 +1,10 @@
 .btn {
-    @extend %inline-block;
-    @extend %font-normal;
-    @extend %text-center;
-    @extend %relative;
-    @extend %hide-overflow;
-    @extend %border-radius;
+    display: inline-block;
+    font-weight: normal;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: $border-radius;
     font-size: $btn-font-size;
     line-height: $btn-font-size + .3;
     background-color: $btn-default-bg;

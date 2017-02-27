@@ -1,14 +1,14 @@
 .popover {
-    @extend %absolute;
-    @extend %border-radius;
+    position: absolute;
+    border-radius: $border-radius;
     background-color: $popover-bg;
     max-width: $popover-max-width;
     box-shadow: $box-shadow-out;
     z-index: $z-index-popover;
 }
 .popover-title {
-    @extend %bg-gray;
-    @extend %font-bold;
+    background-color: $gray;
+    font-weight: $text-bold;
     font-size: 1.4rem;
     background-color: $popover-title-bg;
     padding: $popover-content-padding;
@@ -21,14 +21,14 @@
     border-top: none;
 }
 .popover-title .glyph-icon {
-    @extend %absolute;
+    position: absolute;
     cursor: pointer;
     top: 12px;
     right: 10px;
     opacity: 0.3;
 }
 .popover-title .glyph-icon:hover {
-    @extend %opacity-show;
+    opacity: 1;
 }
 
 
@@ -76,8 +76,8 @@
 
 // Primary
 .popover-primary .popover-title {
-    @extend %color-white;
-    @extend %bg-primary;
+    color: $white;
+    background-color: $brand-primary;
 }
 .popover-primary.arrow-nw:after,
 .popover-primary.arrow-n:after,
@@ -88,8 +88,8 @@
 
 // Success
 .popover-success .popover-title {
-    @extend %color-white;
-    @extend %bg-success;
+    color: $white;
+    background-color: $brand-success;
 }
 .popover-success.arrow-nw:after,
 .popover-success.arrow-n:after,
@@ -99,8 +99,8 @@
 
 // Info
 .popover-info .popover-title {
-    @extend %color-white;
-    @extend %bg-info;
+    color: $white;
+    background-color: $brand-info;
 }
 .popover-info.arrow-nw:after,
 .popover-info.arrow-n:after,
@@ -110,8 +110,8 @@
 
 // Warning
 .popover-warning .popover-title {
-    @extend %color-white;
-    @extend %bg-warning;
+    color: $white;
+    background-color: $brand-warning;
 }
 .popover-warning.arrow-nw:after,
 .popover-warning.arrow-n:after,
@@ -121,8 +121,8 @@
 
 // Danger
 .popover-danger .popover-title {
-    @extend %color-white;
-    @extend %bg-danger;
+    color: $white;
+    background-color: $brand-danger;
 }
 .popover-danger.arrow-nw:after,
 .popover-danger.arrow-n:after,

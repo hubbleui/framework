@@ -2,22 +2,22 @@ input[type=checkbox].switch {
     display: none;
 
     + label {
-        @extend %relative;
-        @extend %inline-block;
+        position: relative;
+        display: inline-block;
         padding-left: 46px;
         cursor: pointer;
         &:before, 
         &:after {
-            @extend %empty-content;
-            @extend %absolute;
-            @extend %no-margin;
-            @extend %top-50;
+            content: "";
+            position: absolute;
+            margin: 0;
+            top: 50%;
             outline: none;
             transform: translate(0, -50%);
             transition: all 0.3s ease;
         }
         &:before {
-            @extend %bg-gray;
+            background-color: $gray;
             left: 1px;
             width: 34px;
             height: 14px;

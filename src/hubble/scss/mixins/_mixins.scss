@@ -1,0 +1,108 @@
+// Breakpoints
+@mixin media-breakpoint-up($name) {
+	$width: map-get($breakpoints, $name);
+	@if $width > 0 {
+		@media (min-width: $width) {
+			@content;
+		}
+	}
+	@else {
+		@content;
+	}
+  	
+}
+@mixin media-breakpoint-down($name) {
+  	$width: map-get($breakpoints, $name);
+	@if $width > 0 {
+		@media (max-width: $width) {
+			@content;
+		}
+	}
+	@else {
+		@content;
+	}
+}
+
+// Utility
+@function minusPercent($value, $percentage) {
+	$diff: $value * ($percentage / 100);
+	@return $value - $diff;
+}
+@function addPercent($value, $percentage) {
+	$diff: $value * ($percentage / 100);
+	@return $value + $diff;
+}
+
+// Font smoothing
+@mixin fontSmooth() {
+	@if $font-smoothing {
+   		-webkit-font-smoothing: antialiased;
+    	-moz-osx-font-smoothing: grayscale;
+   	}
+}
+
+// Text ellipsis
+@mixin ellipsis {
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// Clearfix
+@mixin clearfix {
+	&:after {
+    	content: "";
+    	display: table;
+    	clear: both;
+  	}
+}
+
+// Sticky footer
+@mixin stickyFooter($footerheight) {
+  	.page-container {
+		margin-bottom: -$footerheight; 
+	}
+	.sticky-footer, .page-container:after {
+		height: $footerheight; 
+	}
+}
+
+// Make icon
+@mixin glyphIcon {
+    font-family: 'FontAwesome';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: $base-line-height;
+
+    /* Enable Ligatures ================ */
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga=1";
+    -moz-font-feature-settings: "liga";
+    -ms-font-feature-settings: "liga" 1;
+    -o-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// Unstyled button
+@mixin button-unstyled() {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+
+    &:hover,
+    &.hover,
+    &:active,
+    &.active {
+        background-color: transparent;
+        border: none;
+        outline: none;
+    }
+}

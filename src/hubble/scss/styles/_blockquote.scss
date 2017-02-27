@@ -57,7 +57,7 @@ blockquote {
         display: block;
         font-size: 85%;
         line-height: 1.42857143;
-        @extend %color-gray-dark;
+        color: $gray-dark;
     }
 
     &.bq-danger,

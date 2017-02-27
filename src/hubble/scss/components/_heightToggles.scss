@@ -1,4 +1,4 @@
 .collapsed {
-	@extend %hide-overflow;
+	overflow: hidden;
 	height: 0;
 }

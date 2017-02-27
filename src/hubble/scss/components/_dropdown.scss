@@ -1,25 +1,25 @@
 // Base styles
 .drop-container {
-    @extend %relative;
-    @extend %inline-block;
+    position: relative;
+    display: inline-block;
 }
 .btn-dropdown + .drop-menu {
-    @extend %no-display;
+    display: none;
 }
 .btn-dropdown.active + .drop-menu {
-    @extend %block;
+    display: block;
 }
 .drop-menu {
-    @extend %absolute;
-    @extend %full-width;
-    @extend %left-0;
-    @extend %border-radius;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    border-radius: $border-radius;
     z-index: $z-index-dropdown;
     top: ($btn-pad-y * 2 ) + ($btn-font-size * 2);
     min-width: $dropdown-width;
     width: auto;
     .drop {
-        @extend %border-radius;
+        border-radius: $border-radius;
         background-color: $dropdown-bg;
         box-shadow: $box-shadow-out;
         padding: 8px 0px;
@@ -28,35 +28,35 @@
 
 // Dropdown list
 .drop ul {
-    @extend %list-style-none;
-    @extend %no-margin;
-    @extend %no-padding;
+    list-style: none;
+    margin: 0;
+    padding: 0;
     li {
-        @extend %no-padding;
-        @extend %block;
-        @extend %full-width;
-        @extend %hide-overflow;
-        @extend %relative;
-        @extend %no-margin;
+        padding: 0;
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        margin: 0;
         font-size: $dropdown-font-size;
         border-top: 1px solid $dropdown-border-color;
         a {
-            @extend %relative;
-            @extend %bg-transparent;
-            @extend %full-width;
-            @extend %text-ellipses;
-            @extend %block;
+            position: relative;
+            background-color: transparent;
+            width: 100%;
+            @include ellipsis();
+            display: block;
             color: $dropdown-color;
             padding: 12px;
             &:hover,
             &.selected {
-                @extend %no-text-decoration;
+                text-decoration: none;
                 background-color: $dropdown-hover-bg;
             }
         }
         // Show tick
         a.selected:after {
-            @extend %absolute;
+            position: absolute;
             color: $dropdown-tick-color;
             right: 12px;
             font-family: 'IcoMoon';
@@ -65,7 +65,7 @@
 
     }
     .drop-header {
-        @extend %font-bolder;
+        font-weight: $text-bolder;
         padding: 0px 12px 8px 12px;
         border-bottom: 1px solid $dropdown-divider-color;
     }
@@ -143,6 +143,3 @@
 .drop-menu.raised.arrow-sw:before {
     border-top-color: #7b7b7b;
 }
-
-   
-

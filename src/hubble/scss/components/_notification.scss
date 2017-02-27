@@ -1,18 +1,18 @@
 .notification-wrap {
-	@extend %fixed;
-	@extend %right-0;
-	@extend %left-0;
-	@extend %margin-center;
-	@extend %no-display;
+	position: fixed;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	display: none;
 	z-index: $z-index-notification;
 	top: -2px;
 	width: 100%;
 	.msg-buttons {
-		@extend %text-center;
+		text-align: center;
 	}
 }
 .notification-wrap.active {
-	@extend %block;
+	display: block;
 }
 .notification-wrap .msg {
 	cursor: pointer;

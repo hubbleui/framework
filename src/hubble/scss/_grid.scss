@@ -8,8 +8,8 @@
 
 // basic rows
 .row {
-    @extend %clearfix;
-    @extend %full-width;
+    @include clearfix;
+    width: 100%;
 }
 
 // basic columns

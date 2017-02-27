@@ -4,7 +4,6 @@
 .serif        { font-family: $font-family-monospace }
 .heading-font { font-family: $headings-font-family }
 
-
 // Font Weights
 .font-lightest { font-weight: $text-lightest }
 .font-light    { font-weight: $text-light }
@@ -16,7 +15,7 @@
 // Font Styles
 .text-normal    { font-style: normal; }
 .text-italic    { font-style: italic; }
-.text-ellipses  { @include ellipses; }
+.text-ellipses  { @include ellipsis(); }
 .text-strike    { text-decoration: line-through; }
 
 // Text Modifications

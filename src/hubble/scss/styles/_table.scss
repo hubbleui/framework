@@ -1,21 +1,21 @@
 .table {
 
 	caption {
-		@extend %color-gray;
-		@extend %text-left;
+		color: $gray;
+		text-align: left;
 	    padding-top: 8px;
 	    padding-bottom: 8px;
 	}
 
-	@extend %full-width;
+	width: 100%;
 	font-size: $table-font-size;
 	color: $table-color;
 	background-color: $table-bg;
 	thead,
 	tfoot {		
 		th {
-			@extend %font-bolder;
-			@extend %text-left;
+			font-weight: $text-bolder;
+			text-align: left;
 			padding: $table-cell-pad-y $table-cell-pad-x;
     		background-color: $gray;
     		border-color: $gray;
@@ -26,7 +26,7 @@
 	> tfoot > tr:first-child > th,
 	> thead > tr:first-child > th,
 	> tbody > tr:first-child > th {
-		@extend %font-bold;
+		font-weight: $text-bold;
 	}
 
 	> tbody > tr > td,
@@ -36,7 +36,7 @@
 	> thead > tr > td,
 	> thead > tr > th {
 		padding: $table-cell-pad-y $table-cell-pad-x;
-		@extend %text-left;
+		text-align: left;
 		border-bottom: 1px solid $table-border-color;
 	}
 	&.table-bordered {
@@ -54,7 +54,7 @@
 		}
 	}
 	&.table-transparent {
-		@extend %bg-transparent;
+		background-color: transparent;
 	}
 
 

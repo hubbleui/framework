@@ -1,7 +1,6 @@
 .badge {
-	@extend %font-normal;
-    @extend %inline-block;
-    @extend %text-center;
+    display: inline-block;
+    text-align: center;
     padding: $badge-pad-y $badge-pad-x;
     color: $badge-default-color;
     background-color: $badge-default-bg;
@@ -50,19 +49,19 @@
 // In buttons
 .btn {
     &.btn-primary .badge {
-        @extend %color-primary;
+        color: $brand-primary;
     }
     &.btn-info .badge {
-        @extend %color-info;
+        color: $brand-info;
     }
     &.btn-success .badge {
-        @extend %color-success;
+        color: $brand-success;
     }
     &.btn-warning .badge {
-        @extend %color-warning;
+        color: $brand-warning;
     }
     &.btn-danger .badge {
-        @extend %color-danger;
+        color: $brand-danger;
     }
     &.with-badge {
         overflow: visible;

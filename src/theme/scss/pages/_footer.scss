@@ -1,0 +1,101 @@
+// FOOTER STYLES
+.site-footer {
+    background-color: #312f38;
+    color: #fff;
+    .sitemap {
+	    display: inline-block;
+	    width: 100%;
+	    li {
+	    	margin: 20px 0;
+	    	display: block;
+	    	text-align: center;
+	    	a {
+	    		color: #fff;
+	    		position: relative;
+	    		transition: .2s ease;
+	    		&:after {
+	    			content: "";
+    			    bottom: -8px;
+    			    height: 1px;
+					width: 0;
+					left: 0;
+					right: 0;
+					margin: 0 auto;
+					position: absolute;
+					background-color: $brand-primary;
+					transition: .2s ease;
+	    		}
+	    		&:hover {
+	    			text-decoration: none;
+	    			color: $brand-primary;
+	    			&:after {
+	    				width: 100%;
+	    			}
+	    		}
+	    	}
+	    }
+	}
+	.logo {
+    	height: 48px;
+    	width: 100%;
+    	margin-bottom: 20px;
+	}
+	small {
+		text-align: center;
+    	display: block;
+	}
+	.social-links {
+		text-align: center;
+		padding: 50px 0;
+	}
+}
+
+.social-share {
+	display: inline-block;
+    height: 60px;
+    width: 60px;
+    font-size: 22px;
+    margin-right: 5px;
+    text-decoration: none;
+    color:#fff;
+    border-radius: 2px;
+    transition: .2s ease;
+    text-align: center;
+}
+.social-share .icon {
+    margin-top: 18px;
+    color: #fff;
+    &:hover {
+    	color: #fff;
+    }
+}
+.social-share.facebook {
+    background-color: #3B5898
+}
+.social-share.facebook:hover {
+    background-color: #31497e
+}
+.social-share.twitter {
+    background-color: #1AB4EF
+}
+.social-share.twitter:hover {
+    background-color: #179dd1
+}
+.social-share.google {
+    background-color: #dc4a38
+}
+.social-share.google:hover {
+    background-color: #bb3f2f
+}
+.social-share.github {
+    background-color: #6e2a80
+}
+.social-share.github:hover {
+    background-color: #5e246d
+}
+.social-share.to-top {
+    background-color: $brand-primary;
+}
+.social-share.to-top:hover {
+    background-color: darken($brand-primary, 5);
+}

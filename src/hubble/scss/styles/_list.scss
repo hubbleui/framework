@@ -37,9 +37,9 @@ dl dd:last-child {
     margin-bottom: 0;
 }
 .dl-horizontal dt {
-    @extend %float-left;
-    @extend %text-right;
-    @extend %text-ellipses;
+    float: left;
+    text-align: right;
+    @include ellipsis();
     width: 160px;
     clear: left;
 }

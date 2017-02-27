@@ -20,8 +20,8 @@ input[type="checkbox"]:focus {
     padding-left: 20px;
     
     label {
-        @extend %inline-block;
-        @extend %relative;
+        display: inline-block;
+        position: relative;
         cursor: pointer;
         vertical-align: middle;
         position: relative;
@@ -29,12 +29,12 @@ input[type="checkbox"]:focus {
         min-height: 22px;
         margin-bottom: 0;
         &:before {
-            @extend %empty-content;
-            @extend %inline-block;
-            @extend %absolute;
-            @extend %left-0;
-            @extend %border-radius-2;
-            @extend %bg-white;
+            content: "";
+            display: inline-block;
+            position: absolute;
+            left: 0;
+            border-radius: 2px;
+            background-color: $white;
             width: 20px;
             height: 20px;
             margin-left: -20px;
@@ -58,9 +58,9 @@ input[type="checkbox"]:focus {
     }
 
     input[type=checkbox] {
-        @extend %absolute;
-        @extend %no-display;
-        @extend %opacity-hide;
+        position: absolute;
+        display: none;
+        opacity: 0;
         margin-left: -20px;
         margin-top: 0;
         margin-bottom: 0;
@@ -108,7 +108,7 @@ input[type="checkbox"]:focus {
     &.checkbox-primary {
         input[type=checkbox] {
             &:checked + label:before {
-                @extend %bg-primary;
+                background-color: $brand-primary;
                 border-color: $brand-primary;
             }
             &:checked + label:after {
@@ -119,7 +119,7 @@ input[type="checkbox"]:focus {
     &.checkbox-info {
         input[type=checkbox] {
             &:checked + label:before {
-                @extend %bg-info;
+                background-color: $brand-info;
                 border-color: $brand-info;
             }
             &:checked + label:after {
@@ -130,7 +130,7 @@ input[type="checkbox"]:focus {
     &.checkbox-success {
         input[type=checkbox] {
             &:checked + label:before {
-                @extend %bg-success;
+                background-color: $brand-success;
                 border-color: $brand-success;
             }
             &:checked + label:after {
@@ -141,7 +141,7 @@ input[type="checkbox"]:focus {
     &.checkbox-warning {
         input[type=checkbox] {
             &:checked + label:before {
-                @extend %bg-warning;
+                background-color: $brand-warning;
                 border-color: $brand-warning;
             }
             &:checked + label:after {
@@ -152,7 +152,7 @@ input[type="checkbox"]:focus {
     &.checkbox-danger {
         input[type=checkbox] {
             &:checked + label:before {
-                @extend %bg-danger;
+                background-color: $brand-danger;
                 border-color: $brand-danger;
             }
             &:checked + label:after {
@@ -168,7 +168,7 @@ input[type="checkbox"]:focus {
                 border-width: 1px;
             }
             &:checked + label:after {
-               @extend %color-primary;
+               color: $brand-primary;
             }
         }
     }

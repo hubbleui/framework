@@ -1,9 +1,9 @@
 .form-field {
-    @extend %relative;
-    @extend %inline-block;    
+    position: relative;
+    display: inline-block;    
     input,textarea, select {
-        @extend %block;
-        @extend %full-width;
+        display: block;
+        width: 100%;
         font-size: $input-font-size;
         padding: $input-pad-y $input-pad-x;
         border-radius: $border-radius;
@@ -21,7 +21,7 @@
         }
         &.disabled,
         &:disabled {
-            @extend %bg-gray-light;
+            background-color: $gray-light;
             opacity: 0.4;
             cursor: not-allowed;
         }
@@ -37,8 +37,8 @@
         background-repeat: no-repeat;
     }
     label {
-        @extend %block;
-        @extend %full-width;
+        display: block;
+        width: 100%;
         font-size: 1.3rem;
         margin-bottom: 5px;
         font-weight: $text-bolder;
@@ -52,17 +52,17 @@
     }
     .help-danger,
     .help-warning {
-        @extend %hide-overflow;
-        @extend %no-margin;
-        @extend %font-bold;
+        overflow: hidden;
+        margin: 0;
+        font-weight: $text-bold;
         max-height: 0;
         transition: max-height $base-easing-time $base-easing;
     }
     .help-danger {
-        @extend %color-danger;
+        color: $brand-danger;
     }
     .help-warning {
-        @extend %color-warning;
+        color: $brand-warning;
     }
     &.danger {
         input,textarea, select {
