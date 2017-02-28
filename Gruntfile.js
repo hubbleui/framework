@@ -99,6 +99,17 @@ module.exports = function(grunt) {
             },
         },
 
+        import: {
+            core: {
+                src: 'src/hubble/js/hubble.js',
+                dest: 'build/js/hubble.js',
+            },
+            theme: {
+                src: 'src/theme/js/theme.js',
+                dest: 'build/js/theme.js',
+            }
+        },
+
         // Concat js 
         concat: {
 
@@ -123,55 +134,6 @@ module.exports = function(grunt) {
                 dest: 'build/css/hubble.min.css',
             },
 
-            // js core
-            js_core: {
-                src: [
-
-                    // Module ioc
-                    'src/hubble/js/module-loader.js',
-
-                    // Helper
-                    'src/hubble/js/helper/open.js',
-                    'src/hubble/js/helper/dom.js',
-                    'src/hubble/js/helper/string.js',
-                    'src/hubble/js/helper/array.js',
-                    'src/hubble/js/helper/misc.js',
-                    'src/hubble/js/helper/events.js',
-                    'src/hubble/js/helper/close.js',
-
-                    // Modules
-                    'src/hubble/js/modules/SmoothScroll.js',
-                    'src/hubble/js/modules/Waypoint.js',
-                    'src/hubble/js/modules/Scrollbar.js',
-                    'src/hubble/js/modules/Ajax.js',
-                    'src/hubble/js/modules/ButtonRipple.js',
-                    'src/hubble/js/modules/Collapse.js',
-                    'src/hubble/js/modules/Dropdown.js',
-                    'src/hubble/js/modules/Events.js',
-                    'src/hubble/js/modules/FileInput.js',
-                    'src/hubble/js/modules/Flickity.js',
-                    'src/hubble/js/modules/Modal.js',
-                    'src/hubble/js/modules/Notification.js',
-                    'src/hubble/js/modules/Popover.js',
-                    'src/hubble/js/modules/Tabs.js',
-                    'src/hubble/js/modules/ToggleHeight.js',
-                    'src/hubble/js/modules/InputMasker.js',
-                    'src/hubble/js/modules/InputMasks.js',
-                    'src/hubble/js/modules/FormValidator.js',
-
-                ],
-                dest: 'build/js/hubble.js',
-            },
-
-            // js theme
-            js_theme: {
-                src: [
-                    'src/theme/js/theme.js'
-                ],
-                dest: 'build/js/theme.js',
-            },
-
-
         },
 
         // Uglify js
@@ -195,7 +157,7 @@ module.exports = function(grunt) {
             },
             js: {
                 files: 'src/**/*.js',
-                tasks: ['concat', 'uglify'],
+                tasks: ['import', 'uglify'],
                 options: {
                     interrupt: true,
                 },
@@ -205,12 +167,13 @@ module.exports = function(grunt) {
     });
 
     grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.loadNpmTasks('grunt-import');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-autoprefixer');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('default', [ 'sass', 'autoprefixer', 'cssmin', 'concat', 'uglify']);
+    grunt.registerTask('default', [ 'sass', 'autoprefixer', 'concat', 'cssmin', 'import', 'uglify']);
 
 }
