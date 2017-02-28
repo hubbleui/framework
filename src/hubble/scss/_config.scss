@@ -153,17 +153,17 @@ $btn-pad-y:                 1.3rem !default;
 $btn-font-size:             1.1rem !default;
 $btn-font-weight:           $text-bolder !default;
 
-$btn-xs-pad-x:              minusPercent($btn-pad-x, 30) !default;
-$btn-xs-pad-y:              minusPercent($btn-pad-y, 30) !default;
+$btn-xs-pad-x:              _minusPercent($btn-pad-x, 30) !default;
+$btn-xs-pad-y:              _minusPercent($btn-pad-y, 30) !default;
 
-$btn-sm-pad-x:              minusPercent($btn-pad-x, 20) !default;
-$btn-sm-pad-y:              minusPercent($btn-pad-y, 20) !default;
+$btn-sm-pad-x:              _minusPercent($btn-pad-x, 20) !default;
+$btn-sm-pad-y:              _minusPercent($btn-pad-y, 20) !default;
 
-$btn-lg-pad-x:              addPercent($btn-pad-x, 30) !default;
-$btn-lg-pad-y:              addPercent($btn-pad-y, 30) !default;
+$btn-lg-pad-x:              _addPercent($btn-pad-x, 30) !default;
+$btn-lg-pad-y:              _addPercent($btn-pad-y, 30) !default;
 
-$btn-xl-pad-x:              addPercent($btn-pad-x, 50) !default;
-$btn-xl-pad-y:              addPercent($btn-pad-y, 50) !default;
+$btn-xl-pad-x:              _addPercent($btn-pad-x, 50) !default;
+$btn-xl-pad-y:              _addPercent($btn-pad-y, 50) !default;
 
 $btn-default-bg:            $gray-light !default;
 $btn-default-bg-hover:      darken($gray-light, 10);

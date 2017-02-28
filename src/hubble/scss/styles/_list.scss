@@ -39,7 +39,7 @@ dl dd:last-child {
 .dl-horizontal dt {
     float: left;
     text-align: right;
-    @include ellipsis();
+    @include _ellipsis();
     width: 160px;
     clear: left;
 }

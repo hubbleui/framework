@@ -3,12 +3,12 @@
 .container-fluid {
     margin-left: auto;
     margin-right: auto;
-    @include clearfix;
+    @include _clearfix;
 }
 
 // basic rows
 .row {
-    @include clearfix;
+    @include _clearfix;
     width: 100%;
 }
 

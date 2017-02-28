@@ -106,16 +106,16 @@
     line-height:  $circle-btn-font-size;
     padding: $btn-font-size;
     &.btn-xs {
-       padding: minusPercent($btn-font-size, 20);
+       padding: _minusPercent($btn-font-size, 20);
     }
     &.btn-sm {
-        padding: minusPercent($btn-font-size, 10);
+        padding: _minusPercent($btn-font-size, 10);
     }
     &.btn-lg {
-        padding: addPercent($btn-font-size, 30);
+        padding: _addPercent($btn-font-size, 30);
     }
     &.btn-xl {
-       padding: addPercent($btn-font-size, 50);
+       padding: _addPercent($btn-font-size, 50);
     }
 }
 

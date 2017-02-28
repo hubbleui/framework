@@ -15,7 +15,6 @@ module.exports = function(grunt) {
 
     // Sass compiler options
     var _sassOptions = {
-        loadPath: ['src/scss'],
         precision: 6,
         sourcemap: 'auto',
         style: 'expanded',
@@ -30,7 +29,21 @@ module.exports = function(grunt) {
 
         // Sass (scss)
         sass: {
-            // core
+
+            // Preminify icons, fonts, css rest
+            premin: {
+                options: {
+                    precision: 6,
+                    sourcemap: 'none',
+                    style: 'compressed',
+                    trace: true,
+                    bundleExec: false
+                },
+                files: {
+                    'src/hubble/scss/base/premin.min.css' : 'src/hubble/scss/base/premin.scss',
+                }
+            },
+            // hubble
             core: {
                 options: _sassOptions,
                 files: {
@@ -51,9 +64,16 @@ module.exports = function(grunt) {
             options: {
                 browsers: _browsers,
             },
+            // Hubble
             core: {
                 files: {
+                    'src/hubble/scss/base/premin.min.css' : 'src/hubble/scss/base/premin.min.css',
                     'build/css/hubble.css' : 'build/css/hubble.css',
+                }
+            },
+            // theme
+            theme: {
+                files: {
                     'build/css/theme.css' : 'build/css/theme.css',
                 }
             }
@@ -85,7 +105,26 @@ module.exports = function(grunt) {
             options: {
                 separator: '\n',
             },
-            core: {
+
+            // theme
+            css_core: {
+                src: [
+                    'src/hubble/scss/base/premin.min.css',
+                    'build/css/hubble.css'
+                ],
+                dest: 'build/css/hubble.css',
+            },
+            // theme minified
+            css_core_min: {
+                src: [
+                    'src/hubble/scss/base/premin.min.css',
+                    'build/css/hubble.min.css'
+                ],
+                dest: 'build/css/hubble.min.css',
+            },
+
+            // js core
+            js_core: {
                 src: [
 
                     // Module ioc
@@ -123,13 +162,16 @@ module.exports = function(grunt) {
                 ],
                 dest: 'build/js/hubble.js',
             },
-            // theme
-            theme: {
+
+            // js theme
+            js_theme: {
                 src: [
                     'src/theme/js/theme.js'
                 ],
                 dest: 'build/js/theme.js',
             },
+
+
         },
 
         // Uglify js
@@ -146,7 +188,7 @@ module.exports = function(grunt) {
         watch: {
             sass: {
                 files: 'src/**/*.scss',
-                tasks: ['sass', 'autoprefixer' ,'cssmin'],
+                tasks: ['sass', 'autoprefixer' ,'cssmin', 'concat:css_core', 'concat:css_core_min'],
                 options: {
                     interrupt: true,
                 },

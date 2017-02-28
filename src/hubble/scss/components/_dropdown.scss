@@ -44,7 +44,7 @@
             position: relative;
             background-color: transparent;
             width: 100%;
-            @include ellipsis();
+            @include _ellipsis();
             display: block;
             color: $dropdown-color;
             padding: 12px;

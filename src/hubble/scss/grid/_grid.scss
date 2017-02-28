@@ -14,14 +14,10 @@
 }
 
 // Rows
-@if $curr-grid == null {
-    .row {
-        @include clearfix;
-    }
-}
-@else {
+@if $curr-grid != null {
     .row-#{$curr-grid} {
-        @include clearfix;
+        width: 100%;
+        @include _clearfix;
     }
 }
 

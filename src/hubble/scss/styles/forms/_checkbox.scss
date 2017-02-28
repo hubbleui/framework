@@ -74,8 +74,10 @@ input[type="checkbox"]:focus {
                 transition: all .15s ease-in-out 0s;
             }
             + label:after {
-                @include glyphIcon;
+                font-family: 'FontAwesome';
                 content: "\f00c";
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
         }
         &:focus {

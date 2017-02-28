@@ -15,7 +15,7 @@
 // Font Styles
 .text-normal    { font-style: normal; }
 .text-italic    { font-style: italic; }
-.text-ellipses  { @include ellipsis(); }
+.text-ellipses  { @include _ellipsis(); }
 .text-strike    { text-decoration: line-through; }
 
 // Text Modifications

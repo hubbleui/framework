@@ -23,12 +23,12 @@ body {
     font-weight:      $base-font-weight;
     line-height:      $base-line-height;
     font-size:        1.45rem;
-    @include fontSmooth;
+    @include _fontSmooth;
 }
 input, select, label, button, textarea {
     font-family: $base-font-family;
     font-size:   $base-font-size;
-    @include fontSmooth;
+    @include _fontSmooth;
 }
 
 // Links
@@ -54,5 +54,5 @@ a {
 
 // Clearfix
 .clearfix {
-    @include clearfix();
+    @include _clearfix;
 }

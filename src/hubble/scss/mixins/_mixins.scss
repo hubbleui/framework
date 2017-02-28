@@ -1,3 +1,4 @@
+//================ PUBLIC ================//
 // Breakpoints
 @mixin media-breakpoint-up($name) {
 	$width: map-get($breakpoints, $name);
@@ -23,18 +24,29 @@
 	}
 }
 
+// Sticky footer
+@mixin stickyFooter($footerheight) {
+    .page-container {
+        margin-bottom: -$footerheight; 
+    }
+    .sticky-footer, .page-container:after {
+        height: $footerheight; 
+    }
+}
+
+//================ PRIVATE ================//
 // Utility
-@function minusPercent($value, $percentage) {
+@function _minusPercent($value, $percentage) {
 	$diff: $value * ($percentage / 100);
 	@return $value - $diff;
 }
-@function addPercent($value, $percentage) {
+@function _addPercent($value, $percentage) {
 	$diff: $value * ($percentage / 100);
 	@return $value + $diff;
 }
 
 // Font smoothing
-@mixin fontSmooth() {
+@mixin _fontSmooth() {
 	@if $font-smoothing {
    		-webkit-font-smoothing: antialiased;
     	-moz-osx-font-smoothing: grayscale;
@@ -42,52 +54,19 @@
 }
 
 // Text ellipsis
-@mixin ellipsis {
+@mixin _ellipsis {
 	overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 // Clearfix
-@mixin clearfix {
+@mixin _clearfix {
 	&:after {
     	content: "";
     	display: table;
     	clear: both;
   	}
-}
-
-// Sticky footer
-@mixin stickyFooter($footerheight) {
-  	.page-container {
-		margin-bottom: -$footerheight; 
-	}
-	.sticky-footer, .page-container:after {
-		height: $footerheight; 
-	}
-}
-
-// Make icon
-@mixin glyphIcon {
-    font-family: 'FontAwesome';
-    speak: none;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: $base-line-height;
-
-    /* Enable Ligatures ================ */
-    -webkit-font-feature-settings: "liga";
-    -moz-font-feature-settings: "liga=1";
-    -moz-font-feature-settings: "liga";
-    -ms-font-feature-settings: "liga" 1;
-    -o-font-feature-settings: "liga";
-    font-feature-settings: "liga";
-
-    /* Better Font Rendering =========== */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 // Unstyled button
