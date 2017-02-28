@@ -1,12 +1,13 @@
 /**
- * Material button wave component
- * 
- * This class manages the wave effect on material type buttons.
+ * Button ripple
+ *
+ * This module handles the 'wave' effect on click events.
+ *
  */
 (function() {
 
     /**
-     * @var JSHelper
+     * @var Helper
      */
     var Helper = Modules.require('JSHelper');
 
@@ -31,8 +32,9 @@
     };
 
     /**
-     * Module destructor
+     * Module destructor - removes event listeners
      *
+     * @constructor
      * @params null
      * @access public
      */
@@ -42,36 +44,36 @@
     }
 
     /**
-     * Bind click listener to containers
+     * Event binder - Binds all events on button click
      *
      * @params null
      * @access private
      */
     ButtonRipple.prototype._bind = function() {
         for (var i = 0; i < this._containers.length; i++) {
-            Helper.addEventListener(this._containers[i], 'click', this._invoke);
+            Helper.addEventListener(this._containers[i], 'click', this._eventHandler);
         }
     }
 
     /**
-     * Unbind listener to containers
+     * Event ubinder - Binds all event handlers on button click
      *
      * @params null
      * @access private
      */
     ButtonRipple.prototype._unbind = function() {
         for (var i = 0; i < this._containers.length; i++) {
-            Helper.removeEventListener(this._containers[i], 'click', this._invoke);
+            Helper.removeEventListener(this._containers[i], 'click', this._eventHandler);
         }
     }
 
     /**
-     * Click event handler
+     * Event handler - handles the wave
      *
-     * @param e event
+     * @params e event
      * @access private
      */
-    ButtonRipple.prototype._invoke = function(e) {
+    ButtonRipple.prototype._eventHandler = function(e) {
         e = e || window.event;
         var container  = this;
         var wave       = document.createElement('span');

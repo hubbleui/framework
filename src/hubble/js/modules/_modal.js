@@ -1,11 +1,26 @@
-(function() {
+/**
+ * Modal
+ *
+ * The Modal class is a utility class used to
+ * display a modal.
+ *
+ */
+ (function() {
 
-    // REQUIRES
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
 
-    // MODULE CONSTRUCTOR
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @params options obj
+     * @access public
+     * @return this
+     */
     var Modal = function(options) {
         
         this._options    = options;
@@ -67,10 +82,15 @@
         return this;    
     };
 
+    /**
+     * After options have parsed invoke the modal
+     *
+     * @access private
+     */
     Modal.prototype._invoke = function() {
         
         // Build the modal
-        this._buildStandardModal();
+        this._buildModal();
 
         // Render the modal        
         this._render();
@@ -81,6 +101,55 @@
         return this;
     }
 
+    /**
+     * Build the actual modal
+     *
+     * @access private
+     */
+    Modal.prototype._buildModal = function() {
+
+        var modal   = document.createElement('DIV');
+            modal.className   = 'modal-wrap';
+
+        var overlay = document.createElement('DIV');
+            overlay.className = 'modal-overlay '+this._options['overlay'];
+
+        var closeButton   = typeof this._options.closeText    === 'undefined'   ? '' : '<button type="button" class="btn js-modal-close">'+this._options.closeText+'</button>';
+        var confirmClass  = typeof this._options.confirmClass === 'undefined'   ? 'btn-primary' : this._options.confirmClass;
+        var confirmButton = typeof this._options.confirmText  === 'undefined'   ? '' : '<button type="button" class="btn '+confirmClass+' js-modal-close js-modal-confirm">'+this._options.confirmText+'</button>';
+        var icon          = typeof this._options.icon  === 'undefined' ? '' : '<div class="row floor-sm roof-sm text-center"><span class="modal-icon '+this._options.iconColor+' glyph-icon glyph-icon-'+this._options.icon+'"></spam></div>';
+        var extras        = typeof this._options.extras  === 'undefined' ? '' : this._options.extras;
+        Helper.innerHTML(modal, [
+            '<div class="modal-dialog js-modal-dialog">',
+                '<span class="modal-closer glyph-icon glyph-icon-times js-modal-cancel"></span>',
+                '<div class="card '+this._options.cardclass+' js-modal-panel">',
+                    '<div class="card-header '+this._options.headerclass+'">',
+                        '<h4>'+this._options.title+'</h4>',
+                    '</div>',
+                    '<div class="card-block text-center">',
+                            icon,
+                            '<p class="card-text">'+this._options.message+'</p>',
+                            extras,
+                            closeButton,
+                            confirmButton,
+                        '</div>',
+                        
+                    '</div>',
+                '</div>',
+            '</div>',
+        ]);
+
+        this._modal = modal;
+        this._overlay = overlay;
+        this._modalInner = Helper.$('.js-modal-dialog', modal);
+        this._fireBuilt();
+    }
+
+    /**
+     * Render the modal
+     *
+     * @access private
+     */
     Modal.prototype._render = function() {
         var _this = this;
         document.body.appendChild(this._overlay);
@@ -94,6 +163,11 @@
         Helper.addClass(document.body, 'hide-overflow');
     }
 
+    /**
+     * Fire render event
+     *
+     * @access private
+     */
     Modal.prototype._fireRender = function() {
         if (typeof this._options.onRender !== 'undefined') {
             var callback = this._options.onRender;
@@ -103,6 +177,11 @@
         }
     }
 
+    /**
+     * Bind event listeners inside the built modal
+     *
+     * @access private
+     */
     Modal.prototype._bindListeners = function() {
         
         var _this = this;
@@ -159,6 +238,12 @@
         } 
     }
 
+    /**
+     * Event handler when user presses enter
+     *
+     * @param  e event
+     * @access private
+     */
     Modal.prototype._pressEnter = function(e) {
         e = e || window.event;
         if (e.keyCode == 13) {
@@ -170,7 +255,11 @@
         }
     }
 
-
+    /**
+     * Fire the closed event
+     *
+     * @access private
+     */
     Modal.prototype._fireClosed = function() {
         if (typeof this._options.onClose !== 'undefined') {
             var callback = this._options.onClose;
@@ -180,6 +269,11 @@
         }
     }
 
+    /**
+     * Fire the confirm event
+     *
+     * @access private
+     */
     Modal.prototype._fireConfirm = function() {
         if (typeof this._options.onConfirm !== 'undefined') {
             var callback = this._options.onConfirm;
@@ -188,6 +282,11 @@
         }
     }
 
+    /**
+     * Fire the confirm validation
+     *
+     * @access private
+     */
     Modal.prototype._fireConfirmValidator = function() {
         if (typeof this._options.validateConfirm !== 'undefined') {
             var callback = this._options.validateConfirm;
@@ -197,45 +296,11 @@
         return true;
     }
 
-    Modal.prototype._buildStandardModal = function() {
-
-        var modal   = document.createElement('DIV');
-            modal.className   = 'modal-wrap';
-
-        var overlay = document.createElement('DIV');
-            overlay.className = 'modal-overlay '+this._options['overlay'];
-
-        var closeButton   = typeof this._options.closeText    === 'undefined'   ? '' : '<button type="button" class="btn js-modal-close">'+this._options.closeText+'</button>';
-        var confirmClass  = typeof this._options.confirmClass === 'undefined'   ? 'btn-primary' : this._options.confirmClass;
-        var confirmButton = typeof this._options.confirmText  === 'undefined'   ? '' : '<button type="button" class="btn '+confirmClass+' js-modal-close js-modal-confirm">'+this._options.confirmText+'</button>';
-        var icon          = typeof this._options.icon  === 'undefined' ? '' : '<div class="row floor-sm roof-sm text-center"><span class="modal-icon '+this._options.iconColor+' glyph-icon glyph-icon-'+this._options.icon+'"></spam></div>';
-        var extras        = typeof this._options.extras  === 'undefined' ? '' : this._options.extras;
-        Helper.innerHTML(modal, [
-            '<div class="modal-dialog js-modal-dialog">',
-                '<span class="modal-closer glyph-icon glyph-icon-times js-modal-cancel"></span>',
-                '<div class="card '+this._options.cardclass+' js-modal-panel">',
-                    '<div class="card-header '+this._options.headerclass+'">',
-                        '<h4>'+this._options.title+'</h4>',
-                    '</div>',
-                    '<div class="card-block text-center">',
-                            icon,
-                            '<p class="card-text">'+this._options.message+'</p>',
-                            extras,
-                            closeButton,
-                            confirmButton,
-                        '</div>',
-                        
-                    '</div>',
-                '</div>',
-            '</div>',
-        ]);
-
-        this._modal = modal;
-        this._overlay = overlay;
-        this._modalInner = Helper.$('.js-modal-dialog', modal);
-        this._fireBuilt();
-    }
-
+    /**
+     * Fire the built event
+     *
+     * @access private
+     */
     Modal.prototype._fireBuilt = function() {
         if (typeof this._options.onBuilt !== 'undefined') {
             var callback = this._options.onBuilt;
@@ -244,6 +309,11 @@
         }
     }
 
+    /**
+     * Center the modal vertically
+     *
+     * @access private
+     */
     Modal.prototype._centerModal = function(centered) {
         var el            = this._modalInner;
         var computedStyle = window.getComputedStyle(el);

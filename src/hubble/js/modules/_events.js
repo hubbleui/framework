@@ -1,28 +1,42 @@
-(function() {
+/**
+ * Events
+ *
+ * This class handles custom event firing and callback assigning.
+ *
+ */
+ (function() {
 
-    // MODULE OBJECT
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @access public
+     * @return this
+     */
     var Events = function() {
         
-        this.__construct();
+        this._callbacks = {};
         
         return this;
     }
 
-    // CONSTRUCTOR
-    /*****************************************/
-    Events.prototype.__construct = function() {
-        this._callbacks = {};
-    }
-
-    // DESTRUCTOR
-    /*****************************************/
+    /**
+     * Module destructor - clears event cache
+     *
+     * @access public
+     */
     Events.prototype.destruct = function() {
         this._callbacks = {};
     }
 
-    // FIRE A CUSTOM EVENT
-    /*****************************************/
+    /**
+     * Fire a custom event
+     *
+     * @param eventName string The event name to fire
+     * @param eventName string What should be given as "this" to the event callbacks
+     * @access public
+     */
     Events.prototype.fire = function(eventName, subject) {
         for (var key in this._callbacks) {
             if (!this._callbacks.hasOwnProperty(key)) continue;
@@ -34,8 +48,13 @@
         }
     }
 
-    // BINDER
-    /*****************************************/
+    /**
+     * Bind a callback to an event
+     *
+     * @param eventName string The event name
+     * @param callback  func   The callback function
+     * @access public
+     */
     Events.prototype.on = function(eventName, callback) {
         
         // Make sure the function is unique - unless it is ananonymous
@@ -50,8 +69,13 @@
         };
     }
 
-    // BINDER
-    /*****************************************/
+    /**
+     * UnBind a callback to an event
+     *
+     * @param eventName string The event name
+     * @param callback  func   The callback function
+     * @access public
+     */
     Events.prototype.off = function(eventName, callback) {
         for (var key in this._callbacks) {
             if (!this._callbacks.hasOwnProperty(key)) continue;
@@ -62,17 +86,20 @@
         }
     }
 
-    // GET THE FUNCTION NAME
-    /*****************************************/
+    /**
+     * Get a callback function by key
+     *
+     * @param fn string The function key
+     * @access private
+     * @return string
+     */
     Events.prototype._getFnName = function(fn) {
         var f = typeof fn == 'function';
         var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
         return (!f && 'not a function') || (s && s[1] || 'anonymous');
     }
 
-    
-    // PUSH TO MODULES AND INVOKE
-    /*****************************************/
+    // Load into container and invoke
     Modules.singleton('Events', Events).require('Events');
 
 }());

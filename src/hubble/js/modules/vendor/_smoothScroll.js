@@ -1,4 +1,12 @@
-// smooth scroll js
+/**
+ * Smoothscroll
+ *
+ * This is a utility class used internally to scroll to elements on a page.
+ * It can still be invoked directly via the IOC container if you want to use it.
+ * @example Modules.require('SmoothScroll').animateScroll('#' + id, null, options);
+ * @see     https://github.com/cferdinandi/smooth-scroll
+ * @see     waypoints.js
+ */
 (function() {
 
         (function (root, factory) {
@@ -509,6 +517,3 @@
     Modules.set('SmoothScroll', scrl);
 
 }());
-
-
-              

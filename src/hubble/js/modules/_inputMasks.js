@@ -1,11 +1,27 @@
-(function() {
+/**
+ * InputMasks
+ *
+ * This module uses the "inputmasker.js" module to handle the masking of inputs
+ * This module itself handles the activation of inputs via DOM elements.
+ * @see     inputMasker.js
+ *
+ */
+ (function() {
 
-    // REQUIRE THE HELPER
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
 
-    // MODULE OBJECT
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @params null
+     * @access public
+     * @return this
+     */
     var InputMasks = function() {
 
         // Private
@@ -19,14 +35,43 @@
         this._nodes_AlphaNumericDashDecimal = [];
 
         // Constructor
-        this.__construct();
+        this._invoke();
         
         return this;
     }
 
-    // PRIVATE CONSTRUCTOR
-    /*****************************************/
-    InputMasks.prototype.__construct = function() {
+    /**
+     * Public destructor remove all masks
+     *
+     * @access public
+     */
+    InputMasks.prototype.destruct = function() {
+        
+        this._loopUnBind(this._nodes_money);
+        this._loopUnBind(this._nodes_creditcard);
+        this._loopUnBind(this._nodes_numeric);
+        this._loopUnBind(this._nodes_numericDecimal);
+        this._loopUnBind(this._nodes_alphaNumeric);
+        this._loopUnBind(this._nodes_alphaSpace);
+        this._loopUnBind(this._nodes_alphaDash);
+        this._loopUnBind(this._nodes_AlphaNumericDash);
+        this._nodes_money            = [];
+        this._nodes_creditcard       = [];
+        this._nodes_numeric          = [];
+        this._nodes_numericDecimal   = [];
+        this._nodes_alphaNumeric     = [];
+        this._nodes_alphaDash        = [];
+        this._nodes_AlphaNumericDash = [];
+        this._nodes_AlphaNumericDashDecimal = [];
+        
+    }
+
+    /**
+     * Find all the nodes and apply any masks
+     *
+     * @access private
+     */
+    InputMasks.prototype._invoke = function() {
 
         // Find all the nodes
         this._nodes_money			 = Helper.$All('.js-mask-money');
@@ -65,48 +110,29 @@
         }
     }
 
-
-    // PUBLIC DESTRUCTOR
-    /*****************************************/
-    InputMasks.prototype.destruct = function() {
-        
-        this._loopUnBind(this._nodes_money);
-        this._loopUnBind(this._nodes_creditcard);
-        this._loopUnBind(this._nodes_numeric);
-        this._loopUnBind(this._nodes_numericDecimal);
-        this._loopUnBind(this._nodes_alphaNumeric);
-        this._loopUnBind(this._nodes_alphaSpace);
-        this._loopUnBind(this._nodes_alphaDash);
-        this._loopUnBind(this._nodes_AlphaNumericDash);
-        this._nodes_money            = [];
-        this._nodes_creditcard       = [];
-        this._nodes_numeric          = [];
-        this._nodes_numericDecimal   = [];
-        this._nodes_alphaNumeric     = [];
-        this._nodes_alphaDash        = [];
-        this._nodes_AlphaNumericDash = [];
-        this._nodes_AlphaNumericDashDecimal = [];
-        
-    }
-
-    // LOOP NODES AND BIND MASKS
-    /*****************************************/
+    /**
+     * Loop and bind masks to DOM LIST
+     *
+     * @access private
+     */
     InputMasks.prototype._loopBind = function(nodes, mask) {
     	for (var i = 0; i < nodes.length; i++) {
     		Modules.require('InputMasker', nodes[i])[mask]();
         }
     }
 
-    // LOOP NODES AND BIND MASKS
-    /*****************************************/
+    /**
+     * Loop and unbind masks to DOM LIST
+     *
+     * @access private
+     */
     InputMasks.prototype._loopUnBind = function(nodes) {
         for (var i = 0; i < nodes.length; i++) {
             Modules.require('InputMasker', nodes[i])[unMask]();
         }
     }
 
-    // SET IN IOC
-    /*****************************************/
+    // Set into container
     Modules.singleton('InputMasks', InputMasks).get('InputMasks');
 
 }());

@@ -1,63 +1,56 @@
-(function() {
+/**
+ * File inputs
+ *
+ * This class is used to handle custom file
+ * input change events
+ *
+ */
+ (function() {
 
-    // REQUIRES
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
 
-    // MODULE OBJECT
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @access public
+     * @return this
+     */
     var FileInput = function() {
-        
-        this._nodes = [];
-        
-        this.__construct();
+                
+        this._nodes = Helper.$All('.js-file-input');
+
+        if (!Helper.empty(this._nodes)) {
+            for (var i = 0; i < this._nodes.length; i++) {
+                Helper.addEventListener(this._nodes[i], 'change', this._eventHandler);
+            }
+        }
         
         return this;
     }
 
-    // CONSTRUCTOR
-    /*****************************************/
-    FileInput.prototype.__construct = function() {
-
-        if (Helper === 'null') Helper = Modules.require('JSHelper');
-
-        this._nodes = Helper.$All('.js-file-input');
-
-        if (!this._nodes.length) {
-            this.destruct();
-            return;
-        }
-
-        for (var i = 0; i < this._nodes.length; i++) {
-            this._bind(this._nodes[i]);
-        }
-    }
-
-    // DESTRUCTOR
-    /*****************************************/
+    /**
+     * Module destructor remove event handlers
+     *
+     * @access public
+     */
     FileInput.prototype.destruct = function() {
         for (var i = 0; i < this._nodes.length; i++) {
-            this._unbind(this._nodes[i]);
+            Helper.removeEventListener(this._nodes[i], 'change', this._eventHandler);
         }
         this._nodes  = [];
-        Helper       = 'null';
     }
 
-    // BINDER
-    /*****************************************/
-    FileInput.prototype._bind = function(node) {
-        Helper.addEventListener(node, 'change', this._invoke);
-    }
-
-    // UNBINDER
-    /*****************************************/
-    FileInput.prototype._unbind = function(node) {
-       Helper.removeEventListener(node, 'change', this._invoke);
-    }
-
-    // EVENT HANDLER
-    /*****************************************/
-    FileInput.prototype._invoke = function() {
+    /**
+     * Handle the change event
+     *
+     * @access private
+     */
+    FileInput.prototype._eventHandler = function() {
         var fileInput = this;
         var wrap      = Helper.parentUntillClass(fileInput, 'js-file-field');
         var showInput = Helper.$('.js-file-text', wrap);
@@ -72,8 +65,7 @@
         }
     }
 
-    // PUSH TO MODULES AND INVOKE
-    /*****************************************/
+    // Put into container and invoke
     Modules.singleton('FileInput', FileInput).require('FileInput');
 
 }());

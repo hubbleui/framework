@@ -1,16 +1,34 @@
-/* Auto transition height */
-(function() {
+/**
+ * ToggleHeight
+ *
+ * The ToggleHeight module allows to transition an element's height 
+ * from 0 -> auto or from auto -> 0
+ *
+ */
+ (function() {
 
-    // REQUIRES
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
 
-    // VARS
-    /*****************************************/
+    /**
+     * @var timeout|null Remove transition after opacity changes
+     */
     var _opacityTimer;
 
-    // MODULE OBJECT CONSTRUCTOR
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @access public
+     * @params el          node     The target node
+     * @params initial     int      The height in px to start the transition
+     * @params time        int      The time in ms of the transition
+     * @params easing      string   Transition easing - valid css easing function
+     * @params withOpacity boolean Should the transition include and opacity fade ?
+     */
     var ToggleHeight = function(el, initial, time, easing, withOpacity) {
         /*
            Set defaults if values were not provided;
@@ -46,8 +64,19 @@
 
     };
 
-    // PRIVATE TRANSITION TO AUTO METHOD
-    /*****************************************/
+    /**
+     * Transition element's height from some height to auto.
+     *
+     * @access private
+     * @params el                   node     The target node
+     * @params initial              int      The height in px to start the transition
+     * @params time                 int      The time in ms of the transition
+     * @params easing               string   Transition easing - valid css easing function
+     * @params actualHeight         int      Height in px that the transition will start at
+     * @params endHeight            int      Height in px that the transition will end at
+     * @params existingTransitions  string   Does the element have any existing transitions?
+     * @params withOpacity          boolean  Should the transition include and opacity fade ?
+     */
     ToggleHeight.prototype._toAuto = function(el, time, easing, actualHeight, endHeight, existingTransitions, withOpacity) {
 
         /* 
@@ -124,8 +153,18 @@
         }
     }
 
-    // PRIVATE TRANSITION FROM AUTO METHOD
-    /*****************************************/
+    /**
+     * Transition element's height from "auto" to 0.
+     *
+     * @access private
+     * @params el                   node     The target node
+     * @params initial              int      The height in px to start the transition
+     * @params time                 int      The time in ms of the transition
+     * @params easing               string   Transition easing - valid css easing function
+     * @params actualHeight         int      Height in px that the transition will start at
+     * @params existingTransitions  string   Does the element have any existing transitions?
+     * @params withOpacity          boolean  Should the transition include and opacity fade ?
+     */
     ToggleHeight.prototype._fromAuto = function(el, initial, time, easing, actualHeight, existingTransitions, withOpacity) {
         /*
            Set the height to the actual height (which could be zero)
@@ -178,7 +217,6 @@
     }
 
     // Load into container
-    /*****************************************/
     Modules.set('ToggleHeight', ToggleHeight);
 
 })();

@@ -1,63 +1,59 @@
-(function() {
+/**
+ * Collapse
+ *
+ * This class handles the toggling of and element's height
+ * when a target element is clicked.
+ *
+ */
+ (function() {
 
-    // REQUIRES
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
 
-    // MODULE OBJECT
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @params null
+     * @access public
+     * @return this
+     */
     var Collapse = function() {
+                
+        this._nodes = Helper.$All('.js-collapse');
         
-        this._nodes = [];
-        
-        this.__construct();
+        // bind listeners
+        if (!Helper.empty(this._nodes)) {
+            for (var i = 0; i < this._nodes.length; i++) {
+                Helper.addEventListener(this._nodes[i], 'click', this._eventHandler);
+            }
+        }
         
         return this;
     }
 
-    // CONSTRUCTOR
-    /*****************************************/
-    Collapse.prototype.__construct = function() {
-
-        if (Helper === 'null') Helper = Modules.require('JSHelper');
-
-        this._nodes = Helper.$All('.js-collapse');
-
-        if (!this._nodes.length) {
-            this.destruct();
-            return;
-        }
-        for (var i = 0; i < this._nodes.length; i++) {
-            this._bind(this._nodes[i]);
-        }
-        
-    }
-
-    // DESTRUCTOR
-    /*****************************************/
+    /**
+     * Module destructor
+     *
+     * @access public
+     */
     Collapse.prototype.destruct = function() {
         for (var i = 0; i < this._nodes.length; i++) {
-            this._unbind(this._nodes[i]);
+            Helper.removeEventListener(this._nodes[i], 'click', this._eventHandler);
         }
         this._nodes  = [];
-        Helper       = 'null';
     }
 
-    // BINDER
-    /*****************************************/
-    Collapse.prototype._bind = function(node) {
-        Helper.addEventListener(node, 'click', this._invoke);
-    }
-
-    // UNBINDER
-    /*****************************************/
-    Collapse.prototype._unbind = function(node) {
-       Helper.removeEventListener(node, 'click', this._invoke);
-    }
-
-    // EVENT HANDLER
-    /*****************************************/
-    Collapse.prototype._invoke = function(e) {
+    /**
+     * Handle the click event
+     *
+     * @param e event
+     * @access private
+     */
+    Collapse.prototype._eventHandler = function(e) {
         e = e || window.event;
         if (Helper.isNodeType(this, 'a')) {
             e.preventDefault();
@@ -74,8 +70,7 @@
         Helper.toggleClass(clicked, 'active');
     }
 
-    // PUSH TO MODULES AND INVOKE
-    /*****************************************/
+    // Load into container and invoke
     Modules.singleton('Collapse', Collapse).require('Collapse');
 
 }());

@@ -1,33 +1,52 @@
+/**
+ * Notifications
+ *
+ * The Notifications class is a utility class used to
+ * display a notification.
+ *
+ */
 (function() {
 
-
-    // REQUIRES
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
+
+    /**
+     * @var _activeNotifs array
+     */
     var _activeNotifs = [];
 
-    // MODULE OBJECT
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @params options obj
+     * @access public
+     * @return this
+     */
     var Notifications = function(options) {
-        this.__construct();
-        this._invoke(options);
-        return this;
-    };
-
-    // CONSTURCTOR
-    /*****************************************/
-    Notifications.prototype.__construct = function(options) {
         this._notifWrap = Helper.$('.js-nofification-wrap');
+        
         if (!Helper.nodeExists(this._notifWrap)) {
             var wrap = document.createElement('DIV');
             wrap.className = 'notification-wrap js-nofification-wrap';
             document.body.appendChild(wrap);
             this._notifWrap = Helper.$('.js-nofification-wrap');
         }
-    }
+        
+        this._invoke(options);
+        
+        return this;
+    };
 
-    // INVOKE - New notification
-    /*****************************************/
+    /**
+     * Display the notification
+     *
+     * @params options obj
+     * @access private
+     */
     Notifications.prototype._invoke = function(options) {
         if (typeof options.isCallback !== 'undefined' && options.isCallback === true) {
             this._invokeCallbackable(options);
@@ -53,8 +72,12 @@
         });
     }
 
-    // INVOKE - NOTIFICATION WITH CALLBACK
-    /*****************************************/
+    /**
+     * Create a notification that has callback buttons 
+     *
+     * @params options obj
+     * @access private
+     */
     Notifications.prototype._invokeCallbackable = function(options) {
         var _this        = this;
         var cancelText   = typeof options.cancelText === 'undefined'  ? 'Cacnel'  : options.cancelText;
@@ -86,8 +109,12 @@
         });
     }
 
-    // Remove a notification 
-    /*****************************************/
+    /**
+     * Remove a notification
+     *
+     * @params _node node
+     * @access private
+     */
     Notifications.prototype._removeNotif = function(_node) {
         var _this = this;
         var i = _activeNotifs.length;
@@ -107,6 +134,7 @@
         }
     }
 
+    // Add to container
     Modules.set('Notifications', Notifications);
 
 })();

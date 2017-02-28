@@ -24,6 +24,7 @@ JSHelper.prototype.in_array = function(needle, haystack, argStrict) {
 
     return false;
 }
+
 JSHelper.prototype.clean_inner_html = function(array) {
     return array.join('');
 }

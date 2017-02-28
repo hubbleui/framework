@@ -1,11 +1,26 @@
+/**
+ * FormValidator
+ *
+ * This class is used to validate a form and 
+ * also apply and classes to display form results and input errors.
+ *
+ */
 (function() {
 
-    // REQUIRES
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
 
-    // MODULE
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @param form node
+     * @access public
+     * @return this
+     */
     var FormValidator = function(form) {
 
         // Save inputs
@@ -27,14 +42,22 @@
     };
 
     // PUBLIC ACCESS
-    /*****************************************/
     
-    // Is the form valid?
+    /**
+     *  Is the form valid?
+     *
+     * @access public
+     * @return boolean
+     */
     FormValidator.prototype.isValid = function() {       
         return this._validateForm();
     };
     
-    // Show invalid inputs
+    /**
+     * Show invalid inputs
+     *
+     * @access public
+     */
     FormValidator.prototype.showInvalid = function() {
         
         this._clearForm();
@@ -46,26 +69,45 @@
         }
     };
 
-    // Show the form result
+    /**
+     * Show form result
+     *
+     * @access public
+     */
     FormValidator.prototype.showResult = function(result) {
         this._clearForm();
         Helper.addClass(this._form, result);
     }
     
-    // Append a keypair
+    /**
+     * Append a key/pair and return form obj
+     *
+     * @access public
+     * @return obj
+     */
     FormValidator.prototype.append = function(key, value) {
         this._formObj[key] = value;
         return  this._generateForm();
     };
     
-    // Get the form
+    /**
+     * Get the form object
+     *
+     * @access public
+     * @return obj
+     */
     FormValidator.prototype.form = function() {
         return  this._generateForm();
     };
 
 
-    // INDEX BY NAME AND RULES
-    /*****************************************/
+    // PRIVATE FUNCTIONS
+
+    /**
+     * Index form inputs by name and rules
+     *
+     * @access public
+     */
     FormValidator.prototype._indexInputs = function() {
         for (var i = 0; i < this._inputs.length; i++) {
             if (!this._inputs[i].name) continue;
@@ -82,8 +124,12 @@
         }
     };
 
-    // VALIDATE THE FORM
-    /*****************************************/
+    /**
+     * Validate the form inputs
+     *
+     * @access private
+     * @return boolean
+     */
     FormValidator.prototype._validateForm = function() {
         this._invalids = [];
         this._validForm = true;
@@ -99,20 +145,20 @@
                 continue;
             } else if (pos.isRequired && value.replace(/ /g,'') === '') {
                 this._devalidate(i);
-            } else if (pos.validationMinLength && !this.validateMinLength(value, pos.validationMinLength)) {
+            } else if (pos.validationMinLength && !this._validateMinLength(value, pos.validationMinLength)) {
                 this._devalidate(i);
-            } else if (pos.validationMaxLength && !this.validateMaxLength(value, pos.validationMaxLength)) {
+            } else if (pos.validationMaxLength && !this._validateMaxLength(value, pos.validationMaxLength)) {
                 this._devalidate(i);
             } else if (pos.validationType) {
                 var isValid = true;
-                if (pos.validationType === 'email') isValid = this.validateEmail(value);
-                if (pos.validationType === 'name') isValid = this.validateName(value);
-                if (pos.validationType === 'password') isValid = this.validatePassword(value);
-                if (pos.validationType === 'creditcard') isValid = this.validateCreditCard(value);
-                if (pos.validationType === 'url') isValid = this.validateUrl(value);
+                if (pos.validationType === 'email') isValid = this._validateEmail(value);
+                if (pos.validationType === 'name') isValid = this._validateName(value);
+                if (pos.validationType === 'password') isValid = this._validatePassword(value);
+                if (pos.validationType === 'creditcard') isValid = this._validateCreditCard(value);
+                if (pos.validationType === 'url') isValid = this._validateUrl(value);
                 if (pos.validationType === 'alpha') isValid = this.alpha(value);
-                if (pos.validationType === 'numeric') isValid = this.validateNumeric(value);
-                if (pos.validationType === 'list') isValid = this.validateList(value);
+                if (pos.validationType === 'numeric') isValid = this._validateNumeric(value);
+                if (pos.validationType === 'list') isValid = this._validateList(value);
                 if (!isValid) this._devalidate(i);
             }
         }
@@ -120,8 +166,12 @@
         return this._validForm;
     };
 
-    // GENERATE THE FORM
-    /*****************************************/
+    /**
+     * Generate the form object
+     *
+     * @access private
+     * @return obj
+     */
     FormValidator.prototype._generateForm = function() {
         for (var i = 0; i < this._inputs.length; i++) {
             var name  = this._inputs[i].name;
@@ -141,16 +191,24 @@
         return this._formObj;
     };
 
-    // DEVALIDATE AN INPUT
-    /*****************************************/
+    /**
+     * Mark an input as not valid (internally)
+     *
+     * @access private
+     * @return obj
+     */
     FormValidator.prototype._devalidate = function(i) {
         this._rulesIndex[i].isValid = false;
         this._validForm = false;
         this._invalids.push(this._rulesIndex[i].node);
     };
 
-    // CLEAR FORM ERRORS AND RESULTS
-    /*****************************************/
+    /**
+     * Clear form result and input errors
+     *
+     * @access private
+     * @return obj
+     */
     FormValidator.prototype._clearForm = function(i) {
         // Remove the form result
         Helper.removeClass(this._form, ['info', 'success', 'warning', 'danger']);
@@ -162,53 +220,51 @@
         }
     };
 
-
-    // PRIVATE VALIDATIORS
-    /*****************************************/
-    FormValidator.prototype.validateEmpty = function(value) {
-        value = value.trim();
-        var re = /^\s*$/;
-        return re.test(value) ? false : true;
-    };
-    FormValidator.prototype.validateEmail = function(value) {
+    /**
+     * Private validator methods
+     *
+     * @access private
+     * @return boolean
+     */
+    FormValidator.prototype._validateEmail = function(value) {
         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(value);
     };
-    FormValidator.prototype.validateName = function(value) {
+    FormValidator.prototype._validateName = function(value) {
         var re = /^[A-z _-]+$/;
         return re.test(value);
     };
-    FormValidator.prototype.validateNumeric = function(value) {
+    FormValidator.prototype._validateNumeric = function(value) {
         var re = /^[\d]+$/;
         return re.test(value);
     };
-    FormValidator.prototype.validatePassword = function(value) {
+    FormValidator.prototype._validatePassword = function(value) {
         var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
         return re.test(value);
     };
-    FormValidator.prototype.validateUrl = function(value) {
+    FormValidator.prototype._validateUrl = function(value) {
         re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
         return re.test(value);
     };
-    FormValidator.prototype.validateMinLength = function(value, min) {
+    FormValidator.prototype._validateMinLength = function(value, min) {
         return value.length >= min;
     };
-    FormValidator.prototype.validateMaxLength = function(value, max) {
+    FormValidator.prototype._validateMaxLength = function(value, max) {
         return value.length <= max;
     };
-    FormValidator.prototype.validateAplha = function(value) {
+    FormValidator.prototype._validateAplha = function(value) {
         var re = /^[A-z _-]+$/;
         return re.test(value);
     };
-    FormValidator.prototype.validateAplhaNumeric = function(value) {
+    FormValidator.prototype._validateAplhaNumeric = function(value) {
         var re = /^[A-z0-9]+$/;
         return re.test(value);
     };
-    FormValidator.prototype.validateList = function(value) {
+    FormValidator.prototype._validateList = function(value) {
         var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
         return re.test(value);
     };
-    FormValidator.prototype.validateCreditCard = function(value) {
+    FormValidator.prototype._validateCreditCard = function(value) {
         value = value.replace(/ /g, "");
         var re = /^[0-9]+$/;
         var check = re.test(value);
@@ -217,9 +273,7 @@
         return true;
     };
 
-
-    // Load into container and invoke
-    /*****************************************/
+    // Load into container
     Modules.set('FormValidator', FormValidator);
 
 })();

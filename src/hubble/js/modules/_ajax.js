@@ -1,3 +1,9 @@
+/**
+ * Ajax
+ *
+ * Ajax utility module
+ *
+ */
 (function() {
 
     /**

@@ -1,11 +1,18 @@
-(function() {
+/**
+ * InputMasker
+ *
+ * The InputMasker is a utility class used internally to apply and handle intput masking.
+ * It can still be invoked directly via the IOC container if you want to use it.
+ * @example Modules.require('InputMasker').creditcard();
+ * @see     inputMasks.js
+ */
+ (function() {
 
-    // REQUIRE THE HELPER
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
 
-    // HELPER FUNCTIONS
-    /*****************************************/
     var Patterns = function() {
         
     };
@@ -170,13 +177,6 @@
         this.element = element;
     
         return this;
-    }
-
-    
-    // PUBLIC DESTRUCTOR
-    /*****************************************/
-    InputMasker.prototype.destruct = function() {
-        
     }
 
     // UNBIND 

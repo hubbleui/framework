@@ -1,44 +1,55 @@
-/* Trigger a waypoint */
-(function() {
+/**
+ * Waypoints
+ *
+ * The waypoint module for click triggers as well as scrolling
+ * to an element on page load.
+ *
+ */
+ (function() {
 
-    // REQUIRES
-    /*****************************************/
-    var Helper       = Modules.require('JSHelper');
-    var pageLoaded   = false;
+    /**
+     * @var Helper obj
+     */
+    var Helper = Modules.require('JSHelper');
 
-    // MODULE OBJECT
-    /*****************************************/
+    /**
+     * @var pageLoaded boolean
+     */
+    var pageLoaded = false;
+
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @params null
+     * @access public
+     * @return this
+     */
     var WayPoints = function() {
-        
-        this.__construct();
-
-        return this;
-    };
-
-    // CONSTURCTOR
-    /*****************************************/
-    WayPoints.prototype.__construct = function() {
-        
-        // Load dependancies
-        if (Helper === 'null') Helper = Modules.require('JSHelper');
         
         // Load nodes
         this._nodes = Helper.$All('.js-waypoint-trigger');
 
         // bind listeners
-        for (var i = 0; i < this._nodes.length; i++) {
-            this._bind(this._nodes[i]);
+        if (!Helper.empty(this._nodes)) {
+            for (var i = 0; i < this._nodes.length; i++) {
+                this._bind(this._nodes[i]);
+            }
         }
-
+        
         // Invoke pageload
         if (!pageLoaded) this._invokePageLoad();
 
-        // Auto destructor
-        if (!this._nodes.length) this.destruct();
-    }
+        return this;
+    };
 
-    // DESTRUCTOR
-    /*****************************************/
+    /**
+     * Module destructor
+     *
+     * @params null
+     * @access public
+     */
     WayPoints.prototype.destruct = function() {
 
         // Unbind listeners
@@ -48,26 +59,35 @@
         
         // Clear Nodes
         this._nodes = [];
-
-        // Clear variables
-        Helper = 'null';
     }
 
-    // LISTENER BINDER
-    /*****************************************/
+    /**
+     * Event binder
+     *
+     * @params trigger node
+     * @access private
+     */
     WayPoints.prototype._bind = function(trigger) {
-        Helper.addEventListener(trigger, 'click', this._invoke);
+        Helper.addEventListener(trigger, 'click', this._eventHandler);
     }
 
-    // LISTENER UNBINDER
-    /*****************************************/
+    /**
+     * Event unbinder
+     *
+     * @params trigger node
+     * @access private
+     */
     WayPoints.prototype._unbind = function(trigger) {
-        Helper.removeEventListener(trigger, 'click', this._invoke);
+        Helper.removeEventListener(trigger, 'click', this._eventHandler);
     }
 
-    // CLICK HANDLER
-    /*****************************************/
-    WayPoints.prototype._invoke = function(e) {
+    /**
+     * Event handler
+     *
+     * @params e event
+     * @access private
+     */
+    WayPoints.prototype._eventHandler = function(e) {
         e = e || window.event;
         e.preventDefault();
         var trigger  = this;
@@ -86,8 +106,12 @@
         }
     }
 
-    // SCROLL TO A ELEMENT WITH ID WHEN THE PAGE LOADS
-    /*****************************************/
+    /**
+     * Scroll to a element with id when the page loads
+     *
+     * @params null
+     * @access private
+     */
     WayPoints.prototype._invokePageLoad = function() {
 
         var url = Helper.parse_url(window.location.href);
@@ -111,8 +135,7 @@
         pageLoaded = true;
     }
 
-    // PUSH TO MODULES AND INVOKE
-    /*****************************************/
-    Modules.singleton('WayPoints', WayPoints).require('WayPoints');
+    // Load into container
+    Modules.singleton('WayPoints', WayPoints).get('WayPoints');
 
 }());

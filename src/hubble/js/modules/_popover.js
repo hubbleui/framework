@@ -1,12 +1,26 @@
-(function() {
+/**
+ * Popover handler
+ *
+ * This is a utility module for the popover component. This is used
+ * by the popover module to build and position the popover element itself.
+ *
+ */
+ (function() {
 
-    // REQUIRES
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
-
     
-    // HANDLER FOR RENDERING
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @params options obj
+     * @access public
+     * @return this
+     */
     var _popHandler = function(options) {
 
         if (!(this instanceof _popHandler)) return new _popHandler(options);
@@ -36,6 +50,12 @@
         return this;
     }
 
+    /**
+     * Build the popover
+     *
+     * @params null
+     * @access private
+     */
     _popHandler.prototype.buildPopEl = function() {
         var pop       = document.createElement('div');
         pop.className = this.options.classes;
@@ -48,10 +68,22 @@
         return pop;
     }
 
+    /**
+     * Remove the popover
+     *
+     * @params null
+     * @access private
+     */
     _popHandler.prototype.remove = function() {
         if (Helper.nodeExists(this.el)) this.el.parentNode.removeChild(this.el);
     }
 
+    /**
+     * Position the popover
+     *
+     * @params null
+     * @access private
+     */
     _popHandler.prototype.stylePop = function() {
 
         var targetCoords = Helper.getCoords(this.options.target);
@@ -78,19 +110,34 @@
         }
     }
 
+    // Set into container for use
     Modules.set('_popHandler', _popHandler);
 
 }());
 
-
+/**
+ * Popovers
+ *
+ * This module handles the initiazling of the popovers, 
+ * e.g parsing options, building the DOM nodes, and hanling the events.
+ *
+ */
 (function() {
 
-    // REQUIRES
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
 
-    // MODULE
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @access public
+     * @param null
+     * @return this
+     */
     var Popovers = function() {
         
         this._pops  = [];
@@ -101,35 +148,26 @@
             right  : 'arrow-w',
             bottom : 'arrow-n',
         };
-        this.__construct();
-
-        return this;
-    };
-
-    // CONSTRUCTOR
-    /*****************************************/
-    Popovers.prototype.__construct = function() {
-
-        // Make sure Helper is included
-        if (typeof Helper == null || typeof Helper == 'undefined') {
-            Helper = Modules.require('JSHelper');
-        }
 
         // Find nodes
         this._nodes = Helper.$All('.js-popover');
 
-        // If nothing to do destruct straight away
-        if (!this._nodes.length) {
-            this.destruct();
-            return;
+        // Bind events
+        if (!Helper.empty(this._nodes)) {
+            for (var i = 0; i < this._nodes.length; i++) {
+                this._initialise(this._nodes[i]);
+            }
         }
 
-        // Bind DOM listeners
-        this._bindDOMListeners();
-    }
+        return this;
+    };
 
-    // DESTRUCTOR
-    /*****************************************/
+    /**
+     * Module destructor
+     *
+     * @access public
+     * @return this
+     */
     Popovers.prototype.destruct = function() {
         this._removeAll();
         this._unbindDOMListeners();
@@ -137,24 +175,12 @@
         this._pops  = [];
     }
 
-    // LISTENERS BINDER
-    /*****************************************/
-    Popovers.prototype._bindDOMListeners = function() {
-        for (var i = 0; i < this._nodes.length; i++) {
-            this._bind(this._nodes[i]);
-        }
-    }
-
-    // LISTENERS UN-BINDER
-    /*****************************************/
-    Popovers.prototype._unbindDOMListeners = function() {
-        for (var i = 0; i < this._nodes.length; i++) {
-            this._unbind(this._nodes[i]);
-        }
-    }
-
-    // LISTENER UNBINDER
-    /*****************************************/
+    /**
+     * Unbind event listeners on a trigger
+     *
+     * @param trigger node
+     * @access private
+     */
     Popovers.prototype._unbind = function(trigger) {
         var evnt = trigger.dataset.popoverEvent;
         if (evnt === 'click') {
@@ -167,9 +193,13 @@
         }
     }
 
-    // LISTENER BINDER
-    /*****************************************/
-    Popovers.prototype._bind = function(trigger) {
+    /**
+     * Initialize the handlers on a trigger
+     *
+     * @param trigger node
+     * @access private
+     */
+    Popovers.prototype._initialise = function(trigger) {
         var direction      = trigger.dataset.popoverDirection;
         var title          = trigger.dataset.popoverTitle;
         var content        = trigger.dataset.popoverContent;
@@ -206,6 +236,11 @@
         }
     }
 
+    /**
+     * Hover over event handler
+     *
+     * @access private
+     */
     Popovers.prototype._hoverOver = function() {
         var trigger    = this;
         var _this      = Modules.require('Popovers');
@@ -215,6 +250,11 @@
         Helper.addClass(trigger, 'popped');
     }
 
+    /**
+     * Hover leave event handler
+     *
+     * @access private
+     */
     Popovers.prototype._hoverLeave = function() {
         var trigger    = this;
         var _this      = Modules.require('Popovers');
@@ -224,7 +264,12 @@
         Helper.removeClass(trigger, 'popped');
     }
 
-    Popovers.prototype._windowResize = function(e) {
+    /**
+     * Window resize event handler
+     *
+     * @access private
+     */
+    Popovers.prototype._windowResize = function() {
         var _this = Modules.require('Popovers');
         for (var i = 0; i < _this._nodes.length; i++) {
             if (Helper.hasClass(_this._nodes[i], 'popped')) {
@@ -234,6 +279,12 @@
         }
     }
 
+    /**
+     * Click event handler
+     *
+     * @param e event
+     * @access private
+     */
     Popovers.prototype._clickHandler = function(e) {
         e = e || window.event;
         e.preventDefault();
@@ -254,6 +305,12 @@
         }
     }
 
+    /**
+     * Click somewhere else event handler to remove
+     *
+     * @param e event
+     * @access private
+     */
     Popovers.prototype._removeClickPop = function(e) {
         e = e || window.event;
         var clicked = e.target;
@@ -263,7 +320,12 @@
         window.removeEventListener("click", _this._removeClickPop);
     }
     
-
+    /**
+     * Get the handler for the trigger
+     *
+     * @param trigger node
+     * @access private
+     */
     Popovers.prototype._getHandler = function(trigger) {
         for (var i = 0; i < this._pops.length; i++) {
            if (this._pops[i]['trigger'] === trigger) return this._pops[i];
@@ -271,13 +333,18 @@
         return false;
     }
 
+    /**
+     * Remove all the popovers currently being displayed
+     *
+     * @param trigger node
+     * @access private
+     */
     Popovers.prototype._removeAll = function() {
         for (var i = 0; i < this._pops.length; i++) {
             this._pops[i].remove();
             Helper.removeClass(this._pops[i].options.target, 'popped');
         }
     }
-    
 
     // Load into container and invoke
     Modules.singleton('Popovers', Popovers).require('Popovers');

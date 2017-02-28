@@ -1,86 +1,91 @@
+/**
+ * Tabs
+ *
+ * The Tabs module allows handles the click events for 
+ * for the tab component.
+ *
+ */
 (function() {
 
-    // REQUIRES
-    /*****************************************/
+    /**
+     * @var Helper obj
+     */
     var Helper = Modules.require('JSHelper');
 
-    // MODULE
-    /*****************************************/
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @params null
+     * @access public
+     * @return this
+     */
     var TabNav = function() {
-        
-        this.__construct();
-
-        return this;
-    };
-
-    // CONSTRUCTOR
-    /*****************************************/
-    TabNav.prototype.__construct = function() {
-
-        // Make sure Helper is included
-        if (Helper == 'null') Helper = Modules.require('JSHelper');
         
         // Find nodes
         this._nodes = Helper.$All('.js-tab-nav');
 
         // If nothing to do destruct straight away
-        if (!this._nodes.length) {
-            this.destruct();
-            return;
+        if (!Helper.empty(this._nodes)) {
+            for (var i = 0; i < this._nodes.length; i++) {
+                this._bindDOMListeners(this._nodes[i]);
+            }
         }
 
-        for (var i = 0; i < this._nodes.length; i++) {
-            this._bindDOMListeners(this._nodes[i]);
-        }
-    }
+        return this;
+    };
 
-    // DESTRUCTOR
-    /*****************************************/
+    /**
+     * Module destructor - unbinds click events
+     *
+     * @params null
+     * @access public
+     */
     TabNav.prototype.destruct = function() {
         for (var i = 0; i < this._nodes.length; i++) {
             this._unbindDOMListeners(this._nodes[i]);
         }
         this._nodes = [];
-        Helper      = 'null';
     }
 
-    // LISTENERS BINDER
-    /*****************************************/
+    /**
+     * Bind click events on all <a> tags in a .js-tab-nav
+     *
+     * @params navWrap node
+     * @access private
+     */
     TabNav.prototype._bindDOMListeners = function(navWrap) {
         var links  = Helper.$All('a', navWrap);
         for (var i = 0; i < links.length; i++) {
-            this._bind(links[i]);
+            Helper.addEventListener(links[i], 'click', this._eventHandler);
         }
     }
 
-    // LISTENERS UN-BINDER
-    /*****************************************/
+    /**
+     * Unbind click events on all <a> tags in a .js-tab-nav
+     *
+     * @params navWrap node
+     * @access private
+     */
     TabNav.prototype._unbindDOMListeners = function(navWrap) {
         var links    = Helper.$All('a', navWrap);
         for (var i = 0; i < links.length; i++) {
-            this._unbind(links[i]);
+            Helper.removeEventListener(links[i], 'click', this._eventHandler);
         }
     }
 
-    // LISTENER UNBINDER
-    /*****************************************/
-    TabNav.prototype._unbind = function(link) {
-       Helper.removeEventListener(link, 'click', this._changeTab);
-    }
-
-    // LISTENER BINDER
-    /*****************************************/
-    TabNav.prototype._bind = function(link) {
-       Helper.addEventListener(link, 'click', this._changeTab);
-    }
-
-    // EVENT HANDLER 
-    /*****************************************/
-    TabNav.prototype._changeTab = function(e) {
+    /**
+     * Click event handler
+     *
+     * @params e event
+     * @access private
+     */
+    TabNav.prototype._eventHandler = function(e) {
         e = e || window.event;
         e.preventDefault();
 
-        var _this = TabNav.prototype;
+        var _this = Modules.get('TabNav');
         
         var node = this;
 
@@ -101,41 +106,10 @@
 
         Helper.addClass(node, 'active');
         Helper.addClass(tabPane, 'active');
-        if (Helper.hasClass(tabNav, 'js-url-tabs')) {
-            var title = node.dataset.tabTitle;
-            var slug  = node.dataset.tabUrl;
-            _this._changeUrl(title, slug);
-        }
-    }
-
-    // CHANGE URL AND TITLE
-    /*****************************************/
-    TabNav.prototype._changeUrl = function(title, slug) {
-        var url;
-
-        if (slug.substring(0,1) === '/') {
-            url = window.location.origin + slug;
-        }
-        else {
-            url = window.location.href.split('?');
-            url = url[0] + '?' + Helper.ltrim(slug, '?');
-        }
-
-        var baseTitle = document.title.split('|').pop().trim();
-        title = title + ' | ' + baseTitle;
-
-        var statedata = title;
-        window.history.pushState( { id: url }, title, url);
-        var locationObj = {
-            location : window.location.href,
-            target   : 'document',
-            title    : document.title,
-        };
-        document.title = title;
+        
     }
 
     // Load into container and invoke
-    /*****************************************/
     Modules.singleton('TabNav', TabNav).require('TabNav');
 
 })();

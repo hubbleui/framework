@@ -1,3 +1,7 @@
+/**
+ * Helper JS
+ *
+ */
 (function() {
 
     // Library initializer
