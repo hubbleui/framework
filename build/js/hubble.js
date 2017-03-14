@@ -357,7 +357,7 @@
             easeInOutQuad: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
 
             // Cubic
-            easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19',
+            easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
             easeOutCubic: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
             easeInOutCubic: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
 
@@ -368,7 +368,7 @@
 
             // Quint
             easeInQuint: 'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
-            easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1',
+            easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1)',
             easeInOutQuint: 'cubic-bezier(0.86, 0, 0.07, 1)',
 
             // Expo
@@ -382,7 +382,7 @@
             easeInOutCirc: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
 
             // Back
-            easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045',
+            easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
             easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             easeInBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 
@@ -4106,7 +4106,7 @@ JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture
         var extras        = typeof this._options.extras  === 'undefined' ? '' : this._options.extras;
         Helper.innerHTML(modal, [
             '<div class="modal-dialog js-modal-dialog">',
-                '<span class="modal-closer glyph-icon glyph-icon-times js-modal-cancel"></span>',
+                '<span class="modal-closer glyph-icon glyph-icon-cross js-modal-cancel"></span>',
                 '<div class="card '+this._options.cardclass+' js-modal-panel">',
                     '<div class="card-header '+this._options.headerclass+'">',
                         '<h4>'+this._options.title+'</h4>',
@@ -6383,3 +6383,96 @@ JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture
     Modules.singleton('FileInput', FileInput).require('FileInput');
 
 }());
+
+/**
+ * Messages
+ *
+ * This module handles messages with clickable close buttons.
+ *
+ */
+(function() {
+
+    /**
+     * @var Helper
+     */
+    var Helper = Modules.require('JSHelper');
+
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @params null
+     * @access public
+     */
+    var MessageClosers = function() {
+
+        /** @access private */
+        this._triggers = Helper.$All('.js-close-msg');
+        
+        if (!Helper.empty(this._triggers)) { 
+            this._bind();
+        }
+
+        return this;
+    };
+
+    /**
+     * Module destructor - removes event listeners
+     *
+     * @constructor
+     * @params null
+     * @access public
+     */
+    MessageClosers.prototype.destruct = function() {
+        this._unbind();
+        this._triggers = [];
+    }
+
+    /**
+     * Event binder - Binds all events on button click
+     *
+     * @params null
+     * @access private
+     */
+    MessageClosers.prototype._bind = function() {
+        for (var i = 0; i < this._triggers.length; i++) {
+            Helper.addEventListener(this._triggers[i], 'click', this._eventHandler);
+        }
+    }
+
+    /**
+     * Event ubinder - Binds all event handlers on button click
+     *
+     * @params null
+     * @access private
+     */
+    MessageClosers.prototype._unbind = function() {
+        for (var i = 0; i < this._triggers.length; i++) {
+            Helper.removeEventListener(this._triggers[i], 'click', this._eventHandler);
+        }
+    }
+
+    /**
+     * Event handler - handles removing the message
+     *
+     * @params e event
+     * @access private
+     */
+    MessageClosers.prototype._eventHandler = function(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        var toRemove = this.parentNode
+        if (Helper.hasClass(this, 'js-rmv-parent')) toRemove = toRemove.parentNode;
+        Helper.animate(toRemove, 'opacity', '1', '0', 300, 'ease');
+        setTimeout(function() {
+            Helper.removeFromDOM(toRemove);
+        }, 300);
+
+    }
+
+    // Load into container and invoke
+    Modules.singleton('MessageClosers', MessageClosers).require('MessageClosers');
+
+})();

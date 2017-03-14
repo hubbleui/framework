@@ -26,8 +26,11 @@
             font-size: 20px;
             width: 20px;
             height: 20px;
+            line-height: 32px;
         }
     }
+
+
 
     // Message Body
     .msg-body {
@@ -50,11 +53,12 @@
     // Close button
     .closer-trigger {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        color: #ffffff;
+        top: 12px;
+        right: 13px;
+        color: $black;
         opacity: 0.5;
         transition: opacity $base-easing-time $base-easing;
+        font-size: 1.3rem;
         &:hover {
             opacity: 1;
         }
@@ -63,42 +67,40 @@
     &.msg-primary {
         color: #ffffff;
         background-color: $brand-primary;
-        .msg-icon {
-            color: #fff;
-        }
-    }
-    &.msg-secondary {
-        color: #ffffff;
-        background-color: $brand-secondary;
-        .msg-icon {
+        .msg-icon,
+        .closer-trigger {
             color: #fff;
         }
     }
     &.msg-info {
         color: #ffffff;
         background-color: $brand-info;
-        .msg-icon {
+        .msg-icon,
+        .closer-trigger {
             color: #fff;
         }
     }
     &.msg-success {
         color: #ffffff;
         background-color: $brand-success;
-        .msg-icon {
+        .msg-icon,
+        .closer-trigger  {
             color: #fff;
         }
     }
     &.msg-warning {
         color: #ffffff;
         background-color: $brand-warning;
-        .msg-icon {
+        .msg-icon,
+        .closer-trigger {
             color: #fff;
         }
     }
     &.msg-danger {
         color: #ffffff;
         background-color: $brand-danger;
-        .msg-icon {
+        .msg-icon,
+        .closer-trigger {
             color: #fff;
         }
     }

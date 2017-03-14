@@ -48,7 +48,7 @@
 	cursor: pointer;
 	top: 3px;
     right: 15px;
-    font-size: 20px;
+    font-size: 14px;
     z-index: $z-index-modal;
     border-radius: 26px;
     padding: 5px 6px;
@@ -66,6 +66,12 @@
 	.modal-closer {
 		background: rgba(#3f3f3f, 0.9);
 		color: #fff;
+	}
+}
+.modal-wrap .card-header {
+	padding: 1.25rem;
+	h4 {
+		font-size: 18px;
 	}
 }
 

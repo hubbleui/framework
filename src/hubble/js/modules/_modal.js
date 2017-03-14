@@ -121,7 +121,7 @@
         var extras        = typeof this._options.extras  === 'undefined' ? '' : this._options.extras;
         Helper.innerHTML(modal, [
             '<div class="modal-dialog js-modal-dialog">',
-                '<span class="modal-closer glyph-icon glyph-icon-times js-modal-cancel"></span>',
+                '<span class="modal-closer glyph-icon glyph-icon-cross js-modal-cancel"></span>',
                 '<div class="card '+this._options.cardclass+' js-modal-panel">',
                     '<div class="card-header '+this._options.headerclass+'">',
                         '<h4>'+this._options.title+'</h4>',

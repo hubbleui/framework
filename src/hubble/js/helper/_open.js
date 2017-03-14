@@ -62,7 +62,7 @@
             easeInOutQuad: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
 
             // Cubic
-            easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19',
+            easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
             easeOutCubic: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
             easeInOutCubic: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
 
@@ -73,7 +73,7 @@
 
             // Quint
             easeInQuint: 'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
-            easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1',
+            easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1)',
             easeInOutQuint: 'cubic-bezier(0.86, 0, 0.07, 1)',
 
             // Expo
@@ -87,7 +87,7 @@
             easeInOutCirc: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
 
             // Back
-            easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045',
+            easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
             easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             easeInBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 

@@ -34,3 +34,4 @@
 @import "modules/_buttonWave.js";
 @import "modules/_inputMasks.js";
 @import "modules/_fileInput.js";
+@import "modules/_messages.js";

@@ -2,7 +2,7 @@
 .label {
     text-align: center;
     border-radius: $border-radius;
-	display: inline;
+    display: inline;
     background-color: $label-default-bg;
     color: $label-default-color;
     font-size: $label-font-size;
@@ -10,25 +10,83 @@
     line-height: 1;
     white-space: nowrap;
     vertical-align: baseline;
+    &:hover {
+        text-decoration: none;
+    }
+    &.label-outline {
+        background-color: transparent;
+        color: $label-default-bg;
+        border: 1px solid $label-default-bg;
+        &:hover {
+            background-color: $label-default-bg;
+            border-color: $label-default-bg;
+            color: $label-default-color;
+        }
+    }
     &.label-primary {
         color: $white;
         background-color: $brand-primary;
+        &.label-outline {
+            background-color: transparent;
+            color: $brand-primary;
+            border: 1px solid $brand-primary;
+            &:hover {
+                color: $white;
+                background-color: $brand-primary;
+            }
+        }
     }
     &.label-success {
         color: $white;
         background-color: $brand-success;
+        &.label-outline {
+            background-color: transparent;
+            color: $brand-success;
+            border: 1px solid $brand-success;
+            &:hover {
+                color: $white;
+                background-color: $brand-success;
+            }
+        }
     }
     &.label-info {
         color: $white;
         background-color: $brand-info;
+        &.label-outline {
+            background-color: transparent;
+            color: $brand-info;
+            border: 1px solid $brand-info;
+            &:hover {
+                color: $white;
+                background-color: $brand-info;
+            }
+        }
     }
     &.label-warning {
         color: $white;
         background-color: $brand-warning;
+        &.label-outline {
+            background-color: transparent;
+            color: $brand-warning;
+            border: 1px solid $brand-warning;
+            &:hover {
+                color: $white;
+                background-color: $brand-warning;
+            }
+        }
     }
     &.label-danger {
         color: $white;
         background-color: $brand-danger;
+        &.label-outline {
+            background-color: transparent;
+            color: $brand-danger;
+            border: 1px solid $brand-danger;
+            &:hover {
+                color: $white;
+                background-color: $brand-danger;
+            }
+        }
     }
 
 }

@@ -1,0 +1,22 @@
+.status {
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+	border-radius: 5px;
+	background-color: $gray;
+	&.status-primary {
+		background-color: $brand-primary;
+	}
+	&.status-info {
+		background-color: $brand-info;
+	}
+	&.status-success {
+		background-color: $brand-success;
+	}
+	&.status-warning {
+		background-color: $brand-warning;
+	}
+	&.status-danger {
+		background-color: $brand-danger;
+	}
+}

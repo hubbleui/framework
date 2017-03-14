@@ -1,0 +1,35 @@
+@include media-breakpoint-up(sm) {
+	.site-footer,
+	.page-wrapper:after {
+		height: 300px; 
+	}
+	.page-wrapper {
+		min-height: 100%;
+	 	margin-bottom: -300px; 
+	}
+	.site-footer {
+		padding: 60px 0;
+	}
+	.site-footer .sitemap li {
+	    padding-right: 20px;
+    	margin: 5px 0;
+    	display: inline-block;
+    	text-align: left;
+	}
+	.site-footer .logo {
+		width: 48px;
+		height: 48px;
+		margin-right: 20px;
+	}
+	.site-footer .social-links {
+	    text-align: right;
+	    padding: 62px 0;
+	}   
+	.site-footer .logo-link,
+	.site-footer small {
+		display: inline-block;
+    	float: left;
+    	text-align: left;
+	}
+	
+}

@@ -74,8 +74,8 @@ input[type="checkbox"]:focus {
                 transition: all .15s ease-in-out 0s;
             }
             + label:after {
-                font-family: 'FontAwesome';
-                content: "\f00c";
+                font-family: 'IcoMoon';
+                content: "\ea10";
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
             }

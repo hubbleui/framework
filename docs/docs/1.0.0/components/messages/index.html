@@ -13,9 +13,8 @@
     <link rel="apple-touch-icon" type="image/png" sizes="72x72" href="http://hubbleui.github.io/build/img/apple-touch-icon-72x72.png">
     <link rel="apple-touch-icon" type="image/png" sizes="114x114" href="http://hubbleui.github.io/build/img/apple-touch-icon-114x114.png">
 
-
-    <link rel="stylesheet" href="/build/css/hubble.min.css">
-    <link rel="stylesheet" href="/build/css/theme.min.css">
+    <link rel="stylesheet" href="/build/css/hubble.min.css?v=0.0.01">
+    <link rel="stylesheet" href="/build/css/theme.min.css?v=0.0.01">
 </head>
 
 <body>
@@ -37,8 +36,7 @@
 <div class="page-wrapper">
 
     <header class="site-header" data-waypoint="header">
-        
-            <nav class="desktop-nav sm md lg xl">
+        <nav class="desktop-nav sm md lg xl">
 
     <div class="container-fluid clearfix">
 
@@ -56,7 +54,7 @@
     </div>
 
 </nav> 
-            <nav class="mobile-nav xs">      
+        <nav class="mobile-nav xs">      
     <div class="container-fluid clearfix">
 
         <a class="float-left inline-block logo" href="/">
@@ -80,8 +78,7 @@
         <li><a href="https://github.com/hubbleui/" target="_blank">GitHub</a></li>
         <li><a href="https://github.com/hubbleui/framework/archive/master.zip" target="_blank">Download</a></li>
 	</ul>
-</div>        
-    </header>
+</div>    </header>
 
    <div class="container-fluid main-container">
 	<div class="col col-12 col-md-3 gutter-md-xl gutter-md-r">
@@ -222,6 +219,10 @@
 		    			Spinners		    		</a>
 		    	</li>
 		    		    			    	<li>
+		    		<a class="" href="/docs/1.0.0/components/status/">
+		    			Status		    		</a>
+		    	</li>
+		    		    			    	<li>
 		    		<a class="" href="/docs/1.0.0/components/tabs/">
 		    			Tabs		    		</a>
 		    	</li>
@@ -297,6 +298,8 @@
 <ul class="list-bullet">
     <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Basic example</a></li>
     <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="contextual" data-waypoint-speed="500">Contextual classes</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="removable" data-waypoint-speed="600">Removable messages</a></li>
+
 </ul>
 
 <hr>
@@ -312,7 +315,7 @@
         <div class="container-fuid"> 
             <div class="msg">
                 <div class="msg-icon">
-                    <span class="glyph-icon glyph-icon-info icon"></span>
+                    <span class="glyph-icon glyph-icon-bell icon"></span>
                 </div>
                 <div class="msg-body">
                     <p>This is an alert! Please read this carefully.</p>
@@ -324,7 +327,7 @@
 <!--
 <div class="msg">
     <div class="msg-icon">
-        <span class="glyph-icon glyph-icon-info icon"></span>
+        <span class="glyph-icon glyph-icon-bell icon"></span>
     </div>
     <div class="msg-body">
         <p>This is an alert! Please read this carefully.</p>
@@ -352,7 +355,7 @@
             <div class="row floor-xs">   
                 <div class="msg">
                     <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-info icon"></span>
+                        <span class="glyph-icon glyph-icon-bell icon"></span>
                     </div>
                     <div class="msg-body">
                         <p>This is an alert! Please read this carefully.</p>
@@ -363,7 +366,7 @@
             <div class="row floor-xs">   
                 <div class="msg msg-primary">
                     <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-info icon"></span>
+                        <span class="glyph-icon glyph-icon-bell icon"></span>
                     </div>
                     <div class="msg-body">
                         <p>This is an alert! Please read this carefully.</p>
@@ -374,7 +377,7 @@
             <div class="row floor-xs">   
                 <div class="msg msg-info">
                     <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-info icon"></span>
+                        <span class="glyph-icon glyph-icon-bell icon"></span>
                     </div>
                     <div class="msg-body">
                         <p>This is an alert! Please read this carefully.</p>
@@ -384,7 +387,7 @@
             <div class="row floor-xs">
                 <div class="msg msg-success">
                     <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-check icon"></span>
+                        <span class="glyph-icon glyph-icon-checkmark icon"></span>
                     </div>
                     <div class="msg-body">
                         <p>This is an alert! Please read this carefully.</p>
@@ -395,7 +398,7 @@
             <div class="row floor-xs">
                 <div class="msg msg-warning">
                     <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-exclamation-triangle icon"></span>
+                        <span class="glyph-icon glyph-icon-power icon"></span>
                     </div>
                     <div class="msg-body">
                         <p>This is an alert! Please read this carefully.</p>
@@ -406,7 +409,7 @@
             <div class="row floor-xs">   
                 <div class="msg msg-danger">
                     <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-times icon"></span>
+                        <span class="glyph-icon glyph-icon-cross icon"></span>
                     </div>
                     <div class="msg-body">
                         <p>This is an alert! Please read this carefully.</p>
@@ -448,6 +451,132 @@
 </div>
 
 <hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="removable">
+    <h2>Removable messages</h2>
+    <p>
+        Add a class of <code>.js-close-msg</code> to the <code>.closer-trigger</code> to 
+        make the message removable by the user. The message will be removed FROM the DOM after it is clicked.
+    </p>
+
+    <p>
+        Add a class of <code>.js-rmv-parent</code> to the <code>.closer-trigger</code> to 
+        make remove the parent node of the message. This is usufell when you message is wrapped 
+        in a spacing element that you want to remove.
+    </p>
+
+    <blockquote class="info"> 
+        <p>
+            You can add the <code>.js-close-msg</code> and <code>.js-rmv-parent</code> classes to any 
+            element.
+        </p>
+    </blockquote>
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+
+            <div class="row floor-xs">   
+                <div class="msg">
+                    <div class="msg-icon">
+                        <span class="glyph-icon glyph-icon-bell icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>This is an alert! Please read this carefully.</p>
+                    </div>
+                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
+                        <span class="glyph-icon glyph-icon-cross"></span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="row floor-xs">   
+                <div class="msg msg-primary">
+                    <div class="msg-icon">
+                        <span class="glyph-icon glyph-icon-bell icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>This is an alert! Please read this carefully.</p>
+                    </div>
+                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
+                        <span class="glyph-icon glyph-icon-cross"></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row floor-xs">   
+                <div class="msg msg-info">
+                    <div class="msg-icon">
+                        <span class="glyph-icon glyph-icon-bell icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>This is an alert! Please read this carefully.</p>
+                    </div>
+                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
+                        <span class="glyph-icon glyph-icon-cross"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="row floor-xs">
+                <div class="msg msg-success">
+                    <div class="msg-icon">
+                        <span class="glyph-icon glyph-icon-checkmark icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>This is an alert! Please read this carefully.</p>
+                    </div>
+                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
+                        <span class="glyph-icon glyph-icon-cross"></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row floor-xs">
+                <div class="msg msg-warning">
+                    <div class="msg-icon">
+                        <span class="glyph-icon glyph-icon-power icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>This is an alert! Please read this carefully.</p>
+                    </div>
+                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
+                        <span class="glyph-icon glyph-icon-cross"></span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="row floor-xs">   
+                <div class="msg msg-danger">
+                    <div class="msg-icon">
+                        <span class="glyph-icon glyph-icon-cross icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>This is an alert! Please read this carefully.</p>
+                    </div>
+                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
+                        <span class="glyph-icon glyph-icon-cross"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<div class="msg msg-danger">
+    <div class="msg-icon">
+        <span class="glyph-icon glyph-icon-cross icon"></span>
+    </div>
+    <div class="msg-body">
+        <p>This is an alert! Please read this carefully.</p>
+    </div>
+    <a href="#" class="closer-trigger js-close-msg">
+        <span class="glyph-icon glyph-icon-cross"></span>
+    </a>
+</div>
+-->
+</code></pre>
+
+</div>
 	</article>
 </div></div>
 </div>
@@ -513,8 +642,8 @@
 </footer>
 
 <div class="sidebar-overlay js-sidebar-overlay"></div>
-<script src="/build/js/hubble.min.js"></script>
-<script src="/build/js/theme.min.js"></script>
+<script src="/build/js/hubble.min.js?v=0.0.01"></script>
+<script src="/build/js/theme.min.js?v=0.0.01"></script>
 
 </body>
 

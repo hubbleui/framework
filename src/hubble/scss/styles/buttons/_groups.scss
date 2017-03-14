@@ -1,5 +1,5 @@
 .btn-group {
-	.btn {
+	> .btn {
 		display: inline-block;
 		margin-left: -5px;
 		border-radius: 0;
@@ -13,11 +13,27 @@
 			border-bottom-right-radius: $border-radius;
 		}
 	}
+	> .drop-container {
+		.btn {
+			display: inline-block;
+			margin-left: -5px;
+			border-radius: 0;
+		}
+		&:first-child .btn {
+			margin-left: 0;
+			border-top-left-radius: $border-radius;
+			border-bottom-left-radius: $border-radius;
+		}
+		&:last-child .btn {
+			border-top-right-radius: $border-radius;
+			border-bottom-right-radius: $border-radius;
+		}
+	}
 	&.btn-pill {
-		.btn:first-child {
+		> .btn:first-child {
 			border-radius: 500px 0 0 500px;
 		}
-		.btn:last-child {
+		> .btn:last-child {
 			border-radius: 0 500px 500px 0;
 		}
 	}
