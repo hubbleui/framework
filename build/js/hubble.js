@@ -6154,9 +6154,10 @@ JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture
         container.appendChild(wave);
 
         var coords = Helper.getCoords(container);
-        var x      = e.pageX - coords.left - wave.offsetWidth / 2;
-        var y      = e.pageY - coords.top - wave.offsetHeight / 2;
         var size   = container.offsetWidth;
+        var x      = e.pageX - coords.left - (container.offsetWidth / 2);
+        var y      = e.pageY - coords.top - (container.offsetHeight * 1.3);
+       
 
         Helper.css(wave, {
             top: y + 'px',

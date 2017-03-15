@@ -2626,6 +2626,11 @@ blockquote.bq-danger > footer, blockquote.bq-success > footer, blockquote.bq-inf
           box-shadow: none;
   background-color: transparent;
 }
+.btn .glyph-icon {
+  font-size: 1.6rem;
+  line-height: 1.4rem;
+  vertical-align: bottom;
+}
 
 .btn-xs {
   padding: 0.91rem 1.365rem;
@@ -2646,20 +2651,26 @@ blockquote.bq-danger > footer, blockquote.bq-success > footer, blockquote.bq-inf
 .btn-circle {
   border-radius: 50%;
   font-size: 2rem;
-  line-height: 2rem;
   padding: 1.1rem;
 }
 .btn-circle.btn-xs {
-  padding: 0.88rem;
+  padding: 0.66rem;
 }
 .btn-circle.btn-sm {
-  padding: 0.99rem;
+  padding: 0.88rem;
 }
 .btn-circle.btn-lg {
   padding: 1.43rem;
 }
 .btn-circle.btn-xl {
   padding: 1.65rem;
+}
+.btn-circle .glyph-icon {
+  line-height: initial;
+}
+.btn-circle:not(.raised):active {
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 .btn-block {
@@ -3080,7 +3091,7 @@ input[type="button"].btn-block {
 }
 .form-field input:focus, .form-field input.focus, .form-field textarea:focus, .form-field textarea.focus, .form-field select:focus, .form-field select.focus {
   background-color: transparent;
-  border-color: #01aef0;
+  border-color: #76afe1;
 }
 .form-field input.disabled, .form-field input:disabled, .form-field textarea.disabled, .form-field textarea:disabled, .form-field select.disabled, .form-field select:disabled {
   background-color: #DADADA;
@@ -3802,6 +3813,9 @@ form.success .msg-success {
 .btn-upload {
   position: relative;
   cursor: pointer;
+}
+.btn-upload .glyph-icon {
+  line-height: 2.3rem;
 }
 
 .btn-upload .upload-cover {
@@ -4773,7 +4787,7 @@ form.success .msg-success {
   width: 60px;
   background-color: rgba(0, 0, 0, 0.25);
 }
-.msg .msg-icon .icon {
+.msg .msg-icon .glyph-icon {
   font-size: 20px;
   width: 20px;
   height: 20px;
@@ -4909,8 +4923,8 @@ form.success .msg-success {
   position: absolute;
   color: #2A2A2A;
   cursor: pointer;
-  top: 3px;
-  right: 15px;
+  top: 7px;
+  right: 20px;
   font-size: 14px;
   z-index: 500;
   border-radius: 26px;
@@ -5877,7 +5891,7 @@ form.success .msg-success {
   width: 10px;
   height: 10px;
   display: inline-block;
-  border-radius: 5px;
+  border-radius: 50%;
   background-color: #76838f;
 }
 .status.status-primary {
@@ -5894,6 +5908,26 @@ form.success .msg-success {
 }
 .status.status-danger {
   background-color: #ff6666;
+}
+
+.status-xs {
+  width: 7px;
+  height: 7px;
+}
+
+.status-md {
+  width: 13px;
+  height: 13px;
+}
+
+.status-lg {
+  width: 15px;
+  height: 15px;
+}
+
+.status-xl {
+  width: 20px;
+  height: 20px;
 }
 
 .hamburger {

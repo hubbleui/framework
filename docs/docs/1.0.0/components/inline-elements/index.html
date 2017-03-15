@@ -137,11 +137,11 @@
 		    	</li>
 		     
 		    </ul>
-		 					    <div class="title-wrap js-collapse " data-collapse-target="components">
+		 					    <div class="title-wrap js-collapse active" data-collapse-target="components">
 		        <h6>Components</h6>
 		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
 		    </div>
-		    <ul class="list-unstyled collapsed" id="components">
+		    <ul class="list-unstyled " id="components">
 		    		    			    	<li>
 		    		<a class="" href="/docs/1.0.0/components/cards/">
 		    			Cards		    		</a>
@@ -224,11 +224,11 @@
 		    	</li>
 		     
 		    </ul>
-		 					    <div class="title-wrap js-collapse active" data-collapse-target="javascript">
+		 					    <div class="title-wrap js-collapse " data-collapse-target="javascript">
 		        <h6>JavaScript</h6>
 		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
 		    </div>
-		    <ul class="list-unstyled " id="javascript">
+		    <ul class="list-unstyled collapsed" id="javascript">
 		    		    			    	<li>
 		    		<a class="" href="/docs/1.0.0/javascript/introduction/">
 		    			Introduction		    		</a>
@@ -242,7 +242,7 @@
 		    			HelperJS		    		</a>
 		    	</li>
 		    		    			    	<li>
-		    		<a class="active" href="/docs/1.0.0/javascript/events/">
+		    		<a class="" href="/docs/1.0.0/javascript/events/">
 		    			Events		    		</a>
 		    	</li>
 		    		    			    	<li>
@@ -279,62 +279,242 @@
 	    </button>
 	</div>
 	<article class="docs-body">
-		<h1>Events</h1>
+		<h1>Inline Elements</h1>
+
 <hr>
 
-<div class="row roof-xs floor-xs" data-waypoint="welcome">
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="badges" data-waypoint-speed="400">Badges</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="labels" data-waypoint-speed="500">Labels</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="status" data-waypoint-speed="600">Status</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="carets" data-waypoint-speed="700">Carets</a></li>
+</ul>
+
+<hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="badges">
+    <h2>Badges</h2>
     <p>
-        The events module allows you to set callbacks for and trigger custom events. 
-        This is useful for when you want to trigger a function when a specific 'event' or action 
-        happens in your code.
+        Badges can be used to display a digit of new or unread items to the user. 
+        For example how many unread notifications the user has.
     </p>
-    <p>
-        To access the events module, use the <code>Events</code> key via the module loader.
-    </p>
-<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <span class="badge">1</span>
+            <span class="badge badge-primary">2</span>
+            <span class="badge badge-info">3</span>
+            <span class="badge badge-success">4</span>
+            <span class="badge badge-warning">5</span>
+            <span class="badge badge-danger">6</span>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-var events = Modules.get('Events');
+<span class="badge">1</span>
+<span class="badge badge-primary">2</span>
+<span class="badge badge-info">3</span>
+<span class="badge badge-success">4</span>
+<span class="badge badge-warning">5</span>
+<span class="badge badge-danger">6</span>
 -->
 </code></pre>
     <p>
-        The <code>on()</code> method sets a callback for an event name.
+        Badges can be displayed outside a button by adding the <code>.with-badge</code> to class button. 
+        On buttons with <code>.btn-pure</code> the badge will display on the top right corner of the text or icon.
     </p>
-<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <button class="btn btn-outline with-badge">
+                <span class="glyph-icon glyph-icon-bell"></span>
+                <span class="badge badge-info">3</span>
+            </button>
+            <button class="btn btn-pure with-badge">
+                <span class="glyph-icon glyph-icon-bell icon-md"></span>
+                <span class="badge badge-info">3</span>
+            </button>   
+            <button class="btn btn-pure with-badge">
+                Boo!
+                <span class="badge badge-info">3</span>
+            </button>     
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-var callback = function(){
-    console.log('fired callback');
-}
-events.on('myEventName', callback);
+<button class="btn btn-outline with-badge">
+    <span class="glyph-icon glyph-icon-bell"></span>
+    <span class="badge badge-info">3</span>
+</button>
+<button class="btn btn-pure with-badge">
+    <span class="glyph-icon glyph-icon-bell icon-md"></span>
+    <span class="badge badge-info">3</span>
+</button>   
+<button class="btn btn-pure with-badge">
+    Boo!
+    <span class="badge badge-info">3</span>
+</button>     
 -->
 </code></pre>
 
-    <p>
-        The <code>fire()</code> method calls all the callbacks on an event. They are fired in the order they were set.
-    </p>
-<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
-<!--
-var callback = function(){
-    console.log('fired callback');
-}
-events.on('myEventName', callback);
-events.fire('myEventName');
-// fired callback
--->
-</code></pre>
-    <p>
-        The <code>off()</code> method removes a callback for an event name.
-    </p>
-<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
-<!--
-if (somevar) {
-    events.off('myEventName', callback);
-}
--->
-</code></pre>
-    
 </div>
 
 <hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="labels">
+	<h2>Labels</h2>
+    <p>
+        Labels can be used to emphasize content with text.
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <span class="label">NEW</span>
+            <span class="label label-primary">NEW</span>
+            <span class="label label-info">NEW</span>
+            <span class="label label-success">NEW</span>
+            <span class="label label-warning">NEW</span>
+            <span class="label label-danger">NEW</span>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<span class="label">NEW</span>
+<span class="label label-primary">NEW</span>
+<span class="label label-info">NEW</span>
+<span class="label label-success">NEW</span>
+<span class="label label-warning">NEW</span>
+<span class="label label-danger">NEW</span>
+-->
+</code></pre>
+    <p>
+        Use the <code>.label-outline</code> class for outlined styles
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <span class="label label-outline">NEW</span>
+            <span class="label label-primary label-outline">NEW</span>
+            <span class="label label-info label-outline">NEW</span>
+            <span class="label label-success label-outline">NEW</span>
+            <span class="label label-warning label-outline">NEW</span>
+            <span class="label label-danger label-outline">NEW</span>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<span class="label label-outline">NEW</span>
+<span class="label label-primary label-outline">NEW</span>
+<span class="label label-info label-outline">NEW</span>
+<span class="label label-success label-outline">NEW</span>
+<span class="label label-warning label-outline">NEW</span>
+<span class="label label-danger label-outline">NEW</span>
+-->
+</code></pre>
+
+</div>
+
+<hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="status">
+    <h2>Status</h2>
+    <p>
+        Use the <code>.status</code> class to indicate a status
+    </p>
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <span class="status"></span>
+            <span class="status status-primary"></span>
+            <span class="status status-info"></span>
+            <span class="status status-success"></span>
+            <span class="status status-warning"></span>
+            <span class="status status-danger"></span>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<span class="status">1</span>
+<span class="status status-primary"></span>
+<span class="status status-info"></span>
+<span class="status status-success"></span>
+<span class="status status-warning"></span>
+<span class="status status-danger"></span>
+-->
+</code></pre>
+
+	<p>
+    	Apply various sizings using the sizing classes <code>.status-xs</code>, <code>.status-sm</code>, <code>.status-lg</code>,
+    	<code>.status-xl</code>. 
+    </p>
+
+    <div class="code-content-example">
+        <div class="container-fuid"> 
+            <span class="status status-xs"></span>
+            <span class="status"></span>
+            <span class="status status-md"></span>
+            <span class="status status-lg"></span>
+            <span class="status status-xl"></span>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<span class="status status-xs"></span>
+<span class="status"></span>
+<span class="status status-md"></span>
+<span class="status status-lg"></span>
+<span class="status status-xl"></span>
+-->
+</code></pre>
+
+<hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="carets">
+	<h2>Carets</h2>
+    <p>
+        Carets can be used to show the user that a button or any other content will either dropdown or dropup. 
+        You can use them wherever you like but here's an example in a button. 
+    </p>
+    <div class="code-content-example">
+        <div class="container-fuid">
+            <button class="btn">
+                Button
+                <span class="caret-s">
+            </button>
+            <button class="btn btn-outline">
+                Button
+                <span class="caret-n">
+            </button>
+            <button class="btn btn-success">
+                Button
+                <span class="caret-n">
+            </button>
+            <button class="btn btn-info btn-outline">
+                Button
+                <span class="caret-n">
+            </button>
+        </div>
+    </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<button class="btn">
+    Button
+    <span class="caret-s">
+</button>
+<button class="btn btn-outline">
+    Button
+    <span class="caret-n">
+</button>
+<button class="btn btn-success">
+    Button
+    <span class="caret-n">
+</button>
+<button class="btn btn-info btn-outline">
+    Button
+    <span class="caret-n">
+</button>
+-->
+</code></pre>
+
+</div>
 	</article>
 </div></div>
 </div>
