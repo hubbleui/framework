@@ -17,17 +17,17 @@ input[type="checkbox"]:focus {
 
 // styles
 .checkbox {
-    padding-left: 20px;
+    padding-left: $checkbox-size;
     
     label {
         display: inline-block;
-        position: relative;
         cursor: pointer;
         vertical-align: middle;
         position: relative;
         padding-left: 10px;
-        min-height: 22px;
+        min-height: $checkbox-size + 2;
         margin-bottom: 0;
+        line-height: $checkbox-size;
         &:before {
             content: "";
             display: inline-block;
@@ -35,24 +35,24 @@ input[type="checkbox"]:focus {
             left: 0;
             border-radius: 2px;
             background-color: $white;
-            width: 20px;
-            height: 20px;
-            margin-left: -20px;
+            width: $checkbox-size;
+            height: $checkbox-size;
+            margin-left: -$checkbox-size;
             border: 1px solid #e4eaec;
             transition: all .15s ease-in-out 0s;
         }
         &:after {
             display: inline-block;
             position: absolute;
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
+            width: $checkbox-size;
+            height: $checkbox-size;
+            line-height: $checkbox-size;
             left: 0;
             top: 0;
-            margin-left: -20px;
+            margin-left: -$checkbox-size;
             text-align: center;
             padding-top: 1px;
-            font-size: 12px;
+            font-size: 1.4rem;
             color: #76838f;
         }
     }
@@ -61,16 +61,16 @@ input[type="checkbox"]:focus {
         position: absolute;
         display: none;
         opacity: 0;
-        margin-left: -20px;
+        margin-left: -$checkbox-size;
         margin-top: 0;
         margin-bottom: 0;
         z-index: 1;
-        width: 20px;
-        height: 20px;
+        width: $checkbox-size;
+        height: $checkbox-size;
         &:checked {
             + label:before {
                 border-color: #e4eaec;
-                border-width: 10px;
+                border-width: $checkbox-size / 2;
                 transition: all .15s ease-in-out 0s;
             }
             + label:after {
@@ -83,10 +83,10 @@ input[type="checkbox"]:focus {
         &:focus {
             + label:before {
                 border-color: #e4eaec;
-                border-width: 10px;
+                border-width: $checkbox-size / 2;
                 transition: all .15s ease-in-out 0s;
                 outline: thin dotted;
-                outline: 5px auto -webkit-focus-ring-color;
+                outline: $checkbox-size / 4 auto -webkit-focus-ring-color;
                 outline-offset: -2px;
             }
         }

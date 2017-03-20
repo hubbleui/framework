@@ -2590,8 +2590,8 @@ blockquote.bq-danger > footer, blockquote.bq-success > footer, blockquote.bq-inf
   -webkit-transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, -webkit-box-shadow 0.2s ease;
        -o-transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
           transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-  padding: 1.3rem 1.95rem;
-  padding: 1.3rem 1.95rem;
+  padding: 1.6rem 2.1rem;
+  padding: 1.6rem 2.1rem;
 }
 .btn:hover {
   background-color: #c1c1c1;
@@ -2633,19 +2633,19 @@ blockquote.bq-danger > footer, blockquote.bq-success > footer, blockquote.bq-inf
 }
 
 .btn-xs {
-  padding: 0.91rem 1.365rem;
+  padding: 1.12rem 1.47rem;
 }
 
 .btn-sm {
-  padding: 1.04rem 1.56rem;
+  padding: 1.28rem 1.68rem;
 }
 
 .btn-lg {
-  padding: 1.69rem 2.535rem;
+  padding: 2.08rem 2.73rem;
 }
 
 .btn-xl {
-  padding: 1.95rem 2.925rem;
+  padding: 2.4rem 3.15rem;
 }
 
 .btn-circle {
@@ -3055,14 +3055,14 @@ input[type="button"].btn-block {
   display: none;
   position: absolute;
   top: 50%;
-  height: 3.7rem;
-  width: 3.7rem;
-  left: 0.975rem;
-  margin-top: -1.85rem;
+  height: 4.3rem;
+  width: 4.3rem;
+  left: 1.05rem;
+  margin-top: -2.15rem;
 }
 
 .btn.with-spinner.active {
-  padding-left: 5.85rem;
+  padding-left: 6.3rem;
 }
 
 .btn.active .loading-spinner {
@@ -3077,7 +3077,7 @@ input[type="button"].btn-block {
   display: block;
   width: 100%;
   font-size: 1.3rem;
-  padding: 0.9rem 1.2rem;
+  padding: 1.15rem 1.2rem;
   border-radius: 2px;
   outline: none;
   font-weight: 400;
@@ -3191,7 +3191,7 @@ input[type="button"].btn-block {
   float: left;
   text-align: center;
   font-size: 1.3rem;
-  padding: 0.9rem 1.2rem;
+  padding: 1.15rem 1.2rem;
   border-radius: 2px;
   background-color: #f4f4f4;
   font-weight: 600;
@@ -3218,7 +3218,7 @@ input[type="button"].btn-block {
   margin: 0;
   line-height: 1.8;
   font-size: 1.3rem;
-  padding: 0.9rem 1.2rem;
+  padding: 1.15rem 1.2rem;
 }
 .field-group .btn:last-child {
   border-top-left-radius: 0;
@@ -3243,17 +3243,17 @@ input[type="checkbox"]:focus {
 }
 
 .checkbox {
-  padding-left: 20px;
+  padding-left: 30px;
 }
 .checkbox label {
   display: inline-block;
-  position: relative;
   cursor: pointer;
   vertical-align: middle;
   position: relative;
   padding-left: 10px;
-  min-height: 22px;
+  min-height: 32px;
   margin-bottom: 0;
+  line-height: 30px;
 }
 .checkbox label:before {
   content: "";
@@ -3262,9 +3262,9 @@ input[type="checkbox"]:focus {
   left: 0;
   border-radius: 2px;
   background-color: #ffffff;
-  width: 20px;
-  height: 20px;
-  margin-left: -20px;
+  width: 30px;
+  height: 30px;
+  margin-left: -30px;
   border: 1px solid #e4eaec;
   -webkit-transition: all .15s ease-in-out 0s;
        -o-transition: all .15s ease-in-out 0s;
@@ -3273,31 +3273,31 @@ input[type="checkbox"]:focus {
 .checkbox label:after {
   display: inline-block;
   position: absolute;
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
   left: 0;
   top: 0;
-  margin-left: -20px;
+  margin-left: -30px;
   text-align: center;
   padding-top: 1px;
-  font-size: 12px;
+  font-size: 1.4rem;
   color: #76838f;
 }
 .checkbox input[type=checkbox] {
   position: absolute;
   display: none;
   opacity: 0;
-  margin-left: -20px;
+  margin-left: -30px;
   margin-top: 0;
   margin-bottom: 0;
   z-index: 1;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 }
 .checkbox input[type=checkbox]:checked + label:before {
   border-color: #e4eaec;
-  border-width: 10px;
+  border-width: 15px;
   -webkit-transition: all .15s ease-in-out 0s;
        -o-transition: all .15s ease-in-out 0s;
           transition: all .15s ease-in-out 0s;
@@ -3310,12 +3310,12 @@ input[type="checkbox"]:focus {
 }
 .checkbox input[type=checkbox]:focus + label:before {
   border-color: #e4eaec;
-  border-width: 10px;
+  border-width: 15px;
   -webkit-transition: all .15s ease-in-out 0s;
        -o-transition: all .15s ease-in-out 0s;
           transition: all .15s ease-in-out 0s;
   outline: thin dotted;
-  outline: 5px auto -webkit-focus-ring-color;
+  outline: 7.5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
 .checkbox input[type=checkbox].disabled, .checkbox input[type=checkbox][disabled] {
@@ -3393,17 +3393,17 @@ input[type=radio]:focus {
 }
 
 .radio {
-  padding-left: 20px;
+  padding-left: 30px;
 }
 .radio label {
   display: inline-block;
   position: relative;
   cursor: pointer;
   vertical-align: middle;
-  position: relative;
-  padding-left: 10px;
-  min-height: 22px;
+  padding-left: 7.5px;
+  min-height: 32px;
   margin-bottom: 0;
+  line-height: 30px;
 }
 .radio label:before {
   content: "";
@@ -3412,9 +3412,9 @@ input[type=radio]:focus {
   left: 0;
   border-radius: 50%;
   background-color: #ffffff;
-  width: 20px;
-  height: 20px;
-  margin-left: -20px;
+  width: 30px;
+  height: 30px;
+  margin-left: -30px;
   border: 1px solid #e4eaec;
   -webkit-transition: all .15s ease-in-out 0s;
        -o-transition: all .15s ease-in-out 0s;
@@ -3425,12 +3425,11 @@ input[type=radio]:focus {
   display: inline-block;
   position: absolute;
   border-radius: 50%;
-  background-color: #ffffff;
   background-color: #76838f;
-  left: -15px;
-  top: 5px;
-  width: 10px;
-  height: 10px;
+  left: -21.99px;
+  top: 7.5px;
+  width: 15px;
+  height: 15px;
   -webkit-transition: all .15s ease-in-out 0s;
        -o-transition: all .15s ease-in-out 0s;
           transition: all .15s ease-in-out 0s;
@@ -3443,16 +3442,16 @@ input[type=radio]:focus {
   position: absolute;
   display: none;
   opacity: 0;
-  margin-left: -20px;
+  margin-left: -30px;
   margin-top: 0;
   margin-bottom: 0;
   z-index: 1;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 }
 .radio input[type=radio]:checked + label:before {
   border-color: #e4eaec;
-  border-width: 10px;
+  border-width: 15px;
   -webkit-transition: all .15s ease-in-out 0s;
        -o-transition: all .15s ease-in-out 0s;
           transition: all .15s ease-in-out 0s;
@@ -3468,7 +3467,7 @@ input[type=radio]:focus {
 }
 .radio input[type=radio]:focus + label:before {
   border-color: #e4eaec;
-  border-width: 10px;
+  border-width: 15px;
   -webkit-transition: all .15s ease-in-out 0s;
        -o-transition: all .15s ease-in-out 0s;
           transition: all .15s ease-in-out 0s;
@@ -4390,7 +4389,7 @@ form.success .msg-success {
   left: 0;
   border-radius: 2px;
   z-index: 300;
-  top: 4.8rem;
+  top: 5.4rem;
   min-width: 160px;
   width: auto;
 }
@@ -4498,7 +4497,7 @@ form.success .msg-success {
 }
 
 .drop-menu.arrow.drop-s, .drop-menu.arrow.drop-se, .drop-menu.arrow.drop-sw {
-  top: 5.2rem;
+  top: 6.4rem;
 }
 
 .drop-menu.arrow.drop-n, .drop-menu.arrow.drop-ne, .drop-menu.arrow.drop-nw {

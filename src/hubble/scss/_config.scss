@@ -148,8 +148,8 @@ $bq-padding:                2rem;
 
 // Button
 $btn-text-transform:        uppercase !default;
-$btn-pad-x:                 1.95rem !default;
-$btn-pad-y:                 1.3rem !default;
+$btn-pad-x:                 2.1rem !default;
+$btn-pad-y:                 1.6rem !default;
 $btn-font-size:             1.1rem !default;
 $btn-font-weight:           $text-bolder !default;
 
@@ -171,6 +171,10 @@ $btn-default-color:         $gray !default;
 $btn-default-color-hover:   $brand-primary !default;
 
 $circle-btn-font-size:      2.0rem;
+
+$btn-icon-font-size:        1.6rem;
+$btn-icon-line-height:      1.4rem;
+$btn-icon-vertical-align:   bottom;
 
 // Dropdown
 $dropdown-bg:               #fff !default;
@@ -230,18 +234,27 @@ $card-cap-bg:               $gray-lighter;
 $card-img-overlay-padding:  1.25rem;
 $card-deck-margin:          1.25rem;
 
-// Forms
+// Inputs
 $input-font-size:             1.3rem !default;
 $input-line-height:           $base-line-height !default;
 $input-color:                 $gray-dark !default;
 $input-border-color:          #ccd5db !default;
-$input-hover-border-color:    $brand-secondary !default;
+$input-hover-border-color:    $brand-info !default;
 $input-bg:                    transparent !default;
 $input-bg-hover:              transparent !default;
-$input-pad-y:                 0.9rem !default;
+$input-pad-y:                 1.15rem !default;
 $input-pad-x:                 1.2rem !default;
 $input-addon-bg:              $gray-lightest !default;
 $input-addon-color:           $gray-dark !default;
+
+// Checkbox
+$checkbox-size:               30px;
+
+// Radio
+$radio-size:                  30px;
+
+// Status sizes
+$status-size:                 10px;         
 
 // Zindexs
 $z-index-tooltip:             100;

@@ -1,8 +1,8 @@
 .status {
-	width: 10px;
-	height: 10px;
+	width: $status-size;
+	height: $status-size;
 	display: inline-block;
-	border-radius: 5px;
+	border-radius: 50%;
 	background-color: $gray;
 	&.status-primary {
 		background-color: $brand-primary;
@@ -19,4 +19,20 @@
 	&.status-danger {
 		background-color: $brand-danger;
 	}
+}
+.status-xs {
+	width:  _minusPercent($status-size, 30);
+	height: _minusPercent($status-size, 30);
+}
+.status-md {
+	width:  _addPercent($status-size, 30);
+	height: _addPercent($status-size, 30);
+}
+.status-lg {
+	width:  _addPercent($status-size, 50);
+	height: _addPercent($status-size, 50);
+}
+.status-xl {
+	width:  _addPercent($status-size, 100);
+	height: _addPercent($status-size, 100);
 }

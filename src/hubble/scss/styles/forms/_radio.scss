@@ -17,17 +17,17 @@ input[type=radio]:focus {
 
 // styles
 .radio {
-    padding-left: 20px;
+    padding-left: $radio-size;
     
     label {
         display: inline-block;
         position: relative;
         cursor: pointer;
         vertical-align: middle;
-        position: relative;
-        padding-left: 10px;
-        min-height: 22px;
+        padding-left: $radio-size / 4;
+        min-height: $radio-size + 2;
         margin-bottom: 0;
+        line-height: $radio-size;
         &:before {
             content: "";
             display: inline-block;
@@ -35,9 +35,9 @@ input[type=radio]:focus {
             left: 0;
             border-radius: 50%;
             background-color: $white;
-            width: 20px;
-            height: 20px;
-            margin-left: -20px;
+            width: $radio-size;
+            height: $radio-size;
+            margin-left: -$radio-size;
             border: 1px solid #e4eaec;
             transition: all .15s ease-in-out 0s;
         }
@@ -46,12 +46,11 @@ input[type=radio]:focus {
             display: inline-block;
             position: absolute;
             border-radius: 50%;
-            background-color: $white;
-            background-color: #76838f;
-            left: -15px;
-            top: 5px;
-            width: 10px;
-            height: 10px;
+            background-color: $gray;
+            left: - ($radio-size * 0.733);
+            top: ($radio-size / 4);
+            width: $radio-size / 2;
+            height: $radio-size / 2;
             transition: all .15s ease-in-out 0s;
             transform: scale(0);
         }
@@ -61,16 +60,16 @@ input[type=radio]:focus {
         position: absolute;
         display: none;
         opacity: 0;
-        margin-left: -20px;
+        margin-left: -$radio-size;
         margin-top: 0;
         margin-bottom: 0;
         z-index: 1;
-        width: 20px;
-        height: 20px;
+        width: $radio-size;
+        height: $radio-size;
         &:checked {
             + label:before {
                 border-color: #e4eaec;
-                border-width: 10px;
+                border-width: $radio-size / 2;
                 transition: all .15s ease-in-out 0s;
             }
             + label:after {
@@ -81,7 +80,7 @@ input[type=radio]:focus {
         &:focus {
             + label:before {
                 border-color: #e4eaec;
-                border-width: 10px;
+                border-width: $radio-size / 2;
                 transition: all .15s ease-in-out 0s;
                 outline: thin dotted;
                 outline: 5px auto -webkit-focus-ring-color;

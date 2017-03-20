@@ -84,6 +84,11 @@
             background-color: transparent;
         }
     }
+    .glyph-icon {
+        font-size: $btn-icon-font-size;
+        line-height: $btn-icon-line-height;
+        vertical-align: $btn-icon-vertical-align;
+    }
 }
 
 // Sizes
@@ -104,19 +109,24 @@
 .btn-circle {
     border-radius: 50%;
     font-size: $circle-btn-font-size;
-    line-height:  $circle-btn-font-size;
     padding: $btn-font-size;
     &.btn-xs {
-       padding: _minusPercent($btn-font-size, 20);
+       padding: _minusPercent($btn-font-size, 40);
     }
     &.btn-sm {
-        padding: _minusPercent($btn-font-size, 10);
+        padding: _minusPercent($btn-font-size, 20);
     }
     &.btn-lg {
         padding: _addPercent($btn-font-size, 30);
     }
     &.btn-xl {
        padding: _addPercent($btn-font-size, 50);
+    }
+    .glyph-icon {
+        line-height: initial;
+    }
+    &:not(.raised):active{
+        box-shadow: none;
     }
 }
 

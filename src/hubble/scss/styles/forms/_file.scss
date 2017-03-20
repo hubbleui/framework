@@ -10,6 +10,9 @@
 .btn-upload {
 	position: relative;
 	cursor: pointer;
+	.glyph-icon {
+		line-height: 2.3rem;
+	}
 }
 .btn-upload .upload-cover {
 	position: absolute;
