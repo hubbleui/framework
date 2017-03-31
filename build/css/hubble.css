@@ -4348,6 +4348,20 @@ form.success .msg-success {
     margin-right: 1.25rem;
   }
 }
+.card-columns {
+  -webkit-column-count: 3;
+     -moz-column-count: 3;
+          column-count: 3;
+  -webkit-column-gap: 1.25rem;
+     -moz-column-gap: 1.25rem;
+          column-gap: 1.25rem;
+}
+.card-columns .card {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 1.8rem;
+}
+
 .caret-n,
 .caret-s {
   display: inline-block;
@@ -4987,11 +5001,13 @@ form.success .msg-success {
 }
 
 .modal-icon {
-  font-size: 41px;
+  font-size: 3.1rem;
   border-width: 1px;
   border-style: solid;
   border-radius: 50%;
-  padding: 14px;
+  width: 7rem;
+  height: 7rem;
+  line-height: 7rem;
 }
 
 .modal-dialog {

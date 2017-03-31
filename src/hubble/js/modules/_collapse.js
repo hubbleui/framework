@@ -60,7 +60,6 @@
             e.stopPropagation();
         }
         
-
         var clicked  = this;
         var targetEl = Helper.$('#'+clicked.dataset.collapseTarget);
         var speed    = parseInt(clicked.dataset.collapseSpeed) || 350;

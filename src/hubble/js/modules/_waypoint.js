@@ -118,7 +118,7 @@
 
         if (Helper.isset(url['fragment']) && url['fragment'] !== '') {
 
-            var waypoint = url['fragment'];
+            var waypoint = Helper.trim(url['fragment'], '/');
             var options  = {
                 speed:   50,
                 easing: 'Linear'

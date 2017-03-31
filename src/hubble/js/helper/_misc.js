@@ -239,5 +239,7 @@ JSHelper.prototype.getBrowser = function() {
         fullVersion = "" + parseFloat(navigator.appVersion);
         majorVersion = parseInt(navigator.appVersion, 10)
     }
-    this.browser = browserName;
+    this.browser = {'name': browserName, 'version': majorVersion };
+
+    return this.browser;
 }

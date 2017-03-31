@@ -2371,7 +2371,9 @@ JSHelper.prototype.getBrowser = function() {
         fullVersion = "" + parseFloat(navigator.appVersion);
         majorVersion = parseInt(navigator.appVersion, 10)
     }
-    this.browser = browserName;
+    this.browser = {'name': browserName, 'version': majorVersion };
+
+    return this.browser;
 }
 JSHelper.prototype.addEventListener = function(element, eventName, handler, useCapture) {
 
@@ -2490,7 +2492,7 @@ JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture
         el.detachEvent('on' + eventName, handler, useCapture);
     }
 }
-	Modules.singleton('JSHelper', JSHelper);
+	Modules.singleton('JSHelper', JSHelper).get('JSHelper').getBrowser();
 
 })();
 
@@ -5172,7 +5174,7 @@ JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture
 
         if (Helper.isset(url['fragment']) && url['fragment'] !== '') {
 
-            var waypoint = url['fragment'];
+            var waypoint = Helper.trim(url['fragment'], '/');
             var options  = {
                 speed:   50,
                 easing: 'Linear'
@@ -5462,7 +5464,6 @@ JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture
             e.stopPropagation();
         }
         
-
         var clicked  = this;
         var targetEl = Helper.$('#'+clicked.dataset.collapseTarget);
         var speed    = parseInt(clicked.dataset.collapseSpeed) || 350;

@@ -1,3 +1,3 @@
-	Modules.singleton('JSHelper', JSHelper);
+	Modules.singleton('JSHelper', JSHelper).get('JSHelper').getBrowser();
 
 })();

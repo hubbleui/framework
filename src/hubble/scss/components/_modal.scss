@@ -102,11 +102,13 @@
 }
 
 .modal-icon {
-	font-size: 41px;
-	border-width: 1px;
-	border-style: solid;
+	font-size: 3.1rem;
+    border-width: 1px;
+    border-style: solid;
     border-radius: 50%;
-    padding: 14px;
+    width: 7rem;
+    height: 7rem;
+    line-height: 7rem;
 }
 
 .modal-dialog {

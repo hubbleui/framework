@@ -203,7 +203,7 @@
 	}
 }
 
-// Deks
+// Decks
 .card-deck .card, {
 	margin-bottom: $card-spacer-y;
 }
@@ -229,4 +229,15 @@
 	      	&:not(:last-child) { margin-right: $card-deck-margin; }
     	}
   	}
+}
+
+// Columns (masonry)
+.card-columns {
+    column-count: 3;
+    column-gap: 1.25rem;
+    .card {
+	    display: inline-block;
+	    width: 100%;
+	    margin-bottom: 1.8rem;
+	}
 }
