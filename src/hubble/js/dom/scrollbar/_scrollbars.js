@@ -1,29 +1,28 @@
 /**
- * Scrollbars
+ * Custom Scrollbars
  *
- * This module uses the "vendor/scrollbars.js" module to handle the scroll
- * events. This module itself handles the activation and injection of the 
- * required nodes for the module to function.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-(function() {
 
+(function()
+{
     /**
-     * @var Helper obj
+     * Helper instance
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
      * @constructor
-     * @params null
      * @access public
-     * @return this
      */
-    var AutoScrollBars = function() {
-        
+    var ScrollBars = function()
+    {
         this._nodes    = [];
         this._handlers = [];
 
@@ -31,8 +30,10 @@
         this._nodes = Helper.$All('.js-custom-scroll');
 
         // Bind DOM listeners
-        if (!Helper.empty(this._nodes)) {
-            for (var i = 0; i < this._nodes.length; i++) {
+        if (!Helper.empty(this._nodes))
+        {
+            for (var i = 0; i < this._nodes.length; i++)
+            {
                 this._invoke(this._nodes[i]);
             }
         }
@@ -43,13 +44,15 @@
     /**
      * Module destructor - removes handler
      *
-     * @params null
      * @access public
      */
-    AutoScrollBars.prototype.desctruct = function() {
-        for (var i = 0; i < this._handlers.length; i++) {
+    ScrollBars.prototype.desctruct = function()
+    {
+        for (var i = 0; i < this._handlers.length; i++)
+        {
             this._handlers[i].destroy();
         }
+
         this._nodes    = [];
         this._handlers = [];
     }
@@ -61,8 +64,10 @@
      * @params el node
      * @access private
      */
-    AutoScrollBars.prototype._invoke = function(el) {
-        if (Helper.hasClass(el, 'js-auto-scroll-invoked')) {
+    ScrollBars.prototype._invoke = function(el)
+    {
+        if (Helper.hasClass(el, 'js-auto-scroll-invoked'))
+        {
             var handler = Container.get('Scrollbar', el);
             this._handlers.push(handler);
             return;
@@ -87,7 +92,8 @@
         scrollHandle.className = 'scrollbar-handle';
 
         scrollArea.appendChild(scrollWrap);
-        for (var i = 0; i < children.length; i++) {
+        for (var i = 0; i < children.length; i++)
+        {
             scrollWrap.appendChild(children[i]);
         }
         scrollWrap.appendChild(scrollTrack);
@@ -105,7 +111,8 @@
      * @access private
      * @return boolean
      */
-    AutoScrollBars.prototype._needsScroller = function(el) {
+    ScrollBars.prototype._needsScroller = function(el)
+    {
         var computedStyle = window.getComputedStyle(el);
 
         // Is the element hidden?
@@ -114,16 +121,20 @@
         var inlineDisplay = false;
         var needsScroller = false;
 
-        if (isHidden) {
-            if (computedStyle.display === 'none') {
+        if (isHidden)
+        {
+            if (computedStyle.display === 'none')
+            {
                 hiddenEl = el;
             }
             else {
                 var parent = el;
-                while (parent !== document.body) {
+                while (parent !== document.body)
+                {
                     parent = parent.parentNode;
                     var parentStyle = window.getComputedStyle(parent);
-                    if (parentStyle.display === 'none') {
+                    if (parentStyle.display === 'none')
+                    {
                         hiddenEl = parent
                         break;
                     }
@@ -132,19 +143,23 @@
         }
 
         // Make visible
-        if (hiddenEl) {
+        if (hiddenEl)
+        {
             inlineDisplay = hiddenEl.style.display;
             hiddenEl.style.display = 'block';
         }
         var endHeight = el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTop) + parseInt(computedStyle.borderBottom);
         endHeight     = parseInt(endHeight);
-        if (endHeight > el.offsetHeight) {
+        if (endHeight > el.offsetHeight)
+        {
             needsScroller   = true;
             el.style.height = el.offsetHeight+'px';
         }
         // Make invisible
-        if (hiddenEl) {
-            if (inlineDisplay) {
+        if (hiddenEl)
+        {
+            if (inlineDisplay)
+            {
                 hiddenEl.style.display = inlineDisplay;
             }
             else {
@@ -162,11 +177,14 @@
      *
      * @params elem node
      * @access public
-     * @example Container.get('AutoScrollBars').refresh(node) // Node = $.('.js-custom-scroll');
+     * @example Container.get('ScrollBars').refresh(node) // Node = $.('.js-custom-scroll');
      */
-    AutoScrollBars.prototype.refresh = function(elem) {
-        for (var i = 0; i < this._handlers.length; i++) {
+    ScrollBars.prototype.refresh = function(elem)
+    {
+        for (var i = 0; i < this._handlers.length; i++)
+        {
             var handler = this._handlers[i];
+            
             if (handler.el === elem) handler.refresh();
         }
     }
@@ -177,9 +195,12 @@
      * @params elem node
      * @access public
      */
-    AutoScrollBars.prototype.destroy = function(elem) {
+    ScrollBars.prototype.destroy = function(elem)
+    {
         var i = this._handlers.length;
-        while (i--) {
+
+        while (i--)
+        {
             var handler = this._handlers[i];
             if (handler.el === elem) handler.destroy();
             this._handlers.splice(i, 1);
@@ -193,14 +214,17 @@
      * @access public
      * @return mixed
      */
-    AutoScrollBars.prototype.getHandler = function(elem) {
-        for (var i = 0; i < this._handlers.length; i++) {
+    ScrollBars.prototype.getHandler = function(elem)
+    {
+        for (var i = 0; i < this._handlers.length; i++)
+        {
             var handler = this._handlers[i];
+            
             if (handler.el === elem) return handler;
         }
     }
 
-    // Load into hubble DOM core
-    Container.get('Hubble').dom().register('AutoScrollBars', AutoScrollBars);
+    // Load into Hubble DOM core
+    Container.get('Hubble').dom().register('ScrollBars', ScrollBars);
 
 })();

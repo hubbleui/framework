@@ -1,5 +1,5 @@
 /**
- * Close messages
+ * Message closers
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
@@ -13,12 +13,11 @@
      * 
      * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
-     * Constructor
+     * Module constructor
      *
-     * @class
      * @constructor
      * @access public
      */
@@ -101,7 +100,7 @@
         }, 300);
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('MessageClosers', MessageClosers);
 
 })();

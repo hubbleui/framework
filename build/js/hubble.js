@@ -1,11 +1,12 @@
 // Container
 /**
- * JavaScript IoC container
+ * JS IoC Container
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
+
 (function(window)
 {
 	var Container = function()
@@ -211,12 +212,13 @@
 })(window);
 
 /**
- * Application Core
+ * Application core
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
+
 (function()
 {
     /**
@@ -290,14 +292,20 @@
     // Loads into container
     Container.singleton('Hubble', Application);
 
+    if (!window.Hubble)
+    {
+        window.Hubble = Container.get('Hubble');
+    }
+    
 })();
 /**
- * Dom Core
+ * DOM Manager
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
+
 (function()
 {
     /**
@@ -305,7 +313,6 @@
      *
      * @class
      * @constructor
-     * @params null
      * @access public
      */
     var Dom = function()
@@ -403,7 +410,6 @@
     /**
      * Unbind listener to containers
      *
-     * @params null
      * @access private
      */
     Dom.prototype._bindModules = function()
@@ -450,13 +456,23 @@
 
 // Helper
 /**
- * Helper JS
+ * JavaScript helper library
  *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
  */
-(function() {
 
-    // Library initializer
-    var JSHelper = function() {
+(function()
+{
+    /**
+     * Module constructor
+     *
+     * @access public
+     * @constructor
+     */
+    var JSHelper = function()
+    {
 
         this.version = "1.0.0";
 
@@ -554,7 +570,8 @@
     JSHelper.prototype = {};
 
     // Destructor
-    JSHelper.prototype.destruct = function() {
+    JSHelper.prototype.destruct = function()
+    {
         this.clearEventListeners();
     }
 
@@ -1351,38 +1368,76 @@ JSHelper.prototype.showAria = function(el)
 
 
 
-/* Is JSON */
-JSHelper.prototype.isJSON = function(str) {
+/**
+ * String Helper Functions
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ */
+
+/**
+ * Is valid JSON
+ * 
+ * @param  mixed str String JSON
+ * @return object|false
+ */
+JSHelper.prototype.isJSON = function(str)
+{
     var obj;
-    try {
+    try
+    {
         obj = JSON.parse(str);
     }
-    catch (e) {
+    catch (e)
+    {
         return false;
     }
     return obj;
 }
 
-/* Make random id */
-JSHelper.prototype.makeid = function(length) {
-    var text = "";
+/**
+ * Make a random string
+ *
+ * @param  int    length String length
+ * @return string
+ */
+JSHelper.prototype.makeid = function(length)
+{
+    var text     = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    for (var i = 0; i < length; i++) {
+    
+    for (var i = 0; i < length; i++)
+    {
         text += possible.charAt(Math.floor(Math.random() * possible.length))
     }
-    return text
+
+    return text;
 }
 
-/* Is numeric */
-JSHelper.prototype.is_numeric = function(mixed_var) {
+/**
+ * Is variable numeric?
+ *
+ * @param  mixed mixed_var Variable to validate
+ * @return bool
+ */
+JSHelper.prototype.is_numeric = function(mixed_var)
+{
     var whitespace =
         " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
     return (typeof mixed_var === 'number' || (typeof mixed_var === 'string' && whitespace.indexOf(mixed_var.slice(-1)) === -
         1)) && mixed_var !== '' && !isNaN(mixed_var);
 }
 
-/* parse a url */
-JSHelper.prototype.parse_url = function(str, component) {
+/**
+ * Parse url
+ *
+ * @param  string    str       The URL to parse. Invalid characters are replaced by _.
+ * @param  string    component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT, PHP_URL_USER, PHP_URL_PASS, PHP_URL_PATH, PHP_URL_QUERY or PHP_URL_FRAGMENT to retrieve just a specific URL component as a string (except when PHP_URL_PORT is given, in which case the return value will be an integer).
+ * @return object
+ */
+JSHelper.prototype.parse_url = function(str, component)
+{
     //       discuss at: http://phpjs.org/functions/parse_url/
     //      original by: Steven Levithan (http://blog.stevenlevithan.com)
     // reimplemented by: Brett Zamir (http://brett-zamir.me)
@@ -1414,24 +1469,30 @@ JSHelper.prototype.parse_url = function(str, component) {
     var m = parser[mode].exec(str),
         uri = {},
         i = 14;
-    while (i--) {
-        if (m[i]) {
+    while (i--)
+    {
+        if (m[i])
+        {
             uri[key[i]] = m[i];
         }
     }
 
-    if (component) {
+    if (component)
+    {
         return uri[component.replace('PHP_URL_', '')
             .toLowerCase()];
     }
-    if (mode !== 'php') {
+    if (mode !== 'php')
+    {
         var name = (ini['phpjs.parse_url.queryKey'] &&
             ini['phpjs.parse_url.queryKey'].local_value) || 'queryKey';
         parser = /(?:^|&)([^&=]*)=?([^&]*)/g;
         uri[name] = {};
         query = uri[key[12]] || '';
-        query.replace(parser, function($0, $1, $2) {
-            if ($1) {
+        query.replace(parser, function($0, $1, $2)
+        {
+            if ($1)
+            {
                 uri[name][$1] = $2;
             }
         });
@@ -1441,7 +1502,8 @@ JSHelper.prototype.parse_url = function(str, component) {
 }
 
 /* Left trim */
-JSHelper.prototype.ltrim = function(str, charlist) {
+JSHelper.prototype.ltrim = function(str, charlist)
+{
     //  discuss at: http://phpjs.org/functions/ltrim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     //    input by: Erkekjetter
@@ -1458,7 +1520,8 @@ JSHelper.prototype.ltrim = function(str, charlist) {
 }
 
 /* Left trim */
-JSHelper.prototype.rtrim = function(str, charlist) {
+JSHelper.prototype.rtrim = function(str, charlist)
+{
     //  discuss at: http://phpjs.org/functions/rtrim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     //    input by: Erkekjetter
@@ -1477,7 +1540,8 @@ JSHelper.prototype.rtrim = function(str, charlist) {
 }
 
 /* Trim */
-JSHelper.prototype.trim = function(str, charlist) {
+JSHelper.prototype.trim = function(str, charlist)
+{
     //  discuss at: http://phpjs.org/functions/trim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: mdsjack (http://www.mdsjack.bo.it)
@@ -1499,7 +1563,8 @@ JSHelper.prototype.trim = function(str, charlist) {
         i = 0;
     str += '';
 
-    if (!charlist) {
+    if (!charlist)
+    {
         // default list
         whitespace =
             ' \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000';
@@ -1511,16 +1576,20 @@ JSHelper.prototype.trim = function(str, charlist) {
     }
 
     l = str.length;
-    for (i = 0; i < l; i++) {
-        if (whitespace.indexOf(str.charAt(i)) === -1) {
+    for (i = 0; i < l; i++)
+    {
+        if (whitespace.indexOf(str.charAt(i)) === -1)
+        {
             str = str.substring(i);
             break;
         }
     }
 
     l = str.length;
-    for (i = l - 1; i >= 0; i--) {
-        if (whitespace.indexOf(str.charAt(i)) === -1) {
+    for (i = l - 1; i >= 0; i--)
+    {
+        if (whitespace.indexOf(str.charAt(i)) === -1)
+        {
             str = str.substring(0, i + 1);
             break;
         }
@@ -1530,7 +1599,8 @@ JSHelper.prototype.trim = function(str, charlist) {
 }
 
 /* regex escape */
-JSHelper.prototype.preg_quote = function(str, delimiter) {
+JSHelper.prototype.preg_quote = function(str, delimiter)
+{
     //  discuss at: http://phpjs.org/functions/preg_quote/
     // original by: booeyOH
     // improved by: Ates Goral (http://magnetiq.com)
@@ -1549,24 +1619,29 @@ JSHelper.prototype.preg_quote = function(str, delimiter) {
 }
 
 /* Preg match all */
-JSHelper.prototype.preg_match_all = function(pattern, subject) {
+JSHelper.prototype.preg_match_all = function(pattern, subject)
+{
 
     // convert the pattern to regix
     // if needed. return null on fail
-    if (typeof pattern === 'string') {
+    if (typeof pattern === 'string')
+    {
         try {
             pattern = new RegExp(pattern);
         }
-        catch (err) {
+        catch (err)
+        {
             return null;
         }
     }
     var _this   = this;
     var matches = [];
     var matched = pattern.exec(subject);
-    if (matched !== null) {
+    if (matched !== null)
+    {
         var i = 0;
-        while (matched = pattern.exec(subject)) {
+        while (matched = pattern.exec(subject))
+        {
             subject = _this.str_split_index(subject, (matched.index + matched[0].length - 1))[1];
             matched.index = i > 0 ? (matched.index + (matched[0].length - 1)) : matched.index - 1;
             matches.push(matched);
@@ -1578,17 +1653,20 @@ JSHelper.prototype.preg_match_all = function(pattern, subject) {
 }
 
 /* split string at index */
-JSHelper.prototype.str_split_index = function(value, index) {
+JSHelper.prototype.str_split_index = function(value, index)
+{
     return [value.substring(0, index + 1), value.substring(index + 1)];
 }
 
 /* Capatalize first letter */
-JSHelper.prototype.ucfirst = function(string) {
+JSHelper.prototype.ucfirst = function(string)
+{
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 /* Capatalize first letter of all words */
-JSHelper.prototype.ucwords = function(str) {
+JSHelper.prototype.ucwords = function(str)
+{
     //  discuss at: http://phpjs.org/functions/ucwords/
     // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
     // improved by: Waldo Malqui Silva
@@ -1602,13 +1680,15 @@ JSHelper.prototype.ucwords = function(str) {
     //   returns 2: 'HELLO WORLD'
 
     return (str + '')
-        .replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1) {
+        .replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1)
+        {
             return $1.toUpperCase();
         });
 }
 
 /* Reduce a string to a x words/letters with (optional) suffix */
-JSHelper.prototype.strReduce = function(string, length, suffix, toChar) {
+JSHelper.prototype.strReduce = function(string, length, suffix, toChar)
+{
 
     toChar = (typeof toChar === 'undefined' ? true : false);
     suffix = (typeof suffix === 'undefined' ? '' : suffix);
@@ -1624,7 +1704,8 @@ JSHelper.prototype.strReduce = function(string, length, suffix, toChar) {
 }
 
 /* Return human friendly time-ago */
-JSHelper.prototype.timeAgo = function(time, asArray) {
+JSHelper.prototype.timeAgo = function(time, asArray)
+{
     asArray = (typeof asArray === 'undefined' ? false : true);
     time = isValidTimeStamp(time) ? parseInt(time) : strtotime(time);
     var units = [{
@@ -1661,10 +1742,13 @@ JSHelper.prototype.timeAgo = function(time, asArray) {
 
     var i = 0,
         unit;
-    while (unit = units[i++]) {
-        if (diff < unit.limit || !unit.limit) {
+    while (unit = units[i++])
+    {
+        if (diff < unit.limit || !unit.limit)
+        {
             var diff = Math.floor(diff / unit.in_seconds);
-            if (asArray) {
+            if (asArray)
+            {
                 return {
                     unit: unit.name + (diff > 1 ? "s" : ""),
                     time: diff
@@ -1676,12 +1760,14 @@ JSHelper.prototype.timeAgo = function(time, asArray) {
 }
 
 /* Convert a string-date to a timestamp */
-JSHelper.prototype.strtotime = function(text) {
+JSHelper.prototype.strtotime = function(text)
+{
     return Math.round(new Date(text).getTime() / 1000);
 }
 
 /* String replace */
-JSHelper.prototype.str_replace = function(search, replace, subject, count) {
+JSHelper.prototype.str_replace = function(search, replace, subject, count)
+{
     //  discuss at: http://phpjs.org/functions/str_replace/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: Gabriel Paderni
@@ -1724,10 +1810,12 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count) {
         sa = Object.prototype.toString.call(s) === '[object Array]';
     s = [].concat(s);
 
-    if (typeof(search) === 'object' && typeof(replace) === 'string') {
+    if (typeof(search) === 'object' && typeof(replace) === 'string')
+    {
         temp = replace;
         replace = new Array();
-        for (i = 0; i < search.length; i += 1) {
+        for (i = 0; i < search.length; i += 1)
+        {
             replace[i] = temp;
         }
         temp = '';
@@ -1735,21 +1823,26 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count) {
         ra = Object.prototype.toString.call(r) === '[object Array]';
     }
 
-    if (count) {
+    if (count)
+    {
         this.window[count] = 0;
     }
 
-    for (i = 0, sl = s.length; i < sl; i++) {
-        if (s[i] === '') {
+    for (i = 0, sl = s.length; i < sl; i++)
+    {
+        if (s[i] === '')
+        {
             continue;
         }
-        for (j = 0, fl = f.length; j < fl; j++) {
+        for (j = 0, fl = f.length; j < fl; j++)
+        {
             temp = s[i] + '';
             repl = ra ? (r[j] !== undefined ? r[j] : '') : r[0];
             s[i] = (temp)
                 .split(f[j])
                 .join(repl);
-            if (count) {
+            if (count)
+            {
                 this.window[count] += ((temp.split(f[j]))
                     .length - 1);
             }
@@ -1758,7 +1851,8 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count) {
     return sa ? s : s[0];
 }
 
-JSHelper.prototype.str_split = function(string, split_length) {
+JSHelper.prototype.str_split = function(string, split_length)
+{
     //  discuss at: http://phpjs.org/functions/str_split/
     // original by: Martijn Wieringa
     // improved by: Brett Zamir (http://brett-zamir.me)
@@ -1769,35 +1863,41 @@ JSHelper.prototype.str_split = function(string, split_length) {
     //   example 1: str_split('Hello Friend', 3);
     //   returns 1: ['Hel', 'lo ', 'Fri', 'end']
 
-    if (split_length === null) {
+    if (split_length === null)
+    {
         split_length = 1;
     }
-    if (string === null || split_length < 1) {
+    if (string === null || split_length < 1)
+    {
         return false;
     }
     string += '';
     var chunks = [],
         pos = 0,
         len = string.length;
-    while (pos < len) {
+    while (pos < len)
+    {
         chunks.push(string.slice(pos, pos += split_length));
     }
 
     return chunks;
 }
 
-JSHelper.prototype.toCamelCase = function(str) {
+JSHelper.prototype.toCamelCase = function(str)
+{
     return str.toLowerCase()
         .replace(/['"]/g, '')
         .replace(/\W+/g, ' ')
-        .replace(/ (.)/g, function($1) {
+        .replace(/ (.)/g, function($1)
+        {
             return $1.toUpperCase();
         })
         .replace(/ /g, '');
 }
 
 
-JSHelper.prototype.explode = function(delimiter, string, limit) {
+JSHelper.prototype.explode = function(delimiter, string, limit)
+{
     //  discuss at: http://phpjs.org/functions/explode/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     //   example 1: explode(' ', 'Kevin van Zonneveld');
@@ -1806,7 +1906,8 @@ JSHelper.prototype.explode = function(delimiter, string, limit) {
     if (arguments.length < 2 || typeof delimiter === 'undefined' || typeof string === 'undefined') return null;
     if (delimiter === '' || delimiter === false || delimiter === null) return false;
     if (typeof delimiter === 'function' || typeof delimiter === 'object' || typeof string === 'function' || typeof string ===
-        'object') {
+        'object')
+    {
         return {
             0: ''
         };
@@ -1825,7 +1926,8 @@ JSHelper.prototype.explode = function(delimiter, string, limit) {
     if (limit === 0) limit = 1;
 
     // Positive limit
-    if (limit > 0) {
+    if (limit > 0)
+    {
         if (limit >= s.length) return s;
         return s.slice(0, limit - 1)
             .concat([s.slice(limit - 1)
@@ -1840,7 +1942,8 @@ JSHelper.prototype.explode = function(delimiter, string, limit) {
     return s;
 }
 
-JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, double_encode) {
+JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, double_encode)
+{
     // http://kevin.vanzonneveld.net
     // +   original by: Mirek Slugen
     // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -1863,11 +1966,13 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
     var optTemp = 0,
         i = 0,
         noquotes = false;
-    if (typeof quote_style === 'undefined' || quote_style === null) {
+    if (typeof quote_style === 'undefined' || quote_style === null)
+    {
         quote_style = 2;
     }
     string = string.toString();
-    if (double_encode !== false) { // Put this first to avoid double-encoding
+    if (double_encode !== false)
+    { // Put this first to avoid double-encoding
         string = string.replace(/&/g, '&amp;');
     }
     string = string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -1880,26 +1985,33 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
         'ENT_QUOTES': 3,
         'ENT_IGNORE': 4
     };
-    if (quote_style === 0) {
+    if (quote_style === 0)
+    {
         noquotes = true;
     }
-    if (typeof quote_style !== 'number') { // Allow for a single string or an array of string flags
+    if (typeof quote_style !== 'number')
+    { // Allow for a single string or an array of string flags
         quote_style = [].concat(quote_style);
-        for (i = 0; i < quote_style.length; i++) {
+        for (i = 0; i < quote_style.length; i++)
+        {
             // Resolve string input to bitwise e.g. 'ENT_IGNORE' becomes 4
-            if (OPTS[quote_style[i]] === 0) {
+            if (OPTS[quote_style[i]] === 0)
+            {
                 noquotes = true;
             }
-            else if (OPTS[quote_style[i]]) {
+            else if (OPTS[quote_style[i]])
+            {
                 optTemp = optTemp | OPTS[quote_style[i]];
             }
         }
         quote_style = optTemp;
     }
-    if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE) {
+    if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE)
+    {
         string = string.replace(/'/g, '&#039;');
     }
-    if (!noquotes) {
+    if (!noquotes)
+    {
         string = string.replace(/"/g, '&quot;');
     }
 
@@ -1907,7 +2019,8 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
 }
 
 
-JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style) {
+JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style)
+{
   //       discuss at: http://phpjs.org/functions/htmlspecialchars_decode/
   //      original by: Mirek Slugen
   //      improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -1931,7 +2044,8 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style) {
   var optTemp = 0,
     i = 0,
     noquotes = false;
-  if (typeof quote_style === 'undefined') {
+  if (typeof quote_style === 'undefined')
+  {
     quote_style = 2;
   }
   string = string.toString()
@@ -1945,26 +2059,33 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style) {
     'ENT_QUOTES': 3,
     'ENT_IGNORE': 4
   };
-  if (quote_style === 0) {
+  if (quote_style === 0)
+  {
     noquotes = true;
   }
-  if (typeof quote_style !== 'number') { // Allow for a single string or an array of string flags
+  if (typeof quote_style !== 'number')
+  { // Allow for a single string or an array of string flags
     quote_style = [].concat(quote_style);
-    for (i = 0; i < quote_style.length; i++) {
+    for (i = 0; i < quote_style.length; i++)
+    {
       // Resolve string input to bitwise e.g. 'PATHINFO_EXTENSION' becomes 4
-      if (OPTS[quote_style[i]] === 0) {
+      if (OPTS[quote_style[i]] === 0)
+      {
         noquotes = true;
-      } else if (OPTS[quote_style[i]]) {
+      } else if (OPTS[quote_style[i]])
+      {
         optTemp = optTemp | OPTS[quote_style[i]];
       }
     }
     quote_style = optTemp;
   }
-  if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE) {
+  if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE)
+  {
     string = string.replace(/&#0*39;/g, "'"); // PHP doesn't currently escape if more than one 0, but it should
     // string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP
   }
-  if (!noquotes) {
+  if (!noquotes)
+  {
     string = string.replace(/&quot;/g, '"');
   }
   // Put this in last place to avoid escape being double-decoded
@@ -1973,7 +2094,8 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style) {
   return string;
 }
 
-JSHelper.prototype.get_html_translation_table = function(table, quoteStyle) {
+JSHelper.prototype.get_html_translation_table = function(table, quoteStyle)
+{
 
   // eslint-disable-line camelcase
   //  discuss at: http://locutus.io/php/get_html_translation_table/
@@ -2023,12 +2145,14 @@ JSHelper.prototype.get_html_translation_table = function(table, quoteStyle) {
       ? quoteStyle.toUpperCase()
       : 'ENT_COMPAT'
 
-  if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES') {
+  if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES')
+  {
     throw new Error('Table: ' + useTable + ' not supported')
   }
 
   entities['38'] = '&amp;'
-  if (useTable === 'HTML_ENTITIES') {
+  if (useTable === 'HTML_ENTITIES')
+  {
     entities['160'] = '&nbsp;'
     entities['161'] = '&iexcl;'
     entities['162'] = '&cent;'
@@ -2127,18 +2251,22 @@ JSHelper.prototype.get_html_translation_table = function(table, quoteStyle) {
     entities['255'] = '&yuml;'
   }
 
-  if (useQuoteStyle !== 'ENT_NOQUOTES') {
+  if (useQuoteStyle !== 'ENT_NOQUOTES')
+  {
     entities['34'] = '&quot;'
   }
-  if (useQuoteStyle === 'ENT_QUOTES') {
+  if (useQuoteStyle === 'ENT_QUOTES')
+  {
     entities['39'] = '&#39;'
   }
   entities['60'] = '&lt;'
   entities['62'] = '&gt;'
 
   // ascii decimals to real symbols
-  for (decimal in entities) {
-    if (entities.hasOwnProperty(decimal)) {
+  for (decimal in entities)
+  {
+    if (entities.hasOwnProperty(decimal))
+    {
       hashMap[String.fromCharCode(decimal)] = entities[decimal]
     }
   }
@@ -2146,7 +2274,8 @@ JSHelper.prototype.get_html_translation_table = function(table, quoteStyle) {
   return hashMap
 }
 
-JSHelper.prototype.html_entity_decode = function(string, quote_style) {
+JSHelper.prototype.html_entity_decode = function(string, quote_style)
+{
   //  discuss at: http://phpjs.org/functions/html_entity_decode/
   // original by: john (http://www.jd-tech.net)
   //    input by: ger
@@ -2171,7 +2300,8 @@ JSHelper.prototype.html_entity_decode = function(string, quote_style) {
     entity = '';
   tmp_str = string.toString();
 
-  if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style))) {
+  if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style)))
+  {
     return false;
   }
 
@@ -2180,7 +2310,8 @@ JSHelper.prototype.html_entity_decode = function(string, quote_style) {
   delete(hash_map['&']);
   hash_map['&'] = '&amp;';
 
-  for (symbol in hash_map) {
+  for (symbol in hash_map)
+  {
     entity = hash_map[symbol];
     tmp_str = tmp_str.split(entity)
       .join(symbol);
@@ -2191,7 +2322,8 @@ JSHelper.prototype.html_entity_decode = function(string, quote_style) {
   return tmp_str;
 }
 
-JSHelper.prototype.strcmp = function(str1, str2) {
+JSHelper.prototype.strcmp = function(str1, str2)
+{
   //  discuss at: http://phpjs.org/functions/strcmp/
   // original by: Waldo Malqui Silva (http://waldo.malqui.info)
   //    input by: Steve Hilder
@@ -2205,7 +2337,8 @@ JSHelper.prototype.strcmp = function(str1, str2) {
   return ((str1 == str2) ? 0 : ((str1 > str2) ? 1 : -1))
 }
 
-JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
+JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
+{
   //  discuss at: http://phpjs.org/functions/strnatcmp/
   // original by: Martijn Wieringa
   // improved by: Michael White (http://getsprink.com)
@@ -2226,11 +2359,13 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
 
   var i = 0
 
-  if (f_version == undefined) {
+  if (f_version == undefined)
+  {
     f_version = false
   }
 
-  var __strnatcmp_split = function (f_string) {
+  var __strnatcmp_split = function (f_string)
+  {
     var result = []
     var buffer = ''
     var chr = ''
@@ -2240,11 +2375,15 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
     var text = true
 
     f_stringl = f_string.length
-    for (i = 0; i < f_stringl; i++) {
+    for (i = 0; i < f_stringl; i++)
+    {
       chr = f_string.substring(i, i + 1)
-      if (chr.match(/\d/)) {
-        if (text) {
-          if (buffer.length > 0) {
+      if (chr.match(/\d/))
+      {
+        if (text)
+        {
+          if (buffer.length > 0)
+          {
             result[result.length] = buffer
             buffer = ''
           }
@@ -2254,12 +2393,17 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
         buffer += chr
       } else if ((text == false) && (chr === '.') && (i < (f_string.length - 1)) && (f_string.substring(i + 1, i +
             2)
-          .match(/\d/))) {
+          .match(/\d/)))
+      {
         result[result.length] = buffer
         buffer = ''
-      } else {
-        if (text == false) {
-          if (buffer.length > 0) {
+      }
+      else
+      {
+        if (text == false)
+        {
+          if (buffer.length > 0)
+          {
             result[result.length] = parseInt(buffer, 10)
             buffer = ''
           }
@@ -2269,10 +2413,14 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
       }
     }
 
-    if (buffer.length > 0) {
-      if (text) {
+    if (buffer.length > 0)
+    {
+      if (text)
+      {
         result[result.length] = buffer
-      } else {
+      }
+      else
+      {
         result[result.length] = parseInt(buffer, 10)
       }
     }
@@ -2289,37 +2437,56 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
   var result = -1
   var r = 0
 
-  if (len > array2.length) {
+  if (len > array2.length)
+  {
     len = array2.length
     result = 1
   }
 
-  for (i = 0; i < len; i++) {
-    if (isNaN(array1[i])) {
-      if (isNaN(array2[i])) {
+  for (i = 0; i < len; i++)
+  {
+    if (isNaN(array1[i]))
+    {
+      if (isNaN(array2[i]))
+      {
         text = true
 
-        if ((r = this.strcmp(array1[i], array2[i])) != 0) {
+        if ((r = this.strcmp(array1[i], array2[i])) != 0)
+        {
           return r
         }
-      } else if (text) {
-        return 1
-      } else {
-        return -1
-      }
-    } else if (isNaN(array2[i])) {
-      if (text) {
-        return -1
-      } else {
+      } else if (text)
+      {
         return 1
       }
-    } else {
-      if (text || f_version) {
-        if ((r = (array1[i] - array2[i])) != 0) {
+      else
+      {
+        return -1
+      }
+    } else if (isNaN(array2[i]))
+    {
+      if (text)
+      {
+        return -1
+      }
+      else
+      {
+        return 1
+      }
+    }
+    else
+    {
+      if (text || f_version)
+      {
+        if ((r = (array1[i] - array2[i])) != 0)
+        {
           return r
         }
-      } else {
-        if ((r = this.strcmp(array1[i].toString(), array2[i].toString())) != 0) {
+      }
+      else
+      {
+        if ((r = this.strcmp(array1[i].toString(), array2[i].toString())) != 0)
+        {
           return r
         }
       }
@@ -2351,7 +2518,7 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
 JSHelper.prototype.in_array = function(needle, haystack, argStrict) {
 
     var key = '',
-        strict = !!argStrict;
+    strict = !!argStrict;
 
     //we prevent the double check (strict && arr[key] === ndl) || (!strict && arr[key] == ndl)
     //in just one for, in order to improve the performance 
@@ -2441,11 +2608,11 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
     if (Object.prototype.toString.call(arr) !== '[object Array]' ||
         (preserve_keys && offst !== 0)) { // Assoc. array as input or if required as output
         var lgt = 0,
-            newAssoc = {};
-        for (key in arr) {
+    newAssoc = {};
+    for (key in arr) {
             //if (key !== 'length') {
-            lgt += 1;
-            newAssoc[key] = arr[key];
+                lgt += 1;
+                newAssoc[key] = arr[key];
             //}
         }
         arr = newAssoc;
@@ -2455,9 +2622,9 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
 
         var assoc = {};
         var start = false,
-            it = -1,
-            arrlgth = 0,
-            no_pk_idx = 0;
+        it = -1,
+        arrlgth = 0,
+        no_pk_idx = 0;
         for (key in arr) {
             ++it;
             if (arrlgth >= lgth) {
@@ -2530,8 +2697,8 @@ JSHelper.prototype.paginate = function(array, page, limit) {
  */
 JSHelper.prototype.foreach = function(obj, callback, args) {
     var value, i = 0,
-        length = obj.length,
-        isArray = Object.prototype.toString.call(obj) === '[object Array]';
+    length = obj.length,
+    isArray = Object.prototype.toString.call(obj) === '[object Array]';
 
     if (args) {
         if (isArray) {
@@ -2617,51 +2784,51 @@ JSHelper.prototype.array_merge = function () {
   //   returns 2: {0: "data"}
 
   var args = Array.prototype.slice.call(arguments),
-    argl = args.length,
-    arg,
-    retObj = {},
-    k = '',
-    argil = 0,
-    j = 0,
-    i = 0,
-    ct = 0,
-    toStr = Object.prototype.toString,
-    retArr = true;
+  argl = args.length,
+  arg,
+  retObj = {},
+  k = '',
+  argil = 0,
+  j = 0,
+  i = 0,
+  ct = 0,
+  toStr = Object.prototype.toString,
+  retArr = true;
 
   for (i = 0; i < argl; i++) {
     if (toStr.call(args[i]) !== '[object Array]') {
       retArr = false;
       break;
-    }
   }
+}
 
-  if (retArr) {
+if (retArr) {
     retArr = [];
     for (i = 0; i < argl; i++) {
       retArr = retArr.concat(args[i]);
-    }
-    return retArr;
   }
+  return retArr;
+}
 
-  for (i = 0, ct = 0; i < argl; i++) {
+for (i = 0, ct = 0; i < argl; i++) {
     arg = args[i];
     if (toStr.call(arg) === '[object Array]') {
       for (j = 0, argil = arg.length; j < argil; j++) {
         retObj[ct++] = arg[j];
-      }
-    } else {
-      for (k in arg) {
-        if (arg.hasOwnProperty(k)) {
-          if (parseInt(k, 10) + '' === k) {
-            retObj[ct++] = arg[k];
-          } else {
-            retObj[k] = arg[k];
-          }
-        }
-      }
     }
-  }
-  return retObj;
+} else {
+  for (k in arg) {
+    if (arg.hasOwnProperty(k)) {
+      if (parseInt(k, 10) + '' === k) {
+        retObj[ct++] = arg[k];
+    } else {
+        retObj[k] = arg[k];
+    }
+}
+}
+}
+}
+return retObj;
 }
 
 /**
@@ -2712,81 +2879,118 @@ JSHelper.prototype.is_array = function(mixed_var) {
   //   returns 4: false
 
   var ini,
-    _getFuncName = function(fn) {
+  _getFuncName = function(fn) {
       var name = (/\W*function\s+([\w\$]+)\s*\(/)
-        .exec(fn);
+      .exec(fn);
       if (!name) {
         return '(Anonymous)';
-      }
-      return name[1];
-    };
-  _isArray = function(mixed_var) {
+    }
+    return name[1];
+};
+_isArray = function(mixed_var) {
     // return Object.prototype.toString.call(mixed_var) === '[object Array]';
     // The above works, but let's do the even more stringent approach: (since Object.prototype.toString could be overridden)
     // Null, Not an object, no length property so couldn't be an Array (or String)
     if (!mixed_var || typeof mixed_var !== 'object' || typeof mixed_var.length !== 'number') {
       return false;
-    }
-    var len = mixed_var.length;
-    mixed_var[mixed_var.length] = 'bogus';
+  }
+  var len = mixed_var.length;
+  mixed_var[mixed_var.length] = 'bogus';
     // The only way I can think of to get around this (or where there would be trouble) would be to have an object defined
     // with a custom "length" getter which changed behavior on each call (or a setter to mess up the following below) or a custom
     // setter for numeric properties, but even that would need to listen for specific indexes; but there should be no false negatives
     // and such a false positive would need to rely on later JavaScript innovations like __defineSetter__
     if (len !== mixed_var.length) { // We know it's an array since length auto-changed with the addition of a
       // numeric property at its length end, so safely get rid of our bogus element
-      mixed_var.length -= 1;
-      return true;
-    }
+  mixed_var.length -= 1;
+  return true;
+}
     // Get rid of the property we added onto a non-array object; only possible
     // side-effect is if the user adds back the property later, it will iterate
     // this property in the older order placement in IE (an order which should not
     // be depended on anyways)
     delete mixed_var[mixed_var.length];
     return false;
-  };
+};
 
-  if (!mixed_var || typeof mixed_var !== 'object') {
+if (!mixed_var || typeof mixed_var !== 'object') {
     return false;
-  }
-
-  return _isArray(mixed_var);
 }
-/* Is numberic */
-JSHelper.prototype.is_numeric = function(mixed_var) {
+
+return _isArray(mixed_var);
+}
+/**
+ * Miscellaneous helper functions
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ */
+
+/**
+ * Is numeric? 
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to check
+ * @return bool
+ */
+JSHelper.prototype.is_numeric = function(mixed_var)
+{
     var whitespace =
         " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
     return (typeof mixed_var === 'number' || (typeof mixed_var === 'string' && whitespace.indexOf(mixed_var.slice(-1)) === -
         1)) && mixed_var !== '' && !isNaN(mixed_var);
 }
 
-/* Is callback */
-JSHelper.prototype.isCallable = function(obj) {
+/**
+ * Is callable ?
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to check
+ * @return bool
+ */
+JSHelper.prototype.isCallable = function(obj)
+{
     return Object.prototype.toString.call(obj) === '[object Function]';
 }
 
-/* Count an object or string */
-JSHelper.prototype.count = function(mixed_var, mode) {
+/**
+ * Count
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to count
+ * @param  string mode      Variable count mode
+ * @return int
+ */
+JSHelper.prototype.count = function(mixed_var, mode)
+{
     var key, cnt = 0;
-    if (mixed_var === null || typeof mixed_var === 'undefined') {
+    if (mixed_var === null || typeof mixed_var === 'undefined')
+    {
         return 0;
     }
-    else if (mixed_var.constructor !== Array && mixed_var.constructor !== Object) {
+    else if (mixed_var.constructor !== Array && mixed_var.constructor !== Object)
+    {
         return 1;
     }
 
-    if (mode === 'COUNT_RECURSIVE') {
+    if (mode === 'COUNT_RECURSIVE')
+    {
         mode = 1;
     }
-    if (mode != 1) {
+    if (mode != 1)
+    {
         mode = 0;
     }
 
-    for (key in mixed_var) {
-        if (mixed_var.hasOwnProperty(key)) {
+    for (key in mixed_var)
+    {
+        if (mixed_var.hasOwnProperty(key))
+        {
             cnt++;
             if (mode == 1 && mixed_var[key] && (mixed_var[key].constructor === Array || mixed_var[key].constructor ===
-                    Object)) {
+                    Object))
+            {
                 cnt += this.count(mixed_var[key], 1);
             }
         }
@@ -2795,8 +2999,15 @@ JSHelper.prototype.count = function(mixed_var, mode) {
     return cnt;
 }
 
-/* Bool */
-JSHelper.prototype.bool = function(value) {
+/**
+ * Convert to boolean
+ *
+ * @access public
+ * @param  mixed  value Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.bool = function(value)
+{
 
     value = (typeof value === 'undefined' ? false : value);
 
@@ -2804,7 +3015,8 @@ JSHelper.prototype.bool = function(value) {
 
     if (typeof value === 'number') return value > 0;
 
-    if (typeof value === 'string') {
+    if (typeof value === 'string')
+    {
         if (value.toLowerCase() === 'false') return false;
         if (value.toLowerCase() === 'true') return true;
         if (value.toLowerCase() === 'on') return true;
@@ -2817,7 +3029,15 @@ JSHelper.prototype.bool = function(value) {
     return false;
 }
 
-JSHelper.prototype.intval = function(mixed_var, base) {
+/**
+ * Convert to integer
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to evaluate
+ * @return int
+ */
+JSHelper.prototype.intval = function(mixed_var, base)
+{
     //  discuss at: http://phpjs.org/functions/intval/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: stensi
@@ -2840,14 +3060,17 @@ JSHelper.prototype.intval = function(mixed_var, base) {
 
     var type = typeof mixed_var;
 
-    if (type === 'boolean') {
+    if (type === 'boolean')
+    {
         return +mixed_var;
     }
-    else if (type === 'string') {
+    else if (type === 'string')
+    {
         tmp = parseInt(mixed_var, base || 10);
         return (isNaN(tmp) || !isFinite(tmp)) ? 0 : tmp;
     }
-    else if (type === 'number' && isFinite(mixed_var)) {
+    else if (type === 'number' && isFinite(mixed_var))
+    {
         return mixed_var | 0;
     }
     else {
@@ -2855,8 +3078,27 @@ JSHelper.prototype.intval = function(mixed_var, base) {
     }
 }
 
-/* Isset */
-JSHelper.prototype.isset = function() {
+/**
+ * Convert to f,oat
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to evaluate
+ * @return float
+ */
+JSHelper.prototype.floatval = function(mixedVar)
+{
+    return (parseFloat(mixedVar) || 0)
+}
+
+/**
+ * Checks if variable is set
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.isset = function()
+{
     //  discuss at: http://phpjs.org/functions/isset/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: FremyCompany
@@ -2872,12 +3114,15 @@ JSHelper.prototype.isset = function() {
         i = 0,
         undef;
 
-    if (l === 0) {
+    if (l === 0)
+    {
         throw new Error('Empty isset');
     }
 
-    while (i !== l) {
-        if (a[i] === undef || a[i] === null) {
+    while (i !== l)
+    {
+        if (a[i] === undef || a[i] === null)
+        {
             return false;
         }
         i++;
@@ -2885,8 +3130,15 @@ JSHelper.prototype.isset = function() {
     return true;
 }
 
-/* Empty */
-JSHelper.prototype.empty = function(value) {
+/**
+ * Checks if variable is empty
+ *
+ * @access public
+ * @param  mixed  value Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.empty = function(value)
+{
 
     value = (typeof value === 'undefined' ? false : value);
 
@@ -2894,7 +3146,8 @@ JSHelper.prototype.empty = function(value) {
 
     if (typeof value === 'number') return value < 1;
 
-    if (typeof value === 'string') {
+    if (typeof value === 'string')
+    {
         if (value.toLowerCase() === 'undefined') return true;
         if (this.is_numeric(value)) return Number(value) < 1;
         if (value === '') return true;
@@ -2909,7 +3162,15 @@ JSHelper.prototype.empty = function(value) {
 
 }
 
-JSHelper.prototype.is_object = function(mixed_var) {
+/**
+ * Checks if variable is an object
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.is_object = function(mixed_var)
+{
     //  discuss at: http://phpjs.org/functions/is_object/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: Legaev Andrey
@@ -2921,83 +3182,43 @@ JSHelper.prototype.is_object = function(mixed_var) {
     //   example 3: is_object(null);
     //   returns 3: false
 
-    if (Object.prototype.toString.call(mixed_var) === '[object Array]') {
+    if (Object.prototype.toString.call(mixed_var) === '[object Array]')
+    {
         return false;
     }
     return mixed_var !== null && typeof mixed_var === 'object';
 }
 
-JSHelper.prototype.isNodeList = function(nodes) {
+/**
+ * Checks if variable is a nodelist-array
+ *
+ * @access public
+ * @param  mixed  nodes Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.isNodeList = function(nodes)
+{
     return nodes == '[object NodeList]';
 }
+/**
+ * DOM Event Listener Manager
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ */
 
-JSHelper.prototype.getBrowser = function() {
-    if (this.browser) return this.browser;
-    var nVer = navigator.appVersion;
-    var nAgt = navigator.userAgent;
-    var browserName = navigator.appName;
-    var fullVersion = "" + parseFloat(navigator.appVersion);
-    var majorVersion = parseInt(navigator.appVersion, 10);
-    var nameOffset, verOffset, ix;
-    if ((verOffset = nAgt.indexOf("OPR/")) != -1) {
-        browserName = "Opera";
-        fullVersion = nAgt.substring(verOffset + 4)
-    } else {
-        if ((verOffset = nAgt.indexOf("Opera")) != -1) {
-            browserName = "Opera";
-            fullVersion = nAgt.substring(verOffset + 6);
-            if ((verOffset = nAgt.indexOf("Version")) != -1) {
-                fullVersion = nAgt.substring(verOffset + 8)
-            }
-        } else {
-            if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
-                browserName = "Microsoft Internet Explorer";
-                fullVersion = nAgt.substring(verOffset + 5)
-            } else {
-                if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
-                    browserName = "Chrome";
-                    fullVersion = nAgt.substring(verOffset + 7)
-                } else {
-                    if ((verOffset = nAgt.indexOf("Safari")) != -1) {
-                        browserName = "Safari";
-                        fullVersion = nAgt.substring(verOffset + 7);
-                        if ((verOffset = nAgt.indexOf("Version")) != -1) {
-                            fullVersion = nAgt.substring(verOffset + 8)
-                        }
-                    } else {
-                        if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
-                            browserName = "Firefox";
-                            fullVersion = nAgt.substring(verOffset + 8)
-                        } else {
-                            if ((nameOffset = nAgt.lastIndexOf(" ") + 1) < (verOffset = nAgt.lastIndexOf("/"))) {
-                                browserName = nAgt.substring(nameOffset, verOffset);
-                                fullVersion = nAgt.substring(verOffset + 1);
-                                if (browserName.toLowerCase() == browserName.toUpperCase()) {
-                                    browserName = navigator.appName
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if ((ix = fullVersion.indexOf(";")) != -1) {
-        fullVersion = fullVersion.substring(0, ix)
-    }
-    if ((ix = fullVersion.indexOf(" ")) != -1) {
-        fullVersion = fullVersion.substring(0, ix)
-    }
-    majorVersion = parseInt("" + fullVersion, 10);
-    if (isNaN(majorVersion)) {
-        fullVersion = "" + parseFloat(navigator.appVersion);
-        majorVersion = parseInt(navigator.appVersion, 10)
-    }
-    this.browser = {'name': browserName, 'version': majorVersion };
-
-    return this.browser;
-}
-JSHelper.prototype.addEventListener = function(element, eventName, handler, useCapture) {
+/**
+ * Add an event listener
+ *
+ * @access public
+ * @param  node    element    The target DOM node
+ * @param  string  eventName  Event type
+ * @param  closure handler    Callback event
+ * @param  bool    useCapture Use capture (optional) (defaul false)
+ */
+JSHelper.prototype.addEventListener = function(element, eventName, handler, useCapture)
+{
 
     // Boolean use capture defaults to false
     useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
@@ -3021,8 +3242,21 @@ JSHelper.prototype.addEventListener = function(element, eventName, handler, useC
     this._addListener(element, eventName, handler, useCapture);
 }
 
-JSHelper.prototype.removeEventListener = function(element, eventName, handler, useCapture) {
-
+/**
+ * Removes event listeners on a DOM node
+ *
+ * If no event name is given, all attached event listeners are removed.
+ * If no callback is given, all callbacks for the event type will be removed.
+ * This function can still remove "annonymous" functions that are given a name as they are declared.
+ * 
+ * @access public
+ * @param  node    element    The target DOM node
+ * @param  string  eventName  Event type
+ * @param  closure handler    Callback event
+ * @param  bool    useCapture Use capture (optional) (defaul false)
+ */
+JSHelper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
+{
     // If the eventName name was not provided - remove all event handlers on element
     if (!eventName) return this._removeElementListeners(element);
 
@@ -3036,8 +3270,10 @@ JSHelper.prototype.removeEventListener = function(element, eventName, handler, u
 
     if (typeof eventObj === 'undefined') return;
 
-    for (var i = 0, len = eventObj.length; i < len; i++) {
-        if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element) {
+    for (var i = 0, len = eventObj.length; i < len; i++)
+    {
+        if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
+        {
             this._removeListener(element, eventName, handler, useCapture);
             this._events[eventName].splice(i, 1);
             break;
@@ -3045,25 +3281,46 @@ JSHelper.prototype.removeEventListener = function(element, eventName, handler, u
     }
 }
 
-JSHelper.prototype.clearEventListeners = function() {
+/**
+ * Removes all event listeners registered by the library
+ *
+ * @access public
+ */
+JSHelper.prototype.clearEventListeners = function()
+{
     var events = this._events;
-    for (var eventName in events) {
+
+    for (var eventName in events)
+    {
         var eventObj = events[eventName];
         var i = eventObj.length;
-        while (i--) {
+        while (i--)
+        {
             this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
             this._events[eventName].splice(i, 1);
         }
     }
 }
 
-JSHelper.prototype._removeElementListeners = function(element) {
+/**
+ * Removes all event listeners registered by the library on nodes
+ * that are no longer part of the DOM tree
+ *
+ * @access public
+ */
+JSHelper.prototype.collectGarbage = function()
+{
     var events = this._events;
-    for (var eventName in events) {
+    for (var eventName in events)
+    {
         var eventObj = events[eventName];
         var i = eventObj.length;
-        while (i--) {
-            if (eventObj[i]['element'] === element) {
+        while (i--)
+        {
+            var el = eventObj[i]['element'];
+            if (el == window || el == document || el == document.body) continue;
+            if (!this.nodeExists(el))
+            {
                 this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
                 this._events[eventName].splice(i, 1);
             }
@@ -3071,46 +3328,89 @@ JSHelper.prototype._removeElementListeners = function(element) {
     }
 }
 
-JSHelper.prototype._removeElementTypeListeners = function(element, type) {
+/**
+ * Removes all registered event listners on an element
+ *
+ * @access private
+ * @param  node    element Target node element
+ */
+JSHelper.prototype._removeElementListeners = function(element)
+{
+    var events = this._events;
+    for (var eventName in events)
+    {
+        var eventObj = events[eventName];
+        var i = eventObj.length;
+        while (i--)
+        {
+            if (eventObj[i]['element'] === element)
+            {
+                this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
+                this._events[eventName].splice(i, 1);
+            }
+        }
+    }
+}
+
+/**
+ * Removes all registered event listners of a specific type on an element
+ *
+ * @access private
+ * @param  node    element Target node element
+ * @param  string  type    Event listener type
+ */
+JSHelper.prototype._removeElementTypeListeners = function(element, type)
+{
     var eventObj = this._events[type];
     var i = eventObj.length;
-    while (i--) {
-        if (eventObj[i]['element'] === element) {
+    while (i--)
+    {
+        if (eventObj[i]['element'] === element)
+        {
             this._removeListener(eventObj[i]['element'], type, eventObj[i]['handler'], eventObj[i]['useCapture']);
             this._events[type].splice(i, 1);
         }
     }
 }
 
-JSHelper.prototype.collectGarbage = function() {
-    var events = this._events;
-    for (var eventName in events) {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--) {
-            var el = eventObj[i]['element'];
-            if (el == window || el == document || el == document.body) continue;
-            if (!this.nodeExists(el)) {
-                this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-                this._events[eventName].splice(i, 1);
-            }
-        }
-    }
-}
-
-
-JSHelper.prototype._addListener = function(el, eventName, handler, useCapture) {
-    if (el.addEventListener) {
+/**
+ * Adds a listener to the element
+ *
+ * @access private
+ * @param  node    element    The target DOM node
+ * @param  string  eventName  Event type
+ * @param  closure handler    Callback event
+ * @param  bool    useCapture Use capture (optional) (defaul false)
+ */
+JSHelper.prototype._addListener = function(el, eventName, handler, useCapture)
+{
+    if (el.addEventListener)
+    {
         el.addEventListener(eventName, handler, useCapture);
-    } else {
+    }
+    else
+    {
         el.attachEvent('on' + eventName, handler, useCapture);
     }
 }
 
-JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture) {
-    if (el.removeEventListener) {
+/**
+ * Removes a listener from the element
+ *
+ * @access private
+ * @param  node    element    The target DOM node
+ * @param  string  eventName  Event type
+ * @param  closure handler    Callback event
+ * @param  bool    useCapture Use capture (optional) (defaul false)
+ */
+JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture)
+{
+    if (el.removeEventListener)
+    {
         el.removeEventListener(eventName, handler, useCapture);
-    } else {
+    }
+    else
+    {
         el.detachEvent('on' + eventName, handler, useCapture);
     }
 }
@@ -3122,6 +3422,92 @@ JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture
  * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
  */
 
+/**
+ * Get the browser with version
+ *
+ * @access public
+ * @return object
+ */
+JSHelper.prototype.getBrowser = function()
+{
+    if (this.browser) return this.browser;
+    var nVer = navigator.appVersion;
+    var nAgt = navigator.userAgent;
+    var browserName = navigator.appName;
+    var fullVersion = "" + parseFloat(navigator.appVersion);
+    var majorVersion = parseInt(navigator.appVersion, 10);
+    var nameOffset, verOffset, ix;
+    if ((verOffset = nAgt.indexOf("OPR/")) != -1)
+    {
+        browserName = "Opera";
+        fullVersion = nAgt.substring(verOffset + 4)
+    } else {
+        if ((verOffset = nAgt.indexOf("Opera")) != -1)
+        {
+            browserName = "Opera";
+            fullVersion = nAgt.substring(verOffset + 6);
+            if ((verOffset = nAgt.indexOf("Version")) != -1)
+            {
+                fullVersion = nAgt.substring(verOffset + 8)
+            }
+        } else {
+            if ((verOffset = nAgt.indexOf("MSIE")) != -1)
+            {
+                browserName = "Microsoft Internet Explorer";
+                fullVersion = nAgt.substring(verOffset + 5)
+            } else {
+                if ((verOffset = nAgt.indexOf("Chrome")) != -1)
+                {
+                    browserName = "Chrome";
+                    fullVersion = nAgt.substring(verOffset + 7)
+                } else {
+                    if ((verOffset = nAgt.indexOf("Safari")) != -1)
+                    {
+                        browserName = "Safari";
+                        fullVersion = nAgt.substring(verOffset + 7);
+                        if ((verOffset = nAgt.indexOf("Version")) != -1)
+                        {
+                            fullVersion = nAgt.substring(verOffset + 8)
+                        }
+                    } else {
+                        if ((verOffset = nAgt.indexOf("Firefox")) != -1)
+                        {
+                            browserName = "Firefox";
+                            fullVersion = nAgt.substring(verOffset + 8)
+                        } else {
+                            if ((nameOffset = nAgt.lastIndexOf(" ") + 1) < (verOffset = nAgt.lastIndexOf("/")))
+                            {
+                                browserName = nAgt.substring(nameOffset, verOffset);
+                                fullVersion = nAgt.substring(verOffset + 1);
+                                if (browserName.toLowerCase() == browserName.toUpperCase())
+                                {
+                                    browserName = navigator.appName
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if ((ix = fullVersion.indexOf(";")) != -1)
+    {
+        fullVersion = fullVersion.substring(0, ix)
+    }
+    if ((ix = fullVersion.indexOf(" ")) != -1)
+    {
+        fullVersion = fullVersion.substring(0, ix)
+    }
+    majorVersion = parseInt("" + fullVersion, 10);
+    if (isNaN(majorVersion))
+    {
+        fullVersion = "" + parseFloat(navigator.appVersion);
+        majorVersion = parseInt(navigator.appVersion, 10)
+    }
+    this.browser = {'name': browserName, 'version': majorVersion };
+
+    return this.browser;
+}
 
 /**
  * Is this a mobile user agent?
@@ -3664,342 +4050,6 @@ JSHelper.prototype.isMobile = function()
 
 }());
 /**
- * Scrollbars
- *
- * This is a utility class used internally to add custom vertical scrollbars to an element.
- * This class handles the events of the scrollbars.
- * This should not be used at all outside of the framework.
- * @see https://github.com/noraesae/perfect-scrollbar
- */
-(function() {
-
-    var defaults = {
-        elements: {
-            area: '.scrollbar-area',
-            wrapper: '.scrollbar-wrapper',
-            track: '.scrollbar-track',
-            handle: '.scrollbar-handle'
-        },
-        stateClasses: {
-            dragging: 'scrollbar-dragging',
-            hover: 'scrollbar-hover'
-        }
-    };
-
-    // SCROLLBAR HANDLER
-    /*****************************************/
-    function Scrollbar(element, opts) {
-
-        // handle constructor call without `new` keyword
-        if (!(this instanceof Scrollbar))  return new Scrollbar(element, opts);
-
-        // is plugin already initialized?
-        if (this.el) {
-            return;
-        }
-
-        this.el = element;
-        this.opts = extend({}, defaults, opts || {});
-
-        this._setupElements();
-
-        // check if browser has physical scrollbars (usually desktop)
-        if (this.scrollbarWidth = getScrollbarWidth()) {
-            this._enableTrack();
-
-            this._observeHover(this.area);
-            this._observeHover(this.track);
-            this._enableScroll();
-            this._enableDragging();
-
-            this.refresh();
-        } else {
-            this._allowNativeScroll();
-        }
-
-        return this;
-    }
-
-    // PUBLIC API
-    /*****************************************/
-    /**
-     * Destroys plugin instance.
-     */
-    Scrollbar.prototype.destroy = function() {
-        var stateClasses = this.opts.stateClasses;
-
-        this._removeAllListeners();
-
-        this.wrapper.style.overflowY = '';
-        this.wrapper.style.marginRight = '';
-        this.track.style.display = '';
-
-        removeClass(document.body, stateClasses.dragging);
-        removeClass(this.area, stateClasses.dragging);
-        removeClass(this.area, stateClasses.hover);
-        removeClass(this.track, stateClasses.hover);
-
-        delete this.el;
-    }
-
-    /**
-     * Refreshes scrollbar by adjusting its handle's height and position.
-     */
-    Scrollbar.prototype.refresh = function() {
-        var newRatio;
-
-        if (!this.el || this.isNative()) {
-            return;
-        }
-        
-        if (this.wrapper.scrollHeight > this.wrapper.offsetHeight) {
-            this.track.style.display = 'block';
-
-            newRatio = this.track.offsetHeight / this.wrapper.scrollHeight;
-
-            if (newRatio !== this.ratio) {
-                this.ratio = newRatio;
-
-                this._resizeHandle();
-                this._positionHandle();
-            }
-        } else {
-            this.track.style.display = 'none';
-        }
-    }
-
-    /**
-     * Checks if native scroll is enabled.
-     *
-     * @returns {Boolean}
-     */
-    Scrollbar.prototype.isNative = function() {
-        return !this.scrollbarWidth;
-    }
-
-    // PRIVATE API
-    /*****************************************/
-    /**
-     * Sets up elements.
-     *
-     * @private
-     */
-    Scrollbar.prototype._setupElements = function() {
-        var elements = this.opts.elements;
-
-        this.area = this.el.querySelector(elements.area);
-        this.wrapper = this.el.querySelector(elements.wrapper);
-        this.handle = this.el.querySelector(elements.handle);
-        this.track = this.el.querySelector(elements.track);
-    }
-
-    /**
-     * Observes when element is hovered and toggles corresponding class.
-     *
-     * @param {HTMLElement} element
-     * @private
-     */
-    Scrollbar.prototype._observeHover = function(element) {
-        var cls = this.opts.stateClasses.hover;
-
-        this._addListener(element, 'mouseenter', function() {
-            addClass(element, cls);
-        });
-        this._addListener(element, 'mouseleave', function() {
-            removeClass(element, cls);
-        });
-    },
-
-    /**
-     * Enables scroll by overflowing native scrollbar and starting to listen to `scroll` event.
-     *
-     * @private
-     */
-    Scrollbar.prototype._enableScroll = function() {
-        this._addListener(this.wrapper, 'scroll', bind(this._positionHandle, this));
-    }
-
-    /**
-     * Enables handle's dragging along the track.
-     *
-     * @private
-     */
-    Scrollbar.prototype._enableDragging = function() {
-        var cls = this.opts.stateClasses.dragging,
-            initialPosition = null,
-            initialTop = null,
-            startDragging,
-            stopDragging;
-
-        this._addListener(this.handle, 'mousedown', bind(function(e) {
-            initialPosition = this.wrapper.scrollTop;
-            initialTop = e.clientY;
-
-            this._addListener(document, 'mousemove', startDragging);
-            this._addListener(document, 'mouseup', stopDragging);
-        }, this));
-
-        startDragging = bind(function(e) {
-            var newPosition,
-                wrapperHeight,
-                wrapperInnerHeight;
-
-            if (initialTop !== null) {
-                newPosition = Math.round(initialPosition + (e.clientY - initialTop) / this.ratio);
-
-                wrapperHeight = this.wrapper.offsetHeight;
-                wrapperInnerHeight = this.wrapper.scrollHeight;
-
-                if (newPosition + wrapperHeight > wrapperInnerHeight) {
-                    newPosition = wrapperInnerHeight - wrapperHeight;
-                }
-
-                this.wrapper.scrollTop = newPosition;
-                this._positionHandle();
-
-                addClass(document.body, cls);
-                addClass(this.area, cls);
-            }
-        }, this);
-
-        stopDragging = bind(function() {
-            initialTop = null;
-            initialPosition = null;
-
-            removeClass(document.body, cls);
-            removeClass(this.area, cls);
-
-            this._removeListener(document, 'mousemove', startDragging);
-            this._removeListener(document, 'mouseup', stopDragging);
-        }, this);
-    }
-
-    /**
-     * Enables track.
-     *
-     * @private
-     */
-    Scrollbar.prototype._enableTrack = function() {
-        this.wrapper.style.overflowY = 'scroll';
-        this.wrapper.style.marginRight = -1 * this.scrollbarWidth + 'px';
-    }
-
-    /**
-     * Allows native scrolling by making sure that div is scrollable.
-     *
-     * @private
-     */
-    Scrollbar.prototype._allowNativeScroll = function() {
-        this.wrapper.style.overflowY = 'auto';
-    }
-
-    /**
-     * Resizes handle by adjusting its `height`.
-     *
-     * @private
-     */
-    Scrollbar.prototype._resizeHandle = function() {
-        this.handle.style.height = Math.ceil(this.ratio * this.track.offsetHeight) + 'px';
-    }
-
-    /**
-     * Positions handle by adjusting its `top` position.
-     *
-     * @private
-     */
-    Scrollbar.prototype._positionHandle = function() {
-        var wrapperTop = this.wrapper.scrollTop,
-            top;
-
-        if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight) {
-            top = Math.ceil(this.ratio * this.wrapper.scrollTop);
-        } else {
-            // if scroll position has reached the end, force scrollbar to track's end
-            top = this.track.offsetHeight - this.handle.offsetHeight;
-        }
-
-        this.handle.style.top = top + 'px';
-    }
-
-    /**
-     * Adds event listener and keeps track of it.
-     *
-     * @param {HTMLElement} element
-     * @param {String}      eventName
-     * @param {Function}    handler
-     * @private
-     */
-    Scrollbar.prototype._addListener = function(element, eventName, handler) {
-        var events = this._events;
-
-        if (!events) {
-            this._events = events = {};
-        }
-        if (!events[eventName]) {
-            events[eventName] = [];
-        }
-
-        events[eventName].push({
-            element: element,
-            handler: handler
-        });
-
-        addEventListener.apply(null, arguments);
-    }
-
-    /**
-     * Removes event listener.
-     *
-     * @param {HTMLElement} element
-     * @param {String}      eventName
-     * @param {Function}    handler
-     * @private
-     */
-    Scrollbar.prototype._removeListener = function(element, eventName, handler) {
-        var event = this._events[eventName],
-            index,
-            total;
-
-        for (index = 0, total = event.length; index < total; index++) {
-            if (event[index].handler === handler) {
-                event.splice(index, 1);
-                removeEventListener.apply(null, arguments);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Removes all event listeners.
-     *
-     * @private
-     */
-    Scrollbar.prototype._removeAllListeners = function() {
-        var events = this._events,
-            eventName,
-            event,
-            iter,
-            total;
-
-        for (eventName in events) {
-            event = events[eventName];
-
-            for (iter = 0, total = event.length; iter < total; iter++) {
-                removeEventListener(event[iter].element, eventName, event[iter].handler);
-            }
-        }
-
-        delete this._events;
-    }
-
-    // HELPER FUNCTIONS
-    /*****************************************/
-    function bind(fn,context){return function(){fn.apply(context,arguments);};}function extend(){var iter;for(iter=1;iter<arguments.length;iter++){var key;for(key in arguments[iter]){if(arguments[iter].hasOwnProperty(key)){arguments[0][key]=arguments[iter][key];}}}return arguments[0];}function addEventListener(el,eventName,handler){if(el.addEventListener){el.addEventListener(eventName,handler);}else{el.attachEvent("on"+eventName,handler);}}function removeEventListener(el,eventName,handler){if(el.removeEventListener){el.removeEventListener(eventName,handler);}else{el.detachEvent("on"+eventName,handler);}}function addClass(el,className){if(el.classList){el.classList.add(className);}else{el.className+=" "+className;}}function removeClass(el,className){if(el.classList){el.classList.remove(className);}else{el.className=el.className.replace(new RegExp("(^|\\b)"+className.split(" ").join("|")+"(\\b|$)","gi")," ");}}function getScrollbarWidth(){var wrapper=document.createElement("div"),content=document.createElement("div"),width;wrapper.style.position="absolute";wrapper.style.top="-50px";wrapper.style.height="50px";wrapper.style.overflow="scroll";wrapper.appendChild(content);document.body.appendChild(wrapper);width=wrapper.offsetWidth-content.offsetWidth;document.body.removeChild(wrapper);return width;}
-
-    Container.set('Scrollbar', Scrollbar);
-
-})();
-/**
  * Flickity PACKAGED v2.0.5
  * Touch, responsive, flickable carousels
  *
@@ -4020,21 +4070,6 @@ JSHelper.prototype.isMobile = function()
 
     // Load into container 
     Container.set('Flickity', _flickity);
-})();
-(function() {
-
-	/*! VelocityJS.org (1.5.0). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
-	/*! VelocityJS.org jQuery Shim (1.0.1). (C) 2014 The jQuery Foundation. MIT @license: en.wikipedia.org/wiki/MIT_License. */
-	!function(a){"use strict";function b(a){var b=a.length,d=c.type(a);return"function"!==d&&!c.isWindow(a)&&(!(1!==a.nodeType||!b)||("array"===d||0===b||"number"==typeof b&&b>0&&b-1 in a))}if(!a.jQuery){var c=function(a,b){return new c.fn.init(a,b)};c.isWindow=function(a){return a&&a===a.window},c.type=function(a){return a?"object"==typeof a||"function"==typeof a?e[g.call(a)]||"object":typeof a:a+""},c.isArray=Array.isArray||function(a){return"array"===c.type(a)},c.isPlainObject=function(a){var b;if(!a||"object"!==c.type(a)||a.nodeType||c.isWindow(a))return!1;try{if(a.constructor&&!f.call(a,"constructor")&&!f.call(a.constructor.prototype,"isPrototypeOf"))return!1}catch(d){return!1}for(b in a);return b===undefined||f.call(a,b)},c.each=function(a,c,d){var e=0,f=a.length,g=b(a);if(d){if(g)for(;e<f&&c.apply(a[e],d)!==!1;e++);else for(e in a)if(a.hasOwnProperty(e)&&c.apply(a[e],d)===!1)break}else if(g)for(;e<f&&c.call(a[e],e,a[e])!==!1;e++);else for(e in a)if(a.hasOwnProperty(e)&&c.call(a[e],e,a[e])===!1)break;return a},c.data=function(a,b,e){if(e===undefined){var f=a[c.expando],g=f&&d[f];if(b===undefined)return g;if(g&&b in g)return g[b]}else if(b!==undefined){var h=a[c.expando]||(a[c.expando]=++c.uuid);return d[h]=d[h]||{},d[h][b]=e,e}},c.removeData=function(a,b){var e=a[c.expando],f=e&&d[e];f&&(b?c.each(b,function(a,b){delete f[b]}):delete d[e])},c.extend=function(){var a,b,d,e,f,g,h=arguments[0]||{},i=1,j=arguments.length,k=!1;for("boolean"==typeof h&&(k=h,h=arguments[i]||{},i++),"object"!=typeof h&&"function"!==c.type(h)&&(h={}),i===j&&(h=this,i--);i<j;i++)if(f=arguments[i])for(e in f)f.hasOwnProperty(e)&&(a=h[e],d=f[e],h!==d&&(k&&d&&(c.isPlainObject(d)||(b=c.isArray(d)))?(b?(b=!1,g=a&&c.isArray(a)?a:[]):g=a&&c.isPlainObject(a)?a:{},h[e]=c.extend(k,g,d)):d!==undefined&&(h[e]=d)));return h},c.queue=function(a,d,e){if(a){d=(d||"fx")+"queue";var f=c.data(a,d);return e?(!f||c.isArray(e)?f=c.data(a,d,function(a,c){var d=c||[];return a&&(b(Object(a))?function(a,b){for(var c=+b.length,d=0,e=a.length;d<c;)a[e++]=b[d++];if(c!==c)for(;b[d]!==undefined;)a[e++]=b[d++];a.length=e,a}(d,"string"==typeof a?[a]:a):[].push.call(d,a)),d}(e)):f.push(e),f):f||[]}},c.dequeue=function(a,b){c.each(a.nodeType?[a]:a,function(a,d){b=b||"fx";var e=c.queue(d,b),f=e.shift();"inprogress"===f&&(f=e.shift()),f&&("fx"===b&&e.unshift("inprogress"),f.call(d,function(){c.dequeue(d,b)}))})},c.fn=c.prototype={init:function(a){if(a.nodeType)return this[0]=a,this;throw new Error("Not a DOM node.")},offset:function(){var b=this[0].getBoundingClientRect?this[0].getBoundingClientRect():{top:0,left:0};return{top:b.top+(a.pageYOffset||document.scrollTop||0)-(document.clientTop||0),left:b.left+(a.pageXOffset||document.scrollLeft||0)-(document.clientLeft||0)}},position:function(){var a=this[0],b=function(a){for(var b=a.offsetParent;b&&"html"!==b.nodeName.toLowerCase()&&b.style&&"static"===b.style.position;)b=b.offsetParent;return b||document}(a),d=this.offset(),e=/^(?:body|html)$/i.test(b.nodeName)?{top:0,left:0}:c(b).offset();return d.top-=parseFloat(a.style.marginTop)||0,d.left-=parseFloat(a.style.marginLeft)||0,b.style&&(e.top+=parseFloat(b.style.borderTopWidth)||0,e.left+=parseFloat(b.style.borderLeftWidth)||0),{top:d.top-e.top,left:d.left-e.left}}};var d={};c.expando="velocity"+(new Date).getTime(),c.uuid=0;for(var e={},f=e.hasOwnProperty,g=e.toString,h="Boolean Number String Function Array Date RegExp Object Error".split(" "),i=0;i<h.length;i++)e["[object "+h[i]+"]"]=h[i].toLowerCase();c.fn.init.prototype=c.fn,a.Velocity={Utilities:c}}}(window),function(a){"use strict";"object"==typeof module&&"object"==typeof module.exports?module.exports=a():"function"==typeof define&&define.amd?define(a):a()}(function(){"use strict";return function(a,b,c,d){function e(a){for(var b=-1,c=a?a.length:0,d=[];++b<c;){var e=a[b];e&&d.push(e)}return d}function f(a){return u.isWrapped(a)?a=s.call(a):u.isNode(a)&&(a=[a]),a}function g(a){var b=o.data(a,"velocity");return null===b?d:b}function h(a,b){var c=g(a);c&&c.delayTimer&&!c.delayPaused&&(c.delayRemaining=c.delay-b+c.delayBegin,c.delayPaused=!0,clearTimeout(c.delayTimer.setTimeout))}function i(a,b){var c=g(a);c&&c.delayTimer&&c.delayPaused&&(c.delayPaused=!1,c.delayTimer.setTimeout=setTimeout(c.delayTimer.next,c.delayRemaining))}function j(a){return function(b){return Math.round(b*a)*(1/a)}}function k(a,c,d,e){function f(a,b){return 1-3*b+3*a}function g(a,b){return 3*b-6*a}function h(a){return 3*a}function i(a,b,c){return((f(b,c)*a+g(b,c))*a+h(b))*a}function j(a,b,c){return 3*f(b,c)*a*a+2*g(b,c)*a+h(b)}function k(b,c){for(var e=0;e<p;++e){var f=j(c,a,d);if(0===f)return c;c-=(i(c,a,d)-b)/f}return c}function l(){for(var b=0;b<t;++b)x[b]=i(b*u,a,d)}function m(b,c,e){var f,g,h=0;do{g=c+(e-c)/2,f=i(g,a,d)-b,f>0?e=g:c=g}while(Math.abs(f)>r&&++h<s);return g}function n(b){for(var c=0,e=1,f=t-1;e!==f&&x[e]<=b;++e)c+=u;--e;var g=(b-x[e])/(x[e+1]-x[e]),h=c+g*u,i=j(h,a,d);return i>=q?k(b,h):0===i?h:m(b,c,c+u)}function o(){y=!0,a===c&&d===e||l()}var p=4,q=.001,r=1e-7,s=10,t=11,u=1/(t-1),v="Float32Array"in b;if(4!==arguments.length)return!1;for(var w=0;w<4;++w)if("number"!=typeof arguments[w]||isNaN(arguments[w])||!isFinite(arguments[w]))return!1;a=Math.min(a,1),d=Math.min(d,1),a=Math.max(a,0),d=Math.max(d,0);var x=v?new Float32Array(t):new Array(t),y=!1,z=function(b){return y||o(),a===c&&d===e?b:0===b?0:1===b?1:i(n(b),c,e)};z.getControlPoints=function(){return[{x:a,y:c},{x:d,y:e}]};var A="generateBezier("+[a,c,d,e]+")";return z.toString=function(){return A},z}function l(a,b){var c=a;return u.isString(a)?y.Easings[a]||(c=!1):c=u.isArray(a)&&1===a.length?j.apply(null,a):u.isArray(a)&&2===a.length?z.apply(null,a.concat([b])):!(!u.isArray(a)||4!==a.length)&&k.apply(null,a),c===!1&&(c=y.Easings[y.defaults.easing]?y.defaults.easing:x),c}function m(a){if(a){var b=y.timestamp&&a!==!0?a:r.now(),c=y.State.calls.length;c>1e4&&(y.State.calls=e(y.State.calls),c=y.State.calls.length);for(var f=0;f<c;f++)if(y.State.calls[f]){var h=y.State.calls[f],i=h[0],j=h[2],k=h[3],l=!!k,q=null,s=h[5],t=h[6];if(k||(k=y.State.calls[f][3]=b-16),s){if(s.resume!==!0)continue;k=h[3]=Math.round(b-t-16),h[5]=null}t=h[6]=b-k;for(var v=Math.min(t/j.duration,1),w=0,x=i.length;w<x;w++){var z=i[w],B=z.element;if(g(B)){var D=!1;if(j.display!==d&&null!==j.display&&"none"!==j.display){if("flex"===j.display){var E=["-webkit-box","-moz-box","-ms-flexbox","-webkit-flex"];o.each(E,function(a,b){A.setPropertyValue(B,"display",b)})}A.setPropertyValue(B,"display",j.display)}j.visibility!==d&&"hidden"!==j.visibility&&A.setPropertyValue(B,"visibility",j.visibility);for(var F in z)if(z.hasOwnProperty(F)&&"element"!==F){var G,H=z[F],I=u.isString(H.easing)?y.Easings[H.easing]:H.easing;if(u.isString(H.pattern)){var J=1===v?function(a,b,c){var d=H.endValue[b];return c?Math.round(d):d}:function(a,b,c){var d=H.startValue[b],e=H.endValue[b]-d,f=d+e*I(v,j,e);return c?Math.round(f):f};G=H.pattern.replace(/{(\d+)(!)?}/g,J)}else if(1===v)G=H.endValue;else{var K=H.endValue-H.startValue;G=H.startValue+K*I(v,j,K)}if(!l&&G===H.currentValue)continue;if(H.currentValue=G,"tween"===F)q=G;else{var L;if(A.Hooks.registered[F]){L=A.Hooks.getRoot(F);var M=g(B).rootPropertyValueCache[L];M&&(H.rootPropertyValue=M)}var N=A.setPropertyValue(B,F,H.currentValue+(p<9&&0===parseFloat(G)?"":H.unitType),H.rootPropertyValue,H.scrollData);A.Hooks.registered[F]&&(A.Normalizations.registered[L]?g(B).rootPropertyValueCache[L]=A.Normalizations.registered[L]("extract",null,N[1]):g(B).rootPropertyValueCache[L]=N[1]),"transform"===N[0]&&(D=!0)}}j.mobileHA&&g(B).transformCache.translate3d===d&&(g(B).transformCache.translate3d="(0px, 0px, 0px)",D=!0),D&&A.flushTransformCache(B)}}j.display!==d&&"none"!==j.display&&(y.State.calls[f][2].display=!1),j.visibility!==d&&"hidden"!==j.visibility&&(y.State.calls[f][2].visibility=!1),j.progress&&j.progress.call(h[1],h[1],v,Math.max(0,k+j.duration-b),k,q),1===v&&n(f)}}y.State.isTicking&&C(m)}function n(a,b){if(!y.State.calls[a])return!1;for(var c=y.State.calls[a][0],e=y.State.calls[a][1],f=y.State.calls[a][2],h=y.State.calls[a][4],i=!1,j=0,k=c.length;j<k;j++){var l=c[j].element;b||f.loop||("none"===f.display&&A.setPropertyValue(l,"display",f.display),"hidden"===f.visibility&&A.setPropertyValue(l,"visibility",f.visibility));var m=g(l);if(f.loop!==!0&&(o.queue(l)[1]===d||!/\.velocityQueueEntryFlag/i.test(o.queue(l)[1]))&&m){m.isAnimating=!1,m.rootPropertyValueCache={};var n=!1;o.each(A.Lists.transforms3D,function(a,b){var c=/^scale/.test(b)?1:0,e=m.transformCache[b];m.transformCache[b]!==d&&new RegExp("^\\("+c+"[^.]").test(e)&&(n=!0,delete m.transformCache[b])}),f.mobileHA&&(n=!0,delete m.transformCache.translate3d),n&&A.flushTransformCache(l),A.Values.removeClass(l,"velocity-animating")}if(!b&&f.complete&&!f.loop&&j===k-1)try{f.complete.call(e,e)}catch(r){setTimeout(function(){throw r},1)}h&&f.loop!==!0&&h(e),m&&f.loop===!0&&!b&&(o.each(m.tweensContainer,function(a,b){if(/^rotate/.test(a)&&(parseFloat(b.startValue)-parseFloat(b.endValue))%360==0){var c=b.startValue;b.startValue=b.endValue,b.endValue=c}/^backgroundPosition/.test(a)&&100===parseFloat(b.endValue)&&"%"===b.unitType&&(b.endValue=0,b.startValue=100)}),y(l,"reverse",{loop:!0,delay:f.delay})),f.queue!==!1&&o.dequeue(l,f.queue)}y.State.calls[a]=!1;for(var p=0,q=y.State.calls.length;p<q;p++)if(y.State.calls[p]!==!1){i=!0;break}i===!1&&(y.State.isTicking=!1,delete y.State.calls,y.State.calls=[])}var o,p=function(){if(c.documentMode)return c.documentMode;for(var a=7;a>4;a--){var b=c.createElement("div");if(b.innerHTML="<!--[if IE "+a+"]><span></span><![endif]-->",b.getElementsByTagName("span").length)return b=null,a}return d}(),q=function(){var a=0;return b.webkitRequestAnimationFrame||b.mozRequestAnimationFrame||function(b){var c,d=(new Date).getTime();return c=Math.max(0,16-(d-a)),a=d+c,setTimeout(function(){b(d+c)},c)}}(),r=function(){var a=b.performance||{};if("function"!=typeof a.now){var c=a.timing&&a.timing.navigationStart?a.timing.navigationStart:(new Date).getTime();a.now=function(){return(new Date).getTime()-c}}return a}(),s=function(){var a=Array.prototype.slice;try{return a.call(c.documentElement),a}catch(b){return function(b,c){var d=this.length;if("number"!=typeof b&&(b=0),"number"!=typeof c&&(c=d),this.slice)return a.call(this,b,c);var e,f=[],g=b>=0?b:Math.max(0,d+b),h=c<0?d+c:Math.min(c,d),i=h-g;if(i>0)if(f=new Array(i),this.charAt)for(e=0;e<i;e++)f[e]=this.charAt(g+e);else for(e=0;e<i;e++)f[e]=this[g+e];return f}}}(),t=function(){return Array.prototype.includes?function(a,b){return a.includes(b)}:Array.prototype.indexOf?function(a,b){return a.indexOf(b)>=0}:function(a,b){for(var c=0;c<a.length;c++)if(a[c]===b)return!0;return!1}},u={isNumber:function(a){return"number"==typeof a},isString:function(a){return"string"==typeof a},isArray:Array.isArray||function(a){return"[object Array]"===Object.prototype.toString.call(a)},isFunction:function(a){return"[object Function]"===Object.prototype.toString.call(a)},isNode:function(a){return a&&a.nodeType},isWrapped:function(a){return a&&a!==b&&u.isNumber(a.length)&&!u.isString(a)&&!u.isFunction(a)&&!u.isNode(a)&&(0===a.length||u.isNode(a[0]))},isSVG:function(a){return b.SVGElement&&a instanceof b.SVGElement},isEmptyObject:function(a){for(var b in a)if(a.hasOwnProperty(b))return!1;return!0}},v=!1;if(a.fn&&a.fn.jquery?(o=a,v=!0):o=b.Velocity.Utilities,p<=8&&!v)throw new Error("Velocity: IE8 and below require jQuery to be loaded before Velocity.");if(p<=7)return void(jQuery.fn.velocity=jQuery.fn.animate);var w=400,x="swing",y={State:{isMobile:/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),isAndroid:/Android/i.test(navigator.userAgent),isGingerbread:/Android 2\.3\.[3-7]/i.test(navigator.userAgent),isChrome:b.chrome,isFirefox:/Firefox/i.test(navigator.userAgent),prefixElement:c.createElement("div"),prefixMatches:{},scrollAnchor:null,scrollPropertyLeft:null,scrollPropertyTop:null,isTicking:!1,calls:[],delayedElements:{count:0}},CSS:{},Utilities:o,Redirects:{},Easings:{},Promise:b.Promise,defaults:{queue:"",duration:w,easing:x,begin:d,complete:d,progress:d,display:d,visibility:d,loop:!1,delay:!1,mobileHA:!0,_cacheValues:!0,promiseRejectEmpty:!0},init:function(a){o.data(a,"velocity",{isSVG:u.isSVG(a),isAnimating:!1,computedStyle:null,tweensContainer:null,rootPropertyValueCache:{},transformCache:{}})},hook:null,mock:!1,version:{major:1,minor:5,patch:0},debug:!1,timestamp:!0,pauseAll:function(a){var b=(new Date).getTime();o.each(y.State.calls,function(b,c){if(c){if(a!==d&&(c[2].queue!==a||c[2].queue===!1))return!0;c[5]={resume:!1}}}),o.each(y.State.delayedElements,function(a,c){c&&h(c,b)})},resumeAll:function(a){var b=(new Date).getTime();o.each(y.State.calls,function(b,c){if(c){if(a!==d&&(c[2].queue!==a||c[2].queue===!1))return!0;c[5]&&(c[5].resume=!0)}}),o.each(y.State.delayedElements,function(a,c){c&&i(c,b)})}};b.pageYOffset!==d?(y.State.scrollAnchor=b,y.State.scrollPropertyLeft="pageXOffset",y.State.scrollPropertyTop="pageYOffset"):(y.State.scrollAnchor=c.documentElement||c.body.parentNode||c.body,y.State.scrollPropertyLeft="scrollLeft",y.State.scrollPropertyTop="scrollTop");var z=function(){function a(a){return-a.tension*a.x-a.friction*a.v}function b(b,c,d){var e={x:b.x+d.dx*c,v:b.v+d.dv*c,tension:b.tension,friction:b.friction};return{dx:e.v,dv:a(e)}}function c(c,d){var e={dx:c.v,dv:a(c)},f=b(c,.5*d,e),g=b(c,.5*d,f),h=b(c,d,g),i=1/6*(e.dx+2*(f.dx+g.dx)+h.dx),j=1/6*(e.dv+2*(f.dv+g.dv)+h.dv);return c.x=c.x+i*d,c.v=c.v+j*d,c}return function d(a,b,e){var f,g,h,i={x:-1,v:0,tension:null,friction:null},j=[0],k=0;for(a=parseFloat(a)||500,b=parseFloat(b)||20,e=e||null,i.tension=a,i.friction=b,f=null!==e,f?(k=d(a,b),g=k/e*.016):g=.016;;)if(h=c(h||i,g),j.push(1+h.x),k+=16,!(Math.abs(h.x)>1e-4&&Math.abs(h.v)>1e-4))break;return f?function(a){return j[a*(j.length-1)|0]}:k}}();y.Easings={linear:function(a){return a},swing:function(a){return.5-Math.cos(a*Math.PI)/2},spring:function(a){return 1-Math.cos(4.5*a*Math.PI)*Math.exp(6*-a)}},o.each([["ease",[.25,.1,.25,1]],["ease-in",[.42,0,1,1]],["ease-out",[0,0,.58,1]],["ease-in-out",[.42,0,.58,1]],["easeInSine",[.47,0,.745,.715]],["easeOutSine",[.39,.575,.565,1]],["easeInOutSine",[.445,.05,.55,.95]],["easeInQuad",[.55,.085,.68,.53]],["easeOutQuad",[.25,.46,.45,.94]],["easeInOutQuad",[.455,.03,.515,.955]],["easeInCubic",[.55,.055,.675,.19]],["easeOutCubic",[.215,.61,.355,1]],["easeInOutCubic",[.645,.045,.355,1]],["easeInQuart",[.895,.03,.685,.22]],["easeOutQuart",[.165,.84,.44,1]],["easeInOutQuart",[.77,0,.175,1]],["easeInQuint",[.755,.05,.855,.06]],["easeOutQuint",[.23,1,.32,1]],["easeInOutQuint",[.86,0,.07,1]],["easeInExpo",[.95,.05,.795,.035]],["easeOutExpo",[.19,1,.22,1]],["easeInOutExpo",[1,0,0,1]],["easeInCirc",[.6,.04,.98,.335]],["easeOutCirc",[.075,.82,.165,1]],["easeInOutCirc",[.785,.135,.15,.86]]],function(a,b){y.Easings[b[0]]=k.apply(null,b[1])});var A=y.CSS={RegEx:{isHex:/^#([A-f\d]{3}){1,2}$/i,valueUnwrap:/^[A-z]+\((.*)\)$/i,wrappedValueAlreadyExtracted:/[0-9.]+ [0-9.]+ [0-9.]+( [0-9.]+)?/,valueSplit:/([A-z]+\(.+\))|(([A-z0-9#-.]+?)(?=\s|$))/gi},Lists:{colors:["fill","stroke","stopColor","color","backgroundColor","borderColor","borderTopColor","borderRightColor","borderBottomColor","borderLeftColor","outlineColor"],transformsBase:["translateX","translateY","scale","scaleX","scaleY","skewX","skewY","rotateZ"],transforms3D:["transformPerspective","translateZ","scaleZ","rotateX","rotateY"],units:["%","em","ex","ch","rem","vw","vh","vmin","vmax","cm","mm","Q","in","pc","pt","px","deg","grad","rad","turn","s","ms"],colorNames:{aliceblue:"240,248,255",antiquewhite:"250,235,215",aquamarine:"127,255,212",aqua:"0,255,255",azure:"240,255,255",beige:"245,245,220",bisque:"255,228,196",black:"0,0,0",blanchedalmond:"255,235,205",blueviolet:"138,43,226",blue:"0,0,255",brown:"165,42,42",burlywood:"222,184,135",cadetblue:"95,158,160",chartreuse:"127,255,0",chocolate:"210,105,30",coral:"255,127,80",cornflowerblue:"100,149,237",cornsilk:"255,248,220",crimson:"220,20,60",cyan:"0,255,255",darkblue:"0,0,139",darkcyan:"0,139,139",darkgoldenrod:"184,134,11",darkgray:"169,169,169",darkgrey:"169,169,169",darkgreen:"0,100,0",darkkhaki:"189,183,107",darkmagenta:"139,0,139",darkolivegreen:"85,107,47",darkorange:"255,140,0",darkorchid:"153,50,204",darkred:"139,0,0",darksalmon:"233,150,122",darkseagreen:"143,188,143",darkslateblue:"72,61,139",darkslategray:"47,79,79",darkturquoise:"0,206,209",darkviolet:"148,0,211",deeppink:"255,20,147",deepskyblue:"0,191,255",dimgray:"105,105,105",dimgrey:"105,105,105",dodgerblue:"30,144,255",firebrick:"178,34,34",floralwhite:"255,250,240",forestgreen:"34,139,34",fuchsia:"255,0,255",gainsboro:"220,220,220",ghostwhite:"248,248,255",gold:"255,215,0",goldenrod:"218,165,32",gray:"128,128,128",grey:"128,128,128",greenyellow:"173,255,47",green:"0,128,0",honeydew:"240,255,240",hotpink:"255,105,180",indianred:"205,92,92",indigo:"75,0,130",ivory:"255,255,240",khaki:"240,230,140",lavenderblush:"255,240,245",lavender:"230,230,250",lawngreen:"124,252,0",lemonchiffon:"255,250,205",lightblue:"173,216,230",lightcoral:"240,128,128",lightcyan:"224,255,255",lightgoldenrodyellow:"250,250,210",lightgray:"211,211,211",lightgrey:"211,211,211",lightgreen:"144,238,144",lightpink:"255,182,193",lightsalmon:"255,160,122",lightseagreen:"32,178,170",lightskyblue:"135,206,250",lightslategray:"119,136,153",lightsteelblue:"176,196,222",lightyellow:"255,255,224",limegreen:"50,205,50",lime:"0,255,0",linen:"250,240,230",magenta:"255,0,255",maroon:"128,0,0",mediumaquamarine:"102,205,170",mediumblue:"0,0,205",mediumorchid:"186,85,211",mediumpurple:"147,112,219",mediumseagreen:"60,179,113",mediumslateblue:"123,104,238",mediumspringgreen:"0,250,154",mediumturquoise:"72,209,204",mediumvioletred:"199,21,133",midnightblue:"25,25,112",mintcream:"245,255,250",mistyrose:"255,228,225",moccasin:"255,228,181",navajowhite:"255,222,173",navy:"0,0,128",oldlace:"253,245,230",olivedrab:"107,142,35",olive:"128,128,0",orangered:"255,69,0",orange:"255,165,0",orchid:"218,112,214",palegoldenrod:"238,232,170",palegreen:"152,251,152",paleturquoise:"175,238,238",palevioletred:"219,112,147",papayawhip:"255,239,213",peachpuff:"255,218,185",peru:"205,133,63",pink:"255,192,203",plum:"221,160,221",powderblue:"176,224,230",purple:"128,0,128",red:"255,0,0",rosybrown:"188,143,143",royalblue:"65,105,225",saddlebrown:"139,69,19",salmon:"250,128,114",sandybrown:"244,164,96",seagreen:"46,139,87",seashell:"255,245,238",sienna:"160,82,45",silver:"192,192,192",skyblue:"135,206,235",slateblue:"106,90,205",slategray:"112,128,144",snow:"255,250,250",springgreen:"0,255,127",steelblue:"70,130,180",tan:"210,180,140",teal:"0,128,128",thistle:"216,191,216",tomato:"255,99,71",turquoise:"64,224,208",violet:"238,130,238",wheat:"245,222,179",whitesmoke:"245,245,245",white:"255,255,255",yellowgreen:"154,205,50",yellow:"255,255,0"}},Hooks:{templates:{textShadow:["Color X Y Blur","black 0px 0px 0px"],boxShadow:["Color X Y Blur Spread","black 0px 0px 0px 0px"],clip:["Top Right Bottom Left","0px 0px 0px 0px"],backgroundPosition:["X Y","0% 0%"],transformOrigin:["X Y Z","50% 50% 0px"],perspectiveOrigin:["X Y","50% 50%"]},registered:{},register:function(){for(var a=0;a<A.Lists.colors.length;a++){var b="color"===A.Lists.colors[a]?"0 0 0 1":"255 255 255 1";A.Hooks.templates[A.Lists.colors[a]]=["Red Green Blue Alpha",b]}var c,d,e;if(p)for(c in A.Hooks.templates)if(A.Hooks.templates.hasOwnProperty(c)){d=A.Hooks.templates[c],e=d[0].split(" ");var f=d[1].match(A.RegEx.valueSplit);"Color"===e[0]&&(e.push(e.shift()),f.push(f.shift()),A.Hooks.templates[c]=[e.join(" "),f.join(" ")])}for(c in A.Hooks.templates)if(A.Hooks.templates.hasOwnProperty(c)){d=A.Hooks.templates[c],e=d[0].split(" ");for(var g in e)if(e.hasOwnProperty(g)){var h=c+e[g],i=g;A.Hooks.registered[h]=[c,i]}}},getRoot:function(a){var b=A.Hooks.registered[a];return b?b[0]:a},getUnit:function(a,b){var c=(a.substr(b||0,5).match(/^[a-z%]+/)||[])[0]||"";return c&&t(A.Lists.units,c)?c:""},fixColors:function(a){return a.replace(/(rgba?\(\s*)?(\b[a-z]+\b)/g,function(a,b,c){return A.Lists.colorNames.hasOwnProperty(c)?(b?b:"rgba(")+A.Lists.colorNames[c]+(b?"":",1)"):b+c})},cleanRootPropertyValue:function(a,b){return A.RegEx.valueUnwrap.test(b)&&(b=b.match(A.RegEx.valueUnwrap)[1]),A.Values.isCSSNullValue(b)&&(b=A.Hooks.templates[a][1]),b},extractValue:function(a,b){var c=A.Hooks.registered[a];if(c){var d=c[0],e=c[1];return b=A.Hooks.cleanRootPropertyValue(d,b),b.toString().match(A.RegEx.valueSplit)[e]}return b},injectValue:function(a,b,c){var d=A.Hooks.registered[a];if(d){var e,f=d[0],g=d[1];return c=A.Hooks.cleanRootPropertyValue(f,c),e=c.toString().match(A.RegEx.valueSplit),e[g]=b,e.join(" ")}return c}},Normalizations:{registered:{clip:function(a,b,c){switch(a){case"name":return"clip";case"extract":var d;return A.RegEx.wrappedValueAlreadyExtracted.test(c)?d=c:(d=c.toString().match(A.RegEx.valueUnwrap),d=d?d[1].replace(/,(\s+)?/g," "):c),d;case"inject":return"rect("+c+")"}},blur:function(a,b,c){switch(a){case"name":return y.State.isFirefox?"filter":"-webkit-filter";case"extract":var d=parseFloat(c);if(!d&&0!==d){var e=c.toString().match(/blur\(([0-9]+[A-z]+)\)/i);d=e?e[1]:0}return d;case"inject":return parseFloat(c)?"blur("+c+")":"none"}},opacity:function(a,b,c){if(p<=8)switch(a){case"name":return"filter";case"extract":var d=c.toString().match(/alpha\(opacity=(.*)\)/i);return c=d?d[1]/100:1;case"inject":return b.style.zoom=1,parseFloat(c)>=1?"":"alpha(opacity="+parseInt(100*parseFloat(c),10)+")"}else switch(a){case"name":return"opacity";case"extract":return c;case"inject":return c}}},register:function(){function a(a,b,c){if("border-box"===A.getPropertyValue(b,"boxSizing").toString().toLowerCase()===(c||!1)){var d,e,f=0,g="width"===a?["Left","Right"]:["Top","Bottom"],h=["padding"+g[0],"padding"+g[1],"border"+g[0]+"Width","border"+g[1]+"Width"];for(d=0;d<h.length;d++)e=parseFloat(A.getPropertyValue(b,h[d])),isNaN(e)||(f+=e);return c?-f:f}return 0}function b(b,c){return function(d,e,f){switch(d){case"name":return b;case"extract":return parseFloat(f)+a(b,e,c);case"inject":return parseFloat(f)-a(b,e,c)+"px"}}}p&&!(p>9)||y.State.isGingerbread||(A.Lists.transformsBase=A.Lists.transformsBase.concat(A.Lists.transforms3D));for(var c=0;c<A.Lists.transformsBase.length;c++)!function(){var a=A.Lists.transformsBase[c];A.Normalizations.registered[a]=function(b,c,e){switch(b){case"name":return"transform";case"extract":return g(c)===d||g(c).transformCache[a]===d?/^scale/i.test(a)?1:0:g(c).transformCache[a].replace(/[()]/g,"");case"inject":var f=!1;switch(a.substr(0,a.length-1)){case"translate":f=!/(%|px|em|rem|vw|vh|\d)$/i.test(e);break;case"scal":case"scale":y.State.isAndroid&&g(c).transformCache[a]===d&&e<1&&(e=1),f=!/(\d)$/i.test(e);break;case"skew":f=!/(deg|\d)$/i.test(e);break;case"rotate":f=!/(deg|\d)$/i.test(e)}return f||(g(c).transformCache[a]="("+e+")"),g(c).transformCache[a]}}}();for(var e=0;e<A.Lists.colors.length;e++)!function(){var a=A.Lists.colors[e];A.Normalizations.registered[a]=function(b,c,e){switch(b){case"name":return a;case"extract":var f;if(A.RegEx.wrappedValueAlreadyExtracted.test(e))f=e;else{var g,h={black:"rgb(0, 0, 0)",blue:"rgb(0, 0, 255)",gray:"rgb(128, 128, 128)",green:"rgb(0, 128, 0)",red:"rgb(255, 0, 0)",white:"rgb(255, 255, 255)"};/^[A-z]+$/i.test(e)?g=h[e]!==d?h[e]:h.black:A.RegEx.isHex.test(e)?g="rgb("+A.Values.hexToRgb(e).join(" ")+")":/^rgba?\(/i.test(e)||(g=h.black),f=(g||e).toString().match(A.RegEx.valueUnwrap)[1].replace(/,(\s+)?/g," ")}return(!p||p>8)&&3===f.split(" ").length&&(f+=" 1"),f;case"inject":return/^rgb/.test(e)?e:(p<=8?4===e.split(" ").length&&(e=e.split(/\s+/).slice(0,3).join(" ")):3===e.split(" ").length&&(e+=" 1"),(p<=8?"rgb":"rgba")+"("+e.replace(/\s+/g,",").replace(/\.(\d)+(?=,)/g,"")+")")}}}();A.Normalizations.registered.innerWidth=b("width",!0),A.Normalizations.registered.innerHeight=b("height",!0),A.Normalizations.registered.outerWidth=b("width"),A.Normalizations.registered.outerHeight=b("height")}},Names:{camelCase:function(a){return a.replace(/-(\w)/g,function(a,b){return b.toUpperCase()})},SVGAttribute:function(a){var b="width|height|x|y|cx|cy|r|rx|ry|x1|x2|y1|y2";return(p||y.State.isAndroid&&!y.State.isChrome)&&(b+="|transform"),new RegExp("^("+b+")$","i").test(a)},prefixCheck:function(a){if(y.State.prefixMatches[a])return[y.State.prefixMatches[a],!0];for(var b=["","Webkit","Moz","ms","O"],c=0,d=b.length;c<d;c++){var e;if(e=0===c?a:b[c]+a.replace(/^\w/,function(a){return a.toUpperCase()}),u.isString(y.State.prefixElement.style[e]))return y.State.prefixMatches[a]=e,[e,!0]}return[a,!1]}},Values:{hexToRgb:function(a){var b,c=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;return a=a.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,function(a,b,c,d){return b+b+c+c+d+d}),b=c.exec(a),b?[parseInt(b[1],16),parseInt(b[2],16),parseInt(b[3],16)]:[0,0,0]},isCSSNullValue:function(a){return!a||/^(none|auto|transparent|(rgba\(0, ?0, ?0, ?0\)))$/i.test(a)},getUnitType:function(a){return/^(rotate|skew)/i.test(a)?"deg":/(^(scale|scaleX|scaleY|scaleZ|alpha|flexGrow|flexHeight|zIndex|fontWeight)$)|((opacity|red|green|blue|alpha)$)/i.test(a)?"":"px"},getDisplayType:function(a){var b=a&&a.tagName.toString().toLowerCase();return/^(b|big|i|small|tt|abbr|acronym|cite|code|dfn|em|kbd|strong|samp|var|a|bdo|br|img|map|object|q|script|span|sub|sup|button|input|label|select|textarea)$/i.test(b)?"inline":/^(li)$/i.test(b)?"list-item":/^(tr)$/i.test(b)?"table-row":/^(table)$/i.test(b)?"table":/^(tbody)$/i.test(b)?"table-row-group":"block"},addClass:function(a,b){if(a)if(a.classList)a.classList.add(b);else if(u.isString(a.className))a.className+=(a.className.length?" ":"")+b;else{var c=a.getAttribute(p<=7?"className":"class")||"";a.setAttribute("class",c+(c?" ":"")+b)}},removeClass:function(a,b){if(a)if(a.classList)a.classList.remove(b);else if(u.isString(a.className))a.className=a.className.toString().replace(new RegExp("(^|\\s)"+b.split(" ").join("|")+"(\\s|$)","gi")," ");else{var c=a.getAttribute(p<=7?"className":"class")||"";a.setAttribute("class",c.replace(new RegExp("(^|s)"+b.split(" ").join("|")+"(s|$)","gi")," "))}}},getPropertyValue:function(a,c,e,f){function h(a,c){var e=0;if(p<=8)e=o.css(a,c);else{var i=!1;/^(width|height)$/.test(c)&&0===A.getPropertyValue(a,"display")&&(i=!0,A.setPropertyValue(a,"display",A.Values.getDisplayType(a)));var j=function(){i&&A.setPropertyValue(a,"display","none")};if(!f){if("height"===c&&"border-box"!==A.getPropertyValue(a,"boxSizing").toString().toLowerCase()){var k=a.offsetHeight-(parseFloat(A.getPropertyValue(a,"borderTopWidth"))||0)-(parseFloat(A.getPropertyValue(a,"borderBottomWidth"))||0)-(parseFloat(A.getPropertyValue(a,"paddingTop"))||0)-(parseFloat(A.getPropertyValue(a,"paddingBottom"))||0);return j(),k}if("width"===c&&"border-box"!==A.getPropertyValue(a,"boxSizing").toString().toLowerCase()){var l=a.offsetWidth-(parseFloat(A.getPropertyValue(a,"borderLeftWidth"))||0)-(parseFloat(A.getPropertyValue(a,"borderRightWidth"))||0)-(parseFloat(A.getPropertyValue(a,"paddingLeft"))||0)-(parseFloat(A.getPropertyValue(a,"paddingRight"))||0);return j(),l}}var m;m=g(a)===d?b.getComputedStyle(a,null):g(a).computedStyle?g(a).computedStyle:g(a).computedStyle=b.getComputedStyle(a,null),"borderColor"===c&&(c="borderTopColor"),e=9===p&&"filter"===c?m.getPropertyValue(c):m[c],""!==e&&null!==e||(e=a.style[c]),j()}if("auto"===e&&/^(top|right|bottom|left)$/i.test(c)){var n=h(a,"position");("fixed"===n||"absolute"===n&&/top|left/i.test(c))&&(e=o(a).position()[c]+"px")}return e}var i;if(A.Hooks.registered[c]){var j=c,k=A.Hooks.getRoot(j);e===d&&(e=A.getPropertyValue(a,A.Names.prefixCheck(k)[0])),A.Normalizations.registered[k]&&(e=A.Normalizations.registered[k]("extract",a,e)),i=A.Hooks.extractValue(j,e)}else if(A.Normalizations.registered[c]){var l,m;l=A.Normalizations.registered[c]("name",a),"transform"!==l&&(m=h(a,A.Names.prefixCheck(l)[0]),A.Values.isCSSNullValue(m)&&A.Hooks.templates[c]&&(m=A.Hooks.templates[c][1])),i=A.Normalizations.registered[c]("extract",a,m)}if(!/^[\d-]/.test(i)){var n=g(a);if(n&&n.isSVG&&A.Names.SVGAttribute(c))if(/^(height|width)$/i.test(c))try{i=a.getBBox()[c]}catch(q){i=0}else i=a.getAttribute(c);else i=h(a,A.Names.prefixCheck(c)[0])}return A.Values.isCSSNullValue(i)&&(i=0),y.debug>=2&&console.log("Get "+c+": "+i),i},setPropertyValue:function(a,c,d,e,f){var h=c;if("scroll"===c)f.container?f.container["scroll"+f.direction]=d:"Left"===f.direction?b.scrollTo(d,f.alternateValue):b.scrollTo(f.alternateValue,d);else if(A.Normalizations.registered[c]&&"transform"===A.Normalizations.registered[c]("name",a))A.Normalizations.registered[c]("inject",a,d),h="transform",d=g(a).transformCache[c];else{if(A.Hooks.registered[c]){var i=c,j=A.Hooks.getRoot(c);e=e||A.getPropertyValue(a,j),d=A.Hooks.injectValue(i,d,e),c=j}if(A.Normalizations.registered[c]&&(d=A.Normalizations.registered[c]("inject",a,d),c=A.Normalizations.registered[c]("name",a)),h=A.Names.prefixCheck(c)[0],p<=8)try{a.style[h]=d}catch(l){y.debug&&console.log("Browser does not support ["+d+"] for ["+h+"]")}else{var k=g(a);k&&k.isSVG&&A.Names.SVGAttribute(c)?a.setAttribute(c,d):a.style[h]=d}y.debug>=2&&console.log("Set "+c+" ("+h+"): "+d)}return[h,d]},flushTransformCache:function(a){var b="",c=g(a);if((p||y.State.isAndroid&&!y.State.isChrome)&&c&&c.isSVG){var d=function(b){return parseFloat(A.getPropertyValue(a,b))},e={translate:[d("translateX"),d("translateY")],skewX:[d("skewX")],skewY:[d("skewY")],scale:1!==d("scale")?[d("scale"),d("scale")]:[d("scaleX"),d("scaleY")],rotate:[d("rotateZ"),0,0]};o.each(g(a).transformCache,function(a){/^translate/i.test(a)?a="translate":/^scale/i.test(a)?a="scale":/^rotate/i.test(a)&&(a="rotate"),e[a]&&(b+=a+"("+e[a].join(" ")+") ",delete e[a])})}else{var f,h;o.each(g(a).transformCache,function(c){if(f=g(a).transformCache[c],"transformPerspective"===c)return h=f,!0;9===p&&"rotateZ"===c&&(c="rotate"),b+=c+f+" "}),h&&(b="perspective"+h+" "+b)}A.setPropertyValue(a,"transform",b)}};A.Hooks.register(),A.Normalizations.register(),y.hook=function(a,b,c){var e;return a=f(a),o.each(a,function(a,f){if(g(f)===d&&y.init(f),c===d)e===d&&(e=A.getPropertyValue(f,b));else{var h=A.setPropertyValue(f,b,c);"transform"===h[0]&&y.CSS.flushTransformCache(f),e=h}}),e};var B=function(){function a(){return k?z.promise||null:p}function e(a,e){function f(f){var k,n;if(i.begin&&0===D)try{i.begin.call(r,r)}catch(V){setTimeout(function(){throw V},1)}if("scroll"===G){var p,q,w,x=/^x$/i.test(i.axis)?"Left":"Top",B=parseFloat(i.offset)||0;i.container?u.isWrapped(i.container)||u.isNode(i.container)?(i.container=i.container[0]||i.container,p=i.container["scroll"+x],w=p+o(a).position()[x.toLowerCase()]+B):i.container=null:(p=y.State.scrollAnchor[y.State["scrollProperty"+x]],q=y.State.scrollAnchor[y.State["scrollProperty"+("Left"===x?"Top":"Left")]],w=o(a).offset()[x.toLowerCase()]+B),j={scroll:{rootPropertyValue:!1,startValue:p,currentValue:p,endValue:w,unitType:"",easing:i.easing,scrollData:{container:i.container,direction:x,alternateValue:q}},element:a},y.debug&&console.log("tweensContainer (scroll): ",j.scroll,a)}else if("reverse"===G){if(!(k=g(a)))return;if(!k.tweensContainer)return void o.dequeue(a,i.queue);"none"===k.opts.display&&(k.opts.display="auto"),"hidden"===k.opts.visibility&&(k.opts.visibility="visible"),k.opts.loop=!1,k.opts.begin=null,k.opts.complete=null,v.easing||delete i.easing,v.duration||delete i.duration,i=o.extend({},k.opts,i),n=o.extend(!0,{},k?k.tweensContainer:null);for(var E in n)if(n.hasOwnProperty(E)&&"element"!==E){var F=n[E].startValue;n[E].startValue=n[E].currentValue=n[E].endValue,n[E].endValue=F,u.isEmptyObject(v)||(n[E].easing=i.easing),y.debug&&console.log("reverse tweensContainer ("+E+"): "+JSON.stringify(n[E]),a)}j=n}else if("start"===G){k=g(a),k&&k.tweensContainer&&k.isAnimating===!0&&(n=k.tweensContainer);var H=function(e,f){var g,l=A.Hooks.getRoot(e),m=!1,p=f[0],q=f[1],r=f[2]
-	;if(!(k&&k.isSVG||"tween"===l||A.Names.prefixCheck(l)[1]!==!1||A.Normalizations.registered[l]!==d))return void(y.debug&&console.log("Skipping ["+l+"] due to a lack of browser support."));(i.display!==d&&null!==i.display&&"none"!==i.display||i.visibility!==d&&"hidden"!==i.visibility)&&/opacity|filter/.test(e)&&!r&&0!==p&&(r=0),i._cacheValues&&n&&n[e]?(r===d&&(r=n[e].endValue+n[e].unitType),m=k.rootPropertyValueCache[l]):A.Hooks.registered[e]?r===d?(m=A.getPropertyValue(a,l),r=A.getPropertyValue(a,e,m)):m=A.Hooks.templates[l][1]:r===d&&(r=A.getPropertyValue(a,e));var s,t,v,w=!1,x=function(a,b){var c,d;return d=(b||"0").toString().toLowerCase().replace(/[%A-z]+$/,function(a){return c=a,""}),c||(c=A.Values.getUnitType(a)),[d,c]};if(r!==p&&u.isString(r)&&u.isString(p)){g="";var z=0,B=0,C=[],D=[],E=0,F=0,G=0;for(r=A.Hooks.fixColors(r),p=A.Hooks.fixColors(p);z<r.length&&B<p.length;){var H=r[z],I=p[B];if(/[\d\.-]/.test(H)&&/[\d\.-]/.test(I)){for(var J=H,K=I,L=".",N=".";++z<r.length;){if((H=r[z])===L)L="..";else if(!/\d/.test(H))break;J+=H}for(;++B<p.length;){if((I=p[B])===N)N="..";else if(!/\d/.test(I))break;K+=I}var O=A.Hooks.getUnit(r,z),P=A.Hooks.getUnit(p,B);if(z+=O.length,B+=P.length,O===P)J===K?g+=J+O:(g+="{"+C.length+(F?"!":"")+"}"+O,C.push(parseFloat(J)),D.push(parseFloat(K)));else{var Q=parseFloat(J),R=parseFloat(K);g+=(E<5?"calc":"")+"("+(Q?"{"+C.length+(F?"!":"")+"}":"0")+O+" + "+(R?"{"+(C.length+(Q?1:0))+(F?"!":"")+"}":"0")+P+")",Q&&(C.push(Q),D.push(0)),R&&(C.push(0),D.push(R))}}else{if(H!==I){E=0;break}g+=H,z++,B++,0===E&&"c"===H||1===E&&"a"===H||2===E&&"l"===H||3===E&&"c"===H||E>=4&&"("===H?E++:(E&&E<5||E>=4&&")"===H&&--E<5)&&(E=0),0===F&&"r"===H||1===F&&"g"===H||2===F&&"b"===H||3===F&&"a"===H||F>=3&&"("===H?(3===F&&"a"===H&&(G=1),F++):G&&","===H?++G>3&&(F=G=0):(G&&F<(G?5:4)||F>=(G?4:3)&&")"===H&&--F<(G?5:4))&&(F=G=0)}}z===r.length&&B===p.length||(y.debug&&console.error('Trying to pattern match mis-matched strings ["'+p+'", "'+r+'"]'),g=d),g&&(C.length?(y.debug&&console.log('Pattern found "'+g+'" -> ',C,D,"["+r+","+p+"]"),r=C,p=D,t=v=""):g=d)}g||(s=x(e,r),r=s[0],v=s[1],s=x(e,p),p=s[0].replace(/^([+-\/*])=/,function(a,b){return w=b,""}),t=s[1],r=parseFloat(r)||0,p=parseFloat(p)||0,"%"===t&&(/^(fontSize|lineHeight)$/.test(e)?(p/=100,t="em"):/^scale/.test(e)?(p/=100,t=""):/(Red|Green|Blue)$/i.test(e)&&(p=p/100*255,t="")));if(/[\/*]/.test(w))t=v;else if(v!==t&&0!==r)if(0===p)t=v;else{h=h||function(){var d={myParent:a.parentNode||c.body,position:A.getPropertyValue(a,"position"),fontSize:A.getPropertyValue(a,"fontSize")},e=d.position===M.lastPosition&&d.myParent===M.lastParent,f=d.fontSize===M.lastFontSize;M.lastParent=d.myParent,M.lastPosition=d.position,M.lastFontSize=d.fontSize;var g={};if(f&&e)g.emToPx=M.lastEmToPx,g.percentToPxWidth=M.lastPercentToPxWidth,g.percentToPxHeight=M.lastPercentToPxHeight;else{var h=k&&k.isSVG?c.createElementNS("http://www.w3.org/2000/svg","rect"):c.createElement("div");y.init(h),d.myParent.appendChild(h),o.each(["overflow","overflowX","overflowY"],function(a,b){y.CSS.setPropertyValue(h,b,"hidden")}),y.CSS.setPropertyValue(h,"position",d.position),y.CSS.setPropertyValue(h,"fontSize",d.fontSize),y.CSS.setPropertyValue(h,"boxSizing","content-box"),o.each(["minWidth","maxWidth","width","minHeight","maxHeight","height"],function(a,b){y.CSS.setPropertyValue(h,b,"100%")}),y.CSS.setPropertyValue(h,"paddingLeft","100em"),g.percentToPxWidth=M.lastPercentToPxWidth=(parseFloat(A.getPropertyValue(h,"width",null,!0))||1)/100,g.percentToPxHeight=M.lastPercentToPxHeight=(parseFloat(A.getPropertyValue(h,"height",null,!0))||1)/100,g.emToPx=M.lastEmToPx=(parseFloat(A.getPropertyValue(h,"paddingLeft"))||1)/100,d.myParent.removeChild(h)}return null===M.remToPx&&(M.remToPx=parseFloat(A.getPropertyValue(c.body,"fontSize"))||16),null===M.vwToPx&&(M.vwToPx=parseFloat(b.innerWidth)/100,M.vhToPx=parseFloat(b.innerHeight)/100),g.remToPx=M.remToPx,g.vwToPx=M.vwToPx,g.vhToPx=M.vhToPx,y.debug>=1&&console.log("Unit ratios: "+JSON.stringify(g),a),g}();var S=/margin|padding|left|right|width|text|word|letter/i.test(e)||/X$/.test(e)||"x"===e?"x":"y";switch(v){case"%":r*="x"===S?h.percentToPxWidth:h.percentToPxHeight;break;case"px":break;default:r*=h[v+"ToPx"]}switch(t){case"%":r*=1/("x"===S?h.percentToPxWidth:h.percentToPxHeight);break;case"px":break;default:r*=1/h[t+"ToPx"]}}switch(w){case"+":p=r+p;break;case"-":p=r-p;break;case"*":p*=r;break;case"/":p=r/p}j[e]={rootPropertyValue:m,startValue:r,currentValue:r,endValue:p,unitType:t,easing:q},g&&(j[e].pattern=g),y.debug&&console.log("tweensContainer ("+e+"): "+JSON.stringify(j[e]),a)};for(var I in s)if(s.hasOwnProperty(I)){var J=A.Names.camelCase(I),K=function(b,c){var d,f,g;return u.isFunction(b)&&(b=b.call(a,e,C)),u.isArray(b)?(d=b[0],!u.isArray(b[1])&&/^[\d-]/.test(b[1])||u.isFunction(b[1])||A.RegEx.isHex.test(b[1])?g=b[1]:u.isString(b[1])&&!A.RegEx.isHex.test(b[1])&&y.Easings[b[1]]||u.isArray(b[1])?(f=c?b[1]:l(b[1],i.duration),g=b[2]):g=b[1]||b[2]):d=b,c||(f=f||i.easing),u.isFunction(d)&&(d=d.call(a,e,C)),u.isFunction(g)&&(g=g.call(a,e,C)),[d||0,f,g]}(s[I]);if(t(A.Lists.colors,J)){var L=K[0],O=K[1],P=K[2];if(A.RegEx.isHex.test(L)){for(var Q=["Red","Green","Blue"],R=A.Values.hexToRgb(L),S=P?A.Values.hexToRgb(P):d,T=0;T<Q.length;T++){var U=[R[T]];O&&U.push(O),S!==d&&U.push(S[T]),H(J+Q[T],U)}continue}}H(J,K)}j.element=a}j.element&&(A.Values.addClass(a,"velocity-animating"),N.push(j),k=g(a),k&&(""===i.queue&&(k.tweensContainer=j,k.opts=i),k.isAnimating=!0),D===C-1?(y.State.calls.push([N,r,i,null,z.resolver,null,0]),y.State.isTicking===!1&&(y.State.isTicking=!0,m())):D++)}var h,i=o.extend({},y.defaults,v),j={};switch(g(a)===d&&y.init(a),parseFloat(i.delay)&&i.queue!==!1&&o.queue(a,i.queue,function(b){y.velocityQueueEntryFlag=!0;var c=y.State.delayedElements.count++;y.State.delayedElements[c]=a;var d=function(a){return function(){y.State.delayedElements[a]=!1,b()}}(c);g(a).delayBegin=(new Date).getTime(),g(a).delay=parseFloat(i.delay),g(a).delayTimer={setTimeout:setTimeout(b,parseFloat(i.delay)),next:d}}),i.duration.toString().toLowerCase()){case"fast":i.duration=200;break;case"normal":i.duration=w;break;case"slow":i.duration=600;break;default:i.duration=parseFloat(i.duration)||1}if(y.mock!==!1&&(y.mock===!0?i.duration=i.delay=1:(i.duration*=parseFloat(y.mock)||1,i.delay*=parseFloat(y.mock)||1)),i.easing=l(i.easing,i.duration),i.begin&&!u.isFunction(i.begin)&&(i.begin=null),i.progress&&!u.isFunction(i.progress)&&(i.progress=null),i.complete&&!u.isFunction(i.complete)&&(i.complete=null),i.display!==d&&null!==i.display&&(i.display=i.display.toString().toLowerCase(),"auto"===i.display&&(i.display=y.CSS.Values.getDisplayType(a))),i.visibility!==d&&null!==i.visibility&&(i.visibility=i.visibility.toString().toLowerCase()),i.mobileHA=i.mobileHA&&y.State.isMobile&&!y.State.isGingerbread,i.queue===!1)if(i.delay){var k=y.State.delayedElements.count++;y.State.delayedElements[k]=a;var n=function(a){return function(){y.State.delayedElements[a]=!1,f()}}(k);g(a).delayBegin=(new Date).getTime(),g(a).delay=parseFloat(i.delay),g(a).delayTimer={setTimeout:setTimeout(f,parseFloat(i.delay)),next:n}}else f();else o.queue(a,i.queue,function(a,b){if(b===!0)return z.promise&&z.resolver(r),!0;y.velocityQueueEntryFlag=!0,f(a)});""!==i.queue&&"fx"!==i.queue||"inprogress"===o.queue(a)[0]||o.dequeue(a)}var j,k,p,q,r,s,v,x=arguments[0]&&(arguments[0].p||o.isPlainObject(arguments[0].properties)&&!arguments[0].properties.names||u.isString(arguments[0].properties));u.isWrapped(this)?(k=!1,q=0,r=this,p=this):(k=!0,q=1,r=x?arguments[0].elements||arguments[0].e:arguments[0]);var z={promise:null,resolver:null,rejecter:null};if(k&&y.Promise&&(z.promise=new y.Promise(function(a,b){z.resolver=a,z.rejecter=b})),x?(s=arguments[0].properties||arguments[0].p,v=arguments[0].options||arguments[0].o):(s=arguments[q],v=arguments[q+1]),!(r=f(r)))return void(z.promise&&(s&&v&&v.promiseRejectEmpty===!1?z.resolver():z.rejecter()));var C=r.length,D=0;if(!/^(stop|finish|finishAll|pause|resume)$/i.test(s)&&!o.isPlainObject(v)){var E=q+1;v={};for(var F=E;F<arguments.length;F++)u.isArray(arguments[F])||!/^(fast|normal|slow)$/i.test(arguments[F])&&!/^\d/.test(arguments[F])?u.isString(arguments[F])||u.isArray(arguments[F])?v.easing=arguments[F]:u.isFunction(arguments[F])&&(v.complete=arguments[F]):v.duration=arguments[F]}var G;switch(s){case"scroll":G="scroll";break;case"reverse":G="reverse";break;case"pause":var H=(new Date).getTime();return o.each(r,function(a,b){h(b,H)}),o.each(y.State.calls,function(a,b){var c=!1;b&&o.each(b[1],function(a,e){var f=v===d?"":v;return f!==!0&&b[2].queue!==f&&(v!==d||b[2].queue!==!1)||(o.each(r,function(a,d){if(d===e)return b[5]={resume:!1},c=!0,!1}),!c&&void 0)})}),a();case"resume":return o.each(r,function(a,b){i(b,H)}),o.each(y.State.calls,function(a,b){var c=!1;b&&o.each(b[1],function(a,e){var f=v===d?"":v;return f!==!0&&b[2].queue!==f&&(v!==d||b[2].queue!==!1)||(!b[5]||(o.each(r,function(a,d){if(d===e)return b[5].resume=!0,c=!0,!1}),!c&&void 0))})}),a();case"finish":case"finishAll":case"stop":o.each(r,function(a,b){g(b)&&g(b).delayTimer&&(clearTimeout(g(b).delayTimer.setTimeout),g(b).delayTimer.next&&g(b).delayTimer.next(),delete g(b).delayTimer),"finishAll"!==s||v!==!0&&!u.isString(v)||(o.each(o.queue(b,u.isString(v)?v:""),function(a,b){u.isFunction(b)&&b()}),o.queue(b,u.isString(v)?v:"",[]))});var I=[];return o.each(y.State.calls,function(a,b){b&&o.each(b[1],function(c,e){var f=v===d?"":v;if(f!==!0&&b[2].queue!==f&&(v!==d||b[2].queue!==!1))return!0;o.each(r,function(c,d){if(d===e)if((v===!0||u.isString(v))&&(o.each(o.queue(d,u.isString(v)?v:""),function(a,b){u.isFunction(b)&&b(null,!0)}),o.queue(d,u.isString(v)?v:"",[])),"stop"===s){var h=g(d);h&&h.tweensContainer&&f!==!1&&o.each(h.tweensContainer,function(a,b){b.endValue=b.currentValue}),I.push(a)}else"finish"!==s&&"finishAll"!==s||(b[2].duration=1)})})}),"stop"===s&&(o.each(I,function(a,b){n(b,!0)}),z.promise&&z.resolver(r)),a();default:if(!o.isPlainObject(s)||u.isEmptyObject(s)){if(u.isString(s)&&y.Redirects[s]){j=o.extend({},v);var J=j.duration,K=j.delay||0;return j.backwards===!0&&(r=o.extend(!0,[],r).reverse()),o.each(r,function(a,b){parseFloat(j.stagger)?j.delay=K+parseFloat(j.stagger)*a:u.isFunction(j.stagger)&&(j.delay=K+j.stagger.call(b,a,C)),j.drag&&(j.duration=parseFloat(J)||(/^(callout|transition)/.test(s)?1e3:w),j.duration=Math.max(j.duration*(j.backwards?1-a/C:(a+1)/C),.75*j.duration,200)),y.Redirects[s].call(b,b,j||{},a,C,r,z.promise?z:d)}),a()}var L="Velocity: First argument ("+s+") was not a property map, a known action, or a registered redirect. Aborting.";return z.promise?z.rejecter(new Error(L)):b.console&&console.log(L),a()}G="start"}var M={lastParent:null,lastPosition:null,lastFontSize:null,lastPercentToPxWidth:null,lastPercentToPxHeight:null,lastEmToPx:null,remToPx:null,vwToPx:null,vhToPx:null},N=[];o.each(r,function(a,b){u.isNode(b)&&e(b,a)}),j=o.extend({},y.defaults,v),j.loop=parseInt(j.loop,10);var O=2*j.loop-1;if(j.loop)for(var P=0;P<O;P++){var Q={delay:j.delay,progress:j.progress};P===O-1&&(Q.display=j.display,Q.visibility=j.visibility,Q.complete=j.complete),B(r,"reverse",Q)}return a()};y=o.extend(B,y),y.animate=B;var C=b.requestAnimationFrame||q;if(!y.State.isMobile&&c.hidden!==d){var D=function(){c.hidden?(C=function(a){return setTimeout(function(){a(!0)},16)},m()):C=b.requestAnimationFrame||q};D(),c.addEventListener("visibilitychange",D)}return a.Velocity=y,a!==b&&(a.fn.velocity=B,a.fn.velocity.defaults=y.defaults),o.each(["Down","Up"],function(a,b){y.Redirects["slide"+b]=function(a,c,e,f,g,h){var i=o.extend({},c),j=i.begin,k=i.complete,l={},m={height:"",marginTop:"",marginBottom:"",paddingTop:"",paddingBottom:""};i.display===d&&(i.display="Down"===b?"inline"===y.CSS.Values.getDisplayType(a)?"inline-block":"block":"none"),i.begin=function(){0===e&&j&&j.call(g,g);for(var c in m)if(m.hasOwnProperty(c)){l[c]=a.style[c];var d=A.getPropertyValue(a,c);m[c]="Down"===b?[d,0]:[0,d]}l.overflow=a.style.overflow,a.style.overflow="hidden"},i.complete=function(){for(var b in l)l.hasOwnProperty(b)&&(a.style[b]=l[b]);e===f-1&&(k&&k.call(g,g),h&&h.resolver(g))},y(a,m,i)}}),o.each(["In","Out"],function(a,b){y.Redirects["fade"+b]=function(a,c,e,f,g,h){var i=o.extend({},c),j=i.complete,k={opacity:"In"===b?1:0};0!==e&&(i.begin=null),i.complete=e!==f-1?null:function(){j&&j.call(g,g),h&&h.resolver(g)},i.display===d&&(i.display="In"===b?"auto":"none"),y(this,k,i)}}),y}(window.jQuery||window.Zepto||window,window,window?window.document:undefined)});
-	
-	var _velocity = Velocity;
-
-    window.Velocity = null;
-
-    // Load into container 
-    Container.set('Animate', _velocity);
-	
 })();
 
 // Utility
@@ -5751,29 +5786,364 @@ JSHelper.prototype.isMobile = function()
 /**
  * Scrollbars
  *
- * This module uses the "vendor/scrollbars.js" module to handle the scroll
- * events. This module itself handles the activation and injection of the 
- * required nodes for the module to function.
- *
+ * This is a utility class used internally to add custom vertical scrollbars to an element.
+ * This class handles the events of the scrollbars.
+ * This should not be used at all outside of the framework.
+ * @see https://github.com/noraesae/perfect-scrollbar
  */
 (function() {
 
+    var defaults = {
+        elements: {
+            area: '.scrollbar-area',
+            wrapper: '.scrollbar-wrapper',
+            track: '.scrollbar-track',
+            handle: '.scrollbar-handle'
+        },
+        stateClasses: {
+            dragging: 'scrollbar-dragging',
+            hover: 'scrollbar-hover'
+        }
+    };
+
+    // SCROLLBAR HANDLER
+    /*****************************************/
+    function Scrollbar(element, opts) {
+
+        // handle constructor call without `new` keyword
+        if (!(this instanceof Scrollbar))  return new Scrollbar(element, opts);
+
+        // is plugin already initialized?
+        if (this.el) {
+            return;
+        }
+
+        this.el = element;
+        this.opts = extend({}, defaults, opts || {});
+
+        this._setupElements();
+
+        // check if browser has physical scrollbars (usually desktop)
+        if (this.scrollbarWidth = getScrollbarWidth()) {
+            this._enableTrack();
+
+            this._observeHover(this.area);
+            this._observeHover(this.track);
+            this._enableScroll();
+            this._enableDragging();
+
+            this.refresh();
+        } else {
+            this._allowNativeScroll();
+        }
+
+        return this;
+    }
+
+    // PUBLIC API
+    /*****************************************/
     /**
-     * @var Helper obj
+     * Destroys plugin instance.
      */
-    var Helper = Container.get('JSHelper');
+    Scrollbar.prototype.destroy = function() {
+        var stateClasses = this.opts.stateClasses;
+
+        this._removeAllListeners();
+
+        this.wrapper.style.overflowY = '';
+        this.wrapper.style.marginRight = '';
+        this.track.style.display = '';
+
+        removeClass(document.body, stateClasses.dragging);
+        removeClass(this.area, stateClasses.dragging);
+        removeClass(this.area, stateClasses.hover);
+        removeClass(this.track, stateClasses.hover);
+
+        delete this.el;
+    }
+
+    /**
+     * Refreshes scrollbar by adjusting its handle's height and position.
+     */
+    Scrollbar.prototype.refresh = function() {
+        var newRatio;
+
+        if (!this.el || this.isNative()) {
+            return;
+        }
+        
+        if (this.wrapper.scrollHeight > this.wrapper.offsetHeight) {
+            this.track.style.display = 'block';
+
+            newRatio = this.track.offsetHeight / this.wrapper.scrollHeight;
+
+            if (newRatio !== this.ratio) {
+                this.ratio = newRatio;
+
+                this._resizeHandle();
+                this._positionHandle();
+            }
+        } else {
+            this.track.style.display = 'none';
+        }
+    }
+
+    /**
+     * Checks if native scroll is enabled.
+     *
+     * @returns {Boolean}
+     */
+    Scrollbar.prototype.isNative = function() {
+        return !this.scrollbarWidth;
+    }
+
+    // PRIVATE API
+    /*****************************************/
+    /**
+     * Sets up elements.
+     *
+     * @private
+     */
+    Scrollbar.prototype._setupElements = function() {
+        var elements = this.opts.elements;
+
+        this.area = this.el.querySelector(elements.area);
+        this.wrapper = this.el.querySelector(elements.wrapper);
+        this.handle = this.el.querySelector(elements.handle);
+        this.track = this.el.querySelector(elements.track);
+    }
+
+    /**
+     * Observes when element is hovered and toggles corresponding class.
+     *
+     * @param {HTMLElement} element
+     * @private
+     */
+    Scrollbar.prototype._observeHover = function(element) {
+        var cls = this.opts.stateClasses.hover;
+
+        this._addListener(element, 'mouseenter', function() {
+            addClass(element, cls);
+        });
+        this._addListener(element, 'mouseleave', function() {
+            removeClass(element, cls);
+        });
+    },
+
+    /**
+     * Enables scroll by overflowing native scrollbar and starting to listen to `scroll` event.
+     *
+     * @private
+     */
+    Scrollbar.prototype._enableScroll = function() {
+        this._addListener(this.wrapper, 'scroll', bind(this._positionHandle, this));
+    }
+
+    /**
+     * Enables handle's dragging along the track.
+     *
+     * @private
+     */
+    Scrollbar.prototype._enableDragging = function() {
+        var cls = this.opts.stateClasses.dragging,
+            initialPosition = null,
+            initialTop = null,
+            startDragging,
+            stopDragging;
+
+        this._addListener(this.handle, 'mousedown', bind(function(e) {
+            initialPosition = this.wrapper.scrollTop;
+            initialTop = e.clientY;
+
+            this._addListener(document, 'mousemove', startDragging);
+            this._addListener(document, 'mouseup', stopDragging);
+        }, this));
+
+        startDragging = bind(function(e) {
+            var newPosition,
+                wrapperHeight,
+                wrapperInnerHeight;
+
+            if (initialTop !== null) {
+                newPosition = Math.round(initialPosition + (e.clientY - initialTop) / this.ratio);
+
+                wrapperHeight = this.wrapper.offsetHeight;
+                wrapperInnerHeight = this.wrapper.scrollHeight;
+
+                if (newPosition + wrapperHeight > wrapperInnerHeight) {
+                    newPosition = wrapperInnerHeight - wrapperHeight;
+                }
+
+                this.wrapper.scrollTop = newPosition;
+                this._positionHandle();
+
+                addClass(document.body, cls);
+                addClass(this.area, cls);
+            }
+        }, this);
+
+        stopDragging = bind(function() {
+            initialTop = null;
+            initialPosition = null;
+
+            removeClass(document.body, cls);
+            removeClass(this.area, cls);
+
+            this._removeListener(document, 'mousemove', startDragging);
+            this._removeListener(document, 'mouseup', stopDragging);
+        }, this);
+    }
+
+    /**
+     * Enables track.
+     *
+     * @private
+     */
+    Scrollbar.prototype._enableTrack = function() {
+        this.wrapper.style.overflowY = 'scroll';
+        this.wrapper.style.marginRight = -1 * this.scrollbarWidth + 'px';
+    }
+
+    /**
+     * Allows native scrolling by making sure that div is scrollable.
+     *
+     * @private
+     */
+    Scrollbar.prototype._allowNativeScroll = function() {
+        this.wrapper.style.overflowY = 'auto';
+    }
+
+    /**
+     * Resizes handle by adjusting its `height`.
+     *
+     * @private
+     */
+    Scrollbar.prototype._resizeHandle = function() {
+        this.handle.style.height = Math.ceil(this.ratio * this.track.offsetHeight) + 'px';
+    }
+
+    /**
+     * Positions handle by adjusting its `top` position.
+     *
+     * @private
+     */
+    Scrollbar.prototype._positionHandle = function() {
+        var wrapperTop = this.wrapper.scrollTop,
+            top;
+
+        if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight) {
+            top = Math.ceil(this.ratio * this.wrapper.scrollTop);
+        } else {
+            // if scroll position has reached the end, force scrollbar to track's end
+            top = this.track.offsetHeight - this.handle.offsetHeight;
+        }
+
+        this.handle.style.top = top + 'px';
+    }
+
+    /**
+     * Adds event listener and keeps track of it.
+     *
+     * @param {HTMLElement} element
+     * @param {String}      eventName
+     * @param {Function}    handler
+     * @private
+     */
+    Scrollbar.prototype._addListener = function(element, eventName, handler) {
+        var events = this._events;
+
+        if (!events) {
+            this._events = events = {};
+        }
+        if (!events[eventName]) {
+            events[eventName] = [];
+        }
+
+        events[eventName].push({
+            element: element,
+            handler: handler
+        });
+
+        addEventListener.apply(null, arguments);
+    }
+
+    /**
+     * Removes event listener.
+     *
+     * @param {HTMLElement} element
+     * @param {String}      eventName
+     * @param {Function}    handler
+     * @private
+     */
+    Scrollbar.prototype._removeListener = function(element, eventName, handler) {
+        var event = this._events[eventName],
+            index,
+            total;
+
+        for (index = 0, total = event.length; index < total; index++) {
+            if (event[index].handler === handler) {
+                event.splice(index, 1);
+                removeEventListener.apply(null, arguments);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Removes all event listeners.
+     *
+     * @private
+     */
+    Scrollbar.prototype._removeAllListeners = function() {
+        var events = this._events,
+            eventName,
+            event,
+            iter,
+            total;
+
+        for (eventName in events) {
+            event = events[eventName];
+
+            for (iter = 0, total = event.length; iter < total; iter++) {
+                removeEventListener(event[iter].element, eventName, event[iter].handler);
+            }
+        }
+
+        delete this._events;
+    }
+
+    // HELPER FUNCTIONS
+    /*****************************************/
+    function bind(fn,context){return function(){fn.apply(context,arguments);};}function extend(){var iter;for(iter=1;iter<arguments.length;iter++){var key;for(key in arguments[iter]){if(arguments[iter].hasOwnProperty(key)){arguments[0][key]=arguments[iter][key];}}}return arguments[0];}function addEventListener(el,eventName,handler){if(el.addEventListener){el.addEventListener(eventName,handler);}else{el.attachEvent("on"+eventName,handler);}}function removeEventListener(el,eventName,handler){if(el.removeEventListener){el.removeEventListener(eventName,handler);}else{el.detachEvent("on"+eventName,handler);}}function addClass(el,className){if(el.classList){el.classList.add(className);}else{el.className+=" "+className;}}function removeClass(el,className){if(el.classList){el.classList.remove(className);}else{el.className=el.className.replace(new RegExp("(^|\\b)"+className.split(" ").join("|")+"(\\b|$)","gi")," ");}}function getScrollbarWidth(){var wrapper=document.createElement("div"),content=document.createElement("div"),width;wrapper.style.position="absolute";wrapper.style.top="-50px";wrapper.style.height="50px";wrapper.style.overflow="scroll";wrapper.appendChild(content);document.body.appendChild(wrapper);width=wrapper.offsetWidth-content.offsetWidth;document.body.removeChild(wrapper);return width;}
+
+    Container.set('Scrollbar', Scrollbar);
+
+})();
+/**
+ * Custom Scrollbars
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ */
+
+(function()
+{
+    /**
+     * Helper instance
+     * 
+     * @var object
+     */
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
      * @constructor
-     * @params null
      * @access public
-     * @return this
      */
-    var AutoScrollBars = function() {
-        
+    var ScrollBars = function()
+    {
         this._nodes    = [];
         this._handlers = [];
 
@@ -5781,8 +6151,10 @@ JSHelper.prototype.isMobile = function()
         this._nodes = Helper.$All('.js-custom-scroll');
 
         // Bind DOM listeners
-        if (!Helper.empty(this._nodes)) {
-            for (var i = 0; i < this._nodes.length; i++) {
+        if (!Helper.empty(this._nodes))
+        {
+            for (var i = 0; i < this._nodes.length; i++)
+            {
                 this._invoke(this._nodes[i]);
             }
         }
@@ -5793,13 +6165,15 @@ JSHelper.prototype.isMobile = function()
     /**
      * Module destructor - removes handler
      *
-     * @params null
      * @access public
      */
-    AutoScrollBars.prototype.desctruct = function() {
-        for (var i = 0; i < this._handlers.length; i++) {
+    ScrollBars.prototype.desctruct = function()
+    {
+        for (var i = 0; i < this._handlers.length; i++)
+        {
             this._handlers[i].destroy();
         }
+
         this._nodes    = [];
         this._handlers = [];
     }
@@ -5811,8 +6185,10 @@ JSHelper.prototype.isMobile = function()
      * @params el node
      * @access private
      */
-    AutoScrollBars.prototype._invoke = function(el) {
-        if (Helper.hasClass(el, 'js-auto-scroll-invoked')) {
+    ScrollBars.prototype._invoke = function(el)
+    {
+        if (Helper.hasClass(el, 'js-auto-scroll-invoked'))
+        {
             var handler = Container.get('Scrollbar', el);
             this._handlers.push(handler);
             return;
@@ -5837,7 +6213,8 @@ JSHelper.prototype.isMobile = function()
         scrollHandle.className = 'scrollbar-handle';
 
         scrollArea.appendChild(scrollWrap);
-        for (var i = 0; i < children.length; i++) {
+        for (var i = 0; i < children.length; i++)
+        {
             scrollWrap.appendChild(children[i]);
         }
         scrollWrap.appendChild(scrollTrack);
@@ -5855,7 +6232,8 @@ JSHelper.prototype.isMobile = function()
      * @access private
      * @return boolean
      */
-    AutoScrollBars.prototype._needsScroller = function(el) {
+    ScrollBars.prototype._needsScroller = function(el)
+    {
         var computedStyle = window.getComputedStyle(el);
 
         // Is the element hidden?
@@ -5864,16 +6242,20 @@ JSHelper.prototype.isMobile = function()
         var inlineDisplay = false;
         var needsScroller = false;
 
-        if (isHidden) {
-            if (computedStyle.display === 'none') {
+        if (isHidden)
+        {
+            if (computedStyle.display === 'none')
+            {
                 hiddenEl = el;
             }
             else {
                 var parent = el;
-                while (parent !== document.body) {
+                while (parent !== document.body)
+                {
                     parent = parent.parentNode;
                     var parentStyle = window.getComputedStyle(parent);
-                    if (parentStyle.display === 'none') {
+                    if (parentStyle.display === 'none')
+                    {
                         hiddenEl = parent
                         break;
                     }
@@ -5882,19 +6264,23 @@ JSHelper.prototype.isMobile = function()
         }
 
         // Make visible
-        if (hiddenEl) {
+        if (hiddenEl)
+        {
             inlineDisplay = hiddenEl.style.display;
             hiddenEl.style.display = 'block';
         }
         var endHeight = el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTop) + parseInt(computedStyle.borderBottom);
         endHeight     = parseInt(endHeight);
-        if (endHeight > el.offsetHeight) {
+        if (endHeight > el.offsetHeight)
+        {
             needsScroller   = true;
             el.style.height = el.offsetHeight+'px';
         }
         // Make invisible
-        if (hiddenEl) {
-            if (inlineDisplay) {
+        if (hiddenEl)
+        {
+            if (inlineDisplay)
+            {
                 hiddenEl.style.display = inlineDisplay;
             }
             else {
@@ -5912,11 +6298,14 @@ JSHelper.prototype.isMobile = function()
      *
      * @params elem node
      * @access public
-     * @example Container.get('AutoScrollBars').refresh(node) // Node = $.('.js-custom-scroll');
+     * @example Container.get('ScrollBars').refresh(node) // Node = $.('.js-custom-scroll');
      */
-    AutoScrollBars.prototype.refresh = function(elem) {
-        for (var i = 0; i < this._handlers.length; i++) {
+    ScrollBars.prototype.refresh = function(elem)
+    {
+        for (var i = 0; i < this._handlers.length; i++)
+        {
             var handler = this._handlers[i];
+            
             if (handler.el === elem) handler.refresh();
         }
     }
@@ -5927,9 +6316,12 @@ JSHelper.prototype.isMobile = function()
      * @params elem node
      * @access public
      */
-    AutoScrollBars.prototype.destroy = function(elem) {
+    ScrollBars.prototype.destroy = function(elem)
+    {
         var i = this._handlers.length;
-        while (i--) {
+
+        while (i--)
+        {
             var handler = this._handlers[i];
             if (handler.el === elem) handler.destroy();
             this._handlers.splice(i, 1);
@@ -5943,50 +6335,53 @@ JSHelper.prototype.isMobile = function()
      * @access public
      * @return mixed
      */
-    AutoScrollBars.prototype.getHandler = function(elem) {
-        for (var i = 0; i < this._handlers.length; i++) {
+    ScrollBars.prototype.getHandler = function(elem)
+    {
+        for (var i = 0; i < this._handlers.length; i++)
+        {
             var handler = this._handlers[i];
+            
             if (handler.el === elem) return handler;
         }
     }
 
-    // Load into hubble DOM core
-    Container.get('Hubble').dom().register('AutoScrollBars', AutoScrollBars);
+    // Load into Hubble DOM core
+    Container.get('Hubble').dom().register('ScrollBars', ScrollBars);
 
 })();
 /**
- * Collapse
+ * Toggle height on click
  *
- * This class handles the toggling of and element's height
- * when a target element is clicked.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
- (function() {
 
+(function()
+{
     /**
-     * @var Helper obj
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
-     * @constructor
-     * @params null
      * @access public
-     * @return this
+     * @constructor
      */
-    var Collapse = function() {
-                
+    var Collapse = function()
+    {
+        /**
+         * Array of click-triggers
+         * 
+         * @var array
+         */
         this._nodes = Helper.$All('.js-collapse');
                 
-        // bind listeners
-        if (!Helper.empty(this._nodes)) {
-            for (var i = 0; i < this._nodes.length; i++) {
-                Helper.addEventListener(this._nodes[i], 'click', this._eventHandler);
-            }
-        }
+        this._bind();
         
         return this;
     }
@@ -5996,22 +6391,51 @@ JSHelper.prototype.isMobile = function()
      *
      * @access public
      */
-    Collapse.prototype.destruct = function() {
-        for (var i = 0; i < this._nodes.length; i++) {
+    Collapse.prototype.destruct = function()
+    {
+        this._unbind();
+
+        this._nodes = [];
+    }
+
+    /**
+     * Event binder - Binds all events on button click
+     *
+     * @access private
+     */
+    Collapse.prototype._bind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
+            Helper.addEventListener(this._nodes[i], 'click', this._eventHandler);
+        }
+    }
+
+    /**
+     * Event unbinder - Removes all events on button click
+     *
+     * @access private
+     */
+    Collapse.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
             Helper.removeEventListener(this._nodes[i], 'click', this._eventHandler);
         }
-        this._nodes  = [];
     }
 
     /**
      * Handle the click event
      *
-     * @param e event
+     * @param event|null e JavaScript click event
      * @access private
      */
-    Collapse.prototype._eventHandler = function(e) {
+    Collapse.prototype._eventHandler = function(e)
+    {
         e = e || window.event;
-        if (Helper.isNodeType(this, 'a')) {
+
+        if (Helper.isNodeType(this, 'a'))
+        {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -6022,40 +6446,49 @@ JSHelper.prototype.isMobile = function()
         var easing   = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
 
         Container.get('ToggleHeight', targetEl, 0, speed, easing, false);
+        
         Helper.toggleClass(clicked, 'active');
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('Collapse', Collapse);
 
 }());
 
 /**
- * Dropdown buttons
- * 
- * This class manages the click events for dropdown buttons
+ * Dropdown Buttons
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-(function() {
 
+(function()
+{
     /**
-     * @var JSHelper
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
-     * @constructor
-     * @params null
      * @access public
+     * @constructor
      */
-    var DropDowns = function() {
-
-        /** @access private */
+    var DropDowns = function()
+    {
+        /**
+         * Array of click-triggers
+         * 
+         * @var array
+         */
         this._triggers = Helper.$All('.js-drop-trigger');
 
-        if (!Helper.empty(this._triggers)) { 
+        if (!Helper.empty(this._triggers))
+        { 
             this._bind();
         }
 
@@ -6065,10 +6498,10 @@ JSHelper.prototype.isMobile = function()
     /**
      * Module destructor
      *
-     * @params null
      * @access public
      */
-    DropDowns.prototype.destruct = function() {
+    DropDowns.prototype.destruct = function()
+    {
         this._unbind();
         this._triggers = [];
     }
@@ -6076,11 +6509,12 @@ JSHelper.prototype.isMobile = function()
     /**
      * Bind click listener to containers
      *
-     * @params null
      * @access private
      */
-    DropDowns.prototype._bind = function() {
-        for (var i = 0; i < this._triggers.length; i++) {
+    DropDowns.prototype._bind = function()
+    {
+        for (var i = 0; i < this._triggers.length; i++)
+        {
             Helper.addEventListener(this._triggers[i], 'click', this._invoke);
         }
         Helper.addEventListener(window, 'click', this._windowClick);
@@ -6089,11 +6523,12 @@ JSHelper.prototype.isMobile = function()
     /**
      * Unbind listener to containers
      *
-     * @params null
      * @access private
      */
-    DropDowns.prototype._unbind = function() {
-        for (var i = 0; i < this._triggers.length; i++) {
+    DropDowns.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._triggers.length; i++)
+        {
             Helper.removeEventListener(this._triggers[i], 'click', this._invoke);
         }
         Helper.removeEventListener(window, 'click', this._windowClick);
@@ -6102,10 +6537,11 @@ JSHelper.prototype.isMobile = function()
     /**
      * Click event handler
      *
-     * @param e event
+     * @param  event|null e JavaScript Click event
      * @access private
      */
-    DropDowns.prototype._invoke = function(e) {
+    DropDowns.prototype._invoke = function(e)
+    {
         e = e || window.event;
         e.preventDefault();
         e.stopPropagation();
@@ -6125,13 +6561,15 @@ JSHelper.prototype.isMobile = function()
     /**
      * Window click event
      *
-     * @param e event
+     * @param event|null e JavaScript click event
      * @access private
      */
-    DropDowns.prototype._windowClick = function(e) {
+    DropDowns.prototype._windowClick = function(e)
+    {
         e = e || window.event;
         e.stopPropagation();
-        if (!Helper.hasClass(e.target, 'js-drop-trigger')) {
+        if (!Helper.hasClass(e.target, 'js-drop-trigger'))
+        {
             var _this = Container.get('DropDowns');
             _this._hideDropDowns();
         }
@@ -6143,51 +6581,61 @@ JSHelper.prototype.isMobile = function()
      * @param exception (optional) Button to skip
      * @access private
      */
-    DropDowns.prototype._hideDropDowns = function(exception) {
+    DropDowns.prototype._hideDropDowns = function(exception)
+    {
         dropTriggers = Helper.$All('.js-drop-trigger');
         exception    = (typeof exception === 'undefined' ? false : exception);
-        for (var i = 0; i < dropTriggers.length; i++) {
+
+        for (var i = 0; i < dropTriggers.length; i++)
+        {
             var node = dropTriggers[i];
-            if (node === exception) continue;
+
+            if (node === exception)
+            {
+                continue;
+            }
+            
             Helper.removeClass(node, 'active');
         }
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('DropDowns', DropDowns);
 
 })();
 /**
- * Tabs
+ * Tab Nav
  *
- * The Tabs module allows handles the click events for 
- * for the tab component.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-(function() {
 
+(function()
+{
     /**
-     * @var Helper obj
+     * Helper instance
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
      * @constructor
-     * @params null
      * @access public
-     * @return this
      */
-    var TabNav = function() {
-        
+    var TabNav = function()
+    {
         // Find nodes
         this._nodes = Helper.$All('.js-tab-nav');
 
         // If nothing to do destruct straight away
-        if (!Helper.empty(this._nodes)) {
-            for (var i = 0; i < this._nodes.length; i++) {
+        if (!Helper.empty(this._nodes))
+        {
+            for (var i = 0; i < this._nodes.length; i++)
+            {
                 this._bindDOMListeners(this._nodes[i]);
             }
         }
@@ -6198,13 +6646,15 @@ JSHelper.prototype.isMobile = function()
     /**
      * Module destructor - unbinds click events
      *
-     * @params null
      * @access public
      */
-    TabNav.prototype.destruct = function() {
-        for (var i = 0; i < this._nodes.length; i++) {
+    TabNav.prototype.destruct = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
             this._unbindDOMListeners(this._nodes[i]);
         }
+
         this._nodes = [];
     }
 
@@ -6214,9 +6664,12 @@ JSHelper.prototype.isMobile = function()
      * @params navWrap node
      * @access private
      */
-    TabNav.prototype._bindDOMListeners = function(navWrap) {
+    TabNav.prototype._bindDOMListeners = function(navWrap)
+    {
         var links  = Helper.$All('a', navWrap);
-        for (var i = 0; i < links.length; i++) {
+        
+        for (var i = 0; i < links.length; i++)
+        {
             Helper.addEventListener(links[i], 'click', this._eventHandler);
         }
     }
@@ -6227,9 +6680,12 @@ JSHelper.prototype.isMobile = function()
      * @params navWrap node
      * @access private
      */
-    TabNav.prototype._unbindDOMListeners = function(navWrap) {
+    TabNav.prototype._unbindDOMListeners = function(navWrap)
+    {
         var links    = Helper.$All('a', navWrap);
-        for (var i = 0; i < links.length; i++) {
+        
+        for (var i = 0; i < links.length; i++)
+        {
             Helper.removeEventListener(links[i], 'click', this._eventHandler);
         }
     }
@@ -6237,10 +6693,11 @@ JSHelper.prototype.isMobile = function()
     /**
      * Click event handler
      *
-     * @params e event
+     * @param event|null e JavaScript click event
      * @access private
      */
-    TabNav.prototype._eventHandler = function(e) {
+    TabNav.prototype._eventHandler = function(e)
+    {
         e = e || window.event;
         e.preventDefault();
 
@@ -6268,36 +6725,39 @@ JSHelper.prototype.isMobile = function()
         
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('TabNav', TabNav);
 
 })();
 /**
- * Popover handler
+ * Popover Handler
  *
- * This is a utility module for the popover component. This is used
- * by the popover module to build and position the popover element itself.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
- (function() {
 
+(function()
+{
     /**
-     * @var Helper obj
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
     
     /**
      * Module constructor
      *
-     * @class
-     * @constructor
-     * @params options obj
      * @access public
-     * @return this
+     * @constructor
      */
-    var _popHandler = function(options) {
-
-        if (!(this instanceof _popHandler)) return new _popHandler(options);
+    var _popHandler = function(options)
+    {
+        if (!(this instanceof _popHandler))
+        {
+            return new _popHandler(options);
+        }
 
         this.trigger      = options.target;
         this.options      = options;
@@ -6305,14 +6765,17 @@ JSHelper.prototype.isMobile = function()
         this.el.className = options.classes;
         this.animation    = false;
 
-        if (options.animation === 'pop') {
+        if (options.animation === 'pop')
+        {
             this.animation = 'popover-pop';
         }
-        else if (options.animation === 'fade') {
+        else if (options.animation === 'fade')
+        {
             this.animation = 'popover-fade';
         }
 
-        this.render = function() {
+        this.render = function()
+        {
             this.el.style.opacity    = '0';
             this.el.style.visibility = 'hidden';
             document.body.appendChild(this.el);
@@ -6327,16 +6790,19 @@ JSHelper.prototype.isMobile = function()
     /**
      * Build the popover
      *
-     * @params null
      * @access private
      */
-    _popHandler.prototype.buildPopEl = function() {
+    _popHandler.prototype.buildPopEl = function()
+    {
         var pop       = document.createElement('div');
         pop.className = this.options.classes;
-        if (typeof this.options.template === 'string') {
+
+        if (typeof this.options.template === 'string')
+        {
             pop.innerHTML = this.options.template;
         }
-        else {
+        else
+        {
             pop.appendChild(this.options.template);
         }
         return pop;
@@ -6345,75 +6811,78 @@ JSHelper.prototype.isMobile = function()
     /**
      * Remove the popover
      *
-     * @params null
-     * @access private
+     * @access public
      */
-    _popHandler.prototype.remove = function() {
+    _popHandler.prototype.remove = function()
+    {
         if (Helper.nodeExists(this.el)) this.el.parentNode.removeChild(this.el);
     }
 
     /**
      * Position the popover
      *
-     * @params null
-     * @access private
+     * @access public
      */
-    _popHandler.prototype.stylePop = function() {
+    _popHandler.prototype.stylePop = function()
+    {
 
         var targetCoords = Helper.getCoords(this.options.target);
 
-        if (this.options.direction === 'top') {
+        if (this.options.direction === 'top')
+        {
             this.el.style.top  = targetCoords.top  - this.el.scrollHeight + 'px';
             this.el.style.left = targetCoords.left - (this.el.offsetWidth /2) + (this.options.target.offsetWidth/2) + 'px';
             return;
         }
-        else if (this.options.direction === 'bottom') {
+        else if (this.options.direction === 'bottom')
+        {
             this.el.style.top  = targetCoords.top  + this.options.target.offsetHeight + 10 + 'px';
             this.el.style.left = targetCoords.left - (this.el.offsetWidth /2) + (this.options.target.offsetWidth/2) + 'px';
             return;
         }
-        else if (this.options.direction === 'left') {
+        else if (this.options.direction === 'left')
+        {
             this.el.style.top  = targetCoords.top  - (this.el.offsetHeight/2) + (this.options.target.offsetHeight/2) + 'px';
             this.el.style.left = targetCoords.left - this.el.offsetWidth - 10 + 'px';
             return;
         }
-        else if (this.options.direction === 'right') {
+        else if (this.options.direction === 'right')
+        {
             this.el.style.top  = targetCoords.top  - (this.el.offsetHeight/2) + (this.options.target.offsetHeight/2) + 'px';
             this.el.style.left = targetCoords.left + this.options.target.offsetWidth + 10 + 'px';
             return;
         }
     }
 
-    // Set into container for use
+    // Set into container for private use
     Container.set('_popHandler', _popHandler);
 
 }());
-
 /**
  * Popovers
  *
- * This module handles the initiazling of the popovers, 
- * e.g parsing options, building the DOM nodes, and hanling the events.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-(function() {
 
+(function()
+{
     /**
-     * @var Helper obj
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
-     * @constructor
      * @access public
-     * @param null
-     * @return this
+     * @constructor
      */
-    var Popovers = function() {
-        
+    var Popovers = function()
+    {
         this._pops  = [];
         this._nodes = [];
         this._arrowClasses = {
@@ -6431,7 +6900,7 @@ JSHelper.prototype.isMobile = function()
         {
             for (var i = 0; i < this._nodes.length; i++)
             {
-                this._initialise(this._nodes[i]);
+                this._bind(this._nodes[i]);
             }
         }
 
@@ -6444,8 +6913,8 @@ JSHelper.prototype.isMobile = function()
      * @access public
      * @return this
      */
-    Popovers.prototype.destruct = function() {
-        
+    Popovers.prototype.destruct = function()
+    {
         if (!Helper.empty(this._nodes))
         {
             for (var i = 0; i < this._nodes.length; i++)
@@ -6471,11 +6940,13 @@ JSHelper.prototype.isMobile = function()
     {
         var evnt = trigger.dataset.popoverEvent;
 
-        if (evnt === 'click') {
+        if (evnt === 'click')
+        {
             Helper.removeEventListener(trigger, 'click', this._clickHandler);
             window.removeEventListener('resize', this._windowResize);
         }
-        else {
+        else
+        {
             Helper.removeEventListener(trigger, 'mouseenter', this._hoverOver);
             Helper.removeEventListener(trigger, 'mouseleave', this._hoverLeave);
         }
@@ -6484,10 +6955,11 @@ JSHelper.prototype.isMobile = function()
     /**
      * Initialize the handlers on a trigger
      *
-     * @param trigger node
      * @access private
+     * @param  node trigger Click/hover trigger
      */
-    Popovers.prototype._initialise = function(trigger) {
+    Popovers.prototype._bind = function(trigger)
+    {
         var direction      = trigger.dataset.popoverDirection;
         var title          = trigger.dataset.popoverTitle;
         var content        = trigger.dataset.popoverContent;
@@ -6499,7 +6971,8 @@ JSHelper.prototype.isMobile = function()
         var pop            = '<h3 class="popover-title">'+title+closeBtn+'</h3><div class="popover-content"><p>'+content+'</p></div>';
 
 
-        if (target) {
+        if (target)
+        {
             pop = Helper.$('#'+target).cloneNode(true);
             pop.classList.remove('hidden');
         }
@@ -6514,11 +6987,13 @@ JSHelper.prototype.isMobile = function()
 
         this._pops.push(popHandler);
 
-        if (evnt === 'click') {
+        if (evnt === 'click')
+        {
             Helper.addEventListener(trigger, 'click', this._clickHandler);
             window.addEventListener('resize', this._windowResize);
         }
-        else {
+        else
+        {
             Helper.addEventListener(trigger, 'mouseenter', this._hoverOver);
             Helper.addEventListener(trigger, 'mouseleave', this._hoverLeave);
         }
@@ -6529,7 +7004,8 @@ JSHelper.prototype.isMobile = function()
      *
      * @access private
      */
-    Popovers.prototype._hoverOver = function() {
+    Popovers.prototype._hoverOver = function()
+    {
         var trigger    = this;
         var _this      = Container.get('Popovers');
         var popHandler = _this._getHandler(trigger);
@@ -6543,7 +7019,8 @@ JSHelper.prototype.isMobile = function()
      *
      * @access private
      */
-    Popovers.prototype._hoverLeave = function() {
+    Popovers.prototype._hoverLeave = function()
+    {
         var trigger    = this;
         var _this      = Container.get('Popovers');
         var popHandler = _this._getHandler(trigger);
@@ -6557,10 +7034,14 @@ JSHelper.prototype.isMobile = function()
      *
      * @access private
      */
-    Popovers.prototype._windowResize = function() {
+    Popovers.prototype._windowResize = function()
+    {
         var _this = Container.get('Popovers');
-        for (var i = 0; i < _this._nodes.length; i++) {
-            if (Helper.hasClass(_this._nodes[i], 'popped')) {
+        
+        for (var i = 0; i < _this._nodes.length; i++)
+        {
+            if (Helper.hasClass(_this._nodes[i], 'popped'))
+            {
                 var popHandler = _this._getHandler(_this._nodes[i]);
                 popHandler.stylePop();
             }
@@ -6570,22 +7051,25 @@ JSHelper.prototype.isMobile = function()
     /**
      * Click event handler
      *
-     * @param e event
+     * @param event|null e JavaScript click event
      * @access private
      */
-    Popovers.prototype._clickHandler = function(e) {
+    Popovers.prototype._clickHandler = function(e)
+    {
         e = e || window.event;
         e.preventDefault();
         var trigger    = this;
         var _this      = Container.get('Popovers');
         var popHandler = _this._getHandler(trigger);
        
-        if (Helper.hasClass(trigger, 'popped')) {
+        if (Helper.hasClass(trigger, 'popped'))
+        {
             _this._removeAll();
             popHandler.remove();
             Helper.removeClass(trigger, 'popped');
         }
-        else {
+        else
+        {
             _this._removeAll();
             popHandler.render();
             Helper.addClass(trigger, 'popped');
@@ -6596,72 +7080,92 @@ JSHelper.prototype.isMobile = function()
     /**
      * Click somewhere else event handler to remove
      *
-     * @param e event
+     * @param event|null e JavaScript click event
      * @access private
      */
-    Popovers.prototype._removeClickPop = function(e) {
+    Popovers.prototype._removeClickPop = function(e)
+    {
         e = e || window.event;
         var clicked = e.target;
-        if ( (Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closestClass(clicked, 'popover')) && !Helper.hasClass(clicked, 'js-remove-pop')) return;
+
+        if ( (Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closestClass(clicked, 'popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
+        {
+            return;
+        }
+
         var _this = Container.get('Popovers');
+
         _this._removeAll();
+
         window.removeEventListener("click", _this._removeClickPop);
     }
     
     /**
      * Get the handler for the trigger
-     *
-     * @param trigger node
+     * 
      * @access private
+     * @param  node    trigger DOM node that triggered event
+     * @return object|false
      */
-    Popovers.prototype._getHandler = function(trigger) {
-        for (var i = 0; i < this._pops.length; i++) {
+    Popovers.prototype._getHandler = function(trigger)
+    {
+        for (var i = 0; i < this._pops.length; i++)
+        {
            if (this._pops[i]['trigger'] === trigger) return this._pops[i];
         }
+
         return false;
     }
 
     /**
      * Remove all the popovers currently being displayed
      *
-     * @param trigger node
      * @access private
      */
-    Popovers.prototype._removeAll = function() {
-        for (var i = 0; i < this._pops.length; i++) {
+    Popovers.prototype._removeAll = function()
+    {
+        for (var i = 0; i < this._pops.length; i++)
+        {
             this._pops[i].remove();
+
             Helper.removeClass(this._pops[i].options.target, 'popped');
         }
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('Popovers', Popovers);
 
 }());
 /**
- * Button ripple
+ * Button wave click effect
  *
- * This module handles the 'wave' effect on click events.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-(function() {
 
+(function()
+{
     /**
-     * @var Helper
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
-     * @constructor
-     * @params null
      * @access public
+     * @constructor
      */
-    var ButtonRipple = function() {
-        
-        /** @access private */
+    var ButtonRipple = function()
+    {
+        /**
+         * List of click-triggers
+         * 
+         * @var array
+         */
         this._containers = Helper.$All('.js-ripple');
         
         if (!Helper.empty(this._containers))
@@ -6675,24 +7179,24 @@ JSHelper.prototype.isMobile = function()
     /**
      * Module destructor - removes event listeners
      *
-     * @constructor
-     * @params null
      * @access public
      */
-    ButtonRipple.prototype.destruct = function() {
+    ButtonRipple.prototype.destruct = function()
+    {
         this._unbind();
+
         this._containers = [];
     }
 
     /**
      * Event binder - Binds all events on button click
      *
-     * @params null
      * @access private
      */
-    ButtonRipple.prototype._bind = function() {
-
-        for (var i = 0; i < this._containers.length; i++) {
+    ButtonRipple.prototype._bind = function()
+    {
+        for (var i = 0; i < this._containers.length; i++)
+        {
             Helper.addEventListener(this._containers[i], 'click', this._eventHandler);
         }
     }
@@ -6700,22 +7204,24 @@ JSHelper.prototype.isMobile = function()
     /**
      * Event ubinder - Binds all event handlers on button click
      *
-     * @params null
      * @access private
      */
-    ButtonRipple.prototype._unbind = function() {
-        for (var i = 0; i < this._containers.length; i++) {
+    ButtonRipple.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._containers.length; i++)
+        {
             Helper.removeEventListener(this._containers[i], 'click', this._eventHandler);
         }
     }
 
     /**
-     * Event handler - handles the wave
+     * Event handler - handles the wave effect
      *
-     * @params e event
      * @access private
+     * @params event|null e Browser click event
      */
-    ButtonRipple.prototype._eventHandler = function(e) {
+    ButtonRipple.prototype._eventHandler = function(e)
+    {
         e = e || window.event;
         var container  = this;
         var wave       = document.createElement('span');
@@ -6727,49 +7233,53 @@ JSHelper.prototype.isMobile = function()
         var x      = e.pageX - coords.left - (container.offsetWidth / 2);
         var y      = e.pageY - coords.top - (container.offsetHeight * 1.3);
        
-
-        Helper.css(wave, {
+        Helper.css(wave, 
+        {
             top: y + 'px',
             left: x + 'px',
             width: size + 'px',
             height: size + 'px'
         });
+
         Helper.addClass(wave, 'animate');
-        setTimeout(function () {
+
+        setTimeout(function ()
+        {
             container.removeChild(wave);
+
         }, 500);
     }
 
-    // Load into Hubble core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('ButtonRipple', ButtonRipple);
 
 })();
-/**
- * InputMasks
- *
- * This module uses the "inputmasker.js" module to handle the masking of inputs
- * This module itself handles the activation of inputs via DOM elements.
- * @see     inputMasker.js
- *
- */
- (function() {
 
+/**
+ * Input masker
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ */
+
+ (function()
+ {
     /**
-     * @var Helper obj
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
      * @constructor
-     * @params null
      * @access public
-     * @return this
      */
-    var InputMasks = function() {
-
+    var InputMasks = function()
+    {
         // Private
         this._nodes_money			 = [];
         this._nodes_creditcard	     = [];
@@ -6791,8 +7301,8 @@ JSHelper.prototype.isMobile = function()
      *
      * @access public
      */
-    InputMasks.prototype.destruct = function() {
-        
+    InputMasks.prototype.destruct = function()
+    {
         this._loopUnBind(this._nodes_money);
         this._loopUnBind(this._nodes_creditcard);
         this._loopUnBind(this._nodes_numeric);
@@ -6809,7 +7319,6 @@ JSHelper.prototype.isMobile = function()
         this._nodes_alphaDash        = [];
         this._nodes_AlphaNumericDash = [];
         this._nodes_AlphaNumericDashDecimal = [];
-        
     }
 
     /**
@@ -6817,8 +7326,8 @@ JSHelper.prototype.isMobile = function()
      *
      * @access private
      */
-    InputMasks.prototype._invoke = function() {
-
+    InputMasks.prototype._invoke = function()
+    {
         // Find all the nodes
         this._nodes_money			 = Helper.$All('.js-mask-money');
         this._nodes_creditcard	     = Helper.$All('.js-mask-creditcard');
@@ -6830,28 +7339,36 @@ JSHelper.prototype.isMobile = function()
         this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
         this._nodes_AlphaNumericDashDecimal = Helper.$All('.js-mask-alphaNumericDashDecimal');
 
-        if (!Helper.empty(this._nodes_money)) {
+        if (!Helper.empty(this._nodes_money))
+        {
         	this._loopBind(this._nodes_money, 'money');
         }
-        if (!Helper.empty(this._nodes_creditcard)) {
+        if (!Helper.empty(this._nodes_creditcard))
+        {
             this._loopBind(this._nodes_creditcard, 'creditcard');
         }
-        if (!Helper.empty(this._nodes_numeric)) {
+        if (!Helper.empty(this._nodes_numeric))
+        {
             this._loopBind(this._nodes_numeric, 'numeric');
         }
-        if (!Helper.empty(this._nodes_numericDecimal)) {
+        if (!Helper.empty(this._nodes_numericDecimal))
+        {
             this._loopBind(this._nodes_numericDecimal, 'numericDecimal');
         }
-        if (!Helper.empty(this._nodes_alphaNumeric)) {
+        if (!Helper.empty(this._nodes_alphaNumeric))
+        {
             this._loopBind(this._nodes_alphaNumeric, 'alphaNumeric');
         }
-        if (!Helper.empty(this._nodes_alphaSpace)) {
+        if (!Helper.empty(this._nodes_alphaSpace))
+        {
             this._loopBind(this._nodes_alphaSpace, 'alphaSpace');
         }
-        if (!Helper.empty(this._nodes_alphaDash)) {
+        if (!Helper.empty(this._nodes_alphaDash))
+        {
             this._loopBind(this._nodes_alphaDash, 'alphaDash');
         }
-        if (!Helper.empty(this._nodes_AlphaNumericDash)) {
+        if (!Helper.empty(this._nodes_AlphaNumericDash))
+        {
             this._loopBind(this._nodes_AlphaNumericDash, 'alphaNumericDash');
         }
     }
@@ -6861,8 +7378,10 @@ JSHelper.prototype.isMobile = function()
      *
      * @access private
      */
-    InputMasks.prototype._loopBind = function(nodes, mask) {
-    	for (var i = 0; i < nodes.length; i++) {
+    InputMasks.prototype._loopBind = function(nodes, mask)
+    {
+    	for (var i = 0; i < nodes.length; i++)
+        {
     		Container.get('InputMasker', nodes[i])[mask]();
         }
     }
@@ -6872,47 +7391,47 @@ JSHelper.prototype.isMobile = function()
      *
      * @access private
      */
-    InputMasks.prototype._loopUnBind = function(nodes) {
-        for (var i = 0; i < nodes.length; i++) {
+    InputMasks.prototype._loopUnBind = function(nodes)
+    {
+        for (var i = 0; i < nodes.length; i++)
+        {
             Container.get('InputMasker', nodes[i])[unMask]();
         }
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('InputMasks', InputMasks);
 
 }());
+
 /**
  * File inputs
  *
- * This class is used to handle custom file
- * input change events
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
- (function() {
 
+ (function()
+ {
     /**
-     * @var Helper obj
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
      * @constructor
      * @access public
-     * @return this
      */
-    var FileInput = function() {
-                
+    var FileInput = function()
+    {
         this._nodes = Helper.$All('.js-file-input');
 
-        if (!Helper.empty(this._nodes)) {
-            for (var i = 0; i < this._nodes.length; i++) {
-                Helper.addEventListener(this._nodes[i], 'change', this._eventHandler);
-            }
-        }
+        this._bind();
         
         return this;
     }
@@ -6922,11 +7441,37 @@ JSHelper.prototype.isMobile = function()
      *
      * @access public
      */
-    FileInput.prototype.destruct = function() {
-        for (var i = 0; i < this._nodes.length; i++) {
+    FileInput.prototype.destruct = function()
+    {
+        this._unbind();
+
+        this._nodes  = [];
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access public
+     */
+    FileInput.prototype._bind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
+            Helper.addEventListener(this._nodes[i], 'change', this._eventHandler);
+        }
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access public
+     */
+    FileInput.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
             Helper.removeEventListener(this._nodes[i], 'change', this._eventHandler);
         }
-        this._nodes  = [];
     }
 
     /**
@@ -6934,28 +7479,31 @@ JSHelper.prototype.isMobile = function()
      *
      * @access private
      */
-    FileInput.prototype._eventHandler = function() {
+    FileInput.prototype._eventHandler = function()
+    {
         var fileInput = this;
         var wrap      = Helper.closestClass(fileInput, 'js-file-field');
         var showInput = Helper.$('.js-file-text', wrap);
         var fullPath  = fileInput.value;
-        if (fullPath) {
+        if (fullPath)
+        {
             var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
             var filename   = fullPath.substring(startIndex);
-            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
+            {
                 filename = filename.substring(1);
             }
             showInput.value = filename;
         }
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('FileInput', FileInput);
 
 }());
 
 /**
- * Close messages
+ * Message closers
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
@@ -6969,12 +7517,11 @@ JSHelper.prototype.isMobile = function()
      * 
      * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
-     * Constructor
+     * Module constructor
      *
-     * @class
      * @constructor
      * @access public
      */
@@ -7057,52 +7604,59 @@ JSHelper.prototype.isMobile = function()
         }, 300);
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('MessageClosers', MessageClosers);
 
 })();
 /**
  * Waypoints
  *
- * The waypoint module for click triggers as well as scrolling
- * to an element on page load.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
- (function() {
 
+(function()
+ {
     /**
-     * @var Helper obj
+     * Helper instance
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
-     * @var pageLoaded boolean
+     * Has the page loaded?
+     * 
+     * @var object
      */
     var pageLoaded = false;
 
     /**
      * Module constructor
      *
-     * @class
      * @constructor
-     * @params null
      * @access public
-     * @return this
      */
-    var WayPoints = function() {
-        
+    var WayPoints = function()
+    {
         // Load nodes
         this._nodes = Helper.$All('.js-waypoint-trigger');
 
         // bind listeners
-        if (!Helper.empty(this._nodes)) {
-            for (var i = 0; i < this._nodes.length; i++) {
+        if (!Helper.empty(this._nodes))
+        {
+            for (var i = 0; i < this._nodes.length; i++)
+            {
                 this._bind(this._nodes[i]);
             }
         }
         
         // Invoke pageload
-        if (!pageLoaded) this._invokePageLoad();
+        if (!pageLoaded)
+        {
+            this._invokePageLoad();
+        }
 
         return this;
     };
@@ -7110,13 +7664,13 @@ JSHelper.prototype.isMobile = function()
     /**
      * Module destructor
      *
-     * @params null
      * @access public
      */
-    WayPoints.prototype.destruct = function() {
-
+    WayPoints.prototype.destruct = function()
+    {
         // Unbind listeners
-        for (var i = 0; i < this._nodes.length; i++) {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
             this._unbind(this._nodes[i]);
         }
         
@@ -7130,7 +7684,8 @@ JSHelper.prototype.isMobile = function()
      * @params trigger node
      * @access private
      */
-    WayPoints.prototype._bind = function(trigger) {
+    WayPoints.prototype._bind = function(trigger)
+    {
         Helper.addEventListener(trigger, 'click', this._eventHandler);
     }
 
@@ -7140,31 +7695,37 @@ JSHelper.prototype.isMobile = function()
      * @params trigger node
      * @access private
      */
-    WayPoints.prototype._unbind = function(trigger) {
+    WayPoints.prototype._unbind = function(trigger)
+    {
         Helper.removeEventListener(trigger, 'click', this._eventHandler);
     }
 
     /**
      * Event handler
      *
-     * @params e event
+     * @param event|null e JavaScript click event
      * @access private
      */
-    WayPoints.prototype._eventHandler = function(e) {
+    WayPoints.prototype._eventHandler = function(e)
+    {
         e = e || window.event;
         e.preventDefault();
         var trigger  = this;
         var waypoint = trigger.dataset.waypointTarget;
         var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
-        if (Helper.nodeExists(targetEl)) {
+
+        if (Helper.nodeExists(targetEl))
+        {
             var id      = waypoint;
             var speed   = typeof trigger.dataset.waypointSpeed  !== "undefined" ? trigger.dataset.waypointSpeed : 500;
             var easing  = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
             targetEl.id = id;
+
             var options = {
                 easing : easing,
                 speed  : speed,
-            }
+            };
+
             Container.get('SmoothScroll').animateScroll('#' + id, trigger, options);
         }
     }
@@ -7172,14 +7733,15 @@ JSHelper.prototype.isMobile = function()
     /**
      * Scroll to a element with id when the page loads
      *
-     * @params null
      * @access private
      */
-    WayPoints.prototype._invokePageLoad = function() {
+    WayPoints.prototype._invokePageLoad = function()
+    {
 
         var url = Helper.parse_url(window.location.href);
 
-        if (Helper.isset(url['fragment']) && url['fragment'] !== '') {
+        if (Helper.isset(url['fragment']) && url['fragment'] !== '')
+        {
 
             var waypoint = Helper.trim(url['fragment'], '/');
             var options  = {
@@ -7190,7 +7752,8 @@ JSHelper.prototype.isMobile = function()
             
             if (!Helper.nodeExists(targetEl)) targetEl = Helper.$('#' + waypoint);
 
-            if (Helper.nodeExists(targetEl)) {
+            if (Helper.nodeExists(targetEl))
+            {
                 var id      = waypoint;
                 targetEl.id = id;
                 Container.get('SmoothScroll').animateScroll('#' + id, null, options);
@@ -7200,7 +7763,7 @@ JSHelper.prototype.isMobile = function()
         pageLoaded = true;
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('WayPoints', WayPoints);
 
 }());
@@ -7208,20 +7771,16 @@ JSHelper.prototype.isMobile = function()
 
 // Boot Hubble
 /**
- * Boot and Initialize Hubble Core
+ * Boot and initialize Hubble core
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
+
 (function()
 {
-    // Boot Hubble
+	
     Container.get('Hubble').boot();
 
-	if (!window.Hubble)
-	{
-		window.Hubble = Container.get('Hubble');
-	}
-    
 })();

@@ -1,34 +1,31 @@
 /**
  * File inputs
  *
- * This class is used to handle custom file
- * input change events
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
- (function() {
 
+ (function()
+ {
     /**
-     * @var Helper obj
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
      * @constructor
      * @access public
-     * @return this
      */
-    var FileInput = function() {
-                
+    var FileInput = function()
+    {
         this._nodes = Helper.$All('.js-file-input');
 
-        if (!Helper.empty(this._nodes)) {
-            for (var i = 0; i < this._nodes.length; i++) {
-                Helper.addEventListener(this._nodes[i], 'change', this._eventHandler);
-            }
-        }
+        this._bind();
         
         return this;
     }
@@ -38,11 +35,37 @@
      *
      * @access public
      */
-    FileInput.prototype.destruct = function() {
-        for (var i = 0; i < this._nodes.length; i++) {
+    FileInput.prototype.destruct = function()
+    {
+        this._unbind();
+
+        this._nodes  = [];
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access public
+     */
+    FileInput.prototype._bind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
+            Helper.addEventListener(this._nodes[i], 'change', this._eventHandler);
+        }
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access public
+     */
+    FileInput.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
             Helper.removeEventListener(this._nodes[i], 'change', this._eventHandler);
         }
-        this._nodes  = [];
     }
 
     /**
@@ -50,22 +73,25 @@
      *
      * @access private
      */
-    FileInput.prototype._eventHandler = function() {
+    FileInput.prototype._eventHandler = function()
+    {
         var fileInput = this;
         var wrap      = Helper.closestClass(fileInput, 'js-file-field');
         var showInput = Helper.$('.js-file-text', wrap);
         var fullPath  = fileInput.value;
-        if (fullPath) {
+        if (fullPath)
+        {
             var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
             var filename   = fullPath.substring(startIndex);
-            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
+            {
                 filename = filename.substring(1);
             }
             showInput.value = filename;
         }
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('FileInput', FileInput);
 
 }());

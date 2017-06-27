@@ -1,29 +1,28 @@
 /**
- * InputMasks
+ * Input masker
  *
- * This module uses the "inputmasker.js" module to handle the masking of inputs
- * This module itself handles the activation of inputs via DOM elements.
- * @see     inputMasker.js
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
- (function() {
 
+ (function()
+ {
     /**
-     * @var Helper obj
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
      * @constructor
-     * @params null
      * @access public
-     * @return this
      */
-    var InputMasks = function() {
-
+    var InputMasks = function()
+    {
         // Private
         this._nodes_money			 = [];
         this._nodes_creditcard	     = [];
@@ -45,8 +44,8 @@
      *
      * @access public
      */
-    InputMasks.prototype.destruct = function() {
-        
+    InputMasks.prototype.destruct = function()
+    {
         this._loopUnBind(this._nodes_money);
         this._loopUnBind(this._nodes_creditcard);
         this._loopUnBind(this._nodes_numeric);
@@ -63,7 +62,6 @@
         this._nodes_alphaDash        = [];
         this._nodes_AlphaNumericDash = [];
         this._nodes_AlphaNumericDashDecimal = [];
-        
     }
 
     /**
@@ -71,8 +69,8 @@
      *
      * @access private
      */
-    InputMasks.prototype._invoke = function() {
-
+    InputMasks.prototype._invoke = function()
+    {
         // Find all the nodes
         this._nodes_money			 = Helper.$All('.js-mask-money');
         this._nodes_creditcard	     = Helper.$All('.js-mask-creditcard');
@@ -84,28 +82,36 @@
         this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
         this._nodes_AlphaNumericDashDecimal = Helper.$All('.js-mask-alphaNumericDashDecimal');
 
-        if (!Helper.empty(this._nodes_money)) {
+        if (!Helper.empty(this._nodes_money))
+        {
         	this._loopBind(this._nodes_money, 'money');
         }
-        if (!Helper.empty(this._nodes_creditcard)) {
+        if (!Helper.empty(this._nodes_creditcard))
+        {
             this._loopBind(this._nodes_creditcard, 'creditcard');
         }
-        if (!Helper.empty(this._nodes_numeric)) {
+        if (!Helper.empty(this._nodes_numeric))
+        {
             this._loopBind(this._nodes_numeric, 'numeric');
         }
-        if (!Helper.empty(this._nodes_numericDecimal)) {
+        if (!Helper.empty(this._nodes_numericDecimal))
+        {
             this._loopBind(this._nodes_numericDecimal, 'numericDecimal');
         }
-        if (!Helper.empty(this._nodes_alphaNumeric)) {
+        if (!Helper.empty(this._nodes_alphaNumeric))
+        {
             this._loopBind(this._nodes_alphaNumeric, 'alphaNumeric');
         }
-        if (!Helper.empty(this._nodes_alphaSpace)) {
+        if (!Helper.empty(this._nodes_alphaSpace))
+        {
             this._loopBind(this._nodes_alphaSpace, 'alphaSpace');
         }
-        if (!Helper.empty(this._nodes_alphaDash)) {
+        if (!Helper.empty(this._nodes_alphaDash))
+        {
             this._loopBind(this._nodes_alphaDash, 'alphaDash');
         }
-        if (!Helper.empty(this._nodes_AlphaNumericDash)) {
+        if (!Helper.empty(this._nodes_AlphaNumericDash))
+        {
             this._loopBind(this._nodes_AlphaNumericDash, 'alphaNumericDash');
         }
     }
@@ -115,8 +121,10 @@
      *
      * @access private
      */
-    InputMasks.prototype._loopBind = function(nodes, mask) {
-    	for (var i = 0; i < nodes.length; i++) {
+    InputMasks.prototype._loopBind = function(nodes, mask)
+    {
+    	for (var i = 0; i < nodes.length; i++)
+        {
     		Container.get('InputMasker', nodes[i])[mask]();
         }
     }
@@ -126,13 +134,15 @@
      *
      * @access private
      */
-    InputMasks.prototype._loopUnBind = function(nodes) {
-        for (var i = 0; i < nodes.length; i++) {
+    InputMasks.prototype._loopUnBind = function(nodes)
+    {
+        for (var i = 0; i < nodes.length; i++)
+        {
             Container.get('InputMasker', nodes[i])[unMask]();
         }
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('InputMasks', InputMasks);
 
 }());

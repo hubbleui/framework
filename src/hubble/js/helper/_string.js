@@ -1,35 +1,73 @@
-/* Is JSON */
-JSHelper.prototype.isJSON = function(str) {
+/**
+ * String Helper Functions
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ */
+
+/**
+ * Is valid JSON
+ * 
+ * @param  mixed str String JSON
+ * @return object|false
+ */
+JSHelper.prototype.isJSON = function(str)
+{
     var obj;
-    try {
+    try
+    {
         obj = JSON.parse(str);
     }
-    catch (e) {
+    catch (e)
+    {
         return false;
     }
     return obj;
 }
 
-/* Make random id */
-JSHelper.prototype.makeid = function(length) {
-    var text = "";
+/**
+ * Make a random string
+ *
+ * @param  int    length String length
+ * @return string
+ */
+JSHelper.prototype.makeid = function(length)
+{
+    var text     = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    for (var i = 0; i < length; i++) {
+    
+    for (var i = 0; i < length; i++)
+    {
         text += possible.charAt(Math.floor(Math.random() * possible.length))
     }
-    return text
+
+    return text;
 }
 
-/* Is numeric */
-JSHelper.prototype.is_numeric = function(mixed_var) {
+/**
+ * Is variable numeric?
+ *
+ * @param  mixed mixed_var Variable to validate
+ * @return bool
+ */
+JSHelper.prototype.is_numeric = function(mixed_var)
+{
     var whitespace =
         " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
     return (typeof mixed_var === 'number' || (typeof mixed_var === 'string' && whitespace.indexOf(mixed_var.slice(-1)) === -
         1)) && mixed_var !== '' && !isNaN(mixed_var);
 }
 
-/* parse a url */
-JSHelper.prototype.parse_url = function(str, component) {
+/**
+ * Parse url
+ *
+ * @param  string    str       The URL to parse. Invalid characters are replaced by _.
+ * @param  string    component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT, PHP_URL_USER, PHP_URL_PASS, PHP_URL_PATH, PHP_URL_QUERY or PHP_URL_FRAGMENT to retrieve just a specific URL component as a string (except when PHP_URL_PORT is given, in which case the return value will be an integer).
+ * @return object
+ */
+JSHelper.prototype.parse_url = function(str, component)
+{
     //       discuss at: http://phpjs.org/functions/parse_url/
     //      original by: Steven Levithan (http://blog.stevenlevithan.com)
     // reimplemented by: Brett Zamir (http://brett-zamir.me)
@@ -61,24 +99,30 @@ JSHelper.prototype.parse_url = function(str, component) {
     var m = parser[mode].exec(str),
         uri = {},
         i = 14;
-    while (i--) {
-        if (m[i]) {
+    while (i--)
+    {
+        if (m[i])
+        {
             uri[key[i]] = m[i];
         }
     }
 
-    if (component) {
+    if (component)
+    {
         return uri[component.replace('PHP_URL_', '')
             .toLowerCase()];
     }
-    if (mode !== 'php') {
+    if (mode !== 'php')
+    {
         var name = (ini['phpjs.parse_url.queryKey'] &&
             ini['phpjs.parse_url.queryKey'].local_value) || 'queryKey';
         parser = /(?:^|&)([^&=]*)=?([^&]*)/g;
         uri[name] = {};
         query = uri[key[12]] || '';
-        query.replace(parser, function($0, $1, $2) {
-            if ($1) {
+        query.replace(parser, function($0, $1, $2)
+        {
+            if ($1)
+            {
                 uri[name][$1] = $2;
             }
         });
@@ -88,7 +132,8 @@ JSHelper.prototype.parse_url = function(str, component) {
 }
 
 /* Left trim */
-JSHelper.prototype.ltrim = function(str, charlist) {
+JSHelper.prototype.ltrim = function(str, charlist)
+{
     //  discuss at: http://phpjs.org/functions/ltrim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     //    input by: Erkekjetter
@@ -105,7 +150,8 @@ JSHelper.prototype.ltrim = function(str, charlist) {
 }
 
 /* Left trim */
-JSHelper.prototype.rtrim = function(str, charlist) {
+JSHelper.prototype.rtrim = function(str, charlist)
+{
     //  discuss at: http://phpjs.org/functions/rtrim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     //    input by: Erkekjetter
@@ -124,7 +170,8 @@ JSHelper.prototype.rtrim = function(str, charlist) {
 }
 
 /* Trim */
-JSHelper.prototype.trim = function(str, charlist) {
+JSHelper.prototype.trim = function(str, charlist)
+{
     //  discuss at: http://phpjs.org/functions/trim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: mdsjack (http://www.mdsjack.bo.it)
@@ -146,7 +193,8 @@ JSHelper.prototype.trim = function(str, charlist) {
         i = 0;
     str += '';
 
-    if (!charlist) {
+    if (!charlist)
+    {
         // default list
         whitespace =
             ' \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000';
@@ -158,16 +206,20 @@ JSHelper.prototype.trim = function(str, charlist) {
     }
 
     l = str.length;
-    for (i = 0; i < l; i++) {
-        if (whitespace.indexOf(str.charAt(i)) === -1) {
+    for (i = 0; i < l; i++)
+    {
+        if (whitespace.indexOf(str.charAt(i)) === -1)
+        {
             str = str.substring(i);
             break;
         }
     }
 
     l = str.length;
-    for (i = l - 1; i >= 0; i--) {
-        if (whitespace.indexOf(str.charAt(i)) === -1) {
+    for (i = l - 1; i >= 0; i--)
+    {
+        if (whitespace.indexOf(str.charAt(i)) === -1)
+        {
             str = str.substring(0, i + 1);
             break;
         }
@@ -177,7 +229,8 @@ JSHelper.prototype.trim = function(str, charlist) {
 }
 
 /* regex escape */
-JSHelper.prototype.preg_quote = function(str, delimiter) {
+JSHelper.prototype.preg_quote = function(str, delimiter)
+{
     //  discuss at: http://phpjs.org/functions/preg_quote/
     // original by: booeyOH
     // improved by: Ates Goral (http://magnetiq.com)
@@ -196,24 +249,29 @@ JSHelper.prototype.preg_quote = function(str, delimiter) {
 }
 
 /* Preg match all */
-JSHelper.prototype.preg_match_all = function(pattern, subject) {
+JSHelper.prototype.preg_match_all = function(pattern, subject)
+{
 
     // convert the pattern to regix
     // if needed. return null on fail
-    if (typeof pattern === 'string') {
+    if (typeof pattern === 'string')
+    {
         try {
             pattern = new RegExp(pattern);
         }
-        catch (err) {
+        catch (err)
+        {
             return null;
         }
     }
     var _this   = this;
     var matches = [];
     var matched = pattern.exec(subject);
-    if (matched !== null) {
+    if (matched !== null)
+    {
         var i = 0;
-        while (matched = pattern.exec(subject)) {
+        while (matched = pattern.exec(subject))
+        {
             subject = _this.str_split_index(subject, (matched.index + matched[0].length - 1))[1];
             matched.index = i > 0 ? (matched.index + (matched[0].length - 1)) : matched.index - 1;
             matches.push(matched);
@@ -225,17 +283,20 @@ JSHelper.prototype.preg_match_all = function(pattern, subject) {
 }
 
 /* split string at index */
-JSHelper.prototype.str_split_index = function(value, index) {
+JSHelper.prototype.str_split_index = function(value, index)
+{
     return [value.substring(0, index + 1), value.substring(index + 1)];
 }
 
 /* Capatalize first letter */
-JSHelper.prototype.ucfirst = function(string) {
+JSHelper.prototype.ucfirst = function(string)
+{
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 /* Capatalize first letter of all words */
-JSHelper.prototype.ucwords = function(str) {
+JSHelper.prototype.ucwords = function(str)
+{
     //  discuss at: http://phpjs.org/functions/ucwords/
     // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
     // improved by: Waldo Malqui Silva
@@ -249,13 +310,15 @@ JSHelper.prototype.ucwords = function(str) {
     //   returns 2: 'HELLO WORLD'
 
     return (str + '')
-        .replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1) {
+        .replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1)
+        {
             return $1.toUpperCase();
         });
 }
 
 /* Reduce a string to a x words/letters with (optional) suffix */
-JSHelper.prototype.strReduce = function(string, length, suffix, toChar) {
+JSHelper.prototype.strReduce = function(string, length, suffix, toChar)
+{
 
     toChar = (typeof toChar === 'undefined' ? true : false);
     suffix = (typeof suffix === 'undefined' ? '' : suffix);
@@ -271,7 +334,8 @@ JSHelper.prototype.strReduce = function(string, length, suffix, toChar) {
 }
 
 /* Return human friendly time-ago */
-JSHelper.prototype.timeAgo = function(time, asArray) {
+JSHelper.prototype.timeAgo = function(time, asArray)
+{
     asArray = (typeof asArray === 'undefined' ? false : true);
     time = isValidTimeStamp(time) ? parseInt(time) : strtotime(time);
     var units = [{
@@ -308,10 +372,13 @@ JSHelper.prototype.timeAgo = function(time, asArray) {
 
     var i = 0,
         unit;
-    while (unit = units[i++]) {
-        if (diff < unit.limit || !unit.limit) {
+    while (unit = units[i++])
+    {
+        if (diff < unit.limit || !unit.limit)
+        {
             var diff = Math.floor(diff / unit.in_seconds);
-            if (asArray) {
+            if (asArray)
+            {
                 return {
                     unit: unit.name + (diff > 1 ? "s" : ""),
                     time: diff
@@ -323,12 +390,14 @@ JSHelper.prototype.timeAgo = function(time, asArray) {
 }
 
 /* Convert a string-date to a timestamp */
-JSHelper.prototype.strtotime = function(text) {
+JSHelper.prototype.strtotime = function(text)
+{
     return Math.round(new Date(text).getTime() / 1000);
 }
 
 /* String replace */
-JSHelper.prototype.str_replace = function(search, replace, subject, count) {
+JSHelper.prototype.str_replace = function(search, replace, subject, count)
+{
     //  discuss at: http://phpjs.org/functions/str_replace/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: Gabriel Paderni
@@ -371,10 +440,12 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count) {
         sa = Object.prototype.toString.call(s) === '[object Array]';
     s = [].concat(s);
 
-    if (typeof(search) === 'object' && typeof(replace) === 'string') {
+    if (typeof(search) === 'object' && typeof(replace) === 'string')
+    {
         temp = replace;
         replace = new Array();
-        for (i = 0; i < search.length; i += 1) {
+        for (i = 0; i < search.length; i += 1)
+        {
             replace[i] = temp;
         }
         temp = '';
@@ -382,21 +453,26 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count) {
         ra = Object.prototype.toString.call(r) === '[object Array]';
     }
 
-    if (count) {
+    if (count)
+    {
         this.window[count] = 0;
     }
 
-    for (i = 0, sl = s.length; i < sl; i++) {
-        if (s[i] === '') {
+    for (i = 0, sl = s.length; i < sl; i++)
+    {
+        if (s[i] === '')
+        {
             continue;
         }
-        for (j = 0, fl = f.length; j < fl; j++) {
+        for (j = 0, fl = f.length; j < fl; j++)
+        {
             temp = s[i] + '';
             repl = ra ? (r[j] !== undefined ? r[j] : '') : r[0];
             s[i] = (temp)
                 .split(f[j])
                 .join(repl);
-            if (count) {
+            if (count)
+            {
                 this.window[count] += ((temp.split(f[j]))
                     .length - 1);
             }
@@ -405,7 +481,8 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count) {
     return sa ? s : s[0];
 }
 
-JSHelper.prototype.str_split = function(string, split_length) {
+JSHelper.prototype.str_split = function(string, split_length)
+{
     //  discuss at: http://phpjs.org/functions/str_split/
     // original by: Martijn Wieringa
     // improved by: Brett Zamir (http://brett-zamir.me)
@@ -416,35 +493,41 @@ JSHelper.prototype.str_split = function(string, split_length) {
     //   example 1: str_split('Hello Friend', 3);
     //   returns 1: ['Hel', 'lo ', 'Fri', 'end']
 
-    if (split_length === null) {
+    if (split_length === null)
+    {
         split_length = 1;
     }
-    if (string === null || split_length < 1) {
+    if (string === null || split_length < 1)
+    {
         return false;
     }
     string += '';
     var chunks = [],
         pos = 0,
         len = string.length;
-    while (pos < len) {
+    while (pos < len)
+    {
         chunks.push(string.slice(pos, pos += split_length));
     }
 
     return chunks;
 }
 
-JSHelper.prototype.toCamelCase = function(str) {
+JSHelper.prototype.toCamelCase = function(str)
+{
     return str.toLowerCase()
         .replace(/['"]/g, '')
         .replace(/\W+/g, ' ')
-        .replace(/ (.)/g, function($1) {
+        .replace(/ (.)/g, function($1)
+        {
             return $1.toUpperCase();
         })
         .replace(/ /g, '');
 }
 
 
-JSHelper.prototype.explode = function(delimiter, string, limit) {
+JSHelper.prototype.explode = function(delimiter, string, limit)
+{
     //  discuss at: http://phpjs.org/functions/explode/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     //   example 1: explode(' ', 'Kevin van Zonneveld');
@@ -453,7 +536,8 @@ JSHelper.prototype.explode = function(delimiter, string, limit) {
     if (arguments.length < 2 || typeof delimiter === 'undefined' || typeof string === 'undefined') return null;
     if (delimiter === '' || delimiter === false || delimiter === null) return false;
     if (typeof delimiter === 'function' || typeof delimiter === 'object' || typeof string === 'function' || typeof string ===
-        'object') {
+        'object')
+    {
         return {
             0: ''
         };
@@ -472,7 +556,8 @@ JSHelper.prototype.explode = function(delimiter, string, limit) {
     if (limit === 0) limit = 1;
 
     // Positive limit
-    if (limit > 0) {
+    if (limit > 0)
+    {
         if (limit >= s.length) return s;
         return s.slice(0, limit - 1)
             .concat([s.slice(limit - 1)
@@ -487,7 +572,8 @@ JSHelper.prototype.explode = function(delimiter, string, limit) {
     return s;
 }
 
-JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, double_encode) {
+JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, double_encode)
+{
     // http://kevin.vanzonneveld.net
     // +   original by: Mirek Slugen
     // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -510,11 +596,13 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
     var optTemp = 0,
         i = 0,
         noquotes = false;
-    if (typeof quote_style === 'undefined' || quote_style === null) {
+    if (typeof quote_style === 'undefined' || quote_style === null)
+    {
         quote_style = 2;
     }
     string = string.toString();
-    if (double_encode !== false) { // Put this first to avoid double-encoding
+    if (double_encode !== false)
+    { // Put this first to avoid double-encoding
         string = string.replace(/&/g, '&amp;');
     }
     string = string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -527,26 +615,33 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
         'ENT_QUOTES': 3,
         'ENT_IGNORE': 4
     };
-    if (quote_style === 0) {
+    if (quote_style === 0)
+    {
         noquotes = true;
     }
-    if (typeof quote_style !== 'number') { // Allow for a single string or an array of string flags
+    if (typeof quote_style !== 'number')
+    { // Allow for a single string or an array of string flags
         quote_style = [].concat(quote_style);
-        for (i = 0; i < quote_style.length; i++) {
+        for (i = 0; i < quote_style.length; i++)
+        {
             // Resolve string input to bitwise e.g. 'ENT_IGNORE' becomes 4
-            if (OPTS[quote_style[i]] === 0) {
+            if (OPTS[quote_style[i]] === 0)
+            {
                 noquotes = true;
             }
-            else if (OPTS[quote_style[i]]) {
+            else if (OPTS[quote_style[i]])
+            {
                 optTemp = optTemp | OPTS[quote_style[i]];
             }
         }
         quote_style = optTemp;
     }
-    if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE) {
+    if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE)
+    {
         string = string.replace(/'/g, '&#039;');
     }
-    if (!noquotes) {
+    if (!noquotes)
+    {
         string = string.replace(/"/g, '&quot;');
     }
 
@@ -554,7 +649,8 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
 }
 
 
-JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style) {
+JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style)
+{
   //       discuss at: http://phpjs.org/functions/htmlspecialchars_decode/
   //      original by: Mirek Slugen
   //      improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -578,7 +674,8 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style) {
   var optTemp = 0,
     i = 0,
     noquotes = false;
-  if (typeof quote_style === 'undefined') {
+  if (typeof quote_style === 'undefined')
+  {
     quote_style = 2;
   }
   string = string.toString()
@@ -592,26 +689,33 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style) {
     'ENT_QUOTES': 3,
     'ENT_IGNORE': 4
   };
-  if (quote_style === 0) {
+  if (quote_style === 0)
+  {
     noquotes = true;
   }
-  if (typeof quote_style !== 'number') { // Allow for a single string or an array of string flags
+  if (typeof quote_style !== 'number')
+  { // Allow for a single string or an array of string flags
     quote_style = [].concat(quote_style);
-    for (i = 0; i < quote_style.length; i++) {
+    for (i = 0; i < quote_style.length; i++)
+    {
       // Resolve string input to bitwise e.g. 'PATHINFO_EXTENSION' becomes 4
-      if (OPTS[quote_style[i]] === 0) {
+      if (OPTS[quote_style[i]] === 0)
+      {
         noquotes = true;
-      } else if (OPTS[quote_style[i]]) {
+      } else if (OPTS[quote_style[i]])
+      {
         optTemp = optTemp | OPTS[quote_style[i]];
       }
     }
     quote_style = optTemp;
   }
-  if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE) {
+  if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE)
+  {
     string = string.replace(/&#0*39;/g, "'"); // PHP doesn't currently escape if more than one 0, but it should
     // string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP
   }
-  if (!noquotes) {
+  if (!noquotes)
+  {
     string = string.replace(/&quot;/g, '"');
   }
   // Put this in last place to avoid escape being double-decoded
@@ -620,7 +724,8 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style) {
   return string;
 }
 
-JSHelper.prototype.get_html_translation_table = function(table, quoteStyle) {
+JSHelper.prototype.get_html_translation_table = function(table, quoteStyle)
+{
 
   // eslint-disable-line camelcase
   //  discuss at: http://locutus.io/php/get_html_translation_table/
@@ -670,12 +775,14 @@ JSHelper.prototype.get_html_translation_table = function(table, quoteStyle) {
       ? quoteStyle.toUpperCase()
       : 'ENT_COMPAT'
 
-  if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES') {
+  if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES')
+  {
     throw new Error('Table: ' + useTable + ' not supported')
   }
 
   entities['38'] = '&amp;'
-  if (useTable === 'HTML_ENTITIES') {
+  if (useTable === 'HTML_ENTITIES')
+  {
     entities['160'] = '&nbsp;'
     entities['161'] = '&iexcl;'
     entities['162'] = '&cent;'
@@ -774,18 +881,22 @@ JSHelper.prototype.get_html_translation_table = function(table, quoteStyle) {
     entities['255'] = '&yuml;'
   }
 
-  if (useQuoteStyle !== 'ENT_NOQUOTES') {
+  if (useQuoteStyle !== 'ENT_NOQUOTES')
+  {
     entities['34'] = '&quot;'
   }
-  if (useQuoteStyle === 'ENT_QUOTES') {
+  if (useQuoteStyle === 'ENT_QUOTES')
+  {
     entities['39'] = '&#39;'
   }
   entities['60'] = '&lt;'
   entities['62'] = '&gt;'
 
   // ascii decimals to real symbols
-  for (decimal in entities) {
-    if (entities.hasOwnProperty(decimal)) {
+  for (decimal in entities)
+  {
+    if (entities.hasOwnProperty(decimal))
+    {
       hashMap[String.fromCharCode(decimal)] = entities[decimal]
     }
   }
@@ -793,7 +904,8 @@ JSHelper.prototype.get_html_translation_table = function(table, quoteStyle) {
   return hashMap
 }
 
-JSHelper.prototype.html_entity_decode = function(string, quote_style) {
+JSHelper.prototype.html_entity_decode = function(string, quote_style)
+{
   //  discuss at: http://phpjs.org/functions/html_entity_decode/
   // original by: john (http://www.jd-tech.net)
   //    input by: ger
@@ -818,7 +930,8 @@ JSHelper.prototype.html_entity_decode = function(string, quote_style) {
     entity = '';
   tmp_str = string.toString();
 
-  if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style))) {
+  if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style)))
+  {
     return false;
   }
 
@@ -827,7 +940,8 @@ JSHelper.prototype.html_entity_decode = function(string, quote_style) {
   delete(hash_map['&']);
   hash_map['&'] = '&amp;';
 
-  for (symbol in hash_map) {
+  for (symbol in hash_map)
+  {
     entity = hash_map[symbol];
     tmp_str = tmp_str.split(entity)
       .join(symbol);
@@ -838,7 +952,8 @@ JSHelper.prototype.html_entity_decode = function(string, quote_style) {
   return tmp_str;
 }
 
-JSHelper.prototype.strcmp = function(str1, str2) {
+JSHelper.prototype.strcmp = function(str1, str2)
+{
   //  discuss at: http://phpjs.org/functions/strcmp/
   // original by: Waldo Malqui Silva (http://waldo.malqui.info)
   //    input by: Steve Hilder
@@ -852,7 +967,8 @@ JSHelper.prototype.strcmp = function(str1, str2) {
   return ((str1 == str2) ? 0 : ((str1 > str2) ? 1 : -1))
 }
 
-JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
+JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
+{
   //  discuss at: http://phpjs.org/functions/strnatcmp/
   // original by: Martijn Wieringa
   // improved by: Michael White (http://getsprink.com)
@@ -873,11 +989,13 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
 
   var i = 0
 
-  if (f_version == undefined) {
+  if (f_version == undefined)
+  {
     f_version = false
   }
 
-  var __strnatcmp_split = function (f_string) {
+  var __strnatcmp_split = function (f_string)
+  {
     var result = []
     var buffer = ''
     var chr = ''
@@ -887,11 +1005,15 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
     var text = true
 
     f_stringl = f_string.length
-    for (i = 0; i < f_stringl; i++) {
+    for (i = 0; i < f_stringl; i++)
+    {
       chr = f_string.substring(i, i + 1)
-      if (chr.match(/\d/)) {
-        if (text) {
-          if (buffer.length > 0) {
+      if (chr.match(/\d/))
+      {
+        if (text)
+        {
+          if (buffer.length > 0)
+          {
             result[result.length] = buffer
             buffer = ''
           }
@@ -901,12 +1023,17 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
         buffer += chr
       } else if ((text == false) && (chr === '.') && (i < (f_string.length - 1)) && (f_string.substring(i + 1, i +
             2)
-          .match(/\d/))) {
+          .match(/\d/)))
+      {
         result[result.length] = buffer
         buffer = ''
-      } else {
-        if (text == false) {
-          if (buffer.length > 0) {
+      }
+      else
+      {
+        if (text == false)
+        {
+          if (buffer.length > 0)
+          {
             result[result.length] = parseInt(buffer, 10)
             buffer = ''
           }
@@ -916,10 +1043,14 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
       }
     }
 
-    if (buffer.length > 0) {
-      if (text) {
+    if (buffer.length > 0)
+    {
+      if (text)
+      {
         result[result.length] = buffer
-      } else {
+      }
+      else
+      {
         result[result.length] = parseInt(buffer, 10)
       }
     }
@@ -936,37 +1067,56 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version) {
   var result = -1
   var r = 0
 
-  if (len > array2.length) {
+  if (len > array2.length)
+  {
     len = array2.length
     result = 1
   }
 
-  for (i = 0; i < len; i++) {
-    if (isNaN(array1[i])) {
-      if (isNaN(array2[i])) {
+  for (i = 0; i < len; i++)
+  {
+    if (isNaN(array1[i]))
+    {
+      if (isNaN(array2[i]))
+      {
         text = true
 
-        if ((r = this.strcmp(array1[i], array2[i])) != 0) {
+        if ((r = this.strcmp(array1[i], array2[i])) != 0)
+        {
           return r
         }
-      } else if (text) {
-        return 1
-      } else {
-        return -1
-      }
-    } else if (isNaN(array2[i])) {
-      if (text) {
-        return -1
-      } else {
+      } else if (text)
+      {
         return 1
       }
-    } else {
-      if (text || f_version) {
-        if ((r = (array1[i] - array2[i])) != 0) {
+      else
+      {
+        return -1
+      }
+    } else if (isNaN(array2[i]))
+    {
+      if (text)
+      {
+        return -1
+      }
+      else
+      {
+        return 1
+      }
+    }
+    else
+    {
+      if (text || f_version)
+      {
+        if ((r = (array1[i] - array2[i])) != 0)
+        {
           return r
         }
-      } else {
-        if ((r = this.strcmp(array1[i].toString(), array2[i].toString())) != 0) {
+      }
+      else
+      {
+        if ((r = this.strcmp(array1[i].toString(), array2[i].toString())) != 0)
+        {
           return r
         }
       }

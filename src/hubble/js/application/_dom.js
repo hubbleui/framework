@@ -1,10 +1,11 @@
 /**
- * Dom Core
+ * DOM Manager
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
+
 (function()
 {
     /**
@@ -12,7 +13,6 @@
      *
      * @class
      * @constructor
-     * @params null
      * @access public
      */
     var Dom = function()
@@ -110,7 +110,6 @@
     /**
      * Unbind listener to containers
      *
-     * @params null
      * @access private
      */
     Dom.prototype._bindModules = function()

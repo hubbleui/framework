@@ -18,7 +18,7 @@
 JSHelper.prototype.in_array = function(needle, haystack, argStrict) {
 
     var key = '',
-        strict = !!argStrict;
+    strict = !!argStrict;
 
     //we prevent the double check (strict && arr[key] === ndl) || (!strict && arr[key] == ndl)
     //in just one for, in order to improve the performance 
@@ -108,11 +108,11 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
     if (Object.prototype.toString.call(arr) !== '[object Array]' ||
         (preserve_keys && offst !== 0)) { // Assoc. array as input or if required as output
         var lgt = 0,
-            newAssoc = {};
-        for (key in arr) {
+    newAssoc = {};
+    for (key in arr) {
             //if (key !== 'length') {
-            lgt += 1;
-            newAssoc[key] = arr[key];
+                lgt += 1;
+                newAssoc[key] = arr[key];
             //}
         }
         arr = newAssoc;
@@ -122,9 +122,9 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
 
         var assoc = {};
         var start = false,
-            it = -1,
-            arrlgth = 0,
-            no_pk_idx = 0;
+        it = -1,
+        arrlgth = 0,
+        no_pk_idx = 0;
         for (key in arr) {
             ++it;
             if (arrlgth >= lgth) {
@@ -197,8 +197,8 @@ JSHelper.prototype.paginate = function(array, page, limit) {
  */
 JSHelper.prototype.foreach = function(obj, callback, args) {
     var value, i = 0,
-        length = obj.length,
-        isArray = Object.prototype.toString.call(obj) === '[object Array]';
+    length = obj.length,
+    isArray = Object.prototype.toString.call(obj) === '[object Array]';
 
     if (args) {
         if (isArray) {
@@ -284,51 +284,51 @@ JSHelper.prototype.array_merge = function () {
   //   returns 2: {0: "data"}
 
   var args = Array.prototype.slice.call(arguments),
-    argl = args.length,
-    arg,
-    retObj = {},
-    k = '',
-    argil = 0,
-    j = 0,
-    i = 0,
-    ct = 0,
-    toStr = Object.prototype.toString,
-    retArr = true;
+  argl = args.length,
+  arg,
+  retObj = {},
+  k = '',
+  argil = 0,
+  j = 0,
+  i = 0,
+  ct = 0,
+  toStr = Object.prototype.toString,
+  retArr = true;
 
   for (i = 0; i < argl; i++) {
     if (toStr.call(args[i]) !== '[object Array]') {
       retArr = false;
       break;
-    }
   }
+}
 
-  if (retArr) {
+if (retArr) {
     retArr = [];
     for (i = 0; i < argl; i++) {
       retArr = retArr.concat(args[i]);
-    }
-    return retArr;
   }
+  return retArr;
+}
 
-  for (i = 0, ct = 0; i < argl; i++) {
+for (i = 0, ct = 0; i < argl; i++) {
     arg = args[i];
     if (toStr.call(arg) === '[object Array]') {
       for (j = 0, argil = arg.length; j < argil; j++) {
         retObj[ct++] = arg[j];
-      }
-    } else {
-      for (k in arg) {
-        if (arg.hasOwnProperty(k)) {
-          if (parseInt(k, 10) + '' === k) {
-            retObj[ct++] = arg[k];
-          } else {
-            retObj[k] = arg[k];
-          }
-        }
-      }
     }
-  }
-  return retObj;
+} else {
+  for (k in arg) {
+    if (arg.hasOwnProperty(k)) {
+      if (parseInt(k, 10) + '' === k) {
+        retObj[ct++] = arg[k];
+    } else {
+        retObj[k] = arg[k];
+    }
+}
+}
+}
+}
+return retObj;
 }
 
 /**
@@ -379,43 +379,43 @@ JSHelper.prototype.is_array = function(mixed_var) {
   //   returns 4: false
 
   var ini,
-    _getFuncName = function(fn) {
+  _getFuncName = function(fn) {
       var name = (/\W*function\s+([\w\$]+)\s*\(/)
-        .exec(fn);
+      .exec(fn);
       if (!name) {
         return '(Anonymous)';
-      }
-      return name[1];
-    };
-  _isArray = function(mixed_var) {
+    }
+    return name[1];
+};
+_isArray = function(mixed_var) {
     // return Object.prototype.toString.call(mixed_var) === '[object Array]';
     // The above works, but let's do the even more stringent approach: (since Object.prototype.toString could be overridden)
     // Null, Not an object, no length property so couldn't be an Array (or String)
     if (!mixed_var || typeof mixed_var !== 'object' || typeof mixed_var.length !== 'number') {
       return false;
-    }
-    var len = mixed_var.length;
-    mixed_var[mixed_var.length] = 'bogus';
+  }
+  var len = mixed_var.length;
+  mixed_var[mixed_var.length] = 'bogus';
     // The only way I can think of to get around this (or where there would be trouble) would be to have an object defined
     // with a custom "length" getter which changed behavior on each call (or a setter to mess up the following below) or a custom
     // setter for numeric properties, but even that would need to listen for specific indexes; but there should be no false negatives
     // and such a false positive would need to rely on later JavaScript innovations like __defineSetter__
     if (len !== mixed_var.length) { // We know it's an array since length auto-changed with the addition of a
       // numeric property at its length end, so safely get rid of our bogus element
-      mixed_var.length -= 1;
-      return true;
-    }
+  mixed_var.length -= 1;
+  return true;
+}
     // Get rid of the property we added onto a non-array object; only possible
     // side-effect is if the user adds back the property later, it will iterate
     // this property in the older order placement in IE (an order which should not
     // be depended on anyways)
     delete mixed_var[mixed_var.length];
     return false;
-  };
+};
 
-  if (!mixed_var || typeof mixed_var !== 'object') {
+if (!mixed_var || typeof mixed_var !== 'object') {
     return false;
-  }
+}
 
-  return _isArray(mixed_var);
+return _isArray(mixed_var);
 }

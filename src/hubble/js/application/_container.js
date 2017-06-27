@@ -1,10 +1,11 @@
 /**
- * JavaScript IoC container
+ * JS IoC Container
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
+
 (function(window)
 {
 	var Container = function()

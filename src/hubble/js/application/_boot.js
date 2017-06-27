@@ -1,18 +1,14 @@
 /**
- * Boot and Initialize Hubble Core
+ * Boot and initialize Hubble core
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
+
 (function()
 {
-    // Boot Hubble
+	
     Container.get('Hubble').boot();
 
-	if (!window.Hubble)
-	{
-		window.Hubble = Container.get('Hubble');
-	}
-    
 })();

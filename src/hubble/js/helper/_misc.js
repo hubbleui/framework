@@ -1,38 +1,75 @@
-/* Is numberic */
-JSHelper.prototype.is_numeric = function(mixed_var) {
+/**
+ * Miscellaneous helper functions
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ */
+
+/**
+ * Is numeric? 
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to check
+ * @return bool
+ */
+JSHelper.prototype.is_numeric = function(mixed_var)
+{
     var whitespace =
         " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
     return (typeof mixed_var === 'number' || (typeof mixed_var === 'string' && whitespace.indexOf(mixed_var.slice(-1)) === -
         1)) && mixed_var !== '' && !isNaN(mixed_var);
 }
 
-/* Is callback */
-JSHelper.prototype.isCallable = function(obj) {
+/**
+ * Is callable ?
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to check
+ * @return bool
+ */
+JSHelper.prototype.isCallable = function(obj)
+{
     return Object.prototype.toString.call(obj) === '[object Function]';
 }
 
-/* Count an object or string */
-JSHelper.prototype.count = function(mixed_var, mode) {
+/**
+ * Count
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to count
+ * @param  string mode      Variable count mode
+ * @return int
+ */
+JSHelper.prototype.count = function(mixed_var, mode)
+{
     var key, cnt = 0;
-    if (mixed_var === null || typeof mixed_var === 'undefined') {
+    if (mixed_var === null || typeof mixed_var === 'undefined')
+    {
         return 0;
     }
-    else if (mixed_var.constructor !== Array && mixed_var.constructor !== Object) {
+    else if (mixed_var.constructor !== Array && mixed_var.constructor !== Object)
+    {
         return 1;
     }
 
-    if (mode === 'COUNT_RECURSIVE') {
+    if (mode === 'COUNT_RECURSIVE')
+    {
         mode = 1;
     }
-    if (mode != 1) {
+    if (mode != 1)
+    {
         mode = 0;
     }
 
-    for (key in mixed_var) {
-        if (mixed_var.hasOwnProperty(key)) {
+    for (key in mixed_var)
+    {
+        if (mixed_var.hasOwnProperty(key))
+        {
             cnt++;
             if (mode == 1 && mixed_var[key] && (mixed_var[key].constructor === Array || mixed_var[key].constructor ===
-                    Object)) {
+                    Object))
+            {
                 cnt += this.count(mixed_var[key], 1);
             }
         }
@@ -41,8 +78,15 @@ JSHelper.prototype.count = function(mixed_var, mode) {
     return cnt;
 }
 
-/* Bool */
-JSHelper.prototype.bool = function(value) {
+/**
+ * Convert to boolean
+ *
+ * @access public
+ * @param  mixed  value Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.bool = function(value)
+{
 
     value = (typeof value === 'undefined' ? false : value);
 
@@ -50,7 +94,8 @@ JSHelper.prototype.bool = function(value) {
 
     if (typeof value === 'number') return value > 0;
 
-    if (typeof value === 'string') {
+    if (typeof value === 'string')
+    {
         if (value.toLowerCase() === 'false') return false;
         if (value.toLowerCase() === 'true') return true;
         if (value.toLowerCase() === 'on') return true;
@@ -63,7 +108,15 @@ JSHelper.prototype.bool = function(value) {
     return false;
 }
 
-JSHelper.prototype.intval = function(mixed_var, base) {
+/**
+ * Convert to integer
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to evaluate
+ * @return int
+ */
+JSHelper.prototype.intval = function(mixed_var, base)
+{
     //  discuss at: http://phpjs.org/functions/intval/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: stensi
@@ -86,14 +139,17 @@ JSHelper.prototype.intval = function(mixed_var, base) {
 
     var type = typeof mixed_var;
 
-    if (type === 'boolean') {
+    if (type === 'boolean')
+    {
         return +mixed_var;
     }
-    else if (type === 'string') {
+    else if (type === 'string')
+    {
         tmp = parseInt(mixed_var, base || 10);
         return (isNaN(tmp) || !isFinite(tmp)) ? 0 : tmp;
     }
-    else if (type === 'number' && isFinite(mixed_var)) {
+    else if (type === 'number' && isFinite(mixed_var))
+    {
         return mixed_var | 0;
     }
     else {
@@ -101,8 +157,27 @@ JSHelper.prototype.intval = function(mixed_var, base) {
     }
 }
 
-/* Isset */
-JSHelper.prototype.isset = function() {
+/**
+ * Convert to f,oat
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to evaluate
+ * @return float
+ */
+JSHelper.prototype.floatval = function(mixedVar)
+{
+    return (parseFloat(mixedVar) || 0)
+}
+
+/**
+ * Checks if variable is set
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.isset = function()
+{
     //  discuss at: http://phpjs.org/functions/isset/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: FremyCompany
@@ -118,12 +193,15 @@ JSHelper.prototype.isset = function() {
         i = 0,
         undef;
 
-    if (l === 0) {
+    if (l === 0)
+    {
         throw new Error('Empty isset');
     }
 
-    while (i !== l) {
-        if (a[i] === undef || a[i] === null) {
+    while (i !== l)
+    {
+        if (a[i] === undef || a[i] === null)
+        {
             return false;
         }
         i++;
@@ -131,8 +209,15 @@ JSHelper.prototype.isset = function() {
     return true;
 }
 
-/* Empty */
-JSHelper.prototype.empty = function(value) {
+/**
+ * Checks if variable is empty
+ *
+ * @access public
+ * @param  mixed  value Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.empty = function(value)
+{
 
     value = (typeof value === 'undefined' ? false : value);
 
@@ -140,7 +225,8 @@ JSHelper.prototype.empty = function(value) {
 
     if (typeof value === 'number') return value < 1;
 
-    if (typeof value === 'string') {
+    if (typeof value === 'string')
+    {
         if (value.toLowerCase() === 'undefined') return true;
         if (this.is_numeric(value)) return Number(value) < 1;
         if (value === '') return true;
@@ -155,7 +241,15 @@ JSHelper.prototype.empty = function(value) {
 
 }
 
-JSHelper.prototype.is_object = function(mixed_var) {
+/**
+ * Checks if variable is an object
+ *
+ * @access public
+ * @param  mixed  mixed_var Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.is_object = function(mixed_var)
+{
     //  discuss at: http://phpjs.org/functions/is_object/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
     // improved by: Legaev Andrey
@@ -167,79 +261,21 @@ JSHelper.prototype.is_object = function(mixed_var) {
     //   example 3: is_object(null);
     //   returns 3: false
 
-    if (Object.prototype.toString.call(mixed_var) === '[object Array]') {
+    if (Object.prototype.toString.call(mixed_var) === '[object Array]')
+    {
         return false;
     }
     return mixed_var !== null && typeof mixed_var === 'object';
 }
 
-JSHelper.prototype.isNodeList = function(nodes) {
+/**
+ * Checks if variable is a nodelist-array
+ *
+ * @access public
+ * @param  mixed  nodes Variable to evaluate
+ * @return bool
+ */
+JSHelper.prototype.isNodeList = function(nodes)
+{
     return nodes == '[object NodeList]';
-}
-
-JSHelper.prototype.getBrowser = function() {
-    if (this.browser) return this.browser;
-    var nVer = navigator.appVersion;
-    var nAgt = navigator.userAgent;
-    var browserName = navigator.appName;
-    var fullVersion = "" + parseFloat(navigator.appVersion);
-    var majorVersion = parseInt(navigator.appVersion, 10);
-    var nameOffset, verOffset, ix;
-    if ((verOffset = nAgt.indexOf("OPR/")) != -1) {
-        browserName = "Opera";
-        fullVersion = nAgt.substring(verOffset + 4)
-    } else {
-        if ((verOffset = nAgt.indexOf("Opera")) != -1) {
-            browserName = "Opera";
-            fullVersion = nAgt.substring(verOffset + 6);
-            if ((verOffset = nAgt.indexOf("Version")) != -1) {
-                fullVersion = nAgt.substring(verOffset + 8)
-            }
-        } else {
-            if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
-                browserName = "Microsoft Internet Explorer";
-                fullVersion = nAgt.substring(verOffset + 5)
-            } else {
-                if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
-                    browserName = "Chrome";
-                    fullVersion = nAgt.substring(verOffset + 7)
-                } else {
-                    if ((verOffset = nAgt.indexOf("Safari")) != -1) {
-                        browserName = "Safari";
-                        fullVersion = nAgt.substring(verOffset + 7);
-                        if ((verOffset = nAgt.indexOf("Version")) != -1) {
-                            fullVersion = nAgt.substring(verOffset + 8)
-                        }
-                    } else {
-                        if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
-                            browserName = "Firefox";
-                            fullVersion = nAgt.substring(verOffset + 8)
-                        } else {
-                            if ((nameOffset = nAgt.lastIndexOf(" ") + 1) < (verOffset = nAgt.lastIndexOf("/"))) {
-                                browserName = nAgt.substring(nameOffset, verOffset);
-                                fullVersion = nAgt.substring(verOffset + 1);
-                                if (browserName.toLowerCase() == browserName.toUpperCase()) {
-                                    browserName = navigator.appName
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if ((ix = fullVersion.indexOf(";")) != -1) {
-        fullVersion = fullVersion.substring(0, ix)
-    }
-    if ((ix = fullVersion.indexOf(" ")) != -1) {
-        fullVersion = fullVersion.substring(0, ix)
-    }
-    majorVersion = parseInt("" + fullVersion, 10);
-    if (isNaN(majorVersion)) {
-        fullVersion = "" + parseFloat(navigator.appVersion);
-        majorVersion = parseInt(navigator.appVersion, 10)
-    }
-    this.browser = {'name': browserName, 'version': majorVersion };
-
-    return this.browser;
 }

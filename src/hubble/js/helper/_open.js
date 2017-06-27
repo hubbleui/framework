@@ -1,11 +1,21 @@
 /**
- * Helper JS
+ * JavaScript helper library
  *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
  */
-(function() {
 
-    // Library initializer
-    var JSHelper = function() {
+(function()
+{
+    /**
+     * Module constructor
+     *
+     * @access public
+     * @constructor
+     */
+    var JSHelper = function()
+    {
 
         this.version = "1.0.0";
 
@@ -103,7 +113,8 @@
     JSHelper.prototype = {};
 
     // Destructor
-    JSHelper.prototype.destruct = function() {
+    JSHelper.prototype.destruct = function()
+    {
         this.clearEventListeners();
     }
 

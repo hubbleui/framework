@@ -1,27 +1,33 @@
 /**
- * Button ripple
+ * Button wave click effect
  *
- * This module handles the 'wave' effect on click events.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-(function() {
 
+(function()
+{
     /**
-     * @var Helper
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
-     * @constructor
-     * @params null
      * @access public
+     * @constructor
      */
-    var ButtonRipple = function() {
-        
-        /** @access private */
+    var ButtonRipple = function()
+    {
+        /**
+         * List of click-triggers
+         * 
+         * @var array
+         */
         this._containers = Helper.$All('.js-ripple');
         
         if (!Helper.empty(this._containers))
@@ -35,24 +41,24 @@
     /**
      * Module destructor - removes event listeners
      *
-     * @constructor
-     * @params null
      * @access public
      */
-    ButtonRipple.prototype.destruct = function() {
+    ButtonRipple.prototype.destruct = function()
+    {
         this._unbind();
+
         this._containers = [];
     }
 
     /**
      * Event binder - Binds all events on button click
      *
-     * @params null
      * @access private
      */
-    ButtonRipple.prototype._bind = function() {
-
-        for (var i = 0; i < this._containers.length; i++) {
+    ButtonRipple.prototype._bind = function()
+    {
+        for (var i = 0; i < this._containers.length; i++)
+        {
             Helper.addEventListener(this._containers[i], 'click', this._eventHandler);
         }
     }
@@ -60,22 +66,24 @@
     /**
      * Event ubinder - Binds all event handlers on button click
      *
-     * @params null
      * @access private
      */
-    ButtonRipple.prototype._unbind = function() {
-        for (var i = 0; i < this._containers.length; i++) {
+    ButtonRipple.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._containers.length; i++)
+        {
             Helper.removeEventListener(this._containers[i], 'click', this._eventHandler);
         }
     }
 
     /**
-     * Event handler - handles the wave
+     * Event handler - handles the wave effect
      *
-     * @params e event
      * @access private
+     * @params event|null e Browser click event
      */
-    ButtonRipple.prototype._eventHandler = function(e) {
+    ButtonRipple.prototype._eventHandler = function(e)
+    {
         e = e || window.event;
         var container  = this;
         var wave       = document.createElement('span');
@@ -87,20 +95,24 @@
         var x      = e.pageX - coords.left - (container.offsetWidth / 2);
         var y      = e.pageY - coords.top - (container.offsetHeight * 1.3);
        
-
-        Helper.css(wave, {
+        Helper.css(wave, 
+        {
             top: y + 'px',
             left: x + 'px',
             width: size + 'px',
             height: size + 'px'
         });
+
         Helper.addClass(wave, 'animate');
-        setTimeout(function () {
+
+        setTimeout(function ()
+        {
             container.removeChild(wave);
+
         }, 500);
     }
 
-    // Load into Hubble core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('ButtonRipple', ButtonRipple);
 
 })();

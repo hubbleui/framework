@@ -1,29 +1,37 @@
 /**
- * Dropdown buttons
- * 
- * This class manages the click events for dropdown buttons
+ * Dropdown Buttons
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-(function() {
 
+(function()
+{
     /**
-     * @var JSHelper
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
-     * @constructor
-     * @params null
      * @access public
+     * @constructor
      */
-    var DropDowns = function() {
-
-        /** @access private */
+    var DropDowns = function()
+    {
+        /**
+         * Array of click-triggers
+         * 
+         * @var array
+         */
         this._triggers = Helper.$All('.js-drop-trigger');
 
-        if (!Helper.empty(this._triggers)) { 
+        if (!Helper.empty(this._triggers))
+        { 
             this._bind();
         }
 
@@ -33,10 +41,10 @@
     /**
      * Module destructor
      *
-     * @params null
      * @access public
      */
-    DropDowns.prototype.destruct = function() {
+    DropDowns.prototype.destruct = function()
+    {
         this._unbind();
         this._triggers = [];
     }
@@ -44,11 +52,12 @@
     /**
      * Bind click listener to containers
      *
-     * @params null
      * @access private
      */
-    DropDowns.prototype._bind = function() {
-        for (var i = 0; i < this._triggers.length; i++) {
+    DropDowns.prototype._bind = function()
+    {
+        for (var i = 0; i < this._triggers.length; i++)
+        {
             Helper.addEventListener(this._triggers[i], 'click', this._invoke);
         }
         Helper.addEventListener(window, 'click', this._windowClick);
@@ -57,11 +66,12 @@
     /**
      * Unbind listener to containers
      *
-     * @params null
      * @access private
      */
-    DropDowns.prototype._unbind = function() {
-        for (var i = 0; i < this._triggers.length; i++) {
+    DropDowns.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._triggers.length; i++)
+        {
             Helper.removeEventListener(this._triggers[i], 'click', this._invoke);
         }
         Helper.removeEventListener(window, 'click', this._windowClick);
@@ -70,10 +80,11 @@
     /**
      * Click event handler
      *
-     * @param e event
+     * @param  event|null e JavaScript Click event
      * @access private
      */
-    DropDowns.prototype._invoke = function(e) {
+    DropDowns.prototype._invoke = function(e)
+    {
         e = e || window.event;
         e.preventDefault();
         e.stopPropagation();
@@ -93,13 +104,15 @@
     /**
      * Window click event
      *
-     * @param e event
+     * @param event|null e JavaScript click event
      * @access private
      */
-    DropDowns.prototype._windowClick = function(e) {
+    DropDowns.prototype._windowClick = function(e)
+    {
         e = e || window.event;
         e.stopPropagation();
-        if (!Helper.hasClass(e.target, 'js-drop-trigger')) {
+        if (!Helper.hasClass(e.target, 'js-drop-trigger'))
+        {
             var _this = Container.get('DropDowns');
             _this._hideDropDowns();
         }
@@ -111,17 +124,25 @@
      * @param exception (optional) Button to skip
      * @access private
      */
-    DropDowns.prototype._hideDropDowns = function(exception) {
+    DropDowns.prototype._hideDropDowns = function(exception)
+    {
         dropTriggers = Helper.$All('.js-drop-trigger');
         exception    = (typeof exception === 'undefined' ? false : exception);
-        for (var i = 0; i < dropTriggers.length; i++) {
+
+        for (var i = 0; i < dropTriggers.length; i++)
+        {
             var node = dropTriggers[i];
-            if (node === exception) continue;
+
+            if (node === exception)
+            {
+                continue;
+            }
+            
             Helper.removeClass(node, 'active');
         }
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('DropDowns', DropDowns);
 
 })();

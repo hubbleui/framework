@@ -1,36 +1,36 @@
 /**
- * Collapse
+ * Toggle height on click
  *
- * This class handles the toggling of and element's height
- * when a target element is clicked.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
- (function() {
 
+(function()
+{
     /**
-     * @var Helper obj
+     * JS Helper reference
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
-     * @constructor
-     * @params null
      * @access public
-     * @return this
+     * @constructor
      */
-    var Collapse = function() {
-                
+    var Collapse = function()
+    {
+        /**
+         * Array of click-triggers
+         * 
+         * @var array
+         */
         this._nodes = Helper.$All('.js-collapse');
                 
-        // bind listeners
-        if (!Helper.empty(this._nodes)) {
-            for (var i = 0; i < this._nodes.length; i++) {
-                Helper.addEventListener(this._nodes[i], 'click', this._eventHandler);
-            }
-        }
+        this._bind();
         
         return this;
     }
@@ -40,22 +40,51 @@
      *
      * @access public
      */
-    Collapse.prototype.destruct = function() {
-        for (var i = 0; i < this._nodes.length; i++) {
+    Collapse.prototype.destruct = function()
+    {
+        this._unbind();
+
+        this._nodes = [];
+    }
+
+    /**
+     * Event binder - Binds all events on button click
+     *
+     * @access private
+     */
+    Collapse.prototype._bind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
+            Helper.addEventListener(this._nodes[i], 'click', this._eventHandler);
+        }
+    }
+
+    /**
+     * Event unbinder - Removes all events on button click
+     *
+     * @access private
+     */
+    Collapse.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
             Helper.removeEventListener(this._nodes[i], 'click', this._eventHandler);
         }
-        this._nodes  = [];
     }
 
     /**
      * Handle the click event
      *
-     * @param e event
+     * @param event|null e JavaScript click event
      * @access private
      */
-    Collapse.prototype._eventHandler = function(e) {
+    Collapse.prototype._eventHandler = function(e)
+    {
         e = e || window.event;
-        if (Helper.isNodeType(this, 'a')) {
+
+        if (Helper.isNodeType(this, 'a'))
+        {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -66,10 +95,11 @@
         var easing   = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
 
         Container.get('ToggleHeight', targetEl, 0, speed, easing, false);
+        
         Helper.toggleClass(clicked, 'active');
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('Collapse', Collapse);
 
 }());

@@ -15,9 +15,7 @@
 
 // Vendors
 @import "vendor/_smoothScroll.js";
-@import "vendor/_scrollbars.js";
 @import "vendor/_flickity.js";
-@import "vendor/_velocity.js";
 
 // Utility
 @import "utility/_toggleHeight.js";
@@ -29,12 +27,14 @@
 @import "utility/_formValidator.js";
 
 // DOM Module
-@import "dom/_scrollbar.js";
+@import "dom/scrollbar/_handler.js";
+@import "dom/scrollbar/_scrollbars.js";
 @import "dom/_collapse.js";
 @import "dom/_dropdown.js";
 @import "dom/_tabs.js";
-@import "dom/_popover.js";
-@import "dom/_buttonWave.js";
+@import "dom/popover/_handler.js";
+@import "dom/popover/_popovers.js";
+@import "dom/_buttonRipple.js";
 @import "dom/_inputMasks.js";
 @import "dom/_fileInput.js";
 @import "dom/_messages.js";

@@ -1,34 +1,36 @@
 /**
- * Tabs
+ * Tab Nav
  *
- * The Tabs module allows handles the click events for 
- * for the tab component.
- *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-(function() {
 
+(function()
+{
     /**
-     * @var Helper obj
+     * Helper instance
+     * 
+     * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
      *
-     * @class
      * @constructor
-     * @params null
      * @access public
-     * @return this
      */
-    var TabNav = function() {
-        
+    var TabNav = function()
+    {
         // Find nodes
         this._nodes = Helper.$All('.js-tab-nav');
 
         // If nothing to do destruct straight away
-        if (!Helper.empty(this._nodes)) {
-            for (var i = 0; i < this._nodes.length; i++) {
+        if (!Helper.empty(this._nodes))
+        {
+            for (var i = 0; i < this._nodes.length; i++)
+            {
                 this._bindDOMListeners(this._nodes[i]);
             }
         }
@@ -39,13 +41,15 @@
     /**
      * Module destructor - unbinds click events
      *
-     * @params null
      * @access public
      */
-    TabNav.prototype.destruct = function() {
-        for (var i = 0; i < this._nodes.length; i++) {
+    TabNav.prototype.destruct = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
             this._unbindDOMListeners(this._nodes[i]);
         }
+
         this._nodes = [];
     }
 
@@ -55,9 +59,12 @@
      * @params navWrap node
      * @access private
      */
-    TabNav.prototype._bindDOMListeners = function(navWrap) {
+    TabNav.prototype._bindDOMListeners = function(navWrap)
+    {
         var links  = Helper.$All('a', navWrap);
-        for (var i = 0; i < links.length; i++) {
+        
+        for (var i = 0; i < links.length; i++)
+        {
             Helper.addEventListener(links[i], 'click', this._eventHandler);
         }
     }
@@ -68,9 +75,12 @@
      * @params navWrap node
      * @access private
      */
-    TabNav.prototype._unbindDOMListeners = function(navWrap) {
+    TabNav.prototype._unbindDOMListeners = function(navWrap)
+    {
         var links    = Helper.$All('a', navWrap);
-        for (var i = 0; i < links.length; i++) {
+        
+        for (var i = 0; i < links.length; i++)
+        {
             Helper.removeEventListener(links[i], 'click', this._eventHandler);
         }
     }
@@ -78,10 +88,11 @@
     /**
      * Click event handler
      *
-     * @params e event
+     * @param event|null e JavaScript click event
      * @access private
      */
-    TabNav.prototype._eventHandler = function(e) {
+    TabNav.prototype._eventHandler = function(e)
+    {
         e = e || window.event;
         e.preventDefault();
 
@@ -109,7 +120,7 @@
         
     }
 
-    // Load into hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('TabNav', TabNav);
 
 })();
