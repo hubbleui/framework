@@ -253,28 +253,6 @@ html, body {
   text-decoration: none;
 }
 
-code, pre {
-  font-family: menlo,Consolas,"Liberation Mono",Courier,monospace;
-  -webkit-font-smoothing: initial;
-  -moz-osx-font-smoothing: initial;
-  line-height: 1.8;
-  font-size: 1.4rem;
-  color: #1e2629;
-  background-color: #F3F6F5;
-  border: 1px solid #E1E8EC;
-}
-
-pre {
-  padding: 1.5rem 2rem;
-  overflow: auto;
-}
-
-code {
-  line-height: inherit;
-  padding: .2rem .4rem;
-  border-radius: 2px;
-}
-
 code[class*=language-],
 pre[class*=language-] {
   border-radius: 2px;
@@ -410,7 +388,7 @@ code:not([class]) {
 }
 
 .code-content-example {
-  border: 1px solid #e1e8ec;
+  border: 1px solid #f4f4f4;
   border-radius: 3px;
   border-bottom-left-radius: 1px;
   border-bottom-right-radius: 1px;
@@ -420,7 +398,6 @@ code:not([class]) {
 
 .code-content-example + .highlight-wrap {
   border-radius: 3px;
-  border-top-color: transparent;
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
 }

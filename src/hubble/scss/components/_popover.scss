@@ -13,11 +13,11 @@
     background-color: $popover-title-bg;
     padding: $popover-content-padding;
     margin-bottom: 0;
-    border: 1px solid darken($popover-title-bg, 10);
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
 }
 .popover-content {
     padding: 20px;
-    border: 1px solid darken($popover-title-bg, 10);
     border-top: none;
 }
 .popover-title .glyph-icon {

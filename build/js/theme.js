@@ -2,7 +2,7 @@ var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScop
 punctuation:/[;[\]()`,.]/};
 
 (function() {
-    var Helper = Modules.require('JSHelper');
+    var Helper = Container.get('JSHelper');
     function a() {
         var a = "https://twitter.com/intent/tweet?hashtags=hubble&original_referer=https%3A%2F%2Fhubbleui.github.io%2F&text=Hubble%20UI&tw_p=tweetbutton&url=https%3A%2F%2Fhubbleui.github.io%2F";
         window.open(a, "_blank", "location=yes,height=570,width=520,scrollbars=yes,status=yes")
@@ -15,7 +15,7 @@ punctuation:/[;[\]()`,.]/};
 })();
 
 (function() {
-    var Helper = Modules.require('JSHelper');
+    var Helper = Container.get('JSHelper');
 
     function a(a) {
         var c = b[a],
@@ -42,7 +42,7 @@ punctuation:/[;[\]()`,.]/};
 
 
 (function() {
-    var Helper = Modules.require('JSHelper');
+    var Helper = Container.get('JSHelper');
 
     var menutrigger = Helper.$('.js-doc-side-trigger');
     var docsMenu    = Helper.$('.js-docs-menu');
@@ -88,7 +88,4 @@ punctuation:/[;[\]()`,.]/};
     });
 
 })();
-
-
-
 

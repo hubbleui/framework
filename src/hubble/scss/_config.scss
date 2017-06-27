@@ -141,9 +141,8 @@ $footerHeight:              500px;
 
 // Blockquote
 $bq-color:                  $body-color;
-$bq-bg:                     $body-bg;
-$bq-box-shadow:             $box-shadow-out;
-$bq-border-left:            $brand-primary;
+$bq-bg:                     darken($body-bg, 5);
+$bq-box-shadow:             none;
 $bq-padding:                2rem;
 
 // Button

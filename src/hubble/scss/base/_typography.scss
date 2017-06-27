@@ -130,11 +130,11 @@ del, .del { text-decoration: line-through; }
 // address
 address,
 .address {
-    font-family:      $base-font-family;
-    font-weight:      $base-font-weight;
-    line-height:      $base-line-height;
-    color:            $body-color;
-    font-size: $base-font-size;
+    font-family: $base-font-family;
+    font-weight: $base-font-weight;
+    line-height: $base-line-height;
+    color:       $body-color;
+    font-size:   $base-font-size;
     margin: 0 0 1rem 0;
 }
 
@@ -147,7 +147,7 @@ code, pre {
     -moz-osx-font-smoothing: initial;
     background-color: $gray-lightest;
     border-radius: $border-radius;
-    border: 1px solid darken($gray-lightest, 10);
+    border: 1px solid $gray-lightest;
 }
 code {
     padding: .2rem .4rem;

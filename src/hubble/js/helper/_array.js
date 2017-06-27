@@ -1,4 +1,20 @@
-/* In array */
+/**
+ * Array utility functions
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ */
+
+/**
+ * Checks if an array contains a value
+ *
+ * @access public
+ * @param  string needle    The value to search for
+ * @param  array  haystack  The target array to index
+ * @param  bool   argStrict Compare strict
+ * @return bool
+ */
 JSHelper.prototype.in_array = function(needle, haystack, argStrict) {
 
     var key = '',
@@ -25,14 +41,27 @@ JSHelper.prototype.in_array = function(needle, haystack, argStrict) {
     return false;
 }
 
-JSHelper.prototype.clean_inner_html = function(array) {
-    return array.join('');
-}
-
+/**
+ * Reduce an array to n values
+ * 
+ * @access public
+ * @param  array  array The target array to change
+ * @param  int    count The amount of items to reduce the array to
+ * @return array
+ */
 JSHelper.prototype.array_reduce = function(array, count) {
     return this.array_slice(array, 0, count);
 }
 
+/**
+ * Implode an array
+ * 
+ * @access public
+ * @param  array  array  The target array to implode
+ * @param  string prefix Imploding prefix
+ * @param  string suffix Imploding sufix (optional) (default )
+ * @return string
+ */
 JSHelper.prototype.implode = function(array, prefix, suffix) {
     var str = '';
     for (i = 0; i < array.length; i++) {
@@ -46,6 +75,16 @@ JSHelper.prototype.implode = function(array, prefix, suffix) {
     return str;
 }
 
+/**
+ * PHP "array_slice" function
+ * 
+ * @access public
+ * @param  array array         The target array to slice
+ * @param  int   offst         At what offset to start the slice
+ * @param  int   lgth          Target ending length
+ * @param  bool  preserve_keys Preserve array keys (optional) (default false)
+ * @return array
+ */
 JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
     //  discuss at: http://phpjs.org/functions/array_slice/
     // original by: Brett Zamir (http://brett-zamir.me)
@@ -119,6 +158,15 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
     }
 }
 
+/**
+ * Paginates an array of data
+ * 
+ * @access public
+ * @param  array array The target array to paginate
+ * @param  int   page  The current page
+ * @param  int   limit Data per page
+ * @return array
+ */
 JSHelper.prototype.paginate = function(array, page, limit) {
     page = (page === false || page === 0 ? 1 : page);
     limit = (limit ? limit : 10);
@@ -139,6 +187,14 @@ JSHelper.prototype.paginate = function(array, page, limit) {
     return paged;
 }
 
+/**
+ * Foreach loop
+ * 
+ * @access public
+ * @param  object  obj       The target object to loop over
+ * @param  closure callback  Callback to apply to each iteration
+ * @param  array   args      Array of params to apply to callback (optional) (default null)
+ */
 JSHelper.prototype.foreach = function(obj, callback, args) {
     var value, i = 0,
         length = obj.length,
@@ -190,7 +246,13 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
     return obj;
 }
 
-/* Clone an object */
+/**
+ * Clone an object
+ * 
+ * @access public
+ * @param  object  src       The object to clone
+ * @return object
+ */
 JSHelper.prototype.cloneObj = function(src) {
     var clone = {};
     for (var prop in src) {
@@ -199,7 +261,13 @@ JSHelper.prototype.cloneObj = function(src) {
     return clone;
 }
 
-/*Arrray merge */
+/**
+ * Merge multiple arrays together
+ * 
+ * @access public
+ * @param  ...   List of arrays to merge
+ * @return array
+ */
 JSHelper.prototype.array_merge = function () {
   //  discuss at: http://phpjs.org/functions/array_merge/
   // original by: Brett Zamir (http://brett-zamir.me)
@@ -263,6 +331,13 @@ JSHelper.prototype.array_merge = function () {
   return retObj;
 }
 
+/**
+ * Array filter
+ * 
+ * @access public
+ * @param  array array Target array to filter
+ * @return array
+ */
 JSHelper.prototype.array_filter = function(array) {
     var result = [];
     for (var i = 0; i < array.length; i++) {
@@ -272,7 +347,13 @@ JSHelper.prototype.array_filter = function(array) {
     return result;
 }
 
-/* IS ARRAY */
+/**
+ * Is array
+ * 
+ * @access public
+ * @param  array array Target array to filter
+ * @return bool
+ */
 JSHelper.prototype.is_array = function(mixed_var) {
   //  discuss at: http://phpjs.org/functions/is_array/
   // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)

@@ -238,7 +238,7 @@ code, pre {
   -moz-osx-font-smoothing: initial;
   background-color: #f4f4f4;
   border-radius: 2px;
-  border: 1px solid #dbdbdb;
+  border: 1px solid #f4f4f4;
 }
 
 code {
@@ -2507,18 +2507,14 @@ dl dd:last-child {
 blockquote {
   margin: 0 0 1em;
   border-radius: 2px;
-  -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  -webkit-box-shadow: none;
+          box-shadow: none;
   padding: 2rem;
   color: #1d1d1d;
-  background-color: #ffffff;
-  border-left: 10px solid #ff3366;
+  background-color: #f2f2f2;
 }
 blockquote p {
   padding: 0;
-}
-blockquote.bq-danger, blockquote.bq-success, blockquote.bq-info, blockquote.bq-warning, blockquote.bq-primary {
-  border-left: 10px solid rgba(0, 0, 0, 0.16);
 }
 blockquote.bq-danger p, blockquote.bq-success p, blockquote.bq-info p, blockquote.bq-warning p, blockquote.bq-primary p {
   color: rgba(0, 0, 0, 0.57);
@@ -2538,19 +2534,19 @@ blockquote.bq-primary pre {
   background-color: rgba(0, 0, 0, 0.22);
 }
 blockquote.bq-danger {
-  background-color: #ff9999;
+  background-color: #ffcccc;
 }
 blockquote.bq-success {
-  background-color: #99e8b7;
+  background-color: #c3f1d4;
 }
 blockquote.bq-info {
-  background-color: #a0c7ea;
+  background-color: #cae0f3;
 }
 blockquote.bq-warning {
-  background-color: #ffe999;
+  background-color: #fff4cc;
 }
 blockquote.bq-primary {
-  background-color: #ff668c;
+  background-color: #ff99b3;
 }
 blockquote > :last-child {
   margin-bottom: 0;
@@ -5234,12 +5230,12 @@ form.success .msg-success {
   background-color: #DADADA;
   padding: 8px 14px;
   margin-bottom: 0;
-  border: 1px solid #c1c1c1;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
 }
 
 .popover-content {
   padding: 20px;
-  border: 1px solid #c1c1c1;
   border-top: none;
 }
 

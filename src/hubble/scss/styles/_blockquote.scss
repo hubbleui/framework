@@ -5,7 +5,6 @@ blockquote {
     padding: $bq-padding;
     color: $bq-color;
     background-color: $bq-bg;
-    border-left: 10px solid $bq-border-left;
 
     p {
     	padding: 0;
@@ -15,7 +14,7 @@ blockquote {
     &.bq-info,
     &.bq-warning,
     &.bq-primary {
-        border-left: 10px solid rgba(0, 0, 0, 0.16);
+        
     	p {
     		color: rgba(0, 0, 0, 0.57);
     	}
@@ -31,19 +30,19 @@ blockquote {
         }
     }
     &.bq-danger {
-    	background-color: lighten($brand-danger, 10);
+    	background-color: lighten($brand-danger, 20);
     }
     &.bq-success {
-    	background-color: lighten($brand-success, 10);
+    	background-color: lighten($brand-success, 20);
     }
     &.bq-info {
-    	background-color: lighten($brand-info, 10);
+    	background-color: lighten($brand-info, 20);
     }
     &.bq-warning {
-    	background-color: lighten($brand-warning, 10);
+    	background-color: lighten($brand-warning, 20);
     }
     &.bq-primary {
-        background-color: lighten($brand-primary, 10);
+        background-color: lighten($brand-primary, 20);
     }
     >:last-child {
         margin-bottom: 0;

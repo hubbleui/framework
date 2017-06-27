@@ -79,7 +79,7 @@
 
 // Outline variants
 .btn.btn-outline {
-    @include button-outline(#76838f);
+    @include button-outline($gray);
 }
 .btn-primary.btn-outline {
     @include button-outline($brand-primary);
@@ -105,7 +105,7 @@
 
 // Pure variants
 .btn.btn-pure {
-    @include button-pure(#76838f);
+    @include button-pure($gray);
 }
 .btn-primary.btn-pure {
     @include button-pure($brand-primary);
