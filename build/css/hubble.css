@@ -4239,13 +4239,11 @@ form.success .msg-success {
 }
 
 .card-unstyled {
-  background-color: transparent;
   border: none;
   border-radius: 0;
 }
 .card-unstyled .card-header,
 .card-unstyled .card-footer {
-  background-color: transparent;
   border: none;
   border-radius: 0;
 }
