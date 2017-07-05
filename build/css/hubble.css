@@ -4153,6 +4153,13 @@ form.success .msg-success {
   border-bottom-right-radius: 2px;
 }
 
+.card-img,
+.card-img-top,
+.card-img-bottom {
+  width: 100%;
+  height: auto;
+}
+
 .card-header {
   padding: 0.75rem 1.25rem;
   margin-bottom: 0;
