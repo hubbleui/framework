@@ -16,13 +16,6 @@
     var Helper = Hubble.helper();
 
     /**
-     * Window click settimeout
-     * 
-     * @var mixed
-     */
-    var clickTimeout;
-
-    /**
      * Module constructor
      *
      * @access public
@@ -97,7 +90,7 @@
         else
         {
             Helper.removeEventListener(trigger, 'mouseenter', this._hoverOver);
-            Helper.removeEventListener(trigger, 'mouseleave', this._hoverLeave);
+            Helper.removeEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
         }
     }
 
@@ -142,9 +135,24 @@
         }
         else
         {
+            var _this = this;
             Helper.addEventListener(trigger, 'mouseenter', this._hoverOver);
-            Helper.addEventListener(trigger, 'mouseleave', this._hoverLeave);
+            Helper.addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
         }
+    }
+
+    /**
+     * Timeout handler for hoverleave
+     *
+     * @access private
+     */
+    Popovers.prototype._hoverLeavTimeout = function(e)
+    {
+        e = e || window.event;
+        setTimeout(function()
+        {
+            Container.get('Popovers')._hoverLeave(e);
+        }, 300);
     }
 
     /**
@@ -167,14 +175,24 @@
      *
      * @access private
      */
-    Popovers.prototype._hoverLeave = function()
+    Popovers.prototype._hoverLeave = function(e)
     {
-        var trigger    = this;
-        var _this      = Container.get('Popovers');
-        var popHandler = _this._getHandler(trigger);
-        if (!Helper.hasClass(trigger, 'popped')) return;
-        popHandler.remove();
-        Helper.removeClass(trigger, 'popped');
+        var _this = Container.get('Popovers');
+        var hovers = Helper.$All(':hover');
+        for (var i = 0; i < hovers.length; i++)
+        {
+            if (Helper.hasClass(hovers[i], 'popover'))
+            {
+                hovers[i].addEventListener('mouseleave', function(_e)
+                {
+                    _e = _e || window.event;
+                    _this._hoverLeave(_e);
+                });
+                return;
+            }
+        }
+
+        _this._removeAll();
     }
 
     /**
@@ -245,8 +263,6 @@
             {
                 return;
             }
-
-            console.log('clicked window');
 
             _this._removeAll();
         });
