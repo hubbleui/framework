@@ -23,11 +23,6 @@
      */
     var _popHandler = function(options)
     {
-        if (!(this instanceof _popHandler))
-        {
-            return new _popHandler(options);
-        }
-
         this.trigger      = options.target;
         this.options      = options;
         this.el           = this.buildPopEl();
@@ -45,12 +40,8 @@
 
         this.render = function()
         {
-            this.el.style.opacity    = '0';
-            this.el.style.visibility = 'hidden';
             document.body.appendChild(this.el);
             this.stylePop();
-            this.el.style.removeProperty('opacity');
-            this.el.style.removeProperty('visibility');
             this.el.classList.add(this.animation);
         }
         return this;

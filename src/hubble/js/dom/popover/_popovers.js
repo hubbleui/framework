@@ -16,6 +16,13 @@
     var Helper = Hubble.helper();
 
     /**
+     * Window click settimeout
+     * 
+     * @var mixed
+     */
+    var clickTimeout;
+
+    /**
      * Module constructor
      *
      * @access public
@@ -42,6 +49,8 @@
             {
                 this._bind(this._nodes[i]);
             }
+
+            this._addWindowClickEvent();
         }
 
         return this;
@@ -107,9 +116,8 @@
         var evnt           = trigger.dataset.popoverEvent;
         var animation      = trigger.dataset.popoverAnimate || 'pop';
         var target         = trigger.dataset.popoverTarget;
-        var closeBtn       = evnt === 'click' ? '<span class="glyph-icon glyph-icon-cross3 js-remove-pop"></span>' : ''; 
+        var closeBtn       = evnt === 'click' ? '<span class="glyph-icon glyph-icon-cross js-remove-pop"></span>' : ''; 
         var pop            = '<h3 class="popover-title">'+title+closeBtn+'</h3><div class="popover-content"><p>'+content+'</p></div>';
-
 
         if (target)
         {
@@ -213,31 +221,35 @@
             _this._removeAll();
             popHandler.render();
             Helper.addClass(trigger, 'popped');
-            setTimeout(function(){ window.addEventListener('click', _this._removeClickPop); }, 300);
         }
     }
 
     /**
-     * Click somewhere else event handler to remove
+     * Remove all popovers when anything is clicked
      *
-     * @param event|null e JavaScript click event
      * @access private
      */
-    Popovers.prototype._removeClickPop = function(e)
+    Popovers.prototype._addWindowClickEvent = function()
     {
-        e = e || window.event;
-        var clicked = e.target;
+        var _this = this;
 
-        if ( (Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closestClass(clicked, 'popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
+        window.addEventListener('click', function (e)
         {
-            return;
-        }
+            e = e || window.event;
+            var clicked = e.target;
 
-        var _this = Container.get('Popovers');
+            // Clicked inside the popver itself,
+            // Clicked a popover trigger
+            // Clicked a close trigger inside the popover
+            if ( (Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closestClass(clicked, 'popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
+            {
+                return;
+            }
 
-        _this._removeAll();
+            console.log('clicked window');
 
-        window.removeEventListener("click", _this._removeClickPop);
+            _this._removeAll();
+        });
     }
     
     /**
