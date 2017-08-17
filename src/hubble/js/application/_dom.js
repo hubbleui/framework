@@ -17,7 +17,7 @@
      */
     var Dom = function()
     {
-    	this._modules = {};
+        this._modules = {};
 
         return this;
     };
@@ -31,7 +31,7 @@
      */
     Dom.prototype.boot = function()
     {
-    	this._bindModules();
+        this._bindModules();
     }
 
     /**
@@ -55,19 +55,43 @@
     }
 
     /**
-     * Refresh the DOM modiules
+     * Refresh the DOM modiules or a string module
      *
      * @access public
-     * @param string name   Name of the module
-     * @param object module Uninvoked module object
+     * @param string name Name of the module (optional) (default false)
      */
-    Dom.prototype.refresh = function()
+    Dom.prototype.refresh = function(module)
     {
-        this._unbindModules();
+        module = (typeof module === 'undefined' ? false : module);
 
-        this._bindModules();
+        if (module)
+        {
+            for (var key in this._modules)
+            {
+                if (!this._modules.hasOwnProperty(key))
+                {
+                    continue;
+                }
 
-        Container.get('JSHelper').collectGarbage();
+                if (module === key)
+                {
+                    this._unbindModule(key);
+
+                    this._bindModule(key);
+
+                    Container.get('JSHelper').collectGarbage();
+                }
+            }   
+        }
+        else
+        {
+            this._unbindModules();
+
+            this._bindModules();
+
+            Container.get('JSHelper').collectGarbage();
+        }
+        
     }
 
     /**
