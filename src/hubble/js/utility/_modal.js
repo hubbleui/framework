@@ -317,12 +317,26 @@
     Modal.prototype._centerModal = function(centered) {
         var el            = this._modalInner;
         var computedStyle = window.getComputedStyle(el);
-        var h             = el.scrollHeight;
-        h                 = parseInt(h);
-        if (centered) {
-            el.style.marginTop  = '-' + (h/2) + 'px';
+        var modalH        = parseInt(el.offsetHeight);
+        var windowH       = window.innerHeight|| document.documentElement.clientHeight|| getElementsByTagName('body')[0].clientHeight;
+        
+        // If the window height is less than the modal dialog
+        // We need to adjust the dialog so it is at the top of the page
+        if (centered)
+        {
+            if (windowH <= modalH)
+            {
+                el.style.marginTop  = '0px';
+                el.style.top  = '0';
+            }
+            else
+            {
+                el.style.marginTop  = '-' + (modalH/2) + 'px';
+                el.style.top  = '50%';
+            }
         }
-        else {
+        else
+        {
            el.style.top  = '0';
         }
     }
