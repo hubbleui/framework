@@ -525,6 +525,15 @@ JSHelper.prototype.toCamelCase = function(str)
         .replace(/ /g, '');
 }
 
+JSHelper.prototype.camelCaseToHyphen = function(str)
+{
+     return str
+        // insert a hyphen between lower & upper
+        .replace(/([a-z])([A-Z])/g, '$1-$2')
+        // hyphen before last upper in a sequence followed by lower
+        .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1-$2$3').toLowerCase();
+}
+
 
 JSHelper.prototype.explode = function(delimiter, string, limit)
 {

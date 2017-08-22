@@ -10,6 +10,7 @@
 @import "helper/_array.js";
 @import "helper/_misc.js";
 @import "helper/_events.js";
+@import "helper/_animate.js";
 @import "helper/_browser.js";
 @import "helper/_close.js";
 

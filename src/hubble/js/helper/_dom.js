@@ -309,7 +309,26 @@ JSHelper.prototype.removeFromDOM = function(el)
  */
 JSHelper.prototype.removeStyle = function(el, prop)
 {
-    prop = (typeof prop === 'undefined' ? 'style' : this.toCamelCase(prop));
+    if (typeof prop === 'undefined')
+    {
+        prop = 'style';
+    }
+    else
+    {
+        if (Object.prototype.toString.call(prop) === '[object Array]')
+        {
+            for (var i = 0; i < prop.length; i++)
+            {
+                this.removeStyle(el, prop[i]);
+            }
+
+            return;
+        }
+        else
+        {
+            prop = this.toCamelCase(prop);
+        }
+    }
 
     if (el.style.removeProperty)
     {
@@ -479,29 +498,6 @@ JSHelper.prototype.getCoords = function(el)
 }
 
 /**
- * Get an element's currently displaying style
- *
- * @access public
- * @param  node   el   Target element
- * @param  string prop CSS property to check
- * @return string
- */
-JSHelper.prototype.getStyle = function(el, prop)
-{
-    if (window.getComputedStyle)
-    {
-        return window.getComputedStyle(el, null).getPropertyValue(prop);
-    }
-    else
-    {
-        if (el.currentStyle)
-        {
-            return el.currentStyle[prop];
-        }
-    }
-}
-
-/**
  * Triggers a native event on an element
  *
  * @access public
@@ -574,7 +570,6 @@ JSHelper.prototype.getFormInputs = function(form)
  */
 JSHelper.prototype.getInputValue = function(input)
 {
-
     if (input.type == "checkbox")
     {
         var val    = '';
@@ -633,138 +628,12 @@ JSHelper.prototype.innerHTML = function(target, content, append)
 }
 
 /**
- * Set CSS value(s) on element
+ * Check if an element is in current viewport
  *
  * @access public
- * @param  node   el     Target DOM node
- * @param  string|object Assoc array of property->value or string property
- * @example JSHelper.css(node, { display : 'none' });
- * @example JSHelper.css(node, 'display', 'none');
+ * @param  node   el Target DOM node
+ * @return bool
  */
-JSHelper.prototype.css = function(el, property, value)
-{
-    // If their is no value and property is an object
-    if (this.is_object(property))
-    {
-        for (var key in property)
-        {
-            if (!property.hasOwnProperty(key))
-            {
-                continue;
-            }
-
-            this.css(el, key, property[key]);
-        }
-    }
-    else
-    {
-        if (this.isset(this.cssEasings[value]))
-        {
-            value = this.cssEasings[value];
-        }
-
-        if (this.in_array(property, this.cssPrefixable))
-        {
-            for (var i = 0; i < this.cssPrefixes.length; i++)
-            {
-                var prefix     = this.cssPrefixes[i];
-                var prop       = this.toCamelCase(prefix + property);
-                el.style[prop] = value;
-            }
-        }
-        else
-        {
-            var prop = this.toCamelCase(property);
-            
-            el.style[prop] = value;
-        }
-    }
-}
-
-/**
- * Animate a css proprety
- *
- * @access public
- * @param  node   el          Target DOM node
- * @param  string cssProperty CSS property
- * @param  mixed  from        Start value
- * @param  mixed  to          Ending value
- * @param  int    time        Animation time in ms
- * @param  string easing      Easing function
- */
-JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
-{
-    // Set defaults if values were not provided;
-    time   = (typeof time === 'undefined' ? 300 : time);
-    easing = (typeof easing === 'undefined' || !this.isset(this.cssEasings[easing]) ? 'ease' : this.cssEasings[easing]);
-
-    // Width and height need to use js to get the starting size
-    // if it was set to auto/initial/null
-    if ((cssProperty === 'height' || cssProperty === 'width') && (from === 'auto' || from === null || from === 'initial') )
-    {
-        if (cssProperty === 'height')
-        {
-            from = el.clientHeight || el.offsetHeight;
-        }
-        else
-        {
-            from = el.clientWidth || el.offsetWidth;
-        }
-
-        this.css(el, cssProperty, from);
-    }
-
-    // Ortherwise set the current style or the defined "from"
-    else
-    {
-        if (from === 'initial' || from === 'auto' ||  from === null)
-        {
-            this.css(el, cssProperty, this.getStyle(el, cssProperty));
-        }
-        else
-        {
-            this.css(el, cssProperty, from);
-        }
-    }
-
-    var transitions         = [];
-    var computedStyle       = window.getComputedStyle(el);
-    var existingTransitions = computedStyle.transition;
-
-    if (existingTransitions !== 'none' && existingTransitions !== 'all 0s ease 0s')
-    {
-        transitions.push(existingTransitions);
-        
-        transitions.push(cssProperty + ' ' + time + 'ms ' + easing);
-        
-        el.style.transition = transitions.join(', ');
-    }
-    else
-    {
-        this.css(el, 'transition', cssProperty + ' ' + time + 'ms ' + easing);
-    }
-
-    this.css(el, cssProperty, to);
-
-    
-    // Add an event listener to check when the transition has finished
-    var _this = this;
-
-    el.addEventListener('transitionend', function transitionEnd(e)
-    {
-        e = e || window.event;
-
-        if (e.propertyName == cssProperty)
-        {
-            _this.removeStyle(el, 'transition');
-
-            el.removeEventListener('transitionend', transitionEnd, false);
-        }
-
-    }, false);
-}
-
-
 JSHelper.prototype.inViewport = function(el)
 {
     
@@ -778,14 +647,24 @@ JSHelper.prototype.inViewport = function(el)
     );
 }
 
+/**
+ * Aria hide an element
+ *
+ * @access public
+ * @param  node   el Target DOM node
+ */
 JSHelper.prototype.hideAria = function(el)
 {
     el.setAttribute("aria-hidden", 'true');
 }
 
+/**
+ * Aria show an element
+ *
+ * @access public
+ * @param  node   el Target DOM node
+ */
 JSHelper.prototype.showAria = function(el)
 {
     el.setAttribute("aria-hidden", 'false');
 }
-
-

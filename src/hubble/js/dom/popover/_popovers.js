@@ -196,6 +196,23 @@
     }
 
     /**
+     * Hover leave event handler
+     *
+     * @access private
+     */
+    Popovers.prototype._onWindowMouseOver = function(e)
+    {
+        e = e || window.event;
+
+        if (Helper.closestClass(e.target, 'popover'))
+        {
+            return;
+        }
+
+        window.removeEventListener('mouseover', _onMouseOverWindow);
+    }
+
+    /**
      * Window resize event handler
      *
      * @access private
