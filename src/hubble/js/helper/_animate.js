@@ -77,18 +77,28 @@ JSHelper.prototype._shortHandExpand = function(property, recurse)
  *
  * @access private
  * @param  node   el   Target element
- * @param  string prop CSS property to check (in camelCase)
+ * @param  string prop CSS property to check (in camelCase) (optional)
  * @return mixed
  */
 JSHelper.prototype._computeStyle = function(el, property)
 {
     if (window.getComputedStyle)
     {
-        return window.getComputedStyle(el, null)[property];
+        if (property)
+        {
+            return window.getComputedStyle(el, null)[property];
+        }
+
+        return window.getComputedStyle(el, null);
+        
     }
     if (el.currentStyle)
     {
-        return el.currentStyle[property];
+        if (property)
+        {
+            return el.currentStyle[property];
+        }
+        return el.currentStyle;
     }
 
     return '';
@@ -364,5 +374,3 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
 
     }, false);
 }
-
-

@@ -132,14 +132,13 @@
 
         if (Helper.isset(url['fragment']) && url['fragment'] !== '')
         {
-
             var waypoint = Helper.trim(url['fragment'], '/');
             var options  = {
-                speed:   50,
+                speed:   100,
                 easing: 'Linear'
             };
             var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
-            
+
             if (!Helper.nodeExists(targetEl)) targetEl = Helper.$('#' + waypoint);
 
             if (Helper.nodeExists(targetEl))

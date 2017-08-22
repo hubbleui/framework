@@ -93,8 +93,9 @@
         var targetEl = Helper.$('#'+clicked.dataset.collapseTarget);
         var speed    = parseInt(clicked.dataset.collapseSpeed) || 350;
         var easing   = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
+        var opacity  = clicked.dataset.withOpacity;
 
-        Container.get('ToggleHeight', targetEl, 0, speed, easing, false);
+        Container.get('ToggleHeight', targetEl, 0, speed, easing, opacity);
         
         Helper.toggleClass(clicked, 'active');
     }
