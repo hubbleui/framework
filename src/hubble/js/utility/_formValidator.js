@@ -67,7 +67,17 @@
             var __wrap = Helper.closestClass(this._invalids[j], 'form-field');
             if (Helper.nodeExists(__wrap)) Helper.addClass(__wrap, 'danger');
         }
-    };
+    }
+
+    /**
+     * Remove errored inputs
+     *
+     * @access public
+     */
+    FormValidator.prototype.clearInvalid = function()
+    {
+        this._clearForm();
+    }
 
     /**
      * Show form result

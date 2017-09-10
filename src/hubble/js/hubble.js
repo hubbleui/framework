@@ -26,6 +26,8 @@
 @import "utility/_notification.js";
 @import "utility/_ajax.js";
 @import "utility/_formValidator.js";
+@import "utility/dynamicUI/_handler.js";
+@import "utility/dynamicUI/_dynamicUi.js";
 
 // DOM Module
 @import "dom/scrollbar/_handler.js";
