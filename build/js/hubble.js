@@ -6569,7 +6569,7 @@ JSHelper.prototype.isRetina = function()
 
 (function()
 {
-	/**
+    /**
      * JS Helper
      * 
      * @var obj
@@ -6641,7 +6641,7 @@ JSHelper.prototype.isRetina = function()
      */
     (function(DOMParser){var DOMParser_proto=DOMParser.prototype,real_parseFromString=DOMParser_proto.parseFromString;try{if((new DOMParser).parseFromString("","text/html")){return;}}catch(ex){}DOMParser_proto.parseFromString=function(markup,type){if(/^\s*text\/html\s*(?:;|$)/i.test(type)){var doc=document.implementation.createHTMLDocument(""),doc_elt=doc.documentElement,first_elt;doc_elt.innerHTML=markup;first_elt=doc_elt.firstElementChild;if(doc_elt.childElementCount===1&&first_elt.localName.toLowerCase()==="html"){doc.replaceChild(first_elt,doc_elt);}return doc;}else{return real_parseFromString.apply(this,arguments);}};}(DOMParser));
 
-	/**
+    /**
      * Module constructor
      *
      * @constructor
@@ -6649,10 +6649,10 @@ JSHelper.prototype.isRetina = function()
      */
     var Pjax = function()
     {
-    	if (!_invoked)
-    	{
-    		this._bind();
-    	}
+        if (!_invoked)
+        {
+            this._bind();
+        }
 
         return this;
     };
@@ -6664,14 +6664,14 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype.destruct = function()
     {
-    	// Keep the CAHCE so that state changes are retained
-    	_invoked   = false;
+        // Keep the CAHCE so that state changes are retained
+        _invoked   = false;
         _listening = false;
         
         window.removeEventListener('popstate', this._stateChange, false);
-	    
-	    Hubble.require('Events').off('pjax:start', this._onStart);
-	    Hubble.require('Events').off('pjax:complete', this._onComplete);
+        
+        Hubble.require('Events').off('pjax:start', this._onStart);
+        Hubble.require('Events').off('pjax:complete', this._onComplete);
     }
 
     /**
@@ -6681,12 +6681,73 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._bind = function()
     {
-    	_invoked = true;
-        
+        _invoked = true;
+
         this._cachePage();
 
-	    Hubble.require('Events').on('pjax:start', this._onStart);
-	    Hubble.require('Events').on('pjax:complete', this._onComplete);
+        _requestedUrls.push(this._normaliseUrl(window.location.href));
+
+        Hubble.require('Events').on('pjax:start', this._onStart);
+        Hubble.require('Events').on('pjax:complete', this._onComplete);
+    }
+
+    /**
+     * Check if the module has loaded a url
+     *
+     * @access public
+     * @param  string url URL to check
+     * @return bool
+     */
+    Pjax.prototype.requestedUrl = function(url)
+    {
+        return Helper.in_array(this._normaliseUrl(url), _requestedUrls);
+    }
+
+    /**
+     * Remove a requested url
+     *
+     * @access public
+     * @param  string url URL to check
+     */
+    Pjax.prototype.removeUrl = function(url)
+    {
+        if (this.requestedUrl(url))
+        {
+            url = this._normaliseUrl(url);
+            var i = _requestedUrls.length;
+            while (i--)
+            {
+                if (_requestedUrls[i] === url)
+                {
+                    _requestedUrls.splice(i, 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * Set a state based on a url
+     *
+     * @access public
+     * @param  string url URL to check
+     */
+    Pjax.prototype.setState = function(url)
+    {
+        url = this._normaliseUrl(url)
+        
+        if (this.requestedUrl(url))
+        {
+            var _content  = this._cacheGet(url + '____content');
+            var _location = this._cacheGet(url + '____location');
+            
+            if (!_content || !_location)
+            {
+                window.location.href = url;
+            }
+
+            // Load entire body from cache
+            this._restoreState(_location, _content);
+        }
     }
 
     /**
@@ -6696,7 +6757,7 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._onStart = function()
     {
-    	Hubble.require('NProgress').start();
+        Hubble.require('NProgress').start();
     }
 
     /**
@@ -6706,8 +6767,8 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._onComplete = function()
     {
-    	Hubble.require('NProgress').done();
-    	Hubble.dom().refresh();
+        Hubble.require('NProgress').done();
+        Hubble.dom().refresh();
     }
 
     /**
@@ -6722,16 +6783,16 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype.invoke = function(url, target, title, stateChange, singleRequest)
     {
-    	// Save the document's current state
-      	this._cachePage();
+        // Save the document's current state
+        this._cachePage();
 
-    	// If we are already loading a pjax request don't proceed
-       	if (_loading)
-       	{
-       		return;
-       	}
+        // If we are already loading a pjax request don't proceed
+        if (_loading)
+        {
+            return;
+        }
 
-       	// We are now loading
+        // We are now loading
         _loading = true;
 
         // Fallback title
@@ -6746,15 +6807,15 @@ JSHelper.prototype.isRetina = function()
         // Normalize the url
         url = this._normaliseUrl(url.trim());
 
-      	// Are we changing the window state	
+        // Are we changing the window state 
         if (stateChange)
         {
-        	// Push the current state
-        	window.history.pushState(
-	        	{ id: window.location.href },
-	        	document.title, 
-	        	window.location.href
-	        );
+            // Push the current state
+            window.history.pushState(
+                { id: window.location.href },
+                document.title, 
+                window.location.href
+            );
         }
 
         // Create a new location object
@@ -6768,24 +6829,24 @@ JSHelper.prototype.isRetina = function()
 
         // Do we need to request fresh ?
         if (singleRequest === true && Helper.in_array(url, _requestedUrls))
-    	{
-    		if (stateChange === true)
-    		{
-    			if (title)
-    			{
-    				document.title = title;
-    			}
+        {
+            if (stateChange === true)
+            {
+                if (title)
+                {
+                    document.title = title;
+                }
 
                 window.history.pushState(
-                	{ id: url }, 
-                	title, 
-                	url
+                    { id: url }, 
+                    title, 
+                    url
                 );
-    		}
-    		_loading = false;
-    		
-	        return;
-    	}
+            }
+            _loading = false;
+            
+            return;
+        }
 
         // pjax GET the new content
         this._load(newLocation, stateChange, singleRequest);
@@ -6805,7 +6866,7 @@ JSHelper.prototype.isRetina = function()
         var _this = this;
 
         // We have now requested this url  
-		_requestedUrls.push(locationObj['location']);
+        _requestedUrls.push(locationObj['location']);
 
         // Fire the start event
         Hubble.require('Events').fire('pjax:start', locationObj);
@@ -6867,14 +6928,14 @@ JSHelper.prototype.isRetina = function()
         
         if (_title)
         {
-        	locationObj['title'] = _title;
+            locationObj['title'] = _title;
         }
         else
         {
-        	if (!locationObj['title'])
-        	{
-        		locationObj['title'] = document.title;
-        	}
+            if (!locationObj['title'])
+            {
+                locationObj['title'] = document.title;
+            }
         }
 
         // Set the title
@@ -6885,17 +6946,17 @@ JSHelper.prototype.isRetina = function()
         // Otherwise get by id
         if (locationObj['target'] === 'document-body')
         {
-        	var targetEl  = document.body;
-        	var domTarget = domCotent.body;
+            var targetEl  = document.body;
+            var domTarget = domCotent.body;
         }
         else
         {
-        	var targetEl  = document.getElementById(locationObj['target']);
-        	var domTarget = domCotent.getElementById(locationObj['target']);
+            var targetEl  = document.getElementById(locationObj['target']);
+            var domTarget = domCotent.getElementById(locationObj['target']);
         }
         
         // Cache the current document scripts to compare
-       	var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
+        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
         var newScripts  = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
         
         // Replace the target el's innerHTML
@@ -6927,26 +6988,26 @@ JSHelper.prototype.isRetina = function()
         (
             function(res, chain)
             {
-            	// Append scripts, wait for load/execution and call next chain
+                // Append scripts, wait for load/execution and call next chain
                 _this._appendScripts(currScripts, newScripts, chain);
             },
             function(res, chain)
             {
-            	// Push the history state
+                // Push the history state
                 window.history.pushState(
-                	{ id: locationObj.location }, 
-                	locationObj.title, 
-                	locationObj.location
+                    { id: locationObj.location }, 
+                    locationObj.title, 
+                    locationObj.location
                 );
                 chain.next();
             },
             function(res, chain)
             {
-            	// If we are not listening for any state changes
-            	// Add the listener
+                // If we are not listening for any state changes
+                // Add the listener
                 if (!_listening)
                 {
-                	_this._stateListener();
+                    _this._stateListener();
                 }
 
                 // Finished loading
@@ -6958,7 +7019,7 @@ JSHelper.prototype.isRetina = function()
                 // Wait for spinner to finish
                 setTimeout(function()
                 { 
-                	_this._cachePage();
+                    _this._cachePage();
 
                 }, 500);                
             }
@@ -7014,7 +7075,7 @@ JSHelper.prototype.isRetina = function()
         }
         else
         {
-        	history.back();
+            history.back();
         }
     }
 
@@ -7026,8 +7087,8 @@ JSHelper.prototype.isRetina = function()
      * @param  string HTML        document.body.innerHTML
      */
     Pjax.prototype._restoreState = function(locationObj, HTML)
-    {    	
-    	// Parse the HTML
+    {       
+        // Parse the HTML
         var domCotent = this._parseHTML(HTML);
 
         // Try to get the title
@@ -7035,14 +7096,14 @@ JSHelper.prototype.isRetina = function()
         
         if (_title)
         {
-        	locationObj['title'] = _title;
+            locationObj['title'] = _title;
         }
         else
         {
-        	if (!locationObj['title'])
-        	{
-        		locationObj['title'] = document.title;
-        	}
+            if (!locationObj['title'])
+            {
+                locationObj['title'] = document.title;
+            }
         }
 
         // Set the title
@@ -7051,7 +7112,7 @@ JSHelper.prototype.isRetina = function()
         document.body.innerHTML = HTML;
         
         // Cache the current document scripts to compare
-       	var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
+        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
         var newScripts  = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
 
         // Push the state change and append any new scripts
@@ -7061,13 +7122,13 @@ JSHelper.prototype.isRetina = function()
         (
             function(res, chain)
             {
-            	// Append scripts, wait for load/execution and call next chain
+                // Append scripts, wait for load/execution and call next chain
                 _this._appendScripts(currScripts, newScripts, chain);
             },
             function(res, chain)
             {
-            	_loading = false;
-            	Hubble.require('Events').fire('pjax:complete', locationObj);
+                _loading = false;
+                Hubble.require('Events').fire('pjax:complete', locationObj);
             }
         );
     }
@@ -7090,10 +7151,10 @@ JSHelper.prototype.isRetina = function()
 
         for (var i = 0; i < newScripts.length; i++)
         {
-        	// Script is not in the current DOM tree
+            // Script is not in the current DOM tree
             if (!this._hasScript(newScripts[i], currScripts))
             {
-            	// Create a new script
+                // Create a new script
                 var script = document.createElement('script');
                 script.type  = 'text/javascript';
                 script.async = false;
@@ -7101,37 +7162,37 @@ JSHelper.prototype.isRetina = function()
                 // Is this an inline script or a src ?
                 if (newScripts[i]['src'] === true)
                 {
-                	// Listen for the script to load to chain next
-                	if (!this._havMoreScriptSources(i, newScripts))
-                	{
-                		script.addEventListener('load', function()
-		                {
-		                    chain.next();
-		                });
-		                listeningForChain = true;
-                	}
+                    // Listen for the script to load to chain next
+                    if (!this._havMoreScriptSources(i, newScripts))
+                    {
+                        script.addEventListener('load', function()
+                        {
+                            chain.next();
+                        });
+                        listeningForChain = true;
+                    }
 
-	                script.src = newScripts[i]['content'];
+                    script.src = newScripts[i]['content'];
                 }
                 else
                 {
-                	script.innerHTML = newScripts[i]['content'];
+                    script.innerHTML = newScripts[i]['content'];
 
-                	// If there are either no more scripts to load
-                	// Or no more src scripts to load:
-                	// and we haven't added a listener to call the next chain
-                	// Add a function so once this script executes the next chain will be called
-                	if (!listeningForChain && !this._havMoreScriptSources(i, newScripts))
-                	{
-                		listeningForChain = true;
-                		window.nextChain = function()
-                		{
-                			chain.next();
-                			delete window.nextChain;
-                		};
+                    // If there are either no more scripts to load
+                    // Or no more src scripts to load:
+                    // and we haven't added a listener to call the next chain
+                    // Add a function so once this script executes the next chain will be called
+                    if (!listeningForChain && !this._havMoreScriptSources(i, newScripts))
+                    {
+                        listeningForChain = true;
+                        window.nextChain = function()
+                        {
+                            chain.next();
+                            delete window.nextChain;
+                        };
 
-                		script.innerHTML += ';(function(){ nextChain(); })();';
-                	}
+                        script.innerHTML += ';(function(){ nextChain(); })();';
+                    }
                 }
 
                 // Append the new script
@@ -7142,7 +7203,7 @@ JSHelper.prototype.isRetina = function()
         // If no listeners call next
         if (!listeningForChain)
         {
-        	chain.next();
+            chain.next();
         }
     }
 
@@ -7156,18 +7217,18 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._havMoreScriptSources = function(i, scripts)
     {
-    	// Are we at the last iteration ?
-    	if (i < scripts.length - 1)
-    	{
-    		return false;
-    	}
-
-    	for (var k = 0; k < scripts.length; k++)
+        // Are we at the last iteration ?
+        if (i < scripts.length - 1)
         {
-        	if (k > i && scripts[k]['src'] === true)
-        	{
-        		return true;
-        	}
+            return false;
+        }
+
+        for (var k = 0; k < scripts.length; k++)
+        {
+            if (k > i && scripts[k]['src'] === true)
+            {
+                return true;
+            }
         }
 
         return false;
@@ -7190,20 +7251,20 @@ JSHelper.prototype.isRetina = function()
 
             if (src)
             {
-            	// Remove the query string
-            	src = src.split('?')[0];
-            	
-            	result.push( { 'src': true, 'inline' : false, 'content' : src} );
+                // Remove the query string
+                src = src.split('?')[0];
+                
+                result.push( { 'src': true, 'inline' : false, 'content' : src} );
             }
             else
-            {	
-            	// Don't append JSON inline scripts
-            	if (Helper.isJSON(nodes[i].innerHTML.trim()))
-            	{
-            		continue;
-            	}
+            {   
+                // Don't append JSON inline scripts
+                if (Helper.isJSON(nodes[i].innerHTML.trim()))
+                {
+                    continue;
+                }
 
-            	result.push({ 'src': false, 'inline' : true, 'content' : nodes[i].innerHTML.trim()});
+                result.push({ 'src': false, 'inline' : true, 'content' : nodes[i].innerHTML.trim()});
             }
         }
 
@@ -7222,10 +7283,10 @@ JSHelper.prototype.isRetina = function()
     {
         for (var i = 0; i < currScripts.length; i++)
         {
-        	if (script['content'] === currScripts[i]['content'])
-        	{
-        		return true;
-        	}
+            if (script['content'] === currScripts[i]['content'])
+            {
+                return true;
+            }
         }
 
         return false;
@@ -7244,7 +7305,7 @@ JSHelper.prototype.isRetina = function()
         
         if (title.length)
         {
-        	return title[0].innerHTML.trim();
+            return title[0].innerHTML.trim();
         }
 
         return false;
@@ -7259,7 +7320,7 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._parseHTML = function(html)
     {
-    	var parser = new DOMParser();
+        var parser = new DOMParser();
         return parser.parseFromString(html, 'text/html');
     }
 
@@ -7289,7 +7350,7 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._cachePut = function(key, value)
     {
-    	for (var i = 0; i < _cache.length; i++)
+        for (var i = 0; i < _cache.length; i++)
         {
             if (_cache[i]['key'] === key)
             {
@@ -7328,7 +7389,7 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._cachePage = function()
     {
-    	var content = document.body.innerHTML;
+        var content = document.body.innerHTML;
 
         var _location =
         {
@@ -7349,43 +7410,43 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._normaliseUrl = function(url)
     {
-    	// If the url was set as local
-    	
-    	// e.g www.foobar.com/foobar
-    	// foobar.com/foobar
-    	if (url.indexOf('http') < 0)
-    	{
-    		// Get the path
-    		var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;	
+        // If the url was set as local
+        
+        // e.g www.foobar.com/foobar
+        // foobar.com/foobar
+        if (url.indexOf('http') < 0)
+        {
+            // Get the path
+            var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;  
 
-    		// e.g www.foobar.com/foobar
-    		if (url[0] === 'w')
-    		{
-    			var host = url.split('.com');
+            // e.g www.foobar.com/foobar
+            if (url[0] === 'w')
+            {
+                var host = url.split('.com');
 
-    			url = window.location.protocol + '//' + host[0] + '.com/' + path;
-    		}
-    		else
-    		{
-    			// foobar.com/foobar
-    			if (url.indexOf('.com') !== -1)
-    			{
-    				var host = url.split('.com');
-    				url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
-    			}
-    			// /foobar/bar/
-    			else
-    			{
-    				url = window.location.origin + '/' + path;
-    			}
-    			
-    		}
-    	}
+                url = window.location.protocol + '//' + host[0] + '.com/' + path;
+            }
+            else
+            {
+                // foobar.com/foobar
+                if (url.indexOf('.com') !== -1)
+                {
+                    var host = url.split('.com');
+                    url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
+                }
+                // /foobar/bar/
+                else
+                {
+                    url = window.location.origin + '/' + path;
+                }
+                
+            }
+        }
 
-    	return url;
+        return url;
     }
 
-	// Load into Hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('Pjax', Pjax);
    
 })();
