@@ -138,7 +138,7 @@
     {
         for (var i = 0; i < nodes.length; i++)
         {
-            Container.get('InputMasker', nodes[i])[unMask]();
+            Container.get('InputMasker', nodes[i]).remove();
         }
     }
 

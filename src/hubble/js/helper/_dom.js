@@ -76,14 +76,23 @@ JSHelper.prototype.closestClass = function(el, clas)
         return el.parentNode;
     }
     var parent = el.parentNode;
-    if (parent === window.document) return null;
+    if (parent === window.document)
+    {
+        return null;
+    }
     while (parent !== document.body)
     {
-        parent = parent.parentNode;
         if (this.hasClass(parent, clas))
         {
             return parent;
         }
+
+        if (parent === null || typeof parent === 'undefined')
+        {
+            return null;
+        }
+
+        parent = parent.parentNode;
     }
     return null;
 }
@@ -149,12 +158,13 @@ JSHelper.prototype.nextUntillClass = function(el, className)
 
     while (next !== document.body && typeof next !== "undefined" && next !== null)
     {
-        next = next.nextSibling;
-
         if (next && this.hasClass(next, className))
         {
             return next;
         }
+        
+        next = next.nextSibling;
+
     }
 
     return null;
@@ -330,14 +340,23 @@ JSHelper.prototype.removeStyle = function(el, prop)
         }
     }
 
-    if (el.style.removeProperty)
+    if (prop === 'style')
     {
-        el.style.removeProperty(prop);
+        el.removeAttribute("style");
     }
     else
     {
-        el.style.removeAttribute(prop);
+        if (el.style.removeProperty)
+        {
+            el.style.removeProperty(prop);
+        }
+        else
+        {
+            el.style.removeAttribute(prop);
+        }
     }
+
+    
 }
 
 /**
@@ -443,6 +462,11 @@ JSHelper.prototype.hasClass = function(el, className)
             }
         }
 
+        return false;
+    }
+
+    if (!el.classList)
+    {
         return false;
     }
 

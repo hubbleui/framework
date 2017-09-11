@@ -7,7 +7,7 @@
  */
 
 (function()
- {
+{
     /**
      * Helper instance
      * 
@@ -151,6 +151,7 @@
 
         pageLoaded = true;
     }
+
 
     // Load into Hubble DOM core
     Container.get('Hubble').dom().register('WayPoints', WayPoints);

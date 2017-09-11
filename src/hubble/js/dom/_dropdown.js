@@ -58,7 +58,7 @@
     {
         for (var i = 0; i < this._triggers.length; i++)
         {
-            Helper.addEventListener(this._triggers[i], 'click', this._invoke);
+            Helper.addEventListener(this._triggers[i], 'click', this._clickHandler);
         }
         Helper.addEventListener(window, 'click', this._windowClick);
     }
@@ -72,7 +72,7 @@
     {
         for (var i = 0; i < this._triggers.length; i++)
         {
-            Helper.removeEventListener(this._triggers[i], 'click', this._invoke);
+            Helper.removeEventListener(this._triggers[i], 'click', this._clickHandler);
         }
         Helper.removeEventListener(window, 'click', this._windowClick);
     }
@@ -83,11 +83,11 @@
      * @param  event|null e JavaScript Click event
      * @access private
      */
-    DropDowns.prototype._invoke = function(e)
+    DropDowns.prototype._clickHandler = function(e)
     {
         e = e || window.event;
         e.preventDefault();
-        e.stopPropagation();
+
         var button   = this;
         var _this    = Container.get('DropDowns');
 
@@ -95,10 +95,44 @@
         _this._hideDropDowns(button);
 
         // Remove active and return
-        if (Helper.hasClass(button, 'active')) return Helper.removeClass(button, 'active');
+        if (Helper.hasClass(button, 'active'))
+        {
+            _this._hideDrop(button);
+        }
+        else
+        {
+            _this._showDrop(button);
+        }
+    }
 
-        // Add active
+    /**
+     * Click event handler
+     *
+     * @param  event|null e JavaScript Click event
+     * @access private
+     */
+    DropDowns.prototype._hideDrop = function(button)
+    {
+        var drop = Helper.$('.drop-menu', button.parentNode);
+        Helper.removeClass(button, 'active');
+        button.setAttribute('aria-pressed', 'false');
+        Helper.hideAria(drop);
+        drop.blur();
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param  event|null e JavaScript Click event
+     * @access private
+     */
+    DropDowns.prototype._showDrop = function(button)
+    {
+        var drop = Helper.$('.drop-menu', button.parentNode);
         Helper.addClass(button, 'active');
+        button.setAttribute('aria-pressed', 'true');
+        Helper.showAria(drop);
+        drop.focus();
     }
 
     /**
@@ -110,10 +144,14 @@
     DropDowns.prototype._windowClick = function(e)
     {
         e = e || window.event;
-        e.stopPropagation();
+        if (Helper.closestClass(e.target, 'js-drop-trigger'))
+        {
+            return;
+        }
         if (!Helper.hasClass(e.target, 'js-drop-trigger'))
         {
             var _this = Container.get('DropDowns');
+            
             _this._hideDropDowns();
         }
     }
@@ -137,8 +175,8 @@
             {
                 continue;
             }
-            
-            Helper.removeClass(node, 'active');
+
+            this._hideDrop(node);
         }
     }
 

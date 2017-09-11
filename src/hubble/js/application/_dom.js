@@ -17,7 +17,7 @@
      */
     var Dom = function()
     {
-        this._modules = {};
+    	this._modules = {};
 
         return this;
     };
@@ -31,7 +31,7 @@
      */
     Dom.prototype.boot = function()
     {
-        this._bindModules();
+    	this._bindModules();
     }
 
     /**
@@ -81,15 +81,15 @@
 
                     Container.get('JSHelper').collectGarbage();
                 }
-            }   
+            }
         }
         else
         {
             this._unbindModules();
 
-            this._bindModules();
-
             Container.get('JSHelper').collectGarbage();
+
+            this._bindModules();
         }
         
     }

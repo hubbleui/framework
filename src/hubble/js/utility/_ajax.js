@@ -30,6 +30,7 @@
             success: null,
             error: null,
             complete: null,
+            headers: [],
             accepts: {
                 text: 'text/plain',
                 html: 'text/html',
@@ -107,6 +108,16 @@
             if (opts.dataType && opts.accepts[opts.dataType])
                 xhr.setRequestHeader('Accept', opts.accepts[opts.dataType]);
 
+            if (opts.headers)
+            {
+                for (var k = 0; k < opts.headers.length; k++)
+                {
+                    var header = opts.headers[k];
+                    var key    = Object.keys(header)[0];                    
+                    xhr.setRequestHeader(key, header[key]);
+                }
+            }
+
             if (opts.async) {
                 xhr.onreadystatechange = ready;
                 xhr.send(opts.data);
@@ -125,7 +136,7 @@
          * @param {Function} [success] Callback when request was succesfull
          * @return {This}
          */
-        get: function(url, data, success, error) {
+        get: function(url, data, success, error, headers) {
             if (this.isFunction(data)) {
                 error   = success;
                 success = data;
@@ -137,7 +148,8 @@
                 type: 'GET',
                 data: data,
                 success: success,
-                error: error
+                error: error,
+                headers: headers
             });
         },
 
@@ -148,7 +160,7 @@
          * @param {Function} [success] Callback when request was succesfull
          * @return {This}
          */
-        post: function(url, data, success, error) {
+        post: function(url, data, success, error, headers) {
             if (this.isFunction(data)) {
                 error   = success;
                 success = data;
@@ -160,7 +172,8 @@
                 type: 'POST',
                 data: data,
                 success: success,
-                error: error
+                error: error,
+                headers: headers
             });
         },
 

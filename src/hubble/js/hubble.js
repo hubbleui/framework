@@ -17,6 +17,7 @@
 // Vendors
 @import "vendor/_smoothScroll.js";
 @import "vendor/_flickity.js";
+@import "vendor/_nprogress.js";
 
 // Utility
 @import "utility/_toggleHeight.js";
@@ -30,6 +31,8 @@
 @import "utility/dynamicUI/_dynamicUi.js";
 
 // DOM Module
+@import "dom/_pjax.js";
+@import "dom/_pjaxLinks.js";
 @import "dom/scrollbar/_handler.js";
 @import "dom/scrollbar/_scrollbars.js";
 @import "dom/_collapse.js";
@@ -42,6 +45,7 @@
 @import "dom/_fileInput.js";
 @import "dom/_messages.js";
 @import "dom/_waypoint.js";
+
 
 // Boot Hubble
 @import "application/_boot.js";

@@ -1,10 +1,9 @@
 /**
- * Dynamic UI component 
+ * Component Dynamic Hanlder 
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- * 
  */
 (function()
 {
@@ -16,81 +15,186 @@
     var Helper = Hubble.helper();
 
     /**
+     * AJAX Module
+     * 
+     * @var obj
+     */
+    var Ajax = Hubble.require('Ajax');
+
+    /**
      * Module constructor
      *
-     * @access public
+     * @access      public
      * @constructor
+     * @param       object options Object of handler options
      */
-    var DynamicUI = function(options)
+    var DynamicUiHandler = function(options)
     {
-        this._handler = null;
         this._options = options;
 
-        this._init();
+        this._options.onRenderArgs = typeof options.onRenderArgs === 'undefined' ? [] : options.onRenderArgs;
+        this._options.onErrorArgs  = typeof options.onErrorArgs === 'undefined'  ? [] : options.onErrorArgs;
+
+        if (Helper.nodeExists(Helper.$(this._options.trigger)))
+        {
+            this._bind();
+        }
+
+        _this = this;
 
         return this;
     };
 
     /**
-     * Destroy the module instance and remove event listeners
+     * Destroy the handler and remove event listener
      *
      * @access public
      */
-    DynamicUI.prototype.destroy = function()
+    DynamicUiHandler.prototype.destroy = function()
     {
-        if (this._handler)
+        this._unbind();
+    }
+
+    /**
+     * Bind the event listener
+     *
+     * @access private
+     */
+    DynamicUiHandler.prototype._bind = function()
+    {
+        var _this = this;
+
+        this._callback = function _uiEventHandler(e)
         {
-            this._handler.destroy();
-        }
+            _this._eventHandler();
+        };
+
+        Helper.addEventListener(Helper.$(this._options.trigger), this._options.event, this._callback);
     }
 
     /**
-     * Invoke the module handler
+     * Unbind the event listener
      *
-     * @access public
+     * @access private
      */
-    DynamicUI.prototype.invoke = function()
+    DynamicUiHandler.prototype._unbind = function()
     {
-        if (this._handler)
-        {
-            this._handler._eventHandler();
-        }
+        Helper.removeEventListener(Helper.$(this._options.trigger), this._options.event, this._callback);
     }
 
     /**
-     * Refresh the module instance - removes and re-adds event listeners
+     * Event handler
      *
-     * @access public
+     * @access private
      */
-    DynamicUI.prototype.refresh = function()
+    DynamicUiHandler.prototype._eventHandler = function()
     {
-        this._handler.destroy();
-
-        this._init();
-    }
-
-    /**
-     * Initialize the handler
-     *
-     * @access public
-     */
-    DynamicUI.prototype._init = function()
-    {
-        var _this   = this;
         var trigger = Helper.$(this._options.trigger);
+        var target  = Helper.$(this._options.target);
+        var ajaxUrl = this._options.url;
+        var form    = this._options.form || {};
+        var trigger = this._options.trigger;
+        var _this   = this;
 
-        if (Helper.nodeExists(trigger))
+        // Return on loading or disabled
+        if (Helper.hasClass(trigger, 'active') || trigger.disabled === true)
         {
-            this._handler = Container.get('_DynamicUiHandler', this._options);
+            return;
         }
-        
-        Hubble.require('Events').on('domChange', function()
+
+        // Add active class
+        Helper.addClass(trigger, 'active');
+        Helper.addClass(target, 'active');
+
+        // Request the Ajax
+        Ajax.post(ajaxUrl, form, function(success)
         {
-            _this.refresh();
+            var responseObj = Helper.isJSON(success);
+
+            if (responseObj && responseObj.response === 'valid')
+            {
+                _this._render(responseObj);
+                _this._fireRendered(responseObj);
+                Hubble.require('Events').fire('domChange', target);
+                Hubble.dom().refresh();
+            }
+            else
+            {
+                _this._fireErrored(success);
+            }
+
+            Helper.removeClass(trigger, 'active');
+            Helper.removeClass(target, 'active');
+        },
+        function(error)
+        {
+            Helper.removeClass(trigger, 'active');
+            Helper.removeClass(target, 'active');
+            _this._fireErrored(error);
         });
     }
 
+    /**
+     * Render the DOM changes
+     *
+     * @access private
+     * @param  object  response Response object from the server
+     */
+    DynamicUiHandler.prototype._render = function(response)
+    {
+        var details = response.details;
+        var classes = this._options.classes;
+        var target  = Helper.$(this._options.target);
+
+        for (var i = 0; i < classes.length; i++)
+        {
+            var content = details[classes[i]['key']] || null;
+            var node    = Helper.$(classes[i]['class'], target);
+
+            if (!content || !Helper.nodeExists(node))
+            {
+                continue;
+            }
+
+            node.innerHTML = content;
+        }
+    }
+
+    /**
+     * Fire rendered event
+     *
+     * @access private
+     */
+    DynamicUiHandler.prototype._fireRendered = function(response)
+    {        
+        if (typeof this._options.onRender !== 'undefined')
+        {
+            var callback = this._options.onRender;
+            var args     = this._options.onRenderArgs;
+            args.unshift(response);
+
+            callback.apply(this._options.target, args);
+        }
+    }
+
+    /**
+     * Fire errored event
+     *
+     * @access private
+     */
+    DynamicUiHandler.prototype._fireErrored = function(error)
+    {
+        if (typeof this._options.onError !== 'undefined')
+        {
+            var callback = this._options.onError;
+            var args     = this._options.onErrorArgs;
+            args.unshift(error);
+
+            callback.apply(this._options.target, args);
+        }
+    }
+
     // Load into container
-    Container.set('DynamicUI', DynamicUI);
+    Container.set('_DynamicUiHandler', DynamicUiHandler);
 
 })();

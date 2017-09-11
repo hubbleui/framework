@@ -86,7 +86,6 @@
         if (Helper.isNodeType(this, 'a'))
         {
             e.preventDefault();
-            e.stopPropagation();
         }
         
         var clicked  = this;

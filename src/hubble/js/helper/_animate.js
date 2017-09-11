@@ -374,3 +374,5 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
 
     }, false);
 }
+
+
