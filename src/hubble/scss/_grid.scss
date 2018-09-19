@@ -97,6 +97,92 @@
     }
 }
 
+// Displays
+@include media-breakpoint-up(sm)
+{
+    .xs-no-display
+    {
+        display: none;
+    }
+    .xs-inline-block,
+    .xs-inline
+    {
+        display: none;
+    }
+    .sm-inline-block
+    {
+        display: inline-block;
+    }
+    .sm-inline
+    {
+        display: inline;
+    }
+    
+}
+@include media-breakpoint-up(md)
+{
+    .sm-no-display
+    {
+        display: none;
+    }
+    .sm-inline-block,
+    .sm-inline
+    {
+        display: none;
+    }
+    .md-inline-block
+    {
+        display: inline-block;
+    }
+    .md-inline
+    {
+        display: inline;
+    }
+    
+}
+@include media-breakpoint-up(lg)
+{
+    .md-no-display
+    {
+        display: none;
+    }
+    .md-inline-block,
+    .md-inline
+    {
+        display: none;
+    }
+    .lg-inline-block
+    {
+        display: inline-block;
+    }
+    .lg-inline
+    {
+        display: inline;
+    }
+}
+@include media-breakpoint-up(xl)
+{
+    .lg-no-display
+    {
+        display: none;
+    }
+    .lg-inline-block,
+    .lg-inline
+    {
+        display: none;
+    }
+    .xl-inline-block
+    {
+        display: inline-block;
+    }
+    .xl-inline
+    {
+        display: inline;
+    }
+   
+}
+
+
 // Mobile first grid
 $prev-breakpoint: null;
 $curr-grid:       null;

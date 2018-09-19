@@ -31,6 +31,8 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    max-height: $dropdown-max-height;
+    overflow-y: auto;
     li {
         padding: 0;
         display: block;
@@ -142,4 +144,42 @@
 .drop-menu.raised.arrow-se:before,
 .drop-menu.raised.arrow-sw:before {
     border-top-color: #7b7b7b;
+}
+
+// size specific
+.btn-xs + .drop-menu
+{
+    &.drop-s,
+    &.drop-se,
+    &.drop-sw
+    {
+        top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) - 1;
+    }
+}
+.btn-sm + .drop-menu
+{
+    &.drop-s,
+    &.drop-se,
+    &.drop-sw
+    {
+        top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) - 0.5;
+    }
+}
+.btn-lg + .drop-menu
+{
+    &.drop-s,
+    &.drop-se,
+    &.drop-sw
+    {
+        top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) + 1;
+    }
+}
+.btn-xl + .drop-menu
+{
+    &.drop-s,
+    &.drop-se,
+    &.drop-sw
+    {
+        top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) + 1.5;
+    }
 }

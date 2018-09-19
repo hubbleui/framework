@@ -4771,277 +4771,374 @@ JSHelper.prototype.isRetina = function()
 /**
  * InputMasker
  *
- * The InputMasker is a utility class used internally to apply and handle intput masking.
- * It can still be invoked directly via the IOC container if you want to use it.
- * @example Container.get('InputMasker').creditcard();
- * @see     inputMasks.js
+ * @see https://github.com/text-mask/text-mask/tree/master/vanilla
  */
- (function() {
+ (function()
+ {
+    /**
+     * JS Helper reference
+     * 
+     * @see https://github.com/text-mask/text-mask/tree/master/vanilla
+     */
+    !function(e,r){"object"==typeof exports&&"object"==typeof module?module.exports=r():"function"==typeof define&&define.amd?define([],r):"object"==typeof exports?exports.vanillaTextMask=r():e.vanillaTextMask=r()}(this,function(){return function(e){function r(n){if(t[n])return t[n].exports;var o=t[n]={exports:{},id:n,loaded:!1};return e[n].call(o.exports,o,o.exports,r),o.loaded=!0,o.exports}var t={};return r.m=e,r.c=t,r.p="",r(0)}([function(e,r,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function o(e){var r=e.inputElement,t=(0,u.default)(e),n=function(e){var r=e.target.value;return t.update(r)};return r.addEventListener("input",n),t.update(r.value),{textMaskInputElement:t,_destroy:function(){r.removeEventListener("input",n)}}}Object.defineProperty(r,"__esModule",{value:!0}),r.conformToMask=void 0,r.maskInput=o;var i=t(2);Object.defineProperty(r,"conformToMask",{enumerable:!0,get:function(){return n(i).default}});var a=t(5),u=n(a);r.default=o},function(e,r){"use strict";Object.defineProperty(r,"__esModule",{value:!0}),r.placeholderChar="_",r.strFunction="function"},function(e,r,t){"use strict";function n(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:l,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:u,t=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{};if(!(0,i.isArray)(r)){if(("undefined"==typeof r?"undefined":o(r))!==a.strFunction)throw new Error("Text-mask:conformToMask; The mask property must be an array.");r=r(e,t),r=(0,i.processCaretTraps)(r).maskWithoutCaretTraps}var n=t.guide,s=void 0===n||n,f=t.previousConformedValue,d=void 0===f?l:f,c=t.placeholderChar,p=void 0===c?a.placeholderChar:c,v=t.placeholder,h=void 0===v?(0,i.convertMaskToPlaceholder)(r,p):v,m=t.currentCaretPosition,y=t.keepCharPositions,g=s===!1&&void 0!==d,b=e.length,C=d.length,k=h.length,x=r.length,P=b-C,T=P>0,O=m+(T?-P:0),M=O+Math.abs(P);if(y===!0&&!T){for(var w=l,S=O;S<M;S++)h[S]===p&&(w+=p);e=e.slice(0,O)+w+e.slice(O,b)}for(var _=e.split(l).map(function(e,r){return{char:e,isNew:r>=O&&r<M}}),j=b-1;j>=0;j--){var V=_[j].char;if(V!==p){var A=j>=O&&C===x;V===h[A?j-P:j]&&_.splice(j,1)}}var E=l,N=!1;e:for(var F=0;F<k;F++){var I=h[F];if(I===p){if(_.length>0)for(;_.length>0;){var L=_.shift(),R=L.char,J=L.isNew;if(R===p&&g!==!0){E+=p;continue e}if(r[F].test(R)){if(y===!0&&J!==!1&&d!==l&&s!==!1&&T){for(var W=_.length,q=null,z=0;z<W;z++){var B=_[z];if(B.char!==p&&B.isNew===!1)break;if(B.char===p){q=z;break}}null!==q?(E+=R,_.splice(q,1)):F--}else E+=R;continue e}N=!0}g===!1&&(E+=h.substr(F,k));break}E+=I}if(g&&T===!1){for(var D=null,G=0;G<E.length;G++)h[G]===p&&(D=G);E=null!==D?E.substr(0,D+1):l}return{conformedValue:E,meta:{someCharsRejected:N}}}Object.defineProperty(r,"__esModule",{value:!0});var o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};r.default=n;var i=t(3),a=t(1),u=[],l=""},function(e,r,t){"use strict";function n(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:s,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:l.placeholderChar;if(!o(e))throw new Error("Text-mask:convertMaskToPlaceholder; The mask property must be an array.");if(e.indexOf(r)!==-1)throw new Error("Placeholder character must not be used as part of the mask. Please specify a character that is not present in your mask as your placeholder character.\n\n"+("The placeholder character that was received is: "+JSON.stringify(r)+"\n\n")+("The mask that was received is: "+JSON.stringify(e)));return e.map(function(e){return e instanceof RegExp?r:e}).join("")}function o(e){return Array.isArray&&Array.isArray(e)||e instanceof Array}function i(e){return"string"==typeof e||e instanceof String}function a(e){return"number"==typeof e&&void 0===e.length&&!isNaN(e)}function u(e){for(var r=[],t=void 0;t=e.indexOf(f),t!==-1;)r.push(t),e.splice(t,1);return{maskWithoutCaretTraps:e,indexes:r}}Object.defineProperty(r,"__esModule",{value:!0}),r.convertMaskToPlaceholder=n,r.isArray=o,r.isString=i,r.isNumber=a,r.processCaretTraps=u;var l=t(1),s=[],f="[]"},function(e,r){"use strict";function t(e){var r=e.previousConformedValue,t=void 0===r?o:r,i=e.previousPlaceholder,a=void 0===i?o:i,u=e.currentCaretPosition,l=void 0===u?0:u,s=e.conformedValue,f=e.rawValue,d=e.placeholderChar,c=e.placeholder,p=e.indexesOfPipedChars,v=void 0===p?n:p,h=e.caretTrapIndexes,m=void 0===h?n:h;if(0===l||!f.length)return 0;var y=f.length,g=t.length,b=c.length,C=s.length,k=y-g,x=k>0,P=0===g,T=k>1&&!x&&!P;if(T)return l;var O=x&&(t===s||s===c),M=0,w=void 0,S=void 0;if(O)M=l-k;else{var _=s.toLowerCase(),j=f.toLowerCase(),V=j.substr(0,l).split(o),A=V.filter(function(e){return _.indexOf(e)!==-1});S=A[A.length-1];var E=a.substr(0,A.length).split(o).filter(function(e){return e!==d}).length,N=c.substr(0,A.length).split(o).filter(function(e){return e!==d}).length,F=N!==E,I=void 0!==a[A.length-1]&&void 0!==c[A.length-2]&&a[A.length-1]!==d&&a[A.length-1]!==c[A.length-1]&&a[A.length-1]===c[A.length-2];!x&&(F||I)&&E>0&&c.indexOf(S)>-1&&void 0!==f[l]&&(w=!0,S=f[l]);for(var L=v.map(function(e){return _[e]}),R=L.filter(function(e){return e===S}).length,J=A.filter(function(e){return e===S}).length,W=c.substr(0,c.indexOf(d)).split(o).filter(function(e,r){return e===S&&f[r]!==e}).length,q=W+J+R+(w?1:0),z=0,B=0;B<C;B++){var D=_[B];if(M=B+1,D===S&&z++,z>=q)break}}if(x){for(var G=M,H=M;H<=b;H++)if(c[H]===d&&(G=H),c[H]===d||m.indexOf(H)!==-1||H===b)return G}else if(w){for(var K=M-1;K>=0;K--)if(s[K]===S||m.indexOf(K)!==-1||0===K)return K}else for(var Q=M;Q>=0;Q--)if(c[Q-1]===d||m.indexOf(Q)!==-1||0===Q)return Q}Object.defineProperty(r,"__esModule",{value:!0}),r.default=t;var n=[],o=""},function(e,r,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function o(e){var r={previousConformedValue:void 0,previousPlaceholder:void 0};return{state:r,update:function(t){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:e,o=n.inputElement,s=n.mask,d=n.guide,m=n.pipe,g=n.placeholderChar,b=void 0===g?v.placeholderChar:g,C=n.keepCharPositions,k=void 0!==C&&C,x=n.showMask,P=void 0!==x&&x;if("undefined"==typeof t&&(t=o.value),t!==r.previousConformedValue){("undefined"==typeof s?"undefined":l(s))===y&&void 0!==s.pipe&&void 0!==s.mask&&(m=s.pipe,s=s.mask);var T=void 0,O=void 0;if(s instanceof Array&&(T=(0,p.convertMaskToPlaceholder)(s,b)),s!==!1){var M=a(t),w=o.selectionEnd,S=r.previousConformedValue,_=r.previousPlaceholder,j=void 0;if(("undefined"==typeof s?"undefined":l(s))===v.strFunction){if(O=s(M,{currentCaretPosition:w,previousConformedValue:S,placeholderChar:b}),O===!1)return;var V=(0,p.processCaretTraps)(O),A=V.maskWithoutCaretTraps,E=V.indexes;O=A,j=E,T=(0,p.convertMaskToPlaceholder)(O,b)}else O=s;var N={previousConformedValue:S,guide:d,placeholderChar:b,pipe:m,placeholder:T,currentCaretPosition:w,keepCharPositions:k},F=(0,c.default)(M,O,N),I=F.conformedValue,L=("undefined"==typeof m?"undefined":l(m))===v.strFunction,R={};L&&(R=m(I,u({rawValue:M},N)),R===!1?R={value:S,rejected:!0}:(0,p.isString)(R)&&(R={value:R}));var J=L?R.value:I,W=(0,f.default)({previousConformedValue:S,previousPlaceholder:_,conformedValue:J,placeholder:T,rawValue:M,currentCaretPosition:w,placeholderChar:b,indexesOfPipedChars:R.indexesOfPipedChars,caretTrapIndexes:j}),q=J===T&&0===W,z=P?T:h,B=q?z:J;r.previousConformedValue=B,r.previousPlaceholder=T,o.value!==B&&(o.value=B,i(o,W))}}}}}function i(e,r){document.activeElement===e&&(g?b(function(){return e.setSelectionRange(r,r,m)},0):e.setSelectionRange(r,r,m))}function a(e){if((0,p.isString)(e))return e;if((0,p.isNumber)(e))return String(e);if(void 0===e||null===e)return h;throw new Error("The 'value' provided to Text Mask needs to be a string or a number. The value received was:\n\n "+JSON.stringify(e))}Object.defineProperty(r,"__esModule",{value:!0});var u=Object.assign||function(e){for(var r=1;r<arguments.length;r++){var t=arguments[r];for(var n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[n]=t[n])}return e},l="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};r.default=o;var s=t(4),f=n(s),d=t(2),c=n(d),p=t(3),v=t(1),h="",m="none",y="object",g="undefined"!=typeof navigator&&/Android/i.test(navigator.userAgent),b="undefined"!=typeof requestAnimationFrame?requestAnimationFrame:setTimeout}])});
+
+    var vanillaMasker = vanillaTextMask;
+
+    window.vanillaTextMask = null;
 
     /**
-     * @var Helper obj
+     * Reference to all applied masks
+     * 
+     * @var array
+     */
+    var _masks = [];
+
+    /**
+     * JS Helper reference
+     * 
+     * @var object
      */
     var Helper = Container.get('JSHelper');
 
-    var Patterns = function() {
-        
-    };
+    /**
+     * Module constructor
+     *
+     * @constructor
+     * @access public
+     */
+    var InputMasker = function(element)
+    {
+        this._element = element;
 
-    Patterns.money = function(value, opts) {
-        opts = mergeMoneyOptions(opts);
-        if (opts.zeroCents) {
-            opts.lastOutput = opts.lastOutput || "";
-            var zeroMatcher = ("(" + opts.separator + "[0]{0," + opts.precision + "})"),
-                zeroRegExp = new RegExp(zeroMatcher, "g"),
-                digitsLength = value.toString().replace(/[\D]/g, "").length || 0,
-                lastDigitLength = opts.lastOutput.toString().replace(/[\D]/g, "").length || 0;
-            value = value.toString().replace(zeroRegExp, "");
-            if (digitsLength < lastDigitLength) {
-                value = value.slice(0, value.length - 1);
-            }
-        }
-        var number = value.toString().replace(/[\D]/g, ""),
-            clearDelimiter = new RegExp("^(0|\\" + opts.delimiter + ")"),
-            clearSeparator = new RegExp("(\\" + opts.separator + ")$"),
-            money = number.substr(0, number.length - opts.moneyPrecision),
-            masked = money.substr(0, money.length % 3),
-            cents = new Array(opts.precision + 1).join("0");
-        money = money.substr(money.length % 3, money.length);
-        for (var i = 0, len = money.length; i < len; i++) {
-            if (i % 3 === 0) {
-                masked += opts.delimiter;
-            }
-            masked += money[i];
-        }
-        masked = masked.replace(clearDelimiter, "");
-        masked = masked.length ? masked : "0";
-        if (!opts.zeroCents) {
-            var beginCents = number.length - opts.precision,
-                centsValue = number.substr(beginCents, opts.precision),
-                centsLength = centsValue.length,
-                centsSliced = (opts.precision > centsLength) ? opts.precision : centsLength;
-            cents = (cents + centsValue).slice(-centsSliced);
-        }
-        var output = opts.unit + masked + opts.separator + cents + opts.suffixUnit;
-        return output.replace(clearSeparator, "");
-    };
-
-    Patterns.pattern = function(value, opts) {
-        var pattern = (typeof opts === 'object' ? opts.pattern : opts),
-            patternChars = pattern.replace(/\W/g, ''),
-            output = pattern.split(""),
-            values = value.toString().replace(/\W/g, ""),
-            charsValues = values.replace(/\W/g, ''),
-            index = 0,
-            i,
-            outputLength = output.length,
-            placeholder = (typeof opts === 'object' ? opts.placeholder : undefined);
-
-        for (i = 0; i < outputLength; i++) {
-            // Reached the end of input
-            if (index >= values.length) {
-                if (patternChars.length == charsValues.length) {
-                    return output.join("");
-                } else if ((placeholder !== undefined) && (patternChars.length > charsValues.length)) {
-                    return addPlaceholdersToOutput(output, i, placeholder).join("");
-                } else {
-                    break;
-                }
-            }
-            // Remaining chars in input
-            else {
-                if ((output[i] === DIGIT && values[index].match(/[0-9]/)) ||
-                    (output[i] === ALPHA && values[index].match(/[a-zA-Z]/)) ||
-                    (output[i] === ALPHANUM && values[index].match(/[0-9a-zA-Z]/))) {
-                    output[i] = values[index++];
-                } else if (output[i] === DIGIT || output[i] === ALPHA || output[i] === ALPHANUM) {
-                    if (placeholder !== undefined) {
-                        return addPlaceholdersToOutput(output, i, placeholder).join("");
-                    } else {
-                        return output.slice(0, i).join("");
-                    }
-                }
-            }
-        }
-        return output.join("").substr(0, i);
-    };
-
-    Patterns.numeric = function(value) {
-        return value.toString().replace(/(?!^-)[^0-9]/g, "");
-    };
-
-    Patterns.alphaNumeric = function(value) {
-        return value.toString().replace(/[^a-z0-9]+/i, "");
-    };
-
-    Patterns.alphaSpace = function(value) {
-        return value.toString().replace(/[^a-z ]+/i, "");
-    };
-
-    Patterns.alphaNumericDash = function(value) {
-        return value.toString().replace(/[^a-z0-9-]+/i, "");
-    };
-
-    Patterns.numericDecimal = function(value) {
-        return value.toString().replace(/(?!^-)[^0-9\.]/g, "")
-    };
-
-    Patterns.alphaDash = function(value) {
-        var val = value.toString();
-        while (val[0] === '-') {
-            val = val.slice(1);
-        }
-        return val.replace(/[^a-z-]+/i, "");
-    };
-
-    Patterns.alphaDashNumDot = function(value) {
-        var val = value.toString();
-        while (val[0] === '-') {
-            val = val.slice(1);
-        }
-        return val.replace(/[^a-z0-9-.]+/i, "");
-    };
-
-    // INTERNAL VARIABLES
-    /*****************************************/
-    var DIGIT = "9",
-    ALPHA = "A",
-    ALPHANUM = "S",
-    BY_PASS_KEYS = [9, 16, 17, 18, 36, 37, 38, 39, 40, 91, 92, 93],
-    isAllowedKeyCode = function(keyCode) {
-        for (var i = 0, len = BY_PASS_KEYS.length; i < len; i++) {
-            if (keyCode == BY_PASS_KEYS[i]) {
-                return false;
-            }
-        }
-        return true;
-    },
-    mergeMoneyOptions = function(opts) {
-        opts = opts || {};
-        opts = {
-            precision: opts.hasOwnProperty("precision") ? opts.precision : 2,
-            separator: opts.separator || ",",
-            delimiter: opts.delimiter || ".",
-            unit: opts.unit && (opts.unit.replace(/[\s]/g, '') + " ") || "",
-            suffixUnit: opts.suffixUnit && (" " + opts.suffixUnit.replace(/[\s]/g, '')) || "",
-            zeroCents: opts.zeroCents,
-            lastOutput: opts.lastOutput
-        };
-        opts.moneyPrecision = opts.zeroCents ? 0 : opts.precision;
-        return opts;
-    },
-    // Fill wildcards past index in output with placeholder
-    addPlaceholdersToOutput = function(output, index, placeholder) {
-        for (; index < output.length; index++) {
-            if (output[index] === DIGIT || output[index] === ALPHA || output[index] === ALPHANUM) {
-                output[index] = placeholder;
-            }
-        }
-        return output;
-    };
-
-    // MODULE OBJECT
-    /*****************************************/
-    var InputMasker = function(element) {
-        
-        this.element = element;
+        this._mask = null;
     
         return this;
     }
+    
 
-    // UNBIND 
-    /*****************************************/
-    InputMasker.prototype._unbindElementToMask = function() {
-        this.element.lastOutput = "";
-        this.element.onkeyup = false;
-        this.element.onkeydown = false;
+    /**
+     * Mask Credit Card
+     *
+     * @access public
+     */
+    InputMasker.prototype.creditcard = function()
+    {
+        var _mask = vanillaMasker.maskInput({
+            inputElement : this._element,
+            guide        : false,
+            mask         : [/[0-9]/,/[0-9]/,/[0-9]/,/[0-9]/, ' ', /[0-9]/,/[0-9]/,/[0-9]/,/[0-9]/, ' ', /[0-9]/,/[0-9]/,/[0-9]/,/[0-9]/, ' ', /[0-9]/,/[0-9]/,/[0-9]/,/[0-9]/]
+        });
 
-        if (this.element.value.length) {
-            this.element.value = this.element.value.replace(/\D/g, '');
-        }
+        _mask['_element'] = this._element;
+
+        _masks.push(_mask);
     };
 
-    // BIND 
-    /*****************************************/
-    InputMasker.prototype._bindElementToMask = function(maskFunction) {
-        var that = this,
-            onType = function(e) {
-                e = e || window.event;
-                var source = e.target || e.srcElement;
-
-                if (isAllowedKeyCode(e.keyCode)) {
-                    setTimeout(function() {
-                        that.opts.lastOutput = source.lastOutput;
-                        source.value = Patterns[maskFunction](source.value, that.opts);
-                        source.lastOutput = source.value;
-                        if (source.setSelectionRange && that.opts.suffixUnit) {
-                            source.setSelectionRange(source.value.length, (source.value.length - that.opts.suffixUnit.length));
-                        }
-                    }, 0);
+    /**
+     * Mask money
+     *
+     * @access public
+     */
+    InputMasker.prototype.money = function() 
+    {
+        var _filter = function(rawValue)
+        {
+            var mask = [];
+            
+            if (rawValue.length > 1)
+            {
+                for (var i = 0; i < rawValue.length; i++)
+                {
+                    mask.push(/[0-9]|\./);
                 }
-            };
-        
-        this.element.lastOutput = "";
-        this.element.onkeyup = onType;
-        if (this.element.value.length) {
-            this.element.value = Patterns[maskFunction](this.element.value, this.opts);
+
+                return mask;
+            }
+
+            return [/[0-9]/];
+        };
+
+        var _mask = vanillaMasker.maskInput({
+            inputElement : this._element,
+            guide        : false,
+            mask         : _filter
+        });
+
+        _mask['_element'] = this._element;
+
+        _masks.push(_mask);
+    };
+
+    /**
+     * Mask money
+     *
+     * @access public
+     */
+    InputMasker.prototype.numeric = function()
+    {
+        var _filter = function(rawValue)
+        {
+            var mask = [];
+            
+            if (rawValue.length > 1)
+            {
+                for (var i = 0; i < rawValue.length; i++)
+                {
+                    mask.push(/[0-9]/);
+                }
+
+                return mask;
+            }
+
+            return [/[0-9]/];
+        };
+
+        var _mask = vanillaMasker.maskInput({
+            inputElement : this._element,
+            guide        : false,
+            mask         : _filter
+        });
+
+        _mask['_element'] = this._element;
+
+        _masks.push(_mask);
+    };
+
+    /**
+     * Mask numeric with decimals
+     *
+     * @access public
+     */
+    InputMasker.prototype.numericDecimal = function()
+    {
+        var _filter = function(rawValue)
+        {
+            var mask = [];
+            
+            if (rawValue.length > 1)
+            {
+                for (var i = 0; i < rawValue.length; i++)
+                {
+                    mask.push(/[0-9]|\./);
+                }
+
+                return mask;
+            }
+
+            return [/[0-9]/];
+        };
+
+        var _mask = vanillaMasker.maskInput({
+            inputElement : this._element,
+            guide        : false,
+            mask         : _filter
+        });
+
+        _mask['_element'] = this._element;
+
+        _masks.push(_mask);
+    };
+
+    /**
+     * Mask alpha numeric
+     *
+     * @access public
+     */
+    InputMasker.prototype.alphaNumeric = function()
+    {
+        var _filter = function(rawValue)
+        {
+            var mask = [];
+
+            var regex = /[A-z0-9]/;
+            
+            if (rawValue.length > 1)
+            {
+                for (var i = 0; i < rawValue.length; i++)
+                {
+                    mask.push(regex);
+                }
+
+                return mask;
+            }
+
+            return [regex];
+        };
+
+        var _mask = vanillaMasker.maskInput({
+            inputElement : this._element,
+            guide        : false,
+            mask         : _filter
+        });
+
+        _mask['_element'] = this._element;
+
+        _masks.push(_mask);
+    };
+
+    /**
+     * Mask alpha space
+     *
+     * @access public
+     */
+    InputMasker.prototype.alphaSpace = function()
+    {
+        var _filter = function(rawValue)
+        {
+            var mask = [];
+
+            var regex = /[A-z ]/;
+            
+            if (rawValue.length > 1)
+            {
+                for (var i = 0; i < rawValue.length; i++)
+                {
+                    mask.push(regex);
+                }
+
+                return mask;
+            }
+
+            return [regex];
+        };
+
+        var _mask = vanillaMasker.maskInput({
+            inputElement : this._element,
+            guide        : false,
+            mask         : _filter
+        });
+
+        _mask['_element'] = this._element;
+
+        _masks.push(_mask);
+    };
+
+    /**
+     * Mask alpha dash
+     *
+     * @access public
+     */
+    InputMasker.prototype.alphaDash = function()
+    {
+        var _filter = function(rawValue)
+        {
+            var mask = [];
+
+            var regex = /[A-z-]/;
+            
+            if (rawValue.length > 1)
+            {
+                for (var i = 0; i < rawValue.length; i++)
+                {
+                    mask.push(regex);
+                }
+
+                return mask;
+            }
+
+            return [regex];
+        };
+
+        var _mask = vanillaMasker.maskInput({
+            inputElement : this._element,
+            guide        : false,
+            mask         : _filter
+        });
+
+        _mask['_element'] = this._element;
+
+        _masks.push(_mask);
+    };
+
+    /**
+     * Mask alphanumeric dash
+     *
+     * @access public
+     */
+    InputMasker.prototype.alphaNumericDash = function()
+    {
+        var _filter = function(rawValue)
+        {
+            var mask = [];
+
+            var regex = /[A-z0-9-]/;
+            
+            if (rawValue.length > 1)
+            {
+                for (var i = 0; i < rawValue.length; i++)
+                {
+                    mask.push(regex);
+                }
+
+                return mask;
+            }
+
+            return [regex];
+        };
+
+        var _mask = vanillaMasker.maskInput({
+            inputElement : this._element,
+            guide        : false,
+            mask         : _filter
+        });
+
+        _mask['_element'] = this._element;
+
+        _masks.push(_mask);
+    };
+
+    /**
+     * Mask custom regex
+     *
+     * @access public
+     * @param  regex  pattern The pattern regex to mask
+     */
+    InputMasker.prototype.regex = function(pattern)
+    {
+        var _filter = function(rawValue)
+        {
+            var mask = [];
+            
+            if (rawValue.length > 1)
+            {
+                for (var i = 0; i < rawValue.length; i++)
+                {
+                    mask.push(pattern);
+                }
+
+                return mask;
+            }
+
+            return [pattern];
+        };
+
+        var _mask = vanillaMasker.maskInput({
+            inputElement : this._element,
+            guide        : false,
+            mask         : _filter
+        });
+
+        _mask['_element'] = this._element;
+
+        _masks.push(_mask);
+    };
+
+    /**
+     * Disable the mask
+     *
+     * @access public
+     */
+    InputMasker.prototype.remove = function()
+    {
+        for (var i = _masks.length -1; i >= 0 ; i--)
+        {
+            if (_masks[i]['_element'] === this._element)
+            {
+                _masks[i]._destroy();
+
+                _masks.splice(i, 1);
+            }
         }
-       
-    };
-
-    // PRESETS
-    /*****************************************/
-    InputMasker.prototype.creditcard = function() {
-        this.opts = { pattern: '9999 9999 9999 9999' };
-        this._bindElementToMask("pattern");
-    };
-
-    InputMasker.prototype.money = function(opts) {
-        this.opts = mergeMoneyOptions(opts);
-        this._bindElementToMask("money");
-    };
-
-    InputMasker.prototype.numeric = function() {
-        this.opts = {};
-        this._bindElementToMask("numeric");
-    };
-
-    InputMasker.prototype.numericDecimal = function(pattern) {
-        this.opts = {
-            pattern: pattern
-        };
-        this._bindElementToMask("numericDecimal");
-    };
-
-    InputMasker.prototype.alphaNumeric = function() {
-        this.opts = {};
-        this._bindElementToMask("alphaNumeric");
-    };
-
-    InputMasker.prototype.alphaSpace = function() {
-        this.opts = {};
-        this._bindElementToMask("alphaSpace");
-    };
-
-    InputMasker.prototype.alphaDash = function() {
-        this.opts = {};
-        this._bindElementToMask("alphaDash");
-    };
-
-    InputMasker.prototype.alphaNumericDash = function() {
-        this.opts = {};
-        this._bindElementToMask("alphaNumericDash");
-    };
-
-    InputMasker.prototype.pattern = function(pattern) {
-        this.opts = {
-            pattern: pattern
-        };
-        this._bindElementToMask("pattern");
-    };
-
-    InputMasker.prototype.remove = function() {
-        this._unbindElementToMask();
     };
 
     // SET IN IOC
@@ -5165,7 +5262,8 @@ JSHelper.prototype.isRetina = function()
         var overlay = document.createElement('DIV');
             overlay.className = 'modal-overlay '+this._options['overlay'];
 
-        var closeButton   = typeof this._options.closeText    === 'undefined'   ? '' : '<button type="button" class="btn js-modal-close">'+this._options.closeText+'</button>';
+        var closeClass    = typeof this._options.closeClass   === 'undefined'   ? '' : this._options.closeClass;
+        var closeButton   = typeof this._options.closeText    === 'undefined'   ? '' : '<button type="button" class="btn '+closeClass+' js-modal-close">'+this._options.closeText+'</button>';
         var confirmClass  = typeof this._options.confirmClass === 'undefined'   ? 'btn-primary' : this._options.confirmClass;
         var confirmButton = typeof this._options.confirmText  === 'undefined'   ? '' : '<button type="button" class="btn '+confirmClass+' js-modal-close js-modal-confirm">'+this._options.confirmText+'</button>';
         var icon          = typeof this._options.icon  === 'undefined' ? '' : '<div class="row floor-sm roof-sm text-center"><span class="modal-icon '+this._options.iconColor+' glyph-icon glyph-icon-'+this._options.icon+'"></spam></div>';
@@ -5181,8 +5279,10 @@ JSHelper.prototype.isRetina = function()
                             icon,
                             '<p class="card-text">'+this._options.message+'</p>',
                             extras,
-                            closeButton,
-                            confirmButton,
+                            '<div class="btn-wrap">',
+                                closeButton,
+                                confirmButton,
+                            '</div>',
                         '</div>',
                         
                     '</div>',
@@ -6058,7 +6158,6 @@ JSHelper.prototype.isRetina = function()
                 this._formObj[name] = (this._inputs[i].checked == true);
                 continue;
             }
-            if (Helper.is_numeric(value)) value = parseInt(value);
             if (name.indexOf('[]') > -1) {
                 if (!Helper.isset(this._formObj[name])) this._formObj[name] = [];
                 this._formObj[name].push(value);
@@ -6144,12 +6243,21 @@ JSHelper.prototype.isRetina = function()
         return re.test(value);
     };
     FormValidator.prototype._validateCreditCard = function(value) {
-        value = value.replace(/ /g, "");
-        var re = /^[0-9]+$/;
-        var check = re.test(value);
-        if (check === false) return false;
-        if (value.length !== 16) return false;
-        return true;
+        var arr   = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+        var ccNum = String(value).replace(/[- ]/g,''); 
+
+        var 
+            len = ccNum.length,
+            bit = 1,
+            sum = 0,
+            val;
+
+        while (len) {
+            val = parseInt(ccNum.charAt(--len), 10);
+            sum += (bit ^= 1) ? arr[val] : val;
+        }
+
+        return sum && sum % 10 === 0;
     };
 
     // Load into container
@@ -6569,7 +6677,7 @@ JSHelper.prototype.isRetina = function()
 
 (function()
 {
-    /**
+	/**
      * JS Helper
      * 
      * @var obj
@@ -6641,7 +6749,7 @@ JSHelper.prototype.isRetina = function()
      */
     (function(DOMParser){var DOMParser_proto=DOMParser.prototype,real_parseFromString=DOMParser_proto.parseFromString;try{if((new DOMParser).parseFromString("","text/html")){return;}}catch(ex){}DOMParser_proto.parseFromString=function(markup,type){if(/^\s*text\/html\s*(?:;|$)/i.test(type)){var doc=document.implementation.createHTMLDocument(""),doc_elt=doc.documentElement,first_elt;doc_elt.innerHTML=markup;first_elt=doc_elt.firstElementChild;if(doc_elt.childElementCount===1&&first_elt.localName.toLowerCase()==="html"){doc.replaceChild(first_elt,doc_elt);}return doc;}else{return real_parseFromString.apply(this,arguments);}};}(DOMParser));
 
-    /**
+	/**
      * Module constructor
      *
      * @constructor
@@ -6649,10 +6757,10 @@ JSHelper.prototype.isRetina = function()
      */
     var Pjax = function()
     {
-        if (!_invoked)
-        {
-            this._bind();
-        }
+    	if (!_invoked)
+    	{
+    		this._bind();
+    	}
 
         return this;
     };
@@ -6664,14 +6772,14 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype.destruct = function()
     {
-        // Keep the CAHCE so that state changes are retained
-        _invoked   = false;
+    	// Keep the CAHCE so that state changes are retained
+    	_invoked   = false;
         _listening = false;
         
         window.removeEventListener('popstate', this._stateChange, false);
-        
-        Hubble.require('Events').off('pjax:start', this._onStart);
-        Hubble.require('Events').off('pjax:complete', this._onComplete);
+	    
+	    Hubble.require('Events').off('pjax:start', this._onStart);
+	    Hubble.require('Events').off('pjax:complete', this._onComplete);
     }
 
     /**
@@ -6681,14 +6789,14 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._bind = function()
     {
-        _invoked = true;
+    	_invoked = true;
 
         this._cachePage();
 
         _requestedUrls.push(this._normaliseUrl(window.location.href));
 
-        Hubble.require('Events').on('pjax:start', this._onStart);
-        Hubble.require('Events').on('pjax:complete', this._onComplete);
+	    Hubble.require('Events').on('pjax:start', this._onStart);
+	    Hubble.require('Events').on('pjax:complete', this._onComplete);
     }
 
     /**
@@ -6757,7 +6865,7 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._onStart = function()
     {
-        Hubble.require('NProgress').start();
+    	Hubble.require('NProgress').start();
     }
 
     /**
@@ -6767,8 +6875,8 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._onComplete = function()
     {
-        Hubble.require('NProgress').done();
-        Hubble.dom().refresh();
+    	Hubble.require('NProgress').done();
+    	Hubble.dom().refresh();
     }
 
     /**
@@ -6783,16 +6891,16 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype.invoke = function(url, target, title, stateChange, singleRequest)
     {
-        // Save the document's current state
-        this._cachePage();
+    	// Save the document's current state
+      	this._cachePage();
 
-        // If we are already loading a pjax request don't proceed
-        if (_loading)
-        {
-            return;
-        }
+    	// If we are already loading a pjax request don't proceed
+       	if (_loading)
+       	{
+       		return;
+       	}
 
-        // We are now loading
+       	// We are now loading
         _loading = true;
 
         // Fallback title
@@ -6807,15 +6915,15 @@ JSHelper.prototype.isRetina = function()
         // Normalize the url
         url = this._normaliseUrl(url.trim());
 
-        // Are we changing the window state 
+      	// Are we changing the window state	
         if (stateChange)
         {
-            // Push the current state
-            window.history.pushState(
-                { id: window.location.href },
-                document.title, 
-                window.location.href
-            );
+        	// Push the current state
+        	window.history.pushState(
+	        	{ id: window.location.href },
+	        	document.title, 
+	        	window.location.href
+	        );
         }
 
         // Create a new location object
@@ -6829,24 +6937,25 @@ JSHelper.prototype.isRetina = function()
 
         // Do we need to request fresh ?
         if (singleRequest === true && Helper.in_array(url, _requestedUrls))
-        {
-            if (stateChange === true)
-            {
-                if (title)
-                {
-                    document.title = title;
-                }
+    	{
+    		if (stateChange === true)
+    		{
+    			if (title)
+    			{
+    				document.title = title;
+    			}
 
                 window.history.pushState(
-                    { id: url }, 
-                    title, 
-                    url
+                	{ id: url }, 
+                	title, 
+                	url
                 );
-            }
-            _loading = false;
-            
-            return;
-        }
+    		}
+
+    		_loading = false;
+    		
+	        return;
+    	}
 
         // pjax GET the new content
         this._load(newLocation, stateChange, singleRequest);
@@ -6866,7 +6975,7 @@ JSHelper.prototype.isRetina = function()
         var _this = this;
 
         // We have now requested this url  
-        _requestedUrls.push(locationObj['location']);
+		_requestedUrls.push(locationObj['location']);
 
         // Fire the start event
         Hubble.require('Events').fire('pjax:start', locationObj);
@@ -6928,14 +7037,14 @@ JSHelper.prototype.isRetina = function()
         
         if (_title)
         {
-            locationObj['title'] = _title;
+        	locationObj['title'] = _title;
         }
         else
         {
-            if (!locationObj['title'])
-            {
-                locationObj['title'] = document.title;
-            }
+        	if (!locationObj['title'])
+        	{
+        		locationObj['title'] = document.title;
+        	}
         }
 
         // Set the title
@@ -6946,17 +7055,17 @@ JSHelper.prototype.isRetina = function()
         // Otherwise get by id
         if (locationObj['target'] === 'document-body')
         {
-            var targetEl  = document.body;
-            var domTarget = domCotent.body;
+        	var targetEl  = document.body;
+        	var domTarget = domCotent.body;
         }
         else
         {
-            var targetEl  = document.getElementById(locationObj['target']);
-            var domTarget = domCotent.getElementById(locationObj['target']);
+        	var targetEl  = document.getElementById(locationObj['target']);
+        	var domTarget = domCotent.getElementById(locationObj['target']);
         }
         
         // Cache the current document scripts to compare
-        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
+       	var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
         var newScripts  = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
         
         // Replace the target el's innerHTML
@@ -6988,26 +7097,26 @@ JSHelper.prototype.isRetina = function()
         (
             function(res, chain)
             {
-                // Append scripts, wait for load/execution and call next chain
+            	// Append scripts, wait for load/execution and call next chain
                 _this._appendScripts(currScripts, newScripts, chain);
             },
             function(res, chain)
             {
-                // Push the history state
+            	// Push the history state
                 window.history.pushState(
-                    { id: locationObj.location }, 
-                    locationObj.title, 
-                    locationObj.location
+                	{ id: locationObj.location }, 
+                	locationObj.title, 
+                	locationObj.location
                 );
                 chain.next();
             },
             function(res, chain)
             {
-                // If we are not listening for any state changes
-                // Add the listener
+            	// If we are not listening for any state changes
+            	// Add the listener
                 if (!_listening)
                 {
-                    _this._stateListener();
+                	_this._stateListener();
                 }
 
                 // Finished loading
@@ -7019,7 +7128,7 @@ JSHelper.prototype.isRetina = function()
                 // Wait for spinner to finish
                 setTimeout(function()
                 { 
-                    _this._cachePage();
+                	_this._cachePage();
 
                 }, 500);                
             }
@@ -7075,7 +7184,7 @@ JSHelper.prototype.isRetina = function()
         }
         else
         {
-            history.back();
+        	history.back();
         }
     }
 
@@ -7087,8 +7196,8 @@ JSHelper.prototype.isRetina = function()
      * @param  string HTML        document.body.innerHTML
      */
     Pjax.prototype._restoreState = function(locationObj, HTML)
-    {       
-        // Parse the HTML
+    {    	
+    	// Parse the HTML
         var domCotent = this._parseHTML(HTML);
 
         // Try to get the title
@@ -7096,14 +7205,14 @@ JSHelper.prototype.isRetina = function()
         
         if (_title)
         {
-            locationObj['title'] = _title;
+        	locationObj['title'] = _title;
         }
         else
         {
-            if (!locationObj['title'])
-            {
-                locationObj['title'] = document.title;
-            }
+        	if (!locationObj['title'])
+        	{
+        		locationObj['title'] = document.title;
+        	}
         }
 
         // Set the title
@@ -7112,7 +7221,7 @@ JSHelper.prototype.isRetina = function()
         document.body.innerHTML = HTML;
         
         // Cache the current document scripts to compare
-        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
+       	var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
         var newScripts  = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
 
         // Push the state change and append any new scripts
@@ -7122,13 +7231,13 @@ JSHelper.prototype.isRetina = function()
         (
             function(res, chain)
             {
-                // Append scripts, wait for load/execution and call next chain
+            	// Append scripts, wait for load/execution and call next chain
                 _this._appendScripts(currScripts, newScripts, chain);
             },
             function(res, chain)
             {
-                _loading = false;
-                Hubble.require('Events').fire('pjax:complete', locationObj);
+            	_loading = false;
+            	Hubble.require('Events').fire('pjax:complete', locationObj);
             }
         );
     }
@@ -7151,10 +7260,10 @@ JSHelper.prototype.isRetina = function()
 
         for (var i = 0; i < newScripts.length; i++)
         {
-            // Script is not in the current DOM tree
+        	// Script is not in the current DOM tree
             if (!this._hasScript(newScripts[i], currScripts))
             {
-                // Create a new script
+            	// Create a new script
                 var script = document.createElement('script');
                 script.type  = 'text/javascript';
                 script.async = false;
@@ -7162,37 +7271,37 @@ JSHelper.prototype.isRetina = function()
                 // Is this an inline script or a src ?
                 if (newScripts[i]['src'] === true)
                 {
-                    // Listen for the script to load to chain next
-                    if (!this._havMoreScriptSources(i, newScripts))
-                    {
-                        script.addEventListener('load', function()
-                        {
-                            chain.next();
-                        });
-                        listeningForChain = true;
-                    }
+                	// Listen for the script to load to chain next
+                	if (!this._havMoreScriptSources(i, newScripts))
+                	{
+                		script.addEventListener('load', function()
+		                {
+		                    chain.next();
+		                });
+		                listeningForChain = true;
+                	}
 
-                    script.src = newScripts[i]['content'];
+	                script.src = newScripts[i]['content'];
                 }
                 else
                 {
-                    script.innerHTML = newScripts[i]['content'];
+                	script.innerHTML = newScripts[i]['content'];
 
-                    // If there are either no more scripts to load
-                    // Or no more src scripts to load:
-                    // and we haven't added a listener to call the next chain
-                    // Add a function so once this script executes the next chain will be called
-                    if (!listeningForChain && !this._havMoreScriptSources(i, newScripts))
-                    {
-                        listeningForChain = true;
-                        window.nextChain = function()
-                        {
-                            chain.next();
-                            delete window.nextChain;
-                        };
+                	// If there are either no more scripts to load
+                	// Or no more src scripts to load:
+                	// and we haven't added a listener to call the next chain
+                	// Add a function so once this script executes the next chain will be called
+                	if (!listeningForChain && !this._havMoreScriptSources(i, newScripts))
+                	{
+                		listeningForChain = true;
+                		window.nextChain = function()
+                		{
+                			chain.next();
+                			delete window.nextChain;
+                		};
 
-                        script.innerHTML += ';(function(){ nextChain(); })();';
-                    }
+                		script.innerHTML += ';(function(){ nextChain(); })();';
+                	}
                 }
 
                 // Append the new script
@@ -7203,7 +7312,7 @@ JSHelper.prototype.isRetina = function()
         // If no listeners call next
         if (!listeningForChain)
         {
-            chain.next();
+        	chain.next();
         }
     }
 
@@ -7217,18 +7326,18 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._havMoreScriptSources = function(i, scripts)
     {
-        // Are we at the last iteration ?
-        if (i < scripts.length - 1)
-        {
-            return false;
-        }
+    	// Are we at the last iteration ?
+    	if (i < scripts.length - 1)
+    	{
+    		return false;
+    	}
 
-        for (var k = 0; k < scripts.length; k++)
+    	for (var k = 0; k < scripts.length; k++)
         {
-            if (k > i && scripts[k]['src'] === true)
-            {
-                return true;
-            }
+        	if (k > i && scripts[k]['src'] === true)
+        	{
+        		return true;
+        	}
         }
 
         return false;
@@ -7251,20 +7360,20 @@ JSHelper.prototype.isRetina = function()
 
             if (src)
             {
-                // Remove the query string
-                src = src.split('?')[0];
-                
-                result.push( { 'src': true, 'inline' : false, 'content' : src} );
+            	// Remove the query string
+            	src = src.split('?')[0];
+            	
+            	result.push( { 'src': true, 'inline' : false, 'content' : src} );
             }
             else
-            {   
-                // Don't append JSON inline scripts
-                if (Helper.isJSON(nodes[i].innerHTML.trim()))
-                {
-                    continue;
-                }
+            {	
+            	// Don't append JSON inline scripts
+            	if (Helper.isJSON(nodes[i].innerHTML.trim()))
+            	{
+            		continue;
+            	}
 
-                result.push({ 'src': false, 'inline' : true, 'content' : nodes[i].innerHTML.trim()});
+            	result.push({ 'src': false, 'inline' : true, 'content' : nodes[i].innerHTML.trim()});
             }
         }
 
@@ -7283,10 +7392,10 @@ JSHelper.prototype.isRetina = function()
     {
         for (var i = 0; i < currScripts.length; i++)
         {
-            if (script['content'] === currScripts[i]['content'])
-            {
-                return true;
-            }
+        	if (script['content'] === currScripts[i]['content'])
+        	{
+        		return true;
+        	}
         }
 
         return false;
@@ -7305,7 +7414,7 @@ JSHelper.prototype.isRetina = function()
         
         if (title.length)
         {
-            return title[0].innerHTML.trim();
+        	return title[0].innerHTML.trim();
         }
 
         return false;
@@ -7320,7 +7429,7 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._parseHTML = function(html)
     {
-        var parser = new DOMParser();
+    	var parser = new DOMParser();
         return parser.parseFromString(html, 'text/html');
     }
 
@@ -7350,7 +7459,7 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._cachePut = function(key, value)
     {
-        for (var i = 0; i < _cache.length; i++)
+    	for (var i = 0; i < _cache.length; i++)
         {
             if (_cache[i]['key'] === key)
             {
@@ -7389,7 +7498,7 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._cachePage = function()
     {
-        var content = document.body.innerHTML;
+    	var content = document.body.innerHTML;
 
         var _location =
         {
@@ -7410,43 +7519,43 @@ JSHelper.prototype.isRetina = function()
      */
     Pjax.prototype._normaliseUrl = function(url)
     {
-        // If the url was set as local
-        
-        // e.g www.foobar.com/foobar
-        // foobar.com/foobar
-        if (url.indexOf('http') < 0)
-        {
-            // Get the path
-            var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;  
+    	// If the url was set as local
+    	
+    	// e.g www.foobar.com/foobar
+    	// foobar.com/foobar
+    	if (url.indexOf('http') < 0)
+    	{
+    		// Get the path
+    		var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;	
 
-            // e.g www.foobar.com/foobar
-            if (url[0] === 'w')
-            {
-                var host = url.split('.com');
+    		// e.g www.foobar.com/foobar
+    		if (url[0] === 'w')
+    		{
+    			var host = url.split('.com');
 
-                url = window.location.protocol + '//' + host[0] + '.com/' + path;
-            }
-            else
-            {
-                // foobar.com/foobar
-                if (url.indexOf('.com') !== -1)
-                {
-                    var host = url.split('.com');
-                    url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
-                }
-                // /foobar/bar/
-                else
-                {
-                    url = window.location.origin + '/' + path;
-                }
-                
-            }
-        }
+    			url = window.location.protocol + '//' + host[0] + '.com/' + path;
+    		}
+    		else
+    		{
+    			// foobar.com/foobar
+    			if (url.indexOf('.com') !== -1)
+    			{
+    				var host = url.split('.com');
+    				url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
+    			}
+    			// /foobar/bar/
+    			else
+    			{
+    				url = window.location.origin + '/' + path;
+    			}
+    			
+    		}
+    	}
 
-        return url;
+    	return url;
     }
 
-    // Load into Hubble DOM core
+	// Load into Hubble DOM core
     Container.get('Hubble').dom().register('Pjax', Pjax);
    
 })();
@@ -9091,7 +9200,6 @@ JSHelper.prototype.isRetina = function()
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
  (function()
  {
     /**
@@ -9115,9 +9223,9 @@ JSHelper.prototype.isRetina = function()
         this._nodes_numeric          = [];
         this._nodes_numericDecimal   = [];
         this._nodes_alphaNumeric     = [];
+        this._nodes_alphaSpace       = [];
         this._nodes_alphaDash        = [];
         this._nodes_AlphaNumericDash = [];
-        this._nodes_AlphaNumericDashDecimal = [];
 
         // Constructor
         this._invoke();
@@ -9145,9 +9253,9 @@ JSHelper.prototype.isRetina = function()
         this._nodes_numeric          = [];
         this._nodes_numericDecimal   = [];
         this._nodes_alphaNumeric     = [];
+        this._nodes_alphaSpace       = [];
         this._nodes_alphaDash        = [];
         this._nodes_AlphaNumericDash = [];
-        this._nodes_AlphaNumericDashDecimal = [];
     }
 
     /**
@@ -9166,7 +9274,6 @@ JSHelper.prototype.isRetina = function()
         this._nodes_alphaSpace       = Helper.$All('.js-mask-alpha-space');
         this._nodes_alphaDash        = Helper.$All('.js-mask-alpha-dash');
         this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
-        this._nodes_AlphaNumericDashDecimal = Helper.$All('.js-mask-alphaNumericDashDecimal');
 
         if (!Helper.empty(this._nodes_money))
         {

@@ -1,12 +1,12 @@
 // base
 .arrow:before,
 .arrow:after {
-    position: absolute;
+	position: absolute;
     display: inline-block;
     content: "";
 }
 .arrow:before {
-    border: 8px solid transparent;
+	border: 8px solid transparent;
 }
 .arrow:after {
     border: 8px solid transparent;
@@ -16,8 +16,8 @@
 .arrow-wn:before,
 .arrow-w:before,
 .arrow-ws:before {
-    border-right-color: $arrow-color;
-    left: -16px;
+	border-right-color: $arrow-color;
+	left: -16px;
     margin-top: -4px;
     width:8px;
     height: 8px;
@@ -25,8 +25,8 @@
 .arrow-wn:after,
 .arrow-w:after,
 .arrow-ws:after {
-    border-right-color: #FFFFFF;
-    left: -14px;
+	border-right-color: #FFFFFF;
+	left: -14px;
     margin-top: -4px;
     width:7px;
     height: 7px;
@@ -58,16 +58,16 @@
 .arrow-nw:before,
 .arrow-n:before,
 .arrow-ne:before {
-    border-bottom-color: $arrow-color;
-    top: -16px;
-    margin-left: -4px;
+	border-bottom-color: $arrow-color;
+	top: -16px;
+	margin-left: -4px;
 }
 .arrow-nw:after,
 .arrow-n:after,
 .arrow-ne:after {
-    border-bottom-color: #fff;
-    top: -14px;
-    margin-left: -4px;
+	border-bottom-color: #fff;
+	top: -14px;
+	margin-left: -4px;
 }
 // north
 .arrow-n:before,
@@ -89,15 +89,15 @@
 .arrow-en:before,
 .arrow-e:before,
 .arrow-es:before {
-    border-left-color: $arrow-color;
-    right: -16px;
+	border-left-color: $arrow-color;
+	right: -16px;
     margin-top: -4px;
 }
 .arrow-en:after,
 .arrow-e:after,
 .arrow-es:after {
-    border-left-color: #FFFFFF;
-    right: -14px;
+	border-left-color: #FFFFFF;
+	right: -14px;
     margin-top: -4px;
 }
 // east
@@ -129,16 +129,16 @@
 .arrow-sw:before,
 .arrow-s:before,
 .arrow-se:before {
-    border-top-color: $arrow-color;
-    bottom: -16px;
-    margin-left: -5px;
+	border-top-color: $arrow-color;
+	bottom: -16px;
+	margin-left: -5px;
 }
 .arrow-sw:after,
 .arrow-s:after,
 .arrow-se:after {
-    border-top-color: #fff;
-    bottom: -14px;
-    margin-left: -5px;
+	border-top-color: #fff;
+	bottom: -14px;
+	margin-left: -5px;
 }
 // south
 .arrow-s:before,

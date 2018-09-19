@@ -1,14 +1,15 @@
-html, body {
+html, body
+{
 	height: 100%;
 }
-.page-container {
-	min-height: 100%;
-	margin-bottom: -$footerHeight; 
+body
+{
+	display: flex;
+	flex-flow: column;
+	height: auto;
+    min-height: 100%;
 }
-.page-container:after {
-	content: "";
-	display: block;
-}
-.sticky-footer, .page-container:after {
-	height: $footerHeight; 
+.sticky-footer
+{
+	margin-top: auto;
 }

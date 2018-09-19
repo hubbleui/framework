@@ -1,8 +1,6 @@
 # Minified Scripts #
 ###################
-*.min.css
-*.min.js
-*.min.css.map
+*.min.*
 
 # OS generated files #
 ######################
@@ -13,3 +11,9 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Grunt Specific
+######################
+node_modules
+.sass-cache
+package-lock.json

@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
  (function()
  {
     /**
@@ -29,9 +28,9 @@
         this._nodes_numeric          = [];
         this._nodes_numericDecimal   = [];
         this._nodes_alphaNumeric     = [];
+        this._nodes_alphaSpace       = [];
         this._nodes_alphaDash        = [];
         this._nodes_AlphaNumericDash = [];
-        this._nodes_AlphaNumericDashDecimal = [];
 
         // Constructor
         this._invoke();
@@ -59,9 +58,9 @@
         this._nodes_numeric          = [];
         this._nodes_numericDecimal   = [];
         this._nodes_alphaNumeric     = [];
+        this._nodes_alphaSpace       = [];
         this._nodes_alphaDash        = [];
         this._nodes_AlphaNumericDash = [];
-        this._nodes_AlphaNumericDashDecimal = [];
     }
 
     /**
@@ -80,7 +79,6 @@
         this._nodes_alphaSpace       = Helper.$All('.js-mask-alpha-space');
         this._nodes_alphaDash        = Helper.$All('.js-mask-alpha-dash');
         this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
-        this._nodes_AlphaNumericDashDecimal = Helper.$All('.js-mask-alphaNumericDashDecimal');
 
         if (!Helper.empty(this._nodes_money))
         {

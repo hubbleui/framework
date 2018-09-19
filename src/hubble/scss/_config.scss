@@ -184,6 +184,7 @@ $dropdown-tick-color:       $brand-primary !default;
 $dropdown-hover-bg:         $gray-lighter !default;
 $dropdown-border-color:     transparent !default;
 $dropdown-divider-color:    $gray-lighter !default;
+$dropdown-max-height:       300px !default;
 
 // Arrow
 $arrow-color:               $gray-lighter !default;
@@ -206,6 +207,7 @@ $label-pad-y:               0.4rem !default;
 // Table
 $table-font-size:           1.3rem !default;
 $table-bg:                  #fff !default;
+$table-head-bg:             $gray !default;
 $table-color:               inherit !default;
 $table-border-color:        $gray-lighter !default;
 $table-hover-bg:            rgba(0, 0, 0, 0.08) !default;

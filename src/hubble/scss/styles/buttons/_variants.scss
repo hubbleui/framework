@@ -31,12 +31,12 @@
     &.hover,
     &:active,
     &.active {
-        color: #fff;
+        color: $white;
         background-color: $color;
         border-color: $color;
     }
     .loading-spinner .path {
-        stroke: #fff;
+        stroke: $white;
     }
 }
 
@@ -56,36 +56,33 @@
 
 // Color variants
 .btn-primary {
-    @include button(#fff, $brand-primary);
-}
-.btn-secondary {
-    @include button(#fff, $brand-secondary);
+    @include button($white, $brand-primary);
 }
 .btn-success {
-    @include button(#fff, $brand-success);
+    @include button($white, $brand-success);
 }
 .btn-info {
-    @include button(#fff, $brand-info);
+    @include button($white, $brand-info);
 }
 .btn-warning {
-    @include button(#fff, $brand-warning);
+    @include button($white, $brand-warning);
 }
 .btn-danger {
-    @include button(#fff, $brand-danger);
+    @include button($white, $brand-danger);
 }
 .btn-white {
-    @include button($black, #fff);
+    @include button($black, $white);
+}
+.btn-black {
+    @include button($white, $black);
 }
 
 // Outline variants
 .btn.btn-outline {
-    @include button-outline($gray);
+    @include button-outline($btn-default-bg);
 }
 .btn-primary.btn-outline {
     @include button-outline($brand-primary);
-}
-.btn-secondary.btn-outline {
-    @include button-outline($brand-secondary);
 }
 .btn-success.btn-outline {
     @include button-outline($brand-success);
@@ -100,18 +97,18 @@
     @include button-outline($brand-danger);
 }
 .btn-white.btn-outline {
-    @include button-outline(#fff);
+    @include button-outline($white);
+}
+.btn-black.btn-outline {
+    @include button-outline($black);
 }
 
 // Pure variants
 .btn.btn-pure {
-    @include button-pure($gray);
+    @include button-pure($btn-default-bg);
 }
 .btn-primary.btn-pure {
     @include button-pure($brand-primary);
-}
-.btn-secondary.btn-pure {
-    @include button-pure($brand-secondary);
 }
 .btn-success.btn-pure {
     @include button-pure($brand-success);
@@ -125,8 +122,11 @@
 .btn-danger.btn-pure {
     @include button-pure($brand-danger);
 }
+.btn-black.btn-pure {
+   @include button-pure($black);
+}
 .btn-white.btn-pure {
-    @include button-pure(#fff);
+    @include button-pure($white);
     &:hover,
     &.hover {
         opacity: 0.8;

@@ -132,6 +132,9 @@
 	border-color: $brand-danger;
 	color: #fff;
 }
+.card-header-white {
+	background-color: #fff;
+}
 
 
 // Unstyled
@@ -142,6 +145,26 @@
 	.card-footer {
 		border: none;
 		border-radius: 0;
+		background-color: transparent;
+	}
+}
+
+// With table
+.card-table
+{
+	table tbody > tr:last-child td,
+	table tbody > tr:last-child th
+	{
+		border-bottom: none;
+	}
+}
+.card-header.with-options
+{
+	line-height: 38px;
+
+	.card-header-options
+	{
+		float: right;
 	}
 }
 
@@ -153,7 +176,8 @@
 	margin-bottom: 0;
 }
 @include media-breakpoint-up(sm) {
-	.card-group {
+	.card-group
+	{
 	    display: flex;
 	    flex-flow: row wrap;
 
@@ -216,7 +240,7 @@
 .card-deck .card:last-child {
 	margin-bottom: 0;
 }
-@include media-breakpoint-up(sm) {
+@include media-breakpoint-up(md) {
 
 	.card-deck {
     	display: flex;

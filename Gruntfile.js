@@ -1,171 +1,46 @@
-module.exports = function(grunt) {
+module.exports = function(grunt)
+{
+    /**
+     * Helper function to load config files
+     *
+     * @access private
+     * @return object
+     */
+    function loadConfig(path)
+    {
+        var glob   = require('glob');
+        var object = {};
+        var key;
 
-    // Browser support for CSS prefix
-    var _browsers = [
-        'Chrome >= 35', 
-        'Firefox >= 31',
-        'Edge >= 12',
-        'Explorer >= 9',
-        'iOS >= 8',
-        'Safari >= 8',
-        'Android 2.3',
-        'Android >= 4',
-        'Opera >= 12'
-    ];
+        glob.sync('*', {cwd: path}).forEach(function(option)
+        {
+            key        = option.replace(/\.js$/,'');
+            object[key] = require(path + option);
+        });
 
-    // Sass compiler options
-    var _sassOptions = {
-        precision: 6,
-        sourcemap: 'auto',
-        style: 'expanded',
-        trace: true,
-        bundleExec: false
-    };
+        return object;
+    }
 
-    // Grunt init config
-    grunt.initConfig({
+    /**
+     * Initial Grunt Config
+     *
+     * @var object
+     */
+    var config =
+    {
+        pkg: grunt.file.readJSON('package.json')
+    }
 
-        pkg: grunt.file.readJSON('package.json'),
+    // Load tasks from the grunt-config folder
+    grunt.loadTasks('grunt-config');
 
-        // Sass (scss)
-        sass: {
+    // Load all the tasks options in grunt-config based on the name:
+    grunt.util._.extend(config, loadConfig('./grunt-config/'));
 
-            // Preminify icons, fonts, css rest
-            premin: {
-                options: {
-                    precision: 6,
-                    sourcemap: 'none',
-                    style: 'compressed',
-                    trace: true,
-                    bundleExec: false
-                },
-                files: {
-                    'src/hubble/scss/base/premin.min.css' : 'src/hubble/scss/base/premin.scss',
-                }
-            },
-            // hubble
-            core: {
-                options: _sassOptions,
-                files: {
-                   'build/css/hubble.css' : 'src/hubble/scss/hubble.scss'
-                }
-            },
-            // theme
-            theme: {
-                options: _sassOptions,
-                files: {
-                   'build/css/theme.css' : 'src/theme/scss/theme.scss'
-                }
-            },
-        },
+    // Init grunt configurations
+    grunt.initConfig(config);
 
-        // Autoprefixer
-        autoprefixer: {
-            options: {
-                browsers: _browsers,
-            },
-            // Hubble
-            core: {
-                files: {
-                    'src/hubble/scss/base/premin.min.css' : 'src/hubble/scss/base/premin.min.css',
-                    'build/css/hubble.css' : 'build/css/hubble.css',
-                }
-            },
-            // theme
-            theme: {
-                files: {
-                    'build/css/theme.css' : 'build/css/theme.css',
-                }
-            }
-        },
-
-        // CSS Minify 
-        cssmin: {
-            options: {
-                compatibility: 'ie9',
-                keepSpecialComments: '*',
-                sourceMap: true,
-                advanced: false
-            },
-            // Core & Theme
-            core: {
-                files: [{
-                    expand: true,
-                    cwd:  'build/css',
-                    src: ['*.css', '!*.min.css'],
-                    dest:  'build/css',
-                    ext: '.min.css'
-                }]
-            },
-        },
-
-        import: {
-            core: {
-                src: 'src/hubble/js/hubble.js',
-                dest: 'build/js/hubble.js',
-            },
-            theme: {
-                src: 'src/theme/js/theme.js',
-                dest: 'build/js/theme.js',
-            }
-        },
-
-        // Concat js 
-        concat: {
-
-            options: {
-                separator: '\n',
-            },
-
-            // theme
-            css_core: {
-                src: [
-                    'src/hubble/scss/base/premin.min.css',
-                    'build/css/hubble.css'
-                ],
-                dest: 'build/css/hubble.css',
-            },
-            // theme minified
-            css_core_min: {
-                src: [
-                    'src/hubble/scss/base/premin.min.css',
-                    'build/css/hubble.min.css'
-                ],
-                dest: 'build/css/hubble.min.css',
-            },
-
-        },
-
-        // Uglify js
-        uglify: {
-            core: {
-                files: {
-                    'build/js/hubble.min.js': ['build/js/hubble.js'],
-                    'build/js/theme.min.js': ['build/js/theme.js'],
-                }
-            }
-        },
-
-        // Watch
-        watch: {
-            sass: {
-                files: 'src/**/*.scss',
-                tasks: ['sass', 'autoprefixer' ,'cssmin', 'concat:css_core', 'concat:css_core_min'],
-                options: {
-                    interrupt: true,
-                },
-            },
-            js: {
-                files: 'src/**/*.js',
-                tasks: ['import', 'uglify'],
-                options: {
-                    interrupt: true,
-                },
-            },
-        },
-   
-    });
-
+    // Register tasks
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-import');
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -173,7 +48,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-autoprefixer');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-image');
 
-    grunt.registerTask('default', [ 'sass', 'autoprefixer', 'concat', 'cssmin', 'import', 'uglify']);
-
-}
+    // Default grunt task
+    grunt.registerTask('default', [ 'sass', 'autoprefixer', 'concat', 'cssmin', 'import', 'uglify', 'image']);
+};

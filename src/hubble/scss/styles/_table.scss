@@ -17,15 +17,15 @@
 			font-weight: $text-bolder;
 			text-align: left;
 			padding: $table-cell-pad-y $table-cell-pad-x;
-    		background-color: $gray;
-    		border-color: $gray;
+    		background-color: $table-head-bg;
+    		border-color: $table-head-bg;
 		    color: #fff;
 		}
 	}
 
-	> tfoot > tr:first-child > th,
-	> thead > tr:first-child > th,
-	> tbody > tr:first-child > th {
+	> tfoot > tr > th:first-child,
+	> thead > tr > th:first-child,
+	> tbody > tr > th:first-child {
 		font-weight: $text-bold;
 	}
 
@@ -45,7 +45,7 @@
 		}
 		thead th,
 		tfoot th {
-			border-color: $gray;
+			border-color: $table-head-bg;
 		}
 	}
 	&.table-hover {
@@ -55,6 +55,19 @@
 	}
 	&.table-transparent {
 		background-color: transparent;
+	}
+	&.table-plain
+	{
+		thead,
+		tfoot {		
+			th {
+	    		background-color: #fff;
+	    		border-color: #fff;
+	    		border-bottom: 2px solid $table-head-bg;
+			    color: $gray;
+			}
+		}
+
 	}
 
 

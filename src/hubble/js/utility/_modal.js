@@ -114,7 +114,8 @@
         var overlay = document.createElement('DIV');
             overlay.className = 'modal-overlay '+this._options['overlay'];
 
-        var closeButton   = typeof this._options.closeText    === 'undefined'   ? '' : '<button type="button" class="btn js-modal-close">'+this._options.closeText+'</button>';
+        var closeClass    = typeof this._options.closeClass   === 'undefined'   ? '' : this._options.closeClass;
+        var closeButton   = typeof this._options.closeText    === 'undefined'   ? '' : '<button type="button" class="btn '+closeClass+' js-modal-close">'+this._options.closeText+'</button>';
         var confirmClass  = typeof this._options.confirmClass === 'undefined'   ? 'btn-primary' : this._options.confirmClass;
         var confirmButton = typeof this._options.confirmText  === 'undefined'   ? '' : '<button type="button" class="btn '+confirmClass+' js-modal-close js-modal-confirm">'+this._options.confirmText+'</button>';
         var icon          = typeof this._options.icon  === 'undefined' ? '' : '<div class="row floor-sm roof-sm text-center"><span class="modal-icon '+this._options.iconColor+' glyph-icon glyph-icon-'+this._options.icon+'"></spam></div>';
@@ -130,8 +131,10 @@
                             icon,
                             '<p class="card-text">'+this._options.message+'</p>',
                             extras,
-                            closeButton,
-                            confirmButton,
+                            '<div class="btn-wrap">',
+                                closeButton,
+                                confirmButton,
+                            '</div>',
                         '</div>',
                         
                     '</div>',

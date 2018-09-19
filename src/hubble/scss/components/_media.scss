@@ -9,11 +9,17 @@
         margin-bottom: 0;
     }
 }
+.media.show-overlow,
+.media.show-overlow .media-body
+{
+    overflow: visible;
+}
+
 .media-body, 
 .media-left, 
 .media-right {
     display: table-cell;
-     vertical-align: middle;
+    vertical-align: middle;
     img {
         display: block;
     }

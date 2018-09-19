@@ -255,7 +255,8 @@ html, body {
 
 code[class*=language-],
 pre[class*=language-] {
-  border-radius: 2px;
+  -webkit-border-radius: 2px;
+          border-radius: 2px;
   padding: 0;
   color: #4f5b66;
   direction: ltr;
@@ -284,7 +285,8 @@ pre[class*=language-] {
 
 :not(pre) > code[class*=language-] {
   padding: .1em;
-  border-radius: 0.3em;
+  -webkit-border-radius: 0.3em;
+          border-radius: 0.3em;
 }
 
 code:not([class]) {
@@ -303,7 +305,8 @@ pre[class*=language-] {
 
 :not(pre) > code[class*=language-] {
   padding: .1em;
-  border-radius: 0.3em;
+  -webkit-border-radius: 0.3em;
+          border-radius: 0.3em;
 }
 
 code:not([class]) {
@@ -389,17 +392,23 @@ code:not([class]) {
 
 .code-content-example {
   border: 1px solid #f4f4f4;
-  border-radius: 3px;
-  border-bottom-left-radius: 1px;
-  border-bottom-right-radius: 1px;
+  -webkit-border-radius: 3px;
+          border-radius: 3px;
+  -webkit-border-bottom-left-radius: 1px;
+          border-bottom-left-radius: 1px;
+  -webkit-border-bottom-right-radius: 1px;
+          border-bottom-right-radius: 1px;
   padding: 20px;
   background: #fff;
 }
 
 .code-content-example + .highlight-wrap {
-  border-radius: 3px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
+  -webkit-border-radius: 3px;
+          border-radius: 3px;
+  -webkit-border-top-left-radius: 0px;
+          border-top-left-radius: 0px;
+  -webkit-border-top-right-radius: 0px;
+          border-top-right-radius: 0px;
 }
 
 .bd-example-container-sidebar {
@@ -407,21 +416,24 @@ code:not([class]) {
   width: 4rem;
   height: 8rem;
   background-color: #b0e2fe;
-  border-radius: .25rem;
+  -webkit-border-radius: .25rem;
+          border-radius: .25rem;
 }
 
 .bd-example-container-body {
   height: 8rem;
   margin-right: 4.5rem;
   background-color: #ff3366;
-  border-radius: .25rem;
+  -webkit-border-radius: .25rem;
+          border-radius: .25rem;
 }
 
 .bd-example-container-header {
   height: 3rem;
   margin-bottom: .5rem;
   background-color: #7de3b5;
-  border-radius: .25rem;
+  -webkit-border-radius: .25rem;
+          border-radius: .25rem;
 }
 
 .code-content-example .col {
@@ -446,7 +458,8 @@ table code {
   height: 200px;
   margin-right: 10px;
   background: #8C8;
-  border-radius: 5px;
+  -webkit-border-radius: 5px;
+          border-radius: 5px;
   counter-increment: carousel-cell;
 }
 
@@ -486,7 +499,8 @@ table code {
 .avatar img {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  -webkit-border-radius: 50%;
+          border-radius: 50%;
   display: block;
 }
 
@@ -553,7 +567,8 @@ table code {
   margin-right: 5px;
   text-decoration: none;
   color: #fff;
-  border-radius: 2px;
+  -webkit-border-radius: 2px;
+          border-radius: 2px;
   -webkit-transition: .2s ease;
        -o-transition: .2s ease;
           transition: .2s ease;

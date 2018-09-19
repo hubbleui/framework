@@ -8,7 +8,7 @@
 
 (function()
 {
-    /**
+	/**
      * JS Helper
      * 
      * @var obj
@@ -80,7 +80,7 @@
      */
     (function(DOMParser){var DOMParser_proto=DOMParser.prototype,real_parseFromString=DOMParser_proto.parseFromString;try{if((new DOMParser).parseFromString("","text/html")){return;}}catch(ex){}DOMParser_proto.parseFromString=function(markup,type){if(/^\s*text\/html\s*(?:;|$)/i.test(type)){var doc=document.implementation.createHTMLDocument(""),doc_elt=doc.documentElement,first_elt;doc_elt.innerHTML=markup;first_elt=doc_elt.firstElementChild;if(doc_elt.childElementCount===1&&first_elt.localName.toLowerCase()==="html"){doc.replaceChild(first_elt,doc_elt);}return doc;}else{return real_parseFromString.apply(this,arguments);}};}(DOMParser));
 
-    /**
+	/**
      * Module constructor
      *
      * @constructor
@@ -88,10 +88,10 @@
      */
     var Pjax = function()
     {
-        if (!_invoked)
-        {
-            this._bind();
-        }
+    	if (!_invoked)
+    	{
+    		this._bind();
+    	}
 
         return this;
     };
@@ -103,14 +103,14 @@
      */
     Pjax.prototype.destruct = function()
     {
-        // Keep the CAHCE so that state changes are retained
-        _invoked   = false;
+    	// Keep the CAHCE so that state changes are retained
+    	_invoked   = false;
         _listening = false;
         
         window.removeEventListener('popstate', this._stateChange, false);
-        
-        Hubble.require('Events').off('pjax:start', this._onStart);
-        Hubble.require('Events').off('pjax:complete', this._onComplete);
+	    
+	    Hubble.require('Events').off('pjax:start', this._onStart);
+	    Hubble.require('Events').off('pjax:complete', this._onComplete);
     }
 
     /**
@@ -120,14 +120,14 @@
      */
     Pjax.prototype._bind = function()
     {
-        _invoked = true;
+    	_invoked = true;
 
         this._cachePage();
 
         _requestedUrls.push(this._normaliseUrl(window.location.href));
 
-        Hubble.require('Events').on('pjax:start', this._onStart);
-        Hubble.require('Events').on('pjax:complete', this._onComplete);
+	    Hubble.require('Events').on('pjax:start', this._onStart);
+	    Hubble.require('Events').on('pjax:complete', this._onComplete);
     }
 
     /**
@@ -196,7 +196,7 @@
      */
     Pjax.prototype._onStart = function()
     {
-        Hubble.require('NProgress').start();
+    	Hubble.require('NProgress').start();
     }
 
     /**
@@ -206,8 +206,8 @@
      */
     Pjax.prototype._onComplete = function()
     {
-        Hubble.require('NProgress').done();
-        Hubble.dom().refresh();
+    	Hubble.require('NProgress').done();
+    	Hubble.dom().refresh();
     }
 
     /**
@@ -222,16 +222,16 @@
      */
     Pjax.prototype.invoke = function(url, target, title, stateChange, singleRequest)
     {
-        // Save the document's current state
-        this._cachePage();
+    	// Save the document's current state
+      	this._cachePage();
 
-        // If we are already loading a pjax request don't proceed
-        if (_loading)
-        {
-            return;
-        }
+    	// If we are already loading a pjax request don't proceed
+       	if (_loading)
+       	{
+       		return;
+       	}
 
-        // We are now loading
+       	// We are now loading
         _loading = true;
 
         // Fallback title
@@ -246,15 +246,15 @@
         // Normalize the url
         url = this._normaliseUrl(url.trim());
 
-        // Are we changing the window state 
+      	// Are we changing the window state	
         if (stateChange)
         {
-            // Push the current state
-            window.history.pushState(
-                { id: window.location.href },
-                document.title, 
-                window.location.href
-            );
+        	// Push the current state
+        	window.history.pushState(
+	        	{ id: window.location.href },
+	        	document.title, 
+	        	window.location.href
+	        );
         }
 
         // Create a new location object
@@ -268,24 +268,25 @@
 
         // Do we need to request fresh ?
         if (singleRequest === true && Helper.in_array(url, _requestedUrls))
-        {
-            if (stateChange === true)
-            {
-                if (title)
-                {
-                    document.title = title;
-                }
+    	{
+    		if (stateChange === true)
+    		{
+    			if (title)
+    			{
+    				document.title = title;
+    			}
 
                 window.history.pushState(
-                    { id: url }, 
-                    title, 
-                    url
+                	{ id: url }, 
+                	title, 
+                	url
                 );
-            }
-            _loading = false;
-            
-            return;
-        }
+    		}
+
+    		_loading = false;
+    		
+	        return;
+    	}
 
         // pjax GET the new content
         this._load(newLocation, stateChange, singleRequest);
@@ -305,7 +306,7 @@
         var _this = this;
 
         // We have now requested this url  
-        _requestedUrls.push(locationObj['location']);
+		_requestedUrls.push(locationObj['location']);
 
         // Fire the start event
         Hubble.require('Events').fire('pjax:start', locationObj);
@@ -367,14 +368,14 @@
         
         if (_title)
         {
-            locationObj['title'] = _title;
+        	locationObj['title'] = _title;
         }
         else
         {
-            if (!locationObj['title'])
-            {
-                locationObj['title'] = document.title;
-            }
+        	if (!locationObj['title'])
+        	{
+        		locationObj['title'] = document.title;
+        	}
         }
 
         // Set the title
@@ -385,17 +386,17 @@
         // Otherwise get by id
         if (locationObj['target'] === 'document-body')
         {
-            var targetEl  = document.body;
-            var domTarget = domCotent.body;
+        	var targetEl  = document.body;
+        	var domTarget = domCotent.body;
         }
         else
         {
-            var targetEl  = document.getElementById(locationObj['target']);
-            var domTarget = domCotent.getElementById(locationObj['target']);
+        	var targetEl  = document.getElementById(locationObj['target']);
+        	var domTarget = domCotent.getElementById(locationObj['target']);
         }
         
         // Cache the current document scripts to compare
-        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
+       	var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
         var newScripts  = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
         
         // Replace the target el's innerHTML
@@ -427,26 +428,26 @@
         (
             function(res, chain)
             {
-                // Append scripts, wait for load/execution and call next chain
+            	// Append scripts, wait for load/execution and call next chain
                 _this._appendScripts(currScripts, newScripts, chain);
             },
             function(res, chain)
             {
-                // Push the history state
+            	// Push the history state
                 window.history.pushState(
-                    { id: locationObj.location }, 
-                    locationObj.title, 
-                    locationObj.location
+                	{ id: locationObj.location }, 
+                	locationObj.title, 
+                	locationObj.location
                 );
                 chain.next();
             },
             function(res, chain)
             {
-                // If we are not listening for any state changes
-                // Add the listener
+            	// If we are not listening for any state changes
+            	// Add the listener
                 if (!_listening)
                 {
-                    _this._stateListener();
+                	_this._stateListener();
                 }
 
                 // Finished loading
@@ -458,7 +459,7 @@
                 // Wait for spinner to finish
                 setTimeout(function()
                 { 
-                    _this._cachePage();
+                	_this._cachePage();
 
                 }, 500);                
             }
@@ -514,7 +515,7 @@
         }
         else
         {
-            history.back();
+        	history.back();
         }
     }
 
@@ -526,8 +527,8 @@
      * @param  string HTML        document.body.innerHTML
      */
     Pjax.prototype._restoreState = function(locationObj, HTML)
-    {       
-        // Parse the HTML
+    {    	
+    	// Parse the HTML
         var domCotent = this._parseHTML(HTML);
 
         // Try to get the title
@@ -535,14 +536,14 @@
         
         if (_title)
         {
-            locationObj['title'] = _title;
+        	locationObj['title'] = _title;
         }
         else
         {
-            if (!locationObj['title'])
-            {
-                locationObj['title'] = document.title;
-            }
+        	if (!locationObj['title'])
+        	{
+        		locationObj['title'] = document.title;
+        	}
         }
 
         // Set the title
@@ -551,7 +552,7 @@
         document.body.innerHTML = HTML;
         
         // Cache the current document scripts to compare
-        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
+       	var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
         var newScripts  = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
 
         // Push the state change and append any new scripts
@@ -561,13 +562,13 @@
         (
             function(res, chain)
             {
-                // Append scripts, wait for load/execution and call next chain
+            	// Append scripts, wait for load/execution and call next chain
                 _this._appendScripts(currScripts, newScripts, chain);
             },
             function(res, chain)
             {
-                _loading = false;
-                Hubble.require('Events').fire('pjax:complete', locationObj);
+            	_loading = false;
+            	Hubble.require('Events').fire('pjax:complete', locationObj);
             }
         );
     }
@@ -590,10 +591,10 @@
 
         for (var i = 0; i < newScripts.length; i++)
         {
-            // Script is not in the current DOM tree
+        	// Script is not in the current DOM tree
             if (!this._hasScript(newScripts[i], currScripts))
             {
-                // Create a new script
+            	// Create a new script
                 var script = document.createElement('script');
                 script.type  = 'text/javascript';
                 script.async = false;
@@ -601,37 +602,37 @@
                 // Is this an inline script or a src ?
                 if (newScripts[i]['src'] === true)
                 {
-                    // Listen for the script to load to chain next
-                    if (!this._havMoreScriptSources(i, newScripts))
-                    {
-                        script.addEventListener('load', function()
-                        {
-                            chain.next();
-                        });
-                        listeningForChain = true;
-                    }
+                	// Listen for the script to load to chain next
+                	if (!this._havMoreScriptSources(i, newScripts))
+                	{
+                		script.addEventListener('load', function()
+		                {
+		                    chain.next();
+		                });
+		                listeningForChain = true;
+                	}
 
-                    script.src = newScripts[i]['content'];
+	                script.src = newScripts[i]['content'];
                 }
                 else
                 {
-                    script.innerHTML = newScripts[i]['content'];
+                	script.innerHTML = newScripts[i]['content'];
 
-                    // If there are either no more scripts to load
-                    // Or no more src scripts to load:
-                    // and we haven't added a listener to call the next chain
-                    // Add a function so once this script executes the next chain will be called
-                    if (!listeningForChain && !this._havMoreScriptSources(i, newScripts))
-                    {
-                        listeningForChain = true;
-                        window.nextChain = function()
-                        {
-                            chain.next();
-                            delete window.nextChain;
-                        };
+                	// If there are either no more scripts to load
+                	// Or no more src scripts to load:
+                	// and we haven't added a listener to call the next chain
+                	// Add a function so once this script executes the next chain will be called
+                	if (!listeningForChain && !this._havMoreScriptSources(i, newScripts))
+                	{
+                		listeningForChain = true;
+                		window.nextChain = function()
+                		{
+                			chain.next();
+                			delete window.nextChain;
+                		};
 
-                        script.innerHTML += ';(function(){ nextChain(); })();';
-                    }
+                		script.innerHTML += ';(function(){ nextChain(); })();';
+                	}
                 }
 
                 // Append the new script
@@ -642,7 +643,7 @@
         // If no listeners call next
         if (!listeningForChain)
         {
-            chain.next();
+        	chain.next();
         }
     }
 
@@ -656,18 +657,18 @@
      */
     Pjax.prototype._havMoreScriptSources = function(i, scripts)
     {
-        // Are we at the last iteration ?
-        if (i < scripts.length - 1)
-        {
-            return false;
-        }
+    	// Are we at the last iteration ?
+    	if (i < scripts.length - 1)
+    	{
+    		return false;
+    	}
 
-        for (var k = 0; k < scripts.length; k++)
+    	for (var k = 0; k < scripts.length; k++)
         {
-            if (k > i && scripts[k]['src'] === true)
-            {
-                return true;
-            }
+        	if (k > i && scripts[k]['src'] === true)
+        	{
+        		return true;
+        	}
         }
 
         return false;
@@ -690,20 +691,20 @@
 
             if (src)
             {
-                // Remove the query string
-                src = src.split('?')[0];
-                
-                result.push( { 'src': true, 'inline' : false, 'content' : src} );
+            	// Remove the query string
+            	src = src.split('?')[0];
+            	
+            	result.push( { 'src': true, 'inline' : false, 'content' : src} );
             }
             else
-            {   
-                // Don't append JSON inline scripts
-                if (Helper.isJSON(nodes[i].innerHTML.trim()))
-                {
-                    continue;
-                }
+            {	
+            	// Don't append JSON inline scripts
+            	if (Helper.isJSON(nodes[i].innerHTML.trim()))
+            	{
+            		continue;
+            	}
 
-                result.push({ 'src': false, 'inline' : true, 'content' : nodes[i].innerHTML.trim()});
+            	result.push({ 'src': false, 'inline' : true, 'content' : nodes[i].innerHTML.trim()});
             }
         }
 
@@ -722,10 +723,10 @@
     {
         for (var i = 0; i < currScripts.length; i++)
         {
-            if (script['content'] === currScripts[i]['content'])
-            {
-                return true;
-            }
+        	if (script['content'] === currScripts[i]['content'])
+        	{
+        		return true;
+        	}
         }
 
         return false;
@@ -744,7 +745,7 @@
         
         if (title.length)
         {
-            return title[0].innerHTML.trim();
+        	return title[0].innerHTML.trim();
         }
 
         return false;
@@ -759,7 +760,7 @@
      */
     Pjax.prototype._parseHTML = function(html)
     {
-        var parser = new DOMParser();
+    	var parser = new DOMParser();
         return parser.parseFromString(html, 'text/html');
     }
 
@@ -789,7 +790,7 @@
      */
     Pjax.prototype._cachePut = function(key, value)
     {
-        for (var i = 0; i < _cache.length; i++)
+    	for (var i = 0; i < _cache.length; i++)
         {
             if (_cache[i]['key'] === key)
             {
@@ -828,7 +829,7 @@
      */
     Pjax.prototype._cachePage = function()
     {
-        var content = document.body.innerHTML;
+    	var content = document.body.innerHTML;
 
         var _location =
         {
@@ -849,43 +850,43 @@
      */
     Pjax.prototype._normaliseUrl = function(url)
     {
-        // If the url was set as local
-        
-        // e.g www.foobar.com/foobar
-        // foobar.com/foobar
-        if (url.indexOf('http') < 0)
-        {
-            // Get the path
-            var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;  
+    	// If the url was set as local
+    	
+    	// e.g www.foobar.com/foobar
+    	// foobar.com/foobar
+    	if (url.indexOf('http') < 0)
+    	{
+    		// Get the path
+    		var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;	
 
-            // e.g www.foobar.com/foobar
-            if (url[0] === 'w')
-            {
-                var host = url.split('.com');
+    		// e.g www.foobar.com/foobar
+    		if (url[0] === 'w')
+    		{
+    			var host = url.split('.com');
 
-                url = window.location.protocol + '//' + host[0] + '.com/' + path;
-            }
-            else
-            {
-                // foobar.com/foobar
-                if (url.indexOf('.com') !== -1)
-                {
-                    var host = url.split('.com');
-                    url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
-                }
-                // /foobar/bar/
-                else
-                {
-                    url = window.location.origin + '/' + path;
-                }
-                
-            }
-        }
+    			url = window.location.protocol + '//' + host[0] + '.com/' + path;
+    		}
+    		else
+    		{
+    			// foobar.com/foobar
+    			if (url.indexOf('.com') !== -1)
+    			{
+    				var host = url.split('.com');
+    				url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
+    			}
+    			// /foobar/bar/
+    			else
+    			{
+    				url = window.location.origin + '/' + path;
+    			}
+    			
+    		}
+    	}
 
-        return url;
+    	return url;
     }
 
-    // Load into Hubble DOM core
+	// Load into Hubble DOM core
     Container.get('Hubble').dom().register('Pjax', Pjax);
    
 })();

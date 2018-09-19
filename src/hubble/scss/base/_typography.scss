@@ -5,6 +5,7 @@ h1, h2, h3, h4, h5, h6,
     font-weight: $headings-font-weight;
     line-height: $headings-line-height;
     margin-bottom: 1rem;
+    font-style: normal;
 }
 
 h1 { 
@@ -53,21 +54,27 @@ p {
 }
 .p1 {
     font-size: $text-size-p1;
+    line-height: $text-size-p1 * 1.88;
 }
 .p2 {
     font-size: $text-size-p2;
+    line-height: $text-size-p2 * 1.88;
 }
 .p3 {
     font-size: $text-size-p3;
+    line-height: $text-size-p3 * 1.88;
 }
 .p4 {
     font-size: $text-size-p4;
+    line-height: $text-size-p4 * 1.88;
 }
 .p5 {
     font-size: $text-size-p5;
+    line-height: $text-size-p5 * 1.88;
 }
 .p6 {
     font-size: $text-size-p6;
+    line-height: $text-size-p6 * 1.88;
 }
 
 // Bold and Italics

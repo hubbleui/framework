@@ -1,3 +1,5 @@
+$select-pos-y : _minusPercent($input-pad-y, 10);
+
 .form-field {
     position: relative;
     display: inline-block;    
@@ -14,6 +16,8 @@
         background-color: $input-bg;
         border: 1px solid $input-border-color;
         transition: background-color $base-easing-time $base-easing, border-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
+        box-shadow: none;
+        -webkit-appearance: none;
         &:focus,
         &.focus {
             background-color: $input-bg-hover;
@@ -30,9 +34,9 @@
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
-        padding: 9px 50px 9px 16px;
+        padding: $input-pad-y ($input-pad-x * 3) $input-pad-y $input-pad-x;
         background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%), linear-gradient(to right, #ccc, #ccc);
-        background-position: calc(100% - 20px) calc(1em + 6px), calc(100% - 15px) calc(1em + 6px), calc(100% - 37px) 11px;
+        background-position: calc(100% - 20px) calc(1em + #{$select-pos-y}), calc(100% - 15px) calc(1em + #{$select-pos-y}), calc(100% - 37px) 11px;
         background-size: 5px 5px, 5px 5px, 0px 1.5em;
         background-repeat: no-repeat;
     }
@@ -65,10 +69,10 @@
         color: $brand-warning;
     }
     &.danger {
-        input,textarea, select {
+        input, textarea, select {
             border-color: $brand-danger;
         }
-        input + .help-danger {
+        input + .help-danger, textarea + .help-danger, select + .help-danger {
             max-height: 50px;
             transition: max-height $base-easing-time $base-easing;
         }
@@ -77,7 +81,7 @@
         input,textarea, select {
             border-color: $brand-warning;
         }
-        input + .help-warning {
+        input + .help-warning, textarea + .help-warning, select + .help-warning {
             max-height: 50px;
             transition: max-height $base-easing-time $base-easing;
         }

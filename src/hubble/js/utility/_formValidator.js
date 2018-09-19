@@ -193,7 +193,6 @@
                 this._formObj[name] = (this._inputs[i].checked == true);
                 continue;
             }
-            if (Helper.is_numeric(value)) value = parseInt(value);
             if (name.indexOf('[]') > -1) {
                 if (!Helper.isset(this._formObj[name])) this._formObj[name] = [];
                 this._formObj[name].push(value);
@@ -279,12 +278,21 @@
         return re.test(value);
     };
     FormValidator.prototype._validateCreditCard = function(value) {
-        value = value.replace(/ /g, "");
-        var re = /^[0-9]+$/;
-        var check = re.test(value);
-        if (check === false) return false;
-        if (value.length !== 16) return false;
-        return true;
+        var arr   = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+        var ccNum = String(value).replace(/[- ]/g,''); 
+
+        var 
+            len = ccNum.length,
+            bit = 1,
+            sum = 0,
+            val;
+
+        while (len) {
+            val = parseInt(ccNum.charAt(--len), 10);
+            sum += (bit ^= 1) ? arr[val] : val;
+        }
+
+        return sum && sum % 10 === 0;
     };
 
     // Load into container

@@ -84,10 +84,16 @@
             background-color: transparent;
         }
     }
-    .glyph-icon {
+    .glyph-icon
+    {
         font-size: $btn-icon-font-size;
         line-height: $btn-icon-line-height;
         vertical-align: $btn-icon-vertical-align;
+    }
+
+    .loading-spinner .path
+    {
+        stroke: $btn-default-color;
     }
 }
 

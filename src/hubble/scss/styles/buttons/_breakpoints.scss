@@ -1,0 +1,98 @@
+
+.btn-block-xs
+{
+	display: block;
+	width: 100%;
+}
+.btn-block-xs + .btn-block-xs
+{
+	margin-top: 5px;
+}
+
+@include media-breakpoint-up(sm)
+{
+	.btn-block-xs
+	{
+		display: inline-block;
+		width: auto;
+	}
+	.btn-block-xs + .btn-block-xs
+	{
+		margin-top: 0;
+	}
+	.btn-block-sm
+	{
+		display: block;
+		width: 100%;
+	}
+	.btn-block-sm + .btn-block-sm
+	{
+		margin-top: 5px;
+	}
+}
+
+@include media-breakpoint-up(md)
+{
+	.btn-block-sm
+	{
+		display: inline-block;
+		width: auto;
+	}
+	.btn-block-sm + .btn-block-sm
+	{
+		margin-top: 0;
+	}
+	.btn-block-md
+	{
+		display: block;
+		width: 100%;
+	}
+	.btn-block-md + .btn-block-md
+	{
+		margin-top: 5px;
+	}
+}
+
+@include media-breakpoint-up(lg)
+{
+	.btn-block-md
+	{
+		display: inline-block;
+		width: auto;
+	}
+	.btn-block-md + .btn-block-md
+	{
+		margin-top: 0;
+	}
+	.btn-block-lg
+	{
+		display: block;
+		width: 100%;
+	}
+	.btn-block-lg + .btn-block-lg
+	{
+		margin-top: 5px;
+	}
+}
+
+@include media-breakpoint-down(xl)
+{
+	.btn-block-lg
+	{
+		display: inline-block;
+		width: auto;
+	}
+	.btn-block-lg + .btn-block-lg
+	{
+		margin-top: 0;
+	}
+	.btn-block-xl
+	{
+		display: block;
+		width: 100%;
+	}
+	.btn-block-xl + .btn-block-xl
+	{
+		margin-top: 5px;
+	}
+}
