@@ -39,5 +39,13 @@ module.exports =
         options : _options,
         files   : ['src/**/*.{png,jpg,gif}', 'src/*.{png,jpg,gif}'],
         tasks   : ['image'],
+    },
+
+    // Watch image files and run grunt tasks
+    svg :
+    {
+        options : _options,
+        files   : ['src/**/*.svg', 'src/*.svg'],
+        tasks   : ['svgmin'],
     }
 };

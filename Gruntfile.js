@@ -49,7 +49,8 @@ module.exports = function(grunt)
     grunt.loadNpmTasks('grunt-autoprefixer');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-image');
+    grunt.loadNpmTasks('grunt-svgmin');
 
     // Default grunt task
-    grunt.registerTask('default', [ 'sass', 'autoprefixer', 'concat', 'cssmin', 'import', 'uglify', 'image']);
+    grunt.registerTask('default', [ 'sass', 'autoprefixer', 'concat', 'cssmin', 'import', 'uglify', 'image', 'svgmin']);
 };

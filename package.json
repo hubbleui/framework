@@ -11,6 +11,8 @@
         "grunt-contrib-uglify": "^0.9.2",
         "grunt-contrib-watch": "^0.6.1",
         "grunt-image": "^4.2.0",
-        "grunt-import": "^1.0.3"
-    }
+        "grunt-import": "^1.0.3",
+        "grunt-svgmin": "^5.0.0"
+    },
+    "dependencies": {}
 }
