@@ -150,6 +150,8 @@ code, pre {
     font-family: $font-family-monospace;
     line-height: $base-line-height;
     font-size: 1.2rem;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
     -webkit-font-smoothing: initial;
     -moz-osx-font-smoothing: initial;
     background-color: $gray-lightest;

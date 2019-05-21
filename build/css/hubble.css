@@ -22,6 +22,7 @@ body {
   line-height: 1.8;
   font-size: 1.45rem;
   text-rendering: optimizeLegibility;
+  font-smoothing: antialiased;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -30,6 +31,7 @@ input, select, label, button, textarea {
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
   font-size: 1.45rem;
   text-rendering: optimizeLegibility;
+  font-smoothing: antialiased;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -248,6 +250,8 @@ code, pre {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   line-height: 1.8;
   font-size: 1.2rem;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
   -webkit-font-smoothing: initial;
   -moz-osx-font-smoothing: initial;
   background-color: #f4f4f4;
@@ -300,8 +304,8 @@ pre > code {
 
 .container-fluid,
 .container {
-  padding-left: 3rem;
-  padding-right: 3rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
   width: 100%;
 }
 
@@ -601,6 +605,11 @@ pre > code {
   margin-right: 0%;
 }
 
+.gutter-xxs {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
 .gutter-xs {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -639,6 +648,10 @@ pre > code {
   padding-right: 0;
 }
 
+.roof-xxs {
+  padding-top: 0.5rem;
+}
+
 .roof-xs {
   padding-top: 1.5rem;
 }
@@ -661,6 +674,10 @@ pre > code {
 
 .no-roof {
   padding-top: 0;
+}
+
+.floor-xxs {
+  padding-bottom: 0.5rem;
 }
 
 .floor-xs {
@@ -849,6 +866,11 @@ pre > code {
     margin-right: 0%;
   }
 
+  .gutter-sm-xxs {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
   .gutter-sm-xs {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -887,6 +909,10 @@ pre > code {
     padding-right: 0;
   }
 
+  .roof-sm-xxs {
+    padding-top: 0.5rem;
+  }
+
   .roof-sm-xs {
     padding-top: 1.5rem;
   }
@@ -909,6 +935,10 @@ pre > code {
 
   .no-roof-sm {
     padding-top: 0;
+  }
+
+  .floor-sm-xxs {
+    padding-bottom: 0.5rem;
   }
 
   .floor-sm-xs {
@@ -1097,6 +1127,11 @@ pre > code {
     margin-right: 0%;
   }
 
+  .gutter-md-xxs {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
   .gutter-md-xs {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -1135,6 +1170,10 @@ pre > code {
     padding-right: 0;
   }
 
+  .roof-md-xxs {
+    padding-top: 0.5rem;
+  }
+
   .roof-md-xs {
     padding-top: 1.5rem;
   }
@@ -1157,6 +1196,10 @@ pre > code {
 
   .no-roof-md {
     padding-top: 0;
+  }
+
+  .floor-md-xxs {
+    padding-bottom: 0.5rem;
   }
 
   .floor-md-xs {
@@ -1345,6 +1388,11 @@ pre > code {
     margin-right: 0%;
   }
 
+  .gutter-lg-xxs {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
   .gutter-lg-xs {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -1383,6 +1431,10 @@ pre > code {
     padding-right: 0;
   }
 
+  .roof-lg-xxs {
+    padding-top: 0.5rem;
+  }
+
   .roof-lg-xs {
     padding-top: 1.5rem;
   }
@@ -1405,6 +1457,10 @@ pre > code {
 
   .no-roof-lg {
     padding-top: 0;
+  }
+
+  .floor-lg-xxs {
+    padding-bottom: 0.5rem;
   }
 
   .floor-lg-xs {
@@ -1593,6 +1649,11 @@ pre > code {
     margin-right: 0%;
   }
 
+  .gutter-xl-xxs {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
   .gutter-xl-xs {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -1631,6 +1692,10 @@ pre > code {
     padding-right: 0;
   }
 
+  .roof-xl-xxs {
+    padding-top: 0.5rem;
+  }
+
   .roof-xl-xs {
     padding-top: 1.5rem;
   }
@@ -1653,6 +1718,10 @@ pre > code {
 
   .no-roof-xl {
     padding-top: 0;
+  }
+
+  .floor-xl-xxs {
+    padding-bottom: 0.5rem;
   }
 
   .floor-xl-xs {
@@ -3513,6 +3582,7 @@ pre > code {
 ul, ol {
   margin: 1em 0 2em 0;
   padding: 0 0 0 4rem;
+  list-style: disc;
   list-style: initial;
 }
 ul li, ol li {
@@ -3902,6 +3972,7 @@ blockquote.bq-danger > footer, blockquote.bq-success > footer, blockquote.bq-inf
   padding: 1.65rem;
 }
 .btn-circle .glyph-icon {
+  line-height: normal;
   line-height: initial;
 }
 .btn-circle:not(.raised):active {
@@ -4506,6 +4577,7 @@ input[type="button"].btn-block {
 .field-group select,
 .field-group textarea {
   float: left;
+  width: auto;
   width: initial;
   display: table-cell;
 }
@@ -6119,11 +6191,13 @@ form.success .msg-success {
 
 .drop-se {
   right: 0;
+  left: auto;
   left: initial;
 }
 
 .drop-sw {
   left: 0;
+  right: auto;
   right: initial;
 }
 
@@ -6140,6 +6214,7 @@ form.success .msg-success {
   top: auto;
   bottom: 100%;
   right: 0;
+  left: auto;
   left: initial;
   margin-bottom: 8px;
 }
@@ -6148,6 +6223,7 @@ form.success .msg-success {
   top: auto;
   bottom: 100%;
   left: 0;
+  right: auto;
   right: initial;
   margin-bottom: 8px;
 }
@@ -6682,8 +6758,8 @@ form.success .msg-success {
 .modal-dialog {
   margin-left: auto;
   margin-right: auto;
-  padding-left: 3rem;
-  padding-right: 3rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
   width: 100%;
   max-width: 600px;
 }

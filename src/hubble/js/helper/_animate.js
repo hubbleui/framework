@@ -120,11 +120,10 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
     for (var j = 0, len = longHandProps.length; j < len; j++)
     {
         var longHandStyle = this._computeStyle(el, longHandProps[j]);
-        var isMulti       = longHandStyle.indexOf(',') >= 0;
 
         if (longHandStyle)
-        {
-            if (isMulti)
+        {            
+            if (longHandStyle.indexOf(',') >= 0)
             {                        
                 multiValArr.push(longHandStyle.split(',').map(Function.prototype.call, String.prototype.trim));
             }

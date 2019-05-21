@@ -129,6 +129,7 @@
        padding: _addPercent($btn-font-size, 50);
     }
     .glyph-icon {
+        line-height: normal;
         line-height: initial;
     }
     &:not(.raised):active{

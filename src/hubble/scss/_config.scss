@@ -102,6 +102,7 @@ $breakpoints: (
 
 // Grid gutters
 $grid-gutters: (
+    xxs: 0.5rem,
     xs: 1.5rem,
     sm: 2.0rem,
     md: 2.5rem,
@@ -111,6 +112,7 @@ $grid-gutters: (
 
 // Grid roof and floors
 $grid-v-gutters: (
+    xxs: 0.5rem,
     xs: 1.5rem,
     sm: 3.0rem,
     md: 6.0rem,
@@ -120,7 +122,8 @@ $grid-v-gutters: (
 
 // Container gutters
 $container-gutters: (
-    xs: 3.0rem,
+    xxs: 0.5rem,
+    xs: 1.5rem,
     sm: 3.0rem,
     md: 3.0rem,
     lg: 3.0rem,
@@ -129,6 +132,7 @@ $container-gutters: (
 
 // Margin sizes
 $margin-sizes: (
+    xxs: 0.5rem,
     xs: 1.5rem,
     sm: 3.0rem,
     md: 4.5rem,

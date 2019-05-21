@@ -57,9 +57,10 @@
 @mixin _fontSmooth() {
 	@if $font-smoothing {
         text-rendering: optimizeLegibility;
-   		-webkit-font-smoothing: antialiased;
+        font-smoothing: antialiased;
+   	    -webkit-font-smoothing: antialiased;
     	-moz-osx-font-smoothing: grayscale;
-   	}
+  }
 }
 
 // Text ellipsis

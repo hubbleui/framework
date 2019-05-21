@@ -93,10 +93,12 @@
 }
 .drop-se {
     right: 0;
+    left: auto;
     left: initial;
 }
 .drop-sw {
     left: 0;
+    right: auto;
     right: initial;
 }
 
@@ -113,6 +115,7 @@
     top: auto;
     bottom: 100%;
     right: 0;
+    left: auto;
     left: initial;
     margin-bottom: 8px;
 }
@@ -120,6 +123,7 @@
     top: auto;
     bottom: 100%;
     left: 0;
+    right: auto;
     right: initial;
     margin-bottom: 8px;
 }

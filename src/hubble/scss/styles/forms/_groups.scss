@@ -3,6 +3,7 @@
 	select,
 	textarea {
 		float: left;
+		width: auto;
 		width: initial;
 	    display: table-cell;
 	    &:last-child {

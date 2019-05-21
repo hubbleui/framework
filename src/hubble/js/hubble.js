@@ -1,3 +1,6 @@
+// Polyfills
+@import "polyfills/_polyfills.js";
+
 // Container
 @import "application/_container.js";
 @import "application/_application.js";
