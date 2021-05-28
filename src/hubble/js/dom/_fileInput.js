@@ -76,7 +76,7 @@
     FileInput.prototype._eventHandler = function()
     {
         var fileInput = this;
-        var wrap      = Helper.closestClass(fileInput, 'js-file-field');
+        var wrap      = Helper.closest(fileInput, '.js-file-field');
         var showInput = Helper.$('.js-file-text', wrap);
         var fullPath  = fileInput.value;
         if (fullPath)

@@ -37,7 +37,7 @@
      * Fire a custom event
      *
      * @param eventName string The event name to fire
-     * @param eventName string What should be given as "this" to the event callbacks
+     * @param subject   mixed  What should be given as "this" to the event callbacks
      * @access public
      */
     Events.prototype.fire = function(eventName, subject)

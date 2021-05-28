@@ -42,6 +42,50 @@
     }
 }
 
+// Raised
+@mixin raised($level : 1)
+{
+    @if $level == 1
+    {
+        box-shadow: $raised-level-one;
+        transition: box-shadow $base-easing-time $base-easing;
+        &:hover
+        {
+            box-shadow: $raised-level-one-hover;
+        }
+        &:active
+        {
+            box-shadow: none;
+        }
+    }
+    @else if $level == 2
+    {
+        box-shadow: $raised-level-two;
+        transition: box-shadow $base-easing-time $base-easing;
+        &:hover
+        {
+            box-shadow: $raised-level-two-hover;
+        }
+        &:active
+        {
+            box-shadow: none;
+        }
+    }
+    @else if $level == 3
+    {
+        box-shadow: $raised-level-three;
+        transition: box-shadow $base-easing-time $base-easing;
+        &:hover
+        {
+            box-shadow: $raised-level-three-hover;
+        }
+        &:active
+        {
+            box-shadow: none;
+        }
+    }
+}
+
 //================ PRIVATE ================//
 // Utility
 @function _minusPercent($value, $percentage) {
@@ -56,9 +100,9 @@
 // Font smoothing
 @mixin _fontSmooth() {
 	@if $font-smoothing {
-        text-rendering: optimizeLegibility;
-        font-smoothing: antialiased;
-   	    -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      font-smoothing: antialiased;
+   		-webkit-font-smoothing: antialiased;
     	-moz-osx-font-smoothing: grayscale;
   }
 }
@@ -94,4 +138,36 @@
         border: none;
         outline: none;
     }
+}
+
+// icons
+@mixin line-icon
+{
+    display: inline-block;
+    font: normal normal normal 14px/1 'PicIcon';
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+@mixin glyph-icon
+{
+    display: inline-block;
+    font: normal normal normal 14px/1 'IcoMoon';
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+@mixin center-horizontal
+{
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+@mixin center-vertical
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
 }

@@ -54,6 +54,19 @@ JSHelper.prototype.array_reduce = function(array, count) {
 }
 
 /**
+ * Compare two arrays
+ * 
+ * @access public
+ * @param  array  a
+ * @param  array  b
+ * @return array
+ */
+JSHelper.prototype.array_compare = function(a, b)
+{
+    return JSON.stringify(a) === JSON.stringify(b);;
+}
+
+/**
  * Implode an array
  * 
  * @access public
@@ -62,13 +75,36 @@ JSHelper.prototype.array_reduce = function(array, count) {
  * @param  string suffix Imploding sufix (optional) (default )
  * @return string
  */
-JSHelper.prototype.implode = function(array, prefix, suffix) {
+JSHelper.prototype.implode = function(array, prefix, suffix)
+{
+    if (this.is_obj(array))
+    {
+        if (this.empty(array))
+        {
+            return '';
+        }
+
+        glue = typeof prefix === 'undefined' ? '' : prefix;
+
+        separator = typeof suffix === 'undefined' ? '' : suffix; 
+
+        return this.rtrim(Object.keys(array).map(function (key, value) { return [key, array[key]].join(glue); }).join(separator), suffix);
+    }
+
     var str = '';
-    for (i = 0; i < array.length; i++) {
-        if (i === array.length - 1) {
+
+    prefix = typeof prefix === 'undefined' ? '' : prefix;
+
+    suffix = typeof suffix === 'undefined' ? '' : suffix; 
+   
+    for (var i = 0; i < array.length; i++)
+    {
+        if (i === array.length - 1)
+        {
             str += prefix + array[i];
         }
-        else {
+        else
+        {
             str += prefix + array[i] + suffix;
         }
     }
@@ -197,24 +233,35 @@ JSHelper.prototype.paginate = function(array, page, limit) {
  */
 JSHelper.prototype.foreach = function(obj, callback, args) {
     var value, i = 0,
-    length = obj.length,
+    length  = obj.length,
     isArray = Object.prototype.toString.call(obj) === '[object Array]';
 
-    if (args) {
-        if (isArray) {
+    if (Object.prototype.toString.call(args) === '[object Array]')
+    {
+        if (isArray)
+        {
             for (; i < length; i++) {
-                value = callback.apply(obj[i], args);
+
+                var _currArgs = [i, obj[i]];
+
+                value = callback.apply(obj, this.array_merge([i, obj[i]], args));
 
                 if (value === false) {
                     break;
                 }
             }
         }
-        else {
-            for (i in obj) {
-                value = callback.apply(obj[i], args);
+        else
+        {
+            for (i in obj)
+            {
 
-                if (value === false) {
+                var _currArgs = [i, obj[i]];
+
+                value = callback.apply(obj, this.array_merge([i, obj[i]], args));
+
+                if (value === false)
+                {
                     break;
                 }
             }
@@ -223,9 +270,11 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
         // A special, fast, case for the most common use of each
     }
     else {
-        if (isArray) {
-            for (; i < length; i++) {
-                value = callback.call(obj[i], i, obj[i]);
+        if (isArray)
+        {
+            for (; i < length; i++)
+            {
+                value = callback.call(obj, i, obj[i]);
 
                 if (value === false) {
                     break;
@@ -233,8 +282,9 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
             }
         }
         else {
-            for (i in obj) {
-                value = callback.call(obj[i], i, obj[i]);
+            for (i in obj)
+            {
+                value = callback.call(obj, i, obj[i]);
 
                 if (value === false) {
                     break;
@@ -295,7 +345,7 @@ JSHelper.prototype.array_merge = function () {
   toStr = Object.prototype.toString,
   retArr = true;
 
-  for (i = 0; i < argl; i++) {
+  for (var i = 0; i < argl; i++) {
     if (toStr.call(args[i]) !== '[object Array]') {
       retArr = false;
       break;
@@ -304,7 +354,7 @@ JSHelper.prototype.array_merge = function () {
 
 if (retArr) {
     retArr = [];
-    for (i = 0; i < argl; i++) {
+    for (var i = 0; i < argl; i++) {
       retArr = retArr.concat(args[i]);
   }
   return retArr;
@@ -348,74 +398,56 @@ JSHelper.prototype.array_filter = function(array) {
 }
 
 /**
+ * Array filter
+ * 
+ * @access public
+ * @param  array array Target array to filter
+ * @return array
+ */
+JSHelper.prototype.array_unique = function(array)
+{
+    var result = [];
+
+    if (this.is_array(array))
+    {
+        for (var i = 0; i < array.length; i++)
+        {
+            if (!this.in_array(array[i], result))
+            {
+                result.push(array[i])
+            }
+        }
+    }
+    
+    return result;
+}
+
+/**
+ * Is array
+ * 
+ * @access public
+ * @param  mixed mixed_var Target object to to check
+ * @return bool
+ */
+JSHelper.prototype.is_obj = function(mixed_var)
+{
+    if( (typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+
+/**
  * Is array
  * 
  * @access public
  * @param  array array Target array to filter
  * @return bool
  */
-JSHelper.prototype.is_array = function(mixed_var) {
-  //  discuss at: http://phpjs.org/functions/is_array/
-  // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // improved by: Legaev Andrey
-  // improved by: Onno Marsman
-  // improved by: Brett Zamir (http://brett-zamir.me)
-  // improved by: Nathan Sepulveda
-  // improved by: Brett Zamir (http://brett-zamir.me)
-  // bugfixed by: Cord
-  // bugfixed by: Manish
-  // bugfixed by: Brett Zamir (http://brett-zamir.me)
-  //        note: In php.js, javascript objects are like php associative arrays, thus JavaScript objects will also
-  //        note: return true in this function (except for objects which inherit properties, being thus used as objects),
-  //        note: unless you do ini_set('phpjs.objectsAsArrays', 0), in which case only genuine JavaScript arrays
-  //        note: will return true
-  //   example 1: is_array(['Kevin', 'van', 'Zonneveld']);
-  //   returns 1: true
-  //   example 2: is_array('Kevin van Zonneveld');
-  //   returns 2: false
-  //   example 3: is_array({0: 'Kevin', 1: 'van', 2: 'Zonneveld'});
-  //   returns 3: true
-  //   example 4: is_array(function tmp_a(){this.name = 'Kevin'});
-  //   returns 4: false
-
-  var ini,
-  _getFuncName = function(fn) {
-      var name = (/\W*function\s+([\w\$]+)\s*\(/)
-      .exec(fn);
-      if (!name) {
-        return '(Anonymous)';
-    }
-    return name[1];
-};
-_isArray = function(mixed_var) {
-    // return Object.prototype.toString.call(mixed_var) === '[object Array]';
-    // The above works, but let's do the even more stringent approach: (since Object.prototype.toString could be overridden)
-    // Null, Not an object, no length property so couldn't be an Array (or String)
-    if (!mixed_var || typeof mixed_var !== 'object' || typeof mixed_var.length !== 'number') {
-      return false;
-  }
-  var len = mixed_var.length;
-  mixed_var[mixed_var.length] = 'bogus';
-    // The only way I can think of to get around this (or where there would be trouble) would be to have an object defined
-    // with a custom "length" getter which changed behavior on each call (or a setter to mess up the following below) or a custom
-    // setter for numeric properties, but even that would need to listen for specific indexes; but there should be no false negatives
-    // and such a false positive would need to rely on later JavaScript innovations like __defineSetter__
-    if (len !== mixed_var.length) { // We know it's an array since length auto-changed with the addition of a
-      // numeric property at its length end, so safely get rid of our bogus element
-  mixed_var.length -= 1;
-  return true;
-}
-    // Get rid of the property we added onto a non-array object; only possible
-    // side-effect is if the user adds back the property later, it will iterate
-    // this property in the older order placement in IE (an order which should not
-    // be depended on anyways)
-    delete mixed_var[mixed_var.length];
-    return false;
-};
-
-if (!mixed_var || typeof mixed_var !== 'object') {
-    return false;
-}
-
-return _isArray(mixed_var);
+JSHelper.prototype.is_array = function(mixed_var)
+{
+    return Object.prototype.toString.call(mixed_var) === '[object Array]' || Object.prototype.toString.call(mixed_var) === '[object NodeList]';
 }

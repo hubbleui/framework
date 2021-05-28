@@ -6,7 +6,6 @@
 var _options =
 {
     precision: 6,
-    sourcemap: 'auto',
     style: 'expanded',
     trace: true,
     bundleExec: false
@@ -26,7 +25,6 @@ module.exports =
         options:
         {
             precision  : 6,
-            sourcemap  : 'none',
             style      : 'compressed',
             trace      : true,
             bundleExec : false

@@ -163,7 +163,7 @@
         Helper.addEventListener(window, 'resize', function modalResize() {
             _this._centerModal(_this._options.centered);
         });
-        Helper.addClass(document.body, 'hide-overflow');
+        Helper.addClass(document.body, 'no-scroll');
     }
 
     /**
@@ -193,7 +193,7 @@
             e = e || window.event;
             if (_this._options.closeAnywhere === true) {
                 if (this === _this._modal) {
-                    var clickedInner = Helper.closestClass(e.target, 'js-modal-dialog');
+                    var clickedInner = Helper.closest(e.target, '.js-modal-dialog');
                     if (clickedInner) return;
                 }
             }
@@ -212,7 +212,7 @@
             _this._timer = setTimeout(function() {
                 Helper.removeFromDOM(_this._overlay);
                 Helper.removeFromDOM(_this._modal);
-                Helper.removeClass(document.body, 'hide-overflow');
+                Helper.removeClass(document.body, 'no-scroll');
             }, 500);
         }
         
@@ -252,7 +252,7 @@
         if (e.keyCode == 13) {
             e.preventDefault();
             e.stopPropagation();
-            var modal = Helper.closestClass(this, '.js-modal-dialog');
+            var modal = Helper.closest(this, '.js-modal-dialog');
             var modalConfirm = Helper.$('.js-modal-confirm', this._modal);
             Helper.triggerEvent(modalConfirm, 'click');
         }
@@ -268,7 +268,7 @@
             var callback = this._options.onClose;
             var args     = this._options.onCloseArgs;
             callback.apply(this._modal, args);
-            Helper.removeClass(document.body, 'hide-overflow');
+            Helper.removeClass(document.body, 'no-scroll');
         }
     }
 

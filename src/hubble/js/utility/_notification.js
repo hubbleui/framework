@@ -85,7 +85,7 @@
         var cancelClass  = typeof options.cancelClass === 'undefined'  ? 'btn-default'  : options.cancelClass;
         var confirmClass = typeof options.confirmClass === 'undefined'  ? 'btn-success'  : options.confirmClass;
 
-        var content  = '<div class="msg-body"><p>' + options.msg + '</p><div class="row roof-xs msg-buttons"><button class="btn '+cancelClass+' cancel-msg js-cancel">'+cancelText+'</button>&nbsp;&nbsp;<button class="btn '+confirmClass+' js-confirm">' + confirmText + '</button></div></div>';
+        var content  = '<div class="msg-body"><p>' + options.msg + '</p><div class="row roof-xs msg-buttons"><button type="button" class="btn '+cancelClass+' cancel-msg js-cancel">'+cancelText+'</button>&nbsp;&nbsp;<button type="button" class="btn '+confirmClass+' js-confirm">' + confirmText + '</button></div></div>';
         var notif    = Helper.newNode('div', 'msg-'+options.type + ' msg animate-notif msg-confirm', null, content, this._notifWrap);
         var cancel   = Helper.$('.js-cancel', notif);
         var confirm  = Helper.$('.js-confirm', notif);

@@ -1,13 +1,16 @@
-input[type=checkbox].switch {
+input[type=checkbox].switch
+{
     display: none;
 
-    + label {
+    + label
+    {
         position: relative;
         display: inline-block;
         padding-left: 46px;
         cursor: pointer;
         &:before, 
-        &:after {
+        &:after
+        {
             content: "";
             position: absolute;
             margin: 0;
@@ -16,110 +19,95 @@ input[type=checkbox].switch {
             transform: translate(0, -50%);
             transition: all 0.3s ease;
         }
-        &:before {
+        &:before
+        {
             background-color: $gray;
             left: 1px;
             width: 34px;
             height: 14px;
             border-radius: 8px;
         }
-        &:after {
+        &:after
+        {
             left: 0;
             width: 20px;
             height: 20px;
-            background-color: #FAFAFA;
+            background-color: #fff;
             border-radius: 50%;
             box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084);
         }
-        .toggle-on {
+        .toggle-on
+        {
             display: none;
         }
-        .toggle-off {
+        .toggle-off
+        {
             display: inline-block;
         }
     }
-    &:checked + label {
-        &:before {
-            background-color: #9ca7b1;
+    &:checked + label
+    {
+        &:before
+        {
+            background-color: lighten($gray-dark, 20);
         }
-        &:after {
-            background-color: #76838f;
+        &:after
+        {
+            background-color: $gray-dark;
             transform: translate(80%, -50%);
         }
-        .toggle-on {
+        .toggle-on
+        {
             display: inline-block;
         }
-        .toggle-off {
+        .toggle-off
+        {
             display: none;
         }
     }
+}
 
-    // contextuals
-    &.switch-default {
-        + label {
-            &:before {
-                background: #fff;
-                border: 1px solid #e7edee;
-            }
-            &:after {
-                background-color: $gray;
-            }
+// Variants
+@mixin _switch($color)
+{
+    &:checked + label
+    {
+        &:before
+        {
+            background-color: lighten($color, 20);
         }
-        &:checked + label {
-            &:after {
-                background-color: $brand-primary;
-            }
+        &:after
+        {
+            background-color: $color;
         }
     }
-    &.switch-primary {
-        &:checked + label {
-            &:before {
-                background-color: lighten($brand-primary, 10);
-            }
-            &:after {
-                background-color: $brand-primary;
-            }
-        }
+}
+
+input[type=checkbox].switch
+{
+    &.switch-primary
+    {
+        @include _switch($brand-primary);
     }
-    &.switch-info {
-        &:checked + label {
-            &:before {
-                background-color: lighten($brand-info, 10);
-            }
-            &:after {
-                background-color: $brand-info;
-            }
-        }
+    &.switch-secondary
+    {
+        @include _switch($brand-secondary);
     }
-    &.switch-success {
-        &:checked + label {
-            &:before {
-                background-color: lighten($brand-success, 10);
-            }
-            &:after {
-                background-color: $brand-success;
-            }
-        }
+    &.switch-info
+    {
+        @include _switch($brand-info);
     }
-    &.switch-warning {
-        &:checked + label {
-            &:before {
-                background-color: lighten($brand-warning, 10);
-            }
-            &:after {
-                background-color: $brand-warning;
-            }
-        }
+    &.switch-success
+    {
+        @include _switch($brand-success);
     }
-    &.switch-danger {
-        &:checked + label {
-            &:before {
-                background-color: lighten($brand-danger, 10);
-            }
-            &:after {
-                background-color: $brand-danger;
-            }
-        }
+    &.switch-warning
+    {
+        @include _switch($brand-warning);
+    }
+    &.switch-danger
+    {
+        @include _switch($brand-danger);
     }
 
 }

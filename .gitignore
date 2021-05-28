@@ -1,7 +1,3 @@
-# Minified Scripts #
-###################
-*.min.*
-
 # OS generated files #
 ######################
 .DS_Store

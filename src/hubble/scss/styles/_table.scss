@@ -14,7 +14,7 @@
 	thead,
 	tfoot {		
 		th {
-			font-weight: $text-bolder;
+			font-weight: $text-bold;
 			text-align: left;
 			padding: $table-cell-pad-y $table-cell-pad-x;
     		background-color: $table-head-bg;
@@ -36,7 +36,6 @@
 	> thead > tr > td,
 	> thead > tr > th {
 		padding: $table-cell-pad-y $table-cell-pad-x;
-		text-align: left;
 		border-bottom: 1px solid $table-border-color;
 	}
 	&.table-bordered {

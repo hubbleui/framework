@@ -18,10 +18,11 @@
     top: ($btn-pad-y * 2 ) + ($btn-font-size * 2);
     min-width: $dropdown-width;
     width: auto;
+    @include raised(2);
     .drop {
         border-radius: $border-radius;
         background-color: $dropdown-bg;
-        box-shadow: $box-shadow-out;
+        box-shadow: $raised-level-one;
         padding: 8px 0px;
     }
 }
@@ -67,7 +68,7 @@
 
     }
     .drop-header {
-        font-weight: $text-bolder;
+        font-weight: $text-bold;
         padding: 0px 12px 8px 12px;
         border-bottom: 1px solid $dropdown-divider-color;
     }

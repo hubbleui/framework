@@ -1,0 +1,47 @@
+.form-field
+{
+	// Icons
+	> .glyph-icon
+	{
+		position: absolute;
+	    width: 20px;
+	    height: 20px;
+	    padding: 3px;
+    	top: 50%;
+    	margin-top: -10px;
+    	color: $gray;
+	}
+
+	// Left icon
+	> .glyph-icon + input,
+	> .glyph-icon + select,
+	> .glyph-icon + textarea
+	{
+		padding-left: 45px;
+	}
+	> .glyph-icon:first-child
+	{
+		left: 15px;
+	}
+	> .glyph-icon + input + label,
+	> .glyph-icon + input + label,
+	> .glyph-icon + input + label
+	{
+		left: 45px;
+	}
+
+	// Right
+	> .glyph-icon:last-child
+	{
+		left: initial;
+		right: 15px;
+	}
+	&.focus,
+    &:focus-within
+    {
+    	.glyph-icon
+    	{
+    		color: $brand-info;
+    	}
+    }
+}

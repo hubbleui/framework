@@ -106,10 +106,10 @@
         var tabNav        = Helper.closest(node, 'ul');
 
         var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-        var tabPanel      = Helper.closestClass(tabPane, 'js-tab-panels-wrap');
+        var tabPanel      = Helper.closest(tabPane, '.js-tab-panels-wrap');
         var activePanel   = Helper.$('.tab-panel.active', tabPanel);
 
-        var navWrap       = Helper.closestClass(node, 'js-tab-nav');
+        var navWrap       = Helper.closest(node, '.js-tab-nav');
         var activeNav     = Helper.$('a.active', navWrap);
 
         Helper.removeClass(activeNav, 'active');

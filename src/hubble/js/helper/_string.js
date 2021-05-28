@@ -27,6 +27,47 @@ JSHelper.prototype.isJSON = function(str)
 }
 
 /**
+ * Json encode
+ * 
+ * @param  mixed str String JSON
+ * @return object|false
+ */
+JSHelper.prototype.json_encode = function(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.stringify(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+
+/**
+ * Json encode
+ * 
+ * @param  mixed str String JSON
+ * @return object|false
+ */
+JSHelper.prototype.json_decode = function(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.parse(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+
+
+/**
  * Make a random string
  *
  * @param  int    length String length
@@ -127,6 +168,12 @@ JSHelper.prototype.parse_url = function(str, component)
             }
         });
     }
+    
+    if (!'scheme' in uri || !uri.scheme || uri.scheme === '')
+    {
+        uri['scheme'] = window.location.protocol.replace(':', '').replaceAll('/', '');
+    }
+
     delete uri.source;
     return uri;
 }
@@ -206,7 +253,7 @@ JSHelper.prototype.trim = function(str, charlist)
     }
 
     l = str.length;
-    for (i = 0; i < l; i++)
+    for (var i = 0; i < l; i++)
     {
         if (whitespace.indexOf(str.charAt(i)) === -1)
         {
@@ -392,7 +439,32 @@ JSHelper.prototype.timeAgo = function(time, asArray)
 /* Convert a string-date to a timestamp */
 JSHelper.prototype.strtotime = function(text)
 {
-    return Math.round(new Date(text).getTime() / 1000);
+    var timestamp = Math.round(new Date(text).getTime() / 1000);
+
+    if (isNaN(timestamp))
+    {
+        timestamp = Date.parse(text);
+
+        if (isNaN(timestamp))
+        {
+            var split = text.split('/');
+
+            if (Helper.count(split) !== 3)
+            {
+                return false;
+            }
+
+            // MM/DD/YY
+            timestamp = Date.parse(split[1] + '/' + split[0] + '/' + split[2]);
+
+            if (isNaN(timestamp))
+            {
+                return false;
+            }
+        }
+    }
+
+    return timestamp;
 }
 
 /* String replace */
@@ -444,7 +516,7 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count)
     {
         temp = replace;
         replace = new Array();
-        for (i = 0; i < search.length; i += 1)
+        for (var i = 0; i < search.length; i += 1)
         {
             replace[i] = temp;
         }
@@ -631,7 +703,7 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
     if (typeof quote_style !== 'number')
     { // Allow for a single string or an array of string flags
         quote_style = [].concat(quote_style);
-        for (i = 0; i < quote_style.length; i++)
+        for (var i = 0; i < quote_style.length; i++)
         {
             // Resolve string input to bitwise e.g. 'ENT_IGNORE' becomes 4
             if (OPTS[quote_style[i]] === 0)
@@ -705,7 +777,7 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style)
   if (typeof quote_style !== 'number')
   { // Allow for a single string or an array of string flags
     quote_style = [].concat(quote_style);
-    for (i = 0; i < quote_style.length; i++)
+    for (var i = 0; i < quote_style.length; i++)
     {
       // Resolve string input to bitwise e.g. 'PATHINFO_EXTENSION' becomes 4
       if (OPTS[quote_style[i]] === 0)
@@ -1014,7 +1086,7 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
     var text = true
 
     f_stringl = f_string.length
-    for (i = 0; i < f_stringl; i++)
+    for (var i = 0; i < f_stringl; i++)
     {
       chr = f_string.substring(i, i + 1)
       if (chr.match(/\d/))
@@ -1082,7 +1154,7 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
     result = 1
   }
 
-  for (i = 0; i < len; i++)
+  for (var i = 0; i < len; i++)
   {
     if (isNaN(array1[i]))
     {
@@ -1219,4 +1291,87 @@ JSHelper.prototype.number_format = function(number, decimals, decPoint, thousand
   }
 
   return s.join(dec)
+}
+
+JSHelper.prototype.urlencode = function(str)
+{
+  //       discuss at: https://locutus.io/php/urlencode/
+  //      original by: Philip Peterson
+  //      improved by: Kevin van Zonneveld (https://kvz.io)
+  //      improved by: Kevin van Zonneveld (https://kvz.io)
+  //      improved by: Brett Zamir (https://brett-zamir.me)
+  //      improved by: Lars Fischer
+  //      improved by: Waldo Malqui Silva (https://fayr.us/waldo/)
+  //         input by: AJ
+  //         input by: travc
+  //         input by: Brett Zamir (https://brett-zamir.me)
+  //         input by: Ratheous
+  //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
+  //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
+  //      bugfixed by: Joris
+  // reimplemented by: Brett Zamir (https://brett-zamir.me)
+  // reimplemented by: Brett Zamir (https://brett-zamir.me)
+  //           note 1: This reflects PHP 5.3/6.0+ behavior
+  //           note 1: Please be aware that this function
+  //           note 1: expects to encode into UTF-8 encoded strings, as found on
+  //           note 1: pages served as UTF-8
+  //        example 1: urlencode('Kevin van Zonneveld!')
+  //        returns 1: 'Kevin+van+Zonneveld%21'
+  //        example 2: urlencode('https://kvz.io/')
+  //        returns 2: 'https%3A%2F%2Fkvz.io%2F'
+  //        example 3: urlencode('https://www.google.nl/search?q=Locutus&ie=utf-8')
+  //        returns 3: 'https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8'
+
+  str = (str + '')
+
+  return encodeURIComponent(str)
+    .replace(/!/g, '%21')
+    .replace(/'/g, '%27')
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29')
+    .replace(/\*/g, '%2A')
+    .replace(/~/g, '%7E')
+    .replace(/%20/g, '+')
+}
+
+JSHelper.prototype.urldecode = function(str)
+{
+  //       discuss at: https://locutus.io/php/urldecode/
+  //      original by: Philip Peterson
+  //      improved by: Kevin van Zonneveld (https://kvz.io)
+  //      improved by: Kevin van Zonneveld (https://kvz.io)
+  //      improved by: Brett Zamir (https://brett-zamir.me)
+  //      improved by: Lars Fischer
+  //      improved by: Orlando
+  //      improved by: Brett Zamir (https://brett-zamir.me)
+  //      improved by: Brett Zamir (https://brett-zamir.me)
+  //         input by: AJ
+  //         input by: travc
+  //         input by: Brett Zamir (https://brett-zamir.me)
+  //         input by: Ratheous
+  //         input by: e-mike
+  //         input by: lovio
+  //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
+  //      bugfixed by: Rob
+  // reimplemented by: Brett Zamir (https://brett-zamir.me)
+  //           note 1: info on what encoding functions to use from:
+  //           note 1: https://xkr.us/articles/javascript/encode-compare/
+  //           note 1: Please be aware that this function expects to decode
+  //           note 1: from UTF-8 encoded strings, as found on
+  //           note 1: pages served as UTF-8
+  //        example 1: urldecode('Kevin+van+Zonneveld%21')
+  //        returns 1: 'Kevin van Zonneveld!'
+  //        example 2: urldecode('https%3A%2F%2Fkvz.io%2F')
+  //        returns 2: 'https://kvz.io/'
+  //        example 3: urldecode('https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8%26oe%3Dutf-8%26aq%3Dt%26rls%3Dcom.ubuntu%3Aen-US%3Aunofficial%26client%3Dfirefox-a')
+  //        returns 3: 'https://www.google.nl/search?q=Locutus&ie=utf-8&oe=utf-8&aq=t&rls=com.ubuntu:en-US:unofficial&client=firefox-a'
+  //        example 4: urldecode('%E5%A5%BD%3_4')
+  //        returns 4: '\u597d%3_4'
+
+  return decodeURIComponent((str + '')
+    .replace(/%(?![\da-f]{2})/gi, function () {
+      // PHP tolerates poorly formed escape sequences
+      return '%25'
+    })
+    .replace(/\+/g, '%20'))
 }

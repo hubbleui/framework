@@ -9,6 +9,244 @@ if (!window.location.origin)
 	window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
 }
 
+/*
+ * domready (c) Dustin Diaz 2014 - License MIT
+ *
+ */
+!function (name, definition)
+{
+
+  if (typeof module != 'undefined') module.exports = definition()
+  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
+  else this[name] = definition()
+
+}('domready', function ()
+{
+
+  var fns = [], listener
+    , doc = typeof document === 'object' && document
+    , hack = doc && doc.documentElement.doScroll
+    , domContentLoaded = 'DOMContentLoaded'
+    , loaded = doc && (hack ? /^loaded|^c/ : /^loaded|^i|^c/).test(doc.readyState)
+
+
+  if (!loaded && doc)
+  doc.addEventListener(domContentLoaded, listener = function () {
+    doc.removeEventListener(domContentLoaded, listener)
+    loaded = 1
+    while (listener = fns.shift()) listener()
+  })
+
+  return function (fn) {
+    loaded ? setTimeout(fn, 0) : fns.push(fn)
+  }
+
+});
+
+/*
+ * Custom events 
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
+ */
+(function ()
+{
+
+ 	if ( typeof window.CustomEvent === "function" ) return false;
+
+  	function CustomEvent ( event, params )
+  	{
+	    params = params || { bubbles: false, cancelable: false, detail: null };
+	    var evt = document.createEvent( 'CustomEvent' );
+	    evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+	    return evt;
+   	}
+
+  	window.CustomEvent = CustomEvent;
+
+})();
+
+/**
+ * debounce and throttle methods
+ * 
+ * @see Underscore.js 1.9.1
+ */
+(function()
+{
+
+    // Some functions take a variable number of arguments, or a few expected
+    // arguments at the beginning and then a variable number of values to operate
+    // on. This helper accumulates all remaining arguments past the function’s
+    // argument length (or an explicit `startIndex`), into an array that becomes
+    // the last argument. Similar to ES6’s "rest parameter".
+    var restArguments = function(func, startIndex) {
+        startIndex = startIndex == null ? func.length - 1 : +startIndex;
+        return function() {
+            var length = Math.max(arguments.length - startIndex, 0),
+            rest = Array(length),
+            index = 0;
+            for (; index < length; index++) {
+                rest[index] = arguments[index + startIndex];
+            }
+            switch (startIndex) {
+                case 0: return func.call(this, rest);
+                case 1: return func.call(this, arguments[0], rest);
+                case 2: return func.call(this, arguments[0], arguments[1], rest);
+            }
+            var args = Array(startIndex + 1);
+            for (index = 0; index < startIndex; index++) {
+                args[index] = arguments[index];
+            }
+            args[startIndex] = rest;
+            return func.apply(this, args);
+        };
+    };
+
+    // A (possibly faster) way to get the current timestamp as an integer.
+    var _now = Date.now || function() {
+        return new Date().getTime();
+    };
+
+
+    // Delays a function for the given number of milliseconds, and then calls
+    // it with the arguments supplied.
+    var _delay = restArguments(function(func, wait, args) {
+        return setTimeout(function() {
+            return func.apply(null, args);
+        }, wait);
+    });
+
+
+    // Returns a function, that, when invoked, will only be triggered at most once
+    // during a given window of time. Normally, the throttled function will run
+    // as much as it can, without ever going more than once per `wait` duration;
+    // but if you'd like to disable the execution on the leading edge, pass
+    // `{leading: false}`. To disable execution on the trailing edge, ditto.
+    var _throttle = function(func, wait, options) {
+        var timeout, context, args, result;
+        var previous = 0;
+        if (!options) options = {};
+
+        var later = function() {
+            previous = options.leading === false ? 0 : _now();
+            timeout = null;
+            result = func.apply(context, args);
+            if (!timeout) context = args = null;
+        };
+
+        var throttled = function() {
+            var now = _now();
+            if (!previous && options.leading === false) previous = now;
+            var remaining = wait - (now - previous);
+            context = this;
+            args = arguments;
+            if (remaining <= 0 || remaining > wait) {
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                }
+                previous = now;
+                result = func.apply(context, args);
+                if (!timeout) context = args = null;
+            } else if (!timeout && options.trailing !== false) {
+                timeout = setTimeout(later, remaining);
+            }
+            return result;
+        };
+
+        throttled.cancel = function() {
+            clearTimeout(timeout);
+            previous = 0;
+            timeout = context = args = null;
+        };
+
+        return throttled;
+    };
+
+    // Returns a function, that, as long as it continues to be invoked, will not
+    // be triggered. The function will be called after it stops being called for
+    // N milliseconds. If `immediate` is passed, trigger the function on the
+    // leading edge, instead of the trailing.
+    var _debounce = function(func, wait, immediate) {
+        var timeout, result;
+
+        var later = function(context, args) {
+            timeout = null;
+            if (args) result = func.apply(context, args);
+        };
+
+        var debounced = restArguments(function(args) {
+            if (timeout) clearTimeout(timeout);
+            if (immediate) {
+                var callNow = !timeout;
+                timeout = setTimeout(later, wait);
+                if (callNow) result = func.apply(this, args);
+            } else {
+                timeout = _delay(later, wait, this, args);
+            }
+
+            return result;
+        });
+
+        debounced.cancel = function() {
+            clearTimeout(timeout);
+            timeout = null;
+        };
+
+        return debounced;
+    };
+
+    window.throttle = _throttle;
+
+    window.debounce = _debounce;
+
+}());
+
+/**
+ * String includes
+ * 
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+ */
+if (!String.prototype.includes)
+{
+    String.prototype.includes = function(search, start)
+    {
+        'use strict';
+
+        if (search instanceof RegExp)
+        {
+            throw TypeError('first argument must not be a RegExp');
+        }
+        
+        if (start === undefined)
+        {
+            start = 0;
+        }
+        
+        return this.indexOf(search, start) !== -1;
+    };
+}
+
+/**
+ * String.prototype.replaceAll() polyfill
+ * https://gomakethings.com/how-to-replace-a-section-of-a-string-with-another-one-with-vanilla-js/
+ * @author Chris Ferdinandi
+ * @license MIT
+ */
+if (!String.prototype.replaceAll)
+{
+    String.prototype.replaceAll = function(str, newStr)
+    {
+        // If a regex pattern
+        if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]')
+        {
+            return this.replace(str, newStr);
+        }
+
+        // If a string
+        return this.replace(new RegExp(str, 'g'), newStr);
+    };
+}
+
 // Container
 /**
  * JS IoC Container
@@ -20,14 +258,247 @@ if (!window.location.origin)
 
 (function(window)
 {
-	var Container = function()
-	{
-		this.data = {};
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @access public
+     */
+    var ArrayHelper = function()
+    {
+        return this;
+    };
 
-		this.singletons = {};
+    /**
+     * Set a key using dot/bracket notation on an object or array
+     *
+     * @access public
+     * @param  string       path   Path to set
+     * @param  mixed        value  Value to set
+     * @param  object|array object Object to set into
+     * @return object|array
+     */
+    ArrayHelper.prototype.set = function(path, value, object)
+    {
+        this._setRecursive(this._keySegment(path), value, object);
 
-		return this;
-	};
+        return object;
+    }
+
+    /**
+     * Gets an from an array/object using dot/bracket notation
+     *
+     * @access public
+     * @param  string       path   Path to get
+     * @param  object|array object Object to get from
+     * @return mixed
+     */
+    ArrayHelper.prototype.get = function(path, object)
+    {
+        return this._getRecursive(this._keySegment(path), object);
+    }
+
+    /**
+     * Checks if array/object contains path using dot/bracket notation
+     *
+     * @access public
+     * @param  string       path   Path to check
+     * @param  object|array object Object to check on
+     * @return bool
+     */
+    ArrayHelper.prototype.has = function(path, object)
+    {
+        return typeof this.get(path, object) !== 'undefined';
+    }
+
+    /**
+     * Deletes from an array/object using dot/bracket notation
+     *
+     * @access public
+     * @param  string       path   Path to delete
+     * @param  object|array object Object to delete from
+     * @return object|array
+     */
+    ArrayHelper.prototype.delete = function(path, object)
+    {
+        this._deleteRecursive(this._keySegment(path), object);
+
+        return object;
+    }
+
+    /**
+     * Recursively delete from array/object
+     *
+     * @access private
+     * @param  array        keys   Keys in search order
+     * @param  object|array object Object to get from
+     * @return mixed
+     */
+    ArrayHelper.prototype._deleteRecursive = function(keys, object)
+    {
+        var key    = keys.shift();
+        var islast = keys.length === 0;
+
+        if (islast)
+        {
+            if (Object.prototype.toString.call(object) === '[object Array]')
+            {
+                object.splice(key, 1);
+            }
+            else
+            {
+                delete object[key];
+            }
+        }
+
+        if (!object[key])
+        {
+            return false;
+        }
+
+        return this._deleteRecursive(keys, object[key]);
+
+    }
+
+    /**
+     * Recursively search array/object
+     *
+     * @access private
+     * @param  array        keys   Keys in search order
+     * @param  object|array object Object to get from
+     * @return mixed
+     */
+    ArrayHelper.prototype._getRecursive = function(keys, object)
+    {
+        var key    = keys.shift();
+        var islast = keys.length === 0;
+
+        if (islast)
+        {
+            return object[key];
+        }
+
+        if (!object[key])
+        {
+            return undefined;
+        }
+
+        return this._getRecursive(keys, object[key]);
+    }
+
+    /**
+     * Recursively set array/object
+     *
+     * @access private
+     * @param  array        keys   Keys in search order
+     * @param  mixed        value  Value to set
+     * @param  parent       object|array or null
+     * @param  object|array object Object to set on
+     */
+    ArrayHelper.prototype._setRecursive = function(keys, value, object, nextKey)
+    {
+        var key     = keys.shift();
+        var islast  = keys.length === 0;
+        var lastObj = object;
+        object      = !nextKey ? object : object[nextKey];
+
+        // Trying to set a value on nested array that doesn't exist
+        if (!['object', 'function'].includes(typeof object))
+        {
+            throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '['+nextKey+']"');
+        }
+
+        if (!object[key])
+        {
+            // Trying to put object key into an array
+            if (Object.prototype.toString.call(object) === '[object Array]' && typeof key === 'string')
+            {
+                var converted = Object.assign({}, object);
+                
+                lastObj[nextKey] = converted;
+
+                object = converted;
+            }
+
+            if (keys[0] && typeof keys[0] === 'string')
+            {
+                object[key] = {};
+            }
+            else
+            {
+                object[key] = [];
+            }
+        }
+
+        if (islast)
+        {
+            object[key] = value;
+
+            return;
+        }
+
+        this._setRecursive(keys, value, object, key);
+    }
+
+    /**
+     * Segments an array/object path using dot notation
+     *
+     * @access private
+     * @param  string  path Path to parse
+     * @return array
+     */
+    ArrayHelper.prototype._keySegment = function(path)
+    {
+        var result   = [];
+        var segments = path.split('.');
+
+        for (var i = 0; i < segments.length; i++)
+        {
+            var segment = segments[i];
+
+            if (!segment.includes('['))
+            {
+                result.push(segment);
+
+                continue;
+            }
+
+            var subSegments = segment.split('[');
+
+            for (var j = 0; j < subSegments.length; j++)
+            {
+                if (['0','1','2','3','4','5','6','7','8','9'].includes(subSegments[j][0]))
+                {
+                    result.push(parseInt(subSegments[j].replace(']')));
+                }
+                else if (subSegments[j] !== '')
+                {
+                    result.push(subSegments[j])
+                }
+            }
+        }
+
+        return result;
+    }
+
+    var Arr = new ArrayHelper;
+
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @access public
+     */
+    var Container = function()
+    {
+        this.data = {};
+
+        this.singletons = {};
+        
+        return this;
+    };
 
     /**
      * Set data key to value
@@ -38,7 +509,44 @@ if (!window.location.origin)
      */
     Container.prototype.set = function(key, value)
     {
-        this.data[key] = value;
+        if (key.includes('.') || key.includes('['))
+        {
+            Arr.set(key, value, this.data);
+        }
+        else
+        {
+            this.data[key] = value;
+
+            if (this._isInvokable(value) || this._isInvoked(value))
+            {
+                this._setProto(key);
+            }
+        }
+    }
+
+    /**
+     * Sets the key as a prototype method
+     *
+     * @access public
+     * @param  string key   The data key
+     * @return mixed
+     */
+    Container.prototype._setProto = function(key)
+    {
+        var _this = this;
+
+        var _key = this._normalizeKey(key);
+
+        var _proto = Object.getPrototypeOf(this);
+
+        _proto[_key] = function()
+        {
+            var args = Array.prototype.slice.call(arguments);
+
+            args.unshift(key);
+
+            return _this.get.apply(_this, args);
+        };
     }
 
     /**
@@ -49,7 +557,23 @@ if (!window.location.origin)
      */
     Container.prototype.delete = function(key)
     {
+        if (key.includes('.') || key.includes('['))
+        {
+            Arr.delete(key, this.data);
+
+            return;
+        }
+
         delete this.data[key];
+
+        key = this._normalizeKey(key);
+
+        var _proto  = Object.getPrototypeOf(this);
+
+        if (typeof _proto[key] !== 'undefined')
+        {
+            _proto[key] = null;
+        }
     }
 
     /**
@@ -62,21 +586,31 @@ if (!window.location.origin)
      */
     Container.prototype.singleton = function(key, classObj)
     {
-    	var args = this._normalizeArgs(arguments);
+        if (key.includes('.') || key.includes('['))
+        {
+            throw new Error('Cannot set singletons using dot notation.');
+        }
+        
+        var args = this._normalizeArgs(arguments);
 
-    	var instance;
+        var instance;
 
-    	this.singletons[key] = true;
+        if (this._isInvoked(classObj))
+        {
+            instance = classObj;
+        }
+
+        this.singletons[key] = true;
 
         this.set(key, function()
         {
-        	if (!instance)
-        	{        		
-        		if (!this._isInvoked(instance))
-	            {
-	            	instance = this._newInstance(classObj, args);
-	            }
-        	}
+            if (!instance)
+            {               
+                if (!this._isInvoked(instance))
+                {
+                    instance = this._newInstance(classObj, args);
+                }
+            }
 
             return instance;
         });
@@ -94,15 +628,20 @@ if (!window.location.origin)
      */
     Container.prototype.get = function(key)
     {
+        if (key.includes('.') || key.includes('['))
+        {
+            return Arr.get(key, this.data);
+        }
+
         if (this.has(key))
         {
-        	if (this._isSingleton(key))
+            if (this._isSingleton(key))
             {
-            	return this.data[key].apply(this);
+                return this.data[key].apply(this);
             }
             else if (this._isInvokable(this.data[key]))
             {
-            	return this._newInstance(this.data[key], arguments);
+                return this._newInstance(this.data[key], arguments);
             }
 
             return this.data[key];
@@ -120,18 +659,23 @@ if (!window.location.origin)
      */
     Container.prototype.has = function(key)
     {
-        for (var _key in this.data)
-	    {
-	        if (_key === key)
-	        {
-	        	return true;
-	        }
-	    }
+        if (key.includes('.') || key.includes('['))
+        {
+            return Arr.has(key, this.data);
+        }
 
-    	return false;
+        for (var _key in this.data)
+        {
+            if (_key === key)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
-	
-	/**
+    
+    /**
      * Checks if key is a singleton
      *
      * @access private
@@ -139,17 +683,17 @@ if (!window.location.origin)
      * @return bool
      */
     Container.prototype._isSingleton = function(key)
-	{	    
-	    for (var _key in this.singletons)
-	    {
-	        if (_key === key)
-	        {
-	        	return true;
-	        }
-	    }
+    {
+        for (var _key in this.singletons)
+        {
+            if (_key === key)
+            {
+                return true;
+            }
+        }
 
-    	return false;
-	}
+        return false;
+    }
 
     /**
      * Checks if a variable is invokable
@@ -158,10 +702,10 @@ if (!window.location.origin)
      * @param  mixed mixedVar The object instance or reference
      * @return bool
      */
-	Container.prototype._isInvokable = function(mixedVar)
-	{
-		return Object.prototype.toString.call( mixedVar ) === '[object Function]';
-	}
+    Container.prototype._isInvokable = function(mixedVar)
+    {
+        return Object.prototype.toString.call( mixedVar ) === '[object Function]';
+    }
 
     /**
      * Checks if a class object has been invoked
@@ -170,12 +714,12 @@ if (!window.location.origin)
      * @param  mixed classObj The object instance or reference
      * @return bool
      */
-	Container.prototype._isInvoked = function(classObj)
-	{
-		return typeof classObj === 'object';
-	}
+    Container.prototype._isInvoked = function(classObj)
+    {
+        return typeof classObj === 'object' && classObj.constructor && typeof classObj.constructor === 'function' && classObj.constructor.toString().includes('function (');
+    }
 
-	/**
+    /**
      * Invokes and returns a new class instance
      *
      * @access private
@@ -183,10 +727,10 @@ if (!window.location.origin)
      * @param  array args     Arguements to pass to class constructor (optional) (default null)
      * @return object
      */
-	Container.prototype._newInstance = function(reference, args)
-	{
-		return new (Function.prototype.bind.apply(reference, args));
-	}
+    Container.prototype._newInstance = function(reference, args)
+    {
+        return new (Function.prototype.bind.apply(reference, args));
+    }
 
     /**
      * Fixes args passed to constructors 
@@ -209,18 +753,40 @@ if (!window.location.origin)
         return args;
     }
 
-	/**
+    /**
+     * Normalizes key for prototypes
+     *
+     * @access private
+     * @param  string key Key to normalize
+     * @return string
+     */
+    Container.prototype._normalizeKey = function(key)
+    {
+        key = key.replace(/['"]/g, '').replace(/\W+/g, ' ')
+        .replace(/ (.)/g, function($1)
+        {
+            return $1.toUpperCase();
+        })
+        .replace(/ /g, '');
+
+        key = key.charAt(0).toUpperCase() + key.slice(1);
+
+        return key;
+    }
+
+    /**
      * Loads container into global namespace as "Hubble"
      *
      */
-	if (!window.Container)
-	{
-		var ContainerInstance = new Container();
+    if (!window.Container)
+    {
+        var ContainerInstance = new Container;
 
-		window.Container = ContainerInstance;
-	}
+        window.Container = ContainerInstance;
+    }
 
 })(window);
+
 
 /**
  * Application core
@@ -497,7 +1063,6 @@ if (!window.location.origin)
  * @copyright Joe J. Howard
  * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -592,7 +1157,7 @@ if (!window.location.origin)
             // Back
             easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
             easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            easeInBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+            easeInOutBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 
         };
 
@@ -715,7 +1280,7 @@ JSHelper.prototype.$ = function(selector, context)
 }
 
 /**
- * Closest parent node by type
+ * Closest parent node by type/class or array of either
  *
  * @access public
  * @param  node   el   Target element
@@ -724,29 +1289,75 @@ JSHelper.prototype.$ = function(selector, context)
  */
 JSHelper.prototype.closest = function(el, type)
 {
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.closest(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this._closestClass(el, type);
+    }
+
     type = type.toLowerCase();
-    if (typeof el === "undefined") return null;
-    if (el.nodeName.toLowerCase() === type) return el;
-    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type) return el.parentNode;
+
+    if (typeof el === 'undefined')
+    {
+        return null;
+    }
+
+    if (el.nodeName.toLowerCase() === type)
+    {
+        return el;
+    }
+    
+    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type)
+    {
+        return el.parentNode;
+    }
+
     var parent = el.parentNode;
+
     while (parent !== document.body && typeof parent !== "undefined" && parent !== null)
     {
         parent = parent.parentNode;
-        if (parent && parent.nodeName.toLowerCase() === type) return parent;
+        
+        if (parent && parent.nodeName.toLowerCase() === type)
+        {
+            return parent;
+        }
     }
+
+
     return null;
 }
 
 /**
  * Closest parent node by class
  *
- * @access public
+ * @access private
  * @param  node   el   Target element
  * @param  string type Node type to find
  * @return node\null
  */
-JSHelper.prototype.closestClass = function(el, clas)
+JSHelper.prototype._closestClass = function(el, clas)
 {
+    if (clas[0] === '.')
+    {
+        clas = clas.substring(1);
+    }
+
     if (this.hasClass(el, clas))
     {
         return el;
@@ -756,10 +1367,12 @@ JSHelper.prototype.closestClass = function(el, clas)
         return el.parentNode;
     }
     var parent = el.parentNode;
+
     if (parent === window.document)
     {
         return null;
     }
+
     while (parent !== document.body)
     {
         if (this.hasClass(parent, clas))
@@ -774,6 +1387,7 @@ JSHelper.prototype.closestClass = function(el, clas)
 
         parent = parent.parentNode;
     }
+
     return null;
 }
 
@@ -787,48 +1401,87 @@ JSHelper.prototype.closestClass = function(el, clas)
 JSHelper.prototype.firstChildren = function(el)
 {
     var children = [];
+
     var childnodes = el.childNodes;
+
     for (var i = 0; i < childnodes.length; i++)
     {
-        if (childnodes[i].nodeType == 1)  children.push(childnodes[i]);
+        if (childnodes[i].nodeType == 1)
+        {
+            children.push(childnodes[i]);
+        }
     }
+
     return children;
 }
 
 /**
- * Traverse nextSibling untill type
+ * Traverse nextSibling untill type or class or array of either
  *
  * @access public
  * @param  node   el   Target element
  * @param  string type Target node type
  * @return node\null
  */
-JSHelper.prototype.nextUntillType = function(el, type)
+JSHelper.prototype.next = function(el, type)
 {
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.next(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this._nextUntillClass(el, type);
+    }
+
     type = type.toLowerCase();
-    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type) return el.nextSibling;
+
+    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type)
+    {
+        return el.nextSibling;
+    }
     var next = el.nextSibling;
+
     while (next !== document.body && typeof next !== "undefined" && next !== null)
     {
         next = next.nextSibling;
+
         if (next && next.nodeName.toLowerCase() === type)
         {
             return next;
         }
     }
+
     return null;
 }
 
 /**
- * Traverse nextSibling untill class
+ * Traverse nextSibling untill class type or class or array of either
  *
  * @access public
  * @param  node   el        Target element
  * @param  string className Target node classname
  * @return node\null
  */
-JSHelper.prototype.nextUntillClass = function(el, className)
+JSHelper.prototype._nextUntillClass = function(el, className)
 {
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+
     if (el.nextSibling && this.hasClass(el.nextSibling, className))
     {
         return el.nextSibling;
@@ -858,8 +1511,30 @@ JSHelper.prototype.nextUntillClass = function(el, className)
  * @param  string type Target node type
  * @return node\null
  */
-JSHelper.prototype.previousUntillType = function(el, type)
+JSHelper.prototype.previous = function(el, type)
 {
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.previous(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this._previousUntillClass(el, type);
+    }
+
+
     type = type.toLowerCase();
     if (el.previousSibling && el.previousSibling.nodeName.toLowerCase() === type) return el.previousSibling;
     var prev = el.previousSibling;
@@ -882,8 +1557,13 @@ JSHelper.prototype.previousUntillType = function(el, type)
  * @param  string className Target node classname
  * @return node\null
  */
-JSHelper.prototype.previousUntillClass = function(el, className)
+JSHelper.prototype._previousUntillClass = function(el, className)
 {
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+    
     if (el.previousSibling && this.hasClass(el.previousSibling, className))
     {
         return el.previousSibling;
@@ -1291,6 +1971,11 @@ JSHelper.prototype.getInputValue = function(input)
         return this.rtrim(val, ', '); 
     }
 
+    if (input.type == "number")
+    {
+        return parseInt(input.value);
+    }
+
     if (input.type == "select")
     {
         return input.options[input.selectedIndex].value;
@@ -1307,6 +1992,29 @@ JSHelper.prototype.getInputValue = function(input)
     }
 
     return input.value;
+}
+
+/**
+ * Get an array of name/value objects for all inputs in a form
+ *
+ * @access public
+ * @param  node   form Target element
+ * @return array
+ */
+JSHelper.prototype.formArray = function(form)
+{
+    var inputs   = this.getFormInputs(form);
+    var response = [];
+
+    for (var i = 0; i < inputs.length; i++)
+    {
+        response.push({
+            'name'  : inputs[i].name,
+            'value' : this.getInputValue(this.getInputValue(inputs[i]))
+        });
+    }
+
+    return response;
 }
 
 /**
@@ -1372,7 +2080,6 @@ JSHelper.prototype.showAria = function(el)
 {
     el.setAttribute("aria-hidden", 'false');
 }
-
 /**
  * String Helper Functions
  *
@@ -1400,6 +2107,47 @@ JSHelper.prototype.isJSON = function(str)
     }
     return obj;
 }
+
+/**
+ * Json encode
+ * 
+ * @param  mixed str String JSON
+ * @return object|false
+ */
+JSHelper.prototype.json_encode = function(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.stringify(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+
+/**
+ * Json encode
+ * 
+ * @param  mixed str String JSON
+ * @return object|false
+ */
+JSHelper.prototype.json_decode = function(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.parse(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+
 
 /**
  * Make a random string
@@ -1502,6 +2250,12 @@ JSHelper.prototype.parse_url = function(str, component)
             }
         });
     }
+    
+    if (!'scheme' in uri || !uri.scheme || uri.scheme === '')
+    {
+        uri['scheme'] = window.location.protocol.replace(':', '').replaceAll('/', '');
+    }
+
     delete uri.source;
     return uri;
 }
@@ -1581,7 +2335,7 @@ JSHelper.prototype.trim = function(str, charlist)
     }
 
     l = str.length;
-    for (i = 0; i < l; i++)
+    for (var i = 0; i < l; i++)
     {
         if (whitespace.indexOf(str.charAt(i)) === -1)
         {
@@ -1767,7 +2521,32 @@ JSHelper.prototype.timeAgo = function(time, asArray)
 /* Convert a string-date to a timestamp */
 JSHelper.prototype.strtotime = function(text)
 {
-    return Math.round(new Date(text).getTime() / 1000);
+    var timestamp = Math.round(new Date(text).getTime() / 1000);
+
+    if (isNaN(timestamp))
+    {
+        timestamp = Date.parse(text);
+
+        if (isNaN(timestamp))
+        {
+            var split = text.split('/');
+
+            if (Helper.count(split) !== 3)
+            {
+                return false;
+            }
+
+            // MM/DD/YY
+            timestamp = Date.parse(split[1] + '/' + split[0] + '/' + split[2]);
+
+            if (isNaN(timestamp))
+            {
+                return false;
+            }
+        }
+    }
+
+    return timestamp;
 }
 
 /* String replace */
@@ -1819,7 +2598,7 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count)
     {
         temp = replace;
         replace = new Array();
-        for (i = 0; i < search.length; i += 1)
+        for (var i = 0; i < search.length; i += 1)
         {
             replace[i] = temp;
         }
@@ -2006,7 +2785,7 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
     if (typeof quote_style !== 'number')
     { // Allow for a single string or an array of string flags
         quote_style = [].concat(quote_style);
-        for (i = 0; i < quote_style.length; i++)
+        for (var i = 0; i < quote_style.length; i++)
         {
             // Resolve string input to bitwise e.g. 'ENT_IGNORE' becomes 4
             if (OPTS[quote_style[i]] === 0)
@@ -2080,7 +2859,7 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style)
   if (typeof quote_style !== 'number')
   { // Allow for a single string or an array of string flags
     quote_style = [].concat(quote_style);
-    for (i = 0; i < quote_style.length; i++)
+    for (var i = 0; i < quote_style.length; i++)
     {
       // Resolve string input to bitwise e.g. 'PATHINFO_EXTENSION' becomes 4
       if (OPTS[quote_style[i]] === 0)
@@ -2389,7 +3168,7 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
     var text = true
 
     f_stringl = f_string.length
-    for (i = 0; i < f_stringl; i++)
+    for (var i = 0; i < f_stringl; i++)
     {
       chr = f_string.substring(i, i + 1)
       if (chr.match(/\d/))
@@ -2457,7 +3236,7 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
     result = 1
   }
 
-  for (i = 0; i < len; i++)
+  for (var i = 0; i < len; i++)
   {
     if (isNaN(array1[i]))
     {
@@ -2596,6 +3375,89 @@ JSHelper.prototype.number_format = function(number, decimals, decPoint, thousand
   return s.join(dec)
 }
 
+JSHelper.prototype.urlencode = function(str)
+{
+  //       discuss at: https://locutus.io/php/urlencode/
+  //      original by: Philip Peterson
+  //      improved by: Kevin van Zonneveld (https://kvz.io)
+  //      improved by: Kevin van Zonneveld (https://kvz.io)
+  //      improved by: Brett Zamir (https://brett-zamir.me)
+  //      improved by: Lars Fischer
+  //      improved by: Waldo Malqui Silva (https://fayr.us/waldo/)
+  //         input by: AJ
+  //         input by: travc
+  //         input by: Brett Zamir (https://brett-zamir.me)
+  //         input by: Ratheous
+  //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
+  //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
+  //      bugfixed by: Joris
+  // reimplemented by: Brett Zamir (https://brett-zamir.me)
+  // reimplemented by: Brett Zamir (https://brett-zamir.me)
+  //           note 1: This reflects PHP 5.3/6.0+ behavior
+  //           note 1: Please be aware that this function
+  //           note 1: expects to encode into UTF-8 encoded strings, as found on
+  //           note 1: pages served as UTF-8
+  //        example 1: urlencode('Kevin van Zonneveld!')
+  //        returns 1: 'Kevin+van+Zonneveld%21'
+  //        example 2: urlencode('https://kvz.io/')
+  //        returns 2: 'https%3A%2F%2Fkvz.io%2F'
+  //        example 3: urlencode('https://www.google.nl/search?q=Locutus&ie=utf-8')
+  //        returns 3: 'https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8'
+
+  str = (str + '')
+
+  return encodeURIComponent(str)
+    .replace(/!/g, '%21')
+    .replace(/'/g, '%27')
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29')
+    .replace(/\*/g, '%2A')
+    .replace(/~/g, '%7E')
+    .replace(/%20/g, '+')
+}
+
+JSHelper.prototype.urldecode = function(str)
+{
+  //       discuss at: https://locutus.io/php/urldecode/
+  //      original by: Philip Peterson
+  //      improved by: Kevin van Zonneveld (https://kvz.io)
+  //      improved by: Kevin van Zonneveld (https://kvz.io)
+  //      improved by: Brett Zamir (https://brett-zamir.me)
+  //      improved by: Lars Fischer
+  //      improved by: Orlando
+  //      improved by: Brett Zamir (https://brett-zamir.me)
+  //      improved by: Brett Zamir (https://brett-zamir.me)
+  //         input by: AJ
+  //         input by: travc
+  //         input by: Brett Zamir (https://brett-zamir.me)
+  //         input by: Ratheous
+  //         input by: e-mike
+  //         input by: lovio
+  //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
+  //      bugfixed by: Rob
+  // reimplemented by: Brett Zamir (https://brett-zamir.me)
+  //           note 1: info on what encoding functions to use from:
+  //           note 1: https://xkr.us/articles/javascript/encode-compare/
+  //           note 1: Please be aware that this function expects to decode
+  //           note 1: from UTF-8 encoded strings, as found on
+  //           note 1: pages served as UTF-8
+  //        example 1: urldecode('Kevin+van+Zonneveld%21')
+  //        returns 1: 'Kevin van Zonneveld!'
+  //        example 2: urldecode('https%3A%2F%2Fkvz.io%2F')
+  //        returns 2: 'https://kvz.io/'
+  //        example 3: urldecode('https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8%26oe%3Dutf-8%26aq%3Dt%26rls%3Dcom.ubuntu%3Aen-US%3Aunofficial%26client%3Dfirefox-a')
+  //        returns 3: 'https://www.google.nl/search?q=Locutus&ie=utf-8&oe=utf-8&aq=t&rls=com.ubuntu:en-US:unofficial&client=firefox-a'
+  //        example 4: urldecode('%E5%A5%BD%3_4')
+  //        returns 4: '\u597d%3_4'
+
+  return decodeURIComponent((str + '')
+    .replace(/%(?![\da-f]{2})/gi, function () {
+      // PHP tolerates poorly formed escape sequences
+      return '%25'
+    })
+    .replace(/\+/g, '%20'))
+}
+
 /**
  * Array utility functions
  *
@@ -2652,6 +3514,19 @@ JSHelper.prototype.array_reduce = function(array, count) {
 }
 
 /**
+ * Compare two arrays
+ * 
+ * @access public
+ * @param  array  a
+ * @param  array  b
+ * @return array
+ */
+JSHelper.prototype.array_compare = function(a, b)
+{
+    return JSON.stringify(a) === JSON.stringify(b);;
+}
+
+/**
  * Implode an array
  * 
  * @access public
@@ -2660,13 +3535,36 @@ JSHelper.prototype.array_reduce = function(array, count) {
  * @param  string suffix Imploding sufix (optional) (default )
  * @return string
  */
-JSHelper.prototype.implode = function(array, prefix, suffix) {
+JSHelper.prototype.implode = function(array, prefix, suffix)
+{
+    if (this.is_obj(array))
+    {
+        if (this.empty(array))
+        {
+            return '';
+        }
+
+        glue = typeof prefix === 'undefined' ? '' : prefix;
+
+        separator = typeof suffix === 'undefined' ? '' : suffix; 
+
+        return this.rtrim(Object.keys(array).map(function (key, value) { return [key, array[key]].join(glue); }).join(separator), suffix);
+    }
+
     var str = '';
-    for (i = 0; i < array.length; i++) {
-        if (i === array.length - 1) {
+
+    prefix = typeof prefix === 'undefined' ? '' : prefix;
+
+    suffix = typeof suffix === 'undefined' ? '' : suffix; 
+   
+    for (var i = 0; i < array.length; i++)
+    {
+        if (i === array.length - 1)
+        {
             str += prefix + array[i];
         }
-        else {
+        else
+        {
             str += prefix + array[i] + suffix;
         }
     }
@@ -2795,24 +3693,35 @@ JSHelper.prototype.paginate = function(array, page, limit) {
  */
 JSHelper.prototype.foreach = function(obj, callback, args) {
     var value, i = 0,
-    length = obj.length,
+    length  = obj.length,
     isArray = Object.prototype.toString.call(obj) === '[object Array]';
 
-    if (args) {
-        if (isArray) {
+    if (Object.prototype.toString.call(args) === '[object Array]')
+    {
+        if (isArray)
+        {
             for (; i < length; i++) {
-                value = callback.apply(obj[i], args);
+
+                var _currArgs = [i, obj[i]];
+
+                value = callback.apply(obj, this.array_merge([i, obj[i]], args));
 
                 if (value === false) {
                     break;
                 }
             }
         }
-        else {
-            for (i in obj) {
-                value = callback.apply(obj[i], args);
+        else
+        {
+            for (i in obj)
+            {
 
-                if (value === false) {
+                var _currArgs = [i, obj[i]];
+
+                value = callback.apply(obj, this.array_merge([i, obj[i]], args));
+
+                if (value === false)
+                {
                     break;
                 }
             }
@@ -2821,9 +3730,11 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
         // A special, fast, case for the most common use of each
     }
     else {
-        if (isArray) {
-            for (; i < length; i++) {
-                value = callback.call(obj[i], i, obj[i]);
+        if (isArray)
+        {
+            for (; i < length; i++)
+            {
+                value = callback.call(obj, i, obj[i]);
 
                 if (value === false) {
                     break;
@@ -2831,8 +3742,9 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
             }
         }
         else {
-            for (i in obj) {
-                value = callback.call(obj[i], i, obj[i]);
+            for (i in obj)
+            {
+                value = callback.call(obj, i, obj[i]);
 
                 if (value === false) {
                     break;
@@ -2893,7 +3805,7 @@ JSHelper.prototype.array_merge = function () {
   toStr = Object.prototype.toString,
   retArr = true;
 
-  for (i = 0; i < argl; i++) {
+  for (var i = 0; i < argl; i++) {
     if (toStr.call(args[i]) !== '[object Array]') {
       retArr = false;
       break;
@@ -2902,7 +3814,7 @@ JSHelper.prototype.array_merge = function () {
 
 if (retArr) {
     retArr = [];
-    for (i = 0; i < argl; i++) {
+    for (var i = 0; i < argl; i++) {
       retArr = retArr.concat(args[i]);
   }
   return retArr;
@@ -2946,76 +3858,58 @@ JSHelper.prototype.array_filter = function(array) {
 }
 
 /**
+ * Array filter
+ * 
+ * @access public
+ * @param  array array Target array to filter
+ * @return array
+ */
+JSHelper.prototype.array_unique = function(array)
+{
+    var result = [];
+
+    if (this.is_array(array))
+    {
+        for (var i = 0; i < array.length; i++)
+        {
+            if (!this.in_array(array[i], result))
+            {
+                result.push(array[i])
+            }
+        }
+    }
+    
+    return result;
+}
+
+/**
+ * Is array
+ * 
+ * @access public
+ * @param  mixed mixed_var Target object to to check
+ * @return bool
+ */
+JSHelper.prototype.is_obj = function(mixed_var)
+{
+    if( (typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null) )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+
+/**
  * Is array
  * 
  * @access public
  * @param  array array Target array to filter
  * @return bool
  */
-JSHelper.prototype.is_array = function(mixed_var) {
-  //  discuss at: http://phpjs.org/functions/is_array/
-  // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // improved by: Legaev Andrey
-  // improved by: Onno Marsman
-  // improved by: Brett Zamir (http://brett-zamir.me)
-  // improved by: Nathan Sepulveda
-  // improved by: Brett Zamir (http://brett-zamir.me)
-  // bugfixed by: Cord
-  // bugfixed by: Manish
-  // bugfixed by: Brett Zamir (http://brett-zamir.me)
-  //        note: In php.js, javascript objects are like php associative arrays, thus JavaScript objects will also
-  //        note: return true in this function (except for objects which inherit properties, being thus used as objects),
-  //        note: unless you do ini_set('phpjs.objectsAsArrays', 0), in which case only genuine JavaScript arrays
-  //        note: will return true
-  //   example 1: is_array(['Kevin', 'van', 'Zonneveld']);
-  //   returns 1: true
-  //   example 2: is_array('Kevin van Zonneveld');
-  //   returns 2: false
-  //   example 3: is_array({0: 'Kevin', 1: 'van', 2: 'Zonneveld'});
-  //   returns 3: true
-  //   example 4: is_array(function tmp_a(){this.name = 'Kevin'});
-  //   returns 4: false
-
-  var ini,
-  _getFuncName = function(fn) {
-      var name = (/\W*function\s+([\w\$]+)\s*\(/)
-      .exec(fn);
-      if (!name) {
-        return '(Anonymous)';
-    }
-    return name[1];
-};
-_isArray = function(mixed_var) {
-    // return Object.prototype.toString.call(mixed_var) === '[object Array]';
-    // The above works, but let's do the even more stringent approach: (since Object.prototype.toString could be overridden)
-    // Null, Not an object, no length property so couldn't be an Array (or String)
-    if (!mixed_var || typeof mixed_var !== 'object' || typeof mixed_var.length !== 'number') {
-      return false;
-  }
-  var len = mixed_var.length;
-  mixed_var[mixed_var.length] = 'bogus';
-    // The only way I can think of to get around this (or where there would be trouble) would be to have an object defined
-    // with a custom "length" getter which changed behavior on each call (or a setter to mess up the following below) or a custom
-    // setter for numeric properties, but even that would need to listen for specific indexes; but there should be no false negatives
-    // and such a false positive would need to rely on later JavaScript innovations like __defineSetter__
-    if (len !== mixed_var.length) { // We know it's an array since length auto-changed with the addition of a
-      // numeric property at its length end, so safely get rid of our bogus element
-  mixed_var.length -= 1;
-  return true;
-}
-    // Get rid of the property we added onto a non-array object; only possible
-    // side-effect is if the user adds back the property later, it will iterate
-    // this property in the older order placement in IE (an order which should not
-    // be depended on anyways)
-    delete mixed_var[mixed_var.length];
-    return false;
-};
-
-if (!mixed_var || typeof mixed_var !== 'object') {
-    return false;
-}
-
-return _isArray(mixed_var);
+JSHelper.prototype.is_array = function(mixed_var)
+{
+    return Object.prototype.toString.call(mixed_var) === '[object Array]' || Object.prototype.toString.call(mixed_var) === '[object NodeList]';
 }
 /**
  * Miscellaneous helper functions
@@ -3298,6 +4192,52 @@ JSHelper.prototype.isNodeList = function(nodes)
 {
     return nodes == '[object NodeList]';
 }
+
+/**
+ * Gets url query
+ *
+ * @access public
+ * @param  string  name String query to get (optional)
+ * @return object|string
+ */
+JSHelper.prototype.url_query = function(name)
+{
+    var results = {};
+
+    if (window.location.search !== '')
+    {
+        var params = window.location.search.substring(1).split('&');
+
+        for (var i = 0; i < params.length; i++)
+        {
+            if (!params[i].includes('='))
+            {
+                continue;
+            }
+
+            var split = params[i].split('=');
+
+            results[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
+        }
+    }
+
+    // No param return all url query
+    if (typeof name === 'undefined')
+    {
+        return results;
+    }
+    
+    name = decodeURIComponent(name);
+    
+    if (name in results)
+    {
+        return results[name];
+    }
+
+    return false;
+}
+
+
 /**
  * DOM Event Listener Manager
  *
@@ -3317,7 +4257,6 @@ JSHelper.prototype.isNodeList = function(nodes)
  */
 JSHelper.prototype.addEventListener = function(element, eventName, handler, useCapture)
 {
-
     // Boolean use capture defaults to false
     useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
 
@@ -3325,19 +4264,36 @@ JSHelper.prototype.addEventListener = function(element, eventName, handler, useC
     var events = this._events;
 
     // Make sure events are set
-    if (!events) this._events = events = {};
+    if (!events)
+    {
+        this._events = events = {};
+    }
 
     // Make sure an array for the event type exists
-    if (!events[eventName]) events[eventName] = [];
+    if (!events[eventName])
+    {
+        events[eventName] = [];
+    }
 
-    // Push the details to the events object
-    events[eventName].push({
-        element    : element,
-        handler    : handler,
-        useCapture : useCapture,
-    });
+    // Arrays
+    if (this.is_array(element))
+    {
+        for (var i = 0; i < element.length; i++)
+        {
+            this.addEventListener(element[i], eventName, handler, useCapture);
+        }
+    }
+    else
+    {
+        // Push the details to the events object
+        events[eventName].push({
+            element    : element,
+            handler    : handler,
+            useCapture : useCapture,
+        });
 
-    this._addListener(element, eventName, handler, useCapture);
+        this._addListener(element, eventName, handler, useCapture);
+    }
 }
 
 /**
@@ -3355,26 +4311,46 @@ JSHelper.prototype.addEventListener = function(element, eventName, handler, useC
  */
 JSHelper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
 {
-    // If the eventName name was not provided - remove all event handlers on element
-    if (!eventName) return this._removeElementListeners(element);
-
-    // If the callback was not provided - remove all events of the type on the element
-    if (!handler) return this._removeElementTypeListeners(element, eventName);
-
-    // Default use capture
-    useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
-
-    var eventObj = this._events[eventName];
-
-    if (typeof eventObj === 'undefined') return;
-
-    for (var i = 0, len = eventObj.length; i < len; i++)
+    if (this.is_array(element))
     {
-        if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
+        for (var j = 0; j < element.length; j++)
         {
-            this._removeListener(element, eventName, handler, useCapture);
-            this._events[eventName].splice(i, 1);
-            break;
+            this.removeEventListener(element[j], eventName, handler, useCapture);
+        }
+    }
+    else
+    {
+        // If the eventName name was not provided - remove all event handlers on element
+        if (!eventName)
+        {
+            return this._removeElementListeners(element);
+        }
+
+        // If the callback was not provided - remove all events of the type on the element
+        if (!handler)
+        {
+            return this._removeElementTypeListeners(element, eventName);
+        }
+
+        // Default use capture
+        useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
+
+        var eventObj = this._events[eventName];
+
+        if (typeof eventObj === 'undefined')
+        {
+            return;
+        }
+
+        // Loop stored events and match node, event name, handler, use capture
+        for (var i = 0, len = eventObj.length; i < len; i++)
+        {
+            if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
+            {
+                this._removeListener(element, eventName, handler, useCapture);
+                this._events[eventName].splice(i, 1);
+                break;
+            }
         }
     }
 }
@@ -3791,18 +4767,20 @@ JSHelper.prototype.css = function(el, property, value)
  * Animate a css proprety
  *
  * @access public
- * @param  node   el          Target DOM node
- * @param  string cssProperty CSS property
- * @param  mixed  from        Start value
- * @param  mixed  to          Ending value
- * @param  int    time        Animation time in ms
- * @param  string easing      Easing function
+ * @param  node     el          Target DOM node
+ * @param  string   cssProperty CSS property
+ * @param  mixed    from        Start value
+ * @param  mixed    to          Ending value
+ * @param  int      time        Animation time in ms
+ * @param  string   easing      Easing function
+ * @param  function callback    Callback to apply when animation ends (optional)
  */
-JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
+JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
 {     
     // Set defaults if values were not provided;
-    time   = (typeof time === 'undefined' ? 300 : time);
-    easing = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
+    time     = (typeof time === 'undefined' ? 300 : time);
+    easing   = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
+    callback = (typeof callback === 'undefined' ? false : callback);
 
     // Width and height need to use js to get the starting size
     // if it was set to auto/initial/null
@@ -3883,6 +4861,11 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
             _this.removeStyle(el, 'transition');
 
             el.removeEventListener('transitionend', transitionEnd, false);
+
+            if (_this.isCallable(callback))
+            {
+                callback.call(null, el);
+            }
         }
 
     }, false);
@@ -3983,6 +4966,25 @@ JSHelper.prototype.isRetina = function()
 })();
 
 // Vendors
+(function()
+{
+	/*
+	 *  Copyright 2012-2013 (c) Pierre Duquesne <stackp@online.fr>
+	 *  Licensed under the New BSD License.
+	 *  https://github.com/stackp/promisejs
+	 */
+	(function(a){function b(){this._callbacks=[];}b.prototype.then=function(a,c){var d;if(this._isdone)d=a.apply(c,this.result);else{d=new b();this._callbacks.push(function(){var b=a.apply(c,arguments);if(b&&typeof b.then==='function')b.then(d.done,d);});}return d;};b.prototype.done=function(){this.result=arguments;this._isdone=true;for(var a=0;a<this._callbacks.length;a++)this._callbacks[a].apply(null,arguments);this._callbacks=[];};function c(a){var c=new b();var d=[];if(!a||!a.length){c.done(d);return c;}var e=0;var f=a.length;function g(a){return function(){e+=1;d[a]=Array.prototype.slice.call(arguments);if(e===f)c.done(d);};}for(var h=0;h<f;h++)a[h].then(g(h));return c;}function d(a,c){var e=new b();if(a.length===0)e.done.apply(e,c);else a[0].apply(null,c).then(function(){a.splice(0,1);d(a,arguments).then(function(){e.done.apply(e,arguments);});});return e;}function e(a){var b="";if(typeof a==="string")b=a;else{var c=encodeURIComponent;var d=[];for(var e in a)if(a.hasOwnProperty(e))d.push(c(e)+'='+c(a[e]));b=d.join('&');}return b;}function f(){var a;if(window.XMLHttpRequest)a=new XMLHttpRequest();else if(window.ActiveXObject)try{a=new ActiveXObject("Msxml2.XMLHTTP");}catch(b){a=new ActiveXObject("Microsoft.XMLHTTP");}return a;}function g(a,c,d,g){var h=new b();var j,k;d=d||{};g=g||{};try{j=f();}catch(l){h.done(i.ENOXHR,"");return h;}k=e(d);if(a==='GET'&&k){c+='?'+k;k=null;}j.open(a,c);var m='application/x-www-form-urlencoded';for(var n in g)if(g.hasOwnProperty(n))if(n.toLowerCase()==='content-type')m=g[n];else j.setRequestHeader(n,g[n]);j.setRequestHeader('Content-type',m);function o(){j.abort();h.done(i.ETIMEOUT,"",j);}var p=i.ajaxTimeout;if(p)var q=setTimeout(o,p);j.onreadystatechange=function(){if(p)clearTimeout(q);if(j.readyState===4){var a=(!j.status||(j.status<200||j.status>=300)&&j.status!==304);h.done(a,j.responseText,j);}};j.send(k);return h;}function h(a){return function(b,c,d){return g(a,b,c,d);};}var i={Promise:b,join:c,chain:d,ajax:g,get:h('GET'),post:h('POST'),put:h('PUT'),del:h('DELETE'),ENOXHR:1,ETIMEOUT:2,ajaxTimeout:0};if(typeof define==='function'&&define.amd)define(function(){return i;});else a.promise=i;})(this);
+
+	var _promise = promise;
+
+    window.promise = null;
+
+	Container.set('Promise', function()
+	{
+		return new _promise.Promise();
+	});
+
+}());
 /**
  * Smoothscroll
  *
@@ -4538,8 +5540,732 @@ JSHelper.prototype.isRetina = function()
     Container.set('NProgress', _NProgress);
 
 })();
+/**
+ * Pluralize
+ * @see https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations
+ * 
+ * @example Container.get('JSHelper').pluralize('tomato', 5);
+ * 
+ */
+(function()
+{
+    /**
+     * Pluralize a word.
+     *
+     * @param  string word  The input word
+     * @param  int    count The amount of items (optional) (default 2)
+     * @return string
+     */
+    var Pluralize = function(word, count)
+    {
+        /**
+         * The word to convert.
+         *
+         * @var string
+         */
+        this.word = '';
+
+        /**
+         * Lowercase version of word.
+         *
+         * @var string
+         */
+        this.lowercase = '';
+
+        /**
+         * Uppercase version of word.
+         *
+         * @var string
+         */
+        this.upperCase = '';
+
+        /**
+         * Sentence-case version of word.
+         *
+         * @var string
+         */
+        this.sentenceCase = '';
+
+        /**
+         * Casing pattern of the provided word.
+         *
+         * @var string
+         */
+        this.casing = '';
+
+        /**
+         * Sibilants.
+         *
+         * @var array
+         */
+        this.sibilants = ['x', 's', 'z', 's'];
+
+        /**
+         * Vowels.
+         *
+         * @var array
+         */
+        this.vowels = ['a', 'e', 'i', 'o', 'u'];
+
+        /**
+         * Consonants.
+         *
+         * @var array
+         */
+        this.consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
+
+        count = (typeof count === 'undefined' ? 2 : count);
+
+        return this.convert(string, word, int);
+    }
+
+    /**
+     * Pluralize a word.
+     *
+     * @param  string word  The input word
+     * @param  int    count The amount of items (optional) (default 2)
+     * @return string
+     */
+    Pluralize.prototype.convert = function(word, count)
+    {
+        // Return the word if we don't need to pluralize
+        if (count === 1)
+        {
+            return word;
+        }
+
+        // Set class variables for use
+        this.word         = word;
+        this.lowercase    = strtolower(word);
+        this.upperCase    = strtoupper(word);
+        this.sentenceCase = ucfirst(word);
+        this.casing       = this.getCasing();
+
+        // save some time in the case that singular and plural are the same
+        if (this.isUncountable())
+        {
+            return word;
+        }
+
+        // check for irregular forms
+        irregular = this.isIrregular();
+        if (irregular)
+        {
+            return this.toCasing(irregular, this.casing);
+        }
+
+        // nouns that end in -ch, x, s, z or s-like sounds require an es for the plural:
+        if (in_array(this.suffix(this.lowercase, 1), this.sibilants) || (this.suffix(this.lowercase, 2) === 'ch'))
+        {
+            return this.toCasing(word + 'es', this.casing);
+        }
+
+        // Nouns that end in a vowel + y take the letter s:
+        if (in_array(this.nthLast(this.lowercase, 1), this.vowels) && this.suffix(this.lowercase, 1) === 'y')
+        {
+            return this.toCasing(word + 's', this.casing);
+        }
+
+        // Nouns that end in a consonant + y drop the y and take ies:
+        if (in_array(this.nthLast(this.lowercase, 1), this.consonants) && this.suffix(this.lowercase, 1) === 'y')
+        {
+            return this.toCasing(this.sliceFromEnd(word, 1) + 'ies', this.casing);
+        }
+
+        // Nouns that end in a consonant + o add s:
+        if (in_array(this.nthLast(this.lowercase, 1), this.consonants) && this.suffix(this.lowercase, 1) === 'o')
+        {
+            return this.toCasing(word + 's', this.casing);
+        }
+
+        // Nouns that end in a vowel + o take the letter s:
+        if (in_array(this.nthLast(this.lowercase, 1), this.vowels) && this.suffix(this.lowercase, 1) === 'o')
+        {
+            return this.toCasing(word + 's', this.casing);
+        }
+
+        // irregular suffixes that cant be pluralized
+        if (this.suffix(this.lowercase, 4) === 'ness' || this.suffix(this.lowercase, 3) === 'ess')
+        {
+            return word;
+        }
+
+        // Lastly, change the word based on suffix rules
+        pluralized = this.autoSuffix();
+
+        if (pluralized)
+        {
+            return this.toCasing(this.sliceFromEnd(word, pluralized[0]) + pluralized[1], this.casing);
+        }
+
+        return this.word + 's';
+    }
+
+    /**
+     * Is the word irregular and uncountable (e.g fish).
+     *
+     * @return bool
+     */
+    Pluralize.prototype.isUncountable = function()
+    {
+        var uncountable =
+        [
+            'gold',
+            'audio',
+            'police',
+            'sheep',
+            'fish',
+            'deer',
+            'series',
+            'species',
+            'money',
+            'rice',
+            'information',
+            'equipment',
+            'bison',
+            'buffalo',
+            'duck',
+            'pike',
+            'plankton',
+            'salmon',
+            'squid',
+            'swine',
+            'trout',
+            'moose',
+            'aircraft',
+            'you',
+            'pants',
+            'shorts',
+            'eyeglasses',
+            'scissors',
+            'offspring',
+            'eries',
+            'premises',
+            'kudos',
+            'corps',
+            'heep',
+        ];
+
+        return in_array(this.lowercase, uncountable);
+    }
+
+    /**
+     * Returns plural version of iregular words or FALSE if it is not irregular.
+     *
+     * @return string|bool
+     */
+    Pluralize.prototype.isIrregular = function()
+    {
+        var irregular =
+        {
+            'addendum' : 'addenda',
+            'alga' : 'algae',
+            'alumna' : 'alumnae',
+            'alumnus' : 'alumni',
+            'analysis' : 'analyses',
+            'antenna' : 'antennae',
+            'apparatus' : 'apparatuses',
+            'appendix' : 'appendices',
+            'axis' : 'axes',
+            'bacillus' : 'bacilli',
+            'bacterium' : 'bacteria',
+            'basis' : 'bases',
+            'beau' : 'beaux',
+            'kilo' : 'kilos',
+            'bureau' : 'bureaus',
+            'bus' : 'buses',
+            'cactus' : 'cacti',
+            'calf' : 'calves',
+            'child' : 'children',
+            'corps' : 'corps',
+            'corpus' : 'corpora',
+            'crisis' : 'crises',
+            'criterion' : 'criteria',
+            'curriculum' : 'curricula',
+            'datum' : 'data',
+            'deer' : 'deer',
+            'die' : 'dice',
+            'dwarf' : 'dwarves',
+            'diagnosis' : 'diagnoses',
+            'echo' : 'echoes',
+            'elf' : 'elves',
+            'ellipsis' : 'ellipses',
+            'embargo' : 'embargoes',
+            'emphasis' : 'emphases',
+            'erratum' : 'errata',
+            'fireman' : 'firemen',
+            'fish' : 'fish',
+            'fly'  : 'flies',
+            'focus' : 'focuses',
+            'foot' : 'feet',
+            'formula' : 'formulas',
+            'fungus' : 'fungi',
+            'genus' : 'genera',
+            'goose' : 'geese',
+            'human' : 'humans',
+            'half' : 'halves',
+            'hero' : 'heroes',
+            'hippopotamus' : 'hippopotami',
+            'hoof' : 'hooves',
+            'hypothesis' : 'hypotheses',
+            'index' : 'indices',
+            'knife' : 'knives',
+            'leaf' : 'leaves',
+            'life' : 'lives',
+            'loaf' : 'loaves',
+            'louse' : 'lice',
+            'man' : 'men',
+            'matrix' : 'matrices',
+            'means' : 'means',
+            'medium' : 'media',
+            'memorandum' : 'memoranda',
+            'millennium' : 'millenniums',
+            'moose' : 'moose',
+            'mosquito' : 'mosquitoes',
+            'mouse' : 'mice',
+            'my' : 'our',
+            'nebula' : 'nebulae',
+            'neurosis' : 'neuroses',
+            'nucleus' : 'nuclei',
+            'neurosis' : 'neuroses',
+            'nucleus' : 'nuclei',
+            'oasis' : 'oases',
+            'octopus' : 'octopi',
+            'ovum' : 'ova',
+            'ox' : 'oxen',
+            'paralysis' : 'paralyses',
+            'parenthesis' : 'parentheses',
+            'person' : 'people',
+            'phenomenon' : 'phenomena',
+            'potato' : 'potatoes',
+            'quiz'  : 'quizzes',
+            'radius' : 'radii',
+            'scarf' : 'scarfs',
+            'self' : 'selves',
+            'series' : 'series',
+            'sheep' : 'sheep',
+            'shelf' : 'shelves',
+            'scissors' : 'scissors',
+            'species' : 'species',
+            'stimulus' : 'stimuli',
+            'stratum' : 'strata',
+            'syllabus' : 'syllabi',
+            'symposium' : 'symposia',
+            'synthesis' : 'syntheses',
+            'synopsis' : 'synopses',
+            'tableau' : 'tableaux',
+            'that' : 'those',
+            'thesis' : 'theses',
+            'thief' : 'thieves',
+            'this' : 'these',
+            'tomato' : 'tomatoes',
+            'tooth' : 'teeth',
+            'torpedo' : 'torpedoes',
+            'vertebra' : 'vertebrae',
+            'veto' : 'vetoes',
+            'vita' : 'vitae',
+            'virus'  : 'viri',
+            'watch' : 'watches',
+            'wife' : 'wives',
+            'wolf' : 'wolves',
+            'woman' : 'women',
+            'is' : 'are',
+            'was' : 'were',
+            'he' : 'they',
+            'she' : 'they',
+            'i' : 'we',
+            'zero' : 'zeroes',
+        };
+
+        if (typeof irregular[this.lowercase] !== 'undefined')
+        {
+            return irregular[this.lowercase];
+        }        
+
+        return false;
+    }
+
+    /**
+     * Return an array with an index of where to cut off the ending and a suffix or FALSE.
+     *
+     * @return array|false
+     */
+    Pluralize.prototype.autoSuffix = function()
+    {
+        var suffix1 = this.suffix(this.lowercase, 1);
+        var suffix2 = this.suffix(this.lowercase, 2);
+        var suffix3 = this.suffix(this.lowercase, 3);
+
+        if (this.suffix(this.lowercase, 4) === 'zoon') return [4, 'zoa'];
+
+        if (suffix3 === 'eau') return [3, 'eaux'];
+        if (suffix3 === 'ieu') return [3, 'ieux'];
+        if (suffix3 === 'ion') return [3, 'ions'];
+        if (suffix3 === 'oof') return [3, 'ooves'];
+
+        if (suffix2 === 'an') return [2, 'en'];
+        if (suffix2 === 'ch') return [2, 'ches'];
+        if (suffix2 === 'en') return [2, 'ina'];
+        if (suffix2 === 'ex') return [2, 'exes'];
+        if (suffix2 === 'is') return [2, 'ises'];
+        if (suffix2 === 'ix') return [2, 'ices'];
+        if (suffix2 === 'nx') return [2, 'nges'];
+        if (suffix2 === 'nx') return [2, 'nges'];
+        if (suffix2 === 'fe') return [2, 'ves'];
+        if (suffix2 === 'on') return [2, 'a'];
+        if (suffix2 === 'sh') return [2, 'shes'];
+        if (suffix2 === 'um') return [2, 'a'];
+        if (suffix2 === 'us') return [2, 'i'];
+        if (suffix2 === 'x') return [1, 'xes'];
+        if (suffix2 === 'y') return [1, 'ies'];
+
+        if (suffix1 === 'a') return [1, 'ae'];
+        if (suffix1 === 'o') return [1, 'oes'];
+        if (suffix1 === 'f') return [1, 'ves'];
+
+        return false;
+    }
+
+    /**
+     * Get provided casing of word.
+     *
+     * @return string
+     */
+    Pluralize.prototype.getCasing = function()
+    {
+        var casing = 'lower';
+        casing = this.lowercase === this.word ? 'lower' : casing;
+        casing = this.upperCase === this.word ? 'upper' : casing;
+        casing = this.sentenceCase === this.word ? 'sentence' : casing;
+
+        return casing;
+    }
+
+    /**
+     * Convert word to a casing.
+     *
+     * @param  string word   The word to convert
+     * @param  string casing The casing format to convert to
+     * @return string
+     */
+    Pluralize.prototype.toCasing = function(word, casing)
+    {
+        if (casing === 'lower')
+        {
+            return word.toLowerCase();
+        }
+        elseif (casing === 'upper')
+        {
+            return word.toUpperCase();
+        }
+        elseif (casing === 'sentence')
+        {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        }
+
+        return word;
+    }
+
+    /**
+     * Strip end off a word at a given char index and return the end part.
+     *
+     * @param  string word  The word to convert
+     * @param  int    count The index to split at
+     * @return string
+     */
+    Pluralize.prototype.suffix = function(word, count)
+    {
+        return substr(word, word.length - count);
+    }
+
+    /**
+     * Strip end off a word at a given char index and return the start part.
+     *
+     * @param  string word  The word to convert
+     * @param  int    count The index to split at
+     * @return string
+     */
+    Pluralize.prototype.sliceFromEnd = function(word, count)
+    {
+        return substr(word, 0, word.length - count);
+    }
+
+    /**
+     * Get the nth last character of a string.
+     *
+     * @param  string word  The word to convert
+     * @param  int    count The index to get
+     * @return string
+     */
+    Pluralize.prototype.nthLast = function(word, count)
+    {
+        return word.split().reverse().join()[count];
+    }
+
+    Container.set('pluralize', Pluralize);
+
+}());
+(function()
+{
+	/*! PhotoSwipe - v4.1.3 - 2019-01-08
+	* http://photoswipe.com
+	* Copyright (c) 2019 Dmitry Semenov; */
+	!function(a,b){"function"==typeof define&&define.amd?define(b):"object"==typeof exports?module.exports=b():a.PhotoSwipe=b()}(this,function(){"use strict";var a=function(a,b,c,d){var e={features:null,bind:function(a,b,c,d){var e=(d?"remove":"add")+"EventListener";b=b.split(" ");for(var f=0;f<b.length;f++)b[f]&&a[e](b[f],c,!1)},isArray:function(a){return a instanceof Array},createEl:function(a,b){var c=document.createElement(b||"div");return a&&(c.className=a),c},getScrollY:function(){var a=window.pageYOffset;return void 0!==a?a:document.documentElement.scrollTop},unbind:function(a,b,c){e.bind(a,b,c,!0)},removeClass:function(a,b){var c=new RegExp("(\\s|^)"+b+"(\\s|$)");a.className=a.className.replace(c," ").replace(/^\s\s*/,"").replace(/\s\s*$/,"")},addClass:function(a,b){e.hasClass(a,b)||(a.className+=(a.className?" ":"")+b)},hasClass:function(a,b){return a.className&&new RegExp("(^|\\s)"+b+"(\\s|$)").test(a.className)},getChildByClass:function(a,b){for(var c=a.firstChild;c;){if(e.hasClass(c,b))return c;c=c.nextSibling}},arraySearch:function(a,b,c){for(var d=a.length;d--;)if(a[d][c]===b)return d;return-1},extend:function(a,b,c){for(var d in b)if(b.hasOwnProperty(d)){if(c&&a.hasOwnProperty(d))continue;a[d]=b[d]}},easing:{sine:{out:function(a){return Math.sin(a*(Math.PI/2))},inOut:function(a){return-(Math.cos(Math.PI*a)-1)/2}},cubic:{out:function(a){return--a*a*a+1}}},detectFeatures:function(){if(e.features)return e.features;var a=e.createEl(),b=a.style,c="",d={};if(d.oldIE=document.all&&!document.addEventListener,d.touch="ontouchstart"in window,window.requestAnimationFrame&&(d.raf=window.requestAnimationFrame,d.caf=window.cancelAnimationFrame),d.pointerEvent=!!window.PointerEvent||navigator.msPointerEnabled,!d.pointerEvent){var f=navigator.userAgent;if(/iP(hone|od)/.test(navigator.platform)){var g=navigator.appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/);g&&g.length>0&&(g=parseInt(g[1],10),g>=1&&g<8&&(d.isOldIOSPhone=!0))}var h=f.match(/Android\s([0-9\.]*)/),i=h?h[1]:0;i=parseFloat(i),i>=1&&(i<4.4&&(d.isOldAndroid=!0),d.androidVersion=i),d.isMobileOpera=/opera mini|opera mobi/i.test(f)}for(var j,k,l=["transform","perspective","animationName"],m=["","webkit","Moz","ms","O"],n=0;n<4;n++){c=m[n];for(var o=0;o<3;o++)j=l[o],k=c+(c?j.charAt(0).toUpperCase()+j.slice(1):j),!d[j]&&k in b&&(d[j]=k);c&&!d.raf&&(c=c.toLowerCase(),d.raf=window[c+"RequestAnimationFrame"],d.raf&&(d.caf=window[c+"CancelAnimationFrame"]||window[c+"CancelRequestAnimationFrame"]))}if(!d.raf){var p=0;d.raf=function(a){var b=(new Date).getTime(),c=Math.max(0,16-(b-p)),d=window.setTimeout(function(){a(b+c)},c);return p=b+c,d},d.caf=function(a){clearTimeout(a)}}return d.svg=!!document.createElementNS&&!!document.createElementNS("http://www.w3.org/2000/svg","svg").createSVGRect,e.features=d,d}};e.detectFeatures(),e.features.oldIE&&(e.bind=function(a,b,c,d){b=b.split(" ");for(var e,f=(d?"detach":"attach")+"Event",g=function(){c.handleEvent.call(c)},h=0;h<b.length;h++)if(e=b[h])if("object"==typeof c&&c.handleEvent){if(d){if(!c["oldIE"+e])return!1}else c["oldIE"+e]=g;a[f]("on"+e,c["oldIE"+e])}else a[f]("on"+e,c)});var f=this,g=25,h=3,i={allowPanToNext:!0,spacing:.12,bgOpacity:1,mouseUsed:!1,loop:!0,pinchToClose:!0,closeOnScroll:!0,closeOnVerticalDrag:!0,verticalDragRange:.75,hideAnimationDuration:333,showAnimationDuration:333,showHideOpacity:!1,focus:!0,escKey:!0,arrowKeys:!0,mainScrollEndFriction:.35,panEndFriction:.35,isClickableElement:function(a){return"A"===a.tagName},getDoubleTapZoom:function(a,b){return a?1:b.initialZoomLevel<.7?1:1.33},maxSpreadZoom:1.33,modal:!0,scaleMode:"fit"};e.extend(i,d);var j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,$,_,aa,ba,ca,da,ea,fa,ga,ha,ia,ja,ka,la,ma=function(){return{x:0,y:0}},na=ma(),oa=ma(),pa=ma(),qa={},ra=0,sa={},ta=ma(),ua=0,va=!0,wa=[],xa={},ya=!1,za=function(a,b){e.extend(f,b.publicMethods),wa.push(a)},Aa=function(a){var b=ac();return a>b-1?a-b:a<0?b+a:a},Ba={},Ca=function(a,b){return Ba[a]||(Ba[a]=[]),Ba[a].push(b)},Da=function(a){var b=Ba[a];if(b){var c=Array.prototype.slice.call(arguments);c.shift();for(var d=0;d<b.length;d++)b[d].apply(f,c)}},Ea=function(){return(new Date).getTime()},Fa=function(a){ja=a,f.bg.style.opacity=a*i.bgOpacity},Ga=function(a,b,c,d,e){(!ya||e&&e!==f.currItem)&&(d/=e?e.fitRatio:f.currItem.fitRatio),a[E]=u+b+"px, "+c+"px"+v+" scale("+d+")"},Ha=function(a){ea&&(a&&(s>f.currItem.fitRatio?ya||(mc(f.currItem,!1,!0),ya=!0):ya&&(mc(f.currItem),ya=!1)),Ga(ea,pa.x,pa.y,s))},Ia=function(a){a.container&&Ga(a.container.style,a.initialPosition.x,a.initialPosition.y,a.initialZoomLevel,a)},Ja=function(a,b){b[E]=u+a+"px, 0px"+v},Ka=function(a,b){if(!i.loop&&b){var c=m+(ta.x*ra-a)/ta.x,d=Math.round(a-tb.x);(c<0&&d>0||c>=ac()-1&&d<0)&&(a=tb.x+d*i.mainScrollEndFriction)}tb.x=a,Ja(a,n)},La=function(a,b){var c=ub[a]-sa[a];return oa[a]+na[a]+c-c*(b/t)},Ma=function(a,b){a.x=b.x,a.y=b.y,b.id&&(a.id=b.id)},Na=function(a){a.x=Math.round(a.x),a.y=Math.round(a.y)},Oa=null,Pa=function(){Oa&&(e.unbind(document,"mousemove",Pa),e.addClass(a,"pswp--has_mouse"),i.mouseUsed=!0,Da("mouseUsed")),Oa=setTimeout(function(){Oa=null},100)},Qa=function(){e.bind(document,"keydown",f),N.transform&&e.bind(f.scrollWrap,"click",f),i.mouseUsed||e.bind(document,"mousemove",Pa),e.bind(window,"resize scroll orientationchange",f),Da("bindEvents")},Ra=function(){e.unbind(window,"resize scroll orientationchange",f),e.unbind(window,"scroll",r.scroll),e.unbind(document,"keydown",f),e.unbind(document,"mousemove",Pa),N.transform&&e.unbind(f.scrollWrap,"click",f),V&&e.unbind(window,p,f),clearTimeout(O),Da("unbindEvents")},Sa=function(a,b){var c=ic(f.currItem,qa,a);return b&&(da=c),c},Ta=function(a){return a||(a=f.currItem),a.initialZoomLevel},Ua=function(a){return a||(a=f.currItem),a.w>0?i.maxSpreadZoom:1},Va=function(a,b,c,d){return d===f.currItem.initialZoomLevel?(c[a]=f.currItem.initialPosition[a],!0):(c[a]=La(a,d),c[a]>b.min[a]?(c[a]=b.min[a],!0):c[a]<b.max[a]&&(c[a]=b.max[a],!0))},Wa=function(){if(E){var b=N.perspective&&!G;return u="translate"+(b?"3d(":"("),void(v=N.perspective?", 0px)":")")}E="left",e.addClass(a,"pswp--ie"),Ja=function(a,b){b.left=a+"px"},Ia=function(a){var b=a.fitRatio>1?1:a.fitRatio,c=a.container.style,d=b*a.w,e=b*a.h;c.width=d+"px",c.height=e+"px",c.left=a.initialPosition.x+"px",c.top=a.initialPosition.y+"px"},Ha=function(){if(ea){var a=ea,b=f.currItem,c=b.fitRatio>1?1:b.fitRatio,d=c*b.w,e=c*b.h;a.width=d+"px",a.height=e+"px",a.left=pa.x+"px",a.top=pa.y+"px"}}},Xa=function(a){var b="";i.escKey&&27===a.keyCode?b="close":i.arrowKeys&&(37===a.keyCode?b="prev":39===a.keyCode&&(b="next")),b&&(a.ctrlKey||a.altKey||a.shiftKey||a.metaKey||(a.preventDefault?a.preventDefault():a.returnValue=!1,f[b]()))},Ya=function(a){a&&(Y||X||fa||T)&&(a.preventDefault(),a.stopPropagation())},Za=function(){f.setScrollOffset(0,e.getScrollY())},$a={},_a=0,ab=function(a){$a[a]&&($a[a].raf&&I($a[a].raf),_a--,delete $a[a])},bb=function(a){$a[a]&&ab(a),$a[a]||(_a++,$a[a]={})},cb=function(){for(var a in $a)$a.hasOwnProperty(a)&&ab(a)},db=function(a,b,c,d,e,f,g){var h,i=Ea();bb(a);var j=function(){if($a[a]){if(h=Ea()-i,h>=d)return ab(a),f(c),void(g&&g());f((c-b)*e(h/d)+b),$a[a].raf=H(j)}};j()},eb={shout:Da,listen:Ca,viewportSize:qa,options:i,isMainScrollAnimating:function(){return fa},getZoomLevel:function(){return s},getCurrentIndex:function(){return m},isDragging:function(){return V},isZooming:function(){return aa},setScrollOffset:function(a,b){sa.x=a,M=sa.y=b,Da("updateScrollOffset",sa)},applyZoomPan:function(a,b,c,d){pa.x=b,pa.y=c,s=a,Ha(d)},init:function(){if(!j&&!k){var c;f.framework=e,f.template=a,f.bg=e.getChildByClass(a,"pswp__bg"),J=a.className,j=!0,N=e.detectFeatures(),H=N.raf,I=N.caf,E=N.transform,L=N.oldIE,f.scrollWrap=e.getChildByClass(a,"pswp__scroll-wrap"),f.container=e.getChildByClass(f.scrollWrap,"pswp__container"),n=f.container.style,f.itemHolders=y=[{el:f.container.children[0],wrap:0,index:-1},{el:f.container.children[1],wrap:0,index:-1},{el:f.container.children[2],wrap:0,index:-1}],y[0].el.style.display=y[2].el.style.display="none",Wa(),r={resize:f.updateSize,orientationchange:function(){clearTimeout(O),O=setTimeout(function(){qa.x!==f.scrollWrap.clientWidth&&f.updateSize()},500)},scroll:Za,keydown:Xa,click:Ya};var d=N.isOldIOSPhone||N.isOldAndroid||N.isMobileOpera;for(N.animationName&&N.transform&&!d||(i.showAnimationDuration=i.hideAnimationDuration=0),c=0;c<wa.length;c++)f["init"+wa[c]]();if(b){var g=f.ui=new b(f,e);g.init()}Da("firstUpdate"),m=m||i.index||0,(isNaN(m)||m<0||m>=ac())&&(m=0),f.currItem=_b(m),(N.isOldIOSPhone||N.isOldAndroid)&&(va=!1),a.setAttribute("aria-hidden","false"),i.modal&&(va?a.style.position="fixed":(a.style.position="absolute",a.style.top=e.getScrollY()+"px")),void 0===M&&(Da("initialLayout"),M=K=e.getScrollY());var l="pswp--open ";for(i.mainClass&&(l+=i.mainClass+" "),i.showHideOpacity&&(l+="pswp--animate_opacity "),l+=G?"pswp--touch":"pswp--notouch",l+=N.animationName?" pswp--css_animation":"",l+=N.svg?" pswp--svg":"",e.addClass(a,l),f.updateSize(),o=-1,ua=null,c=0;c<h;c++)Ja((c+o)*ta.x,y[c].el.style);L||e.bind(f.scrollWrap,q,f),Ca("initialZoomInEnd",function(){f.setContent(y[0],m-1),f.setContent(y[2],m+1),y[0].el.style.display=y[2].el.style.display="block",i.focus&&a.focus(),Qa()}),f.setContent(y[1],m),f.updateCurrItem(),Da("afterInit"),va||(w=setInterval(function(){_a||V||aa||s!==f.currItem.initialZoomLevel||f.updateSize()},1e3)),e.addClass(a,"pswp--visible")}},close:function(){j&&(j=!1,k=!0,Da("close"),Ra(),cc(f.currItem,null,!0,f.destroy))},destroy:function(){Da("destroy"),Xb&&clearTimeout(Xb),a.setAttribute("aria-hidden","true"),a.className=J,w&&clearInterval(w),e.unbind(f.scrollWrap,q,f),e.unbind(window,"scroll",f),zb(),cb(),Ba=null},panTo:function(a,b,c){c||(a>da.min.x?a=da.min.x:a<da.max.x&&(a=da.max.x),b>da.min.y?b=da.min.y:b<da.max.y&&(b=da.max.y)),pa.x=a,pa.y=b,Ha()},handleEvent:function(a){a=a||window.event,r[a.type]&&r[a.type](a)},goTo:function(a){a=Aa(a);var b=a-m;ua=b,m=a,f.currItem=_b(m),ra-=b,Ka(ta.x*ra),cb(),fa=!1,f.updateCurrItem()},next:function(){f.goTo(m+1)},prev:function(){f.goTo(m-1)},updateCurrZoomItem:function(a){if(a&&Da("beforeChange",0),y[1].el.children.length){var b=y[1].el.children[0];ea=e.hasClass(b,"pswp__zoom-wrap")?b.style:null}else ea=null;da=f.currItem.bounds,t=s=f.currItem.initialZoomLevel,pa.x=da.center.x,pa.y=da.center.y,a&&Da("afterChange")},invalidateCurrItems:function(){x=!0;for(var a=0;a<h;a++)y[a].item&&(y[a].item.needsUpdate=!0)},updateCurrItem:function(a){if(0!==ua){var b,c=Math.abs(ua);if(!(a&&c<2)){f.currItem=_b(m),ya=!1,Da("beforeChange",ua),c>=h&&(o+=ua+(ua>0?-h:h),c=h);for(var d=0;d<c;d++)ua>0?(b=y.shift(),y[h-1]=b,o++,Ja((o+2)*ta.x,b.el.style),f.setContent(b,m-c+d+1+1)):(b=y.pop(),y.unshift(b),o--,Ja(o*ta.x,b.el.style),f.setContent(b,m+c-d-1-1));if(ea&&1===Math.abs(ua)){var e=_b(z);e.initialZoomLevel!==s&&(ic(e,qa),mc(e),Ia(e))}ua=0,f.updateCurrZoomItem(),z=m,Da("afterChange")}}},updateSize:function(b){if(!va&&i.modal){var c=e.getScrollY();if(M!==c&&(a.style.top=c+"px",M=c),!b&&xa.x===window.innerWidth&&xa.y===window.innerHeight)return;xa.x=window.innerWidth,xa.y=window.innerHeight,a.style.height=xa.y+"px"}if(qa.x=f.scrollWrap.clientWidth,qa.y=f.scrollWrap.clientHeight,Za(),ta.x=qa.x+Math.round(qa.x*i.spacing),ta.y=qa.y,Ka(ta.x*ra),Da("beforeResize"),void 0!==o){for(var d,g,j,k=0;k<h;k++)d=y[k],Ja((k+o)*ta.x,d.el.style),j=m+k-1,i.loop&&ac()>2&&(j=Aa(j)),g=_b(j),g&&(x||g.needsUpdate||!g.bounds)?(f.cleanSlide(g),f.setContent(d,j),1===k&&(f.currItem=g,f.updateCurrZoomItem(!0)),g.needsUpdate=!1):d.index===-1&&j>=0&&f.setContent(d,j),g&&g.container&&(ic(g,qa),mc(g),Ia(g));x=!1}t=s=f.currItem.initialZoomLevel,da=f.currItem.bounds,da&&(pa.x=da.center.x,pa.y=da.center.y,Ha(!0)),Da("resize")},zoomTo:function(a,b,c,d,f){b&&(t=s,ub.x=Math.abs(b.x)-pa.x,ub.y=Math.abs(b.y)-pa.y,Ma(oa,pa));var g=Sa(a,!1),h={};Va("x",g,h,a),Va("y",g,h,a);var i=s,j={x:pa.x,y:pa.y};Na(h);var k=function(b){1===b?(s=a,pa.x=h.x,pa.y=h.y):(s=(a-i)*b+i,pa.x=(h.x-j.x)*b+j.x,pa.y=(h.y-j.y)*b+j.y),f&&f(b),Ha(1===b)};c?db("customZoomTo",0,1,c,d||e.easing.sine.inOut,k):k(1)}},fb=30,gb=10,hb={},ib={},jb={},kb={},lb={},mb=[],nb={},ob=[],pb={},qb=0,rb=ma(),sb=0,tb=ma(),ub=ma(),vb=ma(),wb=function(a,b){return a.x===b.x&&a.y===b.y},xb=function(a,b){return Math.abs(a.x-b.x)<g&&Math.abs(a.y-b.y)<g},yb=function(a,b){return pb.x=Math.abs(a.x-b.x),pb.y=Math.abs(a.y-b.y),Math.sqrt(pb.x*pb.x+pb.y*pb.y)},zb=function(){Z&&(I(Z),Z=null)},Ab=function(){V&&(Z=H(Ab),Qb())},Bb=function(){return!("fit"===i.scaleMode&&s===f.currItem.initialZoomLevel)},Cb=function(a,b){return!(!a||a===document)&&(!(a.getAttribute("class")&&a.getAttribute("class").indexOf("pswp__scroll-wrap")>-1)&&(b(a)?a:Cb(a.parentNode,b)))},Db={},Eb=function(a,b){return Db.prevent=!Cb(a.target,i.isClickableElement),Da("preventDragEvent",a,b,Db),Db.prevent},Fb=function(a,b){return b.x=a.pageX,b.y=a.pageY,b.id=a.identifier,b},Gb=function(a,b,c){c.x=.5*(a.x+b.x),c.y=.5*(a.y+b.y)},Hb=function(a,b,c){if(a-Q>50){var d=ob.length>2?ob.shift():{};d.x=b,d.y=c,ob.push(d),Q=a}},Ib=function(){var a=pa.y-f.currItem.initialPosition.y;return 1-Math.abs(a/(qa.y/2))},Jb={},Kb={},Lb=[],Mb=function(a){for(;Lb.length>0;)Lb.pop();return F?(la=0,mb.forEach(function(a){0===la?Lb[0]=a:1===la&&(Lb[1]=a),la++})):a.type.indexOf("touch")>-1?a.touches&&a.touches.length>0&&(Lb[0]=Fb(a.touches[0],Jb),a.touches.length>1&&(Lb[1]=Fb(a.touches[1],Kb))):(Jb.x=a.pageX,Jb.y=a.pageY,Jb.id="",Lb[0]=Jb),Lb},Nb=function(a,b){var c,d,e,g,h=0,j=pa[a]+b[a],k=b[a]>0,l=tb.x+b.x,m=tb.x-nb.x;return c=j>da.min[a]||j<da.max[a]?i.panEndFriction:1,j=pa[a]+b[a]*c,!i.allowPanToNext&&s!==f.currItem.initialZoomLevel||(ea?"h"!==ga||"x"!==a||X||(k?(j>da.min[a]&&(c=i.panEndFriction,h=da.min[a]-j,d=da.min[a]-oa[a]),(d<=0||m<0)&&ac()>1?(g=l,m<0&&l>nb.x&&(g=nb.x)):da.min.x!==da.max.x&&(e=j)):(j<da.max[a]&&(c=i.panEndFriction,h=j-da.max[a],d=oa[a]-da.max[a]),(d<=0||m>0)&&ac()>1?(g=l,m>0&&l<nb.x&&(g=nb.x)):da.min.x!==da.max.x&&(e=j))):g=l,"x"!==a)?void(fa||$||s>f.currItem.fitRatio&&(pa[a]+=b[a]*c)):(void 0!==g&&(Ka(g,!0),$=g!==nb.x),da.min.x!==da.max.x&&(void 0!==e?pa.x=e:$||(pa.x+=b.x*c)),void 0!==g)},Ob=function(a){if(!("mousedown"===a.type&&a.button>0)){if($b)return void a.preventDefault();if(!U||"mousedown"!==a.type){if(Eb(a,!0)&&a.preventDefault(),Da("pointerDown"),F){var b=e.arraySearch(mb,a.pointerId,"id");b<0&&(b=mb.length),mb[b]={x:a.pageX,y:a.pageY,id:a.pointerId}}var c=Mb(a),d=c.length;_=null,cb(),V&&1!==d||(V=ha=!0,e.bind(window,p,f),S=ka=ia=T=$=Y=W=X=!1,ga=null,Da("firstTouchStart",c),Ma(oa,pa),na.x=na.y=0,Ma(kb,c[0]),Ma(lb,kb),nb.x=ta.x*ra,ob=[{x:kb.x,y:kb.y}],Q=P=Ea(),Sa(s,!0),zb(),Ab()),!aa&&d>1&&!fa&&!$&&(t=s,X=!1,aa=W=!0,na.y=na.x=0,Ma(oa,pa),Ma(hb,c[0]),Ma(ib,c[1]),Gb(hb,ib,vb),ub.x=Math.abs(vb.x)-pa.x,ub.y=Math.abs(vb.y)-pa.y,ba=ca=yb(hb,ib))}}},Pb=function(a){if(a.preventDefault(),F){var b=e.arraySearch(mb,a.pointerId,"id");if(b>-1){var c=mb[b];c.x=a.pageX,c.y=a.pageY}}if(V){var d=Mb(a);if(ga||Y||aa)_=d;else if(tb.x!==ta.x*ra)ga="h";else{var f=Math.abs(d[0].x-kb.x)-Math.abs(d[0].y-kb.y);Math.abs(f)>=gb&&(ga=f>0?"h":"v",_=d)}}},Qb=function(){if(_){var a=_.length;if(0!==a)if(Ma(hb,_[0]),jb.x=hb.x-kb.x,jb.y=hb.y-kb.y,aa&&a>1){if(kb.x=hb.x,kb.y=hb.y,!jb.x&&!jb.y&&wb(_[1],ib))return;Ma(ib,_[1]),X||(X=!0,Da("zoomGestureStarted"));var b=yb(hb,ib),c=Vb(b);c>f.currItem.initialZoomLevel+f.currItem.initialZoomLevel/15&&(ka=!0);var d=1,e=Ta(),g=Ua();if(c<e)if(i.pinchToClose&&!ka&&t<=f.currItem.initialZoomLevel){var h=e-c,j=1-h/(e/1.2);Fa(j),Da("onPinchClose",j),ia=!0}else d=(e-c)/e,d>1&&(d=1),c=e-d*(e/3);else c>g&&(d=(c-g)/(6*e),d>1&&(d=1),c=g+d*e);d<0&&(d=0),ba=b,Gb(hb,ib,rb),na.x+=rb.x-vb.x,na.y+=rb.y-vb.y,Ma(vb,rb),pa.x=La("x",c),pa.y=La("y",c),S=c>s,s=c,Ha()}else{if(!ga)return;if(ha&&(ha=!1,Math.abs(jb.x)>=gb&&(jb.x-=_[0].x-lb.x),Math.abs(jb.y)>=gb&&(jb.y-=_[0].y-lb.y)),kb.x=hb.x,kb.y=hb.y,0===jb.x&&0===jb.y)return;if("v"===ga&&i.closeOnVerticalDrag&&!Bb()){na.y+=jb.y,pa.y+=jb.y;var k=Ib();return T=!0,Da("onVerticalDrag",k),Fa(k),void Ha()}Hb(Ea(),hb.x,hb.y),Y=!0,da=f.currItem.bounds;var l=Nb("x",jb);l||(Nb("y",jb),Na(pa),Ha())}}},Rb=function(a){if(N.isOldAndroid){if(U&&"mouseup"===a.type)return;a.type.indexOf("touch")>-1&&(clearTimeout(U),U=setTimeout(function(){U=0},600))}Da("pointerUp"),Eb(a,!1)&&a.preventDefault();var b;if(F){var c=e.arraySearch(mb,a.pointerId,"id");if(c>-1)if(b=mb.splice(c,1)[0],navigator.msPointerEnabled){var d={4:"mouse",2:"touch",3:"pen"};b.type=d[a.pointerType],b.type||(b.type=a.pointerType||"mouse")}else b.type=a.pointerType||"mouse"}var g,h=Mb(a),j=h.length;if("mouseup"===a.type&&(j=0),2===j)return _=null,!0;1===j&&Ma(lb,h[0]),0!==j||ga||fa||(b||("mouseup"===a.type?b={x:a.pageX,y:a.pageY,type:"mouse"}:a.changedTouches&&a.changedTouches[0]&&(b={x:a.changedTouches[0].pageX,y:a.changedTouches[0].pageY,type:"touch"})),Da("touchRelease",a,b));var k=-1;if(0===j&&(V=!1,e.unbind(window,p,f),zb(),aa?k=0:sb!==-1&&(k=Ea()-sb)),sb=1===j?Ea():-1,g=k!==-1&&k<150?"zoom":"swipe",aa&&j<2&&(aa=!1,1===j&&(g="zoomPointerUp"),Da("zoomGestureEnded")),_=null,Y||X||fa||T)if(cb(),R||(R=Sb()),R.calculateSwipeSpeed("x"),T){var l=Ib();if(l<i.verticalDragRange)f.close();else{var m=pa.y,n=ja;db("verticalDrag",0,1,300,e.easing.cubic.out,function(a){pa.y=(f.currItem.initialPosition.y-m)*a+m,Fa((1-n)*a+n),Ha()}),Da("onVerticalDrag",1)}}else{if(($||fa)&&0===j){var o=Ub(g,R);if(o)return;g="zoomPointerUp"}if(!fa)return"swipe"!==g?void Wb():void(!$&&s>f.currItem.fitRatio&&Tb(R))}},Sb=function(){var a,b,c={lastFlickOffset:{},lastFlickDist:{},lastFlickSpeed:{},slowDownRatio:{},slowDownRatioReverse:{},speedDecelerationRatio:{},speedDecelerationRatioAbs:{},distanceOffset:{},backAnimDestination:{},backAnimStarted:{},calculateSwipeSpeed:function(d){ob.length>1?(a=Ea()-Q+50,b=ob[ob.length-2][d]):(a=Ea()-P,b=lb[d]),c.lastFlickOffset[d]=kb[d]-b,c.lastFlickDist[d]=Math.abs(c.lastFlickOffset[d]),c.lastFlickDist[d]>20?c.lastFlickSpeed[d]=c.lastFlickOffset[d]/a:c.lastFlickSpeed[d]=0,Math.abs(c.lastFlickSpeed[d])<.1&&(c.lastFlickSpeed[d]=0),c.slowDownRatio[d]=.95,c.slowDownRatioReverse[d]=1-c.slowDownRatio[d],c.speedDecelerationRatio[d]=1},calculateOverBoundsAnimOffset:function(a,b){c.backAnimStarted[a]||(pa[a]>da.min[a]?c.backAnimDestination[a]=da.min[a]:pa[a]<da.max[a]&&(c.backAnimDestination[a]=da.max[a]),void 0!==c.backAnimDestination[a]&&(c.slowDownRatio[a]=.7,c.slowDownRatioReverse[a]=1-c.slowDownRatio[a],c.speedDecelerationRatioAbs[a]<.05&&(c.lastFlickSpeed[a]=0,c.backAnimStarted[a]=!0,db("bounceZoomPan"+a,pa[a],c.backAnimDestination[a],b||300,e.easing.sine.out,function(b){pa[a]=b,Ha()}))))},calculateAnimOffset:function(a){c.backAnimStarted[a]||(c.speedDecelerationRatio[a]=c.speedDecelerationRatio[a]*(c.slowDownRatio[a]+c.slowDownRatioReverse[a]-c.slowDownRatioReverse[a]*c.timeDiff/10),c.speedDecelerationRatioAbs[a]=Math.abs(c.lastFlickSpeed[a]*c.speedDecelerationRatio[a]),c.distanceOffset[a]=c.lastFlickSpeed[a]*c.speedDecelerationRatio[a]*c.timeDiff,pa[a]+=c.distanceOffset[a])},panAnimLoop:function(){if($a.zoomPan&&($a.zoomPan.raf=H(c.panAnimLoop),c.now=Ea(),c.timeDiff=c.now-c.lastNow,c.lastNow=c.now,c.calculateAnimOffset("x"),c.calculateAnimOffset("y"),Ha(),c.calculateOverBoundsAnimOffset("x"),c.calculateOverBoundsAnimOffset("y"),c.speedDecelerationRatioAbs.x<.05&&c.speedDecelerationRatioAbs.y<.05))return pa.x=Math.round(pa.x),pa.y=Math.round(pa.y),Ha(),void ab("zoomPan")}};return c},Tb=function(a){return a.calculateSwipeSpeed("y"),da=f.currItem.bounds,a.backAnimDestination={},a.backAnimStarted={},Math.abs(a.lastFlickSpeed.x)<=.05&&Math.abs(a.lastFlickSpeed.y)<=.05?(a.speedDecelerationRatioAbs.x=a.speedDecelerationRatioAbs.y=0,a.calculateOverBoundsAnimOffset("x"),a.calculateOverBoundsAnimOffset("y"),!0):(bb("zoomPan"),a.lastNow=Ea(),void a.panAnimLoop())},Ub=function(a,b){var c;fa||(qb=m);var d;if("swipe"===a){var g=kb.x-lb.x,h=b.lastFlickDist.x<10;g>fb&&(h||b.lastFlickOffset.x>20)?d=-1:g<-fb&&(h||b.lastFlickOffset.x<-20)&&(d=1)}var j;d&&(m+=d,m<0?(m=i.loop?ac()-1:0,j=!0):m>=ac()&&(m=i.loop?0:ac()-1,j=!0),j&&!i.loop||(ua+=d,ra-=d,c=!0));var k,l=ta.x*ra,n=Math.abs(l-tb.x);return c||l>tb.x==b.lastFlickSpeed.x>0?(k=Math.abs(b.lastFlickSpeed.x)>0?n/Math.abs(b.lastFlickSpeed.x):333,k=Math.min(k,400),k=Math.max(k,250)):k=333,qb===m&&(c=!1),fa=!0,Da("mainScrollAnimStart"),db("mainScroll",tb.x,l,k,e.easing.cubic.out,Ka,function(){cb(),fa=!1,qb=-1,(c||qb!==m)&&f.updateCurrItem(),Da("mainScrollAnimComplete")}),c&&f.updateCurrItem(!0),c},Vb=function(a){return 1/ca*a*t},Wb=function(){var a=s,b=Ta(),c=Ua();s<b?a=b:s>c&&(a=c);var d,g=1,h=ja;return ia&&!S&&!ka&&s<b?(f.close(),!0):(ia&&(d=function(a){Fa((g-h)*a+h)}),f.zoomTo(a,0,200,e.easing.cubic.out,d),!0)};za("Gestures",{publicMethods:{initGestures:function(){var a=function(a,b,c,d,e){A=a+b,B=a+c,C=a+d,D=e?a+e:""};F=N.pointerEvent,F&&N.touch&&(N.touch=!1),F?navigator.msPointerEnabled?a("MSPointer","Down","Move","Up","Cancel"):a("pointer","down","move","up","cancel"):N.touch?(a("touch","start","move","end","cancel"),G=!0):a("mouse","down","move","up"),p=B+" "+C+" "+D,q=A,F&&!G&&(G=navigator.maxTouchPoints>1||navigator.msMaxTouchPoints>1),f.likelyTouchDevice=G,r[A]=Ob,r[B]=Pb,r[C]=Rb,D&&(r[D]=r[C]),N.touch&&(q+=" mousedown",p+=" mousemove mouseup",r.mousedown=r[A],r.mousemove=r[B],r.mouseup=r[C]),G||(i.allowPanToNext=!1)}}});var Xb,Yb,Zb,$b,_b,ac,bc,cc=function(b,c,d,g){Xb&&clearTimeout(Xb),$b=!0,Zb=!0;var h;b.initialLayout?(h=b.initialLayout,b.initialLayout=null):h=i.getThumbBoundsFn&&i.getThumbBoundsFn(m);var j=d?i.hideAnimationDuration:i.showAnimationDuration,k=function(){ab("initialZoom"),d?(f.template.removeAttribute("style"),f.bg.removeAttribute("style")):(Fa(1),c&&(c.style.display="block"),e.addClass(a,"pswp--animated-in"),Da("initialZoom"+(d?"OutEnd":"InEnd"))),g&&g(),$b=!1};if(!j||!h||void 0===h.x)return Da("initialZoom"+(d?"Out":"In")),s=b.initialZoomLevel,Ma(pa,b.initialPosition),Ha(),a.style.opacity=d?0:1,Fa(1),void(j?setTimeout(function(){k()},j):k());var n=function(){var c=l,g=!f.currItem.src||f.currItem.loadError||i.showHideOpacity;b.miniImg&&(b.miniImg.style.webkitBackfaceVisibility="hidden"),d||(s=h.w/b.w,pa.x=h.x,pa.y=h.y-K,f[g?"template":"bg"].style.opacity=.001,Ha()),bb("initialZoom"),d&&!c&&e.removeClass(a,"pswp--animated-in"),g&&(d?e[(c?"remove":"add")+"Class"](a,"pswp--animate_opacity"):setTimeout(function(){e.addClass(a,"pswp--animate_opacity")},30)),Xb=setTimeout(function(){if(Da("initialZoom"+(d?"Out":"In")),d){var f=h.w/b.w,i={x:pa.x,y:pa.y},l=s,m=ja,n=function(b){1===b?(s=f,pa.x=h.x,pa.y=h.y-M):(s=(f-l)*b+l,pa.x=(h.x-i.x)*b+i.x,pa.y=(h.y-M-i.y)*b+i.y),Ha(),g?a.style.opacity=1-b:Fa(m-b*m)};c?db("initialZoom",0,1,j,e.easing.cubic.out,n,k):(n(1),Xb=setTimeout(k,j+20))}else s=b.initialZoomLevel,Ma(pa,b.initialPosition),Ha(),Fa(1),g?a.style.opacity=1:Fa(1),Xb=setTimeout(k,j+20)},d?25:90)};n()},dc={},ec=[],fc={index:0,errorMsg:'<div class="pswp__error-msg"><a href="%url%" target="_blank">The image</a> could not be loaded.</div>',forceProgressiveLoading:!1,preload:[1,1],getNumItemsFn:function(){return Yb.length}},gc=function(){return{center:{x:0,y:0},max:{x:0,y:0},min:{x:0,y:0}}},hc=function(a,b,c){var d=a.bounds;d.center.x=Math.round((dc.x-b)/2),d.center.y=Math.round((dc.y-c)/2)+a.vGap.top,d.max.x=b>dc.x?Math.round(dc.x-b):d.center.x,d.max.y=c>dc.y?Math.round(dc.y-c)+a.vGap.top:d.center.y,d.min.x=b>dc.x?0:d.center.x,d.min.y=c>dc.y?a.vGap.top:d.center.y},ic=function(a,b,c){if(a.src&&!a.loadError){var d=!c;if(d&&(a.vGap||(a.vGap={top:0,bottom:0}),Da("parseVerticalMargin",a)),dc.x=b.x,dc.y=b.y-a.vGap.top-a.vGap.bottom,d){var e=dc.x/a.w,f=dc.y/a.h;a.fitRatio=e<f?e:f;var g=i.scaleMode;"orig"===g?c=1:"fit"===g&&(c=a.fitRatio),c>1&&(c=1),a.initialZoomLevel=c,a.bounds||(a.bounds=gc())}if(!c)return;return hc(a,a.w*c,a.h*c),d&&c===a.initialZoomLevel&&(a.initialPosition=a.bounds.center),a.bounds}return a.w=a.h=0,a.initialZoomLevel=a.fitRatio=1,a.bounds=gc(),a.initialPosition=a.bounds.center,a.bounds},jc=function(a,b,c,d,e,g){b.loadError||d&&(b.imageAppended=!0,mc(b,d,b===f.currItem&&ya),c.appendChild(d),g&&setTimeout(function(){b&&b.loaded&&b.placeholder&&(b.placeholder.style.display="none",b.placeholder=null)},500))},kc=function(a){a.loading=!0,a.loaded=!1;var b=a.img=e.createEl("pswp__img","img"),c=function(){a.loading=!1,a.loaded=!0,a.loadComplete?a.loadComplete(a):a.img=null,b.onload=b.onerror=null,b=null};return b.onload=c,b.onerror=function(){a.loadError=!0,c()},b.src=a.src,b},lc=function(a,b){if(a.src&&a.loadError&&a.container)return b&&(a.container.innerHTML=""),a.container.innerHTML=i.errorMsg.replace("%url%",a.src),!0},mc=function(a,b,c){if(a.src){b||(b=a.container.lastChild);var d=c?a.w:Math.round(a.w*a.fitRatio),e=c?a.h:Math.round(a.h*a.fitRatio);a.placeholder&&!a.loaded&&(a.placeholder.style.width=d+"px",a.placeholder.style.height=e+"px"),b.style.width=d+"px",b.style.height=e+"px"}},nc=function(){if(ec.length){for(var a,b=0;b<ec.length;b++)a=ec[b],a.holder.index===a.index&&jc(a.index,a.item,a.baseDiv,a.img,!1,a.clearPlaceholder);ec=[]}};za("Controller",{publicMethods:{lazyLoadItem:function(a){a=Aa(a);var b=_b(a);b&&(!b.loaded&&!b.loading||x)&&(Da("gettingData",a,b),b.src&&kc(b))},initController:function(){e.extend(i,fc,!0),f.items=Yb=c,_b=f.getItemAt,ac=i.getNumItemsFn,bc=i.loop,ac()<3&&(i.loop=!1),Ca("beforeChange",function(a){var b,c=i.preload,d=null===a||a>=0,e=Math.min(c[0],ac()),g=Math.min(c[1],ac());for(b=1;b<=(d?g:e);b++)f.lazyLoadItem(m+b);for(b=1;b<=(d?e:g);b++)f.lazyLoadItem(m-b)}),Ca("initialLayout",function(){f.currItem.initialLayout=i.getThumbBoundsFn&&i.getThumbBoundsFn(m)}),Ca("mainScrollAnimComplete",nc),Ca("initialZoomInEnd",nc),Ca("destroy",function(){for(var a,b=0;b<Yb.length;b++)a=Yb[b],a.container&&(a.container=null),a.placeholder&&(a.placeholder=null),a.img&&(a.img=null),a.preloader&&(a.preloader=null),a.loadError&&(a.loaded=a.loadError=!1);ec=null})},getItemAt:function(a){return a>=0&&(void 0!==Yb[a]&&Yb[a])},allowProgressiveImg:function(){return i.forceProgressiveLoading||!G||i.mouseUsed||screen.width>1200},setContent:function(a,b){i.loop&&(b=Aa(b));var c=f.getItemAt(a.index);c&&(c.container=null);var d,g=f.getItemAt(b);if(!g)return void(a.el.innerHTML="");Da("gettingData",b,g),a.index=b,a.item=g;var h=g.container=e.createEl("pswp__zoom-wrap");if(!g.src&&g.html&&(g.html.tagName?h.appendChild(g.html):h.innerHTML=g.html),lc(g),ic(g,qa),!g.src||g.loadError||g.loaded)g.src&&!g.loadError&&(d=e.createEl("pswp__img","img"),d.style.opacity=1,d.src=g.src,mc(g,d),jc(b,g,h,d,!0));else{if(g.loadComplete=function(c){if(j){if(a&&a.index===b){if(lc(c,!0))return c.loadComplete=c.img=null,ic(c,qa),Ia(c),void(a.index===m&&f.updateCurrZoomItem());c.imageAppended?!$b&&c.placeholder&&(c.placeholder.style.display="none",c.placeholder=null):N.transform&&(fa||$b)?ec.push({item:c,baseDiv:h,img:c.img,index:b,holder:a,clearPlaceholder:!0}):jc(b,c,h,c.img,fa||$b,!0)}c.loadComplete=null,c.img=null,Da("imageLoadComplete",b,c)}},e.features.transform){var k="pswp__img pswp__img--placeholder";k+=g.msrc?"":" pswp__img--placeholder--blank";var l=e.createEl(k,g.msrc?"img":"");g.msrc&&(l.src=g.msrc),mc(g,l),h.appendChild(l),g.placeholder=l}g.loading||kc(g),f.allowProgressiveImg()&&(!Zb&&N.transform?ec.push({item:g,baseDiv:h,img:g.img,index:b,holder:a}):jc(b,g,h,g.img,!0,!0))}Zb||b!==m?Ia(g):(ea=h.style,cc(g,d||g.img)),a.el.innerHTML="",a.el.appendChild(h)},cleanSlide:function(a){a.img&&(a.img.onload=a.img.onerror=null),a.loaded=a.loading=a.img=a.imageAppended=!1}}});var oc,pc={},qc=function(a,b,c){var d=document.createEvent("CustomEvent"),e={origEvent:a,target:a.target,releasePoint:b,pointerType:c||"touch"};d.initCustomEvent("pswpTap",!0,!0,e),a.target.dispatchEvent(d)};za("Tap",{publicMethods:{initTap:function(){Ca("firstTouchStart",f.onTapStart),Ca("touchRelease",f.onTapRelease),Ca("destroy",function(){pc={},oc=null})},onTapStart:function(a){a.length>1&&(clearTimeout(oc),oc=null)},onTapRelease:function(a,b){if(b&&!Y&&!W&&!_a){var c=b;if(oc&&(clearTimeout(oc),oc=null,xb(c,pc)))return void Da("doubleTap",c);if("mouse"===b.type)return void qc(a,b,"mouse");var d=a.target.tagName.toUpperCase();if("BUTTON"===d||e.hasClass(a.target,"pswp__single-tap"))return void qc(a,b);Ma(pc,c),oc=setTimeout(function(){qc(a,b),oc=null},300)}}}});var rc;za("DesktopZoom",{publicMethods:{initDesktopZoom:function(){L||(G?Ca("mouseUsed",function(){f.setupDesktopZoom()}):f.setupDesktopZoom(!0))},setupDesktopZoom:function(b){rc={};var c="wheel mousewheel DOMMouseScroll";Ca("bindEvents",function(){e.bind(a,c,f.handleMouseWheel)}),Ca("unbindEvents",function(){rc&&e.unbind(a,c,f.handleMouseWheel)}),f.mouseZoomedIn=!1;var d,g=function(){f.mouseZoomedIn&&(e.removeClass(a,"pswp--zoomed-in"),f.mouseZoomedIn=!1),s<1?e.addClass(a,"pswp--zoom-allowed"):e.removeClass(a,"pswp--zoom-allowed"),h()},h=function(){d&&(e.removeClass(a,"pswp--dragging"),d=!1)};Ca("resize",g),Ca("afterChange",g),Ca("pointerDown",function(){f.mouseZoomedIn&&(d=!0,e.addClass(a,"pswp--dragging"))}),Ca("pointerUp",h),b||g()},handleMouseWheel:function(a){if(s<=f.currItem.fitRatio)return i.modal&&(!i.closeOnScroll||_a||V?a.preventDefault():E&&Math.abs(a.deltaY)>2&&(l=!0,f.close())),!0;if(a.stopPropagation(),rc.x=0,"deltaX"in a)1===a.deltaMode?(rc.x=18*a.deltaX,rc.y=18*a.deltaY):(rc.x=a.deltaX,rc.y=a.deltaY);else if("wheelDelta"in a)a.wheelDeltaX&&(rc.x=-.16*a.wheelDeltaX),a.wheelDeltaY?rc.y=-.16*a.wheelDeltaY:rc.y=-.16*a.wheelDelta;else{if(!("detail"in a))return;rc.y=a.detail}Sa(s,!0);var b=pa.x-rc.x,c=pa.y-rc.y;(i.modal||b<=da.min.x&&b>=da.max.x&&c<=da.min.y&&c>=da.max.y)&&a.preventDefault(),f.panTo(b,c)},toggleDesktopZoom:function(b){b=b||{x:qa.x/2+sa.x,y:qa.y/2+sa.y};var c=i.getDoubleTapZoom(!0,f.currItem),d=s===c;f.mouseZoomedIn=!d,f.zoomTo(d?f.currItem.initialZoomLevel:c,b,333),e[(d?"remove":"add")+"Class"](a,"pswp--zoomed-in")}}});var sc,tc,uc,vc,wc,xc,yc,zc,Ac,Bc,Cc,Dc,Ec={history:!0,galleryUID:1},Fc=function(){return Cc.hash.substring(1)},Gc=function(){sc&&clearTimeout(sc),uc&&clearTimeout(uc)},Hc=function(){var a=Fc(),b={};if(a.length<5)return b;var c,d=a.split("&");for(c=0;c<d.length;c++)if(d[c]){var e=d[c].split("=");e.length<2||(b[e[0]]=e[1])}if(i.galleryPIDs){var f=b.pid;for(b.pid=0,c=0;c<Yb.length;c++)if(Yb[c].pid===f){b.pid=c;break}}else b.pid=parseInt(b.pid,10)-1;return b.pid<0&&(b.pid=0),b},Ic=function(){if(uc&&clearTimeout(uc),_a||V)return void(uc=setTimeout(Ic,500));vc?clearTimeout(tc):vc=!0;var a=m+1,b=_b(m);b.hasOwnProperty("pid")&&(a=b.pid);var c=yc+"&gid="+i.galleryUID+"&pid="+a;zc||Cc.hash.indexOf(c)===-1&&(Bc=!0);var d=Cc.href.split("#")[0]+"#"+c;Dc?"#"+c!==window.location.hash&&history[zc?"replaceState":"pushState"]("",document.title,d):zc?Cc.replace(d):Cc.hash=c,zc=!0,tc=setTimeout(function(){vc=!1},60)};za("History",{publicMethods:{initHistory:function(){if(e.extend(i,Ec,!0),i.history){Cc=window.location,Bc=!1,Ac=!1,zc=!1,yc=Fc(),Dc="pushState"in history,yc.indexOf("gid=")>-1&&(yc=yc.split("&gid=")[0],yc=yc.split("?gid=")[0]),Ca("afterChange",f.updateURL),Ca("unbindEvents",function(){e.unbind(window,"hashchange",f.onHashChange)});var a=function(){xc=!0,Ac||(Bc?history.back():yc?Cc.hash=yc:Dc?history.pushState("",document.title,Cc.pathname+Cc.search):Cc.hash=""),Gc()};Ca("unbindEvents",function(){l&&a()}),Ca("destroy",function(){xc||a()}),Ca("firstUpdate",function(){m=Hc().pid});var b=yc.indexOf("pid=");b>-1&&(yc=yc.substring(0,b),"&"===yc.slice(-1)&&(yc=yc.slice(0,-1))),setTimeout(function(){j&&e.bind(window,"hashchange",f.onHashChange)},40)}},onHashChange:function(){return Fc()===yc?(Ac=!0,void f.close()):void(vc||(wc=!0,f.goTo(Hc().pid),wc=!1))},updateURL:function(){Gc(),wc||(zc?sc=setTimeout(Ic,800):Ic())}}}),e.extend(f,eb)};return a});
+
+	/*! PhotoSwipe Default UI - 4.1.3 - 2019-01-08
+	* http://photoswipe.com
+	* Copyright (c) 2019 Dmitry Semenov; */
+	!function(a,b){"function"==typeof define&&define.amd?define(b):"object"==typeof exports?module.exports=b():a.PhotoSwipeUI_Default=b()}(this,function(){"use strict";var a=function(a,b){var c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v=this,w=!1,x=!0,y=!0,z={barsSize:{top:44,bottom:"auto"},closeElClasses:["item","caption","zoom-wrap","ui","top-bar"],timeToIdle:4e3,timeToIdleOutside:1e3,loadingIndicatorDelay:1e3,addCaptionHTMLFn:function(a,b){return a.title?(b.children[0].innerHTML=a.title,!0):(b.children[0].innerHTML="",!1)},closeEl:!0,captionEl:!0,fullscreenEl:!0,zoomEl:!0,shareEl:!0,counterEl:!0,arrowEl:!0,preloaderEl:!0,tapToClose:!1,tapToToggleControls:!0,clickToCloseNonZoomable:!0,shareButtons:[{id:"facebook",label:"Share on Facebook",url:"https://www.facebook.com/sharer/sharer.php?u={{url}}"},{id:"twitter",label:"Tweet",url:"https://twitter.com/intent/tweet?text={{text}}&url={{url}}"},{id:"pinterest",label:"Pin it",url:"http://www.pinterest.com/pin/create/button/?url={{url}}&media={{image_url}}&description={{text}}"},{id:"download",label:"Download image",url:"{{raw_image_url}}",download:!0}],getImageURLForShare:function(){return a.currItem.src||""},getPageURLForShare:function(){return window.location.href},getTextForShare:function(){return a.currItem.title||""},indexIndicatorSep:" / ",fitControlsWidth:1200},A=function(a){if(r)return!0;a=a||window.event,q.timeToIdle&&q.mouseUsed&&!k&&K();for(var c,d,e=a.target||a.srcElement,f=e.getAttribute("class")||"",g=0;g<S.length;g++)c=S[g],c.onTap&&f.indexOf("pswp__"+c.name)>-1&&(c.onTap(),d=!0);if(d){a.stopPropagation&&a.stopPropagation(),r=!0;var h=b.features.isOldAndroid?600:30;s=setTimeout(function(){r=!1},h)}},B=function(){return!a.likelyTouchDevice||q.mouseUsed||screen.width>q.fitControlsWidth},C=function(a,c,d){b[(d?"add":"remove")+"Class"](a,"pswp__"+c)},D=function(){var a=1===q.getNumItemsFn();a!==p&&(C(d,"ui--one-slide",a),p=a)},E=function(){C(i,"share-modal--hidden",y)},F=function(){return y=!y,y?(b.removeClass(i,"pswp__share-modal--fade-in"),setTimeout(function(){y&&E()},300)):(E(),setTimeout(function(){y||b.addClass(i,"pswp__share-modal--fade-in")},30)),y||H(),!1},G=function(b){b=b||window.event;var c=b.target||b.srcElement;return a.shout("shareLinkClick",b,c),!!c.href&&(!!c.hasAttribute("download")||(window.open(c.href,"pswp_share","scrollbars=yes,resizable=yes,toolbar=no,location=yes,width=550,height=420,top=100,left="+(window.screen?Math.round(screen.width/2-275):100)),y||F(),!1))},H=function(){for(var a,b,c,d,e,f="",g=0;g<q.shareButtons.length;g++)a=q.shareButtons[g],c=q.getImageURLForShare(a),d=q.getPageURLForShare(a),e=q.getTextForShare(a),b=a.url.replace("{{url}}",encodeURIComponent(d)).replace("{{image_url}}",encodeURIComponent(c)).replace("{{raw_image_url}}",c).replace("{{text}}",encodeURIComponent(e)),f+='<a href="'+b+'" target="_blank" class="pswp__share--'+a.id+'"'+(a.download?"download":"")+">"+a.label+"</a>",q.parseShareButtonOut&&(f=q.parseShareButtonOut(a,f));i.children[0].innerHTML=f,i.children[0].onclick=G},I=function(a){for(var c=0;c<q.closeElClasses.length;c++)if(b.hasClass(a,"pswp__"+q.closeElClasses[c]))return!0},J=0,K=function(){clearTimeout(u),J=0,k&&v.setIdle(!1)},L=function(a){a=a?a:window.event;var b=a.relatedTarget||a.toElement;b&&"HTML"!==b.nodeName||(clearTimeout(u),u=setTimeout(function(){v.setIdle(!0)},q.timeToIdleOutside))},M=function(){q.fullscreenEl&&!b.features.isOldAndroid&&(c||(c=v.getFullscreenAPI()),c?(b.bind(document,c.eventK,v.updateFullscreen),v.updateFullscreen(),b.addClass(a.template,"pswp--supports-fs")):b.removeClass(a.template,"pswp--supports-fs"))},N=function(){q.preloaderEl&&(O(!0),l("beforeChange",function(){clearTimeout(o),o=setTimeout(function(){a.currItem&&a.currItem.loading?(!a.allowProgressiveImg()||a.currItem.img&&!a.currItem.img.naturalWidth)&&O(!1):O(!0)},q.loadingIndicatorDelay)}),l("imageLoadComplete",function(b,c){a.currItem===c&&O(!0)}))},O=function(a){n!==a&&(C(m,"preloader--active",!a),n=a)},P=function(a){var c=a.vGap;if(B()){var g=q.barsSize;if(q.captionEl&&"auto"===g.bottom)if(f||(f=b.createEl("pswp__caption pswp__caption--fake"),f.appendChild(b.createEl("pswp__caption__center")),d.insertBefore(f,e),b.addClass(d,"pswp__ui--fit")),q.addCaptionHTMLFn(a,f,!0)){var h=f.clientHeight;c.bottom=parseInt(h,10)||44}else c.bottom=g.top;else c.bottom="auto"===g.bottom?0:g.bottom;c.top=g.top}else c.top=c.bottom=0},Q=function(){q.timeToIdle&&l("mouseUsed",function(){b.bind(document,"mousemove",K),b.bind(document,"mouseout",L),t=setInterval(function(){J++,2===J&&v.setIdle(!0)},q.timeToIdle/2)})},R=function(){l("onVerticalDrag",function(a){x&&a<.95?v.hideControls():!x&&a>=.95&&v.showControls()});var a;l("onPinchClose",function(b){x&&b<.9?(v.hideControls(),a=!0):a&&!x&&b>.9&&v.showControls()}),l("zoomGestureEnded",function(){a=!1,a&&!x&&v.showControls()})},S=[{name:"caption",option:"captionEl",onInit:function(a){e=a}},{name:"share-modal",option:"shareEl",onInit:function(a){i=a},onTap:function(){F()}},{name:"button--share",option:"shareEl",onInit:function(a){h=a},onTap:function(){F()}},{name:"button--zoom",option:"zoomEl",onTap:a.toggleDesktopZoom},{name:"counter",option:"counterEl",onInit:function(a){g=a}},{name:"button--close",option:"closeEl",onTap:a.close},{name:"button--arrow--left",option:"arrowEl",onTap:a.prev},{name:"button--arrow--right",option:"arrowEl",onTap:a.next},{name:"button--fs",option:"fullscreenEl",onTap:function(){c.isFullscreen()?c.exit():c.enter()}},{name:"preloader",option:"preloaderEl",onInit:function(a){m=a}}],T=function(){var a,c,e,f=function(d){if(d)for(var f=d.length,g=0;g<f;g++){a=d[g],c=a.className;for(var h=0;h<S.length;h++)e=S[h],c.indexOf("pswp__"+e.name)>-1&&(q[e.option]?(b.removeClass(a,"pswp__element--disabled"),e.onInit&&e.onInit(a)):b.addClass(a,"pswp__element--disabled"))}};f(d.children);var g=b.getChildByClass(d,"pswp__top-bar");g&&f(g.children)};v.init=function(){b.extend(a.options,z,!0),q=a.options,d=b.getChildByClass(a.scrollWrap,"pswp__ui"),l=a.listen,R(),l("beforeChange",v.update),l("doubleTap",function(b){var c=a.currItem.initialZoomLevel;a.getZoomLevel()!==c?a.zoomTo(c,b,333):a.zoomTo(q.getDoubleTapZoom(!1,a.currItem),b,333)}),l("preventDragEvent",function(a,b,c){var d=a.target||a.srcElement;d&&d.getAttribute("class")&&a.type.indexOf("mouse")>-1&&(d.getAttribute("class").indexOf("__caption")>0||/(SMALL|STRONG|EM)/i.test(d.tagName))&&(c.prevent=!1)}),l("bindEvents",function(){b.bind(d,"pswpTap click",A),b.bind(a.scrollWrap,"pswpTap",v.onGlobalTap),a.likelyTouchDevice||b.bind(a.scrollWrap,"mouseover",v.onMouseOver)}),l("unbindEvents",function(){y||F(),t&&clearInterval(t),b.unbind(document,"mouseout",L),b.unbind(document,"mousemove",K),b.unbind(d,"pswpTap click",A),b.unbind(a.scrollWrap,"pswpTap",v.onGlobalTap),b.unbind(a.scrollWrap,"mouseover",v.onMouseOver),c&&(b.unbind(document,c.eventK,v.updateFullscreen),c.isFullscreen()&&(q.hideAnimationDuration=0,c.exit()),c=null)}),l("destroy",function(){q.captionEl&&(f&&d.removeChild(f),b.removeClass(e,"pswp__caption--empty")),i&&(i.children[0].onclick=null),b.removeClass(d,"pswp__ui--over-close"),b.addClass(d,"pswp__ui--hidden"),v.setIdle(!1)}),q.showAnimationDuration||b.removeClass(d,"pswp__ui--hidden"),l("initialZoomIn",function(){q.showAnimationDuration&&b.removeClass(d,"pswp__ui--hidden")}),l("initialZoomOut",function(){b.addClass(d,"pswp__ui--hidden")}),l("parseVerticalMargin",P),T(),q.shareEl&&h&&i&&(y=!0),D(),Q(),M(),N()},v.setIdle=function(a){k=a,C(d,"ui--idle",a)},v.update=function(){x&&a.currItem?(v.updateIndexIndicator(),q.captionEl&&(q.addCaptionHTMLFn(a.currItem,e),C(e,"caption--empty",!a.currItem.title)),w=!0):w=!1,y||F(),D()},v.updateFullscreen=function(d){d&&setTimeout(function(){a.setScrollOffset(0,b.getScrollY())},50),b[(c.isFullscreen()?"add":"remove")+"Class"](a.template,"pswp--fs")},v.updateIndexIndicator=function(){q.counterEl&&(g.innerHTML=a.getCurrentIndex()+1+q.indexIndicatorSep+q.getNumItemsFn())},v.onGlobalTap=function(c){c=c||window.event;var d=c.target||c.srcElement;if(!r)if(c.detail&&"mouse"===c.detail.pointerType){if(I(d))return void a.close();b.hasClass(d,"pswp__img")&&(1===a.getZoomLevel()&&a.getZoomLevel()<=a.currItem.fitRatio?q.clickToCloseNonZoomable&&a.close():a.toggleDesktopZoom(c.detail.releasePoint))}else if(q.tapToToggleControls&&(x?v.hideControls():v.showControls()),q.tapToClose&&(b.hasClass(d,"pswp__img")||I(d)))return void a.close()},v.onMouseOver=function(a){a=a||window.event;var b=a.target||a.srcElement;C(d,"ui--over-close",I(b))},v.hideControls=function(){b.addClass(d,"pswp__ui--hidden"),x=!1},v.showControls=function(){x=!0,w||v.update(),b.removeClass(d,"pswp__ui--hidden")},v.supportsFullscreen=function(){var a=document;return!!(a.exitFullscreen||a.mozCancelFullScreen||a.webkitExitFullscreen||a.msExitFullscreen)},v.getFullscreenAPI=function(){var b,c=document.documentElement,d="fullscreenchange";return c.requestFullscreen?b={enterK:"requestFullscreen",exitK:"exitFullscreen",elementK:"fullscreenElement",eventK:d}:c.mozRequestFullScreen?b={enterK:"mozRequestFullScreen",exitK:"mozCancelFullScreen",elementK:"mozFullScreenElement",eventK:"moz"+d}:c.webkitRequestFullscreen?b={enterK:"webkitRequestFullscreen",exitK:"webkitExitFullscreen",elementK:"webkitFullscreenElement",eventK:"webkit"+d}:c.msRequestFullscreen&&(b={enterK:"msRequestFullscreen",exitK:"msExitFullscreen",elementK:"msFullscreenElement",eventK:"MSFullscreenChange"}),b&&(b.enter=function(){return j=q.closeOnScroll,q.closeOnScroll=!1,"webkitRequestFullscreen"!==this.enterK?a.template[this.enterK]():void a.template[this.enterK](Element.ALLOW_KEYBOARD_INPUT)},b.exit=function(){return q.closeOnScroll=j,document[this.exitK]()},b.isFullscreen=function(){return document[this.elementK]}),b}};return a});
+
+	var _PhotoSwipe = PhotoSwipe;
+
+    window.PhotoSwipe = null;
+
+	Container.set('PhotoSwipe', _PhotoSwipe);
+
+}());
 
 // Utility
+/**
+ * Cookie manager
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+ * 
+ */
+(function()
+{
+    /* Base64 Polyfill https://github.com/davidchambers/Base64.js */
+    !function(e){"use strict";if("object"==typeof exports&&null!=exports&&"number"!=typeof exports.nodeType)module.exports=e();else if("function"==typeof define&&null!=define.amd)define([],e);else{var t=e(),o="undefined"!=typeof self?self:$.global;"function"!=typeof o.btoa&&(o.btoa=t.btoa),"function"!=typeof o.atob&&(o.atob=t.atob)}}(function(){"use strict";var f="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";function c(e){this.message=e}return(c.prototype=new Error).name="InvalidCharacterError",{btoa:function(e){for(var t,o,r=String(e),n=0,a=f,i="";r.charAt(0|n)||(a="=",n%1);i+=a.charAt(63&t>>8-n%1*8)){if(255<(o=r.charCodeAt(n+=.75)))throw new c("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");t=t<<8|o}return i},atob:function(e){var t=String(e).replace(/[=]+$/,"");if(t.length%4==1)throw new c("'atob' failed: The string to be decoded is not correctly encoded.");for(var o,r,n=0,a=0,i="";r=t.charAt(a++);~r&&(o=n%4?64*o+r:r,n++%4)&&(i+=String.fromCharCode(255&o>>(-2*n&6))))r=f.indexOf(r);return i}}});
+
+    /**
+     * Cookie prefix
+     * 
+     * @var string
+     */
+    var _prefix = '_hb';
+
+    /**
+     * Module constructor
+     *
+     * @access public
+     * @constructor
+     * @return this
+     */
+    var Cookies = function()
+    {
+    	return this;
+    }
+
+    /**
+     * Set a cookie
+     *
+     * @access public
+     * @param  string    key      Cookie key
+     * @param  string    value    Cookie value
+     * @param  int    days     Cookie expiry in days (optional) (default when browser closes)
+     * @param  string    path     Cookie path (optional) (default "/")
+     * @param  bool   secure   Secure policy (optional) (default) (true)
+     * @param  stringing samesite Samesite policy (optional) (default) (true)
+     * @return sting
+     */
+    Cookies.prototype.set = function(key, value, days, path, secure, samesite)
+    {
+    	value         = this._encodeCookieValue(value);
+    	key           = this._normaliseKey(key);
+    	path          = typeof path === 'undefined' ? '; path=/' : '; path=' + path;
+    	secure        = (typeof secure === 'undefined' || secure === true) && window.location.protocol === 'https:' ? '; secure' : '';
+    	samesite      = typeof samesite === 'undefined' ? '' : '; samesite=' + samesite;
+    	var expires   = expires = "; expires=" + this._normaliseExpiry(days | 365);
+
+    	document.cookie = key + '=' + value + expires + path + secure + samesite;
+
+	    return value;
+    }
+
+    /**
+     * Get a cookie
+     *
+     * @access public
+     * @param  string key Cookie key
+     * @return mixed
+     */
+    Cookies.prototype.get = function(key)
+    {
+    	key = this._normaliseKey(key);
+  		
+  		var ca = document.cookie.split(';');
+
+  		for(var i = 0; i <ca.length; i++)
+  		{
+		    var c = ca[i];
+		    
+		    while (c.charAt(0) == ' ')
+		    {
+		    	c = c.substring(1);
+		    }
+		    
+		    if (c.indexOf(key) == 0)
+		    {
+		    	return this._decodeCookieValue(c.split('=').pop());
+			}
+		}
+		
+		return false;
+    }
+
+    /**
+     * Remove a cookie
+     *
+     * @access public
+     * @param  string key Cookie to remove
+     */
+    Cookies.prototype.remove = function(key)
+    {
+    	key = this._normaliseKey(key);
+
+        document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    }
+
+    /**
+     * Normalise cookie expiry date
+     *
+     * @access private
+     * @param  int    days Days when cookie expires
+     * @return sting
+     */
+    Cookies.prototype._normaliseExpiry = function(days)
+    {
+    	var date = new Date();
+	        
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        
+       	return date.toUTCString();
+    }
+
+    /**
+     * Normalise cookie key
+     *
+     * @access private
+     * @param  string key Cookie key
+     * @return sting
+     */
+    Cookies.prototype._normaliseKey = function(key)
+    {
+    	key = key.replace(/[^a-z0-9+]+/gi, '').toLowerCase();
+
+    	return _prefix + key;
+    }
+
+    /**
+     * Encode cookie value
+     *
+     * @access private
+     * @param  mixed  value Value to encode
+     * @return sting
+     */
+    Cookies.prototype._encodeCookieValue = function(value)
+    {
+    	try
+	    {
+	        value = this._base64_encode(JSON.stringify(value));
+	    }
+	    catch (e)
+	    {
+	        value = this._base64_encode(value);
+	    }
+
+	    return value;
+    }
+
+    /**
+     * Decode cookie value
+     *
+     * @access private
+     * @param  string  str Value to decode
+     * @return mixed
+     */
+    Cookies.prototype._decodeCookieValue = function(str)
+    {
+    	var value = this._base64_decode(str);
+
+    	try
+	    {
+	        value = JSON.parse(value);
+	    }
+	    catch (e)
+	    {
+	    	return value;
+	    }
+
+	    return value;
+    }
+
+    /**
+     * Base64 encode
+     *
+     * @access private
+     * @param  string str String to encode
+     * @return sting
+     */
+    Cookies.prototype._base64_encode = function(str)
+    {
+        return btoa(this._toBinary(str)).replace(/=/g, '_');
+    }
+
+    /**
+     * Base64 decode
+     *
+     * @access pubic
+     * @param  string str String to decode
+     * @return sting
+     */
+    Cookies.prototype._base64_decode = function(str)
+    {
+        return this._fromBinary(atob(str.replace(/_/g, '=')));
+    }
+
+    /**
+     * From binary
+     *
+     * @access prvate
+     * @param  string binary String to decode
+     * @return string
+     */
+    Cookies.prototype._fromBinary = function(binary)
+    {
+        const bytes = new Uint8Array(binary.length);
+        
+        for (var i = 0; i < bytes.length; i++)
+        {
+            bytes[i] = binary.charCodeAt(i);
+        }
+
+        return String.fromCharCode.apply(null, new Uint16Array(bytes.buffer));
+    }
+
+    /**
+     * To binary
+     *
+     * @access pubic
+     * @param  string string String to encode
+     * @return sting
+     */
+    Cookies.prototype._toBinary = function(string)
+    {
+        const codeUnits = new Uint16Array(string.length);
+        
+        for (var i = 0; i < codeUnits.length; i++)
+        {
+            codeUnits[i] = string.charCodeAt(i);
+        }
+        
+        return String.fromCharCode.apply(null, new Uint8Array(codeUnits.buffer));
+    }
+
+    // Register as DOM Module and invoke
+   	Container.singleton('Cookies', Cookies);
+
+})();
 /**
  * ToggleHeight
  *
@@ -4553,8 +6279,6 @@ JSHelper.prototype.isRetina = function()
      * @var Helper obj
      */
     var Helper = Container.get('JSHelper');
-
-    var timer;
 
     /**
      * Module constructor
@@ -4612,6 +6336,7 @@ JSHelper.prototype.isRetina = function()
         if (el.style.height === 'auto')
         {
             this._fromAuto(el, 0, time, easing, actualHeight, withOpacity);
+            
             return;
         }
 
@@ -4619,10 +6344,9 @@ JSHelper.prototype.isRetina = function()
         if (actualHeight === endHeight)
         {
             el.style.height = 'auto';
+            
             return;
         }
-        
-        clearTimeout(timer);
 
         // Opacity timer
         var opacityTime = (75 * time) / 100 + time;
@@ -4633,17 +6357,17 @@ JSHelper.prototype.isRetina = function()
         el.offsetHeight;
         
         // Run animations
-        Helper.animate(el, 'height',  actualHeight + 'px', endHeight + 'px', time, easing);
+        var remove = function()
+        {
+            Helper.css(el, 'height', 'auto');
+        };
+
+        Helper.animate(el, 'height',  actualHeight + 'px', endHeight + 'px', time, easing, remove);
+        
         if  (withOpacity)
         {
             Helper.animate(el, 'opacity', '0', '1', opacityTime, easing);
         }
-
-        timer = setTimeout(function()
-        {
-            Helper.css(el, 'height', 'auto');
-        }, time);
-
     }
 
     /**
@@ -4659,7 +6383,6 @@ JSHelper.prototype.isRetina = function()
      */
     ToggleHeight.prototype._fromAuto = function(el, initial, time, easing, actualHeight, withOpacity)
     {
-        clearTimeout(timer);
         var opacityTime = (15 * time) / 100 + time; 
 
         // Set the height to the actual height (which could be zero)
@@ -4719,7 +6442,7 @@ JSHelper.prototype.isRetina = function()
      * Fire a custom event
      *
      * @param eventName string The event name to fire
-     * @param eventName string What should be given as "this" to the event callbacks
+     * @param subject   mixed  What should be given as "this" to the event callbacks
      * @access public
      */
     Events.prototype.fire = function(eventName, subject)
@@ -4811,6 +6534,144 @@ JSHelper.prototype.isRetina = function()
 
     // Load into container and invoke
     Container.singleton('Events', Events);
+
+}());
+
+/**
+ * Filters
+ *
+ * This class handles custom event firing and callback assigning.
+ *
+ */
+ (function()
+ {
+
+    /**
+     * Module constructor
+     *
+     * @class
+     * @constructor
+     * @access public
+     * @return this
+     */
+    var Filters = function()
+    {
+        this._callbacks = {};
+        
+        return this;
+    }
+
+    /**
+     * Module destructor - clears event cache
+     *
+     * @access public
+     */
+    Filters.prototype.destruct = function()
+    {
+        this._callbacks = {};
+    }
+
+    /**
+     * Fire a custom event
+     *
+     * @param eventName string The event name to fire
+     * @param subject   mixed  What should be given as "this" to the event callbacks
+     * @access public
+     */
+    Filters.prototype.filter = function(eventName, subject)
+    {
+        var response = subject;
+
+        for (var key in this._callbacks)
+        {
+            if (!this._callbacks.hasOwnProperty(key))
+            {
+                continue;
+            }
+
+            var callbackEvent = key.split('______')[0];
+
+            if (callbackEvent === eventName)
+            {
+                var callback = this._callbacks[key].callback;
+                
+                response = callback.call(response, response);
+            }
+        }
+
+        return response;
+    }
+
+    /**
+     * Bind a callback to an event
+     *
+     * @param eventName string The event name
+     * @param callback  func   The callback function
+     * @access public
+     */
+    Filters.prototype.on = function(eventName, callback)
+    {
+        // Make sure the function is unique - unless it is ananonymous
+        var callbackName = this._getFnName(callback);
+        
+        if (callbackName === 'anonymous')
+        {
+            callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
+        }
+
+        var key  = eventName+'______'+callbackName;
+
+        // Save the callback and event name
+        this._callbacks[key] =
+        {
+            name     : eventName,
+            callback : callback,
+        };
+    }
+
+    /**
+     * UnBind a callback to an event
+     *
+     * @param eventName string The event name
+     * @param callback  func   The callback function
+     * @access public
+     */
+    Filters.prototype.off = function(eventName, callback)
+    {
+        for (var key in this._callbacks)
+        {
+            if (!this._callbacks.hasOwnProperty(key))
+            {
+                continue;
+            }
+
+            var callbackEvent = key.split('______')[0];
+            
+            if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
+            {
+                delete this._callbacks[key];
+            }
+        }
+    }
+
+    /**
+     * Get a callback function by key
+     *
+     * @param fn string The function key
+     * @access private
+     * @return string
+     */
+    Filters.prototype._getFnName = function(fn)
+    {
+        var f = typeof fn == 'function';
+        
+        var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
+
+        return (!f && 'not a function') || (s && s[1] || 'anonymous');
+    }
+
+    // Load into container and invoke
+    Container.singleton('Filters', Filters);
 
 }());
 
@@ -5357,7 +7218,7 @@ JSHelper.prototype.isRetina = function()
         Helper.addEventListener(window, 'resize', function modalResize() {
             _this._centerModal(_this._options.centered);
         });
-        Helper.addClass(document.body, 'hide-overflow');
+        Helper.addClass(document.body, 'no-scroll');
     }
 
     /**
@@ -5387,7 +7248,7 @@ JSHelper.prototype.isRetina = function()
             e = e || window.event;
             if (_this._options.closeAnywhere === true) {
                 if (this === _this._modal) {
-                    var clickedInner = Helper.closestClass(e.target, 'js-modal-dialog');
+                    var clickedInner = Helper.closest(e.target, '.js-modal-dialog');
                     if (clickedInner) return;
                 }
             }
@@ -5406,7 +7267,7 @@ JSHelper.prototype.isRetina = function()
             _this._timer = setTimeout(function() {
                 Helper.removeFromDOM(_this._overlay);
                 Helper.removeFromDOM(_this._modal);
-                Helper.removeClass(document.body, 'hide-overflow');
+                Helper.removeClass(document.body, 'no-scroll');
             }, 500);
         }
         
@@ -5446,7 +7307,7 @@ JSHelper.prototype.isRetina = function()
         if (e.keyCode == 13) {
             e.preventDefault();
             e.stopPropagation();
-            var modal = Helper.closestClass(this, '.js-modal-dialog');
+            var modal = Helper.closest(this, '.js-modal-dialog');
             var modalConfirm = Helper.$('.js-modal-confirm', this._modal);
             Helper.triggerEvent(modalConfirm, 'click');
         }
@@ -5462,7 +7323,7 @@ JSHelper.prototype.isRetina = function()
             var callback = this._options.onClose;
             var args     = this._options.onCloseArgs;
             callback.apply(this._modal, args);
-            Helper.removeClass(document.body, 'hide-overflow');
+            Helper.removeClass(document.body, 'no-scroll');
         }
     }
 
@@ -5629,7 +7490,7 @@ JSHelper.prototype.isRetina = function()
         var cancelClass  = typeof options.cancelClass === 'undefined'  ? 'btn-default'  : options.cancelClass;
         var confirmClass = typeof options.confirmClass === 'undefined'  ? 'btn-success'  : options.confirmClass;
 
-        var content  = '<div class="msg-body"><p>' + options.msg + '</p><div class="row roof-xs msg-buttons"><button class="btn '+cancelClass+' cancel-msg js-cancel">'+cancelText+'</button>&nbsp;&nbsp;<button class="btn '+confirmClass+' js-confirm">' + confirmText + '</button></div></div>';
+        var content  = '<div class="msg-body"><p>' + options.msg + '</p><div class="row roof-xs msg-buttons"><button type="button" class="btn '+cancelClass+' cancel-msg js-cancel">'+cancelText+'</button>&nbsp;&nbsp;<button type="button" class="btn '+confirmClass+' js-confirm">' + confirmText + '</button></div></div>';
         var notif    = Helper.newNode('div', 'msg-'+options.type + ' msg animate-notif msg-confirm', null, content, this._notifWrap);
         var cancel   = Helper.$('.js-cancel', notif);
         var confirm  = Helper.$('.js-confirm', notif);
@@ -5683,329 +7544,573 @@ JSHelper.prototype.isRetina = function()
 
 })();
 /**
- * Ajax
+ * Ajax Utility
  *
- * Ajax utility module
- *
- */
-(function() {
+ * @example 
+
+var headers = {'foo' : 'bar'};
+var data    = {'foo' : 'bar'};
+
+_Ajax.get('https://stackoverflow.com', function complete(response)
+{
+    console.log('Completed');
+    
+});
+
+_Ajax.get('https://stackoverflow.com', function complete(response)
+{
+    console.log('Completed');
+    
+}, headers);
+
+_Ajax.post('https://stackoverflow.com', data,
+function success(response)
+{
+    console.log('success');
+    
+},
+function error(response)
+{
+    console.log('error');
+});
+
+_Ajax.post('https://stackoverflow.com', data,
+function success(response)
+{
+    console.log('success');
+    
+},
+function error(response)
+{
+    console.log('error');
+    
+},
+function complete(response)
+{
+    console.log('Completed');
+    
+}, headers);
+
+*/
+(function()
+{
+    /**
+     * JS Queue
+     *
+     * @see https://medium.com/@griffinmichl/asynchronous-javascript-queue-920828f6327
+     */
+    var Queue = function(concurrency)
+    {
+        this.running     = 0;
+        this.concurrency = concurrency;
+        this.taskQueue   = [];
+        
+        return this;
+    }
+
+    Queue.prototype.add = function(task, _this, _args)
+    {
+        if (this.running < this.concurrency)
+        {
+            this._runTask(task, _this, _args);
+        }
+        else
+        {
+            this._enqueueTask(task, _this, _args);
+        }
+    }
+
+    Queue.prototype.next = function()
+    {        
+        this.running--;
+
+        if (this.taskQueue.length > 0)
+        {
+            var task = this.taskQueue.shift();
+
+            this._runTask(task['callback'], task['_this'], task['_args']);
+        }
+    }
+
+    Queue.prototype._runTask = function(task, _this, _args)
+    {       
+        this.running++;
+
+        task.apply(_this, _args);
+    }
+
+    Queue.prototype._enqueueTask = function(task, _this, _args)
+    {
+        this.taskQueue.push(
+        {
+            'callback' : task,
+            '_this'    : _this,
+            '_args'    : _args
+        });
+    }
+
+    var AjaxQueue = new Queue(1);
 
     /**
-     * @namespace HelperAjax
+     * Module constructor
+     *
+     * @access public
+     * @constructor
+     * @return this
      */
-    var HelperAjax = {
-
-        /**
-         * @property {XMLHttpRequest|ActiveXObject}
-         */
-        xhr: null,
-
-        /**
-         * @property {Object} Default ajax settings
-         */
-        settings: {
-            url: '',
-            type: 'GET',
-            dataType: 'text', // text, html, json or xml
-            async: true,
-            cache: true,
-            data: null,
-            contentType: 'application/x-www-form-urlencoded',
-            success: null,
-            error: null,
-            complete: null,
-            headers: [],
-            accepts: {
-                text: 'text/plain',
-                html: 'text/html',
-                xml: 'application/xml, text/xml',
-                json: 'application/json, text/javascript'
-            }
-        },
-
-        construct: function() {},
-        destruct: function() {},
-
-        /**
-         * Ajax call
-         * @param {Object} [options] Overwrite the default settings (see ajaxSettings)
-         * @return {This}
-         */
-        call: function(options) {
-            var self = this,
-                xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
-                opts = (function(s, o) {
-                    var opts = {};
-
-                    for (var key in s)
-                        opts[key] = (typeof o[key] == 'undefined') ? s[key] : o[key];
-
-                    return opts;
-                })(this.settings, options),
-                ready = function() {
-                    if (xhr.readyState == 4) {
-                        if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
-                            // set data
-                            var data = (opts.dataType == 'xml') ? xhr.responseXML : xhr.responseText;
-
-                            //console.log(data);
-
-                            // parse json data
-                            if (opts.dataType == 'json')
-                                data = self.parseJSON(data);
-
-                            // success callback
-                            if (self.isFunction(opts.success))
-                                opts.success.call(opts, data, xhr.status, xhr);
-                        } else {
-                            // error callback
-                            if (self.isFunction(opts.error))
-                                opts.error.call(opts, xhr, xhr.status);
-                        }
-
-                        // complete callback
-                        if (self.isFunction(opts.complete))
-                            opts.complete.call(opts, xhr, xhr.status);
-                    }
-                };
-
-            this.xhr = xhr;
-
-            // prepare options
-            if (!opts.cache)
-                opts.url += ((opts.url.indexOf('?') > -1) ? '&' : '?') + '_nocache=' + (new Date()).getTime();
-
-            if (opts.data) {
-                if (opts.type == 'GET') {
-                    opts.url += ((opts.url.indexOf('?') > -1) ? '&' : '?') + this.param(opts.data);
-                    opts.data = null;
-                } else {
-                    opts.data = this.param(opts.data);
-                }
-            }
-
-            // set request
-            xhr.open(opts.type, opts.url, opts.async);
-            xhr.setRequestHeader('Content-type', opts.contentType);
-            xhr.setRequestHeader('REQUESTED-WITH', 'XMLHttpRequest');
-
-            if (opts.dataType && opts.accepts[opts.dataType])
-                xhr.setRequestHeader('Accept', opts.accepts[opts.dataType]);
-
-            if (opts.headers)
-            {
-                for (var k = 0; k < opts.headers.length; k++)
-                {
-                    var header = opts.headers[k];
-                    var key    = Object.keys(header)[0];                    
-                    xhr.setRequestHeader(key, header[key]);
-                }
-            }
-
-            if (opts.async) {
-                xhr.onreadystatechange = ready;
-                xhr.send(opts.data);
-            } else {
-                xhr.send(opts.data);
-                ready();
-            }
-
-            return this;
-        },
-
-        /**
-         * Ajax GET request
-         * @param {String} url
-         * @param {String|Object} [data] Containing GET values
-         * @param {Function} [success] Callback when request was succesfull
-         * @return {This}
-         */
-        get: function(url, data, success, error, headers) {
-            if (this.isFunction(data)) {
-                error   = success;
-                success = data;
-                data    = null;
-            }
-
-            return this.call({
-                url: url,
-                type: 'GET',
-                data: data,
-                success: success,
-                error: error,
-                headers: headers
-            });
-        },
-
-        /**
-         * Ajax POST request
-         * @param {String} url
-         * @param {String|Object} [data] Containing POST values
-         * @param {Function} [success] Callback when request was succesfull
-         * @return {This}
-         */
-        post: function(url, data, success, error, headers) {
-            if (this.isFunction(data)) {
-                error   = success;
-                success = data;
-                data    = null;
-            }
-
-            return this.call({
-                url: url,
-                type: 'POST',
-                data: data,
-                success: success,
-                error: error,
-                headers: headers
-            });
-        },
-
-        upload: function(url, data, success, error, start, progress, load)
+    var _Ajax = function()
+    {
+        this._settings = 
         {
-            var formData = new FormData();
-            for (var key in data) {
-                
-                //formData.append(name, file, filename);
-                // skip loop if the property is from prototype
-                if (!data.hasOwnProperty(key)) continue;
+            'url'          : '',
+            'async'        : true,
+            'headers'      :
+            {
+                'Content-Type'  : 'application/x-www-form-urlencoded',
+                'Accepts'       : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'Cache-Control' : 'no-cache',
+                'Pragma'        : 'no-cache'
+            },
+        };
+
+        this._complete = false;
+        this._success = false;
+        this._error   = false;
+
+        return this;
+    }
+
+    /**
+     * Ajax Methods 
+     *
+     * @access public
+     * @param  string        url     Destination URL
+     * @param  string|object data    Data (optional)
+     * @param  function      success Success callback (optional)
+     * @param  function      error   Error callback (optional)
+     * @param  object        headers Request headers (optional)
+     * @return this
+     */
+    _Ajax.prototype.post = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
+
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('POST', url, data, success, error, complete, headers));
+
+        return instance;
+    }
+    _Ajax.prototype.get = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
+
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('GET', url, data, success, error, complete, headers));
+
+        return instance;
+    }
+    _Ajax.prototype.head = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
+
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('HEAD', url, data, success, error, complete, headers));
+
+        return instance;
+    }
+    _Ajax.prototype.put = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
+
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('PUT', url, data, success, error, complete, headers));
+
+        return instance;
+    }
+    _Ajax.prototype.delete = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
+        
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('DELETE', url, data, success, error, complete, headers));
+
+        return instance;
+    }
+
+    /**
+     * Success function
+     *
+     * @param  function  callback Callback function
+     * @return this
+     */
+    _Ajax.prototype.success = function(callback)
+    {
+        if (!this._isFunc(callback))
+        {
+            throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
+        }
+        
+        this._success = callback;
+
+        return this;
+    }
+
+    /**
+     * Error function
+     *
+     * @param  function  callback Callback function
+     * @return this
+     */
+    _Ajax.prototype.error = function(callback)
+    {
+        if (!this._isFunc(callback))
+        {
+            throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
+        }
+        
+        this._error = callback;
+
+        return this;
+    }
+
+    /**
+     * Alias for complete
+     *
+     * @param  function  callback Callback function
+     * @return this
+     */
+    _Ajax.prototype.then = function(callback)
+    {
+        return this.complete(callback);
+    }
+
+    /**
+     * Complete function
+     *
+     * @param  function  callback Callback function
+     * @return this
+     */
+    _Ajax.prototype.complete = function(callback)
+    {
+        if (!this._isFunc(callback))
+        {
+            throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
+        }
+
+        this._complete = callback;
+
+        return this;
+    }
+
+    /**
+     * Special Upload Function
+     *
+     * @access public
+     * @param  string        url      Destination URL
+     * @param  object        data     Form data
+     * @param  function      success  Success callback
+     * @param  function      error    Error callback
+     * @param  function      start    Start callback (optional)
+     * @param  function      progress Progress callback (optional)
+     * @param  function      complete Complete callback (optional)
+     * @return this
+     */
+    _Ajax.prototype.upload = function(url, data, success, error, start, progress, complete)
+    {
+        var formData = new FormData();
+        
+        for (var key in data)
+        {
+            if (data.hasOwnProperty(key))
+            {
                 var value = data[key];
 
-                if (value['type']) {
+                if (value['type'])
+                {
                     formData.append(key, value, value.name);
                 }
-                else {
+                else
+                {
                     formData.append(key, value);
                 }
             }
-
-            var self = this;
-            var xhr  = new XMLHttpRequest();
-            if (this.isFunction(start)) {
-                xhr.upload.addEventListener("loadstart", start, false);
-            }
-            if (this.isFunction(progress)) {
-                 xhr.upload.addEventListener("progress", progress, false);
-            }
-            if (this.isFunction(load)) {
-                xhr.upload.addEventListener("load", load, false);
-            }
-            xhr.addEventListener("readystatechange", function(e) {
-                e = e || window.event;
-                var status, text, readyState;
-                try {
-                    readyState = e.target.readyState;
-                    text       = e.target.responseText;
-                    status     = e.target.status;
-                } 
-                catch (e) {
-                    return;
-                }
-
-                if (readyState == 4) {
-                    if (status >= 200 && status < 300 || status === 304) {
-                        var response = e.target.responseText;
-                        //console.log(response);
-                        if (self.isFunction(success)) success(response);
-                    } 
-                    else {
-                        // error callback
-                        if (self.isFunction(error)) error.call(status, xhr);
-                    }
-                }
-
-            }, false);
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader('REQUESTED-WITH', 'XMLHttpRequest');
-            xhr.send(formData);
-            
-
-        },
-
-        /**
-         * Set content loaded by an ajax call
-         * @param {DOMElement|String} el Can contain an element or the id of the element
-         * @param {String} url The url of the ajax call (include GET vars in querystring)
-         * @param {String} [data] The POST data, when set method will be set to POST
-         * @param {Function} [complete] Callback when loading is completed
-         * @return {This}
-         */
-        load: function(el, url, data, complete) {
-            if (typeof el == 'string')
-                el = document.getElementById(el);
-
-            return this.call({
-                url: url,
-                type: data ? 'POST' : 'GET',
-                data: data || null,
-                complete: complete || null,
-                success: function(html) {
-                    try {
-                        el.innerHTML = html;
-                    } catch (e) {
-                        var ph = document.createElement('div');
-                        ph.innerHTML = html;
-
-                        // empty element content
-                        while (el.firstChild)
-                            el.removeChild(el.firstChild);
-
-                        // set new html content
-                        for (var x = 0, max = ph.childNodes.length; x < max; x++)
-                            el.appendChild(ph.childNodes[x]);
-                    }
-                }
-            });
-        },
-
-        /**
-         * Make querystring outof object or array of values
-         * @param {Object|Array} obj Keys/values
-         * @return {String} The querystring
-         */
-        param: function(obj) {
-            var s = [];
-
-            for (var key in obj) {
-                s.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
-            }
-
-            return s.join('&');
-        },
-
-        /**
-         * Parse JSON string
-         * @param {String} data
-         * @return {Object} JSON object
-         */
-        parseJSON: function(data) {
-            if (typeof data !== 'string' || !data)
-                return null;
-
-            return eval('(' + this.trim(data) + ')');
-        },
-
-        /**
-         * Trim spaces
-         * @param {String} str
-         * @return {String}
-         */
-        trim: function(str) {
-            return str.replace(/^\s+/, '').replace(/\s+$/, '');
-        },
-
-        /**
-         * Check if argument is function
-         * @param {Mixed} obj
-         * @return {Boolean}
-         */
-        isFunction: function(obj) {
-            return Object.prototype.toString.call(obj) === '[object Function]';
         }
 
-    };
+        xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
-    Container.set('Ajax', HelperAjax);
+        if (data)
+        {
+            data = this._params(data);
+        }
+
+        xhr.requestURL = url;
+
+        xhr.method = 'POST';
+
+        if (this.isFunction(start))
+        {
+            xhr.upload.addEventListener('loadstart', start, false);
+        }
+        if (this.isFunction(progress))
+        {
+            xhr.upload.addEventListener('progress', progress, false);
+        }
+        if (this.isFunction(complete))
+        {
+            xhr.upload.addEventListener('load', complete, false);
+        }
+        xhr.addEventListener('readystatechange', function(e)
+        {
+            e = e || window.event;
+            var status, text, readyState;
+            try
+            {
+                readyState = e.target.readyState;
+                text       = e.target.responseText;
+                status     = e.target.status;
+            } 
+            catch (e)
+            {
+                return;
+            }
+
+            if (readyState == 4)
+            {
+                if (status >= 200 && status < 300 || status === 304)
+                {
+                    var response = e.target.responseText;
+                    
+                    if (_this.isFunction(success))
+                    {
+                        success(response);
+                    }
+                } 
+                else {
+                    // error callback
+                    if (_this.isFunction(error))
+                    {
+                        error.call(status, xhr);
+                    }
+                }
+
+
+            }
+
+        }, false);
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('REQUESTED-WITH', 'XMLHttpRequest');
+        xhr.send(formData);
+    }
+
+    /**
+     * Ajax call 
+     *
+     * @access private
+     * @param  string        method  Request method
+     * @param  string        url     Destination URL
+     * @param  string|object data    Data (optional)
+     * @param  function      success Success callback (optional)
+     * @param  function      error   Error callback (optional)
+     * @param  function      complete Complete callback (optional)
+     * @param  object        headers Request headers (optional)
+     * @return this
+     */
+    _Ajax.prototype._call = function(method, url, data, success, error, complete, headers)
+    {
+
+        xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+        this._xhr = xhr;
+
+        xhr.requestURL = url;
+
+        xhr.mthod = method;
+
+        xhr.open(method, url, this._settings['async']);
+
+        this._sendHeaders(xhr, headers);
+
+        var _this = this;
+
+        if (this._settings['async'])
+        {
+            xhr.onreadystatechange = function()
+            {
+                _this._ready.call(_this, xhr, success, error, complete);
+            }
+            
+            xhr.send(data);
+        }
+        else
+        {
+            xhr.send(data);
+
+            this._ready.call(this, xhr, success, error, complete);
+        }
+
+        return this;
+    }
+
+    /**
+     * Send XHR headers
+     *
+     * @access private
+     * @param  object    xhr     XHR object
+     * @param  object    headers Request headers (optional)
+     * @return {This}
+     */
+    _Ajax.prototype._sendHeaders = function(xhr, headers)
+    {
+        if (xhr.mthod === 'POST')
+        {
+            this._settings['headers']['REQUESTED-WITH'] = 'XMLHttpRequest';
+        }
+
+        if (this._isObj(headers))
+        {
+            this._settings['headers'] = Object.assign({}, this._settings['headers'], headers);
+        }
+                
+        for (var k in this._settings['headers'])
+        {
+            if (this._settings['headers'].hasOwnProperty(k))
+            {
+                xhr.setRequestHeader(k, this._settings['headers'][k]);
+            }
+        }
+    }
+
+    /**
+     * Normalise arguments from original call function
+     *
+     * @param  string        method  Request method
+     * @param  string        url     Destination URL
+     * @param  string|object data    Data (optional)
+     * @param  function      success Success callback (optional)
+     * @param  function      error   Error callback (optional)
+     * @param  object        headers Request headers (optional)
+     * @return {This}
+     */
+    _Ajax.prototype._normaliseArgs = function(method, url, data, success, error, complete, headers)
+    {
+        var complete = typeof complete === 'undefined' ? 'false' : complete;
+
+        // (url, complete)
+        if (this._isFunc(data))
+        {
+            complete = data;
+
+            //OR (url, complete, headers)
+            if (this._isFunc(success))
+            {
+                headers = success;
+            }
+
+            success = false;
+
+            error = false;
+        }
+
+        if (method !== 'POST')
+        {
+            if (this._isObj(data) && !this._isEmpty(data))
+            {
+                url += url.includes('?') ? '&' : '?';
+                url += this._params(data);
+                data = null;
+            }
+        }
+        else if (this._isObj(data) && !this._isEmpty(data))
+        {
+            data = this._params(data);
+        }
+        
+        return [method, url, data, success, error, complete, headers];
+    }
+    /**
+     * Ready callback
+     *
+     * @return string
+     */
+    _Ajax.prototype._ready = function(xhr, success, error, complete)
+    {
+        if (xhr.readyState == 4)
+        {
+            var successfull = false;
+
+            if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)
+            {
+                successfull = true;
+
+                // set data
+                var response = xhr.responseText;
+
+                // success callback
+                if (this._isFunc(success))
+                {
+                    success.call(xhr, response);
+                }
+
+                if (this._success)
+                {
+                    this._success.call(xhr, response);
+                }
+            } 
+            else
+            {
+                successfull = false;
+
+                // error callback
+                if (this._isFunc(error))
+                {
+                    error.call(xhr, response);
+                }
+
+                if (this._error)
+                {
+                    this._error.call(xhr, response)
+                }
+            }
+
+            // Complete
+            if (this._isFunc(complete))
+            {
+                complete.call(xhr, response, successfull);
+            }
+
+            if (this._complete)
+            {
+                this._complete.call(xhr, response, successfull);
+            }
+
+            // Next queue
+            AjaxQueue.next();
+        }
+    }
+
+    _Ajax.prototype._isEmpty = function(mixedvar)
+    {
+        return mixedvar && Object.keys(mixedvar).length === 0 && mixedvar.constructor === Object;
+    }
+
+    _Ajax.prototype._isFunc = function(mixedvar)
+    {
+        return Object.prototype.toString.call(mixedvar) === '[object Function]';
+    }
+
+    _Ajax.prototype._isObj = function(mixedvar)
+    {
+        return Object.prototype.toString.call(mixedvar) === '[object Object]';
+    }
+
+    _Ajax.prototype._params = function(obj)
+    {
+        var s = [];
+
+        for (var key in obj)
+        {
+            s.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+        }
+
+        return s.join('&');
+    }
+
+    Container.set('Ajax', _Ajax);
 
 })();
 
@@ -6075,7 +8180,7 @@ JSHelper.prototype.isRetina = function()
 
         // Show the invalid inputs
         for (var j = 0; j < this._invalids.length; j++) {
-            var __wrap = Helper.closestClass(this._invalids[j], 'form-field');
+            var __wrap = Helper.closest(this._invalids[j], '.form-field');
             if (Helper.nodeExists(__wrap)) Helper.addClass(__wrap, 'danger');
         }
     }
@@ -6239,7 +8344,7 @@ JSHelper.prototype.isRetina = function()
 
         // Make all input elements 'valid' - i.e hide the error msg and styles.
         for (var i = 0; i < this._inputs.length; i++) {
-            var _wrap = Helper.closestClass(this._inputs[i], 'form-field');
+            var _wrap = Helper.closest(this._inputs[i], '.form-field');
             if (Helper.nodeExists(_wrap)) Helper.removeClass(_wrap, ['info', 'success', 'warning', 'danger'])
         }
     };
@@ -6311,6 +8416,1436 @@ JSHelper.prototype.isRetina = function()
 
 })();
 
+/**
+ * Money Formatter
+ *
+ * @see https://github.com/gerardojbaez/money
+ * @example Money.format(12.99, 'USD'); // RESULT: $12.99
+ * 
+ */
+(function()
+{   
+    /**
+     * number_format
+     *
+     * @see https://github.com/locutusjs/locutus/blob/e0a68222d482d43164e96ab96023b712d25680a6/src/php/strings/number_format.js
+     */
+    function number_format (number, decimals, decPoint, thousandsSep) { // eslint-disable-line camelcase
+  //  discuss at: https://locutus.io/php/number_format/
+  // original by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
+  // improved by: Kevin van Zonneveld (https://kvz.io)
+  // improved by: davook
+  // improved by: Brett Zamir (https://brett-zamir.me)
+  // improved by: Brett Zamir (https://brett-zamir.me)
+  // improved by: Theriault (https://github.com/Theriault)
+  // improved by: Kevin van Zonneveld (https://kvz.io)
+  // bugfixed by: Michael White (https://getsprink.com)
+  // bugfixed by: Benjamin Lupton
+  // bugfixed by: Allan Jensen (https://www.winternet.no)
+  // bugfixed by: Howard Yeend
+  // bugfixed by: Diogo Resende
+  // bugfixed by: Rival
+  // bugfixed by: Brett Zamir (https://brett-zamir.me)
+  //  revised by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
+  //  revised by: Luke Smith (https://lucassmith.name)
+  //    input by: Kheang Hok Chin (https://www.distantia.ca/)
+  //    input by: Jay Klehr
+  //    input by: Amir Habibi (https://www.residence-mixte.com/)
+  //    input by: Amirouche
+  //   example 1: number_format(1234.56)
+  //   returns 1: '1,235'
+  //   example 2: number_format(1234.56, 2, ',', ' ')
+  //   returns 2: '1 234,56'
+  //   example 3: number_format(1234.5678, 2, '.', '')
+  //   returns 3: '1234.57'
+  //   example 4: number_format(67, 2, ',', '.')
+  //   returns 4: '67,00'
+  //   example 5: number_format(1000)
+  //   returns 5: '1,000'
+  //   example 6: number_format(67.311, 2)
+  //   returns 6: '67.31'
+  //   example 7: number_format(1000.55, 1)
+  //   returns 7: '1,000.6'
+  //   example 8: number_format(67000, 5, ',', '.')
+  //   returns 8: '67.000,00000'
+  //   example 9: number_format(0.9, 0)
+  //   returns 9: '1'
+  //  example 10: number_format('1.20', 2)
+  //  returns 10: '1.20'
+  //  example 11: number_format('1.20', 4)
+  //  returns 11: '1.2000'
+  //  example 12: number_format('1.2000', 3)
+  //  returns 12: '1.200'
+  //  example 13: number_format('1 000,50', 2, '.', ' ')
+  //  returns 13: '100 050.00'
+  //  example 14: number_format(1e-8, 8, '.', '')
+  //  returns 14: '0.00000001'
+
+  number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
+  const n = !isFinite(+number) ? 0 : +number
+  const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+  const sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
+  const dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+  let s = '';
+
+  const toFixedFix = function (n, prec) {
+    if (('' + n).indexOf('e') === -1) {
+      return +(Math.round(n + 'e+' + prec) + 'e-' + prec)
+    } else {
+      const arr = ('' + n).split('e')
+      let sig = ''
+      if (+arr[1] + prec > 0) {
+        sig = '+'
+      }
+      return (+(Math.round(+arr[0] + 'e' + sig + (+arr[1] + prec)) + 'e-' + prec)).toFixed(prec)
+    }
+  }
+
+  // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
+  s = (prec ? toFixedFix(n, prec).toString() : '' + Math.round(n)).split('.')
+  if (s[0].length > 3) {
+    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
+  }
+  if ((s[1] || '').length < prec) {
+    s[1] = s[1] || ''
+    s[1] += new Array(prec - s[1].length + 1).join('0')
+  }
+
+  return s.join(dec)
+}
+
+
+    /**
+     * Currency Formats.
+     *
+     * Formats initially collected from
+     * http://www.joelpeterson.com/blog/2011/03/formatting-over-100-currencies-in-php/
+     *
+     * All currencies were validated against some trusted
+     * sources like Wikipedia, thefinancials.com and
+     * cldr.unicode.org.
+     *
+     * Please note that each format used on each currency is
+     * the format for that particular country/language.
+     * When the country is unknown, the English format is used.
+     *
+     * @todo REFACTOR! This should be located on a separated file. Working on that!
+     *
+     * @var array
+     */
+    var currencies =
+    {
+        'NGN' :
+        {
+            'code' : 'NGN',
+            'title' : 'Nigerian Naira',
+            'symbol' : '₦',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'ARS' :
+        {
+            'code' : 'ARS',
+            'title' : 'Argentine Peso',
+            'symbol' : 'AR$',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'AMD' :
+        {
+            'code' : 'AMD',
+            'title' : 'Armenian Dram',
+            'symbol' : 'Դ',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'AWG' :
+        {
+            'code' : 'AWG',
+            'title' : 'Aruban Guilder',
+            'symbol' : 'Afl. ',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'AUD' :
+        {
+            'code' : 'AUD',
+            'title' : 'Australian Dollar',
+            'symbol' : '$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'BSD' :
+        {
+            'code' : 'BSD',
+            'title' : 'Bahamian Dollar',
+            'symbol' : 'B$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'BHD' :
+        {
+            'code' : 'BHD',
+            'title' : 'Bahraini Dinar',
+            'symbol' : null,
+            'precision' : 3,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'BDT' :
+        {
+            'code' : 'BDT',
+            'title' : 'Bangladesh, Taka',
+            'symbol' : null,
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'BZD' :
+        {
+            'code' : 'BZD',
+            'title' : 'Belize Dollar',
+            'symbol' : 'BZ$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'BMD' :
+        {
+            'code' : 'BMD',
+            'title' : 'Bermudian Dollar',
+            'symbol' : 'BD$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'BOB' :
+        {
+            'code' : 'BOB',
+            'title' : 'Bolivia, Boliviano',
+            'symbol' : 'Bs',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'BAM' :
+        {
+            'code' : 'BAM',
+            'title' : 'Bosnia and Herzegovina convertible mark',
+            'symbol' : 'KM ',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'BWP' :
+        {
+            'code' : 'BWP',
+            'title' : 'Botswana, Pula',
+            'symbol' : 'p',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'BRL' :
+        {
+            'code' : 'BRL',
+            'title' : 'Brazilian Real',
+            'symbol' : 'R$',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'BND' :
+        {
+            'code' : 'BND',
+            'title' : 'Brunei Dollar',
+            'symbol' : 'B$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'CAD' :
+        {
+            'code' : 'CAD',
+            'title' : 'Canadian Dollar',
+            'symbol' : 'CA$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'KYD' :
+        {
+            'code' : 'KYD',
+            'title' : 'Cayman Islands Dollar',
+            'symbol' : 'CI$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'CLP' :
+        {
+            'code' : 'CLP',
+            'title' : 'Chilean Peso',
+            'symbol' : 'CLP$',
+            'precision' : 0,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : '',
+            'symbolPlacement' : 'before'
+        },
+        'CNY' :
+        {
+            'code' : 'CNY',
+            'title' : 'China Yuan Renminbi',
+            'symbol' : 'CN¥',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'COP' :
+        {
+            'code' : 'COP',
+            'title' : 'Colombian Peso',
+            'symbol' : 'COL$',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'CRC' :
+        {
+            'code' : 'CRC',
+            'title' : 'Costa Rican Colon',
+            'symbol' : '₡',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'HRK' :
+        {
+            'code' : 'HRK',
+            'title' : 'Croatian Kuna',
+            'symbol' : ' kn',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'after'
+        },
+        'CUC' :
+        {
+            'code' : 'CUC',
+            'title' : 'Cuban Convertible Peso',
+            'symbol' : 'CUC$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'CUP' :
+        {
+            'code' : 'CUP',
+            'title' : 'Cuban Peso',
+            'symbol' : 'CUP$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'CYP' :
+        {
+            'code' : 'CYP',
+            'title' : 'Cyprus Pound',
+            'symbol' : '£',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'CZK' :
+        {
+            'code' : 'CZK',
+            'title' : 'Czech Koruna',
+            'symbol' : ' Kč',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'after'
+        },
+        'DKK' :
+        {
+            'code' : 'DKK',
+            'title' : 'Danish Krone',
+            'symbol' : ' kr.',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'after'
+        },
+        'DOP' :
+        {
+            'code' : 'DOP',
+            'title' : 'Dominican Peso',
+            'symbol' : 'RD$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'XCD' :
+        {
+            'code' : 'XCD',
+            'title' : 'East Caribbean Dollar',
+            'symbol' : 'EC$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'EGP' :
+        {
+            'code' : 'EGP',
+            'title' : 'Egyptian Pound',
+            'symbol' : 'EGP',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'SVC' :
+        {
+            'code' : 'SVC',
+            'title' : 'El Salvador Colon',
+            'symbol' : '₡',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'EUR' :
+        {
+            'code' : 'EUR',
+            'title' : 'Euro',
+            'symbol' : '€',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'GHC' :
+        {
+            'code' : 'GHC',
+            'title' : 'Ghana, Cedi',
+            'symbol' : 'GH₵',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'GIP' :
+        {
+            'code' : 'GIP',
+            'title' : 'Gibraltar Pound',
+            'symbol' : '£',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'GTQ' :
+        {
+            'code' : 'GTQ',
+            'title' : 'Guatemala, Quetzal',
+            'symbol' : 'Q',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'HNL' :
+        {
+            'code' : 'HNL',
+            'title' : 'Honduras, Lempira',
+            'symbol' : 'L',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'HKD' :
+        {
+            'code' : 'HKD',
+            'title' : 'Hong Kong Dollar',
+            'symbol' : 'HK$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'HUF' :
+        {
+            'code' : 'HUF',
+            'title' : 'Hungary, Forint',
+            'symbol' : ' Ft',
+            'precision' : 0,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : '',
+            'symbolPlacement' : 'after'
+        },
+        'ISK' :
+        {
+            'code' : 'ISK',
+            'title' : 'Iceland Krona',
+            'symbol' : ' kr',
+            'precision' : 0,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : '',
+            'symbolPlacement' : 'after'
+        },
+        'INR' :
+        {
+            'code' : 'INR',
+            'title' : 'Indian Rupee ₹',
+            'symbol' : '₹',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'IDR' :
+        {
+            'code' : 'IDR',
+            'title' : 'Indonesia, Rupiah',
+            'symbol' : 'Rp',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'IRR' :
+        {
+            'code' : 'IRR',
+            'title' : 'Iranian Rial',
+            'symbol' : null,
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'JMD' :
+        {
+            'code' : 'JMD',
+            'title' : 'Jamaican Dollar',
+            'symbol' : 'J$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'JPY' :
+        {
+            'code' : 'JPY',
+            'title' : 'Japan, Yen',
+            'symbol' : '¥',
+            'precision' : 0,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '',
+            'symbolPlacement' : 'before'
+        },
+        'JOD' :
+        {
+            'code' : 'JOD',
+            'title' : 'Jordanian Dinar',
+            'symbol' : null,
+            'precision' : 3,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'KES' :
+        {
+            'code' : 'KES',
+            'title' : 'Kenyan Shilling',
+            'symbol' : 'KSh',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'KWD' :
+        {
+            'code' : 'KWD',
+            'title' : 'Kuwaiti Dinar',
+            'symbol' : 'K.D.',
+            'precision' : 3,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'KZT' :
+        {
+            'code' : 'KZT',
+            'title' : 'Kazakh tenge',
+            'symbol' : '₸',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'LVL' :
+        {
+            'code' : 'LVL',
+            'title' : 'Latvian Lats',
+            'symbol' : 'Ls',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'LBP' :
+        {
+            'code' : 'LBP',
+            'title' : 'Lebanese Pound',
+            'symbol' : 'LBP',
+            'precision' : 0,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '',
+            'symbolPlacement' : 'before'
+        },
+        'LTL' :
+        {
+            'code' : 'LTL',
+            'title' : 'Lithuanian Litas',
+            'symbol' : ' Lt',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'after'
+        },
+        'MKD' :
+        {
+            'code' : 'MKD',
+            'title' : 'Macedonia, Denar',
+            'symbol' : 'ден ',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'MYR' :
+        {
+            'code' : 'MYR',
+            'title' : 'Malaysian Ringgit',
+            'symbol' : 'RM',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'MTL' :
+        {
+            'code' : 'MTL',
+            'title' : 'Maltese Lira',
+            'symbol' : 'Lm',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'MUR' :
+        {
+            'code' : 'MUR',
+            'title' : 'Mauritius Rupee',
+            'symbol' : 'Rs',
+            'precision' : 0,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '',
+            'symbolPlacement' : 'before'
+        },
+        'MXN' :
+        {
+            'code' : 'MXN',
+            'title' : 'Mexican Peso',
+            'symbol' : 'MX$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'MZM' :
+        {
+            'code' : 'MZM',
+            'title' : 'Mozambique Metical',
+            'symbol' : 'MT',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'NPR' :
+        {
+            'code' : 'NPR',
+            'title' : 'Nepalese Rupee',
+            'symbol' : null,
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'ANG' :
+        {
+            'code' : 'ANG',
+            'title' : 'Netherlands Antillian Guilder',
+            'symbol' : 'NAƒ ',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'ILS' :
+        {
+            'code' : 'ILS',
+            'title' : 'New Israeli Shekel ₪',
+            'symbol' : ' ₪',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'after'
+        },
+        'TRY' :
+        {
+            'code' : 'TRY',
+            'title' : 'New Turkish Lira',
+            'symbol' : '₺',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'NZD' :
+        {
+            'code' : 'NZD',
+            'title' : 'New Zealand Dollar',
+            'symbol' : 'NZ$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'NOK' :
+        {
+            'code' : 'NOK',
+            'title' : 'Norwegian Krone',
+            'symbol' : 'kr ',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'PKR' :
+        {
+            'code' : 'PKR',
+            'title' : 'Pakistan Rupee',
+            'symbol' : null,
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'PEN' :
+        {
+            'code' : 'PEN',
+            'title' : 'Peru, Nuevo Sol',
+            'symbol' : 'S/.',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'UYU' :
+        {
+            'code' : 'UYU',
+            'title' : 'Peso Uruguayo',
+            'symbol' : '$U ',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'PHP' :
+        {
+            'code' : 'PHP',
+            'title' : 'Philippine Peso',
+            'symbol' : '₱',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'PLN' :
+        {
+            'code' : 'PLN',
+            'title' : 'Poland, Zloty',
+            'symbol' : ' zł',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'after'
+        },
+        'GBP' :
+        {
+            'code' : 'GBP',
+            'title' : 'Pound Sterling',
+            'symbol' : '£',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'OMR' :
+        {
+            'code' : 'OMR',
+            'title' : 'Rial Omani',
+            'symbol' : 'OMR',
+            'precision' : 3,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'RON' :
+        {
+            'code' : 'RON',
+            'title' : 'Romania, New Leu',
+            'symbol' : null,
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'ROL' :
+        {
+            'code' : 'ROL',
+            'title' : 'Romania, Old Leu',
+            'symbol' : null,
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'RUB' :
+        {
+            'code' : 'RUB',
+            'title' : 'Russian Ruble',
+            'symbol' : ' ₽',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'after'
+        },
+        'SAR' :
+        {
+            'code' : 'SAR',
+            'title' : 'Saudi Riyal',
+            'symbol' : 'SAR',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'SGD' :
+        {
+            'code' : 'SGD',
+            'title' : 'Singapore Dollar',
+            'symbol' : 'S$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'SKK' :
+        {
+            'code' : 'SKK',
+            'title' : 'Slovak Koruna',
+            'symbol' : ' SKK',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'after'
+        },
+        'SIT' :
+        {
+            'code' : 'SIT',
+            'title' : 'Slovenia, Tolar',
+            'symbol' : null,
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'ZAR' :
+        {
+            'code' : 'ZAR',
+            'title' : 'South Africa, Rand',
+            'symbol' : 'R',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'KRW' :
+        {
+            'code' : 'KRW',
+            'title' : 'South Korea, Won ₩',
+            'symbol' : '₩',
+            'precision' : 0,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '',
+            'symbolPlacement' : 'before'
+        },
+        'SZL' :
+        {
+            'code' : 'SZL',
+            'title' : 'Swaziland, Lilangeni',
+            'symbol' : 'E',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'SEK' :
+        {
+            'code' : 'SEK',
+            'title' : 'Swedish Krona',
+            'symbol' : ' kr',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'after'
+        },
+        'CHF' :
+        {
+            'code' : 'CHF',
+            'title' : 'Swiss Franc',
+            'symbol' : 'SFr ',
+            'precision' : 2,
+            'thousandSeparator' : '\'',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'TZS' :
+        {
+            'code' : 'TZS',
+            'title' : 'Tanzanian Shilling',
+            'symbol' : 'TSh',
+            'precision' : 0,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'THB' :
+        {
+            'code' : 'THB',
+            'title' : 'Thailand, Baht ฿',
+            'symbol' : '฿',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'TOP' :
+        {
+            'code' : 'TOP',
+            'title' : 'Tonga, Paanga',
+            'symbol' : 'T$ ',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'AED' :
+        {
+            'code' : 'AED',
+            'title' : 'UAE Dirham',
+            'symbol' : 'AED',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'UAH' :
+        {
+            'code' : 'UAH',
+            'title' : 'Ukraine, Hryvnia',
+            'symbol' : ' ₴',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'after'
+        },
+        'USD' :
+        {
+            'code' : 'USD',
+            'title' : 'US Dollar',
+            'symbol' : '$',
+            'precision' : 2,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+        'VUV' :
+        {
+            'code' : 'VUV',
+            'title' : 'Vanuatu, Vatu',
+            'symbol' : 'VT',
+            'precision' : 0,
+            'thousandSeparator' : ',',
+            'decimalSeparator' : '',
+            'symbolPlacement' : 'before'
+        },
+        'VEF' :
+        {
+            'code' : 'VEF',
+            'title' : 'Venezuela Bolivares Fuertes',
+            'symbol' : 'Bs.',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'VEB' :
+        {
+            'code' : 'VEB',
+            'title' : 'Venezuela, Bolivar',
+            'symbol' : 'Bs.',
+            'precision' : 2,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : ',',
+            'symbolPlacement' : 'before'
+        },
+        'VND' :
+        {
+            'code' : 'VND',
+            'title' : 'Viet Nam, Dong ₫',
+            'symbol' : ' ₫',
+            'precision' : 0,
+            'thousandSeparator' : '.',
+            'decimalSeparator' : '',
+            'symbolPlacement' : 'after'
+        },
+        'ZWD' :
+        {
+            'code' : 'ZWD',
+            'title' : 'Zimbabwe Dollar',
+            'symbol' : 'Z$',
+            'precision' : 2,
+            'thousandSeparator' : ' ',
+            'decimalSeparator' : '.',
+            'symbolPlacement' : 'before'
+        },
+    };
+
+    /**
+     * Create new Currency instance.
+     *
+     * @param  string Currency ISO-4217 code
+     * @return void
+     */
+    var Currency = function(code)
+    {
+        /**
+         * ISO-4217 Currency Code.
+         *
+         * @var string
+         */
+        this.code = null;
+
+        /**
+         * Currency symbol.
+         *
+         * @var string
+         */
+        this.symbol = null;
+
+        /**
+         * Currency precision (number of decimals).
+         *
+         * @var int
+         */
+        this.precision = null;
+
+        /**
+         * Currency title.
+         *
+         * @var string
+         */
+        this.title = null;
+
+        /**
+         * Currency thousand separator.
+         *
+         * @var string
+         */
+        this.thousandSeparator = null;
+
+        /**
+         * Currency decimal separator.
+         *
+         * @var string
+         */
+        this.decimalSeparator = null;
+
+        /**
+         * Currency symbol placement.
+         *
+         * @var string (front|after) currency
+         */
+        this.symbolPlacement = null;
+
+        if (!this.hasCurrency(code))
+        {
+            throw new Error('Currency not found: "' + code + '"');
+        }
+
+        var currency = this.getCurrency(code);
+
+        for (var key in currency)
+        {
+            if (!currency.hasOwnProperty(key))
+            {
+                continue;
+            }
+
+            this[key] = currency[key];
+        }
+
+        return this;
+    }
+
+    /**
+     * Get currency ISO-4217 code.
+     *
+     * @return string
+     */
+    Currency.prototype.getCode = function()
+    {
+        return this.code;
+    }
+
+    /**
+     * Get currency symbol.
+     *
+     * @return string
+     */
+    Currency.prototype.getSymbol = function()
+    {
+        return this.symbol;
+    }
+
+    /**
+     * Get currency precision.
+     *
+     * @return int
+     */
+    Currency.prototype.getPrecision = function()
+    {
+        return this.precision;
+    }
+
+    /**
+     * @param integer precision
+     * @return this
+     */
+    Currency.prototype.setPrecision = function(precision)
+    {
+        this.precision = precision;
+
+        return this;
+    }
+
+    /**
+     * Get currency title.
+     *
+     * @return string
+     */
+    Currency.prototype.getTitle = function()
+    {
+        return this.title;
+    }
+
+    /**
+     * Get currency thousand separator.
+     *
+     * @return string
+     */
+    Currency.prototype.getThousandSeparator = function()
+    {
+        return this.thousandSeparator;
+    }
+
+    /**
+     * @param string separator
+     * @return this
+     */
+    Currency.prototype.setThousandSeparator = function(separator)
+    {
+        this.thousandSeparator = separator;
+
+        return this;
+    }
+
+    /**
+     * Get currency decimal separator.
+     *
+     * @return string
+     */
+    Currency.prototype.getDecimalSeparator = function()
+    {
+        return this.decimalSeparator;
+    }
+
+    /**
+     * @param string separator
+     * @return this
+     */
+    Currency.prototype.setDecimalSeparator = function(separator)
+    {
+        this.decimalSeparator = separator;
+
+        return this;
+    }
+
+    /**
+     * Get currency symbol placement.
+     *
+     * @return string
+     */
+    Currency.prototype.getSymbolPlacement = function()
+    {
+        return this.symbolPlacement;
+    }
+
+    /**
+     * @param string placement [before|after]
+     * @return this
+     */
+    Currency.prototype.setSymbolPlacement = function(placement)
+    {
+        this.symbolPlacement = placement;
+
+        return this;
+    }
+
+    /**
+     * Get all currencies.
+     *
+     * @return object
+     */
+    Currency.prototype.getAllCurrencies = function()
+    {
+        return currencies;
+    }
+    
+    /**
+     * Set currency
+     * 
+     * @return void
+     */
+    Currency.prototype.setCurrency = function(code, currency)
+    {
+        currencies[code] = currency;
+    }
+
+    /**
+     * Get currency.
+     *
+     * @access protected
+     * @return object
+     */
+    Currency.prototype.getCurrency = function(code)
+    {
+        return currencies[code];
+    }
+
+    /**
+     * Check currency existence (within the class)
+     *
+     * @access protected
+     * @return bool
+     */
+    Currency.prototype.hasCurrency = function(code)
+    {
+        return code in currencies
+    }
+
+    /**
+     * Create new Money Instance
+     *
+     * @param float|int
+     * @param mixed $currency
+     * @return void
+     */
+    var Money = function(amount, currency)
+    {
+        this._amount = parseFloat(amount);
+
+        currency = (typeof currency === 'undefined' ? 'AUD' : currency);
+
+        if (typeof currency === 'string')
+        {
+            this._currency = new Currency(currency);           
+        }
+        else if (currency instanceof Currency)
+        {
+            this._currency = currency;
+        }
+
+        return this;
+    }
+
+    /**
+     * Converts from cents to dollars
+     *
+     * @return string
+     */
+    Money.prototype.fromCents = function()
+    {
+        this._amount = this._amount / 100;
+
+        return this;
+    }
+
+    /**
+     * Format amount to currency equivalent string.
+     *
+     * @return string
+     */
+    Money.prototype.format = function()
+    {
+        var format = this.amount();
+
+        if (this._currency.getSymbol() === null)
+        {
+            format += ' ' + this._currency.getCode();
+        }
+        else if (this._currency.getSymbolPlacement() == 'before')
+        {
+            format = this._currency.getSymbol() + format;
+        }
+        else
+        {
+            format += this._currency.getSymbol();
+        }
+
+        return format;
+    }
+
+    /**
+     * Get amount formatted to currency.
+     *
+     * @return mixed
+     */
+    Money.prototype.amount = function()
+    {
+        // Indian Rupee use special format
+        if (this._currency.getCode() == 'INR')
+        {
+            return this._amount.toString().split('.')[0].length > 3 ? this._amount.toString().substring(0,this._amount.toString().split('.')[0].length-3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + this._amount.toString().substring(this._amount.toString().split('.')[0].length-3): this._amount.toString();
+        }
+
+        // Return western format
+        return number_format(
+            this._amount,
+            this._currency.getPrecision(),
+            this._currency.getDecimalSeparator(),
+            this._currency.getThousandSeparator()
+        );
+    }
+
+    /**
+     * Get amount formatted decimal.
+     *
+     * @return string decimal
+     */
+    Money.prototype.toDecimal = function()
+    {
+        return this._amount.toString();
+    }
+
+    /**
+     * parses locale formatted money string
+     * to object of class Money
+     *
+     * @param  string          $str      Locale Formatted Money String
+     * @param  Currency|string $currency default 'AUD'
+     * @return Money           $money    Decimal String
+     */
+    Money.prototype.parse = function(str, currency)
+    {
+        currency = typeof currency === 'undefined' ? 'AUD' : currency;
+
+        // get currency object
+        currency = typeof currency === 'string' ? new Currency(currency) : currency;
+
+        // remove HTML encoded characters: http://stackoverflow.com/a/657670
+        // special characters that arrive like &0234;
+        // remove all leading non numbers
+        str = str.replace(/&#?[a-z0-9]{2,8};/ig, '').replace(/^[^0-9]*/g, '');
+
+        // remove all thousands separators
+        if (currency.getThousandSeparator().length > 0)
+        {
+            str = str.replaceAll(currency.getThousandSeparator(), '');
+        }
+
+        if (currency.getDecimalSeparator().length > 0)
+        {
+            // make decimal separator regex safe
+            var char = currency.getDecimalSeparator();
+            
+            // remove all other characters
+            // convert all decimal seperators to PHP/bcmath safe decimal '.'
+
+            str = str.replace(new RegExp('[^\\' + char + '\\d]+', 'g'), '').replaceAll(char, '.');
+        }
+        else
+        {
+            // for currencies that do not have decimal points
+            // remove all other characters
+            str = str.replace(/[^\d]/, '');
+        }
+
+        return new Money(str, currency);
+    }
+
+    // Load into container 
+    Container.set('Money', Money);
+
+    Container.set('Currency', Currency);
+
+}());
 /**
  * Component Dynamic Hanlder 
  *
@@ -8175,15 +11710,18 @@ JSHelper.prototype.isRetina = function()
             {
                 hiddenEl = el;
             }
-            else {
+            else
+            {
                 var parent = el;
                 while (parent !== document.body)
                 {
                     parent = parent.parentNode;
                     var parentStyle = window.getComputedStyle(parent);
+                    
                     if (parentStyle.display === 'none')
                     {
                         hiddenEl = parent
+
                         break;
                     }
                 }
@@ -8212,8 +11750,9 @@ JSHelper.prototype.isRetina = function()
             }
             else {
                 hiddenEl.style.removeProperty('display');
-            }   
+            }
         }
+        
         return needsScroller;
     }
 
@@ -8528,7 +12067,7 @@ JSHelper.prototype.isRetina = function()
     DropDowns.prototype._windowClick = function(e)
     {
         e = e || window.event;
-        if (Helper.closestClass(e.target, 'js-drop-trigger'))
+        if (Helper.closest(e.target, '.js-drop-trigger'))
         {
             return;
         }
@@ -8676,10 +12215,10 @@ JSHelper.prototype.isRetina = function()
         var tabNav        = Helper.closest(node, 'ul');
 
         var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-        var tabPanel      = Helper.closestClass(tabPane, 'js-tab-panels-wrap');
+        var tabPanel      = Helper.closest(tabPane, '.js-tab-panels-wrap');
         var activePanel   = Helper.$('.tab-panel.active', tabPanel);
 
-        var navWrap       = Helper.closestClass(node, 'js-tab-nav');
+        var navWrap       = Helper.closest(node, '.js-tab-nav');
         var activeNav     = Helper.$('a.active', navWrap);
 
         Helper.removeClass(activeNav, 'active');
@@ -9075,7 +12614,7 @@ JSHelper.prototype.isRetina = function()
             // Clicked inside the popver itself,
             // Clicked a popover trigger
             // Clicked a close trigger inside the popover
-            if ( (Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closestClass(clicked, 'popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
+            if ( (Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
             {
                 return;
             }
@@ -9387,104 +12926,6 @@ JSHelper.prototype.isRetina = function()
 }());
 
 /**
- * File inputs
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
-
- (function()
- {
-    /**
-     * JS Helper reference
-     * 
-     * @var object
-     */
-    var Helper = Hubble.helper();
-
-    /**
-     * Module constructor
-     *
-     * @constructor
-     * @access public
-     */
-    var FileInput = function()
-    {
-        this._nodes = Helper.$All('.js-file-input');
-
-        this._bind();
-        
-        return this;
-    }
-
-    /**
-     * Module destructor remove event handlers
-     *
-     * @access public
-     */
-    FileInput.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._nodes  = [];
-    }
-
-    /**
-     * Bind DOM listeners
-     *
-     * @access public
-     */
-    FileInput.prototype._bind = function()
-    {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.addEventListener(this._nodes[i], 'change', this._eventHandler);
-        }
-    }
-
-    /**
-     * Unbind DOM listeners
-     *
-     * @access public
-     */
-    FileInput.prototype._unbind = function()
-    {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.removeEventListener(this._nodes[i], 'change', this._eventHandler);
-        }
-    }
-
-    /**
-     * Handle the change event
-     *
-     * @access private
-     */
-    FileInput.prototype._eventHandler = function()
-    {
-        var fileInput = this;
-        var wrap      = Helper.closestClass(fileInput, 'js-file-field');
-        var showInput = Helper.$('.js-file-text', wrap);
-        var fullPath  = fileInput.value;
-        if (fullPath)
-        {
-            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            var filename   = fullPath.substring(startIndex);
-            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
-            {
-                filename = filename.substring(1);
-            }
-            showInput.value = filename;
-        }
-    }
-
-    // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('FileInput', FileInput);
-
-}());
-
-/**
  * Message closers
  *
  * @author    Joe J. Howard
@@ -9719,7 +13160,6 @@ JSHelper.prototype.isRetina = function()
      */
     WayPoints.prototype._invokePageLoad = function()
     {
-
         var url = Helper.parse_url(window.location.href);
 
         if (Helper.isset(url['fragment']) && url['fragment'] !== '')
@@ -9730,8 +13170,6 @@ JSHelper.prototype.isRetina = function()
                 easing: 'Linear'
             };
             var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
-
-            if (!Helper.nodeExists(targetEl)) targetEl = Helper.$('#' + waypoint);
 
             if (Helper.nodeExists(targetEl))
             {
@@ -9750,6 +13188,508 @@ JSHelper.prototype.isRetina = function()
 
 }());
 
+/**
+ * Adds classes to inputs
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ */
+
+(function()
+{
+    /**
+     * JS Helper reference
+     * 
+     * @var object
+     */
+    var Helper = Hubble.helper();
+
+    /**
+     * Module constructor
+     *
+     * @access public
+     * @constructor
+     */
+    var Inputs = function()
+    {
+        this._inputs = Helper.$All('.form-field input, .form-field select, .form-field textarea');
+        this._labels = Helper.$All('.form-field label');
+        
+        if (!Helper.empty(this._inputs))
+        {
+            this._bind();
+        }
+
+        return this;
+    };
+
+    /**
+     * Module destructor - removes event listeners
+     *
+     * @access public
+     */
+    Inputs.prototype.destruct = function()
+    {
+        this._unbind();
+
+        this._inputs = [];
+    }
+
+    /**
+     * Event binder
+     *
+     * @access private
+     */
+    Inputs.prototype._bind = function()
+    {
+        Helper.addEventListener(this._labels, 'click', this._onLabelClick);
+        Helper.addEventListener(this._inputs, 'click', this._eventHandler);
+        Helper.addEventListener(this._inputs, 'focus', this._eventHandler);
+        Helper.addEventListener(this._inputs, 'blur', this._eventHandler);
+        Helper.addEventListener(this._inputs, 'change', this._eventHandler);
+        Helper.addEventListener(this._inputs, 'input', this._eventHandler);
+        Helper.addEventListener(this._inputs, 'hover', this._eventHandler);
+    }
+
+    /**
+     * Event ubinder
+     *
+     * @access private
+     */
+    Inputs.prototype._unbind = function()
+    {
+        Helper.removeEventListener(this._labels, 'click', this._onLabelClick);
+        Helper.removeEventListener(this._inputs, 'click', this._eventHandler);
+        Helper.removeEventListener(this._inputs, 'focus', this._eventHandler);
+        Helper.removeEventListener(this._inputs, 'blur', this._eventHandler);
+        Helper.removeEventListener(this._inputs, 'change', this._eventHandler);
+        Helper.removeEventListener(this._inputs, 'input', this._eventHandler);
+        Helper.removeEventListener(this._inputs, 'hover', this._eventHandler);
+    }
+
+    /**
+     * Event handler
+     *
+     * @access private
+     * @params event|null e Browser click event
+     */
+    Inputs.prototype._onLabelClick = function(e)
+    {
+        e = e || window.event;
+
+        var input = Helper.$('input', this.parentNode);
+
+        if (Helper.nodeExists(input))
+        {
+            input.focus();
+
+            return;
+        }
+
+        var input = Helper.$('select', this.parentNode);
+
+        if (Helper.nodeExists(input))
+        {
+            input.focus();
+
+            return;
+        }
+
+        var textarea = Helper.$('textarea', this.parentNode);
+
+        if (Helper.nodeExists(input))
+        {
+            input.focus();
+
+            return;
+        }
+    }
+
+    /**
+     * Event handler
+     *
+     * @access private
+     * @params event|null e Browser click event
+     */
+    Inputs.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        if (e.type === 'click')
+        {
+            this.focus();
+        }
+        else if (e.type === 'focus')
+        {
+            Helper.addClass(this.parentNode, 'focus');
+        }
+        else if (e.type === 'blur')
+        {
+            Helper.removeClass(this.parentNode, 'focus');
+        }
+        
+        if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
+        {
+            var _value = Helper.getInputValue(this);
+
+            console.log(_value);
+
+            if (_value === '')
+            {
+                Helper.removeClass(this.parentNode, 'not-empty');
+                Helper.addClass(this.parentNode, 'empty');
+            }
+            else
+            {
+                Helper.removeClass(this.parentNode, 'empty');
+                Helper.addClass(this.parentNode, 'not-empty');
+            }
+        }
+    }
+
+    // Load into Hubble DOM core
+    Container.get('Hubble').dom().register('Inputs', Inputs);
+
+})();
+
+/**
+ * File inputs
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ */
+
+ (function()
+ {
+    /**
+     * JS Helper reference
+     * 
+     * @var object
+     */
+    var Helper = Hubble.helper();
+
+    /**
+     * Module constructor
+     *
+     * @constructor
+     * @access public
+     */
+    var FileInput = function()
+    {
+        this._nodes = Helper.$All('.js-file-input');
+
+        this._bind();
+        
+        return this;
+    }
+
+    /**
+     * Module destructor remove event handlers
+     *
+     * @access public
+     */
+    FileInput.prototype.destruct = function()
+    {
+        this._unbind();
+
+        this._nodes  = [];
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access public
+     */
+    FileInput.prototype._bind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
+            Helper.addEventListener(this._nodes[i], 'change', this._eventHandler);
+        }
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access public
+     */
+    FileInput.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
+            Helper.removeEventListener(this._nodes[i], 'change', this._eventHandler);
+        }
+    }
+
+    /**
+     * Handle the change event
+     *
+     * @access private
+     */
+    FileInput.prototype._eventHandler = function()
+    {
+        var fileInput = this;
+        var wrap      = Helper.closest(fileInput, '.js-file-field');
+        var showInput = Helper.$('.js-file-text', wrap);
+        var fullPath  = fileInput.value;
+        if (fullPath)
+        {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename   = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
+            {
+                filename = filename.substring(1);
+            }
+            showInput.value = filename;
+        }
+    }
+
+    // Load into Hubble DOM core
+    Container.get('Hubble').dom().register('FileInput', FileInput);
+
+}());
+
+/**
+ * Clicking one element triggers a lick on another
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ */
+
+(function()
+{
+    /**
+     * JS Helper reference
+     * 
+     * @var object
+     */
+    var Helper = Hubble.helper();
+
+    /**
+     * Module constructor
+     *
+     * @access public
+     * @constructor
+     */
+    var ClickTriggers = function()
+    {
+        /**
+         * List of click-triggers
+         * 
+         * @var array
+         */
+        this._containers = Helper.$All('.js-click-trigger');
+        
+        if (!Helper.empty(this._containers))
+        {
+            this._bind();
+        }
+
+        return this;
+    };
+
+    /**
+     * Module destructor - removes event listeners
+     *
+     * @access public
+     */
+    ClickTriggers.prototype.destruct = function()
+    {
+        this._unbind();
+
+        this._containers = [];
+    }
+
+    /**
+     * Event binder - Binds all events on button click
+     *
+     * @access private
+     */
+    ClickTriggers.prototype._bind = function()
+    {
+        for (var i = 0; i < this._containers.length; i++)
+        {
+            Helper.addEventListener(this._containers[i], 'click', this._eventHandler);
+        }
+    }
+
+    /**
+     * Event ubinder - Binds all event handlers on button click
+     *
+     * @access private
+     */
+    ClickTriggers.prototype._unbind = function()
+    {
+        for (var i = 0; i < this._containers.length; i++)
+        {
+            Helper.removeEventListener(this._containers[i], 'click', this._eventHandler);
+        }
+    }
+
+    /**
+     * Event handler
+     *
+     * @access private
+     * @params event|null e Browser click event
+     */
+    ClickTriggers.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        if (Helper.isNodeType(this, 'a'))
+        {
+            e.preventDefault();
+        }
+
+        var clicked  = this;
+        var targetEl = Helper.$(clicked.dataset.clickTarget);
+
+        if (Helper.nodeExists(targetEl))
+        {
+            Helper.triggerEvent(targetEl, 'click');
+        }
+    }
+
+    // Load into Hubble DOM core
+    Container.get('Hubble').dom().register('ClickTriggers', ClickTriggers);
+
+})();
+
+/**
+ * Image zoom hover
+ * 
+ */
+(function()
+{
+    /**
+     * JS Helper reference
+     * 
+     * @var object
+     */
+    var Helper = Hubble.helper();
+
+    /**
+     * Module constructor
+     *
+     * @constructor
+     * @access public
+     */
+    var ImageZoom = function()
+    {
+        this._nodes = Helper.$All('.js-img-hover-zoom');
+
+        this._bind();
+        
+        return this;
+    }
+
+    /**
+     * Module destructor remove event handlers
+     *
+     * @access public
+     */
+    ImageZoom.prototype.destruct = function()
+    {
+        this._unbind();
+
+        this._nodes = [];
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access public
+     */
+    ImageZoom.prototype._bind = function()
+    {
+        for (var i = 0; i < this._nodes.length; i++)
+        {
+            Helper.css(this._nodes[i], 'background-image', 'url(' + this._nodes[i].dataset.zoomSrc + ')');
+
+            Helper.addEventListener(this._nodes[i], 'mousemove', this._onHover);
+
+            Helper.$('img', this._nodes[i]).alt = '';
+
+            Helper.$('img', this._nodes[i]).title = '';
+        }
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access public
+     */
+    ImageZoom.prototype._unbind = function()
+    {
+        Helper.removeEventListener(this._nodes, 'mousemove', this._onHover);
+    }
+
+    /**
+     * On hover event
+     *
+     * @param  e event|null "mousemove" event
+     * @access private
+     */
+    ImageZoom.prototype._onHover = function(e)
+    {
+        e = e || window.event;
+
+        if (!e || !e.currentTarget)
+        {
+            return false;
+        }
+
+        var _wrapper     = e.currentTarget;
+        var _zoomSrc     = Helper.parse_url(Helper.getStyle(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
+        var _dataZoomSrc = Helper.parse_url(_wrapper.dataset.zoomSrc);
+
+        if (_zoomSrc.path !== _dataZoomSrc.path)
+        {            
+            Helper.css(_wrapper, 'background-image', 'url(' + _wrapper.dataset.zoomSrc + ')');
+        }
+
+        var offsetX = 0;
+        var offsetY = 0;
+        if (e.offsetX)
+        {
+            offsetX = e.offsetX;
+        }
+        else if (e.touches && e.touches[0] && e.touches[0].pageX)
+        {
+            offsetX = e.touches[0].pageX;
+        }
+        else
+        {
+            return false;
+        }
+
+        if (e.offsetY)
+        {
+            offsetY = e.offsetY;
+        }
+        else if (e.touches && e.touches[0] && e.touches[0].pageY)
+        {
+            offsetY = e.touches[0].pageY;
+        }
+        else
+        {
+            return false;
+        }
+
+        x = offsetX/_wrapper.offsetWidth*100;
+        y = offsetY/_wrapper.offsetHeight*100;
+
+
+        Helper.css(_wrapper, 'background-position', x + '% ' + y + '%');
+    }
+    
+    // Register as DOM Module and invoke
+    Container.get('Hubble').dom().register('ImageZoom', ImageZoom);
+
+}());
 
 
 // Boot Hubble
@@ -9763,7 +13703,9 @@ JSHelper.prototype.isRetina = function()
 
 (function()
 {
-	
     Container.get('Hubble').boot();
 
+    var hubbleReady = new CustomEvent('HubbleReady', { detail: Container.get('Hubble') });
+
+    window.dispatchEvent(hubbleReady);
 })();

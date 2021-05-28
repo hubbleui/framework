@@ -40,3 +40,32 @@
 
 // Misc
 .nowrap       { white-space: nowrap; }
+
+// Responsive text
+@include media-breakpoint-down(md)
+{
+	h1.responsive, .h1.responsive
+	{ 
+	    font-size: _minusPercent($text-size-h1, 20);
+	}
+	h2.responsive, .h2.responsive
+	{ 
+	    font-size: _minusPercent($text-size-h2, 20);
+	}
+	h3.responsive, .h3.responsive
+	{ 
+	    font-size: _minusPercent($text-size-h3, 20);
+	}
+	h4.responsive, .h4.responsive
+	{ 
+	    font-size: _minusPercent($text-size-h4, 20);
+	}
+	h5.responsive, .h5.responsive
+	{ 
+	    font-size: _minusPercent($text-size-h5, 20);
+	}
+	h6.responsive, .h6.responsive
+	{ 
+	    font-size: _minusPercent($text-size-h6, 20);
+	}
+}

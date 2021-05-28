@@ -127,15 +127,18 @@
             {
                 hiddenEl = el;
             }
-            else {
+            else
+            {
                 var parent = el;
                 while (parent !== document.body)
                 {
                     parent = parent.parentNode;
                     var parentStyle = window.getComputedStyle(parent);
+                    
                     if (parentStyle.display === 'none')
                     {
                         hiddenEl = parent
+
                         break;
                     }
                 }
@@ -164,8 +167,9 @@
             }
             else {
                 hiddenEl.style.removeProperty('display');
-            }   
+            }
         }
+        
         return needsScroller;
     }
 

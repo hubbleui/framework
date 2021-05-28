@@ -18,6 +18,12 @@
     &.progress-default .progress {
         background-color: $brand-primary;
     }
+    &.progress-primary .progress {
+        background-color: $brand-primary;
+    }
+    &.progress-secondary .progress {
+        background-color: $brand-secondary;
+    }
     &.progress-info .progress {
         background-color: $brand-info;
     }

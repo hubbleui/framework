@@ -127,7 +127,6 @@
      */
     WayPoints.prototype._invokePageLoad = function()
     {
-
         var url = Helper.parse_url(window.location.href);
 
         if (Helper.isset(url['fragment']) && url['fragment'] !== '')
@@ -138,8 +137,6 @@
                 easing: 'Linear'
             };
             var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
-
-            if (!Helper.nodeExists(targetEl)) targetEl = Helper.$('#' + waypoint);
 
             if (Helper.nodeExists(targetEl))
             {

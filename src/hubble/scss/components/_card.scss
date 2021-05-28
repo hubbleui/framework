@@ -1,273 +1,143 @@
-//
-// Base styles
-//
-.card {
+.card
+{
 	position: relative;
-	display: flex;
-	flex-direction: column;
-	background-color: $card-bg;
-	border: $card-border-width solid $card-border-color;
-	border-radius: $border-radius;
-}
-
-.card-block {
-  // Enable `flex-grow: 1` for decks and groups so that card blocks take up
-  // as much space as possible, ensuring footers are aligned to the bottom.
-  flex: 1 1 auto;
-  padding: $card-spacer-x;
-}
-.card-title {
-	margin-bottom: $card-spacer-y;
-}
-.card-subtitle {
-	margin-top: -($card-spacer-y / 2);
-}
-.card-text:last-child {
-	margin-bottom: 0;
-}
-.card-link {
-	&:hover {
-		text-decoration: none;
-	}
-
-	+ .card-link {
-		margin-left: $card-spacer-x;
-	}
-}
-
-// card image
-.card-img {
-  // margin: -1.325rem;
-  border-radius: $border-radius;
-}
-
-// Card image caps
-.card-img-top {
-	border-radius: 0;
-	border-top-left-radius: $border-radius;
-	border-top-right-radius: $border-radius;
-}
-.card-img-bottom {
-	border-radius: 0;
-	border-bottom-left-radius: $border-radius;
-	border-bottom-right-radius: $border-radius;
-}
-.card-img,
-.card-img-top,
-.card-img-bottom {
-	width: 100%;
-	height: auto;
-	margin: 0 auto;
 	display: block;
-}
+	width: 100%;
+	background-color: $card-bg;
+	border-radius: $card-border-radius;
+	box-shadow: $raised-level-two;
+    transition: box-shadow $base-easing-time $base-easing;
+    &:hover,
+    &:focus
+    {
+        box-shadow: $raised-level-two-hover;
+    }
 
-// car header/footer
-.card-header {
-	padding: $card-spacer-y $card-spacer-x;
-	margin-bottom: 0; // Removes the default margin-bottom of <hN>
-	background-color: $card-cap-bg;
-	border-bottom: $card-border-width solid $card-border-color;
-
-  	&:first-child {
-  		border-radius: 0;
-  		border-top-left-radius: $border-radius;
-  		border-top-right-radius: $border-radius;
-  	}
-  	> h1,h2,h3,h4,h5,h6,p {
-  		margin-bottom: 0;
-  	}
-}
-.card-footer {
-	padding: $card-spacer-y $card-spacer-x;
-	background-color: $card-cap-bg;
-	border-top: $card-border-width solid $card-border-color;
-
-	&:last-child {
-		border-radius: 0;
-  		border-bottom-left-radius: $border-radius;
-  		border-bottom-right-radius: $border-radius;
-	}
-}
-
-// outline contextual styles
-.card-outline-primary {
-	border-color: $brand-primary;
-}
-.card-outline-info {
-	border-color: $brand-info;
-}
-.card-outline-success {
-	border-color: $brand-success;
-}
-.card-outline-warning {
-	border-color: $brand-warning;
-}
-.card-outline-danger {
-	border-color: $brand-danger;
-}
-
-// header contextual styles
-.card-header-primary {
-	background-color: $brand-primary;
-	border-color: $brand-primary;
-	color: #fff;
-}
-.card-header-info {
-	background-color: $brand-info;
-	border-color: $brand-info;
-	color: #fff;
-}
-.card-header-success {
-	background-color: $brand-success;
-	border-color: $brand-success;
-	color: #fff;
-}
-.card-header-warning {
-	background-color: $brand-warning;
-	border-color: $brand-warning;
-	color: #fff;
-}
-.card-header-danger {
-	background-color: $brand-danger;
-	border-color: $brand-danger;
-	color: #fff;
-}
-.card-header-white {
-	background-color: #fff;
-}
-
-
-// Unstyled
-.card-unstyled {
-	border: none;
-	border-radius: 0;
-	.card-header,
-	.card-footer {
-		border: none;
-		border-radius: 0;
-		background-color: transparent;
-	}
-}
-
-// With table
-.card-table
-{
-	table tbody > tr:last-child td,
-	table tbody > tr:last-child th
+	.card-block
 	{
-		border-bottom: none;
+		padding: $card-block-padding;
 	}
-}
-.card-header.with-options
-{
-	line-height: 38px;
-
-	.card-header-options
+	.card-title
 	{
-		float: right;
+		margin-bottom: 1.7rem;
 	}
-}
-
-// Groups
-.card-group .card, {
-	margin-bottom: $card-spacer-y;
-}
-.card-group .card:last-child {
-	margin-bottom: 0;
-}
-@include media-breakpoint-up(sm) {
-	.card-group
+	.card-subtitle
 	{
-	    display: flex;
-	    flex-flow: row wrap;
-
-		.card {
-		    -webkit-box-flex: 1;
-		    -webkit-flex: 1 0 0%;
-		    -ms-flex: 1 0 0%;
-		    flex: 1 0 0%;
-		    border-radius: 0;
-		    margin-bottom: 0;
-
-		    .card-header,
-		    .card-footer,
-		    .card-img-top,
-		    .card-img-bottom,
-		    .card-img {
-			    border-radius: 0;
-			}
-
-			&:not(::first-child),
-			&:not(::last-child) {
-				border-left: none;
-				border-right: none;
-			}
-
-		    &:first-child {
-		    	border-top-left-radius: $border-radius;
-	    		border-bottom-left-radius: $border-radius;
-	    		.card-header:first-child,
-	    		.card-img-top {
-	    			border-top-left-radius: $border-radius;
-	    		}
-			    .card-footer:last-child,
-			    .card-img-bottom {
-			    	
-	    			border-bottom-left-radius: $border-radius;
-			    }
-		    }
-		    &:last-child {
-		    	border-top-right-radius: $border-radius;
-	    		border-bottom-right-radius: $border-radius;
-	    		.card-header:first-child,
-	    		.card-img-top {
-	    			border-top-right-radius: $border-radius;
-	    		}
-			    .card-footer:last-child,
-			    .card-img-bottom {
-			    	
-	    			border-bottom-right-radius: $border-radius;
-			    }
-		    }
+		color: $gray-dark;
+		margin-bottom: 1.8rem;
+	}
+	.card-text
+	{
+		color: $gray-dark;
+		margin: 0;
+		padding: 1.8rem 0;
+		&:last-child
+		{
+			padding-bottom: 0;
 		}
 	}
-}
+	.card-title + .card-text,
+	.card-subtitle + .card-text
+	{
+		padding-top: 0;
+	}
 
-// Decks
-.card-deck .card, {
-	margin-bottom: $card-spacer-y;
-}
-.card-deck .card:last-child {
-	margin-bottom: 0;
-}
-@include media-breakpoint-up(md) {
+	.card-link
+	{
+		&:hover
+		{
+			text-decoration: none;
+		}
 
-	.card-deck {
-    	display: flex;
-    	flex-flow: row wrap;
+		+ .card-link
+		{
+			margin-left: 1.6rem;
+		}
+	}
+	.card-divider
+	{
+	    height: 1px;
+	    background: $gray-light;
+	    border: 0;
+	    margin-top: 0.5rem;
+	    margin-bottom: 0.5rem;
+	}
+	.card-img-top
+	{
+		background-color: $card-img-bg;
+		padding: $card-img-padding;
+		border-radius: 0;
+		border-top-left-radius: $card-border-radius;
+		border-top-right-radius: $card-border-radius;
+		.card-img
+		{
+			border-radius: 0;
+			border-top-left-radius: $card-border-radius;
+			border-top-right-radius: $card-border-radius;
+		}
+	}
+	.card-img-bottom
+	{
+		border-radius: 0;
+		border-bottom-left-radius: $card-border-radius;
+		border-bottom-right-radius: $card-border-radius;
+		.card-img
+		{
+			border-radius: 0;
+			border-bottom-left-radius: $card-border-radius;
+			border-bottom-right-radius: $card-border-radius;
+		}
+	}
+	.card-img,
+	.card-img-top,
+	.card-img-bottom
+	{
+		width: 100%;
+		height: auto;
+		margin: 0 auto;
+		display: block;
+	}
+	.card-header
+	{
+		padding: 2rem 1.6rem;
+		margin-bottom: 0;
 
-    	.card {
-	      	display: flex;
-	      	flex: 1 0 0;
-	      	flex-direction: column;
-	      	margin-bottom: 0;
-	      	
-	      	// Selectively apply horizontal margins to cards to avoid doing the
-	      	// negative margin dance like our grid. This differs from the grid
-	      	// due to the use of margins as gutters instead of padding.
-	      	&:not(:first-child) { margin-left: $card-deck-margin; }
-	      	&:not(:last-child) { margin-right: $card-deck-margin; }
-    	}
-  	}
-}
+	  	&:first-child
+	  	{
+	  		border-radius: 0;
+	  		border-top-left-radius: $card-border-radius;
+	  		border-top-right-radius: $card-border-radius;
+	  	}
+	  	> h1,h2,h3,h4,h5,h6,p
+	  	{
+	  		margin-bottom: 0;
+	  	}
+	}
+	.card-footer
+	{
+		padding: 2rem 1.6rem;
+		&:last-child
+		{
+			border-radius: 0;
+	  		border-bottom-left-radius: $card-border-radius;
+	  		border-bottom-right-radius: $card-border-radius;
+		}
+	}
+	.card-table
+	{
+		table tbody > tr:last-child td,
+		table tbody > tr:last-child th
+		{
+			border-bottom: none;
+		}
+	}
+	.card-header.with-options
+	{
+		line-height: 38px;
 
-// Columns (masonry)
-.card-columns {
-    column-count: 3;
-    column-gap: 1.25rem;
-    .card {
-	    display: inline-block;
-	    width: 100%;
-	    margin-bottom: 1.8rem;
+		.card-header-options
+		{
+			float: right;
+		}
 	}
 }

@@ -1,43 +1,57 @@
-.badge {
+.badge
+{
     display: inline-block;
     text-align: center;
-    padding: $badge-pad-y $badge-pad-x;
-    color: $badge-default-color;
-    background-color: $badge-default-bg;
+    width: $badge-size;
+    height: $badge-size;
     font-size: $badge-font-size;
     line-height: $badge-line-height;
     border-radius: 50%;
     white-space: nowrap;
-    vertical-align: middle;
+
+    color: $badge-default-color;
+    background-color: $badge-default-bg;
 
     // Colors
-    &.badge-primary {
+    &.badge-primary
+    {
         color: #fff;
         background-color: $brand-primary;
     }
-    &.badge-success {
+    &.badge-secondary
+    {
+        color: #fff;
+        background-color: $brand-secondary;
+    }
+    &.badge-success
+    {
         color: #fff;
         background-color: $brand-success;
     }
-    &.badge-info {
+    &.badge-info
+    {
         color: #fff;
         background-color: $brand-info;
     }
-    &.badge-warning {
+    &.badge-warning
+    {
        color: #fff;
         background-color: $brand-warning;
     }
-    &.badge-danger {
+    &.badge-danger
+    {
         color: #fff;
         background-color: $brand-danger;
     }
-    &.badge-white {
+    &.badge-white
+    {
         color: $black;
         background-color: $white;
     }
 
     // Positioning
-    &.badge-up {
+    &.badge-up
+    {
         position: relative;
         top: -10px;
         margin: 0 -.8em;
@@ -47,33 +61,47 @@
 
 
 // In buttons
-.btn {
-    &.btn-primary .badge {
+.btn
+{
+    &.btn-primary .badge
+    {
         color: $brand-primary;
     }
-    &.btn-info .badge {
+    &.btn-secondary .badge
+    {
+        color: $brand-secondary;
+    }
+    &.btn-info .badge
+    {
         color: $brand-info;
     }
-    &.btn-success .badge {
+    &.btn-success .badge
+    {
         color: $brand-success;
     }
-    &.btn-warning .badge {
+    &.btn-warning .badge
+    {
         color: $brand-warning;
     }
-    &.btn-danger .badge {
+    &.btn-danger .badge
+    {
         color: $brand-danger;
     }
-    &.with-badge {
+    &.with-badge
+    {
         overflow: visible;
         position: relative;
-        .badge {
+        .badge
+        {
             position: absolute;
             top: -9px;
             right: -7px;
         }
     }
-    &.btn-pure {
-        .badge {
+    &.btn-pure
+    {
+        .badge
+        {
             top: 0;
             right: 4px;
         }

@@ -144,7 +144,7 @@
     DropDowns.prototype._windowClick = function(e)
     {
         e = e || window.event;
-        if (Helper.closestClass(e.target, 'js-drop-trigger'))
+        if (Helper.closest(e.target, '.js-drop-trigger'))
         {
             return;
         }

@@ -12,8 +12,6 @@
      */
     var Helper = Container.get('JSHelper');
 
-    var timer;
-
     /**
      * Module constructor
      *
@@ -70,6 +68,7 @@
         if (el.style.height === 'auto')
         {
             this._fromAuto(el, 0, time, easing, actualHeight, withOpacity);
+            
             return;
         }
 
@@ -77,10 +76,9 @@
         if (actualHeight === endHeight)
         {
             el.style.height = 'auto';
+            
             return;
         }
-        
-        clearTimeout(timer);
 
         // Opacity timer
         var opacityTime = (75 * time) / 100 + time;
@@ -91,17 +89,17 @@
         el.offsetHeight;
         
         // Run animations
-        Helper.animate(el, 'height',  actualHeight + 'px', endHeight + 'px', time, easing);
+        var remove = function()
+        {
+            Helper.css(el, 'height', 'auto');
+        };
+
+        Helper.animate(el, 'height',  actualHeight + 'px', endHeight + 'px', time, easing, remove);
+        
         if  (withOpacity)
         {
             Helper.animate(el, 'opacity', '0', '1', opacityTime, easing);
         }
-
-        timer = setTimeout(function()
-        {
-            Helper.css(el, 'height', 'auto');
-        }, time);
-
     }
 
     /**
@@ -117,7 +115,6 @@
      */
     ToggleHeight.prototype._fromAuto = function(el, initial, time, easing, actualHeight, withOpacity)
     {
-        clearTimeout(timer);
         var opacityTime = (15 * time) / 100 + time; 
 
         // Set the height to the actual height (which could be zero)

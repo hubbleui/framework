@@ -277,18 +277,20 @@ JSHelper.prototype.css = function(el, property, value)
  * Animate a css proprety
  *
  * @access public
- * @param  node   el          Target DOM node
- * @param  string cssProperty CSS property
- * @param  mixed  from        Start value
- * @param  mixed  to          Ending value
- * @param  int    time        Animation time in ms
- * @param  string easing      Easing function
+ * @param  node     el          Target DOM node
+ * @param  string   cssProperty CSS property
+ * @param  mixed    from        Start value
+ * @param  mixed    to          Ending value
+ * @param  int      time        Animation time in ms
+ * @param  string   easing      Easing function
+ * @param  function callback    Callback to apply when animation ends (optional)
  */
-JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
+JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
 {     
     // Set defaults if values were not provided;
-    time   = (typeof time === 'undefined' ? 300 : time);
-    easing = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
+    time     = (typeof time === 'undefined' ? 300 : time);
+    easing   = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
+    callback = (typeof callback === 'undefined' ? false : callback);
 
     // Width and height need to use js to get the starting size
     // if it was set to auto/initial/null
@@ -369,6 +371,11 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
             _this.removeStyle(el, 'transition');
 
             el.removeEventListener('transitionend', transitionEnd, false);
+
+            if (_this.isCallable(callback))
+            {
+                callback.call(null, el);
+            }
         }
 
     }, false);

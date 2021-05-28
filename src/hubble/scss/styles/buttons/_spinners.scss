@@ -1,5 +1,6 @@
-.btn .loading-spinner {
-	$spinner-size: $btn-font-size + $btn-pad-y + $btn-pad-y;
+.btn .loading-spinner
+{
+	$spinner-size: $btn-pad-y + $btn-pad-y + $btn-font-size / 2;
 	$spinner-top:  $spinner-size / 2;
     display: none;
     position: absolute;
@@ -9,9 +10,11 @@
     left: $btn-pad-x / 2;
     margin-top:  -$spinner-top;
 }
-.btn.with-spinner.active {
+.btn.with-spinner.active
+{
     padding-left: $btn-pad-x * 3;
 }
-.btn.active .loading-spinner {
+.btn.active .loading-spinner
+{
     display: inline-block;
 }

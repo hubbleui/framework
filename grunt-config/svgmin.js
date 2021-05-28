@@ -6,23 +6,34 @@
 var _options =
 {
     plugins :
-    [
-        {removeViewBox         : false},
-        {removeDimensions      : true},
-        {inlineStyles          : true},
-        {removeDoctype         : true},
-        {removeXMLProcInst     : true},
-        {removeComments        : true},
-        {removeMetadata        : true},
-        {removeTitle           : true},
-        {removeDesc            : true},
-        {removeUselessDefs     : false},
-        {removeXMLNS           : false},
-        {removeEditorsNSData   : true},
-        {removeEmptyAttrs      : true},
-        {collapseGroups        : true},
-        {removeAttrs           : { attrs: ['id', 'width', 'height', 'version']}}
-    ]
+    [{
+        cleanupAttrs            : true,
+        removeDimensions        : true,
+        inlineStyles            : true,
+        removeDoctype           : true,
+        removeXMLProcInst       : true,
+        removeComments          : true,
+        removeMetadata          : true,
+        removeTitle             : true,
+        removeDesc              : true,
+        removeUselessDefs       : false,
+        removeXMLNS             : false,
+        removeEditorsNSData     : true,
+        removeEmptyAttrs        : true,
+        collapseGroups          : true,
+        removeEmptyContainers   : true,
+        removeViewBox           : true,
+        cleanupEnableBackground : true,
+        convertStyleToAttrs     : true,
+        convertColors           : true,
+        cleanupIDs              : true,
+        moveGroupAttrsToElems   : true,
+        sortAttrs               : true,
+        removeAttrs             :
+        {
+            attrs: ['id', 'width', 'height', 'version']
+        }
+    }]
 };
 
 /**

@@ -3,7 +3,7 @@
     border-radius: $border-radius;
     background-color: $popover-bg;
     max-width: $popover-max-width;
-    box-shadow: $box-shadow-out;
+    box-shadow: $raised-level-one;
     z-index: $z-index-popover;
 }
 .popover-title {
@@ -86,6 +86,20 @@
 .popover-primary.arrow-n:before,
 .popover-primary.arrow-ne:before {
     border-bottom-color: $brand-primary;
+}
+
+// Secondary
+.popover-secondary .popover-title {
+    color: $white;
+    background-color: $brand-secondary;
+}
+.popover-secondary.arrow-nw:after,
+.popover-secondary.arrow-n:after,
+.popover-secondary.arrow-ne:after,
+.popover-secondary.arrow-nw:before,
+.popover-secondary.arrow-n:before,
+.popover-secondary.arrow-ne:before {
+    border-bottom-color: $brand-secondary;
 }
 
 

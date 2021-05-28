@@ -1,21 +1,22 @@
 // Colors
 $white:                     #ffffff !default;
-$black:                     #2A2A2A !default;
+$black:                     #000000 !default;
+$gray-darker:               #2A2A2A !default;
 $gray-dark:                 #585858 !default;
-$gray:                      #76838f !default;
-$gray-light:                #DADADA !default;
+$gray:                      #999a9d !default;
+$gray-light:                #bebebe !default;
 $gray-lighter:              #e9e9e9 !default;
 $gray-lightest:             #f4f4f4 !default;
 
-$brand-primary:             #ff3366 !default;
+$brand-primary:             #ff007e !default;
 $brand-secondary:           #01aef0 !default;
-$brand-success:             #70de99 !default;
-$brand-info:                #76afe1 !default;
-$brand-warning:             #ffde66 !default;
-$brand-danger:              #ff6666 !default;
+$brand-success:             #40dc7a !default;
+$brand-info:                #33a6ff !default;
+$brand-warning:             #ffd800 !default;
+$brand-danger:              #ff0042 !default;
 
 // Body
-$body-bg:                   #ffffff !default;
+$body-bg:                   #fafafa !default;
 $body-color:                #1d1d1d !default;
 
 // Links
@@ -25,7 +26,7 @@ $link-hover-color:          darken($link-color, 10%) !default;
 $link-hover-decoration:     underline !default;
 
 // Global font families
-$font-family-sans-serif:    -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !default;
+$font-family-sans-serif:    'Roboto', "Helvetica Neue", Arial, sans-serif !default;
 $font-family-serif:         Georgia, "Times New Roman", Times, serif !default;
 $font-family-monospace:     Menlo, Monaco, Consolas, "Courier New", monospace !default;
 $base-font-family:          $font-family-sans-serif !default;
@@ -45,7 +46,7 @@ $text-lightest:             100;
 $text-light:                300;
 $text-normal:               400;
 $text-bold:                 500;
-$text-bolder:               600;
+$text-bolder:               800;
 $text-boldest:              900;
 
 // Global base font styles
@@ -76,12 +77,20 @@ $headings-font-weight:      $text-normal !default;
 $headings-line-height:      1.1 !default;
 
 // Base aesthetics
-$border-radius:             2px !default;
-$box-shadow-out:            0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12) !default;
+$border-radius:             4px !default;
+
+// Raised levels
+$raised-level-one:          0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !default;
+$raised-level-one-hover:    0px 2px 4px -1px rgb(0 0 0 / 10%), 0px 4px 5px 0px rgb(0 0 0 / 12%), 0px 1px 10px 0px rgb(0 0 0 / 6%) !default;
+$raised-level-two:          0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24) !default;
+$raised-level-two-hover:    0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%) !default;
+$raised-level-three:        0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.16) !default;
+$raised-level-three-hover:  0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)!default;
 $box-shadow-in:             inset 0 5px 8px -2px rgba(0,0,0,.13) !default;
 
+
 // Base transitions
-$base-easing:               $ease;
+$base-easing:               cubic-bezier(.4,0,1,1);
 $base-easing-time:          .2s;
 
 // Grid breakpoints
@@ -148,13 +157,14 @@ $bq-color:                  $body-color;
 $bq-bg:                     darken($body-bg, 5);
 $bq-box-shadow:             none;
 $bq-padding:                2rem;
+$bq-border-radius:          4px;
 
 // Button
 $btn-text-transform:        uppercase !default;
-$btn-pad-x:                 2.1rem !default;
-$btn-pad-y:                 1.6rem !default;
-$btn-font-size:             1.1rem !default;
-$btn-font-weight:           $text-bolder !default;
+$btn-pad-x:                 1.6rem !default;
+$btn-pad-y:                 1.2rem !default;
+$btn-font-size:             1.4rem !default;
+$btn-font-weight:           $text-bold !default;
 
 $btn-xs-pad-x:              _minusPercent($btn-pad-x, 30) !default;
 $btn-xs-pad-y:              _minusPercent($btn-pad-y, 30) !default;
@@ -168,10 +178,14 @@ $btn-lg-pad-y:              _addPercent($btn-pad-y, 30) !default;
 $btn-xl-pad-x:              _addPercent($btn-pad-x, 50) !default;
 $btn-xl-pad-y:              _addPercent($btn-pad-y, 50) !default;
 
-$btn-default-bg:            $gray-light !default;
-$btn-default-bg-hover:      darken($gray-light, 10);
-$btn-default-color:         $gray !default;
-$btn-default-color-hover:   $brand-primary !default;
+$btn-default-bg:            $gray !default;
+$btn-default-color:         #fff !default;
+
+$btn-default-bg-hover:      #a4a6a9 !default;
+$btn-default-color-hover:   #fff !default;
+
+$btn-default-bg-active:     #b4b6b7 !default;
+$btn-default-color-active:  #fff !default;
 
 $circle-btn-font-size:      2.0rem;
 
@@ -200,6 +214,7 @@ $badge-font-size:           1.4rem !default;
 $badge-pad-x:               0.6rem !default;
 $badge-pad-y:               0 !default;
 $badge-line-height:         2rem;
+$badge-size:                2rem;
 
 // Label
 $label-default-bg:          $gray !default; 
@@ -207,6 +222,7 @@ $label-default-color:       #fff !default;
 $label-font-size:           1.1rem !default;
 $label-pad-x:               0.8rem !default;
 $label-pad-y:               0.4rem !default;
+$label-font-weight:         $text-bold;
 
 // Table
 $table-font-size:           1.3rem !default;
@@ -219,9 +235,6 @@ $table-cell-pad-y:          1.2rem !default;
 $table-cell-pad-x:          1.8rem !default;
 
 // Message
-$msg-default-bg:            $gray-lightest;
-$msg-default-icon-color:    $brand-primary;
-$msg-default-icon-bg:       $gray-light;
 
 // Popovers
 $popover-bg:                #fff;
@@ -231,32 +244,24 @@ $popover-content-padding:   8px 14px;
 
 // Card
 $card-bg:                   #ffffff;
-$card-border-width:         1px;
-$card-border-color:         $gray-light;
-$card-spacer-x:             1.25rem;
-$card-spacer-y:             0.75rem;
-$card-cap-bg:               $gray-lighter;
-$card-img-overlay-padding:  1.25rem;
-$card-deck-margin:          1.25rem;
+$card-block-padding:        2rem 1.6rem;
+$card-border-radius:        4px;
+$card-img-bg:               $gray-lightest;
+$card-img-padding:          0;
 
 // Inputs
-$input-font-size:             1.3rem !default;
-$input-line-height:           $base-line-height !default;
-$input-color:                 $gray-dark !default;
-$input-border-color:          #ccd5db !default;
-$input-hover-border-color:    $brand-info !default;
-$input-bg:                    transparent !default;
-$input-bg-hover:              transparent !default;
-$input-pad-y:                 1.15rem !default;
-$input-pad-x:                 1.2rem !default;
+$input-font-size:             1.6rem !default;
+$input-line-height:           1.6rem !default;
+$input-pad-y:                 12px !default;
+$input-pad-x:                 12px !default;
 $input-addon-bg:              $gray-lightest !default;
 $input-addon-color:           $gray-dark !default;
 
 // Checkbox
-$checkbox-size:               30px;
+$checkbox-size:               20px;
 
 // Radio
-$radio-size:                  30px;
+$radio-size:                  24px;
 
 // Status sizes
 $status-size:                 10px;         

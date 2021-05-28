@@ -1,4 +1,5 @@
-.btn {
+.btn
+{
     display: inline-block;
     margin: 0;
     font-weight: normal;
@@ -7,7 +8,7 @@
     overflow: hidden;
     border-radius: $border-radius;
     font-size: $btn-font-size;
-    line-height: $btn-font-size + .3;
+    line-height: $btn-font-size;
     background-color: $btn-default-bg;
     border: 1px solid $btn-default-bg;
     color: $btn-default-color;
@@ -19,19 +20,34 @@
     text-decoration: none;
     transition: background-color $base-easing-time $base-easing, border-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
     padding: $btn-pad-y $btn-pad-x;
-    padding: $btn-pad-y $btn-pad-x;
-    
-    // Default hover styles
-    &:hover {
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 2px 0 rgba($btn-default-bg, 14%), 0 3px 1px -2px rgb($btn-default-bg, 20%), 0 1px 5px 0 rgb($btn-default-bg, 12%);
+
+    &:hover,
+    &.hover
+    {
         background-color: $btn-default-bg-hover;
         border-color: $btn-default-bg-hover;
         color: $btn-default-color-hover;
-
+        box-shadow: 0 14px 26px -12px rgb($btn-default-bg, 42%), 0 4px 23px 0 rgb(0 0 0 / 12%), 0 8px 10px -5px rgb($btn-default-bg, 20%);
+    }
+    &:active,
+    &.active
+    {
+        background-color: $btn-default-bg-active;
+        border-color: $btn-default-bg-active;
+        color: $btn-default-color-active;
+        box-shadow: none;
     }
 
-    // Not raised has no box shadow
-    &:not(.raised) {
-        box-shadow: none;
+    // Raised
+    &.raised-2
+    {
+        @include raised(2);
+    }
+    &.raised-3
+    {
+        @include raised(3);
     }
 
     // Hover/active/focus resets
@@ -40,15 +56,10 @@
     &:active,
     &.active,
     &:focus,
-    &.focus {
+    &.focus
+    {
         text-decoration: none;
         outline: none;
-    }
-
-    // Active boxshadow inset
-    &:active,
-    &.active {
-        box-shadow: $box-shadow-in;
     }
 
     // Disabled
@@ -59,29 +70,25 @@
     &:disabled:active,
     &:disabled.active,
     &:disabled:focus,
-    &.disabled.focus {
+    &.disabled.focus
+    {
         box-shadow: none;
         opacity: 0.4;
         cursor: not-allowed;
     }
 
-    // Raised base style
-    &.raised:active,
-    &.raised.active {
-        box-shadow: 0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
-    }
-
-    // Pure base styles
-    &.btn-pure {
+    // Flat
+    &.flat
+    {
+        box-shadow: none;
         &:hover,
         &.hover,
         &:active,
         &.active,
         &:focus,
-        &.focus{
-            border-color: transparent;
+        &.focus
+        {
             box-shadow: none;
-            background-color: transparent;
         }
     }
     .glyph-icon
@@ -90,7 +97,6 @@
         line-height: $btn-icon-line-height;
         vertical-align: $btn-icon-vertical-align;
     }
-
     .loading-spinner .path
     {
         stroke: $btn-default-color;
@@ -98,59 +104,70 @@
 }
 
 // Sizes
-.btn-xs {
+.btn-xs
+{
     padding: $btn-xs-pad-y $btn-xs-pad-x;
 }
-.btn-sm {
+.btn-sm
+{
     padding: $btn-sm-pad-y $btn-sm-pad-x;
 }
-.btn-lg {
+.btn-lg
+{
     padding: $btn-lg-pad-y $btn-lg-pad-x;
 }
-.btn-xl {
+.btn-xl
+{
     padding: $btn-xl-pad-y $btn-xl-pad-x;
 }
 
 // Circle default and sizes 
-.btn-circle {
+.btn-circle
+{
     border-radius: 50%;
     font-size: $circle-btn-font-size;
     padding: $btn-font-size;
-    &.btn-xs {
+    &.btn-xs
+    {
        padding: _minusPercent($btn-font-size, 40);
     }
-    &.btn-sm {
+    &.btn-sm
+    {
         padding: _minusPercent($btn-font-size, 20);
     }
-    &.btn-lg {
+    &.btn-lg
+    {
         padding: _addPercent($btn-font-size, 30);
     }
-    &.btn-xl {
+    &.btn-xl
+    {
        padding: _addPercent($btn-font-size, 50);
     }
-    .glyph-icon {
+    .glyph-icon
+    {
         line-height: normal;
         line-height: initial;
-    }
-    &:not(.raised):active{
-        box-shadow: none;
     }
 }
 
 // Block buttons
-.btn-block {
+.btn-block
+{
     display: block;
     width: 100%;
 }
-.btn-block + .btn-block {
+.btn-block + .btn-block
+{
     margin-top: 5px;
 }
 
 // Override input buttons
 input[type="submit"],
 input[type="reset"],
-input[type="button"] {
-    &.btn-block {
+input[type="button"]
+{
+    &.btn-block
+    {
         width: 100%;
     }
 }

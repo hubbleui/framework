@@ -1,49 +1,57 @@
 // Message color variants
-.msg {
+.msg
+{
     position: relative;
     overflow: hidden;
-    border-radius: $border-radius;
-    background-color: $msg-default-bg;
-    .msg-icon {
-        background-color: $msg-default-icon-bg;
-        color: $msg-default-icon-color;
+    border-radius: 4px;
+    background-color: transparent;
+    border: 1px solid $gray-lighter;
+    .msg-icon
+    {
+        color: #ffffff;
     }
     
     // Layout
     .msg-icon,
-    .msg-body {
+    .msg-body
+    {
         display: table-cell;
     }
 
     // Message Icon
-    .msg-icon {
+    .msg-icon
+    {
         text-align: center;
         vertical-align: middle;
-        padding: 30px;
-        width: 60px;
-        background-color: rgba(0, 0, 0, 0.25);
-        .glyph-icon {
-            font-size: 20px;
-            width: 20px;
-            height: 20px;
-            line-height: 32px;
+        width: 80px;
+        .glyph-icon
+        {
+            background-color: $gray;
+            border-radius: 50%;
+            font-size: 16px;
+            width: 40px;
+            height: 40px;
+            line-height: 41px;
         }
     }
 
 
 
     // Message Body
-    .msg-body {
+    .msg-body
+    {
         vertical-align: middle;
-        padding: 30px 20px 30px 30px;
+        padding: 30px 20px 30px 0px;
 
-        p {
+        p
+        {
             font-size: 1.4rem;
-            font-weight: $text-bold;
             margin: 0;
-            a {
+            a
+            {
                 color: rgba(0,0,0,0.3);
-                &:hover {
+                &:hover
+                {
                     color: rgba(0,0,0,0.5);
                 }
             }
@@ -51,7 +59,8 @@
     }
 
     // Close button
-    .closer-trigger {
+    .closer-trigger
+    {
         position: absolute;
         top: 12px;
         right: 13px;
@@ -59,49 +68,58 @@
         opacity: 0.5;
         transition: opacity $base-easing-time $base-easing;
         font-size: 1.3rem;
-        &:hover {
+        &:hover
+        {
             opacity: 1;
         }
     }
 
-    &.msg-primary {
-        color: #ffffff;
-        background-color: $brand-primary;
-        .msg-icon,
-        .closer-trigger {
-            color: #fff;
+    &.msg-primary
+    {
+        .msg-icon .glyph-icon
+        {
+           background-color: rgba($brand-primary, 0.3);
+           color: $brand-primary;
         }
     }
-    &.msg-info {
-        color: #ffffff;
-        background-color: $brand-info;
-        .msg-icon,
-        .closer-trigger {
-            color: #fff;
+    &.msg-secondary
+    {
+        .msg-icon .glyph-icon
+        {
+            background-color: rgba($brand-secondary, 0.3);
+            color: $brand-secondary;
         }
     }
-    &.msg-success {
-        color: #ffffff;
-        background-color: $brand-success;
-        .msg-icon,
-        .closer-trigger  {
-            color: #fff;
+    &.msg-info
+    {
+        .msg-icon .glyph-icon
+        {
+            background-color: rgba($brand-info, 0.3);
+            color: $brand-info;
         }
     }
-    &.msg-warning {
-        color: #ffffff;
-        background-color: $brand-warning;
-        .msg-icon,
-        .closer-trigger {
-            color: #fff;
+    &.msg-success
+    {
+        .msg-icon .glyph-icon
+        {
+            background-color: rgba($brand-success, 0.3);
+            color: $brand-success;
         }
     }
-    &.msg-danger {
-        color: #ffffff;
-        background-color: $brand-danger;
-        .msg-icon,
-        .closer-trigger {
-            color: #fff;
+    &.msg-warning
+    {
+        .msg-icon .glyph-icon
+        {
+            background-color: rgba($brand-warning, 0.3);
+            color: $brand-warning;
+        }
+    }
+    &.msg-danger
+    {
+        .msg-icon .glyph-icon
+        {
+           background-color: rgba($brand-danger, 0.3);
+           color: $brand-danger;
         }
     }
 }

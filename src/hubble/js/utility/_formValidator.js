@@ -64,7 +64,7 @@
 
         // Show the invalid inputs
         for (var j = 0; j < this._invalids.length; j++) {
-            var __wrap = Helper.closestClass(this._invalids[j], 'form-field');
+            var __wrap = Helper.closest(this._invalids[j], '.form-field');
             if (Helper.nodeExists(__wrap)) Helper.addClass(__wrap, 'danger');
         }
     }
@@ -228,7 +228,7 @@
 
         // Make all input elements 'valid' - i.e hide the error msg and styles.
         for (var i = 0; i < this._inputs.length; i++) {
-            var _wrap = Helper.closestClass(this._inputs[i], 'form-field');
+            var _wrap = Helper.closest(this._inputs[i], '.form-field');
             if (Helper.nodeExists(_wrap)) Helper.removeClass(_wrap, ['info', 'success', 'warning', 'danger'])
         }
     };

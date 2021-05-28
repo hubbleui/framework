@@ -1,89 +1,467 @@
 $select-pos-y : _minusPercent($input-pad-y, 10);
 
-.form-field {
+
+
+@mixin placeholder
+{
+    &::placeholder               {@content}
+    &::-webkit-input-placeholder {@content}
+    &:-moz-placeholder           {@content}
+    &::-moz-placeholder          {@content}
+    &:-ms-input-placeholder      {@content}  
+}
+
+.form-field
+{
     position: relative;
-    display: inline-block;    
-    input,textarea, select {
+    display: inline-block;
+
+    // Label Setup
+    input[type="date"] + label,
+    input[type="datetime-local"] + label,
+    input[type="email"] + label,
+    input[type="file"] + label,
+    input[type="hidden"] + label,
+    input[type="image"] + label,
+    input[type="month"] + label,
+    input[type="number"] + label,
+    input[type="password"] + label,
+    input[type="reset"] + label,
+    input[type="search"] + label,
+    input[type="tel"] + label,
+    input[type="text"] + label,
+    input[type="time"] + label,
+    input[type="url"] + label,
+    input[type="week"] + label,
+    textarea + label,
+    select + label
+    {
+        font-size: $input-font-size;
+        font-weight: $text-normal;
+        line-height: $input-line-height;
+        text-align: left;
+        color: $gray;
+        position: absolute;
+        top: 50%;
+        left: $input-pad-y;
+        height: $input-line-height;
+        transition: transform 0.15s $base-easing;
+        transform: translateY(-$input-line-height / 2);
+        transform-origin: left top;
+        cursor: text;
+    }
+
+    // Focus + Not empty label
+    &.focus,
+    &:focus-within,
+    &.not-empty
+    {
+        input[type="date"] + label,
+        input[type="datetime-local"] + label,
+        input[type="email"] + label,
+        input[type="file"] + label,
+        input[type="hidden"] + label,
+        input[type="image"] + label,
+        input[type="month"] + label,
+        input[type="number"] + label,
+        input[type="password"] + label,
+        input[type="reset"] + label,
+        input[type="search"] + label,
+        input[type="tel"] + label,
+        input[type="text"] + label,
+        input[type="time"] + label,
+        input[type="url"] + label,
+        input[type="week"] + label,
+        textarea + label,
+        select + label
+        {
+            transform: translateY(-18px) scale(0.75);
+        }
+    }
+
+    // Focus label
+    &.focus,
+    &:focus-within
+    {
+        input[type="date"] + label,
+        input[type="datetime-local"] + label,
+        input[type="email"] + label,
+        input[type="file"] + label,
+        input[type="hidden"] + label,
+        input[type="image"] + label,
+        input[type="month"] + label,
+        input[type="number"] + label,
+        input[type="password"] + label,
+        input[type="reset"] + label,
+        input[type="search"] + label,
+        input[type="tel"] + label,
+        input[type="text"] + label,
+        input[type="time"] + label,
+        input[type="url"] + label,
+        input[type="week"] + label,
+        textarea + label,
+        select + label
+        {
+            color: $brand-info;
+        }
+    }
+
+    // Placeholder basics
+    input[type="date"],
+    input[type="datetime-local"],
+    input[type="email"],
+    input[type="file"],
+    input[type="hidden"],
+    input[type="image"],
+    input[type="month"],
+    input[type="number"],
+    input[type="password"],
+    input[type="reset"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="text"],
+    input[type="time"],
+    input[type="url"],
+    input[type="week"],
+    textarea,
+    select
+    {
+        @include placeholder
+        {
+            font-size: $input-font-size * 0.9;
+            font-weight: $text-normal;
+            line-height: $input-line-height;
+            opacity: 0;
+            color: transparent;
+            transition: opacity $base-easing-time $base-easing, color $base-easing-time $base-easing;
+        }
+    }
+
+    // Focus placeholder
+    &.focus,
+    &:focus-within
+    {
+        input[type="date"],
+        input[type="datetime-local"],
+        input[type="email"],
+        input[type="file"],
+        input[type="hidden"],
+        input[type="image"],
+        input[type="month"],
+        input[type="number"],
+        input[type="password"],
+        input[type="reset"],
+        input[type="search"],
+        input[type="tel"],
+        input[type="text"],
+        input[type="time"],
+        input[type="url"],
+        input[type="week"],
+        textarea,
+        select
+        {
+            @include placeholder
+            {
+                opacity: 1;
+                color: $gray-light;
+            }
+        }
+    }
+
+    // Not empty placeholder
+    &.focus,
+    &:focus-within,
+    &.not-empty
+    {
+        input[type="date"],
+        input[type="datetime-local"],
+        input[type="email"],
+        input[type="file"],
+        input[type="hidden"],
+        input[type="image"],
+        input[type="month"],
+        input[type="number"],
+        input[type="password"],
+        input[type="reset"],
+        input[type="search"],
+        input[type="tel"],
+        input[type="text"],
+        input[type="time"],
+        input[type="url"],
+        input[type="week"],
+        textarea,
+        select
+        {
+            @include placeholder
+            {
+                opacity: 1;
+                color: $gray-light;
+            }
+        }
+    }
+
+    // Basic input styling
+    input[type="file"],
+    input[type="week"],
+    input[type="time"],
+    input[type="month"],
+    input[type="datetime-local"],
+    input[type="date"],
+    input[type="email"],
+    input[type="number"],
+    input[type="password"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="text"],
+    input[type="url"],
+    textarea,
+    select,
+    {
         display: block;
         width: 100%;
         font-size: $input-font-size;
-        padding: $input-pad-y $input-pad-x;
+        padding: 24px 12px 9px 12px;
         border-radius: $border-radius;
         outline: none;
         font-weight: $text-normal;
         line-height: $input-line-height;
-        color: $input-color;
-        background-color: $input-bg;
-        border: 1px solid $input-border-color;
+        color: $gray-darker;
+        background-color: transparent;
+        border: 1px solid $gray;
         transition: background-color $base-easing-time $base-easing, border-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
         box-shadow: none;
         -webkit-appearance: none;
         &:focus,
-        &.focus {
-            background-color: $input-bg-hover;
-            border-color: $input-hover-border-color;
+        &.focus
+        {
+            background-color: transparent;
+            border-color: $brand-info;
+            box-shadow: inset 0 0 0 1px $brand-info;
         }
         &.disabled,
-        &:disabled {
-            background-color: $gray-light;
+        &:disabled
+        {
+            background-color: rgba(0,0,0,0.1);
             opacity: 0.4;
             cursor: not-allowed;
         }
     }
-    select {
+
+    // Select
+    select
+    {
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
-        padding: $input-pad-y ($input-pad-x * 3) $input-pad-y $input-pad-x;
         background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%), linear-gradient(to right, #ccc, #ccc);
         background-position: calc(100% - 20px) calc(1em + #{$select-pos-y}), calc(100% - 15px) calc(1em + #{$select-pos-y}), calc(100% - 37px) 11px;
         background-size: 5px 5px, 5px 5px, 0px 1.5em;
         background-repeat: no-repeat;
+        padding: 30px 12px 9px 12px;
     }
-    label {
-        display: block;
-        width: 100%;
-        font-size: 1.3rem;
-        margin-bottom: 5px;
-        font-weight: $text-bolder;
-        line-height: $input-line-height;
-        color: $input-color;
-        white-space: nowrap;
-        transition: all $base-easing-time $base-easing;
-        &.color-inherit {
-            color:inherit;
-        }
+    select,
+    &.empty select
+    {
+        position: relative;
+        text-indent: -99999px;
     }
+    &.not-empty select,
+    select:focus
+    {
+        text-indent: 0;
+    }
+
+    // textarea,
+    textarea
+    {
+        resize: vertical;
+    }
+    textarea + label
+    {
+        top: 26px;
+    }
+        
     .help-danger,
-    .help-warning {
+    .help-warning
+    {
         overflow: hidden;
         margin: 0;
         font-weight: $text-bold;
         max-height: 0;
         transition: max-height $base-easing-time $base-easing;
     }
-    .help-danger {
+    .help-danger
+    {
         color: $brand-danger;
     }
-    .help-warning {
+    .help-warning
+    {
         color: $brand-warning;
     }
-    &.danger {
-        input, textarea, select {
+    &.danger
+    {
+        input, textarea, select
+        {
             border-color: $brand-danger;
         }
-        input + .help-danger, textarea + .help-danger, select + .help-danger {
+        input + .help-danger, textarea + .help-danger, select + .help-danger
+        {
             max-height: 50px;
             transition: max-height $base-easing-time $base-easing;
         }
     }
-    &.warning {
-        input,textarea, select {
+    &.warning
+    {
+        input,textarea, select
+        {
             border-color: $brand-warning;
         }
-        input + .help-warning, textarea + .help-warning, select + .help-warning {
+        input + .help-warning, textarea + .help-warning, select + .help-warning
+        {
             max-height: 50px;
             transition: max-height $base-easing-time $base-easing;
         }
     }
+
+    // Special inputs
+    input[type="time"],
+    input[type="week"],
+    input[type="date"],
+    input[type="month"],
+    input[type="datetime-local"]
+    {
+        position: relative;
+        appearance: none;
+        text-indent: -99px;
+    }
+    input[type="time"]::-webkit-inner-spin-button,
+    input[type="week"]::-webkit-inner-spin-button,
+    input[type="date"]::-webkit-inner-spin-button,
+    input[type="month"]::-webkit-inner-spin-button,
+    input[type="datetime-local"]::-webkit-inner-spin-button
+    {
+        display: none;
+    }
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="week"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="month"]::-webkit-calendar-picker-indicator,
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator
+    {
+        opacity: 0;
+    }
+
+    input[type="time"]:before,
+    input[type="week"]:before,
+    input[type="month"]:before,
+    input[type="date"]:before,
+    input[type="datetime-local"]:before
+    {
+        font-family: 'IcoMoon';
+        content: "\e953";
+        display: inline-block;
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        padding: 3px;
+        top: 50%;
+        right: $input-pad-y;
+        margin-top: -10px;
+        color: $gray;
+        text-indent: 0;
+        cursor: pointer;
+    }
+    input[type="time"]:before
+    {
+        content: "\e94f";
+    }
+    
+    input[type="time"]:focus:before,
+    input[type="week"]:focus:before,
+    input[type="month"]:focus:before,
+    input[type="date"]:focus:before,
+    input[type="datetime-local"]:focus:before
+    {
+        color: $brand-info;
+    }
+
+    &.not-empty input[type="time"],
+    &.not-empty input[type="week"],
+    &.not-empty input[type="date"],
+    &.not-empty input[type="month"],
+    &.not-empty input[type="datetime-local"],
+
+    input[type="time"]:focus,
+    input[type="week"]:focus,
+    input[type="date"]:focus,
+    input[type="month"]:focus,
+    input[type="datetime-local"]:focus,
+    {
+        text-indent: 0;
+    }
+
+    // File
+    // File upload button
+    &.file-field
+    {
+        input:first-child,
+        button
+        {
+            float: left;
+            display: inline-block;
+            width: auto;
+        }
+        .file-text
+        {
+            opacity: 1;
+            cursor: default;
+            background-color: transparent;
+        }
+    }
+    .btn-upload
+    {
+        position: relative;
+        cursor: pointer;
+        margin: 2px 10px;
+        .glyph-icon
+        {
+            line-height: 2.3rem;
+        }
+    }
+    .btn-upload .upload-cover
+    {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        cursor: pointer;
+    }
+    .btn-upload input
+    {
+        opacity: 0;
+        display: block;
+        width: 100%;
+        cursor: pointer;
+    }
+    .btn-upload.btn-sm,
+    .btn-upload.btn-xs .upload-cover
+    {
+        line-height: 19px;
+    }
+
+       
+
+    // Color picker
+
+    // Date
+
+    // File
+
+    // Range
+
+    // Search
+
+    // Time
+
+    // Week
 }

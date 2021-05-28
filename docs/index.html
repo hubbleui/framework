@@ -3,21 +3,21 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Hubble UI</title>
-  	<meta name="description" content="A vanilla HTML, CSS, &amp; JavaScript framework.">
+    <title>Documentation | Hubble UI</title>
+
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="shortcut icon" href="http://hubbleui.github.io/build/img/favicon.png">
-    <link rel="apple-touch-icon" type="image/png" sizes="57x57" href="http://hubbleui.github.io/build/img/apple-touch-icon.png">
-    <link rel="apple-touch-icon" type="image/png" sizes="72x72" href="http://hubbleui.github.io/build/img/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" type="image/png" sizes="114x114" href="http://hubbleui.github.io/build/img/apple-touch-icon-114x114.png">
+    <link rel="shortcut icon" href="../build/img/favicon.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="57x57" href="../build/img/apple-touch-icon.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="72x72" href="../build/img/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" type="image/png" sizes="114x114" href="../build/img/apple-touch-icon-114x114.png">
 
-    <link rel="stylesheet" href="/build/css/hubble.min.css">
-    <link rel="stylesheet" href="/build/css/theme.min.css">
+    <link rel="stylesheet" href="../build/css/hubble.min.css">
+    <link rel="stylesheet" href="../build/css/docs.min.css">
 </head>
 
-<body style="background: linear-gradient(122deg,#e06584,#19094e);">
+<body>
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" style="display:none" xml:space="preserve">
     <g id="logo">
         <path fill="#FF3366" d="M26.002,468.48c-7.372-0.193-11.097-6.621-8.215-11.615c0.814-1.41,2.081-2.588,3.253-3.762c41.353-41.369,82.719-82.727,124.087-124.08c0.942-0.943,1.841-1.965,2.918-2.727c3.436-2.428,6.943-2.375,10.003,0.531c3.071,2.916,3.197,6.461,1.041,9.99c-0.765,1.252-1.949,2.262-3.005,3.318c-41.24,41.248-82.472,82.504-123.776,123.688C30.178,465.947,27.425,467.447,26.002,468.48z"/>
@@ -36,61 +36,338 @@
 <div class="page-wrapper">
 
     <header class="site-header" data-waypoint="header">
-        
         <nav class="desktop-nav sm md lg xl">
-		    <div class="container-fluid clearfix">
-		        <a class="float-left inline-block logo" href="/">
-		            <svg viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
-		        </a>
-		        <ul class="nav-right float-right list-inline text-right uppercase">
-		            <li><a class="fancy-link" href="/docs/1.0.0/">Documentation</a></li>
-                    <li><a class="fancy-link" href="https://github.com/hubbleui/framework/issues" target="_blank">Issues</a></li>
-                    <li><a class="fancy-link" href="https://github.com/hubbleui/" target="_blank">GitHub</a></li>
-                    <li><a class="fancy-link" href="https://github.com/hubbleui/framework/archive/master.zip" target="_blank">Download</a></li>
-		        </ul>
-		    </div>
-		</nav>
 
+    <div class="container-fluid clearfix">
+
+        <a class="float-left inline-block logo" href="/index.html">
+            <svg viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
+        </a>
+
+        <ul class="nav-right float-right list-inline text-right uppercase">
+            <li><a class="fancy-link" href="">Documentation</a></li>
+            <li><a class="fancy-link" href="https://github.com/hubbleui/framework/issues" target="_blank">Issues</a></li>
+            <li><a class="fancy-link" href="https://github.com/hubbleui/" target="_blank">GitHub</a></li>
+            <li><a class="fancy-link" href="https://github.com/hubbleui/framework/archive/master.zip" target="_blank">Download</a></li>
+        </ul>
+
+    </div>
+
+</nav> 
         <nav class="mobile-nav xs">      
-		    <div class="container-fluid clearfix">
-		        <a class="float-left inline-block logo" href="/">
-		            <svg viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
-		        </a>
-		        <a href="#" class="xs hamburger float-right js-collapse" data-collapse-target="mobile-menu" role="button" title="Toggle navigation">
-				    <span class="hamburger-bun  hamburger-bun--top"></span>
-				    <span class="hamburger-patty"></span>
-				    <span class="hamburger-bun  hamburger-bun--btm"></span>
-				</a>
+    <div class="container-fluid clearfix">
+
+        <a class="float-left inline-block logo" href="/index.html">
+            <svg viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
+        </a>
+
+        <a href="#" class="xs hamburger float-right js-collapse" data-collapse-target="mobile-menu" role="button" title="Toggle navigation">
+		    <span class="hamburger-bun  hamburger-bun--top"></span>
+		    <span class="hamburger-patty"></span>
+		    <span class="hamburger-bun  hamburger-bun--btm"></span>
+		</a>
+
+    </div>
+
+</nav>
+
+<div class="mobile-nav-drop xs collapsed" id="mobile-menu">
+	<ul class="list-unstyled">
+	    <li><a href="/index.html">Documentation</a></li>
+        <li><a href="https://github.com/hubbleui/framework/issues" target="_blank">Issues</a></li>
+        <li><a href="https://github.com/hubbleui/" target="_blank">GitHub</a></li>
+        <li><a href="https://github.com/hubbleui/framework/archive/master.zip" target="_blank">Download</a></li>
+	</ul>
+</div>    </header>
+
+   <div class="container-fluid main-container">
+	<div class="col col-12 col-md-3 gutter-md-xl gutter-md-r">
+	<div class="doc-menu js-docs-menu">
+							    <div class="title-wrap js-collapse active" data-collapse-target="getting-started">
+		        <h6>Getting started</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
 		    </div>
-		</nav>
+		    <ul class="list-unstyled " id="getting-started">
+		    		    			    	<li>
+		    		<a class="active" href="getting-started/introduction/index.html">
+		    			Introduction		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="getting-started/download/index.html">
+		    			Download		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="getting-started/project-setup/index.html">
+		    			Project setup		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="getting-started/boilerplate/index.html">
+		    			Boilerplate		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="css">
+		        <h6>CSS</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="css">
+		    		    			    	<li>
+		    		<a class="" href="css/overview/index.html">
+		    			Overview		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="css/grid/index.html">
+		    			Grid		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="css/typography/index.html">
+		    			Typography		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="css/tables/index.html">
+		    			Tables		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="css/forms/index.html">
+		    			Forms		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="css/buttons/index.html">
+		    			Buttons		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="components">
+		        <h6>Components</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="components">
+		    		    			    	<li>
+		    		<a class="" href="components/cards/index.html">
+		    			Cards		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/carousel/index.html">
+		    			Carousel		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/collapse/index.html">
+		    			Collapse		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/dropdowns/index.html">
+		    			Dropdowns		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/fancylink/index.html">
+		    			Fancylink		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/hamburger/index.html">
+		    			Hamburger		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/icons/index.html">
+		    			Icons		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/inline-elements/index.html">
+		    			Inline elements		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/input-mask/index.html">
+		    			Input mask		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/media/index.html">
+		    			Media		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/messages/index.html">
+		    			Messages		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/modals/index.html">
+		    			Modals		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/notifications/index.html">
+		    			Notifications		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/pagination/index.html">
+		    			Pagination		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/popovers/index.html">
+		    			Popovers		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/scrollbars/index.html">
+		    			Scrollbars		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/spinners/index.html">
+		    			Spinners		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/tabs/index.html">
+		    			Tabs		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/tooltips/index.html">
+		    			Tooltips		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="components/waypoints/index.html">
+		    			Waypoints		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="javascript">
+		        <h6>JavaScript</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="javascript">
+		    		    			    	<li>
+		    		<a class="active" href="javascript/introduction/index.html">
+		    			Introduction		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="javascript/components/index.html">
+		    			Components		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="javascript/modules/index.html">
+		    			Modules		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="javascript/events/index.html">
+		    			Events		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="javascript/helperjs/index.html">
+		    			HelperJS		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="javascript/ajax/index.html">
+		    			Ajax		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="javascript/input-masker/index.html">
+		    			Input masker		    		</a>
+		    	</li>
+		    		    			    	<li>
+		    		<a class="" href="javascript/form-validation/index.html">
+		    			Form validation		    		</a>
+		    	</li>
+		     
+		    </ul>
+		 					    <div class="title-wrap js-collapse " data-collapse-target="scss">
+		        <h6>SCSS</h6>
+		        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+		    </div>
+		    <ul class="list-unstyled collapsed" id="scss">
+		    		    			    	<li>
+		    		<a class="" href="scss/helpers-and-extensions/index.html">
+		    			Helpers and Extensions		    		</a>
+		    	</li>
+		     
+		    </ul>
+		  
+	</div>
+</div>	<div class="col col-12 col-md-9">
+	<div class="xs sm row floor-sm">
+	    <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger">
+	    	Documentation Menu
+	    </button>
+	</div>
+	<article class="docs-body">
+		<h1>Introduction</h1>
+<hr>
 
-		<div class="mobile-nav-drop xs collapsed" id="mobile-menu">
-			<ul class="list-unstyled">
-			    <li><a href="/docs/1.0.0/">Documentation</a></li>
-                <li><a href="https://github.com/hubbleui/framework/issues" target="_blank">Issues</a></li>
-                <li><a href="https://github.com/hubbleui/" target="_blank">GitHub</a></li>
-                <li><a href="https://github.com/hubbleui/framework/archive/master.zip" target="_blank">Download</a></li>
-			</ul>
-		</div>
+<ul class="list-bullet">
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="welcome" data-waypoint-speed="400">Welcome</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="how-hubble" data-waypoint-speed="500">How does it work?</a></li>
+    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="reading-docs" data-waypoint-speed="700">How to read this documentation</a></li>
+</ul>
 
-    </header>
+<hr>
 
-    <section class="text-center color-white relative" style="height:500px;">
-    	
-    	<svg class="absolute left-0 right-0 margin-center margin-xl-n" width="60px" viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg>
-    	
-    	<div class="row roof-xl">
-	    	<h1 class="margin-xl-n">Hubble UI</h1>
-	    	<h2 class="h6 text-italic">A vanilla HTML, CSS, &amp; JavaScript framework.</h2>
-	    	<a href="/docs/1.0.0/" class="btn btn-lg btn-info margin-xl-n">View The Docs</a>
-	    </div>
-    </section>
 
+<div class="row roof-xs floor-xs" data-waypoint="welcome">
+    <h2>Welcome</h2>
+    <p>
+        Hubble is modular <code>CSS</code> and <code>JavaScript</code> front-end framework built with <code>SCSS</code> and vanilla <code>JavaScript</code>. 
+        Hubble is designed so that you can use it as a starting point for any sized project from a tiny landing page to a giant web app.
+    </p>
+    <p>
+        One of the main purposes of Hubble is to save you time. Save you time writing <code>CSS(SCSS)</code> and <code>JavaScript</code> while building beautiful web pages with ease. 
+        Hubble is is a medium to large front-end framework. It has everything you need to start your next project.
+    </p>
+    <blockquote class="bq-info">
+        <p>Hubble is 100% <code>JavaScript</code> Dependency free (no <code>jQuery</code>) - 
+        It's Vanilla JavaScript helping keep your project as slim as possible.</p>
+    </blockquote>
+</div>
+
+<hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="how-hubble">
+    <h2>How does it work?</h2>
+    <p>
+        Hubble is really easy to setup and even easier to use. 
+        Hubble is written in <code>SCSS</code> and vanilla <code>JavaScript</code>. It's dependency free and doesn't use <code>jQuery</code> at all. 
+    </p>
+    <p>
+        There are a two different ways to use Hubble:
+    </p>
+    <p> 
+        <strong>Basic Usage</strong><br>
+        The most basic way would be to simply <a href="">download the latest build</a>, 
+        include <code>hubble.css</code> and <code>hubble.js</code> in your project.
+    </p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="hubble.css">
+</head>
+<body>
+
+    <script src="hubble.min.js"></script>
+</body>
+-->
+</code></pre>
+
+    <p>
+        If you are wanting to use Hubble this way. You would simply include it in your project and build ontop of it with your own <code>CSS</code> and <code>JavaScript</code>. 
+        If you intend to use Hubble this way, you can simply skip the <code>Getting started</code> part of this documentation and start familiarizing yourself with the Hubble's <code>CSS</code>.
+    <p> 
+        <strong>Recommended Usage</strong><br>
+        The recommended way to use Hubble however is to build your project using <code>SCSS</code>, and integrate your own Hubble theme. You'll find out more information on how to do this correctly as you follow the documentation.
+    </p>
 
 </div>
 
+<hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="reading-docs">
+    <h2>How to read this documentation</h2>
+    <p>
+        If you are new to Hubble, I recommend you read this documentation from start to finish. If you are already familiar with Hubble, you can instead jump straight to the appropriate section.
+    </p>
+    <p>
+        This documentation begins by explaining Hubble's concepts and architecture before venturing into specific topics like components, modules and mixins.
+    </p>
+</div>
+	</article>
+</div></div>
+</div>
+
 <footer class="site-footer">
-    <div class="container-fluid clearfix">
+	<div class="container-fluid clearfix">
 
         <div class="col col-12 col-sm-7 gutter-sm-r">
 
@@ -98,13 +375,13 @@
 
                 <ul class="list-inline">
                     <li>
-                        <a href="/docs/1.0.0/">Documentation</a>
+                        <a href="/index.html">Documentation</a>
                     </li>
                     <li>
                         <a href="https://github.com/hubbleui/framework/issues">Issues</a>
                     </li>
                     <li>
-                        <a href="https://github.com/hubbleui/">GitHub</a>
+                        <a href="https://github.com/hubbleui">GitHub</a>
                     </li>
                     <li>
                         <a href="https://github.com/hubbleui/framework/archive/master.zip">Download</a>
@@ -128,7 +405,7 @@
 
             <ul class="list-inline social-links">
                 <li>
-                    <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/">
+                    <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/index.html">
                         <span class="icon icon-social glyph-icon glyph-icon-github"></span>
                     </a>
                 </li>
@@ -139,19 +416,19 @@
                 </li>
                 <li>
                     <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
-                        <span class="icon glyph-icon glyph-icon-chevron-up"></span>
+                        <span class="icon glyph-icon glyph-icon-arrow-up"></span>
                     </a>
                 </li>
             </ul>
 
         </div>
-    </div>
-    
+	</div>
+	
 </footer>
 
 <div class="sidebar-overlay js-sidebar-overlay"></div>
-<script src="/build/js/hubble.min.js"></script>
-<script src="/build/js/theme.min.js"></script>
+<script src="../build/js/hubble.min.js"></script>
+<script src="../build/js/docs.min.js"></script>
 
 </body>
 

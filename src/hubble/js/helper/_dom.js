@@ -35,7 +35,7 @@ JSHelper.prototype.$ = function(selector, context)
 }
 
 /**
- * Closest parent node by type
+ * Closest parent node by type/class or array of either
  *
  * @access public
  * @param  node   el   Target element
@@ -44,29 +44,75 @@ JSHelper.prototype.$ = function(selector, context)
  */
 JSHelper.prototype.closest = function(el, type)
 {
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.closest(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this._closestClass(el, type);
+    }
+
     type = type.toLowerCase();
-    if (typeof el === "undefined") return null;
-    if (el.nodeName.toLowerCase() === type) return el;
-    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type) return el.parentNode;
+
+    if (typeof el === 'undefined')
+    {
+        return null;
+    }
+
+    if (el.nodeName.toLowerCase() === type)
+    {
+        return el;
+    }
+    
+    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type)
+    {
+        return el.parentNode;
+    }
+
     var parent = el.parentNode;
+
     while (parent !== document.body && typeof parent !== "undefined" && parent !== null)
     {
         parent = parent.parentNode;
-        if (parent && parent.nodeName.toLowerCase() === type) return parent;
+        
+        if (parent && parent.nodeName.toLowerCase() === type)
+        {
+            return parent;
+        }
     }
+
+
     return null;
 }
 
 /**
  * Closest parent node by class
  *
- * @access public
+ * @access private
  * @param  node   el   Target element
  * @param  string type Node type to find
  * @return node\null
  */
-JSHelper.prototype.closestClass = function(el, clas)
+JSHelper.prototype._closestClass = function(el, clas)
 {
+    if (clas[0] === '.')
+    {
+        clas = clas.substring(1);
+    }
+
     if (this.hasClass(el, clas))
     {
         return el;
@@ -76,10 +122,12 @@ JSHelper.prototype.closestClass = function(el, clas)
         return el.parentNode;
     }
     var parent = el.parentNode;
+
     if (parent === window.document)
     {
         return null;
     }
+
     while (parent !== document.body)
     {
         if (this.hasClass(parent, clas))
@@ -94,6 +142,7 @@ JSHelper.prototype.closestClass = function(el, clas)
 
         parent = parent.parentNode;
     }
+
     return null;
 }
 
@@ -107,48 +156,87 @@ JSHelper.prototype.closestClass = function(el, clas)
 JSHelper.prototype.firstChildren = function(el)
 {
     var children = [];
+
     var childnodes = el.childNodes;
+
     for (var i = 0; i < childnodes.length; i++)
     {
-        if (childnodes[i].nodeType == 1)  children.push(childnodes[i]);
+        if (childnodes[i].nodeType == 1)
+        {
+            children.push(childnodes[i]);
+        }
     }
+
     return children;
 }
 
 /**
- * Traverse nextSibling untill type
+ * Traverse nextSibling untill type or class or array of either
  *
  * @access public
  * @param  node   el   Target element
  * @param  string type Target node type
  * @return node\null
  */
-JSHelper.prototype.nextUntillType = function(el, type)
+JSHelper.prototype.next = function(el, type)
 {
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.next(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this._nextUntillClass(el, type);
+    }
+
     type = type.toLowerCase();
-    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type) return el.nextSibling;
+
+    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type)
+    {
+        return el.nextSibling;
+    }
     var next = el.nextSibling;
+
     while (next !== document.body && typeof next !== "undefined" && next !== null)
     {
         next = next.nextSibling;
+
         if (next && next.nodeName.toLowerCase() === type)
         {
             return next;
         }
     }
+
     return null;
 }
 
 /**
- * Traverse nextSibling untill class
+ * Traverse nextSibling untill class type or class or array of either
  *
  * @access public
  * @param  node   el        Target element
  * @param  string className Target node classname
  * @return node\null
  */
-JSHelper.prototype.nextUntillClass = function(el, className)
+JSHelper.prototype._nextUntillClass = function(el, className)
 {
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+
     if (el.nextSibling && this.hasClass(el.nextSibling, className))
     {
         return el.nextSibling;
@@ -178,8 +266,30 @@ JSHelper.prototype.nextUntillClass = function(el, className)
  * @param  string type Target node type
  * @return node\null
  */
-JSHelper.prototype.previousUntillType = function(el, type)
+JSHelper.prototype.previous = function(el, type)
 {
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.previous(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this._previousUntillClass(el, type);
+    }
+
+
     type = type.toLowerCase();
     if (el.previousSibling && el.previousSibling.nodeName.toLowerCase() === type) return el.previousSibling;
     var prev = el.previousSibling;
@@ -202,8 +312,13 @@ JSHelper.prototype.previousUntillType = function(el, type)
  * @param  string className Target node classname
  * @return node\null
  */
-JSHelper.prototype.previousUntillClass = function(el, className)
+JSHelper.prototype._previousUntillClass = function(el, className)
 {
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+    
     if (el.previousSibling && this.hasClass(el.previousSibling, className))
     {
         return el.previousSibling;
@@ -611,6 +726,11 @@ JSHelper.prototype.getInputValue = function(input)
         return this.rtrim(val, ', '); 
     }
 
+    if (input.type == "number")
+    {
+        return parseInt(input.value);
+    }
+
     if (input.type == "select")
     {
         return input.options[input.selectedIndex].value;
@@ -627,6 +747,29 @@ JSHelper.prototype.getInputValue = function(input)
     }
 
     return input.value;
+}
+
+/**
+ * Get an array of name/value objects for all inputs in a form
+ *
+ * @access public
+ * @param  node   form Target element
+ * @return array
+ */
+JSHelper.prototype.formArray = function(form)
+{
+    var inputs   = this.getFormInputs(form);
+    var response = [];
+
+    for (var i = 0; i < inputs.length; i++)
+    {
+        response.push({
+            'name'  : inputs[i].name,
+            'value' : this.getInputValue(this.getInputValue(inputs[i]))
+        });
+    }
+
+    return response;
 }
 
 /**
