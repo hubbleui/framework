@@ -175,7 +175,7 @@
 		    			Inline elements		    		</a>
 		    	</li>
 		    		    			    	<li>
-		    		<a class="" href="../input-mask/index.html">
+		    		<a class="active" href="../input-mask/index.html">
 		    			Input mask		    		</a>
 		    	</li>
 		    		    			    	<li>
@@ -190,6 +190,8 @@
 		    		<a class="" href="../modals/index.html">
 		    			Modals		    		</a>
 		    	</li>
+		    	<li><a class="" href="../lists/index.html">Lists</a></li>
+
 		    		    			    	<li>
 		    		<a class="" href="../notifications/index.html">
 		    			Notifications		    		</a>
@@ -309,128 +311,128 @@
 
     <p>To mask a credit card, use the <code>.js-mask-creditcard</code> class.</p>
     <div class="code-content-example">
-        <div class="form-field row floor-xs">
+        <div class="form-field row">
+            <input class="js-mask-creditcard" type="text" name="input_1" id="input_1" placeholder="**** **** **** ****">
             <label for="input_1">Credit Card</label>
-            <input class="js-mask-creditcard" type="text" name="input_1" id="input_1" placeholder="">
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<div class="form-field row floor-xs">
-    <label for="input_1">Credit Card</label>
+<div class="form-field row">
     <input class="js-mask-creditcard" type="text" name="input_1" id="input_1" placeholder="">
+    <label for="input_1">Credit Card</label>
 </div>
 -->
 </code></pre>
 
     <p>To mask for money, use the <code>.js-mask-money</code> class.</p>
     <div class="code-content-example">
-        <div class="form-field row floor-xs">
+        <div class="form-field row">
+            <input class="js-mask-money" type="text" name="input_1" id="input_1" placeholder="44.43">
             <label for="input_1">Amount $</label>
-            <input class="js-mask-money" type="text" name="input_1" id="input_1" placeholder="">
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<div class="form-field row floor-xs">
-    <label for="input_1">Amount $</label>
+<div class="form-field row">
     <input class="js-mask-money" type="text" name="input_1" id="input_1" placeholder="">
+    <label for="input_1">Amount $</label>
 </div>
 -->
 </code></pre>
 
     <p>To mask only numbers, use the <code>.js-mask-numeric</code> class.</p>
     <div class="code-content-example">
-        <div class="form-field row floor-xs">
+        <div class="form-field row">
+            <input class="js-mask-numeric" type="text" name="input_1" id="input_1" placeholder="1234567">
             <label for="input_1">Phone</label>
-            <input class="js-mask-numeric" type="text" name="input_1" id="input_1" placeholder="">
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<div class="form-field row floor-xs">
-    <label for="input_1">Phone</label>
+<div class="form-field row">
     <input class="js-mask-numeric" type="text" name="input_1" id="input_1" placeholder="">
+    <label for="input_1">Phone</label>
 </div>
 -->
 </code></pre>
 
     <p>To mask numbers with decimals, use the <code>.js-mask-numeric-decimal</code> class.</p>
     <div class="code-content-example">
-        <div class="form-field row floor-xs">
+        <div class="form-field row">
+            <input class="js-mask-numeric-decimal" type="text" name="input_1" id="input_1" placeholder="332.43">
             <label for="input_1">Amount $</label>
-            <input class="js-mask-numeric-decimal" type="text" name="input_1" id="input_1" placeholder="">
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<div class="form-field row floor-xs">
-    <label for="input_1">Amount $</label>
+<div class="form-field row">
     <input class="js-mask-numeric-decimal" type="text" name="input_1" id="input_1" placeholder="">
+    <label for="input_1">Amount $</label>
 </div>
 -->
 </code></pre>
 
     <p>To mask numbers letters and numbers, use the <code>.js-mask-alpha-numeric</code> class.</p>
     <div class="code-content-example">
-        <div class="form-field row floor-xs">
+        <div class="form-field row">
+            <input class="js-mask-alpha-numeric" type="text" name="input_1" id="input_1" placeholder="Rocker_Man_91">
             <label for="input_1">Username</label>
-            <input class="js-mask-alpha-numeric" type="text" name="input_1" id="input_1" placeholder="">
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<div class="form-field row floor-xs">
-    <label for="input_1">Username</label>
+<div class="form-field row">
     <input class="js-mask-alpha-numeric" type="text" name="input_1" id="input_1" placeholder="">
+    <label for="input_1">Username</label>
 </div>
 -->
 </code></pre>
 
     <p>To mask letters with spaces, use the <code>.js-mask-alpha-space</code> class.</p>
     <div class="code-content-example">
-        <div class="form-field row floor-xs">
+        <div class="form-field row">
+            <input class="js-mask-alpha-space" type="text" name="input_1" id="input_1" placeholder="Rocket Mab">
             <label for="input_1">Your Name</label>
-            <input class="js-mask-alpha-space" type="text" name="input_1" id="input_1" placeholder="">
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<div class="form-field row floor-xs">
-    <label for="input_1">Your Name</label>
+<div class="form-field row">
     <input class="js-mask-alpha-space" type="text" name="input_1" id="input_1" placeholder="">
+    <label for="input_1">Your Name</label>
 </div>
 -->
 </code></pre>
 
     <p>To mask letters with hyphens use the <code>.js-mask-alpha-dash</code> class.</p>
     <div class="code-content-example">
-        <div class="form-field row floor-xs">
+        <div class="form-field row">
+            <input class="js-mask-alpha-dash" type="text" name="input_1" id="input_1" placeholder="Rocket-Man">
             <label for="input_1">Username</label>
-            <input class="js-mask-alpha-dash" type="text" name="input_1" id="input_1" placeholder="">
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<div class="form-field row floor-xs">
-    <label for="input_1">Username</label>
+<div class="form-field row">
     <input class="js-mask-alpha-dash" type="text" name="input_1" id="input_1" placeholder="">
+    <label for="input_1">Username</label>
 </div>
 -->
 </code></pre>
 
     <p>To mask letters, numbers and hyphens use the <code>.js-mask-alpha-numeric-dash</code> class.</p>
     <div class="code-content-example">
-        <div class="form-field row floor-xs">
+        <div class="form-field row">
+            <input class="js-mask-alpha-numeric-dash" type="text" name="input_1" id="input_1" placeholder="Rocket-Man-91">
             <label for="input_1">Username</label>
-            <input class="js-mask-alpha-numeric-dash" type="text" name="input_1" id="input_1" placeholder="">
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<div class="form-field row floor-xs">
-    <label for="input_1">Username</label>
+<div class="form-field row">
     <input class="js-mask-alpha-numeric-dash" type="text" name="input_1" id="input_1" placeholder="">
+    <label for="input_1">Username</label>
 </div>
 -->
 </code></pre>

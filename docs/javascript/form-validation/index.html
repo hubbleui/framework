@@ -190,6 +190,8 @@
 		    		<a class="" href="../../components/modals/index.html">
 		    			Modals		    		</a>
 		    	</li>
+		    	<li><a class="" href="../../components/lists/index.html">Lists</a></li>
+
 		    		    			    	<li>
 		    		<a class="" href="../../components/notifications/index.html">
 		    			Notifications		    		</a>
@@ -262,7 +264,7 @@
 		    			HelperJS		    		</a>
 		    	</li>
 		    		    			    	<li>
-		    		<a class="" href="../../javascript/form-validation/index.html">
+		    		<a class="active" href="../../javascript/form-validation/index.html">
 		    			Form validation		    		</a>
 		    	</li>
 		    		    			    	<li>
@@ -452,30 +454,38 @@ formValidator.showResult('success');
     <div class="code-content-example">
         <div class="container-fuid">
             <form class="js-form">
-                <div class="form-field row floor-xs">
-                    <label for="name">Name</label>
-                    <input type="text" name="name" id="name" data-js-required="true" data-js-validation="name">
-                    <p class="help-danger">* Please enter a valid name.</p>
-                </div>
-
-                <div class="form-field row floor-xs">
-                    <label for="name">Email</label>
-                    <input type="email" name="email" id="email" data-js-required="true" data-js-validation="email">
-                    <p class="help-danger">* Please enter a valid email address.</p>
-                </div>
+            	<div class="row floor-xs">
+	                <div class="form-field row">
+	                    <input type="text" name="name" id="name" data-js-required="true" data-js-validation="name" placeholder="John Smith">
+	                    <label for="name">Name</label>
+	                </div>
+					<p class="help-danger">* Please enter a valid name.</p>
+				</div>
                 
-                <div class="form-field row floor-xs">
-                    <label for="name">Password</label>
-                    <input type="password" name="password" id="password" data-js-required="true" data-js-validation="password">
-                    <p class="help-danger">* Passwords must include a number or special character.</p>
-                </div>
+                <div class="row floor-xs">
+	                <div class="form-field row">
+	                    <input type="email" name="email" id="email" data-js-required="true" data-js-validation="email" placeholder="foo@example.com">
+	                    <label for="name">Email</label>
+	                </div>
+					<p class="help-danger">* Please enter a valid email address.</p>
+				</div>                
                 
-                <div class="form-field row floor-xs">
-                    <span class="checkbox">
-                        <input type="checkbox" name="checkbox" id="checkbox" checked="true" />
-                        <label for="checkbox">Send me free stuff</label>
-                    </span>
-                </div>
+                <div class="row floor-xs">
+	                <div class="form-field row">
+	                    <input type="password" name="password" id="password" data-js-required="true" data-js-validation="password" placeholder="Enter a secure password">
+	                    <label for="name">Password</label>
+	                </div>
+					<p class="help-danger">* Passwords must include a number or special character.</p>
+				</div>               
+                
+                <div class="row floor-xs">
+	                <div class="form-field row">
+	                    <span class="checkbox">
+	                        <input type="checkbox" name="checkbox" id="checkbox" checked="true" />
+	                        <label for="checkbox">Send me free stuff</label>
+	                    </span>
+	                </div>
+	            </div>
 
                 <button type="submit" class="btn btn-default with-spinner">
                     <svg viewBox="0 0 64 64" class="loading-spinner"><circle class="path" cx="32" cy="32" r="30" fill="none" stroke-width="4"></circle></svg>
@@ -535,25 +545,22 @@ formValidator.showResult('success');
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
 <form class="js-form">
-    <div class="form-field row floor-xs">
+    <div class="form-field row">
         <label for="name">Name</label>
         <input type="text" name="name" id="name" data-js-required="true" data-js-validation="name">
-        <p class="help-danger">* Please enter a valid name.</p>
     </div>
-
-    <div class="form-field row floor-xs">
+				<p class="help-danger">* Please enter a valid name.</p>
+    <div class="form-field row">
         <label for="name">Email</label>
         <input type="email" name="email" id="email" data-js-required="true" data-js-validation="email">
-        <p class="help-danger">* Please enter a valid email address.</p>
     </div>
-    
-    <div class="form-field row floor-xs">
+				<p class="help-danger">* Please enter a valid email address.</p>    
+    <div class="form-field row">
         <label for="name">Password</label>
         <input type="password" name="password" id="password" data-js-required="true" data-js-validation="password">
-        <p class="help-danger">* Passwords must include a number or special character.</p>
     </div>
-    
-    <div class="form-field row floor-xs">
+				<p class="help-danger">* Passwords must include a number or special character.</p>    
+    <div class="form-field row">
         <span class="checkbox">
             <input type="checkbox" name="checkbox" id="checkbox" checked="true" />
             <label for="checkbox">Send me free stuff</label>

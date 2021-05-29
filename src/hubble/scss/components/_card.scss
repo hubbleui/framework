@@ -16,6 +16,15 @@
     {
     	background-color: rgba(#000000, 0.01);
     }
+    &.flat
+    {
+    	box-shadow: none;
+    	border: 1px solid $gray-lighter;
+    	&:active
+    	{
+    		background-color: transparent;
+    	}
+    }
 	.card-block
 	{
 		padding: 20px 16px;

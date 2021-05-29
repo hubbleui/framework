@@ -428,6 +428,8 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
     max-height: 0;
     transition: max-height $base-easing-time $base-easing;
     font-size: $input-font-size * 0.75;
+    font-style: italic;
+    line-height: 3.2rem;
 }
 .help-danger
 {

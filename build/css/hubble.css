@@ -2828,6 +2828,11 @@ pre > code {
           box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
+.flat {
+  -webkit-box-shadow: none !important;
+          box-shadow: none !important;
+}
+
 .bg-primary {
   background-color: #ff007e;
 }
@@ -6446,6 +6451,8 @@ input[type=button].btn-block {
        -o-transition: max-height 0.2s cubic-bezier(0.4, 0, 1, 1);
           transition: max-height 0.2s cubic-bezier(0.4, 0, 1, 1);
   font-size: 1.2rem;
+  font-style: italic;
+  line-height: 3.2rem;
 }
 
 .help-danger {
@@ -7659,6 +7666,14 @@ form.success .msg-success {
 }
 .card:active {
   background-color: rgba(0, 0, 0, 0.01);
+}
+.card.flat {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border: 1px solid #e9e9e9;
+}
+.card.flat:active {
+  background-color: transparent;
 }
 .card .card-block {
   padding: 20px 16px;
@@ -9400,6 +9415,54 @@ a.label.label-danger.label-outline:hover {
 .status-xl {
   width: 20px;
   height: 20px;
+}
+
+.list {
+  padding: 8px 0;
+  margin: 0;
+  list-style: none;
+}
+.list > li {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 10px 15px;
+  background-color: transparent;
+}
+.list > li:hover {
+  background-color: #f4f4f4;
+  -webkit-transition: background-color 0.15s cubic-bezier(0.4, 0, 1, 1);
+       -o-transition: background-color 0.15s cubic-bezier(0.4, 0, 1, 1);
+          transition: background-color 0.15s cubic-bezier(0.4, 0, 1, 1);
+}
+.list > li:active, .list > li:focus {
+  background-color: #e9e9e9;
+}
+.list .item-body {
+  width: 10000px;
+}
+.list .item-body,
+.list .item-left,
+.list .item-right {
+  display: table-cell;
+  vertical-align: middle;
+  color: #999a9d;
+}
+.list .item-title {
+  color: #1d1d1d;
+  font-size: 1.8rem;
+}
+.list .item-subtitle {
+  color: #585858;
+}
+.list .item-left {
+  padding-right: 20px;
+}
+.list .item-left .glyph-icon {
+  vertical-align: middle;
+}
+.list .item-right {
+  padding-left: 20px;
 }
 
 .img-hover-zoom {
