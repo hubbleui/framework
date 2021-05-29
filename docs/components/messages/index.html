@@ -310,17 +310,35 @@
     <p>
         A Hubble message has specific markup that you must follow for it to be displayed correctly.
     </p>
-
     <div class="code-content-example">
-        <div class="container-fuid"> 
-            <div class="msg">
-                <div class="msg-icon">
-                    <span class="glyph-icon glyph-icon-bell"></span>
-                </div>
-                <div class="msg-body">
-                    <p>This is an alert! Please read this carefully.</p>
-                </div>
-            </div>
+        <div class="container-fuid">
+        	<div class="row floor-xs">
+	            <div class="msg">
+	                <div class="msg-icon">
+	                    <span class="glyph-icon glyph-icon-bell"></span>
+	                </div>
+	                <div class="msg-body">
+	                    <p>This is an alert! Please read this carefully.</p>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="row floor-xs">
+	            <div class="msg">
+	                <div class="msg-body">
+	                    <p>This is an alert! Please read this carefully.</p>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="row floor-xs">
+	            <div class="msg">
+	                <div class="msg-body">
+	                    <p>This is an alert! Please read this carefully.</p>
+	                </div>
+	                <div class="msg-btn">
+	                	<button type="button" class="btn btn-primary btn-pure">WITH BUTTON</button>
+	                </div>
+	            </div>
+	        </div>
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
@@ -331,6 +349,19 @@
     </div>
     <div class="msg-body">
         <p>This is an alert! Please read this carefully.</p>
+    </div>
+</div>
+<div class="msg">
+    <div class="msg-body">
+        <p>This is an alert! Please read this carefully.</p>
+    </div>
+</div>
+<div class="msg">
+    <div class="msg-body">
+        <p>This is an alert! Please read this carefully.</p>
+    </div>
+    <div class="msg-btn">
+    	<button type="button" class="btn btn-primary btn-pure">WITH BUTTON</button>
     </div>
 </div>
 -->
@@ -354,17 +385,6 @@
 
             <div class="row floor-xs">   
                 <div class="msg">
-                    <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-bell"></span>
-                    </div>
-                    <div class="msg-body">
-                        <p>This is an alert! Please read this carefully.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row floor-xs">   
-                <div class="msg msg-primary">
                     <div class="msg-icon">
                         <span class="glyph-icon glyph-icon-bell"></span>
                     </div>
@@ -422,10 +442,6 @@
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
 <div class="msg">
-    <div class="msg-icon">...</div>
-    <div class="msg-body">...</div>
-</div>
-<div class="msg msg-primary">
     <div class="msg-icon">...</div>
     <div class="msg-body">...</div>
 </div>
@@ -474,7 +490,6 @@
 
     <div class="code-content-example">
         <div class="container-fuid"> 
-
             <div class="row floor-xs">   
                 <div class="msg">
                     <div class="msg-icon">
@@ -483,78 +498,9 @@
                     <div class="msg-body">
                         <p>This is an alert! Please read this carefully.</p>
                     </div>
-                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
-                        <span class="glyph-icon glyph-icon-cross"></span>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="row floor-xs">   
-                <div class="msg msg-primary">
-                    <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-bell"></span>
+                    <div class="msg-btn">
+                    	<button type="button" class="btn btn-primary btn-pure js-close-msg js-rmv-parent">DISMISS</button>
                     </div>
-                    <div class="msg-body">
-                        <p>This is an alert! Please read this carefully.</p>
-                    </div>
-                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
-                        <span class="glyph-icon glyph-icon-cross"></span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="row floor-xs">   
-                <div class="msg msg-info">
-                    <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-bell"></span>
-                    </div>
-                    <div class="msg-body">
-                        <p>This is an alert! Please read this carefully.</p>
-                    </div>
-                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
-                        <span class="glyph-icon glyph-icon-cross"></span>
-                    </a>
-                </div>
-            </div>
-            <div class="row floor-xs">
-                <div class="msg msg-success">
-                    <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-checkmark"></span>
-                    </div>
-                    <div class="msg-body">
-                        <p>This is an alert! Please read this carefully.</p>
-                    </div>
-                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
-                        <span class="glyph-icon glyph-icon-cross"></span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="row floor-xs">
-                <div class="msg msg-warning">
-                    <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-power"></span>
-                    </div>
-                    <div class="msg-body">
-                        <p>This is an alert! Please read this carefully.</p>
-                    </div>
-                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
-                        <span class="glyph-icon glyph-icon-cross"></span>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="row floor-xs">   
-                <div class="msg msg-danger">
-                    <div class="msg-icon">
-                        <span class="glyph-icon glyph-icon-cross"></span>
-                    </div>
-                    <div class="msg-body">
-                        <p>This is an alert! Please read this carefully.</p>
-                    </div>
-                    <a href="#" class="closer-trigger js-close-msg js-rmv-parent">
-                        <span class="glyph-icon glyph-icon-cross"></span>
-                    </a>
                 </div>
             </div>
         </div>
@@ -562,16 +508,16 @@
 
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<div class="msg msg-danger">
+<div class="msg">
     <div class="msg-icon">
-        <span class="glyph-icon glyph-icon-cross"></span>
+        <span class="glyph-icon glyph-icon-bell"></span>
     </div>
     <div class="msg-body">
         <p>This is an alert! Please read this carefully.</p>
     </div>
-    <a href="#" class="closer-trigger js-close-msg">
-        <span class="glyph-icon glyph-icon-cross"></span>
-    </a>
+    <div class="msg-btn">
+    	<button type="button" class="btn btn-primary btn-pure js-close-msg js-rmv-parent">DISMISS</button>
+    </div>
 </div>
 -->
 </code></pre>

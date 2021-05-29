@@ -298,7 +298,6 @@
 <ul class="list-bullet">
     <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="types" data-waypoint-speed="400">Field types</a></li>
     <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="addons" data-waypoint-speed="500">Input add ons</a></li>
-    <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="file" data-waypoint-speed="700">File inputs</a></li>
     <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="states" data-waypoint-speed="800">Input states</a></li>
     <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="checkbox" data-waypoint-speed="900">Checkbox</a></li>
     <li><a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="radio" data-waypoint-speed="1000">Radio</a></li>
@@ -531,12 +530,6 @@
 	</div>
 	<div class="row floor-xs">
 		<div class="form-field row">
-			<input name="color" id="color" type="color" placeholder="#ffffff">
-			<label for="color">Color Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
 			<textarea name="textarea" id="textarea" placeholder="Write a story..." rows="5"></textarea>
 			<label for="textarea">Textarea Input</label>
 		</div>
@@ -665,53 +658,6 @@
 
 <hr>
 
-<div class="row roof-xs foor-xs" data-waypoint="file">
-    <h2>File inputs</h2>
-    <p>
-        File type inputs for upload use a tiny bit of <code>JavaScript</code> and <code>CSS</code> using 
-        a combination of input and button styling. It requires a fair bit of markup to display properly.
-    </p>
-    <div class="code-content-example">
-        <div class="container-fuid">
-            <form>
-                <div class="form-field field-group file-field js-file-field">
-                    <label  for="file_input">
-                        Upload
-                    </label>
-                    <input type="text" class="js-file-text file-text" disabled>
-                    <button type="button" class="btn btn-primary btn-upload">
-                        <span class="upload-cover">
-                            <input type="file" class="js-file-input" name="file_input">
-                        </span>
-                        <span class="glyph-icon glyph-icon-upload"></span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
-<!--
-<form>
-    <div class="form-field field-group file-field js-file-field">
-        <label  for="file_input">
-            Upload
-        </label>
-        <input type="text" class="js-file-text file-text" disabled>
-        <button type="button" class="btn btn-primary btn-upload">
-            <span class="upload-cover">
-                <input type="file" class="js-file-input" name="file_input">
-            </span>
-            <span class="glyph-icon glyph-icon-upload"></span>
-        </button>
-    </div>
-</form>
--->
-</code></pre>
-
-</div>
-
-<hr>
-
 <div class="row roof-xs foor-xs" data-waypoint="states">
     <h2>Input states</h2>
     <p>
@@ -721,29 +667,36 @@
     <div class="code-content-example">
         <div class="container-fuid">
             <form>
-                <div class="form-field row floor-xs">
-                    <label for="input_10">Disabled</label>
-                    <input type="text" name="input_10" id="input_10" placeholder="Joe" disabled>
-                </div>
-                <div class="form-field row floor-xs">
-                    <label for="input_11">Focus</label>
-                    <input class="focus" type="text" name="input_11" id="input_11" placeholder="Joe">
-                </div>
+                <div class="row floor-xs">
+					<div class="form-field row">
+						<input name="text" id="text" type="text" placeholder="Enter some text..." disabled class="disabled">
+						<label>Disabled</label>
+					</div>
+				</div>
+                <div class="row floor-xs">
+					<div class="form-field row focus">
+						<input name="text" id="text" type="text" placeholder="Enter some text..." class="focus">
+						<label>Focus</label>
+					</div>
+				</div>
             </form>
-
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
 <form>
-    <div class="form-field row floor-xs">
-        <label for="input_10">Disabled</label>
-        <input type="text" name="input_10" id="input_10" placeholder="Joe" disabled>
-    </div>
-    <div class="form-field row floor-xs">
-        <label for="input_11">Focus</label>
-        <input class="focus" type="text" name="input_11" id="input_11" placeholder="Joe">
-    </div>
+    <div class="row floor-xs">
+		<div class="form-field row">
+			<input name="text" id="text" type="text" placeholder="Enter some text..." disabled class="disabled">
+			<label>Disabled</label>
+		</div>
+	</div>
+    <div class="row floor-xs">
+		<div class="form-field row focus">
+			<input name="text" id="text" type="text" placeholder="Enter some text..." class="focus">
+			<label>Focus</label>
+		</div>
+	</div>
 </form>
 -->
 </code></pre>
@@ -1156,25 +1109,21 @@
     </p>
     <div class="code-content-example">
         <div class="container-fuid">
-            <form>
-                <div class="form-field row floor-xs">
-                    <label for="input_33">Default state</label>
-                    <input type="text" name="input_33" id="input_33" placeholder="Joe">
-                    <p class="help-warning">* Make sure your name is real</p>
-                </div>
+            <form class="row clearfix" style="width: 400px;">
+            	<div class="row floor-xs">
+            		<div class="form-field row warning">
+						<input name="text" id="text" type="text" placeholder="Enter some text...">
+						<label>Warning!</label>
+					</div>
+					<p class="help-warning">* You need to enter your name</p>
 
-                <div class="form-field danger row floor-xs">
-                    <label for="input_34">.danger</label>
-                    <input type="text" name="input_34" id="input_34" placeholder="Joe">
-                    <p class="help-danger">* You need to enter your name</p>
-                </div>
-
-                <div class="form-field warning row floor-xs">
-                    <label for="input_35">.warning</label>
-                    <input type="text" name="input_35" id="input_35" placeholder="Joe">
-                    <p class="help-warning">* Make sure your name is real</p>
-                </div>
-            </form>
+					<div class="form-field row danger">
+						<input name="text" id="text" type="text" placeholder="Enter some text...">
+						<label>Danger!</label>
+					</div>
+					<p class="help-danger">* You need to enter your name</p>
+				</div>
+			</form>
         </div>
     </div>
 <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">

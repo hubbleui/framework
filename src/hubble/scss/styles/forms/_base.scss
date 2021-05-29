@@ -280,48 +280,6 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
     {
         top: 26px;
     }
-        
-    .help-danger,
-    .help-warning
-    {
-        overflow: hidden;
-        margin: 0;
-        font-weight: $text-bold;
-        max-height: 0;
-        transition: max-height $base-easing-time $base-easing;
-    }
-    .help-danger
-    {
-        color: $brand-danger;
-    }
-    .help-warning
-    {
-        color: $brand-warning;
-    }
-    &.danger
-    {
-        input, textarea, select
-        {
-            border-color: $brand-danger;
-        }
-        input + .help-danger, textarea + .help-danger, select + .help-danger
-        {
-            max-height: 50px;
-            transition: max-height $base-easing-time $base-easing;
-        }
-    }
-    &.warning
-    {
-        input,textarea, select
-        {
-            border-color: $brand-warning;
-        }
-        input + .help-warning, textarea + .help-warning, select + .help-warning
-        {
-            max-height: 50px;
-            transition: max-height $base-easing-time $base-easing;
-        }
-    }
 
     // Special inputs
     input[type="time"],
@@ -449,19 +407,39 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
         line-height: 19px;
     }
 
-       
+    &.danger input
+    {
+        border-color: $brand-danger;
+        box-shadow: inset 0 0 0 1px $brand-danger;
+    }
+    &.warning input
+    {
+        border-color: $brand-warning;
+        box-shadow: inset 0 0 0 1px $brand-warning;
+    }
+}
 
-    // Color picker
-
-    // Date
-
-    // File
-
-    // Range
-
-    // Search
-
-    // Time
-
-    // Week
+.help-danger,
+.help-warning
+{
+    overflow: hidden;
+    margin: 0;
+    font-weight: $text-bold;
+    max-height: 0;
+    transition: max-height $base-easing-time $base-easing;
+    font-size: $input-font-size * 0.75;
+}
+.help-danger
+{
+    color: $brand-danger;
+}
+.help-warning
+{
+    color: $brand-warning;
+}
+.danger + .help-danger,
+.warning + .help-warning
+{
+    max-height: 50px;
+    transition: max-height $base-easing-time $base-easing;
 }

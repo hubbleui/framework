@@ -84,7 +84,7 @@
 
         e.preventDefault();
 
-        var toRemove = this.parentNode;
+        var toRemove = Helper.closest(this, '.msg');
 
         if (Helper.hasClass(this, 'js-rmv-parent'))
         {

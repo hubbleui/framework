@@ -4,14 +4,13 @@
     text-align: center;
     border-radius: $border-radius;
     display: inline;
-    background-color: $label-default-bg;
-    color: $label-default-color;
-    font-size: $label-font-size;
-    padding: $label-pad-y $label-pad-x;
+    background-color: $gray;
+    color: #fff;
+    font-size: $label-size * 1.2;
+    padding: ($label-size * 0.3) ($label-size - 1);
     line-height: 1;
     white-space: nowrap;
     vertical-align: baseline;
-    font-weight: $label-font-weight;
     &:hover
     {
         text-decoration: none;
@@ -25,13 +24,13 @@
     &.label-outline
     {
         background-color: transparent;
-        color: $label-default-bg;
-        border: 1px solid $label-default-bg;
+        color: $gray;
+        border: 1px solid $gray;
         &:hover
         {
-            background-color: $label-default-bg;
-            border-color: $label-default-bg;
-            color: $label-default-color;
+            background-color: $gray;
+            border-color: $gray;
+            color: #fff;
         }
     }
     &.label-primary
@@ -137,11 +136,11 @@ a.label
 {
     &:hover
     {
-        color: $label-default-color;
+        color: #fff;
     }
     &.label-outline:hover
     {
-        color: $label-default-color;
+        color: #fff;
     }
     &.label-primary.label-outline:hover
     {

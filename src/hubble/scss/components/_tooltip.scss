@@ -27,7 +27,7 @@
         word-wrap: break-word;
         white-space: pre;
         pointer-events: none;
-        background-color: #000000;
+        background-color: $gray-dark;
         zoom: 101%;
         -webkit-font-smoothing: subpixel-antialiased;
         @include raised(1);
@@ -39,7 +39,7 @@
         display: none;
         width: 0;
         height: 0;
-        color: #000000;
+        color: $gray-dark;
         pointer-events: none;
         content: "";
         border: 5px solid transparent;
@@ -51,16 +51,6 @@
         text-decoration: none;
     }
 
-    // all south shared
-    &.tooltipped-s:before,
-    &.tooltipped-se:before,
-    &.tooltipped-sw:before
-    {
-        border-bottom-color: #000000;
-        top: auto;
-        bottom: -10px;
-
-    }
     &.tooltipped-s:after,
     &.tooltipped-se:after,
     &.tooltipped-sw:after
@@ -107,16 +97,7 @@
         left: 0px; 
     }
 
-    // North all shared
-    &.tooltipped-n:before,
-    &.tooltipped-ne:before,
-    &.tooltipped-nw:before
-    {
-        top: -10px;
-        border-top-color: #000000;
-        bottom: auto;
 
-    }
     &.tooltipped-n:after,
     &.tooltipped-ne:after,
     &.tooltipped-nw:after
@@ -145,14 +126,6 @@
         margin-left: 5px;
         margin-bottom: -12px;
     }
-    &.tooltipped-e:before
-    {
-        top: 50%;
-        right: -5px;
-        bottom: 50%;
-        margin-top: -5px;
-        border-right-color: #000000;
-    }
 
     // west
     &.tooltipped-w:after
@@ -161,13 +134,5 @@
         bottom: 50%;
         margin-right: 5px;
         margin-bottom: -12px;
-    }
-    &.tooltipped-w:before
-    {
-        top: 50%;
-        bottom: 50%;
-        left: -6px;
-        margin-top: -5px;
-        border-left-color: #000000;
     }
 }

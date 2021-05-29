@@ -6,31 +6,58 @@
 	background-color: $card-bg;
 	border-radius: $card-border-radius;
 	box-shadow: $raised-level-two;
-    transition: box-shadow $base-easing-time $base-easing;
+    transition: box-shadow $base-easing-time $base-easing, background-color 0.15s $base-easing;
     &:hover,
     &:focus
     {
         box-shadow: $raised-level-two-hover;
     }
-
+    &:active
+    {
+    	background-color: rgba(#000000, 0.01);
+    }
 	.card-block
 	{
-		padding: $card-block-padding;
+		padding: 20px 16px;
+
+		> div:first-child,
+		> p:first-child,
+		> h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child
+		{
+			padding-top: 0;
+			margin-top: 0;
+		}
+		> div:last-child,
+		> p:last-child,
+		> h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child
+		{
+			margin-bottom: 0;
+			padding-bottom: 0;
+		}
+	}
+	.card-block
+	{
+		> div
+		{
+			padding-left: 0;
+			padding-right: 0;
+		}
 	}
 	.card-title
 	{
-		margin-bottom: 1.7rem;
+		margin-bottom: 17px;
+		font-weight: $text-bold;
 	}
 	.card-subtitle
 	{
 		color: $gray-dark;
-		margin-bottom: 1.8rem;
+		margin-bottom: 18px;
 	}
 	.card-text
 	{
 		color: $gray-dark;
 		margin: 0;
-		padding: 1.8rem 0;
+		padding: 18px 0;
 		&:last-child
 		{
 			padding-bottom: 0;
@@ -41,27 +68,26 @@
 	{
 		padding-top: 0;
 	}
-
-	.card-link
-	{
-		&:hover
-		{
-			text-decoration: none;
-		}
-
-		+ .card-link
-		{
-			margin-left: 1.6rem;
-		}
-	}
 	.card-divider
 	{
 	    height: 1px;
-	    background: $gray-light;
+	    background: $gray-lighter;
 	    border: 0;
-	    margin-top: 0.5rem;
-	    margin-bottom: 0.5rem;
+	    margin: 10px 0;
 	}
+	
+	.card-text + .card-divider,
+	.card-block + .collapsed + .card-divider,
+	.card-block + .card-divider
+	{
+		margin-top: 0;
+	}
+
+	.card-divider + .card-block
+	{
+		padding-top: 8px;
+	}
+
 	.card-img-top
 	{
 		background-color: $card-img-bg;
@@ -99,8 +125,9 @@
 	}
 	.card-header
 	{
-		padding: 2rem 1.6rem;
+		padding: 20px 16px;
 		margin-bottom: 0;
+		position: relative;
 
 	  	&:first-child
 	  	{
@@ -112,16 +139,68 @@
 	  	{
 	  		margin-bottom: 0;
 	  	}
+	  	.card-title + .card-subtitle
+	  	{
+	  		margin-top: 9px;
+	  	}
+	  	.card-icon
+	  	{
+	  		position: absolute;
+	  		width: 40px;
+		    height: 40px;
+		    border-radius: 50%;
+		    background-color: $gray;
+		    top: 50%;
+    		transform: translateY(-50%);
+    		padding: 0 10px;
+    		line-height: 48px;
+
+	  		.glyph-icon
+	  		{
+	  			color: $gray-dark;
+	  			font-size: 2rem;
+	  		}
+	  	}
+	  	.card-icon + .card-title,
+	  	.card-icon + .card-title + .card-subtitle
+	  	{
+	  		padding-left: 55px;
+	  	}
+	  	.card-overflow
+	  	{
+	  		position: absolute;
+		    top: 50%;
+		    right: 5px;
+		    transform: translateY(-50%);
+	  	}
 	}
-	.card-footer
+	.card-actions
 	{
-		padding: 2rem 1.6rem;
+		padding: 20px 5px 20px 5px;
+
+		.actions-primary
+		{
+			overflow: hidden;
+    		width: 1000px;
+		}
+		.actions-primary,
+		.actions-extra
+		{
+			zoom: 1;
+			display: table-cell;
+    		vertical-align: middle;
+    		white-space: nowrap;
+    	}
 		&:last-child
 		{
 			border-radius: 0;
 	  		border-bottom-left-radius: $card-border-radius;
 	  		border-bottom-right-radius: $card-border-radius;
 		}
+	}
+	.card-block + .card-actions
+	{
+		padding-top: 0;
 	}
 	.card-table
 	{

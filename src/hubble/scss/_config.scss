@@ -207,34 +207,20 @@ $dropdown-max-height:       300px !default;
 // Arrow
 $arrow-color:               $gray-lighter !default;
 
-// Badge
-$badge-default-bg:          $gray !default; 
-$badge-default-color:       #fff !default;
-$badge-font-size:           1.4rem !default;
-$badge-pad-x:               0.6rem !default;
-$badge-pad-y:               0 !default;
-$badge-line-height:         2rem;
-$badge-size:                2rem;
-
-// Label
-$label-default-bg:          $gray !default; 
-$label-default-color:       #fff !default;
-$label-font-size:           1.1rem !default;
-$label-pad-x:               0.8rem !default;
-$label-pad-y:               0.4rem !default;
-$label-font-weight:         $text-bold;
+// Inline elements
+$badge-size:                20px;
+$label-size:                10px;
+$status-size:               10px;
 
 // Table
 $table-font-size:           1.3rem !default;
-$table-bg:                  #fff !default;
+$table-bg:                  transparent !default;
 $table-head-bg:             $gray !default;
 $table-color:               inherit !default;
 $table-border-color:        $gray-lighter !default;
 $table-hover-bg:            rgba(0, 0, 0, 0.08) !default;
 $table-cell-pad-y:          1.2rem !default;
 $table-cell-pad-x:          1.8rem !default;
-
-// Message
 
 // Popovers
 $popover-bg:                #fff;
@@ -244,7 +230,6 @@ $popover-content-padding:   8px 14px;
 
 // Card
 $card-bg:                   #ffffff;
-$card-block-padding:        2rem 1.6rem;
 $card-border-radius:        4px;
 $card-img-bg:               $gray-lightest;
 $card-img-padding:          0;
@@ -254,17 +239,9 @@ $input-font-size:             1.6rem !default;
 $input-line-height:           1.6rem !default;
 $input-pad-y:                 12px !default;
 $input-pad-x:                 12px !default;
-$input-addon-bg:              $gray-lightest !default;
-$input-addon-color:           $gray-dark !default;
-
-// Checkbox
 $checkbox-size:               20px;
-
-// Radio
 $radio-size:                  24px;
-
-// Status sizes
-$status-size:                 10px;         
+        
 
 // Zindexs
 $z-index-tooltip:             100;

@@ -13011,7 +13011,7 @@ function complete(response)
 
         e.preventDefault();
 
-        var toRemove = this.parentNode;
+        var toRemove = Helper.closest(this, '.msg');
 
         if (Helper.hasClass(this, 'js-rmv-parent'))
         {
@@ -13296,7 +13296,7 @@ function complete(response)
             return;
         }
 
-        var textarea = Helper.$('textarea', this.parentNode);
+        var input = Helper.$('textarea', this.parentNode);
 
         if (Helper.nodeExists(input))
         {

@@ -106,7 +106,7 @@
             return;
         }
 
-        var textarea = Helper.$('textarea', this.parentNode);
+        var input = Helper.$('textarea', this.parentNode);
 
         if (Helper.nodeExists(input))
         {

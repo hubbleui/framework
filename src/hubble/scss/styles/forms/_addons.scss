@@ -44,4 +44,21 @@
     		color: $brand-info;
     	}
     }
+
+    &.info .glyph-icon
+    {
+    	color: $brand-info;
+    }
+    &.success .glyph-icon
+    {
+    	color: $brand-success;
+    }
+    &.warning .glyph-icon
+    {
+    	color: $brand-warning;
+    }
+    &.danger .glyph-icon
+    {
+    	color: $brand-danger;
+    }
 }
