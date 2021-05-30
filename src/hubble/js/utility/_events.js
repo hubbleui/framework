@@ -6,6 +6,12 @@
  */
  (function()
  {
+    /**
+     * JS Helper reference
+     * 
+     * @var object
+     */
+    var Helper = Hubble.helper();
 
     /**
      * Module constructor
@@ -38,9 +44,10 @@
      *
      * @param eventName string The event name to fire
      * @param subject   mixed  What should be given as "this" to the event callbacks
+     * @param subject   args   Array of arguments to push to function (optional)
      * @access public
      */
-    Events.prototype.fire = function(eventName, subject)
+    Events.prototype.fire = function(eventName, subject, args)
     {
         for (var key in this._callbacks)
         {
@@ -55,7 +62,7 @@
             {
                 var callback = this._callbacks[key].callback;
                 
-                callback.apply(subject, []);
+                callback.apply(subject, args);
             }
         }
     }

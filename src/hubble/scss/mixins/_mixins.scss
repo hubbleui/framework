@@ -13,7 +13,6 @@
             @content;
         }
 	}
-  	
 }
 @mixin media-breakpoint-down($name) {
   	$width: map-get($breakpoints, $name);
@@ -84,6 +83,34 @@
             box-shadow: none;
         }
     }
+}
+
+// RGBA to RGB
+@function rgba-to-rgb($rgba, $background: #fff)
+{
+    @return mix(rgb(red($rgba), green($rgba), blue($rgba)), $background, alpha($rgba) * 100%)
+}
+
+
+
+// Icon
+@mixin glyphIcon()
+{
+    font-family: "IcoMoon" !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;    
+    letter-spacing: 0;
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga=1";
+    -moz-font-feature-settings: "liga";
+    -ms-font-feature-settings: "liga" 1;
+    -o-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 //================ PRIVATE ================//

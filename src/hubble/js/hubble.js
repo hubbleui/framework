@@ -55,6 +55,10 @@
 @import 'dom/_waypoint.js';
 @import 'dom/_inputs.js';
 @import 'dom/_fileInput.js';
+@import 'dom/chips/_input.js';
+@import 'dom/chips/_suggestion.js';
+@import 'dom/chips/_choice.js';
+@import 'dom/chips/_filter.js';
 @import 'dom/_clickTriggers.js';
 @import 'dom/_imgZoom.js';
 

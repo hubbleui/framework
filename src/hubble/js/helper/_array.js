@@ -246,7 +246,8 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
 
                 value = callback.apply(obj, this.array_merge([i, obj[i]], args));
 
-                if (value === false) {
+                if (value === false)
+                {
                     break;
                 }
             }

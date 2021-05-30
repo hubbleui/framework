@@ -1,7 +1,5 @@
 $select-pos-y : _minusPercent($input-pad-y, 10);
 
-
-
 @mixin placeholder
 {
     &::placeholder               {@content}
@@ -10,7 +8,10 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
     &::-moz-placeholder          {@content}
     &:-ms-input-placeholder      {@content}  
 }
-
+input[type="hidden"]
+{
+    display: none !important;
+}
 .form-field
 {
     position: relative;
@@ -21,7 +22,6 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
     input[type="datetime-local"] + label,
     input[type="email"] + label,
     input[type="file"] + label,
-    input[type="hidden"] + label,
     input[type="image"] + label,
     input[type="month"] + label,
     input[type="number"] + label,
@@ -60,7 +60,6 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
         input[type="datetime-local"] + label,
         input[type="email"] + label,
         input[type="file"] + label,
-        input[type="hidden"] + label,
         input[type="image"] + label,
         input[type="month"] + label,
         input[type="number"] + label,
@@ -87,7 +86,6 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
         input[type="datetime-local"] + label,
         input[type="email"] + label,
         input[type="file"] + label,
-        input[type="hidden"] + label,
         input[type="image"] + label,
         input[type="month"] + label,
         input[type="number"] + label,
@@ -111,7 +109,6 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
     input[type="datetime-local"],
     input[type="email"],
     input[type="file"],
-    input[type="hidden"],
     input[type="image"],
     input[type="month"],
     input[type="number"],
@@ -145,7 +142,6 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
         input[type="datetime-local"],
         input[type="email"],
         input[type="file"],
-        input[type="hidden"],
         input[type="image"],
         input[type="month"],
         input[type="number"],
@@ -177,7 +173,6 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
         input[type="datetime-local"],
         input[type="email"],
         input[type="file"],
-        input[type="hidden"],
         input[type="image"],
         input[type="month"],
         input[type="number"],
