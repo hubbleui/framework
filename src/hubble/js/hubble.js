@@ -55,7 +55,6 @@
 @import 'dom/_waypoint.js';
 @import 'dom/_inputs.js';
 @import 'dom/_fileInput.js';
-@import 'dom/_select.js';
 @import 'dom/chips/_input.js';
 @import 'dom/chips/_suggestion.js';
 @import 'dom/chips/_choice.js';

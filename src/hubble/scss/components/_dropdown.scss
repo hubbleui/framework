@@ -22,12 +22,11 @@
     top: ($btn-pad-y * 2 ) + ($btn-font-size * 2);
     min-width: $dropdown-width;
     width: auto;
-    @include raised(2);
+    @include raised(3);
     .drop
     {
         border-radius: $border-radius;
         background-color: $dropdown-bg;
-        box-shadow: $raised-level-one;
         padding: 8px 0px;
     }
 }
