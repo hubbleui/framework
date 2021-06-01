@@ -310,8 +310,8 @@ input[type="hidden"]
     input[type="date"]:before,
     input[type="datetime-local"]:before
     {
-        font-family: 'IcoMoon';
-        content: "\e953";
+        @include glyph-icon;
+        content: "\ea60";
         display: inline-block;
         position: absolute;
         width: 20px;
@@ -326,7 +326,7 @@ input[type="hidden"]
     }
     input[type="time"]:before
     {
-        content: "\e94f";
+        content: "\ea4d";
     }
     
     input[type="time"]:focus:before,

@@ -1,0 +1,211 @@
+// Base styles
+.form-field.select
+{
+    display: inline-block;
+    font-size: $input-font-size;
+    padding: 28px 12px 11px 12px;
+    border-radius: $border-radius;
+    font-weight: $text-normal;
+    line-height: $input-line-height;
+    color: $gray-darker;
+    background-color: transparent;
+    border: 1px solid $gray;
+    transition: background-color $base-easing-time $base-easing, border-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
+    cursor: default;
+    min-width: 200px;
+
+    &:focus,
+    &:focus-within,
+    &.focus
+    {
+        background-color: transparent;
+        border-color: $brand-info;
+        box-shadow: inset 0 0 0 1px $brand-info;
+    }
+    &.disabled,
+    &:disabled
+    {
+        background-color: rgba(0,0,0,0.1);
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    &:after
+    {
+        @include glyph-icon;
+        content: "\edc9";
+        color: $gray;
+        position: absolute;
+        right: 5px;
+        display: inline-block;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    &.focus:after,
+    &:focus:after,
+    &:focus-within:after
+    {
+        color: $brand-info;
+        transform: translateY(-50%) rotate(180deg);
+    }
+    &.empty
+    {
+        position: relative;
+        text-indent: -99999px;
+    }
+    &.not-empty,
+    &.focus,
+    &:focus,
+    &:focus-within
+    {
+        text-indent: 0;
+    }
+
+    label
+    {
+        position: relative;
+        display: inline-block;
+        font-size: $input-font-size;
+        font-weight: $text-normal;
+        line-height: $input-line-height;
+        text-align: left;
+        color: $gray;
+        top: 50%;
+        height: $input-line-height;
+        transition: transform 0.15s $base-easing;
+        transform: translateY(-7px);
+        transform-origin: left top;
+        cursor: default;
+    }
+    &.focus label,
+    &:focus-within label,
+    &.not-empty label
+    {
+        transform: translateY(-18px) scale(0.75);
+    }
+
+    &.focus label,
+    &:focus-within label,
+    {
+        color: $brand-info;
+    }
+
+    .placeholder
+    {
+        position: absolute;
+        opacity: 1;
+        white-space: nowrap;
+        left: $input-pad-y;
+        font-size: $input-font-size * 0.9;
+        font-weight: $text-normal;
+        line-height: $input-line-height;
+        opacity: 0;
+        color: transparent;
+        transition: opacity $base-easing-time $base-easing, color $base-easing-time $base-easing;
+    }
+    &.focus .placeholder,
+    &:focus-within .placeholder
+    {
+        opacity: 1;
+        color: $gray-light;
+    }
+    &.focus .placeholder,
+    &:focus-within .placeholder,
+    &.not-empty .placeholder
+    {
+        opacity: 1;
+        color: $gray-light;
+    }
+
+    ul
+    {
+        position: absolute;
+        top: 56px;
+        list-style: none;
+        left: 0;
+        margin: 0;
+        padding: 8px 0;
+        max-height: $dropdown-max-height;
+        overflow-y: auto;
+        background-color: #fff;
+        @include raised(3);
+        width: 100%;
+        border-radius: 4px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity $base-easing-time $base-easing;
+        z-index: $z-index-dropdown;
+        li
+        {
+            padding: 0;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            margin: 0;
+            a
+            {
+                display: block;
+                position: relative;
+                color: $body-color;
+                width: 100%;
+                padding: 18px 13px;
+                font-size: 1.6rem;
+                @include _ellipsis();
+                &:hover
+                {
+                    text-decoration: none;
+                    background-color: $gray-lightest;
+                }
+            }
+            &.selected a
+            {
+                background-color: rgba-to-rgb(rgba($brand-primary, 0.15));
+                color: $brand-primary;
+            }
+            // Show tick
+            &.selected:after
+            {
+                position: absolute;
+                color: $dropdown-tick-color;
+                right: 12px;
+                font-family: 'IcoMoon';
+                content:"\ed71";
+            }
+        }
+    }
+    &.focus ul
+    {
+        opacity: 1;
+        visibility: visible;
+    }
+    >.glyph-icon
+    {
+        position: absolute;
+        left: 15px;
+        width: 20px;
+        height: 20px;
+        padding: 3px;
+        top: 50%;
+        margin-top: -10px;
+        color: $gray;
+    }
+    >.glyph-icon ~ .placeholder
+    {
+        left: 45px;
+    }
+    >.glyph-icon ~ label
+    {
+        padding-left: 45px;
+    }
+
+    &.focus >.glyph-icon,
+    &:focus >.glyph-icon,
+    &:focus-within >.glyph-icon
+    {
+        color: $brand-info;
+    }
+    /*&.focus >.glyph-icon,
+    &:focus >.glyph-icon,
+    &:focus-within >.glyph-icon*/
+
+}

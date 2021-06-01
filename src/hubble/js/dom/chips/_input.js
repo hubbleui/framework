@@ -161,7 +161,7 @@
 
             var _value = Helper.getInputValue(this).trim();
 
-            if (!Helper.in_array(_value, _this._getChipsValues(_wrapper)))
+            if (!Helper.in_array(_value, _this._getChipsValues(_wrapper)) && _value !== '')
             {
                 _this.addChip(_value, _wrapper);
 

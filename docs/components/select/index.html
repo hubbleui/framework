@@ -145,7 +145,7 @@
                                 <a class="" href="../input-mask/index.html"> Input mask </a>
                             </li>
                             <li>
-                                <a class="" href="../media/index.html"> Media </a>
+                                <a class="active" href="../media/index.html"> Media </a>
                             </li>
                             <li>
                                 <a class="" href="../messages/index.html"> Messages </a>
@@ -178,7 +178,7 @@
                                 <a class="" href="../tooltips/index.html"> Tooltips </a>
                             </li>
                             <li>
-                                <a class="active" href="../waypoints/index.html"> Waypoints </a>
+                                <a class="" href="../waypoints/index.html"> Waypoints </a>
                             </li>
                         </ul>
                         <div class="title-wrap js-collapse " data-collapse-target="javascript">
@@ -233,111 +233,92 @@
                         <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger"> Documentation Menu </button>
                     </div>
                     <article class="docs-body">
-                        <h1>Waypoints</h1>
-                        <p> Waypoints provide a convenient to automatically scroll to content on a page. They also provide the ability to land at a particular element on page load via the <code>URL</code> hash. </p>
+                        <h1>Select</h1>
+                        <p>Selects display a list of choices offering a more cohesive version of a select menu.</p>
                         <hr>
                         <ul class="list-bullet">
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Usage</a>
+                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Basic example</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="options" data-waypoint-speed="500">Options</a>
+                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="contents" data-waypoint-speed="500">Contents</a>
+                            </li>
+                            <li>
+                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="contextual" data-waypoint-speed="800">Contextual styles</a>
+                            </li>
+                            <li>
+                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="layouts" data-waypoint-speed="1000">Layouts</a>
                             </li>
                         </ul>
                         <hr>
                         <div class="row roof-xs floor-xs" data-waypoint="example">
-                            <h2>Usage</h2>
-                            <p> To setup a click-to-scroll event, simply add the <code>.js-waypoint-trigger</code> class to a clickable element, like a button </p>
+                            <h2>Basic example</h2>
+                            <p> Media are built with as little markup and styles as possible, but still manage to deliver alot customization depending on what you place inside. </p>
+                            <p> Below is an example of a basic media block. </p>
                             <div class="code-content-example">
-                                <button class="btn btn-primary js-waypoint-trigger" data-waypoint-target="scroll-target"> Scroll To Content </button>
-                                <div class="row floor-xs"></div>
-                                <div data-waypoint="scroll-target">
-                                    <p> Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. </p>
+                                <div class="row floor-xs">
+                                    <div class="form-field">
+                                        <input name="text" id="text" type="text" placeholder="Enter some text...">
+                                        <label>Text Input</label>
+                                    </div>
                                 </div>
+                                <div class="row floor-xs">
+                                    <div class="form-field">
+                                        <select name="select" id="select" placeholder="Choose something nice">
+                                            <option value="">Choose an option</option>
+                                            <option value="Option 1">Option 1</option>
+                                            <option value="Option 2">Option 2</option>
+                                            <option value="Option 3">Option 3</option>
+                                        </select>
+                                        <label for="select">Select Input</label>
+                                    </div>
+                                </div>
+                                <div class="row floor-xs">
+                                    <div class="form-field select js-select">
+                                        <ul>
+                                            <li><a href="#" data-value="option-1">Option 1</a></li>
+                                            <li class="selected"><a href="#" data-value="option-2">Option 2</a></li>
+                                            <li><a href="#" data-value="option-3">Option 3</a></li>
+                                            <li><a href="#" data-value="option-4">Option 4 is longer and longer</a></li>
+                                            <li><a href="#" data-value="option-5">Option 5</a></li>
+                                        </ul>
+                                        <label for="select">Select Menu</label>
+                                        <span class="placeholder">Choose an option</span>
+                                        <input type="hidden" name="select" id="select">
+                                    </div>
+                                    <p class="help-warning">* You need to enter your name</p>
+                                </div>
+                                <div class="row floor-xs">
+                                    <div class="form-field select js-select">
+                                        <span class="glyph-icon glyph-icon-heart3"></span>
+                                        <ul>
+                                            <li><a href="#" data-value="option-1">Option 1</a></li>
+                                            <li class="selected"><a href="#" data-value="option-2">Option 2</a></li>
+                                            <li><a href="#" data-value="option-3">Option 3</a></li>
+                                            <li><a href="#" data-value="option-4">Option 4 is longer and longer</a></li>
+                                            <li><a href="#" data-value="option-5">Option 5</a></li>
+                                        </ul>
+                                        <label for="select">Select Menu</label>
+                                        <span class="placeholder">Choose an option</span>
+                                        <input type="hidden" name="select" id="select">
+                                    </div>
+                                    <p class="help-warning">* You need to enter your name</p>
+                                </div>
+                                
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<button class="btn btn-primary js-waypoint-trigger" data-waypoint-target="scroll-target">
-    Scroll To Content
-</button>
-<div data-waypoint="scroll-target">
-    ...
-</div>
--->
-</code></pre>
-                            <blockquote class="bq-info"> Any element with a <code>data-waypoint</code> attribute provides the ability to land at that element on pageload using the <code>URL</code> hash. For example, <code>http://example.com#landhere</code> on pageload would scroll to the element with <code>data-waypoint="landhere"</code>. </blockquote>
-                        </div>
-                        <hr>
-                        <div class="row roof-xs floor-xs" data-waypoint="options">
-                            <h2>Options</h2>
-                            <p> You can specify the the animation speed as well as the animation <code>easing</code> via HTML <code>data-</code> attributes on the click-target. <code>data-waypoint-speed</code> sets the scroll animation in milliseconds, while <code>data-waypoint-easing</code> sets the scroll animation easing via a valid <code>CSS</code> easing property. </p>
-                            <div class="code-content-example">
-                                <button class="btn btn-primary js-waypoint-trigger" data-waypoint-target="scroll-target-1" data-waypoint-speed="500" data-waypoint-easing="ease-out"> Scroll To Content </button>
-                                <div class="row floor-xs"></div>
-                                <div data-waypoint="scroll-target-1">
-                                    <p> Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. </p>
-                                </div>
-                            </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
-<!--
-<button class="btn btn-primary js-waypoint-trigger" 
-    data-waypoint-target="scroll-target"
-    data-waypoint-speed="500"
-    data-waypoint-easing="ease-out">
-    Scroll To Content
-</button>
-<div data-waypoint="scroll-target">
-    ...
+<div class="media">
+    <div class="media-left">
+        <img height="50px" width="50px" src="http://placekitten.com/60/60" alt="...">
+    </div>
+    <div class="media-body gutter-sm gutter-l">
+        <p>This content is the media body.</p>
+    </div>
 </div>
 -->
 </code></pre> </div>
-                    </article>
-                </div>
-            </div>
-        </div>
-        <footer class="site-footer">
-            <div class="container-fluid clearfix">
-                <div class="col col-12 col-sm-7 gutter-sm-r">
-                    <div class="row sitemap roof-sm floor-sm">
-                        <ul class="list-inline">
-                            <li>
-                                <a href="../../index.html">Documentation</a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/hubbleui/framework/issues">Issues</a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/hubbleui/">GitHub</a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/hubbleui/framework/archive/master.zip">Download</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="row">
-                        <a href="/" title="Home" class="logo-link"> <svg class="logo" viewBox="0 0 512 512"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#logo"></use></svg> </a>
-                        <small> © Hubble UI 2016.
-                            <br> Designed &amp; developed with
-                            <span style="font-size:13px;color:#F36B5C;">♥</span> by Joe Howard. </small>
-                    </div>
-                </div>
-                <div class="col col-12 col-sm-4 gutter-sm-l">
-                    <ul class="list-inline social-links">
-                        <li>
-                            <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/index.html">
-                                <span class="icon icon-social glyph-icon glyph-icon-github"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
-                                <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
-                                <span class="icon glyph-icon glyph-icon-arrow-up"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+</article>
+                
             </div>
         </footer>
         <div class="sidebar-overlay js-sidebar-overlay"></div>
