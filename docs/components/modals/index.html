@@ -111,7 +111,6 @@
                             <span class="icon glyph-icon glyph-icon-chevron-down"></span>
                         </div>
                         <ul class="list-unstyled " id="components">
-                            
                             <li>
                                 <a class="" href="../cards/index.html"> Cards </a>
                             </li>
@@ -274,7 +273,6 @@ Hubble.require('Modal',
 -->
 </code></pre> </div>
                         <hr>
-
                         <div class="row roof-sm floor-sm" data-waypoint="example">
                             <h2>Target content</h2>
                             <p>If you require more customized content inside the modal, set the <code>targetContent</code> options to a DOM node selector. The modal content will populate with the content from that node wrapped in a card.</p>
@@ -292,7 +290,11 @@ Hubble.require('Modal',
                                     });
                                 });
                                 </script>
-                                <div class="hidden js-my-custom-content"><div class="card-block"><p>This custom content was loaded from an existing node!</p></div></div>
+                                <div class="hidden js-my-custom-content">
+                                    <div class="card-block">
+                                        <p>This custom content was loaded from an existing node!</p>
+                                    </div>
+                                </div>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 Hubble.require('Modal',
@@ -315,32 +317,43 @@ Hubble.require('Modal',
                                     {
                                         Hubble.require('Modal',
                                         {
-                                            title            : 'Great Idea',
-                                            message          : 'Would you like to continue?',
-                                            closeAnywhere    : false,
-                                            targetContent    : null,
-
-                                            cancelBtn        : true,
-                                            cancelText       : 'Cancel',
-                                            cancelClass      : 'btn btn-pure',
-
-                                            confirmBtn       : true,
-                                            confirmClass     : 'btn btn-pure btn-primary',
-                                            confirmText      : 'Confirm',
-                                            overlay          : 'light',
-                                            extras           : '<img class="card-img" data-src="holder.js/100px180/" alt="100%x180" style="height: 180px; width: 100%; display: block;" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22318%22%20height%3D%22180%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20318%20180%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15a63dd608b%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A16pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15a63dd608b%22%3E%3Crect%20width%3D%22318%22%20height%3D%22180%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22118.0859375%22%20y%3D%2297.2%22%3E318x180%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" data-holder-rendered="true">',
-
-                                            validateConfirm     : function(arg1, arg2, arg3) {var modal = this; console.log(arg1 + arg2 + arg3); return true },
-                                            validateConfirmArgs : ['validate1', 'validate2', 'validate3'],
-                                            
-                                            onBuilt        : function(arg1, arg2, arg3) {var modal = this; console.log(arg1 + arg2 + arg3);},
-                                            onBuiltArgs    : ['built1', 'built2', 'built3'],
-                                            
-                                            onRender       : function(arg1, arg2, arg3) {var modal = this; console.log(arg1 + arg2 + arg3);},
-                                            onRenderArgs   : ['render1', 'render2', 'render3'],
-
-                                            onClose        : function(arg1, arg2, arg3) {var modal = this; console.log(arg1 + arg2 + arg3);},
-                                            onCloseArgs    : ['close1', 'close2', 'close3'],
+                                            title: 'Great Idea',
+                                            message: 'Would you like to continue?',
+                                            closeAnywhere: false,
+                                            targetContent: null,
+                                            cancelBtn: true,
+                                            cancelText: 'Cancel',
+                                            cancelClass: 'btn btn-pure',
+                                            confirmBtn: true,
+                                            confirmClass: 'btn btn-pure btn-primary',
+                                            confirmText: 'Confirm',
+                                            overlay: 'light',
+                                            extras: '<img class="card-img" data-src="holder.js/100px180/" alt="100%x180" style="height: 180px; width: 100%; display: block;" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22318%22%20height%3D%22180%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20318%20180%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15a63dd608b%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A16pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15a63dd608b%22%3E%3Crect%20width%3D%22318%22%20height%3D%22180%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22118.0859375%22%20y%3D%2297.2%22%3E318x180%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" data-holder-rendered="true">',
+                                            validateConfirm: function(arg1, arg2, arg3)
+                                            {
+                                                var modal = this;
+                                                console.log(arg1 + arg2 + arg3);
+                                                return true
+                                            },
+                                            validateConfirmArgs: ['validate1', 'validate2', 'validate3'],
+                                            onBuilt: function(arg1, arg2, arg3)
+                                            {
+                                                var modal = this;
+                                                console.log(arg1 + arg2 + arg3);
+                                            },
+                                            onBuiltArgs: ['built1', 'built2', 'built3'],
+                                            onRender: function(arg1, arg2, arg3)
+                                            {
+                                                var modal = this;
+                                                console.log(arg1 + arg2 + arg3);
+                                            },
+                                            onRenderArgs: ['render1', 'render2', 'render3'],
+                                            onClose: function(arg1, arg2, arg3)
+                                            {
+                                                var modal = this;
+                                                console.log(arg1 + arg2 + arg3);
+                                            },
+                                            onCloseArgs: ['close1', 'close2', 'close3'],
                                         });
                                     });
                                 });
@@ -352,32 +365,25 @@ Hubble.require('Modal', {
     message          : 'Would you like to continue?',
     closeAnywhere    : false,
     targetContent    : null,
-
     cancelBtn        : true,
     cancelText       : 'Cancel',
     cancelClass      : 'btn btn-pure',
-
     confirmBtn       : true,
     confirmClass     : 'btn btn-pure btn-primary',
     confirmText      : 'Confirm',
     overlay          : 'light',
     extras           : '<img class="card-img" data-src="holder.js/100px180/" alt="100%x180" style="height: 180px; width: 100%; display: block;" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22318%22%20height%3D%22180%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20318%20180%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15a63dd608b%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A16pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15a63dd608b%22%3E%3Crect%20width%3D%22318%22%20height%3D%22180%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22118.0859375%22%20y%3D%2297.2%22%3E318x180%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" data-holder-rendered="true">',
-
     validateConfirm     : function(arg1, arg2, arg3) {var modal = this; console.log(arg1 + arg2 + arg3); return true },
     validateConfirmArgs : ['validate1', 'validate2', 'validate3'],
-
     onBuilt        : function(arg1, arg2, arg3) {var modal = this; console.log(arg1 + arg2 + arg3);},
     onBuiltArgs    : ['built1', 'built2', 'built3'],
-
     onRender       : function(arg1, arg2, arg3) {var modal = this; console.log(arg1 + arg2 + arg3);},
     onRenderArgs   : ['render1', 'render2', 'render3'],
-
     onClose        : function(arg1, arg2, arg3) {var modal = this; console.log(arg1 + arg2 + arg3);},
     onCloseArgs    : ['close1', 'close2', 'close3'],
 });
 -->
 </code></pre>
-
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>

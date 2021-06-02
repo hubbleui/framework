@@ -443,46 +443,46 @@ function complete(response)
      * @return {This}
      */
     _Ajax.prototype._normaliseArgs = function(method, url, data, success, error, complete, headers)
-    {
-        var complete = typeof complete === 'undefined' ? 'false' : complete;
-
-        // (url, complete)
-        if (this._isFunc(data))
         {
-            complete = data;
+            var complete = typeof complete === 'undefined' ? 'false' : complete;
 
-            //OR (url, complete, headers)
-            if (this._isFunc(success))
+            // (url, complete)
+            if (this._isFunc(data))
             {
-                headers = success;
+                complete = data;
+
+                //OR (url, complete, headers)
+                if (this._isFunc(success))
+                {
+                    headers = success;
+                }
+
+                success = false;
+
+                error = false;
             }
 
-            success = false;
-
-            error = false;
-        }
-
-        if (method !== 'POST')
-        {
-            if (this._isObj(data) && !this._isEmpty(data))
+            if (method !== 'POST')
             {
-                url += url.includes('?') ? '&' : '?';
-                url += this._params(data);
-                data = null;
+                if (this._isObj(data) && !this._isEmpty(data))
+                {
+                    url += url.includes('?') ? '&' : '?';
+                    url += this._params(data);
+                    data = null;
+                }
             }
-        }
-        else if (this._isObj(data) && !this._isEmpty(data))
-        {
-            data = this._params(data);
-        }
+            else if (this._isObj(data) && !this._isEmpty(data))
+            {
+                data = this._params(data);
+            }
 
-        return [method, url, data, success, error, complete, headers];
-    }
-    /**
-     * Ready callback
-     *
-     * @return string
-     */
+            return [method, url, data, success, error, complete, headers];
+        }
+        /**
+         * Ready callback
+         *
+         * @return string
+         */
     _Ajax.prototype._ready = function(xhr, success, error, complete)
     {
         if (xhr.readyState == 4)

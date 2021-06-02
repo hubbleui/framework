@@ -14,6 +14,7 @@
         "grunt-contrib-watch": "^0.6.1",
         "grunt-image": "^4.2.0",
         "grunt-import": "^1.0.3",
+        "grunt-jsbeautifier": "^0.2.13",
         "grunt-prettify": "^0.4.0",
         "grunt-svgmin": "^5.0.0",
         "grunt-text-replace": "^0.4.0"

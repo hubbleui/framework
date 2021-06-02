@@ -111,7 +111,6 @@
                             <span class="icon glyph-icon glyph-icon-chevron-down"></span>
                         </div>
                         <ul class="list-unstyled " id="components">
-                            
                             <li>
                                 <a class="" href="../cards/index.html"> Cards </a>
                             </li>
@@ -306,14 +305,12 @@ Hubble.require('Notifications', {
     msg: 'Connection lost.',
     timeoutMs: 5000,
     isCallback: true,
-
     confirmText: 'Retry',
     onConfirm: function(args)
     {
         console.log(args);
     },
     onConfirmArgs: ['variable1', 'variable2', 'variable3'],
-
     showDismiss: true,
     onDismiss: function(args)
     {

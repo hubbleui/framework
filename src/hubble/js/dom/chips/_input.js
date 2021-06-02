@@ -184,6 +184,7 @@
             Helper.removeFromDOM(_chips.pop());
         }
     }
+
     /**
      * Insert new chip
      *
