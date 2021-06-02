@@ -25,12 +25,6 @@
     {
         this._pops  = [];
         this._nodes = [];
-        this._arrowClasses = {
-            top    : 'arrow-s',
-            left   : 'arrow-e',
-            right  : 'arrow-w',
-            bottom : 'arrow-n',
-        };
 
         // Find nodes
         this._nodes = Helper.$All('.js-popover');
@@ -105,12 +99,11 @@
         var direction      = trigger.dataset.popoverDirection;
         var title          = trigger.dataset.popoverTitle;
         var content        = trigger.dataset.popoverContent;
-        var type           = trigger.dataset.popoverType || '';
         var evnt           = trigger.dataset.popoverEvent;
         var animation      = trigger.dataset.popoverAnimate || 'pop';
         var target         = trigger.dataset.popoverTarget;
-        var closeBtn       = evnt === 'click' ? '<span class="glyph-icon glyph-icon-cross js-remove-pop"></span>' : ''; 
-        var pop            = '<h3 class="popover-title">'+title+closeBtn+'</h3><div class="popover-content"><p>'+content+'</p></div>';
+        var closeBtn       = evnt === 'click' ? '<button type="button" class="btn btn-xs btn-pure btn-circle js-remove-pop"><span class="glyph-icon glyph-icon-cross"></span></button>' : ''; 
+        var pop            = '<h3 class="popover-title">'+ title + closeBtn + '</h3><div class="popover-content"><p>' + content + '</p></div>';
 
         if (target)
         {
@@ -118,12 +111,13 @@
             pop.classList.remove('hidden');
         }
 
-        var popHandler = Container.get('_popHandler', {
+        var popHandler = Container.get('_popHandler',
+        {
             target    :  trigger,
             direction :  direction,
             template  :  pop,
             animation :  animation,
-            classes   : 'popover '+ direction +' '+ type +' arrow ' + this._arrowClasses[direction],
+            classes   : 'popover '+ direction ,
         });
 
         this._pops.push(popHandler);
