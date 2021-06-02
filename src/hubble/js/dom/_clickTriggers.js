@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -29,7 +28,7 @@
          * @var array
          */
         this._containers = Helper.$All('.js-click-trigger');
-        
+
         if (!Helper.empty(this._containers))
         {
             this._bind();
@@ -91,7 +90,7 @@
             e.preventDefault();
         }
 
-        var clicked  = this;
+        var clicked = this;
         var targetEl = Helper.$(clicked.dataset.clickTarget);
 
         if (Helper.nodeExists(targetEl))

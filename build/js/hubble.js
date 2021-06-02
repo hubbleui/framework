@@ -15542,7 +15542,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -15562,7 +15561,7 @@ function complete(response)
     {
         this._inputs = Helper.$All('.form-field input, .form-field select, .form-field textarea');
         this._labels = Helper.$All('.form-field label');
-        
+
         if (!Helper.empty(this._inputs))
         {
             this._bind();
@@ -15675,7 +15674,7 @@ function complete(response)
         {
             Helper.removeClass(this.parentNode, 'focus');
         }
-        
+
         if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
         {
             var _value = Helper.getInputValue(this);
@@ -15699,7 +15698,6 @@ function complete(response)
     Container.get('Hubble').dom().register('Inputs', Inputs);
 
 })();
-
 /**
  * File inputs
  *
@@ -16360,7 +16358,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -16384,7 +16381,7 @@ function complete(response)
          * @var array
          */
         this._containers = Helper.$All('.js-click-trigger');
-        
+
         if (!Helper.empty(this._containers))
         {
             this._bind();
@@ -16446,7 +16443,7 @@ function complete(response)
             e.preventDefault();
         }
 
-        var clicked  = this;
+        var clicked = this;
         var targetEl = Helper.$(clicked.dataset.clickTarget);
 
         if (Helper.nodeExists(targetEl))
@@ -16459,7 +16456,6 @@ function complete(response)
     Container.get('Hubble').dom().register('ClickTriggers', ClickTriggers);
 
 })();
-
 /**
  * Image zoom hover
  * 

@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -25,7 +24,7 @@
     {
         this._inputs = Helper.$All('.form-field input, .form-field select, .form-field textarea');
         this._labels = Helper.$All('.form-field label');
-        
+
         if (!Helper.empty(this._inputs))
         {
             this._bind();
@@ -138,7 +137,7 @@
         {
             Helper.removeClass(this.parentNode, 'focus');
         }
-        
+
         if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
         {
             var _value = Helper.getInputValue(this);
