@@ -2,7 +2,7 @@
 {
     position: absolute;
     border-radius: 4px;
-    background-color: $popover-bg;
+    background-color: #fff;
     max-width: $popover-max-width;
     box-shadow: $raised-level-one;
     z-index: $z-index-popover;
@@ -20,7 +20,7 @@
     background-color: transparent;
     font-weight: $text-bold;
     font-size: 1.4rem;
-    padding: $popover-content-padding;
+    padding: 8px 14px;
     margin-bottom: 0;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;

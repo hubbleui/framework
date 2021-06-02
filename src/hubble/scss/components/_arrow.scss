@@ -20,7 +20,7 @@
 .arrow-w:before,
 .arrow-ws:before
 {
-	border-right-color: $arrow-color;
+	border-right-color: $gray-lighter;
 	left: -16px;
     margin-top: -4px;
     width:8px;
@@ -67,7 +67,7 @@
 .arrow-n:before,
 .arrow-ne:before
 {
-	border-bottom-color: $arrow-color;
+	border-bottom-color: $gray-lighter;
 	top: -16px;
 	margin-left: -4px;
 }
@@ -102,7 +102,7 @@
 .arrow-e:before,
 .arrow-es:before
 {
-	border-left-color: $arrow-color;
+	border-left-color: $gray-lighter;
 	right: -16px;
     margin-top: -4px;
 }
@@ -147,7 +147,7 @@
 .arrow-s:before,
 .arrow-se:before
 {
-	border-top-color: $arrow-color;
+	border-top-color: $gray-lighter;
 	bottom: -16px;
 	margin-left: -5px;
 }

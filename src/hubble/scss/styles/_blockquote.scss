@@ -1,10 +1,10 @@
 blockquote
 {
     margin: 0 0 1em;
-    border-radius: $bq-border-radius;
-    padding: $bq-padding;
-    color: $bq-color;
-    background-color: $bq-bg;
+    border-radius: 4px;
+    padding: 2rem;
+    color: $body-color;
+    background-color: darken($body-bg, 5);
 
     p
     {

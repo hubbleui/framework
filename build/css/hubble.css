@@ -64,7 +64,7 @@ body.no-scroll {
 
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
   font-weight: 400;
   margin-bottom: 1rem;
   font-style: normal;
@@ -3527,7 +3527,7 @@ pre > code {
 }
 
 .heading-font {
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
 }
 
 .font-lightest {
@@ -3959,9 +3959,9 @@ blockquote.bq-danger > footer, blockquote.bq-success > footer, blockquote.bq-inf
           border-radius: 4px;
   font-size: 1.4rem;
   line-height: 1.4rem;
-  background-color: #999a9d;
-  border: 1px solid #999a9d;
-  color: #fff;
+  background-color: #bebebe;
+  border: 1px solid #bebebe;
+  color: #585858;
   font-weight: 500;
   text-transform: uppercase;
   white-space: nowrap;
@@ -3977,16 +3977,16 @@ blockquote.bq-danger > footer, blockquote.bq-success > footer, blockquote.bq-inf
           box-shadow: 0 2px 2px 0 rgba(153, 154, 157, 0.14), 0 3px 1px -2px rgba(153, 154, 157, 0.2), 0 1px 5px 0 rgba(153, 154, 157, 0.12);
 }
 .btn:hover, .btn.hover {
-  background-color: #a4a6a9;
-  border-color: #a4a6a9;
-  color: #fff;
+  background-color: #cbcbcb;
+  border-color: #cbcbcb;
+  color: #585858;
   -webkit-box-shadow: 0 14px 26px -12px rgba(153, 154, 157, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(153, 154, 157, 0.2);
           box-shadow: 0 14px 26px -12px rgba(153, 154, 157, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(153, 154, 157, 0.2);
 }
 .btn:active, .btn.active {
-  background-color: #b4b6b7;
-  border-color: #b4b6b7;
-  color: #fff;
+  background-color: #d8d8d8;
+  border-color: #d8d8d8;
+  color: #585858;
   -webkit-box-shadow: none;
           box-shadow: none;
 }
@@ -8193,7 +8193,6 @@ form.success .msg-success {
   position: relative;
   margin: 0;
   font-size: 1.2rem;
-  border-top: 1px solid transparent;
 }
 .drop ul li a {
   position: relative;

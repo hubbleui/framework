@@ -41,14 +41,14 @@ input, select, label, button, textarea
 a
 {
     color: $link-color;
-    text-decoration: $link-decoration;
+    text-decoration: none;
     background: transparent;
     &:active,
     &:hover
     {
         outline: 0;
         color: $link-hover-color;
-        text-decoration: $link-hover-decoration;
+        text-decoration: underline;
     }
     &.no-link:hover
     {

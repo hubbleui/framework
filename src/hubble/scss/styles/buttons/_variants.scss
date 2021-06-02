@@ -133,7 +133,7 @@
 // Outline variants
 .btn.btn-outline
 {
-    @include button-outline($btn-default-bg);
+    @include button-outline($gray);
 }
 .btn-primary.btn-outline
 {
@@ -171,7 +171,7 @@
 // Pure variants
 .btn.btn-pure
 {
-    @include button-pure($btn-default-bg);
+    @include button-pure($gray);
 }
 .btn-primary.btn-pure
 {
