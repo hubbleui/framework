@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -29,7 +28,7 @@
          * @var array
          */
         this._containers = Helper.$All('.js-ripple');
-        
+
         if (!Helper.empty(this._containers))
         {
             this._bind();
@@ -85,17 +84,17 @@
     ButtonRipple.prototype._eventHandler = function(e)
     {
         e = e || window.event;
-        var container  = this;
-        var wave       = document.createElement('span');
+        var container = this;
+        var wave = document.createElement('span');
         wave.className = 'wave';
         container.appendChild(wave);
 
         var coords = Helper.getCoords(container);
-        var size   = container.offsetWidth;
-        var x      = e.pageX - coords.left - (container.offsetWidth / 2);
-        var y      = e.pageY - coords.top - (container.offsetHeight * 1.3);
-       
-        Helper.css(wave, 
+        var size = container.offsetWidth;
+        var x = e.pageX - coords.left - (container.offsetWidth / 2);
+        var y = e.pageY - coords.top - (container.offsetHeight * 1.3);
+
+        Helper.css(wave,
         {
             top: y + 'px',
             left: x + 'px',
@@ -105,7 +104,7 @@
 
         Helper.addClass(wave, 'animate');
 
-        setTimeout(function ()
+        setTimeout(function()
         {
             container.removeChild(wave);
 

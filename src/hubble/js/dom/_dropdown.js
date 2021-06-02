@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -31,7 +30,7 @@
         this._triggers = Helper.$All('.js-drop-trigger');
 
         if (!Helper.empty(this._triggers))
-        { 
+        {
             this._bind();
         }
 
@@ -88,8 +87,8 @@
         e = e || window.event;
         e.preventDefault();
 
-        var button   = this;
-        var _this    = Container.get('DropDowns');
+        var button = this;
+        var _this = Container.get('DropDowns');
 
         // Hide all dropdowns except this
         _this._hideDropDowns(button);
@@ -151,7 +150,7 @@
         if (!Helper.hasClass(e.target, 'js-drop-trigger'))
         {
             var _this = Container.get('DropDowns');
-            
+
             _this._hideDropDowns();
         }
     }
@@ -165,7 +164,7 @@
     DropDowns.prototype._hideDropDowns = function(exception)
     {
         dropTriggers = Helper.$All('.js-drop-trigger');
-        exception    = (typeof exception === 'undefined' ? false : exception);
+        exception = (typeof exception === 'undefined' ? false : exception);
 
         for (var i = 0; i < dropTriggers.length; i++)
         {

@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -23,7 +22,7 @@
      */
     var Popovers = function()
     {
-        this._pops  = [];
+        this._pops = [];
         this._nodes = [];
 
         // Find nodes
@@ -62,8 +61,8 @@
         this._removeAll();
 
         this._nodes = [];
-        
-        this._pops  = [];
+
+        this._pops = [];
     }
 
     /**
@@ -96,28 +95,28 @@
      */
     Popovers.prototype._bind = function(trigger)
     {
-        var direction      = trigger.dataset.popoverDirection;
-        var title          = trigger.dataset.popoverTitle;
-        var content        = trigger.dataset.popoverContent;
-        var evnt           = trigger.dataset.popoverEvent;
-        var animation      = trigger.dataset.popoverAnimate || 'pop';
-        var target         = trigger.dataset.popoverTarget;
-        var closeBtn       = evnt === 'click' ? '<button type="button" class="btn btn-xs btn-pure btn-circle js-remove-pop"><span class="glyph-icon glyph-icon-cross"></span></button>' : ''; 
-        var pop            = '<h3 class="popover-title">'+ title + closeBtn + '</h3><div class="popover-content"><p>' + content + '</p></div>';
+        var direction = trigger.dataset.popoverDirection;
+        var title = trigger.dataset.popoverTitle;
+        var content = trigger.dataset.popoverContent;
+        var evnt = trigger.dataset.popoverEvent;
+        var animation = trigger.dataset.popoverAnimate || 'pop';
+        var target = trigger.dataset.popoverTarget;
+        var closeBtn = evnt === 'click' ? '<button type="button" class="btn btn-xs btn-pure btn-circle js-remove-pop"><span class="glyph-icon glyph-icon-cross"></span></button>' : '';
+        var pop = '<h3 class="popover-title">' + title + closeBtn + '</h3><div class="popover-content"><p>' + content + '</p></div>';
 
         if (target)
         {
-            pop = Helper.$('#'+target).cloneNode(true);
+            pop = Helper.$('#' + target).cloneNode(true);
             pop.classList.remove('hidden');
         }
 
         var popHandler = Container.get('_popHandler',
         {
-            target    :  trigger,
-            direction :  direction,
-            template  :  pop,
-            animation :  animation,
-            classes   : 'popover '+ direction ,
+            target: trigger,
+            direction: direction,
+            template: pop,
+            animation: animation,
+            classes: 'popover ' + direction,
         });
 
         this._pops.push(popHandler);
@@ -156,8 +155,8 @@
      */
     Popovers.prototype._hoverOver = function()
     {
-        var trigger    = this;
-        var _this      = Container.get('Popovers');
+        var trigger = this;
+        var _this = Container.get('Popovers');
         var popHandler = _this._getHandler(trigger);
         if (Helper.hasClass(trigger, 'popped')) return;
         popHandler.render();
@@ -197,7 +196,7 @@
     Popovers.prototype._windowResize = function()
     {
         var _this = Container.get('Popovers');
-        
+
         for (var i = 0; i < _this._nodes.length; i++)
         {
             if (Helper.hasClass(_this._nodes[i], 'popped'))
@@ -218,10 +217,10 @@
     {
         e = e || window.event;
         e.preventDefault();
-        var trigger    = this;
-        var _this      = Container.get('Popovers');
+        var trigger = this;
+        var _this = Container.get('Popovers');
         var popHandler = _this._getHandler(trigger);
-       
+
         if (Helper.hasClass(trigger, 'popped'))
         {
             _this._removeAll();
@@ -245,7 +244,7 @@
     {
         var _this = this;
 
-        window.addEventListener('click', function (e)
+        window.addEventListener('click', function(e)
         {
             e = e || window.event;
             var clicked = e.target;
@@ -253,7 +252,7 @@
             // Clicked inside the popver itself,
             // Clicked a popover trigger
             // Clicked a close trigger inside the popover
-            if ( (Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
+            if ((Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
             {
                 return;
             }
@@ -261,7 +260,7 @@
             _this._removeAll();
         });
     }
-    
+
     /**
      * Get the handler for the trigger
      * 
@@ -273,7 +272,7 @@
     {
         for (var i = 0; i < this._pops.length; i++)
         {
-           if (this._pops[i]['trigger'] === trigger) return this._pops[i];
+            if (this._pops[i]['trigger'] === trigger) return this._pops[i];
         }
 
         return false;

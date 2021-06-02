@@ -30,14 +30,14 @@
     var Notifications = function(options)
     {
         this._notifWrap = Helper.$('.js-nofification-wrap');
-        
+
         if (!Helper.nodeExists(this._notifWrap))
         {
             this._buildNotificationContainer();
         }
-        
+
         this._invoke(options);
-        
+
         return this;
     }
 
@@ -66,21 +66,22 @@
         if (typeof options.isCallback !== 'undefined' && options.isCallback === true)
         {
             this._invokeCallbackable(options);
-            
+
             return;
         }
 
-        var _this     = this;
-        var content   = '<div class="msg-body"><p>' + options.msg + '</p></div>';
-        var notif     = Helper.newNode('div', 'msg-'+ options.type + ' msg animate-notif', null, content, this._notifWrap);
-        var timeout   = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
+        var _this = this;
+        var content = '<div class="msg-body"><p>' + options.msg + '</p></div>';
+        var notif = Helper.newNode('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
+        var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
         Helper.addClass(this._notifWrap, 'active');
 
         // Timout remove automatically
-        _activeNotifs.push({
-            node    : notif,
-            timeout : setTimeout(function()
+        _activeNotifs.push(
+        {
+            node: notif,
+            timeout: setTimeout(function()
             {
                 _this._removeNotification(notif);
             }, timeout),
@@ -101,22 +102,23 @@
      */
     Notifications.prototype._invokeCallbackable = function(options)
     {
-        var _this        = this;
-        var confirmText  = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
-        var dismissX     = typeof options.showDismiss === 'undefined' ? '' : '<button type="button" class="btn btn-xs btn-pure btn-dismiss btn-circle js-dismiss"><span class="glyph-icon glyph-icon-cross2"></span></button>';
-        var timeout      = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
+        var _this = this;
+        var confirmText = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
+        var dismissX = typeof options.showDismiss === 'undefined' ? '' : '<button type="button" class="btn btn-xs btn-pure btn-dismiss btn-circle js-dismiss"><span class="glyph-icon glyph-icon-cross2"></span></button>';
+        var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
-        var content  = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX +'</div>';
+        var content = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX + '</div>';
 
-        var notif    = Helper.newNode('div', 'msg animate-notif', null, content, this._notifWrap);
-        var confirm  = Helper.$('.js-confirm', notif);
-        var dismiss  = Helper.$('.js-dismiss', notif);
-        
+        var notif = Helper.newNode('div', 'msg animate-notif', null, content, this._notifWrap);
+        var confirm = Helper.$('.js-confirm', notif);
+        var dismiss = Helper.$('.js-dismiss', notif);
+
         Helper.addClass(this._notifWrap, 'active');
-        
-        _activeNotifs.push({
-            node    : notif,
-            timeout : setTimeout(function()
+
+        _activeNotifs.push(
+        {
+            node: notif,
+            timeout: setTimeout(function()
             {
                 _this._removeNotification(notif);
             }, timeout),
@@ -129,7 +131,7 @@
             {
                 options.onDismiss(options.onDismissArgs);
             }
-                
+
             _this._removeNotification(notif);
         });
 

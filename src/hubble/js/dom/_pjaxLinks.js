@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -20,7 +19,10 @@
      * 
      * @var function
      */
-    function boolval(l){return!1!==l&&("false"!==l&&(0!==l&&0!==l&&(""!==l&&"0"!==l&&((!Array.isArray(l)||0!==l.length)&&(null!==l&&void 0!==l)))))}
+    function boolval(l)
+    {
+        return !1 !== l && ("false" !== l && (0 !== l && 0 !== l && ("" !== l && "0" !== l && ((!Array.isArray(l) || 0 !== l.length) && (null !== l && void 0 !== l)))))
+    }
 
     /**
      * Module constructor
@@ -34,9 +36,9 @@
 
         if (!Helper.empty(this._nodes))
         {
-        	this._bind();
+            this._bind();
         }
-        
+
         return this;
     }
 
@@ -88,14 +90,14 @@
 
         e.preventDefault();
 
-        var trigger     = this;
-		var href        = trigger.dataset.pjaxHref;
-		var target      = trigger.dataset.pjaxTarget;
-		var title       = trigger.dataset.pjaxTitle || false;
-		var stateChange = boolval(trigger.dataset.pjaxStateChange);
+        var trigger = this;
+        var href = trigger.dataset.pjaxHref;
+        var target = trigger.dataset.pjaxTarget;
+        var title = trigger.dataset.pjaxTitle || false;
+        var stateChange = boolval(trigger.dataset.pjaxStateChange);
         var singleRequest = boolval(trigger.dataset.pjaxSingleRequest);
 
-		Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
+        Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
     }
 
     // Load into Hubble DOM core

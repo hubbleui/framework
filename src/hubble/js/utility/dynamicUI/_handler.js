@@ -33,7 +33,7 @@
         this._options = options;
 
         this._options.onRenderArgs = typeof options.onRenderArgs === 'undefined' ? [] : options.onRenderArgs;
-        this._options.onErrorArgs  = typeof options.onErrorArgs === 'undefined'  ? [] : options.onErrorArgs;
+        this._options.onErrorArgs = typeof options.onErrorArgs === 'undefined' ? [] : options.onErrorArgs;
 
         if (Helper.nodeExists(Helper.$(this._options.trigger)))
         {
@@ -90,11 +90,12 @@
     DynamicUiHandler.prototype._eventHandler = function()
     {
         var trigger = Helper.$(this._options.trigger);
-        var target  = Helper.$(this._options.target);
+        var target = Helper.$(this._options.target);
         var ajaxUrl = this._options.url;
-        var form    = this._options.form || {};
+        var form = this._options.form ||
+        {};
         var trigger = this._options.trigger;
-        var _this   = this;
+        var _this = this;
 
         // Return on loading or disabled
         if (Helper.hasClass(trigger, 'active') || trigger.disabled === true)
@@ -108,30 +109,30 @@
 
         // Request the Ajax
         Ajax.post(ajaxUrl, form, function(success)
-        {
-            var responseObj = Helper.isJSON(success);
-
-            if (responseObj && responseObj.response === 'valid')
             {
-                _this._render(responseObj);
-                _this._fireRendered(responseObj);
-                Hubble.require('Events').fire('domChange', target);
-                Hubble.dom().refresh();
-            }
-            else
-            {
-                _this._fireErrored(success);
-            }
+                var responseObj = Helper.isJSON(success);
 
-            Helper.removeClass(trigger, 'active');
-            Helper.removeClass(target, 'active');
-        },
-        function(error)
-        {
-            Helper.removeClass(trigger, 'active');
-            Helper.removeClass(target, 'active');
-            _this._fireErrored(error);
-        });
+                if (responseObj && responseObj.response === 'valid')
+                {
+                    _this._render(responseObj);
+                    _this._fireRendered(responseObj);
+                    Hubble.require('Events').fire('domChange', target);
+                    Hubble.dom().refresh();
+                }
+                else
+                {
+                    _this._fireErrored(success);
+                }
+
+                Helper.removeClass(trigger, 'active');
+                Helper.removeClass(target, 'active');
+            },
+            function(error)
+            {
+                Helper.removeClass(trigger, 'active');
+                Helper.removeClass(target, 'active');
+                _this._fireErrored(error);
+            });
     }
 
     /**
@@ -144,12 +145,12 @@
     {
         var details = response.details;
         var classes = this._options.classes;
-        var target  = Helper.$(this._options.target);
+        var target = Helper.$(this._options.target);
 
         for (var i = 0; i < classes.length; i++)
         {
             var content = details[classes[i]['key']] || null;
-            var node    = Helper.$(classes[i]['class'], target);
+            var node = Helper.$(classes[i]['class'], target);
 
             if (!content || !Helper.nodeExists(node))
             {
@@ -166,11 +167,11 @@
      * @access private
      */
     DynamicUiHandler.prototype._fireRendered = function(response)
-    {        
+    {
         if (typeof this._options.onRender !== 'undefined')
         {
             var callback = this._options.onRender;
-            var args     = this._options.onRenderArgs;
+            var args = this._options.onRenderArgs;
             args.unshift(response);
 
             callback.apply(this._options.target, args);
@@ -187,7 +188,7 @@
         if (typeof this._options.onError !== 'undefined')
         {
             var callback = this._options.onError;
-            var args     = this._options.onErrorArgs;
+            var args = this._options.onErrorArgs;
             args.unshift(error);
 
             callback.apply(this._options.target, args);

@@ -76,7 +76,7 @@ JSHelper.prototype.closest = function(el, type)
     {
         return el;
     }
-    
+
     if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type)
     {
         return el.parentNode;
@@ -87,7 +87,7 @@ JSHelper.prototype.closest = function(el, type)
     while (parent !== document.body && typeof parent !== "undefined" && parent !== null)
     {
         parent = parent.parentNode;
-        
+
         if (parent && parent.nodeName.toLowerCase() === type)
         {
             return parent;
@@ -250,7 +250,7 @@ JSHelper.prototype._nextUntillClass = function(el, className)
         {
             return next;
         }
-        
+
         next = next.nextSibling;
 
     }
@@ -318,7 +318,7 @@ JSHelper.prototype._previousUntillClass = function(el, className)
     {
         className = className.substring(1);
     }
-    
+
     if (el.previousSibling && this.hasClass(el.previousSibling, className))
     {
         return el.previousSibling;
@@ -353,10 +353,10 @@ JSHelper.prototype._previousUntillClass = function(el, className)
 JSHelper.prototype.newNode = function(type, classes, ID, content, target)
 {
     var node = document.createElement(type);
-    classes  = (typeof classes === "undefined" ? null : classes);
-    ID       = (typeof ID === "undefined" ? null : ID);
-    content  = (typeof content === "undefined" ? null : content);
-    
+    classes = (typeof classes === "undefined" ? null : classes);
+    ID = (typeof ID === "undefined" ? null : ID);
+    content = (typeof content === "undefined" ? null : content);
+
     if (classes !== null)
     {
         node.className = classes
@@ -413,9 +413,9 @@ JSHelper.prototype.removeFromDOM = function(el)
     if (this.nodeExists(el))
     {
         el.parentNode.removeChild(el);
-        
+
         var children = this.$All('*', el);
-        
+
         for (var i = 0, len = children.length; i < len; i++)
         {
             this.removeEventListener(children[i]);
@@ -471,7 +471,7 @@ JSHelper.prototype.removeStyle = function(el, prop)
         }
     }
 
-    
+
 }
 
 /**
@@ -610,29 +610,29 @@ JSHelper.prototype.isNodeType = function(el, NodeType)
  */
 JSHelper.prototype.getCoords = function(el)
 {
-    var box        = el.getBoundingClientRect();
-    var body       = document.body;
-    var docEl      = document.documentElement;
-    var scrollTop  = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    var box = el.getBoundingClientRect();
+    var body = document.body;
+    var docEl = document.documentElement;
+    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
     var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-    var clientTop  = docEl.clientTop || body.clientTop || 0;
+    var clientTop = docEl.clientTop || body.clientTop || 0;
     var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var borderL    = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderR    = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderT    = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderB    = parseInt(this.getStyle(el, 'border-top-width'));
-    var top        = box.top  + scrollTop  - clientTop  - borderT - borderB;
-    var left       = box.left + scrollLeft - clientLeft + borderL - borderR;
-    var width      = parseFloat(this.getStyle(el, "width"));
-    var height     = parseFloat(this.getStyle(el, "height"));
+    var borderL = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderR = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderT = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderB = parseInt(this.getStyle(el, 'border-top-width'));
+    var top = box.top + scrollTop - clientTop - borderT - borderB;
+    var left = box.left + scrollLeft - clientLeft + borderL - borderR;
+    var width = parseFloat(this.getStyle(el, "width"));
+    var height = parseFloat(this.getStyle(el, "height"));
 
     return {
-        top    : top,
-        left   : left,
-        right  : left + width,
-        bottom : top + height,
-        height : height,
-        width  : width,
+        top: top,
+        left: left,
+        right: left + width,
+        bottom: top + height,
+        height: height,
+        width: width,
     };
 }
 
@@ -711,9 +711,9 @@ JSHelper.prototype.getInputValue = function(input)
 {
     if (input.type == "checkbox")
     {
-        var val    = '';
-        
-        var checks = this.$All('input[name='+input.name+']');
+        var val = '';
+
+        var checks = this.$All('input[name=' + input.name + ']');
 
         for (var i = 0, len = checks.length; i < len; i++)
         {
@@ -723,7 +723,7 @@ JSHelper.prototype.getInputValue = function(input)
             }
         }
 
-        return this.rtrim(val, ', '); 
+        return this.rtrim(val, ', ');
     }
 
     if (input.type == "number")
@@ -758,14 +758,15 @@ JSHelper.prototype.getInputValue = function(input)
  */
 JSHelper.prototype.formArray = function(form)
 {
-    var inputs   = this.getFormInputs(form);
+    var inputs = this.getFormInputs(form);
     var response = [];
 
     for (var i = 0; i < inputs.length; i++)
     {
-        response.push({
-            'name'  : inputs[i].name,
-            'value' : this.getInputValue(this.getInputValue(inputs[i]))
+        response.push(
+        {
+            'name': inputs[i].name,
+            'value': this.getInputValue(this.getInputValue(inputs[i]))
         });
     }
 
@@ -803,7 +804,7 @@ JSHelper.prototype.innerHTML = function(target, content, append)
  */
 JSHelper.prototype.inViewport = function(el)
 {
-    
+
     var rect = el.getBoundingClientRect();
 
     return (

@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function(window)
 {
     /**
@@ -87,7 +86,7 @@
      */
     ArrayHelper.prototype._deleteRecursive = function(keys, object)
     {
-        var key    = keys.shift();
+        var key = keys.shift();
         var islast = keys.length === 0;
 
         if (islast)
@@ -121,7 +120,7 @@
      */
     ArrayHelper.prototype._getRecursive = function(keys, object)
     {
-        var key    = keys.shift();
+        var key = keys.shift();
         var islast = keys.length === 0;
 
         if (islast)
@@ -148,15 +147,15 @@
      */
     ArrayHelper.prototype._setRecursive = function(keys, value, object, nextKey)
     {
-        var key     = keys.shift();
-        var islast  = keys.length === 0;
+        var key = keys.shift();
+        var islast = keys.length === 0;
         var lastObj = object;
-        object      = !nextKey ? object : object[nextKey];
+        object = !nextKey ? object : object[nextKey];
 
         // Trying to set a value on nested array that doesn't exist
         if (!['object', 'function'].includes(typeof object))
         {
-            throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '['+nextKey+']"');
+            throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
         }
 
         if (!object[key])
@@ -164,8 +163,9 @@
             // Trying to put object key into an array
             if (Object.prototype.toString.call(object) === '[object Array]' && typeof key === 'string')
             {
-                var converted = Object.assign({}, object);
-                
+                var converted = Object.assign(
+                {}, object);
+
                 lastObj[nextKey] = converted;
 
                 object = converted;
@@ -200,7 +200,7 @@
      */
     ArrayHelper.prototype._keySegment = function(path)
     {
-        var result   = [];
+        var result = [];
         var segments = path.split('.');
 
         for (var i = 0; i < segments.length; i++)
@@ -218,7 +218,7 @@
 
             for (var j = 0; j < subSegments.length; j++)
             {
-                if (['0','1','2','3','4','5','6','7','8','9'].includes(subSegments[j][0]))
+                if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
                 {
                     result.push(parseInt(subSegments[j].replace(']')));
                 }
@@ -246,7 +246,7 @@
         this.data = {};
 
         this.singletons = {};
-        
+
         return this;
     };
 
@@ -318,7 +318,7 @@
 
         key = this._normalizeKey(key);
 
-        var _proto  = Object.getPrototypeOf(this);
+        var _proto = Object.getPrototypeOf(this);
 
         if (typeof _proto[key] !== 'undefined')
         {
@@ -340,7 +340,7 @@
         {
             throw new Error('Cannot set singletons using dot notation.');
         }
-        
+
         var args = this._normalizeArgs(arguments);
 
         var instance;
@@ -355,7 +355,7 @@
         this.set(key, function()
         {
             if (!instance)
-            {               
+            {
                 if (!this._isInvoked(instance))
                 {
                     instance = this._newInstance(classObj, args);
@@ -424,7 +424,7 @@
 
         return false;
     }
-    
+
     /**
      * Checks if key is a singleton
      *
@@ -454,7 +454,7 @@
      */
     Container.prototype._isInvokable = function(mixedVar)
     {
-        return Object.prototype.toString.call( mixedVar ) === '[object Function]';
+        return Object.prototype.toString.call(mixedVar) === '[object Function]';
     }
 
     /**
@@ -479,7 +479,7 @@
      */
     Container.prototype._newInstance = function(reference, args)
     {
-        return new (Function.prototype.bind.apply(reference, args));
+        return new(Function.prototype.bind.apply(reference, args));
     }
 
     /**
@@ -491,10 +491,10 @@
      */
     Container.prototype._normalizeArgs = function(args)
     {
-        if ( Object.prototype.toString.call( args ) === '[object Arguments]')
+        if (Object.prototype.toString.call(args) === '[object Arguments]')
         {
             var _args = Array.prototype.slice.call(args);
-            
+
             _args.shift();
 
             return _args;
@@ -513,11 +513,11 @@
     Container.prototype._normalizeKey = function(key)
     {
         key = key.replace(/['"]/g, '').replace(/\W+/g, ' ')
-        .replace(/ (.)/g, function($1)
-        {
-            return $1.toUpperCase();
-        })
-        .replace(/ /g, '');
+            .replace(/ (.)/g, function($1)
+            {
+                return $1.toUpperCase();
+            })
+            .replace(/ /g, '');
 
         key = key.charAt(0).toUpperCase() + key.slice(1);
 
@@ -536,4 +536,3 @@
     }
 
 })(window);
-

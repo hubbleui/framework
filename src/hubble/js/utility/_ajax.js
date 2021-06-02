@@ -56,10 +56,10 @@ function complete(response)
      */
     var Queue = function(concurrency)
     {
-        this.running     = 0;
+        this.running = 0;
         this.concurrency = concurrency;
-        this.taskQueue   = [];
-        
+        this.taskQueue = [];
+
         return this;
     }
 
@@ -76,7 +76,7 @@ function complete(response)
     }
 
     Queue.prototype.next = function()
-    {        
+    {
         this.running--;
 
         if (this.taskQueue.length > 0)
@@ -88,7 +88,7 @@ function complete(response)
     }
 
     Queue.prototype._runTask = function(task, _this, _args)
-    {       
+    {
         this.running++;
 
         task.apply(_this, _args);
@@ -98,9 +98,9 @@ function complete(response)
     {
         this.taskQueue.push(
         {
-            'callback' : task,
-            '_this'    : _this,
-            '_args'    : _args
+            'callback': task,
+            '_this': _this,
+            '_args': _args
         });
     }
 
@@ -115,22 +115,21 @@ function complete(response)
      */
     var _Ajax = function()
     {
-        this._settings = 
-        {
-            'url'          : '',
-            'async'        : true,
-            'headers'      :
+        this._settings = {
+            'url': '',
+            'async': true,
+            'headers':
             {
-                'Content-Type'  : 'application/x-www-form-urlencoded',
-                'Accepts'       : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                'Cache-Control' : 'no-cache',
-                'Pragma'        : 'no-cache'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accepts': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
             },
         };
 
         this._complete = false;
         this._success = false;
-        this._error   = false;
+        this._error = false;
 
         return this;
     }
@@ -181,7 +180,7 @@ function complete(response)
     _Ajax.prototype.delete = function(url, data, success, error, complete, headers)
     {
         var instance = new _Ajax;
-        
+
         AjaxQueue.add(instance._call, instance, instance._normaliseArgs('DELETE', url, data, success, error, complete, headers));
 
         return instance;
@@ -199,7 +198,7 @@ function complete(response)
         {
             throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
         }
-        
+
         this._success = callback;
 
         return this;
@@ -217,7 +216,7 @@ function complete(response)
         {
             throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
         }
-        
+
         this._error = callback;
 
         return this;
@@ -268,7 +267,7 @@ function complete(response)
     _Ajax.prototype.upload = function(url, data, success, error, start, progress, complete)
     {
         var formData = new FormData();
-        
+
         for (var key in data)
         {
             if (data.hasOwnProperty(key))
@@ -316,9 +315,9 @@ function complete(response)
             try
             {
                 readyState = e.target.readyState;
-                text       = e.target.responseText;
-                status     = e.target.status;
-            } 
+                text = e.target.responseText;
+                status = e.target.status;
+            }
             catch (e)
             {
                 return;
@@ -329,13 +328,14 @@ function complete(response)
                 if (status >= 200 && status < 300 || status === 304)
                 {
                     var response = e.target.responseText;
-                    
+
                     if (_this.isFunction(success))
                     {
                         success(response);
                     }
-                } 
-                else {
+                }
+                else
+                {
                     // error callback
                     if (_this.isFunction(error))
                     {
@@ -388,7 +388,7 @@ function complete(response)
             {
                 _this._ready.call(_this, xhr, success, error, complete);
             }
-            
+
             xhr.send(data);
         }
         else
@@ -418,9 +418,10 @@ function complete(response)
 
         if (this._isObj(headers))
         {
-            this._settings['headers'] = Object.assign({}, this._settings['headers'], headers);
+            this._settings['headers'] = Object.assign(
+            {}, this._settings['headers'], headers);
         }
-                
+
         for (var k in this._settings['headers'])
         {
             if (this._settings['headers'].hasOwnProperty(k))
@@ -474,7 +475,7 @@ function complete(response)
         {
             data = this._params(data);
         }
-        
+
         return [method, url, data, success, error, complete, headers];
     }
     /**
@@ -505,7 +506,7 @@ function complete(response)
                 {
                     this._success.call(xhr, response);
                 }
-            } 
+            }
             else
             {
                 successfull = false;

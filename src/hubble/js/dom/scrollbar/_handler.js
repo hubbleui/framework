@@ -6,16 +6,19 @@
  * This should not be used at all outside of the framework.
  * @see https://github.com/noraesae/perfect-scrollbar
  */
-(function() {
+(function()
+{
 
     var defaults = {
-        elements: {
+        elements:
+        {
             area: '.scrollbar-area',
             wrapper: '.scrollbar-wrapper',
             track: '.scrollbar-track',
             handle: '.scrollbar-handle'
         },
-        stateClasses: {
+        stateClasses:
+        {
             dragging: 'scrollbar-dragging',
             hover: 'scrollbar-hover'
         }
@@ -23,23 +26,28 @@
 
     // SCROLLBAR HANDLER
     /*****************************************/
-    function Scrollbar(element, opts) {
+    function Scrollbar(element, opts)
+    {
 
         // handle constructor call without `new` keyword
-        if (!(this instanceof Scrollbar))  return new Scrollbar(element, opts);
+        if (!(this instanceof Scrollbar)) return new Scrollbar(element, opts);
 
         // is plugin already initialized?
-        if (this.el) {
+        if (this.el)
+        {
             return;
         }
 
         this.el = element;
-        this.opts = extend({}, defaults, opts || {});
+        this.opts = extend(
+        {}, defaults, opts ||
+        {});
 
         this._setupElements();
 
         // check if browser has physical scrollbars (usually desktop)
-        if (this.scrollbarWidth = getScrollbarWidth()) {
+        if (this.scrollbarWidth = getScrollbarWidth())
+        {
             this._enableTrack();
 
             this._observeHover(this.area);
@@ -48,7 +56,9 @@
             this._enableDragging();
 
             this.refresh();
-        } else {
+        }
+        else
+        {
             this._allowNativeScroll();
         }
 
@@ -60,7 +70,8 @@
     /**
      * Destroys plugin instance.
      */
-    Scrollbar.prototype.destroy = function() {
+    Scrollbar.prototype.destroy = function()
+    {
         var stateClasses = this.opts.stateClasses;
 
         this._removeAllListeners();
@@ -80,25 +91,31 @@
     /**
      * Refreshes scrollbar by adjusting its handle's height and position.
      */
-    Scrollbar.prototype.refresh = function() {
+    Scrollbar.prototype.refresh = function()
+    {
         var newRatio;
 
-        if (!this.el || this.isNative()) {
+        if (!this.el || this.isNative())
+        {
             return;
         }
-        
-        if (this.wrapper.scrollHeight > this.wrapper.offsetHeight) {
+
+        if (this.wrapper.scrollHeight > this.wrapper.offsetHeight)
+        {
             this.track.style.display = 'block';
 
             newRatio = this.track.offsetHeight / this.wrapper.scrollHeight;
 
-            if (newRatio !== this.ratio) {
+            if (newRatio !== this.ratio)
+            {
                 this.ratio = newRatio;
 
                 this._resizeHandle();
                 this._positionHandle();
             }
-        } else {
+        }
+        else
+        {
             this.track.style.display = 'none';
         }
     }
@@ -108,7 +125,8 @@
      *
      * @returns {Boolean}
      */
-    Scrollbar.prototype.isNative = function() {
+    Scrollbar.prototype.isNative = function()
+    {
         return !this.scrollbarWidth;
     }
 
@@ -119,7 +137,8 @@
      *
      * @private
      */
-    Scrollbar.prototype._setupElements = function() {
+    Scrollbar.prototype._setupElements = function()
+    {
         var elements = this.opts.elements;
 
         this.area = this.el.querySelector(elements.area);
@@ -134,39 +153,45 @@
      * @param {HTMLElement} element
      * @private
      */
-    Scrollbar.prototype._observeHover = function(element) {
-        var cls = this.opts.stateClasses.hover;
+    Scrollbar.prototype._observeHover = function(element)
+        {
+            var cls = this.opts.stateClasses.hover;
 
-        this._addListener(element, 'mouseenter', function() {
-            addClass(element, cls);
-        });
-        this._addListener(element, 'mouseleave', function() {
-            removeClass(element, cls);
-        });
-    },
+            this._addListener(element, 'mouseenter', function()
+            {
+                addClass(element, cls);
+            });
+            this._addListener(element, 'mouseleave', function()
+            {
+                removeClass(element, cls);
+            });
+        },
 
-    /**
-     * Enables scroll by overflowing native scrollbar and starting to listen to `scroll` event.
-     *
-     * @private
-     */
-    Scrollbar.prototype._enableScroll = function() {
-        this._addListener(this.wrapper, 'scroll', bind(this._positionHandle, this));
-    }
+        /**
+         * Enables scroll by overflowing native scrollbar and starting to listen to `scroll` event.
+         *
+         * @private
+         */
+        Scrollbar.prototype._enableScroll = function()
+        {
+            this._addListener(this.wrapper, 'scroll', bind(this._positionHandle, this));
+        }
 
     /**
      * Enables handle's dragging along the track.
      *
      * @private
      */
-    Scrollbar.prototype._enableDragging = function() {
+    Scrollbar.prototype._enableDragging = function()
+    {
         var cls = this.opts.stateClasses.dragging,
             initialPosition = null,
             initialTop = null,
             startDragging,
             stopDragging;
 
-        this._addListener(this.handle, 'mousedown', bind(function(e) {
+        this._addListener(this.handle, 'mousedown', bind(function(e)
+        {
             initialPosition = this.wrapper.scrollTop;
             initialTop = e.clientY;
 
@@ -174,18 +199,21 @@
             this._addListener(document, 'mouseup', stopDragging);
         }, this));
 
-        startDragging = bind(function(e) {
+        startDragging = bind(function(e)
+        {
             var newPosition,
                 wrapperHeight,
                 wrapperInnerHeight;
 
-            if (initialTop !== null) {
+            if (initialTop !== null)
+            {
                 newPosition = Math.round(initialPosition + (e.clientY - initialTop) / this.ratio);
 
                 wrapperHeight = this.wrapper.offsetHeight;
                 wrapperInnerHeight = this.wrapper.scrollHeight;
 
-                if (newPosition + wrapperHeight > wrapperInnerHeight) {
+                if (newPosition + wrapperHeight > wrapperInnerHeight)
+                {
                     newPosition = wrapperInnerHeight - wrapperHeight;
                 }
 
@@ -197,7 +225,8 @@
             }
         }, this);
 
-        stopDragging = bind(function() {
+        stopDragging = bind(function()
+        {
             initialTop = null;
             initialPosition = null;
 
@@ -214,7 +243,8 @@
      *
      * @private
      */
-    Scrollbar.prototype._enableTrack = function() {
+    Scrollbar.prototype._enableTrack = function()
+    {
         this.wrapper.style.overflowY = 'scroll';
         this.wrapper.style.marginRight = -1 * this.scrollbarWidth + 'px';
     }
@@ -224,7 +254,8 @@
      *
      * @private
      */
-    Scrollbar.prototype._allowNativeScroll = function() {
+    Scrollbar.prototype._allowNativeScroll = function()
+    {
         this.wrapper.style.overflowY = 'auto';
     }
 
@@ -233,7 +264,8 @@
      *
      * @private
      */
-    Scrollbar.prototype._resizeHandle = function() {
+    Scrollbar.prototype._resizeHandle = function()
+    {
         this.handle.style.height = Math.ceil(this.ratio * this.track.offsetHeight) + 'px';
     }
 
@@ -242,13 +274,17 @@
      *
      * @private
      */
-    Scrollbar.prototype._positionHandle = function() {
+    Scrollbar.prototype._positionHandle = function()
+    {
         var wrapperTop = this.wrapper.scrollTop,
             top;
 
-        if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight) {
+        if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight)
+        {
             top = Math.ceil(this.ratio * this.wrapper.scrollTop);
-        } else {
+        }
+        else
+        {
             // if scroll position has reached the end, force scrollbar to track's end
             top = this.track.offsetHeight - this.handle.offsetHeight;
         }
@@ -264,17 +300,21 @@
      * @param {Function}    handler
      * @private
      */
-    Scrollbar.prototype._addListener = function(element, eventName, handler) {
+    Scrollbar.prototype._addListener = function(element, eventName, handler)
+    {
         var events = this._events;
 
-        if (!events) {
+        if (!events)
+        {
             this._events = events = {};
         }
-        if (!events[eventName]) {
+        if (!events[eventName])
+        {
             events[eventName] = [];
         }
 
-        events[eventName].push({
+        events[eventName].push(
+        {
             element: element,
             handler: handler
         });
@@ -290,13 +330,16 @@
      * @param {Function}    handler
      * @private
      */
-    Scrollbar.prototype._removeListener = function(element, eventName, handler) {
+    Scrollbar.prototype._removeListener = function(element, eventName, handler)
+    {
         var event = this._events[eventName],
             index,
             total;
 
-        for (index = 0, total = event.length; index < total; index++) {
-            if (event[index].handler === handler) {
+        for (index = 0, total = event.length; index < total; index++)
+        {
+            if (event[index].handler === handler)
+            {
                 event.splice(index, 1);
                 removeEventListener.apply(null, arguments);
                 break;
@@ -309,17 +352,20 @@
      *
      * @private
      */
-    Scrollbar.prototype._removeAllListeners = function() {
+    Scrollbar.prototype._removeAllListeners = function()
+    {
         var events = this._events,
             eventName,
             event,
             iter,
             total;
 
-        for (eventName in events) {
+        for (eventName in events)
+        {
             event = events[eventName];
 
-            for (iter = 0, total = event.length; iter < total; iter++) {
+            for (iter = 0, total = event.length; iter < total; iter++)
+            {
                 removeEventListener(event[iter].element, eventName, event[iter].handler);
             }
         }
@@ -329,7 +375,94 @@
 
     // HELPER FUNCTIONS
     /*****************************************/
-    function bind(fn,context){return function(){fn.apply(context,arguments);};}function extend(){var iter;for(iter=1;iter<arguments.length;iter++){var key;for(key in arguments[iter]){if(arguments[iter].hasOwnProperty(key)){arguments[0][key]=arguments[iter][key];}}}return arguments[0];}function addEventListener(el,eventName,handler){if(el.addEventListener){el.addEventListener(eventName,handler);}else{el.attachEvent("on"+eventName,handler);}}function removeEventListener(el,eventName,handler){if(el.removeEventListener){el.removeEventListener(eventName,handler);}else{el.detachEvent("on"+eventName,handler);}}function addClass(el,className){if(el.classList){el.classList.add(className);}else{el.className+=" "+className;}}function removeClass(el,className){if(el.classList){el.classList.remove(className);}else{el.className=el.className.replace(new RegExp("(^|\\b)"+className.split(" ").join("|")+"(\\b|$)","gi")," ");}}function getScrollbarWidth(){var wrapper=document.createElement("div"),content=document.createElement("div"),width;wrapper.style.position="absolute";wrapper.style.top="-50px";wrapper.style.height="50px";wrapper.style.overflow="scroll";wrapper.appendChild(content);document.body.appendChild(wrapper);width=wrapper.offsetWidth-content.offsetWidth;document.body.removeChild(wrapper);return width;}
+    function bind(fn, context)
+    {
+        return function()
+        {
+            fn.apply(context, arguments);
+        };
+    }
+
+    function extend()
+    {
+        var iter;
+        for (iter = 1; iter < arguments.length; iter++)
+        {
+            var key;
+            for (key in arguments[iter])
+            {
+                if (arguments[iter].hasOwnProperty(key))
+                {
+                    arguments[0][key] = arguments[iter][key];
+                }
+            }
+        }
+        return arguments[0];
+    }
+
+    function addEventListener(el, eventName, handler)
+    {
+        if (el.addEventListener)
+        {
+            el.addEventListener(eventName, handler);
+        }
+        else
+        {
+            el.attachEvent("on" + eventName, handler);
+        }
+    }
+
+    function removeEventListener(el, eventName, handler)
+    {
+        if (el.removeEventListener)
+        {
+            el.removeEventListener(eventName, handler);
+        }
+        else
+        {
+            el.detachEvent("on" + eventName, handler);
+        }
+    }
+
+    function addClass(el, className)
+    {
+        if (el.classList)
+        {
+            el.classList.add(className);
+        }
+        else
+        {
+            el.className += " " + className;
+        }
+    }
+
+    function removeClass(el, className)
+    {
+        if (el.classList)
+        {
+            el.classList.remove(className);
+        }
+        else
+        {
+            el.className = el.className.replace(new RegExp("(^|\\b)" + className.split(" ").join("|") + "(\\b|$)", "gi"), " ");
+        }
+    }
+
+    function getScrollbarWidth()
+    {
+        var wrapper = document.createElement("div"),
+            content = document.createElement("div"),
+            width;
+        wrapper.style.position = "absolute";
+        wrapper.style.top = "-50px";
+        wrapper.style.height = "50px";
+        wrapper.style.overflow = "scroll";
+        wrapper.appendChild(content);
+        document.body.appendChild(wrapper);
+        width = wrapper.offsetWidth - content.offsetWidth;
+        document.body.removeChild(wrapper);
+        return width;
+    }
 
     Container.set('Scrollbar', Scrollbar);
 

@@ -5,9 +5,8 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
@@ -26,7 +25,7 @@
         this._chips = Helper.$All('.js-filter-chips .chip');
 
         this._bind();
-        
+
         return this;
     }
 

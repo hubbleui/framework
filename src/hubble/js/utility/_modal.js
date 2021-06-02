@@ -5,8 +5,8 @@
  * display a modal.
  *
  */
- (function()
- {
+(function()
+{
     /**
      * @var obj
      */
@@ -15,31 +15,30 @@
     /**
      * @var obj
      */
-    var defaults = 
-    {
-        title            : '',
-        message          : '',
-        closeAnywhere    : true,
-        targetContent    : null,
+    var defaults = {
+        title: '',
+        message: '',
+        closeAnywhere: true,
+        targetContent: null,
 
-        cancelBtn        : true,
-        cancelText        : 'Cancel',
-        cancelClass       : 'btn btn-pure',
+        cancelBtn: true,
+        cancelText: 'Cancel',
+        cancelClass: 'btn btn-pure',
 
-        confirmBtn       : true,
-        confirmClass     : 'btn btn-pure btn-primary',
-        confirmText      : 'Confirm',
-        overlay          : 'light',
-        extras           : '',
+        confirmBtn: true,
+        confirmClass: 'btn btn-pure btn-primary',
+        confirmText: 'Confirm',
+        overlay: 'light',
+        extras: '',
 
-        onBuilt             : null,
-        onBuiltArgs         : null,
-        onRender            : null,
-        onRenderArgs        : null,
-        onClose             : null,
-        onCloseArgs         : null,
-        validateConfirm     : null,
-        validateConfirmArgs : null
+        onBuilt: null,
+        onBuiltArgs: null,
+        onRender: null,
+        onRenderArgs: null,
+        onClose: null,
+        onCloseArgs: null,
+        validateConfirm: null,
+        validateConfirmArgs: null
 
     };
 
@@ -54,15 +53,15 @@
      */
     var Modal = function(options)
     {
-        this._options    = Helper.array_merge(defaults, options);
-        this._timer      = null;
-        this._modal      = null;
-        this._overlay    = null;
+        this._options = Helper.array_merge(defaults, options);
+        this._timer = null;
+        this._modal = null;
+        this._overlay = null;
         this._modalInner = null;
 
         this._invoke();
 
-        return this;    
+        return this;
     };
 
     /**
@@ -71,7 +70,7 @@
      * @access private
      */
     Modal.prototype._invoke = function()
-    {   
+    {
         // Build the modal
         this._buildModal();
 
@@ -90,12 +89,12 @@
      * @access private
      */
     Modal.prototype._buildModal = function()
-    {  
-        var modal   = document.createElement('DIV');
-            modal.className   = 'modal-wrap';
+    {
+        var modal = document.createElement('DIV');
+        modal.className = 'modal-wrap';
 
         var overlay = document.createElement('DIV');
-            overlay.className = 'modal-overlay ' + this._options['overlay'];
+        overlay.className = 'modal-overlay ' + this._options['overlay'];
 
         var content = '';
 
@@ -105,30 +104,30 @@
         }
         else
         {
-            var closeButton   = this._options.cancelBtn === true ? '<button type="button" class="btn ' + this._options.cancelClass + ' js-modal-close js-modal-cancel">' + this._options.cancelText + '</button>' : '';
-            var confirmButton = this._options.confirmBtn === true  ? '<button type="button" class="btn ' + this._options.confirmClass +' js-modal-close js-modal-confirm">'+ this._options.confirmText +'</button>' : '';
-            
+            var closeButton = this._options.cancelBtn === true ? '<button type="button" class="btn ' + this._options.cancelClass + ' js-modal-close js-modal-cancel">' + this._options.cancelText + '</button>' : '';
+            var confirmButton = this._options.confirmBtn === true ? '<button type="button" class="btn ' + this._options.confirmClass + ' js-modal-close js-modal-confirm">' + this._options.confirmText + '</button>' : '';
+
             Helper.innerHTML(modal, [
                 '<div class="modal-dialog js-modal-dialog">',
-                    '<div class="card js-modal-panel">',
-                        '<div class="card-header">',
-                            '<h4 class="card-title">'+this._options.title+'</h4>',
-                        '</div>',
-                        this._options.extras,
-                        '<div class="card-block">',
-                            '<p class="card-text">'+ this._options.message +'</p>',
-                        '</div>',
-                        '<div class="card-actions">',
-                            closeButton,
-                            confirmButton,
-                        '</div>',
-                    '</div>',
+                '<div class="card js-modal-panel">',
+                '<div class="card-header">',
+                '<h4 class="card-title">' + this._options.title + '</h4>',
+                '</div>',
+                this._options.extras,
+                '<div class="card-block">',
+                '<p class="card-text">' + this._options.message + '</p>',
+                '</div>',
+                '<div class="card-actions">',
+                closeButton,
+                confirmButton,
+                '</div>',
+                '</div>',
                 '</div>',
             ]);
         }
 
-        this._modal      = modal;
-        this._overlay    = overlay;
+        this._modal = modal;
+        this._overlay = overlay;
         this._modalInner = Helper.$('.js-modal-dialog', modal);
         this._fireBuilt();
     }
@@ -161,18 +160,18 @@
         var _this = this;
         document.body.appendChild(this._overlay);
         document.body.appendChild(this._modal);
-       
+
         this._centerModal();
-        
+
         Helper.addClass(this._overlay, 'active');
-        
+
         this._fireRender();
-        
+
         Helper.addEventListener(window, 'resize', function modalResize()
         {
             _this._centerModal();
         });
-        
+
         Helper.addClass(document.body, 'no-scroll');
     }
 
@@ -194,7 +193,7 @@
                 if (this === _this._modal)
                 {
                     var clickedInner = Helper.closest(e.target, '.js-modal-dialog');
-                    
+
                     if (clickedInner)
                     {
                         return;
@@ -205,26 +204,26 @@
             e.preventDefault();
 
             clearTimeout(_this._timer);
-            
+
             if (Helper.hasClass(this, 'js-modal-confirm'))
             {
                 var canClose = _this._fireConfirmValidator();
-                
+
                 if (!canClose)
                 {
                     return;
                 }
             }
-            
+
             Helper.addClass(_this._overlay, 'transition-off');
-            
+
             _this._fireClosed();
-            
+
             if (Helper.hasClass(this, 'js-modal-confirm'))
             {
                 _this._fireConfirm();
             }
-            
+
             _this._timer = setTimeout(function()
             {
                 Helper.removeFromDOM(_this._overlay);
@@ -232,7 +231,7 @@
                 Helper.removeClass(document.body, 'no-scroll');
             }, 500);
         }
-        
+
         if (this._options.closeAnywhere === true)
         {
             Helper.addEventListener(this._modal, 'click', closeModal, false);
@@ -241,7 +240,7 @@
         var modalCloses = Helper.$All('.js-modal-close', this._modal);
         if (!Helper.empty(modalCloses))
         {
-             Helper.addEventListener(modalCloses, 'click', closeModal, false);
+            Helper.addEventListener(modalCloses, 'click', closeModal, false);
         }
 
         var modalCancel = Helper.$('.js-modal-cancel', this._modal);
@@ -261,9 +260,9 @@
         if (this._options.onRender !== null && Helper.isCallable(this._options.onRender))
         {
             var callback = this._options.onRender;
-            var args     = this._options.onRenderArgs;
+            var args = this._options.onRenderArgs;
             callback.apply(this._modal, args);
-            
+
         }
     }
 
@@ -277,7 +276,7 @@
         if (this._options.onClose !== null && Helper.isCallable(this._options.onClose))
         {
             var callback = this._options.onClose;
-            var args     = this._options.onCloseArgs;
+            var args = this._options.onCloseArgs;
             callback.apply(this._modal, args);
             Helper.removeClass(document.body, 'no-scroll');
         }
@@ -293,7 +292,7 @@
         if (this._options.onConfirm !== null && Helper.isCallable(this._options.onConfirm))
         {
             var callback = this._options.onConfirm;
-            var args     = this._options.onConfirmArgs;
+            var args = this._options.onConfirmArgs;
             callback.apply(this._modal, args);
         }
     }
@@ -308,7 +307,7 @@
         if (this._options.validateConfirm !== null && Helper.isCallable(this._options.validateConfirm))
         {
             var callback = this._options.validateConfirm;
-            var args     = this._options.validateConfirmArgs;
+            var args = this._options.validateConfirmArgs;
             return callback.apply(this._modal, args);
         }
 
@@ -325,7 +324,7 @@
         if (this._options.onBuilt !== null && Helper.isCallable(this._options.onBuilt))
         {
             var callback = this._options.onBuilt;
-            var args     = this._options.onBuiltArgs;
+            var args = this._options.onBuiltArgs;
             callback.apply(this._modal, args);
         }
     }
@@ -337,22 +336,22 @@
      */
     Modal.prototype._centerModal = function()
     {
-        var el            = this._modalInner;
+        var el = this._modalInner;
         var computedStyle = window.getComputedStyle(el);
-        var modalH        = parseInt(el.offsetHeight);
-        var windowH       = window.innerHeight|| document.documentElement.clientHeight|| getElementsByTagName('body')[0].clientHeight;
-        
+        var modalH = parseInt(el.offsetHeight);
+        var windowH = window.innerHeight || document.documentElement.clientHeight || getElementsByTagName('body')[0].clientHeight;
+
         // If the window height is less than the modal dialog
         // We need to adjust the dialog so it is at the top of the page
         if (windowH <= modalH)
         {
-            el.style.marginTop  = '0px';
-            el.style.top  = '0';
+            el.style.marginTop = '0px';
+            el.style.top = '0';
         }
         else
         {
-            el.style.marginTop  = '-' + (modalH/2) + 'px';
-            el.style.top  = '50%';
+            el.style.marginTop = '-' + (modalH / 2) + 'px';
+            el.style.top = '50%';
         }
     }
 

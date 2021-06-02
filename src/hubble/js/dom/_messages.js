@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -24,9 +23,9 @@
     var MessageClosers = function()
     {
         this._triggers = Helper.$All('.js-close-msg');
-        
+
         if (!Helper.empty(this._triggers))
-        { 
+        {
             this._bind();
         }
 
@@ -90,9 +89,9 @@
         {
             toRemove = toRemove.parentNode;
         }
-        
+
         Helper.animate(toRemove, 'opacity', '1', '0', 300, 'ease');
-        
+
         setTimeout(function()
         {
             Helper.removeFromDOM(toRemove);

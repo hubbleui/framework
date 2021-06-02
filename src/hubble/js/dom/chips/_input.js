@@ -1,14 +1,13 @@
 /**
- * File inputs
+ * Chip inputs
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
-   /**
+(function()
+{
+    /**
      * JS Helper reference
      * 
      * @var object
@@ -26,7 +25,7 @@
         this._wrappers = Helper.$All('.js-chips-input');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -76,8 +75,8 @@
      */
     ChipInputs.prototype._initInput = function(_wrapper)
     {
-        var _removeBtns  = Helper.$All('.chip .remove-icon', _wrapper);
-        var _input       = Helper.$('.js-chip-input', _wrapper);
+        var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
+        var _input = Helper.$('.js-chip-input', _wrapper);
 
         Helper.addEventListener(_removeBtns, 'click', this._removeChip);
 
@@ -97,8 +96,8 @@
      */
     ChipInputs.prototype._destroy = function(_wrapper)
     {
-        var _removeBtns  = Helper.$All('.chip .remove-icon', _wrapper);
-        var _input       = Helper.$('.js-chip-input', _wrapper);
+        var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
+        var _input = Helper.$('.js-chip-input', _wrapper);
 
         Helper.removeEventListener(_removeBtns, 'click', this._removeChip);
 
@@ -119,7 +118,7 @@
     ChipInputs.prototype._preventSubmit = function(e)
     {
         e = e || window.event;
-        
+
         var _key = e.code || e.key || e.keyCode || e.charCode;
 
         if (_key == 'Enter' || _key === 13)
@@ -129,12 +128,12 @@
             return false;
         }
         // Backspace
-        else if ( _key == 'Delete'  || _key == 'Backspace' || _key == 8 || _key == 46 )
+        else if (_key == 'Delete' || _key == 'Backspace' || _key == 8 || _key == 46)
         {
             if (this.value === '')
             {
                 var _wrapper = Helper.closest(this, '.js-chips-input');
-            
+
                 Container.ChipInputs()._removeLastChip(_wrapper);
             }
         }
@@ -195,12 +194,12 @@
      */
     ChipInputs.prototype.addChip = function(_value, _wrapper, _icon)
     {
-        _icon          = typeof _icon === 'undefined' ? false : _icon;
-        var _name      = _wrapper.dataset.inputName;   
-        var _chip      = document.createElement('span');
-        var _children  = Helper.firstChildren(_wrapper);
-        var _classes   = _wrapper.dataset.chipClass;
-        var _iconStr   = '';
+        _icon = typeof _icon === 'undefined' ? false : _icon;
+        var _name = _wrapper.dataset.inputName;
+        var _chip = document.createElement('span');
+        var _children = Helper.firstChildren(_wrapper);
+        var _classes = _wrapper.dataset.chipClass;
+        var _iconStr = '';
 
         if (_classes)
         {
@@ -209,7 +208,7 @@
 
         if (_icon)
         {
-            _iconStr = '<span class="chip-icon"><span class="glyph-icon glyph-icon-'+ _iconclass +'"></span></span>'; 
+            _iconStr = '<span class="chip-icon"><span class="glyph-icon glyph-icon-' + _iconclass + '"></span></span>';
         }
 
         _chip.className = 'chip';

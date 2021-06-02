@@ -6,40 +6,42 @@
  */
 if (!window.location.origin)
 {
-	window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+    window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
 }
 
 /*
  * domready (c) Dustin Diaz 2014 - License MIT
  *
  */
-!function (name, definition)
+! function(name, definition)
 {
 
-  if (typeof module != 'undefined') module.exports = definition()
-  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
-  else this[name] = definition()
+    if (typeof module != 'undefined') module.exports = definition()
+    else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
+    else this[name] = definition()
 
-}('domready', function ()
+}('domready', function()
 {
 
-  var fns = [], listener
-    , doc = typeof document === 'object' && document
-    , hack = doc && doc.documentElement.doScroll
-    , domContentLoaded = 'DOMContentLoaded'
-    , loaded = doc && (hack ? /^loaded|^c/ : /^loaded|^i|^c/).test(doc.readyState)
+    var fns = [],
+        listener, doc = typeof document === 'object' && document,
+        hack = doc && doc.documentElement.doScroll,
+        domContentLoaded = 'DOMContentLoaded',
+        loaded = doc && (hack ? /^loaded|^c/ : /^loaded|^i|^c/).test(doc.readyState)
 
 
-  if (!loaded && doc)
-  doc.addEventListener(domContentLoaded, listener = function () {
-    doc.removeEventListener(domContentLoaded, listener)
-    loaded = 1
-    while (listener = fns.shift()) listener()
-  })
+    if (!loaded && doc)
+        doc.addEventListener(domContentLoaded, listener = function()
+        {
+            doc.removeEventListener(domContentLoaded, listener)
+            loaded = 1
+            while (listener = fns.shift()) listener()
+        })
 
-  return function (fn) {
-    loaded ? setTimeout(fn, 0) : fns.push(fn)
-  }
+    return function(fn)
+    {
+        loaded ? setTimeout(fn, 0) : fns.push(fn)
+    }
 
 });
 
@@ -48,20 +50,25 @@ if (!window.location.origin)
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
  */
-(function ()
+(function()
 {
 
- 	if ( typeof window.CustomEvent === "function" ) return false;
+    if (typeof window.CustomEvent === "function") return false;
 
-  	function CustomEvent ( event, params )
-  	{
-	    params = params || { bubbles: false, cancelable: false, detail: null };
-	    var evt = document.createEvent( 'CustomEvent' );
-	    evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
-	    return evt;
-   	}
+    function CustomEvent(event, params)
+    {
+        params = params ||
+        {
+            bubbles: false,
+            cancelable: false,
+            detail: null
+        };
+        var evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        return evt;
+    }
 
-  	window.CustomEvent = CustomEvent;
+    window.CustomEvent = CustomEvent;
 
 })();
 
@@ -78,22 +85,30 @@ if (!window.location.origin)
     // on. This helper accumulates all remaining arguments past the function’s
     // argument length (or an explicit `startIndex`), into an array that becomes
     // the last argument. Similar to ES6’s "rest parameter".
-    var restArguments = function(func, startIndex) {
+    var restArguments = function(func, startIndex)
+    {
         startIndex = startIndex == null ? func.length - 1 : +startIndex;
-        return function() {
+        return function()
+        {
             var length = Math.max(arguments.length - startIndex, 0),
-            rest = Array(length),
-            index = 0;
-            for (; index < length; index++) {
+                rest = Array(length),
+                index = 0;
+            for (; index < length; index++)
+            {
                 rest[index] = arguments[index + startIndex];
             }
-            switch (startIndex) {
-                case 0: return func.call(this, rest);
-                case 1: return func.call(this, arguments[0], rest);
-                case 2: return func.call(this, arguments[0], arguments[1], rest);
+            switch (startIndex)
+            {
+                case 0:
+                    return func.call(this, rest);
+                case 1:
+                    return func.call(this, arguments[0], rest);
+                case 2:
+                    return func.call(this, arguments[0], arguments[1], rest);
             }
             var args = Array(startIndex + 1);
-            for (index = 0; index < startIndex; index++) {
+            for (index = 0; index < startIndex; index++)
+            {
                 args[index] = arguments[index];
             }
             args[startIndex] = rest;
@@ -102,15 +117,18 @@ if (!window.location.origin)
     };
 
     // A (possibly faster) way to get the current timestamp as an integer.
-    var _now = Date.now || function() {
+    var _now = Date.now || function()
+    {
         return new Date().getTime();
     };
 
 
     // Delays a function for the given number of milliseconds, and then calls
     // it with the arguments supplied.
-    var _delay = restArguments(function(func, wait, args) {
-        return setTimeout(function() {
+    var _delay = restArguments(function(func, wait, args)
+    {
+        return setTimeout(function()
+        {
             return func.apply(null, args);
         }, wait);
     });
@@ -121,39 +139,47 @@ if (!window.location.origin)
     // as much as it can, without ever going more than once per `wait` duration;
     // but if you'd like to disable the execution on the leading edge, pass
     // `{leading: false}`. To disable execution on the trailing edge, ditto.
-    var _throttle = function(func, wait, options) {
+    var _throttle = function(func, wait, options)
+    {
         var timeout, context, args, result;
         var previous = 0;
         if (!options) options = {};
 
-        var later = function() {
+        var later = function()
+        {
             previous = options.leading === false ? 0 : _now();
             timeout = null;
             result = func.apply(context, args);
             if (!timeout) context = args = null;
         };
 
-        var throttled = function() {
+        var throttled = function()
+        {
             var now = _now();
             if (!previous && options.leading === false) previous = now;
             var remaining = wait - (now - previous);
             context = this;
             args = arguments;
-            if (remaining <= 0 || remaining > wait) {
-                if (timeout) {
+            if (remaining <= 0 || remaining > wait)
+            {
+                if (timeout)
+                {
                     clearTimeout(timeout);
                     timeout = null;
                 }
                 previous = now;
                 result = func.apply(context, args);
                 if (!timeout) context = args = null;
-            } else if (!timeout && options.trailing !== false) {
+            }
+            else if (!timeout && options.trailing !== false)
+            {
                 timeout = setTimeout(later, remaining);
             }
             return result;
         };
 
-        throttled.cancel = function() {
+        throttled.cancel = function()
+        {
             clearTimeout(timeout);
             previous = 0;
             timeout = context = args = null;
@@ -166,28 +192,35 @@ if (!window.location.origin)
     // be triggered. The function will be called after it stops being called for
     // N milliseconds. If `immediate` is passed, trigger the function on the
     // leading edge, instead of the trailing.
-    var _debounce = function(func, wait, immediate) {
+    var _debounce = function(func, wait, immediate)
+    {
         var timeout, result;
 
-        var later = function(context, args) {
+        var later = function(context, args)
+        {
             timeout = null;
             if (args) result = func.apply(context, args);
         };
 
-        var debounced = restArguments(function(args) {
+        var debounced = restArguments(function(args)
+        {
             if (timeout) clearTimeout(timeout);
-            if (immediate) {
+            if (immediate)
+            {
                 var callNow = !timeout;
                 timeout = setTimeout(later, wait);
                 if (callNow) result = func.apply(this, args);
-            } else {
+            }
+            else
+            {
                 timeout = _delay(later, wait, this, args);
             }
 
             return result;
         });
 
-        debounced.cancel = function() {
+        debounced.cancel = function()
+        {
             clearTimeout(timeout);
             timeout = null;
         };
@@ -216,12 +249,12 @@ if (!String.prototype.includes)
         {
             throw TypeError('first argument must not be a RegExp');
         }
-        
+
         if (start === undefined)
         {
             start = 0;
         }
-        
+
         return this.indexOf(search, start) !== -1;
     };
 }
@@ -255,7 +288,6 @@ if (!String.prototype.replaceAll)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function(window)
 {
     /**
@@ -337,7 +369,7 @@ if (!String.prototype.replaceAll)
      */
     ArrayHelper.prototype._deleteRecursive = function(keys, object)
     {
-        var key    = keys.shift();
+        var key = keys.shift();
         var islast = keys.length === 0;
 
         if (islast)
@@ -371,7 +403,7 @@ if (!String.prototype.replaceAll)
      */
     ArrayHelper.prototype._getRecursive = function(keys, object)
     {
-        var key    = keys.shift();
+        var key = keys.shift();
         var islast = keys.length === 0;
 
         if (islast)
@@ -398,15 +430,15 @@ if (!String.prototype.replaceAll)
      */
     ArrayHelper.prototype._setRecursive = function(keys, value, object, nextKey)
     {
-        var key     = keys.shift();
-        var islast  = keys.length === 0;
+        var key = keys.shift();
+        var islast = keys.length === 0;
         var lastObj = object;
-        object      = !nextKey ? object : object[nextKey];
+        object = !nextKey ? object : object[nextKey];
 
         // Trying to set a value on nested array that doesn't exist
         if (!['object', 'function'].includes(typeof object))
         {
-            throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '['+nextKey+']"');
+            throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
         }
 
         if (!object[key])
@@ -414,8 +446,9 @@ if (!String.prototype.replaceAll)
             // Trying to put object key into an array
             if (Object.prototype.toString.call(object) === '[object Array]' && typeof key === 'string')
             {
-                var converted = Object.assign({}, object);
-                
+                var converted = Object.assign(
+                {}, object);
+
                 lastObj[nextKey] = converted;
 
                 object = converted;
@@ -450,7 +483,7 @@ if (!String.prototype.replaceAll)
      */
     ArrayHelper.prototype._keySegment = function(path)
     {
-        var result   = [];
+        var result = [];
         var segments = path.split('.');
 
         for (var i = 0; i < segments.length; i++)
@@ -468,7 +501,7 @@ if (!String.prototype.replaceAll)
 
             for (var j = 0; j < subSegments.length; j++)
             {
-                if (['0','1','2','3','4','5','6','7','8','9'].includes(subSegments[j][0]))
+                if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
                 {
                     result.push(parseInt(subSegments[j].replace(']')));
                 }
@@ -496,7 +529,7 @@ if (!String.prototype.replaceAll)
         this.data = {};
 
         this.singletons = {};
-        
+
         return this;
     };
 
@@ -568,7 +601,7 @@ if (!String.prototype.replaceAll)
 
         key = this._normalizeKey(key);
 
-        var _proto  = Object.getPrototypeOf(this);
+        var _proto = Object.getPrototypeOf(this);
 
         if (typeof _proto[key] !== 'undefined')
         {
@@ -590,7 +623,7 @@ if (!String.prototype.replaceAll)
         {
             throw new Error('Cannot set singletons using dot notation.');
         }
-        
+
         var args = this._normalizeArgs(arguments);
 
         var instance;
@@ -605,7 +638,7 @@ if (!String.prototype.replaceAll)
         this.set(key, function()
         {
             if (!instance)
-            {               
+            {
                 if (!this._isInvoked(instance))
                 {
                     instance = this._newInstance(classObj, args);
@@ -674,7 +707,7 @@ if (!String.prototype.replaceAll)
 
         return false;
     }
-    
+
     /**
      * Checks if key is a singleton
      *
@@ -704,7 +737,7 @@ if (!String.prototype.replaceAll)
      */
     Container.prototype._isInvokable = function(mixedVar)
     {
-        return Object.prototype.toString.call( mixedVar ) === '[object Function]';
+        return Object.prototype.toString.call(mixedVar) === '[object Function]';
     }
 
     /**
@@ -729,7 +762,7 @@ if (!String.prototype.replaceAll)
      */
     Container.prototype._newInstance = function(reference, args)
     {
-        return new (Function.prototype.bind.apply(reference, args));
+        return new(Function.prototype.bind.apply(reference, args));
     }
 
     /**
@@ -741,10 +774,10 @@ if (!String.prototype.replaceAll)
      */
     Container.prototype._normalizeArgs = function(args)
     {
-        if ( Object.prototype.toString.call( args ) === '[object Arguments]')
+        if (Object.prototype.toString.call(args) === '[object Arguments]')
         {
             var _args = Array.prototype.slice.call(args);
-            
+
             _args.shift();
 
             return _args;
@@ -763,11 +796,11 @@ if (!String.prototype.replaceAll)
     Container.prototype._normalizeKey = function(key)
     {
         key = key.replace(/['"]/g, '').replace(/\W+/g, ' ')
-        .replace(/ (.)/g, function($1)
-        {
-            return $1.toUpperCase();
-        })
-        .replace(/ /g, '');
+            .replace(/ (.)/g, function($1)
+            {
+                return $1.toUpperCase();
+            })
+            .replace(/ /g, '');
 
         key = key.charAt(0).toUpperCase() + key.slice(1);
 
@@ -786,8 +819,6 @@ if (!String.prototype.replaceAll)
     }
 
 })(window);
-
-
 /**
  * Application core
  *
@@ -795,7 +826,6 @@ if (!String.prototype.replaceAll)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -873,7 +903,7 @@ if (!String.prototype.replaceAll)
     {
         window.Hubble = Container.get('Hubble');
     }
-    
+
 })();
 /**
  * DOM Manager
@@ -882,7 +912,6 @@ if (!String.prototype.replaceAll)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -894,7 +923,7 @@ if (!String.prototype.replaceAll)
      */
     var Dom = function()
     {
-    	this._modules = {};
+        this._modules = {};
 
         return this;
     };
@@ -908,7 +937,7 @@ if (!String.prototype.replaceAll)
      */
     Dom.prototype.boot = function()
     {
-    	this._bindModules();
+        this._bindModules();
     }
 
     /**
@@ -968,7 +997,7 @@ if (!String.prototype.replaceAll)
 
             this._bindModules();
         }
-        
+
     }
 
     /**
@@ -1168,63 +1197,63 @@ if (!String.prototype.replaceAll)
          */
         this.shortHandProps = {
             // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
-            'list-style':      ['-type', '-position', '-image'],
-            'margin':          ['-top', '-right', '-bottom', '-left'],
-            'outline':         ['-width', '-style', '-color'],
-            'padding':         ['-top', '-right', '-bottom', '-left'],
+            'list-style': ['-type', '-position', '-image'],
+            'margin': ['-top', '-right', '-bottom', '-left'],
+            'outline': ['-width', '-style', '-color'],
+            'padding': ['-top', '-right', '-bottom', '-left'],
 
             // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
-            'background':     ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
-            'border':         ['-width', '-style', '-color'],
-            'borderColor':    ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
-            'borderStyle':    ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
-            'borderWidth':    ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
-            'borderTop':      ['-width', '-style', '-color'],
-            'borderTight':    ['-width', '-style', '-color'],
-            'borderBottom':   ['-width', '-style', '-color'],
-            'borderLeft':     ['-width', '-style', '-color'],
-            'borderRadius':   ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
-            'borderImage':    ['-source', '-slice', '-width', '-outset', '-repeat'],
+            'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
+            'border': ['-width', '-style', '-color'],
+            'borderColor': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
+            'borderStyle': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
+            'borderWidth': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
+            'borderTop': ['-width', '-style', '-color'],
+            'borderTight': ['-width', '-style', '-color'],
+            'borderBottom': ['-width', '-style', '-color'],
+            'borderLeft': ['-width', '-style', '-color'],
+            'borderRadius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
+            'borderImage': ['-source', '-slice', '-width', '-outset', '-repeat'],
 
             // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
-            'font':            ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
-            'fontVariant':     ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
+            'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
+            'fontVariant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
 
             // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
-            'mask':            ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
-            'maskBorder':      ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
+            'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
+            'maskBorder': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
 
             // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
-            'columns':         ['column-width', 'column-count'],
-            'columnRule':      ['-width', '-style', '-color'],
+            'columns': ['column-width', 'column-count'],
+            'columnRule': ['-width', '-style', '-color'],
 
             // CSS Speech Module: http://www.w3.org/TR/css3-speech/
-            'cue':             ['-before', '-after'],
-            'pause':           ['-before', '-after'],
-            'rest':            ['-before', '-after'],
+            'cue': ['-before', '-after'],
+            'pause': ['-before', '-after'],
+            'rest': ['-before', '-after'],
 
             // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
-            'textDecoration':  ['-line', '-style', '-color'],
-            'textEmphasis':    ['-style', '-color'],
+            'textDecoration': ['-line', '-style', '-color'],
+            'textEmphasis': ['-style', '-color'],
 
             // CSS Animations (WD): http://www.w3.org/TR/css3-animations
             'webkitAnimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-            'MozAnimation':    ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-            'msAnimation':     ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-            'Oanimation':      ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-            'animation':       ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+            'MozAnimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+            'msAnimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+            'Oanimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+            'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
 
             // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
             'webkitTransition': ['-property', '-duration', '-timing-function', '-delay'],
-            'MozTransition':    ['-property', '-duration', '-timing-function', '-delay'],
-            'msTransition':     ['-property', '-duration', '-timing-function', '-delay'],
-            'OTransition':      ['-property', '-duration', '-timing-function', '-delay'],
-            'transition':       ['-property', '-duration', '-timing-function', '-delay'],
+            'MozTransition': ['-property', '-duration', '-timing-function', '-delay'],
+            'msTransition': ['-property', '-duration', '-timing-function', '-delay'],
+            'OTransition': ['-property', '-duration', '-timing-function', '-delay'],
+            'transition': ['-property', '-duration', '-timing-function', '-delay'],
 
             // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
-            'webkitFlex':      ['-grow', '-shrink', '-basis'],
-            'msFlex':          ['-grow', '-shrink', '-basis'],
-            'flex':            ['-grow', '-shrink', '-basis'],
+            'webkitFlex': ['-grow', '-shrink', '-basis'],
+            'msFlex': ['-grow', '-shrink', '-basis'],
+            'flex': ['-grow', '-shrink', '-basis'],
         };
 
         this._events = {};
@@ -1241,8 +1270,6 @@ if (!String.prototype.replaceAll)
     {
         this.clearEventListeners();
     }
-
-
 /**
  * JSHelper DOM helpers
  *
@@ -1321,7 +1348,7 @@ JSHelper.prototype.closest = function(el, type)
     {
         return el;
     }
-    
+
     if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type)
     {
         return el.parentNode;
@@ -1332,7 +1359,7 @@ JSHelper.prototype.closest = function(el, type)
     while (parent !== document.body && typeof parent !== "undefined" && parent !== null)
     {
         parent = parent.parentNode;
-        
+
         if (parent && parent.nodeName.toLowerCase() === type)
         {
             return parent;
@@ -1495,7 +1522,7 @@ JSHelper.prototype._nextUntillClass = function(el, className)
         {
             return next;
         }
-        
+
         next = next.nextSibling;
 
     }
@@ -1563,7 +1590,7 @@ JSHelper.prototype._previousUntillClass = function(el, className)
     {
         className = className.substring(1);
     }
-    
+
     if (el.previousSibling && this.hasClass(el.previousSibling, className))
     {
         return el.previousSibling;
@@ -1598,10 +1625,10 @@ JSHelper.prototype._previousUntillClass = function(el, className)
 JSHelper.prototype.newNode = function(type, classes, ID, content, target)
 {
     var node = document.createElement(type);
-    classes  = (typeof classes === "undefined" ? null : classes);
-    ID       = (typeof ID === "undefined" ? null : ID);
-    content  = (typeof content === "undefined" ? null : content);
-    
+    classes = (typeof classes === "undefined" ? null : classes);
+    ID = (typeof ID === "undefined" ? null : ID);
+    content = (typeof content === "undefined" ? null : content);
+
     if (classes !== null)
     {
         node.className = classes
@@ -1658,9 +1685,9 @@ JSHelper.prototype.removeFromDOM = function(el)
     if (this.nodeExists(el))
     {
         el.parentNode.removeChild(el);
-        
+
         var children = this.$All('*', el);
-        
+
         for (var i = 0, len = children.length; i < len; i++)
         {
             this.removeEventListener(children[i]);
@@ -1716,7 +1743,7 @@ JSHelper.prototype.removeStyle = function(el, prop)
         }
     }
 
-    
+
 }
 
 /**
@@ -1855,29 +1882,29 @@ JSHelper.prototype.isNodeType = function(el, NodeType)
  */
 JSHelper.prototype.getCoords = function(el)
 {
-    var box        = el.getBoundingClientRect();
-    var body       = document.body;
-    var docEl      = document.documentElement;
-    var scrollTop  = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    var box = el.getBoundingClientRect();
+    var body = document.body;
+    var docEl = document.documentElement;
+    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
     var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-    var clientTop  = docEl.clientTop || body.clientTop || 0;
+    var clientTop = docEl.clientTop || body.clientTop || 0;
     var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var borderL    = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderR    = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderT    = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderB    = parseInt(this.getStyle(el, 'border-top-width'));
-    var top        = box.top  + scrollTop  - clientTop  - borderT - borderB;
-    var left       = box.left + scrollLeft - clientLeft + borderL - borderR;
-    var width      = parseFloat(this.getStyle(el, "width"));
-    var height     = parseFloat(this.getStyle(el, "height"));
+    var borderL = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderR = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderT = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderB = parseInt(this.getStyle(el, 'border-top-width'));
+    var top = box.top + scrollTop - clientTop - borderT - borderB;
+    var left = box.left + scrollLeft - clientLeft + borderL - borderR;
+    var width = parseFloat(this.getStyle(el, "width"));
+    var height = parseFloat(this.getStyle(el, "height"));
 
     return {
-        top    : top,
-        left   : left,
-        right  : left + width,
-        bottom : top + height,
-        height : height,
-        width  : width,
+        top: top,
+        left: left,
+        right: left + width,
+        bottom: top + height,
+        height: height,
+        width: width,
     };
 }
 
@@ -1956,9 +1983,9 @@ JSHelper.prototype.getInputValue = function(input)
 {
     if (input.type == "checkbox")
     {
-        var val    = '';
-        
-        var checks = this.$All('input[name='+input.name+']');
+        var val = '';
+
+        var checks = this.$All('input[name=' + input.name + ']');
 
         for (var i = 0, len = checks.length; i < len; i++)
         {
@@ -1968,7 +1995,7 @@ JSHelper.prototype.getInputValue = function(input)
             }
         }
 
-        return this.rtrim(val, ', '); 
+        return this.rtrim(val, ', ');
     }
 
     if (input.type == "number")
@@ -2003,14 +2030,15 @@ JSHelper.prototype.getInputValue = function(input)
  */
 JSHelper.prototype.formArray = function(form)
 {
-    var inputs   = this.getFormInputs(form);
+    var inputs = this.getFormInputs(form);
     var response = [];
 
     for (var i = 0; i < inputs.length; i++)
     {
-        response.push({
-            'name'  : inputs[i].name,
-            'value' : this.getInputValue(this.getInputValue(inputs[i]))
+        response.push(
+        {
+            'name': inputs[i].name,
+            'value': this.getInputValue(this.getInputValue(inputs[i]))
         });
     }
 
@@ -2048,7 +2076,7 @@ JSHelper.prototype.innerHTML = function(target, content, append)
  */
 JSHelper.prototype.inViewport = function(el)
 {
-    
+
     var rect = el.getBoundingClientRect();
 
     return (
@@ -2157,9 +2185,9 @@ JSHelper.prototype.json_decode = function(str)
  */
 JSHelper.prototype.makeid = function(length)
 {
-    var text     = "";
+    var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    
+
     for (var i = 0; i < length; i++)
     {
         text += possible.charAt(Math.floor(Math.random() * possible.length))
@@ -2210,7 +2238,8 @@ JSHelper.prototype.parse_url = function(str, component)
     var query, key = ['source', 'scheme', 'authority', 'userInfo', 'user', 'pass', 'host', 'port',
             'relative', 'path', 'directory', 'file', 'query', 'fragment'
         ],
-        ini = (this.php_js && this.php_js.ini) || {},
+        ini = (this.php_js && this.php_js.ini) ||
+        {},
         mode = (ini['phpjs.parse_url.mode'] &&
             ini['phpjs.parse_url.mode'].local_value) || 'php',
         parser = {
@@ -2250,7 +2279,7 @@ JSHelper.prototype.parse_url = function(str, component)
             }
         });
     }
-    
+
     if (!'scheme' in uri || !uri.scheme || uri.scheme === '')
     {
         uri['scheme'] = window.location.protocol.replace(':', '').replaceAll('/', '');
@@ -2328,7 +2357,8 @@ JSHelper.prototype.trim = function(str, charlist)
         whitespace =
             ' \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000';
     }
-    else {
+    else
+    {
         // preg_quote custom list
         charlist += '';
         whitespace = charlist.replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g, '$1');
@@ -2385,7 +2415,8 @@ JSHelper.prototype.preg_match_all = function(pattern, subject)
     // if needed. return null on fail
     if (typeof pattern === 'string')
     {
-        try {
+        try
+        {
             pattern = new RegExp(pattern);
         }
         catch (err)
@@ -2393,7 +2424,7 @@ JSHelper.prototype.preg_match_all = function(pattern, subject)
             return null;
         }
     }
-    var _this   = this;
+    var _this = this;
     var matches = [];
     var matched = pattern.exec(subject);
     if (matched !== null)
@@ -2467,31 +2498,38 @@ JSHelper.prototype.timeAgo = function(time, asArray)
 {
     asArray = (typeof asArray === 'undefined' ? false : true);
     time = isValidTimeStamp(time) ? parseInt(time) : strtotime(time);
-    var units = [{
+    var units = [
+    {
         name: "second",
         limit: 60,
         in_seconds: 1
-    }, {
+    },
+    {
         name: "minute",
         limit: 3600,
         in_seconds: 60
-    }, {
+    },
+    {
         name: "hour",
         limit: 86400,
         in_seconds: 3600
-    }, {
+    },
+    {
         name: "day",
         limit: 604800,
         in_seconds: 86400
-    }, {
+    },
+    {
         name: "week",
         limit: 2629743,
         in_seconds: 604800
-    }, {
+    },
+    {
         name: "month",
         limit: 31556926,
         in_seconds: 2629743
-    }, {
+    },
+    {
         name: "year",
         limit: null,
         in_seconds: 31556926
@@ -2681,7 +2719,7 @@ JSHelper.prototype.toCamelCase = function(str)
 
 JSHelper.prototype.camelCaseToHyphen = function(str)
 {
-     return str
+    return str
         // insert a hyphen between lower & upper
         .replace(/([a-z])([A-Z])/g, '$1-$2')
         // hyphen before last upper in a sequence followed by lower
@@ -2814,650 +2852,662 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
 
 JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style)
 {
-  //       discuss at: http://phpjs.org/functions/htmlspecialchars_decode/
-  //      original by: Mirek Slugen
-  //      improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  //      bugfixed by: Mateusz "loonquawl" Zalega
-  //      bugfixed by: Onno Marsman
-  //      bugfixed by: Brett Zamir (http://brett-zamir.me)
-  //      bugfixed by: Brett Zamir (http://brett-zamir.me)
-  //         input by: ReverseSyntax
-  //         input by: Slawomir Kaniecki
-  //         input by: Scott Cariss
-  //         input by: Francois
-  //         input by: Ratheous
-  //         input by: Mailfaker (http://www.weedem.fr/)
-  //       revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // reimplemented by: Brett Zamir (http://brett-zamir.me)
-  //        example 1: htmlspecialchars_decode("<p>this -&gt; &quot;</p>", 'ENT_NOQUOTES');
-  //        returns 1: '<p>this -> &quot;</p>'
-  //        example 2: htmlspecialchars_decode("&amp;quot;");
-  //        returns 2: '&quot;'
+    //       discuss at: http://phpjs.org/functions/htmlspecialchars_decode/
+    //      original by: Mirek Slugen
+    //      improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    //      bugfixed by: Mateusz "loonquawl" Zalega
+    //      bugfixed by: Onno Marsman
+    //      bugfixed by: Brett Zamir (http://brett-zamir.me)
+    //      bugfixed by: Brett Zamir (http://brett-zamir.me)
+    //         input by: ReverseSyntax
+    //         input by: Slawomir Kaniecki
+    //         input by: Scott Cariss
+    //         input by: Francois
+    //         input by: Ratheous
+    //         input by: Mailfaker (http://www.weedem.fr/)
+    //       revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    // reimplemented by: Brett Zamir (http://brett-zamir.me)
+    //        example 1: htmlspecialchars_decode("<p>this -&gt; &quot;</p>", 'ENT_NOQUOTES');
+    //        returns 1: '<p>this -> &quot;</p>'
+    //        example 2: htmlspecialchars_decode("&amp;quot;");
+    //        returns 2: '&quot;'
 
-  var optTemp = 0,
-    i = 0,
-    noquotes = false;
-  if (typeof quote_style === 'undefined')
-  {
-    quote_style = 2;
-  }
-  string = string.toString()
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
-  var OPTS = {
-    'ENT_NOQUOTES': 0,
-    'ENT_HTML_QUOTE_SINGLE': 1,
-    'ENT_HTML_QUOTE_DOUBLE': 2,
-    'ENT_COMPAT': 2,
-    'ENT_QUOTES': 3,
-    'ENT_IGNORE': 4
-  };
-  if (quote_style === 0)
-  {
-    noquotes = true;
-  }
-  if (typeof quote_style !== 'number')
-  { // Allow for a single string or an array of string flags
-    quote_style = [].concat(quote_style);
-    for (var i = 0; i < quote_style.length; i++)
+    var optTemp = 0,
+        i = 0,
+        noquotes = false;
+    if (typeof quote_style === 'undefined')
     {
-      // Resolve string input to bitwise e.g. 'PATHINFO_EXTENSION' becomes 4
-      if (OPTS[quote_style[i]] === 0)
-      {
-        noquotes = true;
-      } else if (OPTS[quote_style[i]])
-      {
-        optTemp = optTemp | OPTS[quote_style[i]];
-      }
+        quote_style = 2;
     }
-    quote_style = optTemp;
-  }
-  if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE)
-  {
-    string = string.replace(/&#0*39;/g, "'"); // PHP doesn't currently escape if more than one 0, but it should
-    // string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP
-  }
-  if (!noquotes)
-  {
-    string = string.replace(/&quot;/g, '"');
-  }
-  // Put this in last place to avoid escape being double-decoded
-  string = string.replace(/&amp;/g, '&');
+    string = string.toString()
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>');
+    var OPTS = {
+        'ENT_NOQUOTES': 0,
+        'ENT_HTML_QUOTE_SINGLE': 1,
+        'ENT_HTML_QUOTE_DOUBLE': 2,
+        'ENT_COMPAT': 2,
+        'ENT_QUOTES': 3,
+        'ENT_IGNORE': 4
+    };
+    if (quote_style === 0)
+    {
+        noquotes = true;
+    }
+    if (typeof quote_style !== 'number')
+    { // Allow for a single string or an array of string flags
+        quote_style = [].concat(quote_style);
+        for (var i = 0; i < quote_style.length; i++)
+        {
+            // Resolve string input to bitwise e.g. 'PATHINFO_EXTENSION' becomes 4
+            if (OPTS[quote_style[i]] === 0)
+            {
+                noquotes = true;
+            }
+            else if (OPTS[quote_style[i]])
+            {
+                optTemp = optTemp | OPTS[quote_style[i]];
+            }
+        }
+        quote_style = optTemp;
+    }
+    if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE)
+    {
+        string = string.replace(/&#0*39;/g, "'"); // PHP doesn't currently escape if more than one 0, but it should
+        // string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP
+    }
+    if (!noquotes)
+    {
+        string = string.replace(/&quot;/g, '"');
+    }
+    // Put this in last place to avoid escape being double-decoded
+    string = string.replace(/&amp;/g, '&');
 
-  return string;
+    return string;
 }
 
 JSHelper.prototype.get_html_translation_table = function(table, quoteStyle)
 {
 
-  // eslint-disable-line camelcase
-  //  discuss at: http://locutus.io/php/get_html_translation_table/
-  // original by: Philip Peterson
-  //  revised by: Kevin van Zonneveld (http://kvz.io)
-  // bugfixed by: noname
-  // bugfixed by: Alex
-  // bugfixed by: Marco
-  // bugfixed by: madipta
-  // bugfixed by: Brett Zamir (http://brett-zamir.me)
-  // bugfixed by: T.Wild
-  // improved by: KELAN
-  // improved by: Brett Zamir (http://brett-zamir.me)
-  //    input by: Frank Forte
-  //    input by: Ratheous
-  //      note 1: It has been decided that we're not going to add global
-  //      note 1: dependencies to Locutus, meaning the constants are not
-  //      note 1: real constants, but strings instead. Integers are also supported if someone
-  //      note 1: chooses to create the constants themselves.
-  //   example 1: get_html_translation_table('HTML_SPECIALCHARS')
-  //   returns 1: {'"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;'}
+    // eslint-disable-line camelcase
+    //  discuss at: http://locutus.io/php/get_html_translation_table/
+    // original by: Philip Peterson
+    //  revised by: Kevin van Zonneveld (http://kvz.io)
+    // bugfixed by: noname
+    // bugfixed by: Alex
+    // bugfixed by: Marco
+    // bugfixed by: madipta
+    // bugfixed by: Brett Zamir (http://brett-zamir.me)
+    // bugfixed by: T.Wild
+    // improved by: KELAN
+    // improved by: Brett Zamir (http://brett-zamir.me)
+    //    input by: Frank Forte
+    //    input by: Ratheous
+    //      note 1: It has been decided that we're not going to add global
+    //      note 1: dependencies to Locutus, meaning the constants are not
+    //      note 1: real constants, but strings instead. Integers are also supported if someone
+    //      note 1: chooses to create the constants themselves.
+    //   example 1: get_html_translation_table('HTML_SPECIALCHARS')
+    //   returns 1: {'"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;'}
 
-  var entities = {}
-  var hashMap = {}
-  var decimal
-  var constMappingTable = {}
-  var constMappingQuoteStyle = {}
-  var useTable = {}
-  var useQuoteStyle = {}
+    var entities = {}
+    var hashMap = {}
+    var decimal
+    var constMappingTable = {}
+    var constMappingQuoteStyle = {}
+    var useTable = {}
+    var useQuoteStyle = {}
 
-  // Translate arguments
-  constMappingTable[0] = 'HTML_SPECIALCHARS'
-  constMappingTable[1] = 'HTML_ENTITIES'
-  constMappingQuoteStyle[0] = 'ENT_NOQUOTES'
-  constMappingQuoteStyle[2] = 'ENT_COMPAT'
-  constMappingQuoteStyle[3] = 'ENT_QUOTES'
+    // Translate arguments
+    constMappingTable[0] = 'HTML_SPECIALCHARS'
+    constMappingTable[1] = 'HTML_ENTITIES'
+    constMappingQuoteStyle[0] = 'ENT_NOQUOTES'
+    constMappingQuoteStyle[2] = 'ENT_COMPAT'
+    constMappingQuoteStyle[3] = 'ENT_QUOTES'
 
-  useTable = !isNaN(table)
-    ? constMappingTable[table]
-    : table
-      ? table.toUpperCase()
-      : 'HTML_SPECIALCHARS'
+    useTable = !isNaN(table) ?
+        constMappingTable[table] :
+        table ?
+        table.toUpperCase() :
+        'HTML_SPECIALCHARS'
 
-  useQuoteStyle = !isNaN(quoteStyle)
-    ? constMappingQuoteStyle[quoteStyle]
-    : quoteStyle
-      ? quoteStyle.toUpperCase()
-      : 'ENT_COMPAT'
+    useQuoteStyle = !isNaN(quoteStyle) ?
+        constMappingQuoteStyle[quoteStyle] :
+        quoteStyle ?
+        quoteStyle.toUpperCase() :
+        'ENT_COMPAT'
 
-  if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES')
-  {
-    throw new Error('Table: ' + useTable + ' not supported')
-  }
-
-  entities['38'] = '&amp;'
-  if (useTable === 'HTML_ENTITIES')
-  {
-    entities['160'] = '&nbsp;'
-    entities['161'] = '&iexcl;'
-    entities['162'] = '&cent;'
-    entities['163'] = '&pound;'
-    entities['164'] = '&curren;'
-    entities['165'] = '&yen;'
-    entities['166'] = '&brvbar;'
-    entities['167'] = '&sect;'
-    entities['168'] = '&uml;'
-    entities['169'] = '&copy;'
-    entities['170'] = '&ordf;'
-    entities['171'] = '&laquo;'
-    entities['172'] = '&not;'
-    entities['173'] = '&shy;'
-    entities['174'] = '&reg;'
-    entities['175'] = '&macr;'
-    entities['176'] = '&deg;'
-    entities['177'] = '&plusmn;'
-    entities['178'] = '&sup2;'
-    entities['179'] = '&sup3;'
-    entities['180'] = '&acute;'
-    entities['181'] = '&micro;'
-    entities['182'] = '&para;'
-    entities['183'] = '&middot;'
-    entities['184'] = '&cedil;'
-    entities['185'] = '&sup1;'
-    entities['186'] = '&ordm;'
-    entities['187'] = '&raquo;'
-    entities['188'] = '&frac14;'
-    entities['189'] = '&frac12;'
-    entities['190'] = '&frac34;'
-    entities['191'] = '&iquest;'
-    entities['192'] = '&Agrave;'
-    entities['193'] = '&Aacute;'
-    entities['194'] = '&Acirc;'
-    entities['195'] = '&Atilde;'
-    entities['196'] = '&Auml;'
-    entities['197'] = '&Aring;'
-    entities['198'] = '&AElig;'
-    entities['199'] = '&Ccedil;'
-    entities['200'] = '&Egrave;'
-    entities['201'] = '&Eacute;'
-    entities['202'] = '&Ecirc;'
-    entities['203'] = '&Euml;'
-    entities['204'] = '&Igrave;'
-    entities['205'] = '&Iacute;'
-    entities['206'] = '&Icirc;'
-    entities['207'] = '&Iuml;'
-    entities['208'] = '&ETH;'
-    entities['209'] = '&Ntilde;'
-    entities['210'] = '&Ograve;'
-    entities['211'] = '&Oacute;'
-    entities['212'] = '&Ocirc;'
-    entities['213'] = '&Otilde;'
-    entities['214'] = '&Ouml;'
-    entities['215'] = '&times;'
-    entities['216'] = '&Oslash;'
-    entities['217'] = '&Ugrave;'
-    entities['218'] = '&Uacute;'
-    entities['219'] = '&Ucirc;'
-    entities['220'] = '&Uuml;'
-    entities['221'] = '&Yacute;'
-    entities['222'] = '&THORN;'
-    entities['223'] = '&szlig;'
-    entities['224'] = '&agrave;'
-    entities['225'] = '&aacute;'
-    entities['226'] = '&acirc;'
-    entities['227'] = '&atilde;'
-    entities['228'] = '&auml;'
-    entities['229'] = '&aring;'
-    entities['230'] = '&aelig;'
-    entities['231'] = '&ccedil;'
-    entities['232'] = '&egrave;'
-    entities['233'] = '&eacute;'
-    entities['234'] = '&ecirc;'
-    entities['235'] = '&euml;'
-    entities['236'] = '&igrave;'
-    entities['237'] = '&iacute;'
-    entities['238'] = '&icirc;'
-    entities['239'] = '&iuml;'
-    entities['240'] = '&eth;'
-    entities['241'] = '&ntilde;'
-    entities['242'] = '&ograve;'
-    entities['243'] = '&oacute;'
-    entities['244'] = '&ocirc;'
-    entities['245'] = '&otilde;'
-    entities['246'] = '&ouml;'
-    entities['247'] = '&divide;'
-    entities['248'] = '&oslash;'
-    entities['249'] = '&ugrave;'
-    entities['250'] = '&uacute;'
-    entities['251'] = '&ucirc;'
-    entities['252'] = '&uuml;'
-    entities['253'] = '&yacute;'
-    entities['254'] = '&thorn;'
-    entities['255'] = '&yuml;'
-  }
-
-  if (useQuoteStyle !== 'ENT_NOQUOTES')
-  {
-    entities['34'] = '&quot;'
-  }
-  if (useQuoteStyle === 'ENT_QUOTES')
-  {
-    entities['39'] = '&#39;'
-  }
-  entities['60'] = '&lt;'
-  entities['62'] = '&gt;'
-
-  // ascii decimals to real symbols
-  for (decimal in entities)
-  {
-    if (entities.hasOwnProperty(decimal))
+    if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES')
     {
-      hashMap[String.fromCharCode(decimal)] = entities[decimal]
+        throw new Error('Table: ' + useTable + ' not supported')
     }
-  }
 
-  return hashMap
+    entities['38'] = '&amp;'
+    if (useTable === 'HTML_ENTITIES')
+    {
+        entities['160'] = '&nbsp;'
+        entities['161'] = '&iexcl;'
+        entities['162'] = '&cent;'
+        entities['163'] = '&pound;'
+        entities['164'] = '&curren;'
+        entities['165'] = '&yen;'
+        entities['166'] = '&brvbar;'
+        entities['167'] = '&sect;'
+        entities['168'] = '&uml;'
+        entities['169'] = '&copy;'
+        entities['170'] = '&ordf;'
+        entities['171'] = '&laquo;'
+        entities['172'] = '&not;'
+        entities['173'] = '&shy;'
+        entities['174'] = '&reg;'
+        entities['175'] = '&macr;'
+        entities['176'] = '&deg;'
+        entities['177'] = '&plusmn;'
+        entities['178'] = '&sup2;'
+        entities['179'] = '&sup3;'
+        entities['180'] = '&acute;'
+        entities['181'] = '&micro;'
+        entities['182'] = '&para;'
+        entities['183'] = '&middot;'
+        entities['184'] = '&cedil;'
+        entities['185'] = '&sup1;'
+        entities['186'] = '&ordm;'
+        entities['187'] = '&raquo;'
+        entities['188'] = '&frac14;'
+        entities['189'] = '&frac12;'
+        entities['190'] = '&frac34;'
+        entities['191'] = '&iquest;'
+        entities['192'] = '&Agrave;'
+        entities['193'] = '&Aacute;'
+        entities['194'] = '&Acirc;'
+        entities['195'] = '&Atilde;'
+        entities['196'] = '&Auml;'
+        entities['197'] = '&Aring;'
+        entities['198'] = '&AElig;'
+        entities['199'] = '&Ccedil;'
+        entities['200'] = '&Egrave;'
+        entities['201'] = '&Eacute;'
+        entities['202'] = '&Ecirc;'
+        entities['203'] = '&Euml;'
+        entities['204'] = '&Igrave;'
+        entities['205'] = '&Iacute;'
+        entities['206'] = '&Icirc;'
+        entities['207'] = '&Iuml;'
+        entities['208'] = '&ETH;'
+        entities['209'] = '&Ntilde;'
+        entities['210'] = '&Ograve;'
+        entities['211'] = '&Oacute;'
+        entities['212'] = '&Ocirc;'
+        entities['213'] = '&Otilde;'
+        entities['214'] = '&Ouml;'
+        entities['215'] = '&times;'
+        entities['216'] = '&Oslash;'
+        entities['217'] = '&Ugrave;'
+        entities['218'] = '&Uacute;'
+        entities['219'] = '&Ucirc;'
+        entities['220'] = '&Uuml;'
+        entities['221'] = '&Yacute;'
+        entities['222'] = '&THORN;'
+        entities['223'] = '&szlig;'
+        entities['224'] = '&agrave;'
+        entities['225'] = '&aacute;'
+        entities['226'] = '&acirc;'
+        entities['227'] = '&atilde;'
+        entities['228'] = '&auml;'
+        entities['229'] = '&aring;'
+        entities['230'] = '&aelig;'
+        entities['231'] = '&ccedil;'
+        entities['232'] = '&egrave;'
+        entities['233'] = '&eacute;'
+        entities['234'] = '&ecirc;'
+        entities['235'] = '&euml;'
+        entities['236'] = '&igrave;'
+        entities['237'] = '&iacute;'
+        entities['238'] = '&icirc;'
+        entities['239'] = '&iuml;'
+        entities['240'] = '&eth;'
+        entities['241'] = '&ntilde;'
+        entities['242'] = '&ograve;'
+        entities['243'] = '&oacute;'
+        entities['244'] = '&ocirc;'
+        entities['245'] = '&otilde;'
+        entities['246'] = '&ouml;'
+        entities['247'] = '&divide;'
+        entities['248'] = '&oslash;'
+        entities['249'] = '&ugrave;'
+        entities['250'] = '&uacute;'
+        entities['251'] = '&ucirc;'
+        entities['252'] = '&uuml;'
+        entities['253'] = '&yacute;'
+        entities['254'] = '&thorn;'
+        entities['255'] = '&yuml;'
+    }
+
+    if (useQuoteStyle !== 'ENT_NOQUOTES')
+    {
+        entities['34'] = '&quot;'
+    }
+    if (useQuoteStyle === 'ENT_QUOTES')
+    {
+        entities['39'] = '&#39;'
+    }
+    entities['60'] = '&lt;'
+    entities['62'] = '&gt;'
+
+    // ascii decimals to real symbols
+    for (decimal in entities)
+    {
+        if (entities.hasOwnProperty(decimal))
+        {
+            hashMap[String.fromCharCode(decimal)] = entities[decimal]
+        }
+    }
+
+    return hashMap
 }
 
 JSHelper.prototype.html_entity_decode = function(string, quote_style)
 {
-  //  discuss at: http://phpjs.org/functions/html_entity_decode/
-  // original by: john (http://www.jd-tech.net)
-  //    input by: ger
-  //    input by: Ratheous
-  //    input by: Nick Kolosov (http://sammy.ru)
-  // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // improved by: marc andreu
-  //  revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  //  revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // bugfixed by: Onno Marsman
-  // bugfixed by: Brett Zamir (http://brett-zamir.me)
-  // bugfixed by: Fox
-  //  depends on: get_html_translation_table
-  //   example 1: html_entity_decode('Kevin &amp; van Zonneveld');
-  //   returns 1: 'Kevin & van Zonneveld'
-  //   example 2: html_entity_decode('&amp;lt;');
-  //   returns 2: '&lt;'
+    //  discuss at: http://phpjs.org/functions/html_entity_decode/
+    // original by: john (http://www.jd-tech.net)
+    //    input by: ger
+    //    input by: Ratheous
+    //    input by: Nick Kolosov (http://sammy.ru)
+    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    // improved by: marc andreu
+    //  revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    //  revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    // bugfixed by: Onno Marsman
+    // bugfixed by: Brett Zamir (http://brett-zamir.me)
+    // bugfixed by: Fox
+    //  depends on: get_html_translation_table
+    //   example 1: html_entity_decode('Kevin &amp; van Zonneveld');
+    //   returns 1: 'Kevin & van Zonneveld'
+    //   example 2: html_entity_decode('&amp;lt;');
+    //   returns 2: '&lt;'
 
-  var hash_map = {},
-    symbol = '',
-    tmp_str = '',
-    entity = '';
-  tmp_str = string.toString();
+    var hash_map = {},
+        symbol = '',
+        tmp_str = '',
+        entity = '';
+    tmp_str = string.toString();
 
-  if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style)))
-  {
-    return false;
-  }
+    if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style)))
+    {
+        return false;
+    }
 
-  // fix &amp; problem
-  // http://phpjs.org/functions/get_html_translation_table:416#comment_97660
-  delete(hash_map['&']);
-  hash_map['&'] = '&amp;';
+    // fix &amp; problem
+    // http://phpjs.org/functions/get_html_translation_table:416#comment_97660
+    delete(hash_map['&']);
+    hash_map['&'] = '&amp;';
 
-  for (symbol in hash_map)
-  {
-    entity = hash_map[symbol];
-    tmp_str = tmp_str.split(entity)
-      .join(symbol);
-  }
-  tmp_str = tmp_str.split('&#039;')
-    .join("'");
+    for (symbol in hash_map)
+    {
+        entity = hash_map[symbol];
+        tmp_str = tmp_str.split(entity)
+            .join(symbol);
+    }
+    tmp_str = tmp_str.split('&#039;')
+        .join("'");
 
-  return tmp_str;
+    return tmp_str;
 }
 
 JSHelper.prototype.strcmp = function(str1, str2)
 {
-  //  discuss at: http://phpjs.org/functions/strcmp/
-  // original by: Waldo Malqui Silva (http://waldo.malqui.info)
-  //    input by: Steve Hilder
-  // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  //  revised by: gorthaur
-  //   example 1: strcmp( 'waldo', 'owald' );
-  //   returns 1: 1
-  //   example 2: strcmp( 'owald', 'waldo' );
-  //   returns 2: -1
+    //  discuss at: http://phpjs.org/functions/strcmp/
+    // original by: Waldo Malqui Silva (http://waldo.malqui.info)
+    //    input by: Steve Hilder
+    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    //  revised by: gorthaur
+    //   example 1: strcmp( 'waldo', 'owald' );
+    //   returns 1: 1
+    //   example 2: strcmp( 'owald', 'waldo' );
+    //   returns 2: -1
 
-  return ((str1 == str2) ? 0 : ((str1 > str2) ? 1 : -1))
+    return ((str1 == str2) ? 0 : ((str1 > str2) ? 1 : -1))
 }
 
 JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
 {
-  //  discuss at: http://phpjs.org/functions/strnatcmp/
-  // original by: Martijn Wieringa
-  // improved by: Michael White (http://getsprink.com)
-  // improved by: Jack
-  // bugfixed by: Onno Marsman
-  //  depends on: strcmp
-  //        note: Added f_version argument against code guidelines, because it's so neat
-  //   example 1: strnatcmp('Price 12.9', 'Price 12.15');
-  //   returns 1: 1
-  //   example 2: strnatcmp('Price 12.09', 'Price 12.15');
-  //   returns 2: -1
-  //   example 3: strnatcmp('Price 12.90', 'Price 12.15');
-  //   returns 3: 1
-  //   example 4: strnatcmp('Version 12.9', 'Version 12.15', true);
-  //   returns 4: -6
-  //   example 5: strnatcmp('Version 12.15', 'Version 12.9', true);
-  //   returns 5: 6
+    //  discuss at: http://phpjs.org/functions/strnatcmp/
+    // original by: Martijn Wieringa
+    // improved by: Michael White (http://getsprink.com)
+    // improved by: Jack
+    // bugfixed by: Onno Marsman
+    //  depends on: strcmp
+    //        note: Added f_version argument against code guidelines, because it's so neat
+    //   example 1: strnatcmp('Price 12.9', 'Price 12.15');
+    //   returns 1: 1
+    //   example 2: strnatcmp('Price 12.09', 'Price 12.15');
+    //   returns 2: -1
+    //   example 3: strnatcmp('Price 12.90', 'Price 12.15');
+    //   returns 3: 1
+    //   example 4: strnatcmp('Version 12.9', 'Version 12.15', true);
+    //   returns 4: -6
+    //   example 5: strnatcmp('Version 12.15', 'Version 12.9', true);
+    //   returns 5: 6
 
-  var i = 0
+    var i = 0
 
-  if (f_version == undefined)
-  {
-    f_version = false
-  }
-
-  var __strnatcmp_split = function (f_string)
-  {
-    var result = []
-    var buffer = ''
-    var chr = ''
-    var i = 0,
-      f_stringl = 0
-
-    var text = true
-
-    f_stringl = f_string.length
-    for (var i = 0; i < f_stringl; i++)
+    if (f_version == undefined)
     {
-      chr = f_string.substring(i, i + 1)
-      if (chr.match(/\d/))
-      {
-        if (text)
-        {
-          if (buffer.length > 0)
-          {
-            result[result.length] = buffer
-            buffer = ''
-          }
-
-          text = false
-        }
-        buffer += chr
-      } else if ((text == false) && (chr === '.') && (i < (f_string.length - 1)) && (f_string.substring(i + 1, i +
-            2)
-          .match(/\d/)))
-      {
-        result[result.length] = buffer
-        buffer = ''
-      }
-      else
-      {
-        if (text == false)
-        {
-          if (buffer.length > 0)
-          {
-            result[result.length] = parseInt(buffer, 10)
-            buffer = ''
-          }
-          text = true
-        }
-        buffer += chr
-      }
+        f_version = false
     }
 
-    if (buffer.length > 0)
+    var __strnatcmp_split = function(f_string)
     {
-      if (text)
-      {
-        result[result.length] = buffer
-      }
-      else
-      {
-        result[result.length] = parseInt(buffer, 10)
-      }
+        var result = []
+        var buffer = ''
+        var chr = ''
+        var i = 0,
+            f_stringl = 0
+
+        var text = true
+
+        f_stringl = f_string.length
+        for (var i = 0; i < f_stringl; i++)
+        {
+            chr = f_string.substring(i, i + 1)
+            if (chr.match(/\d/))
+            {
+                if (text)
+                {
+                    if (buffer.length > 0)
+                    {
+                        result[result.length] = buffer
+                        buffer = ''
+                    }
+
+                    text = false
+                }
+                buffer += chr
+            }
+            else if ((text == false) && (chr === '.') && (i < (f_string.length - 1)) && (f_string.substring(i + 1, i +
+                        2)
+                    .match(/\d/)))
+            {
+                result[result.length] = buffer
+                buffer = ''
+            }
+            else
+            {
+                if (text == false)
+                {
+                    if (buffer.length > 0)
+                    {
+                        result[result.length] = parseInt(buffer, 10)
+                        buffer = ''
+                    }
+                    text = true
+                }
+                buffer += chr
+            }
+        }
+
+        if (buffer.length > 0)
+        {
+            if (text)
+            {
+                result[result.length] = buffer
+            }
+            else
+            {
+                result[result.length] = parseInt(buffer, 10)
+            }
+        }
+
+        return result
+    }
+
+    var array1 = __strnatcmp_split(f_string1 + '')
+    var array2 = __strnatcmp_split(f_string2 + '')
+
+    var len = array1.length
+    var text = true
+
+    var result = -1
+    var r = 0
+
+    if (len > array2.length)
+    {
+        len = array2.length
+        result = 1
+    }
+
+    for (var i = 0; i < len; i++)
+    {
+        if (isNaN(array1[i]))
+        {
+            if (isNaN(array2[i]))
+            {
+                text = true
+
+                if ((r = this.strcmp(array1[i], array2[i])) != 0)
+                {
+                    return r
+                }
+            }
+            else if (text)
+            {
+                return 1
+            }
+            else
+            {
+                return -1
+            }
+        }
+        else if (isNaN(array2[i]))
+        {
+            if (text)
+            {
+                return -1
+            }
+            else
+            {
+                return 1
+            }
+        }
+        else
+        {
+            if (text || f_version)
+            {
+                if ((r = (array1[i] - array2[i])) != 0)
+                {
+                    return r
+                }
+            }
+            else
+            {
+                if ((r = this.strcmp(array1[i].toString(), array2[i].toString())) != 0)
+                {
+                    return r
+                }
+            }
+
+            text = false
+        }
     }
 
     return result
-  }
-
-  var array1 = __strnatcmp_split(f_string1 + '')
-  var array2 = __strnatcmp_split(f_string2 + '')
-
-  var len = array1.length
-  var text = true
-
-  var result = -1
-  var r = 0
-
-  if (len > array2.length)
-  {
-    len = array2.length
-    result = 1
-  }
-
-  for (var i = 0; i < len; i++)
-  {
-    if (isNaN(array1[i]))
-    {
-      if (isNaN(array2[i]))
-      {
-        text = true
-
-        if ((r = this.strcmp(array1[i], array2[i])) != 0)
-        {
-          return r
-        }
-      } else if (text)
-      {
-        return 1
-      }
-      else
-      {
-        return -1
-      }
-    } else if (isNaN(array2[i]))
-    {
-      if (text)
-      {
-        return -1
-      }
-      else
-      {
-        return 1
-      }
-    }
-    else
-    {
-      if (text || f_version)
-      {
-        if ((r = (array1[i] - array2[i])) != 0)
-        {
-          return r
-        }
-      }
-      else
-      {
-        if ((r = this.strcmp(array1[i].toString(), array2[i].toString())) != 0)
-        {
-          return r
-        }
-      }
-
-      text = false
-    }
-  }
-
-  return result
 }
 
-JSHelper.prototype.number_format = function(number, decimals, decPoint, thousandsSep) { // eslint-disable-line camelcase
-  //  discuss at: http://locutus.io/php/number_format/
-  // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-  // improved by: Kevin van Zonneveld (http://kvz.io)
-  // improved by: davook
-  // improved by: Brett Zamir (http://brett-zamir.me)
-  // improved by: Brett Zamir (http://brett-zamir.me)
-  // improved by: Theriault (https://github.com/Theriault)
-  // improved by: Kevin van Zonneveld (http://kvz.io)
-  // bugfixed by: Michael White (http://getsprink.com)
-  // bugfixed by: Benjamin Lupton
-  // bugfixed by: Allan Jensen (http://www.winternet.no)
-  // bugfixed by: Howard Yeend
-  // bugfixed by: Diogo Resende
-  // bugfixed by: Rival
-  // bugfixed by: Brett Zamir (http://brett-zamir.me)
-  //  revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-  //  revised by: Luke Smith (http://lucassmith.name)
-  //    input by: Kheang Hok Chin (http://www.distantia.ca/)
-  //    input by: Jay Klehr
-  //    input by: Amir Habibi (http://www.residence-mixte.com/)
-  //    input by: Amirouche
-  //   example 1: number_format(1234.56)
-  //   returns 1: '1,235'
-  //   example 2: number_format(1234.56, 2, ',', ' ')
-  //   returns 2: '1 234,56'
-  //   example 3: number_format(1234.5678, 2, '.', '')
-  //   returns 3: '1234.57'
-  //   example 4: number_format(67, 2, ',', '.')
-  //   returns 4: '67,00'
-  //   example 5: number_format(1000)
-  //   returns 5: '1,000'
-  //   example 6: number_format(67.311, 2)
-  //   returns 6: '67.31'
-  //   example 7: number_format(1000.55, 1)
-  //   returns 7: '1,000.6'
-  //   example 8: number_format(67000, 5, ',', '.')
-  //   returns 8: '67.000,00000'
-  //   example 9: number_format(0.9, 0)
-  //   returns 9: '1'
-  //  example 10: number_format('1.20', 2)
-  //  returns 10: '1.20'
-  //  example 11: number_format('1.20', 4)
-  //  returns 11: '1.2000'
-  //  example 12: number_format('1.2000', 3)
-  //  returns 12: '1.200'
-  //  example 13: number_format('1 000,50', 2, '.', ' ')
-  //  returns 13: '100 050.00'
-  //  example 14: number_format(1e-8, 8, '.', '')
-  //  returns 14: '0.00000001'
+JSHelper.prototype.number_format = function(number, decimals, decPoint, thousandsSep)
+{ // eslint-disable-line camelcase
+    //  discuss at: http://locutus.io/php/number_format/
+    // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
+    // improved by: Kevin van Zonneveld (http://kvz.io)
+    // improved by: davook
+    // improved by: Brett Zamir (http://brett-zamir.me)
+    // improved by: Brett Zamir (http://brett-zamir.me)
+    // improved by: Theriault (https://github.com/Theriault)
+    // improved by: Kevin van Zonneveld (http://kvz.io)
+    // bugfixed by: Michael White (http://getsprink.com)
+    // bugfixed by: Benjamin Lupton
+    // bugfixed by: Allan Jensen (http://www.winternet.no)
+    // bugfixed by: Howard Yeend
+    // bugfixed by: Diogo Resende
+    // bugfixed by: Rival
+    // bugfixed by: Brett Zamir (http://brett-zamir.me)
+    //  revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
+    //  revised by: Luke Smith (http://lucassmith.name)
+    //    input by: Kheang Hok Chin (http://www.distantia.ca/)
+    //    input by: Jay Klehr
+    //    input by: Amir Habibi (http://www.residence-mixte.com/)
+    //    input by: Amirouche
+    //   example 1: number_format(1234.56)
+    //   returns 1: '1,235'
+    //   example 2: number_format(1234.56, 2, ',', ' ')
+    //   returns 2: '1 234,56'
+    //   example 3: number_format(1234.5678, 2, '.', '')
+    //   returns 3: '1234.57'
+    //   example 4: number_format(67, 2, ',', '.')
+    //   returns 4: '67,00'
+    //   example 5: number_format(1000)
+    //   returns 5: '1,000'
+    //   example 6: number_format(67.311, 2)
+    //   returns 6: '67.31'
+    //   example 7: number_format(1000.55, 1)
+    //   returns 7: '1,000.6'
+    //   example 8: number_format(67000, 5, ',', '.')
+    //   returns 8: '67.000,00000'
+    //   example 9: number_format(0.9, 0)
+    //   returns 9: '1'
+    //  example 10: number_format('1.20', 2)
+    //  returns 10: '1.20'
+    //  example 11: number_format('1.20', 4)
+    //  returns 11: '1.2000'
+    //  example 12: number_format('1.2000', 3)
+    //  returns 12: '1.200'
+    //  example 13: number_format('1 000,50', 2, '.', ' ')
+    //  returns 13: '100 050.00'
+    //  example 14: number_format(1e-8, 8, '.', '')
+    //  returns 14: '0.00000001'
 
-  number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
-  var n = !isFinite(+number) ? 0 : +number
-  var prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
-  var sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
-  var dec = (typeof decPoint === 'undefined') ? '.' : decPoint
-  var s = ''
+    number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
+    var n = !isFinite(+number) ? 0 : +number
+    var prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+    var sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
+    var dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+    var s = ''
 
-  var toFixedFix = function (n, prec) {
-    if (('' + n).indexOf('e') === -1) {
-      return +(Math.round(n + 'e+' + prec) + 'e-' + prec)
-    } else {
-      var arr = ('' + n).split('e')
-      var sig = ''
-      if (+arr[1] + prec > 0) {
-        sig = '+'
-      }
-      return (+(Math.round(+arr[0] + 'e' + sig + (+arr[1] + prec)) + 'e-' + prec)).toFixed(prec)
+    var toFixedFix = function(n, prec)
+    {
+        if (('' + n).indexOf('e') === -1)
+        {
+            return +(Math.round(n + 'e+' + prec) + 'e-' + prec)
+        }
+        else
+        {
+            var arr = ('' + n).split('e')
+            var sig = ''
+            if (+arr[1] + prec > 0)
+            {
+                sig = '+'
+            }
+            return (+(Math.round(+arr[0] + 'e' + sig + (+arr[1] + prec)) + 'e-' + prec)).toFixed(prec)
+        }
     }
-  }
 
-  // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
-  s = (prec ? toFixedFix(n, prec).toString() : '' + Math.round(n)).split('.')
-  if (s[0].length > 3) {
-    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
-  }
-  if ((s[1] || '').length < prec) {
-    s[1] = s[1] || ''
-    s[1] += new Array(prec - s[1].length + 1).join('0')
-  }
+    // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
+    s = (prec ? toFixedFix(n, prec).toString() : '' + Math.round(n)).split('.')
+    if (s[0].length > 3)
+    {
+        s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
+    }
+    if ((s[1] || '').length < prec)
+    {
+        s[1] = s[1] || ''
+        s[1] += new Array(prec - s[1].length + 1).join('0')
+    }
 
-  return s.join(dec)
+    return s.join(dec)
 }
 
 JSHelper.prototype.urlencode = function(str)
 {
-  //       discuss at: https://locutus.io/php/urlencode/
-  //      original by: Philip Peterson
-  //      improved by: Kevin van Zonneveld (https://kvz.io)
-  //      improved by: Kevin van Zonneveld (https://kvz.io)
-  //      improved by: Brett Zamir (https://brett-zamir.me)
-  //      improved by: Lars Fischer
-  //      improved by: Waldo Malqui Silva (https://fayr.us/waldo/)
-  //         input by: AJ
-  //         input by: travc
-  //         input by: Brett Zamir (https://brett-zamir.me)
-  //         input by: Ratheous
-  //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
-  //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
-  //      bugfixed by: Joris
-  // reimplemented by: Brett Zamir (https://brett-zamir.me)
-  // reimplemented by: Brett Zamir (https://brett-zamir.me)
-  //           note 1: This reflects PHP 5.3/6.0+ behavior
-  //           note 1: Please be aware that this function
-  //           note 1: expects to encode into UTF-8 encoded strings, as found on
-  //           note 1: pages served as UTF-8
-  //        example 1: urlencode('Kevin van Zonneveld!')
-  //        returns 1: 'Kevin+van+Zonneveld%21'
-  //        example 2: urlencode('https://kvz.io/')
-  //        returns 2: 'https%3A%2F%2Fkvz.io%2F'
-  //        example 3: urlencode('https://www.google.nl/search?q=Locutus&ie=utf-8')
-  //        returns 3: 'https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8'
+    //       discuss at: https://locutus.io/php/urlencode/
+    //      original by: Philip Peterson
+    //      improved by: Kevin van Zonneveld (https://kvz.io)
+    //      improved by: Kevin van Zonneveld (https://kvz.io)
+    //      improved by: Brett Zamir (https://brett-zamir.me)
+    //      improved by: Lars Fischer
+    //      improved by: Waldo Malqui Silva (https://fayr.us/waldo/)
+    //         input by: AJ
+    //         input by: travc
+    //         input by: Brett Zamir (https://brett-zamir.me)
+    //         input by: Ratheous
+    //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
+    //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
+    //      bugfixed by: Joris
+    // reimplemented by: Brett Zamir (https://brett-zamir.me)
+    // reimplemented by: Brett Zamir (https://brett-zamir.me)
+    //           note 1: This reflects PHP 5.3/6.0+ behavior
+    //           note 1: Please be aware that this function
+    //           note 1: expects to encode into UTF-8 encoded strings, as found on
+    //           note 1: pages served as UTF-8
+    //        example 1: urlencode('Kevin van Zonneveld!')
+    //        returns 1: 'Kevin+van+Zonneveld%21'
+    //        example 2: urlencode('https://kvz.io/')
+    //        returns 2: 'https%3A%2F%2Fkvz.io%2F'
+    //        example 3: urlencode('https://www.google.nl/search?q=Locutus&ie=utf-8')
+    //        returns 3: 'https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8'
 
-  str = (str + '')
+    str = (str + '')
 
-  return encodeURIComponent(str)
-    .replace(/!/g, '%21')
-    .replace(/'/g, '%27')
-    .replace(/\(/g, '%28')
-    .replace(/\)/g, '%29')
-    .replace(/\*/g, '%2A')
-    .replace(/~/g, '%7E')
-    .replace(/%20/g, '+')
+    return encodeURIComponent(str)
+        .replace(/!/g, '%21')
+        .replace(/'/g, '%27')
+        .replace(/\(/g, '%28')
+        .replace(/\)/g, '%29')
+        .replace(/\*/g, '%2A')
+        .replace(/~/g, '%7E')
+        .replace(/%20/g, '+')
 }
 
 JSHelper.prototype.urldecode = function(str)
 {
-  //       discuss at: https://locutus.io/php/urldecode/
-  //      original by: Philip Peterson
-  //      improved by: Kevin van Zonneveld (https://kvz.io)
-  //      improved by: Kevin van Zonneveld (https://kvz.io)
-  //      improved by: Brett Zamir (https://brett-zamir.me)
-  //      improved by: Lars Fischer
-  //      improved by: Orlando
-  //      improved by: Brett Zamir (https://brett-zamir.me)
-  //      improved by: Brett Zamir (https://brett-zamir.me)
-  //         input by: AJ
-  //         input by: travc
-  //         input by: Brett Zamir (https://brett-zamir.me)
-  //         input by: Ratheous
-  //         input by: e-mike
-  //         input by: lovio
-  //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
-  //      bugfixed by: Rob
-  // reimplemented by: Brett Zamir (https://brett-zamir.me)
-  //           note 1: info on what encoding functions to use from:
-  //           note 1: https://xkr.us/articles/javascript/encode-compare/
-  //           note 1: Please be aware that this function expects to decode
-  //           note 1: from UTF-8 encoded strings, as found on
-  //           note 1: pages served as UTF-8
-  //        example 1: urldecode('Kevin+van+Zonneveld%21')
-  //        returns 1: 'Kevin van Zonneveld!'
-  //        example 2: urldecode('https%3A%2F%2Fkvz.io%2F')
-  //        returns 2: 'https://kvz.io/'
-  //        example 3: urldecode('https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8%26oe%3Dutf-8%26aq%3Dt%26rls%3Dcom.ubuntu%3Aen-US%3Aunofficial%26client%3Dfirefox-a')
-  //        returns 3: 'https://www.google.nl/search?q=Locutus&ie=utf-8&oe=utf-8&aq=t&rls=com.ubuntu:en-US:unofficial&client=firefox-a'
-  //        example 4: urldecode('%E5%A5%BD%3_4')
-  //        returns 4: '\u597d%3_4'
+    //       discuss at: https://locutus.io/php/urldecode/
+    //      original by: Philip Peterson
+    //      improved by: Kevin van Zonneveld (https://kvz.io)
+    //      improved by: Kevin van Zonneveld (https://kvz.io)
+    //      improved by: Brett Zamir (https://brett-zamir.me)
+    //      improved by: Lars Fischer
+    //      improved by: Orlando
+    //      improved by: Brett Zamir (https://brett-zamir.me)
+    //      improved by: Brett Zamir (https://brett-zamir.me)
+    //         input by: AJ
+    //         input by: travc
+    //         input by: Brett Zamir (https://brett-zamir.me)
+    //         input by: Ratheous
+    //         input by: e-mike
+    //         input by: lovio
+    //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
+    //      bugfixed by: Rob
+    // reimplemented by: Brett Zamir (https://brett-zamir.me)
+    //           note 1: info on what encoding functions to use from:
+    //           note 1: https://xkr.us/articles/javascript/encode-compare/
+    //           note 1: Please be aware that this function expects to decode
+    //           note 1: from UTF-8 encoded strings, as found on
+    //           note 1: pages served as UTF-8
+    //        example 1: urldecode('Kevin+van+Zonneveld%21')
+    //        returns 1: 'Kevin van Zonneveld!'
+    //        example 2: urldecode('https%3A%2F%2Fkvz.io%2F')
+    //        returns 2: 'https://kvz.io/'
+    //        example 3: urldecode('https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8%26oe%3Dutf-8%26aq%3Dt%26rls%3Dcom.ubuntu%3Aen-US%3Aunofficial%26client%3Dfirefox-a')
+    //        returns 3: 'https://www.google.nl/search?q=Locutus&ie=utf-8&oe=utf-8&aq=t&rls=com.ubuntu:en-US:unofficial&client=firefox-a'
+    //        example 4: urldecode('%E5%A5%BD%3_4')
+    //        returns 4: '\u597d%3_4'
 
-  return decodeURIComponent((str + '')
-    .replace(/%(?![\da-f]{2})/gi, function () {
-      // PHP tolerates poorly formed escape sequences
-      return '%25'
-    })
-    .replace(/\+/g, '%20'))
+    return decodeURIComponent((str + '')
+        .replace(/%(?![\da-f]{2})/gi, function()
+        {
+            // PHP tolerates poorly formed escape sequences
+            return '%25'
+        })
+        .replace(/\+/g, '%20'))
 }
-
 /**
  * Array utility functions
  *
@@ -3475,24 +3525,31 @@ JSHelper.prototype.urldecode = function(str)
  * @param  bool   argStrict Compare strict
  * @return bool
  */
-JSHelper.prototype.in_array = function(needle, haystack, argStrict) {
+JSHelper.prototype.in_array = function(needle, haystack, argStrict)
+{
 
     var key = '',
-    strict = !!argStrict;
+        strict = !!argStrict;
 
     //we prevent the double check (strict && arr[key] === ndl) || (!strict && arr[key] == ndl)
     //in just one for, in order to improve the performance 
     //deciding wich type of comparation will do before walk array
-    if (strict) {
-        for (key in haystack) {
-            if (haystack[key] === needle) {
+    if (strict)
+    {
+        for (key in haystack)
+        {
+            if (haystack[key] === needle)
+            {
                 return true;
             }
         }
     }
-    else {
-        for (key in haystack) {
-            if (haystack[key] == needle) {
+    else
+    {
+        for (key in haystack)
+        {
+            if (haystack[key] == needle)
+            {
                 return true;
             }
         }
@@ -3509,7 +3566,8 @@ JSHelper.prototype.in_array = function(needle, haystack, argStrict) {
  * @param  int    count The amount of items to reduce the array to
  * @return array
  */
-JSHelper.prototype.array_reduce = function(array, count) {
+JSHelper.prototype.array_reduce = function(array, count)
+{
     return this.array_slice(array, 0, count);
 }
 
@@ -3546,17 +3604,20 @@ JSHelper.prototype.implode = function(array, prefix, suffix)
 
         glue = typeof prefix === 'undefined' ? '' : prefix;
 
-        separator = typeof suffix === 'undefined' ? '' : suffix; 
+        separator = typeof suffix === 'undefined' ? '' : suffix;
 
-        return this.rtrim(Object.keys(array).map(function (key, value) { return [key, array[key]].join(glue); }).join(separator), suffix);
+        return this.rtrim(Object.keys(array).map(function(key, value)
+        {
+            return [key, array[key]].join(glue);
+        }).join(separator), suffix);
     }
 
     var str = '';
 
     prefix = typeof prefix === 'undefined' ? '' : prefix;
 
-    suffix = typeof suffix === 'undefined' ? '' : suffix; 
-   
+    suffix = typeof suffix === 'undefined' ? '' : suffix;
+
     for (var i = 0; i < array.length; i++)
     {
         if (i === array.length - 1)
@@ -3581,7 +3642,8 @@ JSHelper.prototype.implode = function(array, prefix, suffix)
  * @param  bool  preserve_keys Preserve array keys (optional) (default false)
  * @return array
  */
-JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
+JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
+{
     //  discuss at: http://phpjs.org/functions/array_slice/
     // original by: Brett Zamir (http://brett-zamir.me)
     //  depends on: is_int
@@ -3602,13 +3664,15 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
     var key = '';
 
     if (Object.prototype.toString.call(arr) !== '[object Array]' ||
-        (preserve_keys && offst !== 0)) { // Assoc. array as input or if required as output
+        (preserve_keys && offst !== 0))
+    { // Assoc. array as input or if required as output
         var lgt = 0,
-    newAssoc = {};
-    for (key in arr) {
+            newAssoc = {};
+        for (key in arr)
+        {
             //if (key !== 'length') {
-                lgt += 1;
-                newAssoc[key] = arr[key];
+            lgt += 1;
+            newAssoc[key] = arr[key];
             //}
         }
         arr = newAssoc;
@@ -3618,24 +3682,30 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
 
         var assoc = {};
         var start = false,
-        it = -1,
-        arrlgth = 0,
-        no_pk_idx = 0;
-        for (key in arr) {
+            it = -1,
+            arrlgth = 0,
+            no_pk_idx = 0;
+        for (key in arr)
+        {
             ++it;
-            if (arrlgth >= lgth) {
+            if (arrlgth >= lgth)
+            {
                 break;
             }
-            if (it == offst) {
+            if (it == offst)
+            {
                 start = true;
             }
-            if (!start) {
+            if (!start)
+            {
                 continue;
             }++arrlgth;
-            if (this.is_int(key) && !preserve_keys) {
+            if (this.is_int(key) && !preserve_keys)
+            {
                 assoc[no_pk_idx++] = arr[key];
             }
-            else {
+            else
+            {
                 assoc[key] = arr[key];
             }
         }
@@ -3643,13 +3713,16 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
         return assoc;
     }
 
-    if (lgth === undefined) {
+    if (lgth === undefined)
+    {
         return arr.slice(offst);
     }
-    else if (lgth >= 0) {
+    else if (lgth >= 0)
+    {
         return arr.slice(offst, offst + lgth);
     }
-    else {
+    else
+    {
         return arr.slice(offst, lgth);
     }
 }
@@ -3663,7 +3736,8 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
  * @param  int   limit Data per page
  * @return array
  */
-JSHelper.prototype.paginate = function(array, page, limit) {
+JSHelper.prototype.paginate = function(array, page, limit)
+{
     page = (page === false || page === 0 ? 1 : page);
     limit = (limit ? limit : 10);
     var total = count(array);
@@ -3675,7 +3749,8 @@ JSHelper.prototype.paginate = function(array, page, limit) {
 
     if (page > pages) return false;
 
-    for (var i = 0; i < pages; i++) {
+    for (var i = 0; i < pages; i++)
+    {
         offset = i * limit;
         paged.push(array.slice(offset, limit));
     }
@@ -3691,16 +3766,18 @@ JSHelper.prototype.paginate = function(array, page, limit) {
  * @param  closure callback  Callback to apply to each iteration
  * @param  array   args      Array of params to apply to callback (optional) (default null)
  */
-JSHelper.prototype.foreach = function(obj, callback, args) {
+JSHelper.prototype.foreach = function(obj, callback, args)
+{
     var value, i = 0,
-    length  = obj.length,
-    isArray = Object.prototype.toString.call(obj) === '[object Array]';
+        length = obj.length,
+        isArray = Object.prototype.toString.call(obj) === '[object Array]';
 
     if (Object.prototype.toString.call(args) === '[object Array]')
     {
         if (isArray)
         {
-            for (; i < length; i++) {
+            for (; i < length; i++)
+            {
 
                 var _currArgs = [i, obj[i]];
 
@@ -3730,24 +3807,28 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
 
         // A special, fast, case for the most common use of each
     }
-    else {
+    else
+    {
         if (isArray)
         {
             for (; i < length; i++)
             {
                 value = callback.call(obj, i, obj[i]);
 
-                if (value === false) {
+                if (value === false)
+                {
                     break;
                 }
             }
         }
-        else {
+        else
+        {
             for (i in obj)
             {
                 value = callback.call(obj, i, obj[i]);
 
-                if (value === false) {
+                if (value === false)
+                {
                     break;
                 }
             }
@@ -3764,9 +3845,11 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
  * @param  object  src       The object to clone
  * @return object
  */
-JSHelper.prototype.cloneObj = function(src) {
+JSHelper.prototype.cloneObj = function(src)
+{
     var clone = {};
-    for (var prop in src) {
+    for (var prop in src)
+    {
         if (src.hasOwnProperty(prop)) clone[prop] = src[prop];
     }
     return clone;
@@ -3779,67 +3862,82 @@ JSHelper.prototype.cloneObj = function(src) {
  * @param  ...   List of arrays to merge
  * @return array
  */
-JSHelper.prototype.array_merge = function () {
-  //  discuss at: http://phpjs.org/functions/array_merge/
-  // original by: Brett Zamir (http://brett-zamir.me)
-  // bugfixed by: Nate
-  // bugfixed by: Brett Zamir (http://brett-zamir.me)
-  //    input by: josh
-  //   example 1: arr1 = {"color": "red", 0: 2, 1: 4}
-  //   example 1: arr2 = {0: "a", 1: "b", "color": "green", "shape": "trapezoid", 2: 4}
-  //   example 1: array_merge(arr1, arr2)
-  //   returns 1: {"color": "green", 0: 2, 1: 4, 2: "a", 3: "b", "shape": "trapezoid", 4: 4}
-  //   example 2: arr1 = []
-  //   example 2: arr2 = {1: "data"}
-  //   example 2: array_merge(arr1, arr2)
-  //   returns 2: {0: "data"}
+JSHelper.prototype.array_merge = function()
+{
+    //  discuss at: http://phpjs.org/functions/array_merge/
+    // original by: Brett Zamir (http://brett-zamir.me)
+    // bugfixed by: Nate
+    // bugfixed by: Brett Zamir (http://brett-zamir.me)
+    //    input by: josh
+    //   example 1: arr1 = {"color": "red", 0: 2, 1: 4}
+    //   example 1: arr2 = {0: "a", 1: "b", "color": "green", "shape": "trapezoid", 2: 4}
+    //   example 1: array_merge(arr1, arr2)
+    //   returns 1: {"color": "green", 0: 2, 1: 4, 2: "a", 3: "b", "shape": "trapezoid", 4: 4}
+    //   example 2: arr1 = []
+    //   example 2: arr2 = {1: "data"}
+    //   example 2: array_merge(arr1, arr2)
+    //   returns 2: {0: "data"}
 
-  var args = Array.prototype.slice.call(arguments),
-  argl = args.length,
-  arg,
-  retObj = {},
-  k = '',
-  argil = 0,
-  j = 0,
-  i = 0,
-  ct = 0,
-  toStr = Object.prototype.toString,
-  retArr = true;
+    var args = Array.prototype.slice.call(arguments),
+        argl = args.length,
+        arg,
+        retObj = {},
+        k = '',
+        argil = 0,
+        j = 0,
+        i = 0,
+        ct = 0,
+        toStr = Object.prototype.toString,
+        retArr = true;
 
-  for (var i = 0; i < argl; i++) {
-    if (toStr.call(args[i]) !== '[object Array]') {
-      retArr = false;
-      break;
-  }
-}
-
-if (retArr) {
-    retArr = [];
-    for (var i = 0; i < argl; i++) {
-      retArr = retArr.concat(args[i]);
-  }
-  return retArr;
-}
-
-for (i = 0, ct = 0; i < argl; i++) {
-    arg = args[i];
-    if (toStr.call(arg) === '[object Array]') {
-      for (j = 0, argil = arg.length; j < argil; j++) {
-        retObj[ct++] = arg[j];
+    for (var i = 0; i < argl; i++)
+    {
+        if (toStr.call(args[i]) !== '[object Array]')
+        {
+            retArr = false;
+            break;
+        }
     }
-} else {
-  for (k in arg) {
-    if (arg.hasOwnProperty(k)) {
-      if (parseInt(k, 10) + '' === k) {
-        retObj[ct++] = arg[k];
-    } else {
-        retObj[k] = arg[k];
+
+    if (retArr)
+    {
+        retArr = [];
+        for (var i = 0; i < argl; i++)
+        {
+            retArr = retArr.concat(args[i]);
+        }
+        return retArr;
     }
-}
-}
-}
-}
-return retObj;
+
+    for (i = 0, ct = 0; i < argl; i++)
+    {
+        arg = args[i];
+        if (toStr.call(arg) === '[object Array]')
+        {
+            for (j = 0, argil = arg.length; j < argil; j++)
+            {
+                retObj[ct++] = arg[j];
+            }
+        }
+        else
+        {
+            for (k in arg)
+            {
+                if (arg.hasOwnProperty(k))
+                {
+                    if (parseInt(k, 10) + '' === k)
+                    {
+                        retObj[ct++] = arg[k];
+                    }
+                    else
+                    {
+                        retObj[k] = arg[k];
+                    }
+                }
+            }
+        }
+    }
+    return retObj;
 }
 
 /**
@@ -3849,9 +3947,11 @@ return retObj;
  * @param  array array Target array to filter
  * @return array
  */
-JSHelper.prototype.array_filter = function(array) {
+JSHelper.prototype.array_filter = function(array)
+{
     var result = [];
-    for (var i = 0; i < array.length; i++) {
+    for (var i = 0; i < array.length; i++)
+    {
         if (array[i] === '' || this.empty(array[i])) continue;
         result.push(array[i]);
     }
@@ -3879,7 +3979,7 @@ JSHelper.prototype.array_unique = function(array)
             }
         }
     }
-    
+
     return result;
 }
 
@@ -3892,7 +3992,7 @@ JSHelper.prototype.array_unique = function(array)
  */
 JSHelper.prototype.is_obj = function(mixed_var)
 {
-    if( (typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null) )
+    if ((typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null))
     {
         return true;
     }
@@ -4066,7 +4166,8 @@ JSHelper.prototype.intval = function(mixed_var, base)
     {
         return mixed_var | 0;
     }
-    else {
+    else
+    {
         return 0;
     }
 }
@@ -4227,9 +4328,9 @@ JSHelper.prototype.url_query = function(name)
     {
         return results;
     }
-    
+
     name = decodeURIComponent(name);
-    
+
     if (name in results)
     {
         return results[name];
@@ -4237,8 +4338,6 @@ JSHelper.prototype.url_query = function(name)
 
     return false;
 }
-
-
 /**
  * DOM Event Listener Manager
  *
@@ -4287,10 +4386,11 @@ JSHelper.prototype.addEventListener = function(element, eventName, handler, useC
     else
     {
         // Push the details to the events object
-        events[eventName].push({
-            element    : element,
-            handler    : handler,
-            useCapture : useCapture,
+        events[eventName].push(
+        {
+            element: element,
+            handler: handler,
+            useCapture: useCapture,
         });
 
         this._addListener(element, eventName, handler, useCapture);
@@ -4548,7 +4648,7 @@ JSHelper.prototype._shortHandExpand = function(property, recurse)
         return [property];
     }
 
-    return props[property].map(function (p)
+    return props[property].map(function(p)
     {
         if (p.substr(0, 1) === '-')
         {
@@ -4581,7 +4681,7 @@ JSHelper.prototype._computeStyle = function(el, property)
         }
 
         return window.getComputedStyle(el, null);
-        
+
     }
     if (el.currentStyle)
     {
@@ -4605,7 +4705,7 @@ JSHelper.prototype._computeStyle = function(el, property)
  */
 JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
 {
-    var shorthand   = '';
+    var shorthand = '';
     var multiValArr = [];
 
     for (var j = 0, len = longHandProps.length; j < len; j++)
@@ -4613,14 +4713,14 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
         var longHandStyle = this._computeStyle(el, longHandProps[j]);
 
         if (longHandStyle)
-        {            
+        {
             if (longHandStyle.indexOf(',') >= 0)
-            {                        
+            {
                 multiValArr.push(longHandStyle.split(',').map(Function.prototype.call, String.prototype.trim));
             }
             else
             {
-                shorthand += ' '+longHandStyle;
+                shorthand += ' ' + longHandStyle;
             }
         }
     }
@@ -4631,7 +4731,7 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
         var multiValArrStrs = [];
         for (var k = 0, len = multiValArr.length; k < len; k++)
         {
-            multiValArr[k].map(function (val, n)
+            multiValArr[k].map(function(val, n)
             {
                 if (!_this.isset(multiValArrStrs[n]))
                 {
@@ -4639,7 +4739,7 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
                 }
                 else
                 {
-                    multiValArrStrs[n] += ' '+val;
+                    multiValArrStrs[n] += ' ' + val;
                 }
             });
         }
@@ -4690,7 +4790,7 @@ JSHelper.prototype.getStyle = function(el, prop)
     // console.log(window.getComputedStyle(document.body));
     // console.log(window.getComputedStyle(document.body).padding);
     // console.log(window.getComputedStyle(document.body).getPropertyValue('padding'));
-   
+
     // Additionally, some css values can be comma separated
     // e.g
     // transition height 300ms ease, width 300ms ease;
@@ -4716,7 +4816,7 @@ JSHelper.prototype.getStyle = function(el, prop)
         }
 
         var shorthand = this._concatShortHandProperties(el, longHands);
-        
+
         if (shorthand)
         {
             return shorthand;
@@ -4749,7 +4849,7 @@ JSHelper.prototype.css = function(el, property, value)
         }
     }
     else
-    {   
+    {
         // Normalise if this is an easing value - e.g display, 'ease-in-out'
         value = this._normalizeEasing(value);
 
@@ -4777,15 +4877,15 @@ JSHelper.prototype.css = function(el, property, value)
  * @param  function callback    Callback to apply when animation ends (optional)
  */
 JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
-{     
+{
     // Set defaults if values were not provided;
-    time     = (typeof time === 'undefined' ? 300 : time);
-    easing   = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
+    time = (typeof time === 'undefined' ? 300 : time);
+    easing = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
     callback = (typeof callback === 'undefined' ? false : callback);
 
     // Width and height need to use js to get the starting size
     // if it was set to auto/initial/null
-    if ((cssProperty === 'height' || cssProperty === 'width') && (from === 'initial' || from === 'auto' || !from) )
+    if ((cssProperty === 'height' || cssProperty === 'width') && (from === 'initial' || from === 'auto' || !from))
     {
         if (cssProperty === 'height')
         {
@@ -4830,13 +4930,13 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, c
         var transitions = existingTransitions.split(',').map(Function.prototype.call, String.prototype.trim);
         transitions.push(cssProperty + ' ' + time + 'ms ' + easing);
 
-        var props  = [];
+        var props = [];
         for (var i = transitions.length - 1; i >= 0; --i)
         {
             var prop = transitions[i].split(' ')[0];
             if (this.in_array(prop, props))
             {
-               transitions.splice(i, 1);
+                transitions.splice(i, 1);
             }
             props.push(prop);
         }
@@ -4871,9 +4971,6 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, c
 
     }, false);
 }
-
-
-
 /**
  * Browser utility functions
  *
@@ -4912,16 +5009,1293 @@ JSHelper.prototype.getBrowser = function()
      * console.log(agentInfo.browser.family); // Chrome
      *
      */
-    (function(e){Array.prototype.map||(Array.prototype.map=function(e,r){var a,o,i;if(null==this)throw new TypeError(" this is null or not defined");var n=Object(this),t=n.length>>>0;if("function"!=typeof e)throw new TypeError(e+" is not a function");for(r&&(a=r),o=Array(t),i=0;t>i;){var l,d;i in n&&(l=n[i],d=e.call(a,l,i,n),o[i]=d),i++}return o});var r=e.detect=function(){var e=function(){},r={browser_parsers:[{regex:"^(Opera)/(\\d+)\\.(\\d+) \\(Nintendo Wii",family_replacement:"Wii",manufacturer:"Nintendo"},{regex:"(SeaMonkey|Camino)/(\\d+)\\.(\\d+)\\.?([ab]?\\d+[a-z]*)",family_replacement:"Camino",other:!0},{regex:"(Pale[Mm]oon)/(\\d+)\\.(\\d+)\\.?(\\d+)?",family_replacement:"Pale Moon (Firefox Variant)",other:!0},{regex:"(Fennec)/(\\d+)\\.(\\d+)\\.?([ab]?\\d+[a-z]*)",family_replacement:"Firefox Mobile"},{regex:"(Fennec)/(\\d+)\\.(\\d+)(pre)",family_replacment:"Firefox Mobile"},{regex:"(Fennec)/(\\d+)\\.(\\d+)",family_replacement:"Firefox Mobile"},{regex:"Mobile.*(Firefox)/(\\d+)\\.(\\d+)",family_replacement:"Firefox Mobile"},{regex:"(Namoroka|Shiretoko|Minefield)/(\\d+)\\.(\\d+)\\.(\\d+(?:pre)?)",family_replacement:"Firefox ($1)"},{regex:"(Firefox)/(\\d+)\\.(\\d+)(a\\d+[a-z]*)",family_replacement:"Firefox Alpha"},{regex:"(Firefox)/(\\d+)\\.(\\d+)(b\\d+[a-z]*)",family_replacement:"Firefox Beta"},{regex:"(Firefox)-(?:\\d+\\.\\d+)?/(\\d+)\\.(\\d+)(a\\d+[a-z]*)",family_replacement:"Firefox Alpha"},{regex:"(Firefox)-(?:\\d+\\.\\d+)?/(\\d+)\\.(\\d+)(b\\d+[a-z]*)",family_replacement:"Firefox Beta"},{regex:"(Namoroka|Shiretoko|Minefield)/(\\d+)\\.(\\d+)([ab]\\d+[a-z]*)?",family_replacement:"Firefox ($1)"},{regex:"(Firefox).*Tablet browser (\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"MicroB",tablet:!0},{regex:"(MozillaDeveloperPreview)/(\\d+)\\.(\\d+)([ab]\\d+[a-z]*)?"},{regex:"(Flock)/(\\d+)\\.(\\d+)(b\\d+?)",family_replacement:"Flock",other:!0},{regex:"(RockMelt)/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Rockmelt",other:!0},{regex:"(Navigator)/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Netscape"},{regex:"(Navigator)/(\\d+)\\.(\\d+)([ab]\\d+)",family_replacement:"Netscape"},{regex:"(Netscape6)/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Netscape"},{regex:"(MyIBrow)/(\\d+)\\.(\\d+)",family_replacement:"My Internet Browser",other:!0},{regex:"(Opera Tablet).*Version/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",family_replacement:"Opera Tablet",tablet:!0},{regex:"(Opera)/.+Opera Mobi.+Version/(\\d+)\\.(\\d+)",family_replacement:"Opera Mobile"},{regex:"Opera Mobi",family_replacement:"Opera Mobile"},{regex:"(Opera Mini)/(\\d+)\\.(\\d+)",family_replacement:"Opera Mini"},{regex:"(Opera Mini)/att/(\\d+)\\.(\\d+)",family_replacement:"Opera Mini"},{regex:"(Opera)/9.80.*Version/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",family_replacement:"Opera"},{regex:"(OPR)/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",family_replacement:"Opera"},{regex:"(webOSBrowser)/(\\d+)\\.(\\d+)",family_replacement:"webOS"},{regex:"(webOS)/(\\d+)\\.(\\d+)",family_replacement:"webOS"},{regex:"(wOSBrowser).+TouchPad/(\\d+)\\.(\\d+)",family_replacement:"webOS TouchPad"},{regex:"(luakit)",family_replacement:"LuaKit",other:!0},{regex:"(Lightning)/(\\d+)\\.(\\d+)([ab]?\\d+[a-z]*)",family_replacement:"Lightning",other:!0},{regex:"(Firefox)/(\\d+)\\.(\\d+)\\.(\\d+(?:pre)?) \\(Swiftfox\\)",family_replacement:"Swiftfox",other:!0},{regex:"(Firefox)/(\\d+)\\.(\\d+)([ab]\\d+[a-z]*)? \\(Swiftfox\\)",family_replacement:"Swiftfox",other:!0},{regex:"rekonq",family_replacement:"Rekonq",other:!0},{regex:"(conkeror|Conkeror)/(\\d+)\\.(\\d+)\\.?(\\d+)?",family_replacement:"Conkeror",other:!0},{regex:"(konqueror)/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Konqueror",other:!0},{regex:"(WeTab)-Browser",family_replacement:"WeTab",other:!0},{regex:"(Comodo_Dragon)/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Comodo Dragon",other:!0},{regex:"(YottaaMonitor)",family_replacement:"Yottaa Monitor",other:!0},{regex:"(Kindle)/(\\d+)\\.(\\d+)",family_replacement:"Kindle"},{regex:"(Symphony) (\\d+).(\\d+)",family_replacement:"Symphony",other:!0},{regex:"Minimo",family_replacement:"Minimo",other:!0},{regex:"(Edge)/(\\d+)\\.(\\d+)",family_replacement:"Edge"},{regex:"(CrMo)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Chrome Mobile"},{regex:"(CriOS)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Chrome Mobile iOS"},{regex:"(Chrome)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+) Mobile",family_replacement:"Chrome Mobile"},{regex:"(chromeframe)/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Chrome Frame"},{regex:"(UC Browser)(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"UC Browser",other:!0},{regex:"(SLP Browser)/(\\d+)\\.(\\d+)",family_replacement:"Tizen Browser",other:!0},{regex:"(Epiphany)/(\\d+)\\.(\\d+).(\\d+)",family_replacement:"Epiphany",other:!0},{regex:"(SE 2\\.X) MetaSr (\\d+)\\.(\\d+)",family_replacement:"Sogou Explorer",other:!0},{regex:"(Pingdom.com_bot_version_)(\\d+)\\.(\\d+)",family_replacement:"PingdomBot",other:!0},{regex:"(facebookexternalhit)/(\\d+)\\.(\\d+)",family_replacement:"FacebookBot"},{regex:"(Twitterbot)/(\\d+)\\.(\\d+)",family_replacement:"TwitterBot"},{regex:"(AdobeAIR|Chromium|FireWeb|Jasmine|ANTGalio|Midori|Fresco|Lobo|PaleMoon|Maxthon|Lynx|OmniWeb|Dillo|Camino|Demeter|Fluid|Fennec|Shiira|Sunrise|Chrome|Flock|Netscape|Lunascape|WebPilot|NetFront|Netfront|Konqueror|SeaMonkey|Kazehakase|Vienna|Iceape|Iceweasel|IceWeasel|Iron|K-Meleon|Sleipnir|Galeon|GranParadiso|Opera Mini|iCab|NetNewsWire|ThunderBrowse|Iron|Iris|UP\\.Browser|Bunjaloo|Google Earth|Raven for Mac)/(\\d+)\\.(\\d+)\\.(\\d+)"},{regex:"(Bolt|Jasmine|IceCat|Skyfire|Midori|Maxthon|Lynx|Arora|IBrowse|Dillo|Camino|Shiira|Fennec|Phoenix|Chrome|Flock|Netscape|Lunascape|Epiphany|WebPilot|Opera Mini|Opera|NetFront|Netfront|Konqueror|Googlebot|SeaMonkey|Kazehakase|Vienna|Iceape|Iceweasel|IceWeasel|Iron|K-Meleon|Sleipnir|Galeon|GranParadiso|iCab|NetNewsWire|Iron|Space Bison|Stainless|Orca|Dolfin|BOLT|Minimo|Tizen Browser|Polaris)/(\\d+)\\.(\\d+)"},{regex:"(iRider|Crazy Browser|SkipStone|iCab|Lunascape|Sleipnir|Maemo Browser) (\\d+)\\.(\\d+)\\.(\\d+)"},{regex:"(iCab|Lunascape|Opera|Android|Jasmine|Polaris|BREW) (\\d+)\\.(\\d+)\\.?(\\d+)?"},{regex:"(Android) Donut",v2_replacement:"2",v1_replacement:"1"},{regex:"(Android) Eclair",v2_replacement:"1",v1_replacement:"2"},{regex:"(Android) Froyo",v2_replacement:"2",v1_replacement:"2"},{regex:"(Android) Gingerbread",v2_replacement:"3",v1_replacement:"2"},{regex:"(Android) Honeycomb",v1_replacement:"3"},{regex:"(IEMobile)[ /](\\d+)\\.(\\d+)",family_replacement:"IE Mobile"},{regex:"(MSIE) (\\d+)\\.(\\d+).*XBLWP7",family_replacement:"IE Large Screen"},{regex:"(Firefox)/(\\d+)\\.(\\d+)\\.(\\d+)"},{regex:"(Firefox)/(\\d+)\\.(\\d+)(pre|[ab]\\d+[a-z]*)?"},{regex:"(Obigo)InternetBrowser",other:!0},{regex:"(Obigo)\\-Browser",other:!0},{regex:"(Obigo|OBIGO)[^\\d]*(\\d+)(?:.(\\d+))?",other:!0},{regex:"(MAXTHON|Maxthon) (\\d+)\\.(\\d+)",family_replacement:"Maxthon",other:!0},{regex:"(Maxthon|MyIE2|Uzbl|Shiira)",v1_replacement:"0",other:!0},{regex:"(PLAYSTATION) (\\d+)",family_replacement:"PlayStation",manufacturer:"Sony"},{regex:"(PlayStation Portable)[^\\d]+(\\d+).(\\d+)",manufacturer:"Sony"},{regex:"(BrowseX) \\((\\d+)\\.(\\d+)\\.(\\d+)",other:!0},{regex:"(POLARIS)/(\\d+)\\.(\\d+)",family_replacement:"Polaris",other:!0},{regex:"(Embider)/(\\d+)\\.(\\d+)",family_replacement:"Polaris",other:!0},{regex:"(BonEcho)/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Bon Echo",other:!0},{regex:"(iPod).+Version/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Mobile Safari",manufacturer:"Apple"},{regex:"(iPod).*Version/(\\d+)\\.(\\d+)",family_replacement:"Mobile Safari",manufacturer:"Apple"},{regex:"(iPod)",family_replacement:"Mobile Safari",manufacturer:"Apple"},{regex:"(iPhone).*Version/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Mobile Safari",manufacturer:"Apple"},{regex:"(iPhone).*Version/(\\d+)\\.(\\d+)",family_replacement:"Mobile Safari",manufacturer:"Apple"},{regex:"(iPhone)",family_replacement:"Mobile Safari",manufacturer:"Apple"},{regex:"(iPad).*Version/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Mobile Safari",tablet:!0,manufacturer:"Apple"},{regex:"(iPad).*Version/(\\d+)\\.(\\d+)",family_replacement:"Mobile Safari",tablet:!0,manufacturer:"Apple"},{regex:"(iPad)",family_replacement:"Mobile Safari",tablet:!0,manufacturer:"Apple"},{regex:"(AvantGo) (\\d+).(\\d+)",other:!0},{regex:"(Avant)",v1_replacement:"1",other:!0},{regex:"^(Nokia)",family_replacement:"Nokia Services (WAP) Browser",manufacturer:"Nokia"},{regex:"(NokiaBrowser)/(\\d+)\\.(\\d+).(\\d+)\\.(\\d+)",manufacturer:"Nokia"},{regex:"(NokiaBrowser)/(\\d+)\\.(\\d+).(\\d+)",manufacturer:"Nokia"},{regex:"(NokiaBrowser)/(\\d+)\\.(\\d+)",manufacturer:"Nokia"},{regex:"(BrowserNG)/(\\d+)\\.(\\d+).(\\d+)",family_replacement:"NokiaBrowser",manufacturer:"Nokia"},{regex:"(Series60)/5\\.0",v2_replacement:"0",v1_replacement:"7",family_replacement:"NokiaBrowser",manufacturer:"Nokia"},{regex:"(Series60)/(\\d+)\\.(\\d+)",family_replacement:"Nokia OSS Browser",manufacturer:"Nokia"},{regex:"(S40OviBrowser)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Nokia Series 40 Ovi Browser",manufacturer:"Nokia"},{regex:"(Nokia)[EN]?(\\d+)",manufacturer:"Nokia"},{regex:"(PlayBook).+RIM Tablet OS (\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Blackberry WebKit",tablet:!0,manufacturer:"Nokia"},{regex:"(Black[bB]erry).+Version/(\\d+)\\.(\\d+)\\.(\\d+)",family_replacement:"Blackberry WebKit",manufacturer:"RIM"},{regex:"(Black[bB]erry)\\s?(\\d+)",family_replacement:"Blackberry",manufacturer:"RIM"},{regex:"(OmniWeb)/v(\\d+)\\.(\\d+)",other:!0},{regex:"(Blazer)/(\\d+)\\.(\\d+)",family_replacement:"Palm Blazer",manufacturer:"Palm"},{regex:"(Pre)/(\\d+)\\.(\\d+)",family_replacement:"Palm Pre",manufacturer:"Palm"},{regex:"(Links) \\((\\d+)\\.(\\d+)",other:!0},{regex:"(QtWeb) Internet Browser/(\\d+)\\.(\\d+)",other:!0},{regex:"(Silk)/(\\d+)\\.(\\d+)(?:\\.([0-9\\-]+))?",other:!0,tablet:!0},{regex:"(AppleWebKit)/(\\d+)\\.?(\\d+)?\\+ .* Version/\\d+\\.\\d+.\\d+ Safari/",family_replacement:"WebKit Nightly"},{regex:"(Version)/(\\d+)\\.(\\d+)(?:\\.(\\d+))?.*Safari/",family_replacement:"Safari"},{regex:"(Safari)/\\d+"},{regex:"(OLPC)/Update(\\d+)\\.(\\d+)",other:!0},{regex:"(OLPC)/Update()\\.(\\d+)",v1_replacement:"0",other:!0},{regex:"(SEMC\\-Browser)/(\\d+)\\.(\\d+)",other:!0},{regex:"(Teleca)",family_replacement:"Teleca Browser",other:!0},{regex:"Trident(.*)rv.(\\d+)\\.(\\d+)",family_replacement:"IE"},{regex:"(MSIE) (\\d+)\\.(\\d+)",family_replacement:"IE"}],os_parsers:[{regex:"(Android) (\\d+)\\.(\\d+)(?:[.\\-]([a-z0-9]+))?"},{regex:"(Android)\\-(\\d+)\\.(\\d+)(?:[.\\-]([a-z0-9]+))?"},{regex:"(Android) Donut",os_v2_replacement:"2",os_v1_replacement:"1"},{regex:"(Android) Eclair",os_v2_replacement:"1",os_v1_replacement:"2"},{regex:"(Android) Froyo",os_v2_replacement:"2",os_v1_replacement:"2"},{regex:"(Android) Gingerbread",os_v2_replacement:"3",os_v1_replacement:"2"},{regex:"(Android) Honeycomb",os_v1_replacement:"3"},{regex:"(Silk-Accelerated=[a-z]{4,5})",os_replacement:"Android"},{regex:"(Windows Phone 6\\.5)"},{regex:"(Windows (?:NT 5\\.2|NT 5\\.1))",os_replacement:"Windows XP"},{regex:"(XBLWP7)",os_replacement:"Windows Phone OS"},{regex:"(Windows NT 6\\.1)",os_replacement:"Windows 7"},{regex:"(Windows NT 6\\.0)",os_replacement:"Windows Vista"},{regex:"(Windows 98|Windows XP|Windows ME|Windows 95|Windows CE|Windows 7|Windows NT 4\\.0|Windows Vista|Windows 2000)"},{regex:"(Windows NT 6\\.4|Windows NT 10\\.0)",os_replacement:"Windows 10"},{regex:"(Windows NT 6\\.2)",os_replacement:"Windows 8"},{regex:"(Windows Phone 8)",os_replacement:"Windows Phone 8"},{regex:"(Windows NT 5\\.0)",os_replacement:"Windows 2000"},{regex:"(Windows Phone OS) (\\d+)\\.(\\d+)"},{regex:"(Windows ?Mobile)",os_replacement:"Windows Mobile"},{regex:"(WinNT4.0)",os_replacement:"Windows NT 4.0"},{regex:"(Win98)",os_replacement:"Windows 98"},{regex:"(Tizen)/(\\d+)\\.(\\d+)",other:!0},{regex:"(Mac OS X) (\\d+)[_.](\\d+)(?:[_.](\\d+))?",manufacturer:"Apple"},{regex:"(?:PPC|Intel) (Mac OS X)",manufacturer:"Apple"},{regex:"(CPU OS|iPhone OS) (\\d+)_(\\d+)(?:_(\\d+))?",os_replacement:"iOS",manufacturer:"Apple"},{regex:"(iPhone|iPad|iPod); Opera",os_replacement:"iOS",manufacturer:"Apple"},{regex:"(iPad); Opera",tablet:!0,manufacturer:"Apple"},{regex:"(iPhone|iPad|iPod).*Mac OS X.*Version/(\\d+)\\.(\\d+)",os_replacement:"iOS",manufacturer:"Apple"},{regex:"(CrOS) [a-z0-9_]+ (\\d+)\\.(\\d+)(?:\\.(\\d+))?",os_replacement:"Chrome OS"},{regex:"(Debian)-(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",other:!0},{regex:"(Linux Mint)(?:/(\\d+))?",other:!0},{regex:"(Mandriva)(?: Linux)?/(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",other:!0},{regex:"(Symbian[Oo][Ss])/(\\d+)\\.(\\d+)",os_replacement:"Symbian OS"},{regex:"(Symbian/3).+NokiaBrowser/7\\.3",os_replacement:"Symbian^3 Anna"},{regex:"(Symbian/3).+NokiaBrowser/7\\.4",os_replacement:"Symbian^3 Belle"},{regex:"(Symbian/3)",os_replacement:"Symbian^3"},{regex:"(Series 60|SymbOS|S60)",os_replacement:"Symbian OS"},{regex:"(MeeGo)",other:!0},{regex:"Symbian [Oo][Ss]",os_replacement:"Symbian OS"},{regex:"(Black[Bb]erry)[0-9a-z]+/(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",os_replacement:"BlackBerry OS",manufacturer:"RIM"},{regex:"(Black[Bb]erry).+Version/(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",os_replacement:"BlackBerry OS",manufacturer:"RIM"},{regex:"(RIM Tablet OS) (\\d+)\\.(\\d+)\\.(\\d+)",os_replacement:"BlackBerry Tablet OS",tablet:!0,manufacturer:"RIM"},{regex:"(Play[Bb]ook)",os_replacement:"BlackBerry Tablet OS",tablet:!0,manufacturer:"RIM"},{regex:"(Black[Bb]erry)",os_replacement:"Blackberry OS",manufacturer:"RIM"},{regex:"(webOS|hpwOS)/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",os_replacement:"webOS"},{regex:"(SUSE|Fedora|Red Hat|PCLinuxOS)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",other:!0},{regex:"(SUSE|Fedora|Red Hat|Puppy|PCLinuxOS|CentOS)/(\\d+)\\.(\\d+)\\.(\\d+)",other:!0},{regex:"(Ubuntu|Kindle|Bada|Lubuntu|BackTrack|Red Hat|Slackware)/(\\d+)\\.(\\d+)"},{regex:"(Windows|OpenBSD|FreeBSD|NetBSD|Ubuntu|Kubuntu|Android|Arch Linux|CentOS|WeTab|Slackware)"},{regex:"(Linux|BSD)",other:!0}],mobile_os_families:["Windows Phone 6.5","Windows CE","Symbian OS"],device_parsers:[{regex:"HTC ([A-Z][a-z0-9]+) Build",device_replacement:"HTC $1",manufacturer:"HTC"},{regex:"HTC ([A-Z][a-z0-9 ]+) \\d+\\.\\d+\\.\\d+\\.\\d+",device_replacement:"HTC $1",manufacturer:"HTC"},{regex:"HTC_Touch_([A-Za-z0-9]+)",device_replacement:"HTC Touch ($1)",manufacturer:"HTC"},{regex:"USCCHTC(\\d+)",device_replacement:"HTC $1 (US Cellular)",manufacturer:"HTC"},{regex:"Sprint APA(9292)",device_replacement:"HTC $1 (Sprint)",manufacturer:"HTC"},{regex:"HTC ([A-Za-z0-9]+ [A-Z])",device_replacement:"HTC $1",manufacturer:"HTC"},{regex:"HTC-([A-Za-z0-9]+)",device_replacement:"HTC $1",manufacturer:"HTC"},{regex:"HTC_([A-Za-z0-9]+)",device_replacement:"HTC $1",manufacturer:"HTC"},{regex:"HTC ([A-Za-z0-9]+)",device_replacement:"HTC $1",manufacturer:"HTC"},{regex:"(ADR[A-Za-z0-9]+)",device_replacement:"HTC $1",manufacturer:"HTC"},{regex:"(HTC)",manufacturer:"HTC"},{regex:"SonyEricsson([A-Za-z0-9]+)/",device_replacement:"Ericsson $1",other:!0,manufacturer:"Sony"},{regex:"Android[\\- ][\\d]+\\.[\\d]+\\; [A-Za-z]{2}\\-[A-Za-z]{2}\\; WOWMobile (.+) Build"},{regex:"Android[\\- ][\\d]+\\.[\\d]+\\.[\\d]+; [A-Za-z]{2}\\-[A-Za-z]{2}\\; (.+) Build"},{regex:"Android[\\- ][\\d]+\\.[\\d]+\\-update1\\; [A-Za-z]{2}\\-[A-Za-z]{2}\\; (.+) Build"},{regex:"Android[\\- ][\\d]+\\.[\\d]+\\; [A-Za-z]{2}\\-[A-Za-z]{2}\\; (.+) Build"},{regex:"Android[\\- ][\\d]+\\.[\\d]+\\.[\\d]+; (.+) Build"},{regex:"NokiaN([0-9]+)",device_replacement:"Nokia N$1",manufacturer:"Nokia"},{regex:"Nokia([A-Za-z0-9\\v-]+)",device_replacement:"Nokia $1",manufacturer:"Nokia"},{regex:"NOKIA ([A-Za-z0-9\\-]+)",device_replacement:"Nokia $1",manufacturer:"Nokia"},{regex:"Nokia ([A-Za-z0-9\\-]+)",device_replacement:"Nokia $1",manufacturer:"Nokia"},{regex:"Lumia ([A-Za-z0-9\\-]+)",device_replacement:"Lumia $1",manufacturer:"Nokia"},{regex:"Symbian",device_replacement:"Nokia",manufacturer:"Nokia"},{regex:"(PlayBook).+RIM Tablet OS",device_replacement:"Blackberry Playbook",tablet:!0,manufacturer:"RIM"},{regex:"(Black[Bb]erry [0-9]+);",manufacturer:"RIM"},{regex:"Black[Bb]erry([0-9]+)",device_replacement:"BlackBerry $1",manufacturer:"RIM"},{regex:"(Pre)/(\\d+)\\.(\\d+)",device_replacement:"Palm Pre",manufacturer:"Palm"},{regex:"(Pixi)/(\\d+)\\.(\\d+)",device_replacement:"Palm Pixi",manufacturer:"Palm"},{regex:"(Touchpad)/(\\d+)\\.(\\d+)",device_replacement:"HP Touchpad",manufacturer:"HP"},{regex:"HPiPAQ([A-Za-z0-9]+)/(\\d+).(\\d+)",device_replacement:"HP iPAQ $1",manufacturer:"HP"},{regex:"Palm([A-Za-z0-9]+)",device_replacement:"Palm $1",manufacturer:"Palm"},{regex:"Treo([A-Za-z0-9]+)",device_replacement:"Palm Treo $1",manufacturer:"Palm"},{regex:"webOS.*(P160UNA)/(\\d+).(\\d+)",device_replacement:"HP Veer",manufacturer:"HP"},{regex:"(Kindle Fire)",manufacturer:"Amazon"},{regex:"(Kindle)",manufacturer:"Amazon"},{regex:"(Silk)/(\\d+)\\.(\\d+)(?:\\.([0-9\\-]+))?",device_replacement:"Kindle Fire",tablet:!0,manufacturer:"Amazon"},{regex:"(iPad) Simulator;",manufacturer:"Apple"},{regex:"(iPad);",manufacturer:"Apple"},{regex:"(iPod);",manufacturer:"Apple"},{regex:"(iPhone) Simulator;",manufacturer:"Apple"},{regex:"(iPhone);",manufacturer:"Apple"},{regex:"Nexus\\ ([A-Za-z0-9\\-]+)",device_replacement:"Nexus $1"},{regex:"acer_([A-Za-z0-9]+)_",device_replacement:"Acer $1",manufacturer:"Acer"},{regex:"acer_([A-Za-z0-9]+)_",device_replacement:"Acer $1",manufacturer:"Acer"},{regex:"Amoi\\-([A-Za-z0-9]+)",device_replacement:"Amoi $1",other:!0,manufacturer:"Amoi"},{regex:"AMOI\\-([A-Za-z0-9]+)",device_replacement:"Amoi $1",other:!0,manufacturer:"Amoi"},{regex:"Asus\\-([A-Za-z0-9]+)",device_replacement:"Asus $1",manufacturer:"Asus"},{regex:"ASUS\\-([A-Za-z0-9]+)",device_replacement:"Asus $1",manufacturer:"Asus"},{regex:"BIRD\\-([A-Za-z0-9]+)",device_replacement:"Bird $1",other:!0},{regex:"BIRD\\.([A-Za-z0-9]+)",device_replacement:"Bird $1",other:!0},{regex:"BIRD ([A-Za-z0-9]+)",device_replacement:"Bird $1",other:!0},{regex:"Dell ([A-Za-z0-9]+)",device_replacement:"Dell $1",manufacturer:"Dell"},{regex:"DoCoMo/2\\.0 ([A-Za-z0-9]+)",device_replacement:"DoCoMo $1",other:!0},{regex:"([A-Za-z0-9]+)\\_W\\;FOMA",device_replacement:"DoCoMo $1",other:!0},{regex:"([A-Za-z0-9]+)\\;FOMA",device_replacement:"DoCoMo $1",other:!0},{regex:"vodafone([A-Za-z0-9]+)",device_replacement:"Huawei Vodafone $1",other:!0},{regex:"i\\-mate ([A-Za-z0-9]+)",device_replacement:"i-mate $1",other:!0},{regex:"Kyocera\\-([A-Za-z0-9]+)",device_replacement:"Kyocera $1",other:!0},{regex:"KWC\\-([A-Za-z0-9]+)",device_replacement:"Kyocera $1",other:!0},{regex:"Lenovo\\-([A-Za-z0-9]+)",device_replacement:"Lenovo $1",manufacturer:"Lenovo"},{regex:"Lenovo\\_([A-Za-z0-9]+)",device_replacement:"Lenovo $1",manufacturer:"Levovo"},{regex:"LG/([A-Za-z0-9]+)",device_replacement:"LG $1",manufacturer:"LG"},{regex:"LG-LG([A-Za-z0-9]+)",device_replacement:"LG $1",manufacturer:"LG"},{regex:"LGE-LG([A-Za-z0-9]+)",device_replacement:"LG $1",manufacturer:"LG"},{regex:"LGE VX([A-Za-z0-9]+)",device_replacement:"LG $1",manufacturer:"LG"},{regex:"LG ([A-Za-z0-9]+)",device_replacement:"LG $1",manufacturer:"LG"},{regex:"LGE LG\\-AX([A-Za-z0-9]+)",device_replacement:"LG $1",manufacturer:"LG"},{regex:"LG\\-([A-Za-z0-9]+)",device_replacement:"LG $1",manufacturer:"LG"},{regex:"LGE\\-([A-Za-z0-9]+)",device_replacement:"LG $1",manufacturer:"LG"},{regex:"LG([A-Za-z0-9]+)",device_replacement:"LG $1",manufacturer:"LG"},{regex:"(KIN)\\.One (\\d+)\\.(\\d+)",device_replacement:"Microsoft $1"},{regex:"(KIN)\\.Two (\\d+)\\.(\\d+)",device_replacement:"Microsoft $1"},{regex:"(Motorola)\\-([A-Za-z0-9]+)",manufacturer:"Motorola"},{regex:"MOTO\\-([A-Za-z0-9]+)",device_replacement:"Motorola $1",manufacturer:"Motorola"},{regex:"MOT\\-([A-Za-z0-9]+)",device_replacement:"Motorola $1",manufacturer:"Motorola"},{regex:"Philips([A-Za-z0-9]+)",device_replacement:"Philips $1",manufacturer:"Philips"},{regex:"Philips ([A-Za-z0-9]+)",device_replacement:"Philips $1",manufacturer:"Philips"},{regex:"SAMSUNG-([A-Za-z0-9\\-]+)",device_replacement:"Samsung $1",manufacturer:"Samsung"},{regex:"SAMSUNG\\; ([A-Za-z0-9\\-]+)",device_replacement:"Samsung $1",manufacturer:"Samsung"},{regex:"Softbank/1\\.0/([A-Za-z0-9]+)",device_replacement:"Softbank $1",other:!0},{regex:"Softbank/2\\.0/([A-Za-z0-9]+)",device_replacement:"Softbank $1",other:!0},{regex:"(hiptop|avantgo|plucker|xiino|blazer|elaine|up.browser|up.link|mmp|smartphone|midp|wap|vodafone|o2|pocket|mobile|pda)",device_replacement:"Generic Smartphone"},{regex:"^(1207|3gso|4thp|501i|502i|503i|504i|505i|506i|6310|6590|770s|802s|a wa|acer|acs\\-|airn|alav|asus|attw|au\\-m|aur |aus |abac|acoo|aiko|alco|alca|amoi|anex|anny|anyw|aptu|arch|argo|bell|bird|bw\\-n|bw\\-u|beck|benq|bilb|blac|c55/|cdm\\-|chtm|capi|comp|cond|craw|dall|dbte|dc\\-s|dica|ds\\-d|ds12|dait|devi|dmob|doco|dopo|el49|erk0|esl8|ez40|ez60|ez70|ezos|ezze|elai|emul|eric|ezwa|fake|fly\\-|fly\\_|g\\-mo|g1 u|g560|gf\\-5|grun|gene|go.w|good|grad|hcit|hd\\-m|hd\\-p|hd\\-t|hei\\-|hp i|hpip|hs\\-c|htc |htc\\-|htca|htcg)",device_replacement:"Generic Feature Phone"},{regex:"^(htcp|htcs|htct|htc\\_|haie|hita|huaw|hutc|i\\-20|i\\-go|i\\-ma|i230|iac|iac\\-|iac/|ig01|im1k|inno|iris|jata|java|kddi|kgt|kgt/|kpt |kwc\\-|klon|lexi|lg g|lg\\-a|lg\\-b|lg\\-c|lg\\-d|lg\\-f|lg\\-g|lg\\-k|lg\\-l|lg\\-m|lg\\-o|lg\\-p|lg\\-s|lg\\-t|lg\\-u|lg\\-w|lg/k|lg/l|lg/u|lg50|lg54|lge\\-|lge/|lynx|leno|m1\\-w|m3ga|m50/|maui|mc01|mc21|mcca|medi|meri|mio8|mioa|mo01|mo02|mode|modo|mot |mot\\-|mt50|mtp1|mtv |mate|maxo|merc|mits|mobi|motv|mozz|n100|n101|n102|n202|n203|n300|n302|n500|n502|n505|n700|n701|n710|nec\\-|nem\\-|newg|neon)",device_replacement:"Generic Feature Phone"},{regex:"^(netf|noki|nzph|o2 x|o2\\-x|opwv|owg1|opti|oran|ot\\-s|p800|pand|pg\\-1|pg\\-2|pg\\-3|pg\\-6|pg\\-8|pg\\-c|pg13|phil|pn\\-2|pt\\-g|palm|pana|pire|pock|pose|psio|qa\\-a|qc\\-2|qc\\-3|qc\\-5|qc\\-7|qc07|qc12|qc21|qc32|qc60|qci\\-|qwap|qtek|r380|r600|raks|rim9|rove|s55/|sage|sams|sc01|sch\\-|scp\\-|sdk/|se47|sec\\-|sec0|sec1|semc|sgh\\-|shar|sie\\-|sk\\-0|sl45|slid|smb3|smt5|sp01|sph\\-|spv |spv\\-|sy01|samm|sany|sava|scoo|send|siem|smar|smit|soft|sony|t\\-mo|t218|t250|t600|t610|t618|tcl\\-|tdg\\-|telm|tim\\-|ts70|tsm\\-|tsm3|tsm5|tx\\-9|tagt)",device_replacement:"Generic Feature Phone"},{regex:"^(talk|teli|topl|tosh|up.b|upg1|utst|v400|v750|veri|vk\\-v|vk40|vk50|vk52|vk53|vm40|vx98|virg|vite|voda|vulc|w3c |w3c\\-|wapj|wapp|wapu|wapm|wig |wapi|wapr|wapv|wapy|wapa|waps|wapt|winc|winw|wonu|x700|xda2|xdag|yas\\-|your|zte\\-|zeto|aste|audi|avan|blaz|brew|brvw|bumb|ccwa|cell|cldc|cmd\\-|dang|eml2|fetc|hipt|http|ibro|idea|ikom|ipaq|jbro|jemu|jigs|keji|kyoc|kyok|libw|m\\-cr|midp|mmef|moto|mwbp|mywa|newt|nok6|o2im|pant|pdxg|play|pluc|port|prox|rozo|sama|seri|smal|symb|treo|upsi|vx52|vx53|vx60|vx61|vx70|vx80|vx81|vx83|vx85|wap\\-|webc|whit|wmlb|xda\\-|xda\\_)",device_replacement:"Generic Feature Phone"},{regex:"(bot|borg|google(^tv)|yahoo|slurp|msnbot|msrbot|openbot|archiver|netresearch|lycos|scooter|altavista|teoma|gigabot|baiduspider|blitzbot|oegp|charlotte|furlbot|http%20client|polybot|htdig|ichiro|mogimogi|larbin|pompos|scrubby|searchsight|seekbot|semanticdiscovery|silk|snappy|speedy|spider|voila|vortex|voyager|zao|zeal|fast\\-webcrawler|converacrawler|dataparksearch|findlinks)",device_replacement:"Spider"}],mobile_browser_families:["Firefox Mobile","Opera Mobile","Opera Mini","Mobile Safari","webOS","IE Mobile","Playstation Portable","Nokia","Blackberry","Palm","Silk","Android","Maemo","Obigo","Netfront","AvantGo","Teleca","SEMC-Browser","Bolt","Iris","UP.Browser","Symphony","Minimo","Bunjaloo","Jasmine","Dolfin","Polaris","BREW","Chrome Mobile","Chrome Mobile iOS","UC Browser","Tizen Browser"]};e.parsers=["device_parsers","browser_parsers","os_parsers","mobile_os_families","mobile_browser_families"],e.types=["browser","os","device"],e.regexes=r||function(){var r={};return e.parsers.map(function(e){r[e]=[]}),r}(),e.families=function(){var r={};return e.types.map(function(e){r[e]=[]}),r}();var a=Array.prototype,o=(Object.prototype,Function.prototype,a.forEach);a.indexOf;var i=function(e,r){for(var a={},o=0;r.length>o&&!(a=r[o](e));o++);return a},n=function(e,r){t(e,function(e){t(r,function(r){delete e[r]})})},t=forEach=function(e,r,a){if(null!=e)if(o&&e.forEach===o)e.forEach(r,a);else if(e.length===+e.length)for(var i=0,n=e.length;n>i;i++)r.call(a,e[i],i,e);else for(var t in e)_.has(e,t)&&r.call(a,e[t],t,e)},l=function(e){return!(!e||e===undefined||null==e)},d=function(e){var r="";return e=e||{},l(e)&&l(e.major)&&(r+=e.major,l(e.minor)&&(r+="."+e.minor,l(e.patch)&&(r+="."+e.patch))),r},c=function(e){e=e||{};var r=d(e);return r&&(r=" "+r),e&&l(e.family)?e.family+r:""};return e.parse=function(r){var a=function(r){return e.regexes[r+"_parsers"].map(function(e){function a(r){var a=r.match(o);if(!a)return null;var t={};return t.family=(i?i.replace("$1",a[1]):a[1])||"other",t.major=parseInt(n?n:a[2])||null,t.minor=a[3]?parseInt(a[3]):null,t.patch=a[4]?parseInt(a[4]):null,t.tablet=e.tablet,t.man=e.manufacturer||null,t}var o=RegExp(e.regex),i=e[("browser"===r?"family":r)+"_replacement"],n=e.major_version_replacement;return a})},o=function(){},t=a("browser"),m=a("os"),p=a("device"),s=new o;s.source=r,s.browser=i(r,t),l(s.browser)?(s.browser.name=c(s.browser),s.browser.version=d(s.browser)):s.browser={},s.os=i(r,m),l(s.os)?(s.os.name=c(s.os),s.os.version=d(s.os)):s.os={},s.device=i(r,p),l(s.device)?(s.device.name=c(s.device),s.device.version=d(s.device)):s.device={tablet:!1,family:"Other"};var g={};return e.regexes.mobile_browser_families.map(function(e){g[e]=!0}),e.regexes.mobile_os_families.map(function(e){g[e]=!0}),s.device.type="Spider"===s.browser.family?"Spider":s.browser.tablet||s.os.tablet||s.device.tablet?"Tablet":g.hasOwnProperty(s.browser.family)?"Mobile":"Desktop",s.device.manufacturer=s.browser.man||s.os.man||s.device.man||null,n([s.browser,s.os,s.device],["tablet","man"]),s},e}();"undefined"!=typeof exports?("undefined"!=typeof module&&module.exports&&(exports=module.exports=r),exports.detect=r):e.detect=r,"function"==typeof define&&define.amd&&define(function(){return r})})(window);
+    (function(e)
+    {
+        Array.prototype.map || (Array.prototype.map = function(e, r)
+        {
+            var a, o, i;
+            if (null == this) throw new TypeError(" this is null or not defined");
+            var n = Object(this),
+                t = n.length >>> 0;
+            if ("function" != typeof e) throw new TypeError(e + " is not a function");
+            for (r && (a = r), o = Array(t), i = 0; t > i;)
+            {
+                var l, d;
+                i in n && (l = n[i], d = e.call(a, l, i, n), o[i] = d), i++
+            }
+            return o
+        });
+        var r = e.detect = function()
+        {
+            var e = function() {},
+                r = {
+                    browser_parsers: [
+                    {
+                        regex: "^(Opera)/(\\d+)\\.(\\d+) \\(Nintendo Wii",
+                        family_replacement: "Wii",
+                        manufacturer: "Nintendo"
+                    },
+                    {
+                        regex: "(SeaMonkey|Camino)/(\\d+)\\.(\\d+)\\.?([ab]?\\d+[a-z]*)",
+                        family_replacement: "Camino",
+                        other: !0
+                    },
+                    {
+                        regex: "(Pale[Mm]oon)/(\\d+)\\.(\\d+)\\.?(\\d+)?",
+                        family_replacement: "Pale Moon (Firefox Variant)",
+                        other: !0
+                    },
+                    {
+                        regex: "(Fennec)/(\\d+)\\.(\\d+)\\.?([ab]?\\d+[a-z]*)",
+                        family_replacement: "Firefox Mobile"
+                    },
+                    {
+                        regex: "(Fennec)/(\\d+)\\.(\\d+)(pre)",
+                        family_replacment: "Firefox Mobile"
+                    },
+                    {
+                        regex: "(Fennec)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Firefox Mobile"
+                    },
+                    {
+                        regex: "Mobile.*(Firefox)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Firefox Mobile"
+                    },
+                    {
+                        regex: "(Namoroka|Shiretoko|Minefield)/(\\d+)\\.(\\d+)\\.(\\d+(?:pre)?)",
+                        family_replacement: "Firefox ($1)"
+                    },
+                    {
+                        regex: "(Firefox)/(\\d+)\\.(\\d+)(a\\d+[a-z]*)",
+                        family_replacement: "Firefox Alpha"
+                    },
+                    {
+                        regex: "(Firefox)/(\\d+)\\.(\\d+)(b\\d+[a-z]*)",
+                        family_replacement: "Firefox Beta"
+                    },
+                    {
+                        regex: "(Firefox)-(?:\\d+\\.\\d+)?/(\\d+)\\.(\\d+)(a\\d+[a-z]*)",
+                        family_replacement: "Firefox Alpha"
+                    },
+                    {
+                        regex: "(Firefox)-(?:\\d+\\.\\d+)?/(\\d+)\\.(\\d+)(b\\d+[a-z]*)",
+                        family_replacement: "Firefox Beta"
+                    },
+                    {
+                        regex: "(Namoroka|Shiretoko|Minefield)/(\\d+)\\.(\\d+)([ab]\\d+[a-z]*)?",
+                        family_replacement: "Firefox ($1)"
+                    },
+                    {
+                        regex: "(Firefox).*Tablet browser (\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "MicroB",
+                        tablet: !0
+                    },
+                    {
+                        regex: "(MozillaDeveloperPreview)/(\\d+)\\.(\\d+)([ab]\\d+[a-z]*)?"
+                    },
+                    {
+                        regex: "(Flock)/(\\d+)\\.(\\d+)(b\\d+?)",
+                        family_replacement: "Flock",
+                        other: !0
+                    },
+                    {
+                        regex: "(RockMelt)/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Rockmelt",
+                        other: !0
+                    },
+                    {
+                        regex: "(Navigator)/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Netscape"
+                    },
+                    {
+                        regex: "(Navigator)/(\\d+)\\.(\\d+)([ab]\\d+)",
+                        family_replacement: "Netscape"
+                    },
+                    {
+                        regex: "(Netscape6)/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Netscape"
+                    },
+                    {
+                        regex: "(MyIBrow)/(\\d+)\\.(\\d+)",
+                        family_replacement: "My Internet Browser",
+                        other: !0
+                    },
+                    {
+                        regex: "(Opera Tablet).*Version/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
+                        family_replacement: "Opera Tablet",
+                        tablet: !0
+                    },
+                    {
+                        regex: "(Opera)/.+Opera Mobi.+Version/(\\d+)\\.(\\d+)",
+                        family_replacement: "Opera Mobile"
+                    },
+                    {
+                        regex: "Opera Mobi",
+                        family_replacement: "Opera Mobile"
+                    },
+                    {
+                        regex: "(Opera Mini)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Opera Mini"
+                    },
+                    {
+                        regex: "(Opera Mini)/att/(\\d+)\\.(\\d+)",
+                        family_replacement: "Opera Mini"
+                    },
+                    {
+                        regex: "(Opera)/9.80.*Version/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
+                        family_replacement: "Opera"
+                    },
+                    {
+                        regex: "(OPR)/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
+                        family_replacement: "Opera"
+                    },
+                    {
+                        regex: "(webOSBrowser)/(\\d+)\\.(\\d+)",
+                        family_replacement: "webOS"
+                    },
+                    {
+                        regex: "(webOS)/(\\d+)\\.(\\d+)",
+                        family_replacement: "webOS"
+                    },
+                    {
+                        regex: "(wOSBrowser).+TouchPad/(\\d+)\\.(\\d+)",
+                        family_replacement: "webOS TouchPad"
+                    },
+                    {
+                        regex: "(luakit)",
+                        family_replacement: "LuaKit",
+                        other: !0
+                    },
+                    {
+                        regex: "(Lightning)/(\\d+)\\.(\\d+)([ab]?\\d+[a-z]*)",
+                        family_replacement: "Lightning",
+                        other: !0
+                    },
+                    {
+                        regex: "(Firefox)/(\\d+)\\.(\\d+)\\.(\\d+(?:pre)?) \\(Swiftfox\\)",
+                        family_replacement: "Swiftfox",
+                        other: !0
+                    },
+                    {
+                        regex: "(Firefox)/(\\d+)\\.(\\d+)([ab]\\d+[a-z]*)? \\(Swiftfox\\)",
+                        family_replacement: "Swiftfox",
+                        other: !0
+                    },
+                    {
+                        regex: "rekonq",
+                        family_replacement: "Rekonq",
+                        other: !0
+                    },
+                    {
+                        regex: "(conkeror|Conkeror)/(\\d+)\\.(\\d+)\\.?(\\d+)?",
+                        family_replacement: "Conkeror",
+                        other: !0
+                    },
+                    {
+                        regex: "(konqueror)/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Konqueror",
+                        other: !0
+                    },
+                    {
+                        regex: "(WeTab)-Browser",
+                        family_replacement: "WeTab",
+                        other: !0
+                    },
+                    {
+                        regex: "(Comodo_Dragon)/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Comodo Dragon",
+                        other: !0
+                    },
+                    {
+                        regex: "(YottaaMonitor)",
+                        family_replacement: "Yottaa Monitor",
+                        other: !0
+                    },
+                    {
+                        regex: "(Kindle)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Kindle"
+                    },
+                    {
+                        regex: "(Symphony) (\\d+).(\\d+)",
+                        family_replacement: "Symphony",
+                        other: !0
+                    },
+                    {
+                        regex: "Minimo",
+                        family_replacement: "Minimo",
+                        other: !0
+                    },
+                    {
+                        regex: "(Edge)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Edge"
+                    },
+                    {
+                        regex: "(CrMo)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Chrome Mobile"
+                    },
+                    {
+                        regex: "(CriOS)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Chrome Mobile iOS"
+                    },
+                    {
+                        regex: "(Chrome)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+) Mobile",
+                        family_replacement: "Chrome Mobile"
+                    },
+                    {
+                        regex: "(chromeframe)/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Chrome Frame"
+                    },
+                    {
+                        regex: "(UC Browser)(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "UC Browser",
+                        other: !0
+                    },
+                    {
+                        regex: "(SLP Browser)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Tizen Browser",
+                        other: !0
+                    },
+                    {
+                        regex: "(Epiphany)/(\\d+)\\.(\\d+).(\\d+)",
+                        family_replacement: "Epiphany",
+                        other: !0
+                    },
+                    {
+                        regex: "(SE 2\\.X) MetaSr (\\d+)\\.(\\d+)",
+                        family_replacement: "Sogou Explorer",
+                        other: !0
+                    },
+                    {
+                        regex: "(Pingdom.com_bot_version_)(\\d+)\\.(\\d+)",
+                        family_replacement: "PingdomBot",
+                        other: !0
+                    },
+                    {
+                        regex: "(facebookexternalhit)/(\\d+)\\.(\\d+)",
+                        family_replacement: "FacebookBot"
+                    },
+                    {
+                        regex: "(Twitterbot)/(\\d+)\\.(\\d+)",
+                        family_replacement: "TwitterBot"
+                    },
+                    {
+                        regex: "(AdobeAIR|Chromium|FireWeb|Jasmine|ANTGalio|Midori|Fresco|Lobo|PaleMoon|Maxthon|Lynx|OmniWeb|Dillo|Camino|Demeter|Fluid|Fennec|Shiira|Sunrise|Chrome|Flock|Netscape|Lunascape|WebPilot|NetFront|Netfront|Konqueror|SeaMonkey|Kazehakase|Vienna|Iceape|Iceweasel|IceWeasel|Iron|K-Meleon|Sleipnir|Galeon|GranParadiso|Opera Mini|iCab|NetNewsWire|ThunderBrowse|Iron|Iris|UP\\.Browser|Bunjaloo|Google Earth|Raven for Mac)/(\\d+)\\.(\\d+)\\.(\\d+)"
+                    },
+                    {
+                        regex: "(Bolt|Jasmine|IceCat|Skyfire|Midori|Maxthon|Lynx|Arora|IBrowse|Dillo|Camino|Shiira|Fennec|Phoenix|Chrome|Flock|Netscape|Lunascape|Epiphany|WebPilot|Opera Mini|Opera|NetFront|Netfront|Konqueror|Googlebot|SeaMonkey|Kazehakase|Vienna|Iceape|Iceweasel|IceWeasel|Iron|K-Meleon|Sleipnir|Galeon|GranParadiso|iCab|NetNewsWire|Iron|Space Bison|Stainless|Orca|Dolfin|BOLT|Minimo|Tizen Browser|Polaris)/(\\d+)\\.(\\d+)"
+                    },
+                    {
+                        regex: "(iRider|Crazy Browser|SkipStone|iCab|Lunascape|Sleipnir|Maemo Browser) (\\d+)\\.(\\d+)\\.(\\d+)"
+                    },
+                    {
+                        regex: "(iCab|Lunascape|Opera|Android|Jasmine|Polaris|BREW) (\\d+)\\.(\\d+)\\.?(\\d+)?"
+                    },
+                    {
+                        regex: "(Android) Donut",
+                        v2_replacement: "2",
+                        v1_replacement: "1"
+                    },
+                    {
+                        regex: "(Android) Eclair",
+                        v2_replacement: "1",
+                        v1_replacement: "2"
+                    },
+                    {
+                        regex: "(Android) Froyo",
+                        v2_replacement: "2",
+                        v1_replacement: "2"
+                    },
+                    {
+                        regex: "(Android) Gingerbread",
+                        v2_replacement: "3",
+                        v1_replacement: "2"
+                    },
+                    {
+                        regex: "(Android) Honeycomb",
+                        v1_replacement: "3"
+                    },
+                    {
+                        regex: "(IEMobile)[ /](\\d+)\\.(\\d+)",
+                        family_replacement: "IE Mobile"
+                    },
+                    {
+                        regex: "(MSIE) (\\d+)\\.(\\d+).*XBLWP7",
+                        family_replacement: "IE Large Screen"
+                    },
+                    {
+                        regex: "(Firefox)/(\\d+)\\.(\\d+)\\.(\\d+)"
+                    },
+                    {
+                        regex: "(Firefox)/(\\d+)\\.(\\d+)(pre|[ab]\\d+[a-z]*)?"
+                    },
+                    {
+                        regex: "(Obigo)InternetBrowser",
+                        other: !0
+                    },
+                    {
+                        regex: "(Obigo)\\-Browser",
+                        other: !0
+                    },
+                    {
+                        regex: "(Obigo|OBIGO)[^\\d]*(\\d+)(?:.(\\d+))?",
+                        other: !0
+                    },
+                    {
+                        regex: "(MAXTHON|Maxthon) (\\d+)\\.(\\d+)",
+                        family_replacement: "Maxthon",
+                        other: !0
+                    },
+                    {
+                        regex: "(Maxthon|MyIE2|Uzbl|Shiira)",
+                        v1_replacement: "0",
+                        other: !0
+                    },
+                    {
+                        regex: "(PLAYSTATION) (\\d+)",
+                        family_replacement: "PlayStation",
+                        manufacturer: "Sony"
+                    },
+                    {
+                        regex: "(PlayStation Portable)[^\\d]+(\\d+).(\\d+)",
+                        manufacturer: "Sony"
+                    },
+                    {
+                        regex: "(BrowseX) \\((\\d+)\\.(\\d+)\\.(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(POLARIS)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Polaris",
+                        other: !0
+                    },
+                    {
+                        regex: "(Embider)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Polaris",
+                        other: !0
+                    },
+                    {
+                        regex: "(BonEcho)/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Bon Echo",
+                        other: !0
+                    },
+                    {
+                        regex: "(iPod).+Version/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Mobile Safari",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPod).*Version/(\\d+)\\.(\\d+)",
+                        family_replacement: "Mobile Safari",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPod)",
+                        family_replacement: "Mobile Safari",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPhone).*Version/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Mobile Safari",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPhone).*Version/(\\d+)\\.(\\d+)",
+                        family_replacement: "Mobile Safari",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPhone)",
+                        family_replacement: "Mobile Safari",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPad).*Version/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Mobile Safari",
+                        tablet: !0,
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPad).*Version/(\\d+)\\.(\\d+)",
+                        family_replacement: "Mobile Safari",
+                        tablet: !0,
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPad)",
+                        family_replacement: "Mobile Safari",
+                        tablet: !0,
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(AvantGo) (\\d+).(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(Avant)",
+                        v1_replacement: "1",
+                        other: !0
+                    },
+                    {
+                        regex: "^(Nokia)",
+                        family_replacement: "Nokia Services (WAP) Browser",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(NokiaBrowser)/(\\d+)\\.(\\d+).(\\d+)\\.(\\d+)",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(NokiaBrowser)/(\\d+)\\.(\\d+).(\\d+)",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(NokiaBrowser)/(\\d+)\\.(\\d+)",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(BrowserNG)/(\\d+)\\.(\\d+).(\\d+)",
+                        family_replacement: "NokiaBrowser",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(Series60)/5\\.0",
+                        v2_replacement: "0",
+                        v1_replacement: "7",
+                        family_replacement: "NokiaBrowser",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(Series60)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Nokia OSS Browser",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(S40OviBrowser)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Nokia Series 40 Ovi Browser",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(Nokia)[EN]?(\\d+)",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(PlayBook).+RIM Tablet OS (\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Blackberry WebKit",
+                        tablet: !0,
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(Black[bB]erry).+Version/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        family_replacement: "Blackberry WebKit",
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "(Black[bB]erry)\\s?(\\d+)",
+                        family_replacement: "Blackberry",
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "(OmniWeb)/v(\\d+)\\.(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(Blazer)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Palm Blazer",
+                        manufacturer: "Palm"
+                    },
+                    {
+                        regex: "(Pre)/(\\d+)\\.(\\d+)",
+                        family_replacement: "Palm Pre",
+                        manufacturer: "Palm"
+                    },
+                    {
+                        regex: "(Links) \\((\\d+)\\.(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(QtWeb) Internet Browser/(\\d+)\\.(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(Silk)/(\\d+)\\.(\\d+)(?:\\.([0-9\\-]+))?",
+                        other: !0,
+                        tablet: !0
+                    },
+                    {
+                        regex: "(AppleWebKit)/(\\d+)\\.?(\\d+)?\\+ .* Version/\\d+\\.\\d+.\\d+ Safari/",
+                        family_replacement: "WebKit Nightly"
+                    },
+                    {
+                        regex: "(Version)/(\\d+)\\.(\\d+)(?:\\.(\\d+))?.*Safari/",
+                        family_replacement: "Safari"
+                    },
+                    {
+                        regex: "(Safari)/\\d+"
+                    },
+                    {
+                        regex: "(OLPC)/Update(\\d+)\\.(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(OLPC)/Update()\\.(\\d+)",
+                        v1_replacement: "0",
+                        other: !0
+                    },
+                    {
+                        regex: "(SEMC\\-Browser)/(\\d+)\\.(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(Teleca)",
+                        family_replacement: "Teleca Browser",
+                        other: !0
+                    },
+                    {
+                        regex: "Trident(.*)rv.(\\d+)\\.(\\d+)",
+                        family_replacement: "IE"
+                    },
+                    {
+                        regex: "(MSIE) (\\d+)\\.(\\d+)",
+                        family_replacement: "IE"
+                    }],
+                    os_parsers: [
+                    {
+                        regex: "(Android) (\\d+)\\.(\\d+)(?:[.\\-]([a-z0-9]+))?"
+                    },
+                    {
+                        regex: "(Android)\\-(\\d+)\\.(\\d+)(?:[.\\-]([a-z0-9]+))?"
+                    },
+                    {
+                        regex: "(Android) Donut",
+                        os_v2_replacement: "2",
+                        os_v1_replacement: "1"
+                    },
+                    {
+                        regex: "(Android) Eclair",
+                        os_v2_replacement: "1",
+                        os_v1_replacement: "2"
+                    },
+                    {
+                        regex: "(Android) Froyo",
+                        os_v2_replacement: "2",
+                        os_v1_replacement: "2"
+                    },
+                    {
+                        regex: "(Android) Gingerbread",
+                        os_v2_replacement: "3",
+                        os_v1_replacement: "2"
+                    },
+                    {
+                        regex: "(Android) Honeycomb",
+                        os_v1_replacement: "3"
+                    },
+                    {
+                        regex: "(Silk-Accelerated=[a-z]{4,5})",
+                        os_replacement: "Android"
+                    },
+                    {
+                        regex: "(Windows Phone 6\\.5)"
+                    },
+                    {
+                        regex: "(Windows (?:NT 5\\.2|NT 5\\.1))",
+                        os_replacement: "Windows XP"
+                    },
+                    {
+                        regex: "(XBLWP7)",
+                        os_replacement: "Windows Phone OS"
+                    },
+                    {
+                        regex: "(Windows NT 6\\.1)",
+                        os_replacement: "Windows 7"
+                    },
+                    {
+                        regex: "(Windows NT 6\\.0)",
+                        os_replacement: "Windows Vista"
+                    },
+                    {
+                        regex: "(Windows 98|Windows XP|Windows ME|Windows 95|Windows CE|Windows 7|Windows NT 4\\.0|Windows Vista|Windows 2000)"
+                    },
+                    {
+                        regex: "(Windows NT 6\\.4|Windows NT 10\\.0)",
+                        os_replacement: "Windows 10"
+                    },
+                    {
+                        regex: "(Windows NT 6\\.2)",
+                        os_replacement: "Windows 8"
+                    },
+                    {
+                        regex: "(Windows Phone 8)",
+                        os_replacement: "Windows Phone 8"
+                    },
+                    {
+                        regex: "(Windows NT 5\\.0)",
+                        os_replacement: "Windows 2000"
+                    },
+                    {
+                        regex: "(Windows Phone OS) (\\d+)\\.(\\d+)"
+                    },
+                    {
+                        regex: "(Windows ?Mobile)",
+                        os_replacement: "Windows Mobile"
+                    },
+                    {
+                        regex: "(WinNT4.0)",
+                        os_replacement: "Windows NT 4.0"
+                    },
+                    {
+                        regex: "(Win98)",
+                        os_replacement: "Windows 98"
+                    },
+                    {
+                        regex: "(Tizen)/(\\d+)\\.(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(Mac OS X) (\\d+)[_.](\\d+)(?:[_.](\\d+))?",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(?:PPC|Intel) (Mac OS X)",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(CPU OS|iPhone OS) (\\d+)_(\\d+)(?:_(\\d+))?",
+                        os_replacement: "iOS",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPhone|iPad|iPod); Opera",
+                        os_replacement: "iOS",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPad); Opera",
+                        tablet: !0,
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPhone|iPad|iPod).*Mac OS X.*Version/(\\d+)\\.(\\d+)",
+                        os_replacement: "iOS",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(CrOS) [a-z0-9_]+ (\\d+)\\.(\\d+)(?:\\.(\\d+))?",
+                        os_replacement: "Chrome OS"
+                    },
+                    {
+                        regex: "(Debian)-(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
+                        other: !0
+                    },
+                    {
+                        regex: "(Linux Mint)(?:/(\\d+))?",
+                        other: !0
+                    },
+                    {
+                        regex: "(Mandriva)(?: Linux)?/(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
+                        other: !0
+                    },
+                    {
+                        regex: "(Symbian[Oo][Ss])/(\\d+)\\.(\\d+)",
+                        os_replacement: "Symbian OS"
+                    },
+                    {
+                        regex: "(Symbian/3).+NokiaBrowser/7\\.3",
+                        os_replacement: "Symbian^3 Anna"
+                    },
+                    {
+                        regex: "(Symbian/3).+NokiaBrowser/7\\.4",
+                        os_replacement: "Symbian^3 Belle"
+                    },
+                    {
+                        regex: "(Symbian/3)",
+                        os_replacement: "Symbian^3"
+                    },
+                    {
+                        regex: "(Series 60|SymbOS|S60)",
+                        os_replacement: "Symbian OS"
+                    },
+                    {
+                        regex: "(MeeGo)",
+                        other: !0
+                    },
+                    {
+                        regex: "Symbian [Oo][Ss]",
+                        os_replacement: "Symbian OS"
+                    },
+                    {
+                        regex: "(Black[Bb]erry)[0-9a-z]+/(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
+                        os_replacement: "BlackBerry OS",
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "(Black[Bb]erry).+Version/(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
+                        os_replacement: "BlackBerry OS",
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "(RIM Tablet OS) (\\d+)\\.(\\d+)\\.(\\d+)",
+                        os_replacement: "BlackBerry Tablet OS",
+                        tablet: !0,
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "(Play[Bb]ook)",
+                        os_replacement: "BlackBerry Tablet OS",
+                        tablet: !0,
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "(Black[Bb]erry)",
+                        os_replacement: "Blackberry OS",
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "(webOS|hpwOS)/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
+                        os_replacement: "webOS"
+                    },
+                    {
+                        regex: "(SUSE|Fedora|Red Hat|PCLinuxOS)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(SUSE|Fedora|Red Hat|Puppy|PCLinuxOS|CentOS)/(\\d+)\\.(\\d+)\\.(\\d+)",
+                        other: !0
+                    },
+                    {
+                        regex: "(Ubuntu|Kindle|Bada|Lubuntu|BackTrack|Red Hat|Slackware)/(\\d+)\\.(\\d+)"
+                    },
+                    {
+                        regex: "(Windows|OpenBSD|FreeBSD|NetBSD|Ubuntu|Kubuntu|Android|Arch Linux|CentOS|WeTab|Slackware)"
+                    },
+                    {
+                        regex: "(Linux|BSD)",
+                        other: !0
+                    }],
+                    mobile_os_families: ["Windows Phone 6.5", "Windows CE", "Symbian OS"],
+                    device_parsers: [
+                    {
+                        regex: "HTC ([A-Z][a-z0-9]+) Build",
+                        device_replacement: "HTC $1",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "HTC ([A-Z][a-z0-9 ]+) \\d+\\.\\d+\\.\\d+\\.\\d+",
+                        device_replacement: "HTC $1",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "HTC_Touch_([A-Za-z0-9]+)",
+                        device_replacement: "HTC Touch ($1)",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "USCCHTC(\\d+)",
+                        device_replacement: "HTC $1 (US Cellular)",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "Sprint APA(9292)",
+                        device_replacement: "HTC $1 (Sprint)",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "HTC ([A-Za-z0-9]+ [A-Z])",
+                        device_replacement: "HTC $1",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "HTC-([A-Za-z0-9]+)",
+                        device_replacement: "HTC $1",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "HTC_([A-Za-z0-9]+)",
+                        device_replacement: "HTC $1",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "HTC ([A-Za-z0-9]+)",
+                        device_replacement: "HTC $1",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "(ADR[A-Za-z0-9]+)",
+                        device_replacement: "HTC $1",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "(HTC)",
+                        manufacturer: "HTC"
+                    },
+                    {
+                        regex: "SonyEricsson([A-Za-z0-9]+)/",
+                        device_replacement: "Ericsson $1",
+                        other: !0,
+                        manufacturer: "Sony"
+                    },
+                    {
+                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\; [A-Za-z]{2}\\-[A-Za-z]{2}\\; WOWMobile (.+) Build"
+                    },
+                    {
+                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\.[\\d]+; [A-Za-z]{2}\\-[A-Za-z]{2}\\; (.+) Build"
+                    },
+                    {
+                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\-update1\\; [A-Za-z]{2}\\-[A-Za-z]{2}\\; (.+) Build"
+                    },
+                    {
+                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\; [A-Za-z]{2}\\-[A-Za-z]{2}\\; (.+) Build"
+                    },
+                    {
+                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\.[\\d]+; (.+) Build"
+                    },
+                    {
+                        regex: "NokiaN([0-9]+)",
+                        device_replacement: "Nokia N$1",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "Nokia([A-Za-z0-9\\v-]+)",
+                        device_replacement: "Nokia $1",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "NOKIA ([A-Za-z0-9\\-]+)",
+                        device_replacement: "Nokia $1",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "Nokia ([A-Za-z0-9\\-]+)",
+                        device_replacement: "Nokia $1",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "Lumia ([A-Za-z0-9\\-]+)",
+                        device_replacement: "Lumia $1",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "Symbian",
+                        device_replacement: "Nokia",
+                        manufacturer: "Nokia"
+                    },
+                    {
+                        regex: "(PlayBook).+RIM Tablet OS",
+                        device_replacement: "Blackberry Playbook",
+                        tablet: !0,
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "(Black[Bb]erry [0-9]+);",
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "Black[Bb]erry([0-9]+)",
+                        device_replacement: "BlackBerry $1",
+                        manufacturer: "RIM"
+                    },
+                    {
+                        regex: "(Pre)/(\\d+)\\.(\\d+)",
+                        device_replacement: "Palm Pre",
+                        manufacturer: "Palm"
+                    },
+                    {
+                        regex: "(Pixi)/(\\d+)\\.(\\d+)",
+                        device_replacement: "Palm Pixi",
+                        manufacturer: "Palm"
+                    },
+                    {
+                        regex: "(Touchpad)/(\\d+)\\.(\\d+)",
+                        device_replacement: "HP Touchpad",
+                        manufacturer: "HP"
+                    },
+                    {
+                        regex: "HPiPAQ([A-Za-z0-9]+)/(\\d+).(\\d+)",
+                        device_replacement: "HP iPAQ $1",
+                        manufacturer: "HP"
+                    },
+                    {
+                        regex: "Palm([A-Za-z0-9]+)",
+                        device_replacement: "Palm $1",
+                        manufacturer: "Palm"
+                    },
+                    {
+                        regex: "Treo([A-Za-z0-9]+)",
+                        device_replacement: "Palm Treo $1",
+                        manufacturer: "Palm"
+                    },
+                    {
+                        regex: "webOS.*(P160UNA)/(\\d+).(\\d+)",
+                        device_replacement: "HP Veer",
+                        manufacturer: "HP"
+                    },
+                    {
+                        regex: "(Kindle Fire)",
+                        manufacturer: "Amazon"
+                    },
+                    {
+                        regex: "(Kindle)",
+                        manufacturer: "Amazon"
+                    },
+                    {
+                        regex: "(Silk)/(\\d+)\\.(\\d+)(?:\\.([0-9\\-]+))?",
+                        device_replacement: "Kindle Fire",
+                        tablet: !0,
+                        manufacturer: "Amazon"
+                    },
+                    {
+                        regex: "(iPad) Simulator;",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPad);",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPod);",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPhone) Simulator;",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "(iPhone);",
+                        manufacturer: "Apple"
+                    },
+                    {
+                        regex: "Nexus\\ ([A-Za-z0-9\\-]+)",
+                        device_replacement: "Nexus $1"
+                    },
+                    {
+                        regex: "acer_([A-Za-z0-9]+)_",
+                        device_replacement: "Acer $1",
+                        manufacturer: "Acer"
+                    },
+                    {
+                        regex: "acer_([A-Za-z0-9]+)_",
+                        device_replacement: "Acer $1",
+                        manufacturer: "Acer"
+                    },
+                    {
+                        regex: "Amoi\\-([A-Za-z0-9]+)",
+                        device_replacement: "Amoi $1",
+                        other: !0,
+                        manufacturer: "Amoi"
+                    },
+                    {
+                        regex: "AMOI\\-([A-Za-z0-9]+)",
+                        device_replacement: "Amoi $1",
+                        other: !0,
+                        manufacturer: "Amoi"
+                    },
+                    {
+                        regex: "Asus\\-([A-Za-z0-9]+)",
+                        device_replacement: "Asus $1",
+                        manufacturer: "Asus"
+                    },
+                    {
+                        regex: "ASUS\\-([A-Za-z0-9]+)",
+                        device_replacement: "Asus $1",
+                        manufacturer: "Asus"
+                    },
+                    {
+                        regex: "BIRD\\-([A-Za-z0-9]+)",
+                        device_replacement: "Bird $1",
+                        other: !0
+                    },
+                    {
+                        regex: "BIRD\\.([A-Za-z0-9]+)",
+                        device_replacement: "Bird $1",
+                        other: !0
+                    },
+                    {
+                        regex: "BIRD ([A-Za-z0-9]+)",
+                        device_replacement: "Bird $1",
+                        other: !0
+                    },
+                    {
+                        regex: "Dell ([A-Za-z0-9]+)",
+                        device_replacement: "Dell $1",
+                        manufacturer: "Dell"
+                    },
+                    {
+                        regex: "DoCoMo/2\\.0 ([A-Za-z0-9]+)",
+                        device_replacement: "DoCoMo $1",
+                        other: !0
+                    },
+                    {
+                        regex: "([A-Za-z0-9]+)\\_W\\;FOMA",
+                        device_replacement: "DoCoMo $1",
+                        other: !0
+                    },
+                    {
+                        regex: "([A-Za-z0-9]+)\\;FOMA",
+                        device_replacement: "DoCoMo $1",
+                        other: !0
+                    },
+                    {
+                        regex: "vodafone([A-Za-z0-9]+)",
+                        device_replacement: "Huawei Vodafone $1",
+                        other: !0
+                    },
+                    {
+                        regex: "i\\-mate ([A-Za-z0-9]+)",
+                        device_replacement: "i-mate $1",
+                        other: !0
+                    },
+                    {
+                        regex: "Kyocera\\-([A-Za-z0-9]+)",
+                        device_replacement: "Kyocera $1",
+                        other: !0
+                    },
+                    {
+                        regex: "KWC\\-([A-Za-z0-9]+)",
+                        device_replacement: "Kyocera $1",
+                        other: !0
+                    },
+                    {
+                        regex: "Lenovo\\-([A-Za-z0-9]+)",
+                        device_replacement: "Lenovo $1",
+                        manufacturer: "Lenovo"
+                    },
+                    {
+                        regex: "Lenovo\\_([A-Za-z0-9]+)",
+                        device_replacement: "Lenovo $1",
+                        manufacturer: "Levovo"
+                    },
+                    {
+                        regex: "LG/([A-Za-z0-9]+)",
+                        device_replacement: "LG $1",
+                        manufacturer: "LG"
+                    },
+                    {
+                        regex: "LG-LG([A-Za-z0-9]+)",
+                        device_replacement: "LG $1",
+                        manufacturer: "LG"
+                    },
+                    {
+                        regex: "LGE-LG([A-Za-z0-9]+)",
+                        device_replacement: "LG $1",
+                        manufacturer: "LG"
+                    },
+                    {
+                        regex: "LGE VX([A-Za-z0-9]+)",
+                        device_replacement: "LG $1",
+                        manufacturer: "LG"
+                    },
+                    {
+                        regex: "LG ([A-Za-z0-9]+)",
+                        device_replacement: "LG $1",
+                        manufacturer: "LG"
+                    },
+                    {
+                        regex: "LGE LG\\-AX([A-Za-z0-9]+)",
+                        device_replacement: "LG $1",
+                        manufacturer: "LG"
+                    },
+                    {
+                        regex: "LG\\-([A-Za-z0-9]+)",
+                        device_replacement: "LG $1",
+                        manufacturer: "LG"
+                    },
+                    {
+                        regex: "LGE\\-([A-Za-z0-9]+)",
+                        device_replacement: "LG $1",
+                        manufacturer: "LG"
+                    },
+                    {
+                        regex: "LG([A-Za-z0-9]+)",
+                        device_replacement: "LG $1",
+                        manufacturer: "LG"
+                    },
+                    {
+                        regex: "(KIN)\\.One (\\d+)\\.(\\d+)",
+                        device_replacement: "Microsoft $1"
+                    },
+                    {
+                        regex: "(KIN)\\.Two (\\d+)\\.(\\d+)",
+                        device_replacement: "Microsoft $1"
+                    },
+                    {
+                        regex: "(Motorola)\\-([A-Za-z0-9]+)",
+                        manufacturer: "Motorola"
+                    },
+                    {
+                        regex: "MOTO\\-([A-Za-z0-9]+)",
+                        device_replacement: "Motorola $1",
+                        manufacturer: "Motorola"
+                    },
+                    {
+                        regex: "MOT\\-([A-Za-z0-9]+)",
+                        device_replacement: "Motorola $1",
+                        manufacturer: "Motorola"
+                    },
+                    {
+                        regex: "Philips([A-Za-z0-9]+)",
+                        device_replacement: "Philips $1",
+                        manufacturer: "Philips"
+                    },
+                    {
+                        regex: "Philips ([A-Za-z0-9]+)",
+                        device_replacement: "Philips $1",
+                        manufacturer: "Philips"
+                    },
+                    {
+                        regex: "SAMSUNG-([A-Za-z0-9\\-]+)",
+                        device_replacement: "Samsung $1",
+                        manufacturer: "Samsung"
+                    },
+                    {
+                        regex: "SAMSUNG\\; ([A-Za-z0-9\\-]+)",
+                        device_replacement: "Samsung $1",
+                        manufacturer: "Samsung"
+                    },
+                    {
+                        regex: "Softbank/1\\.0/([A-Za-z0-9]+)",
+                        device_replacement: "Softbank $1",
+                        other: !0
+                    },
+                    {
+                        regex: "Softbank/2\\.0/([A-Za-z0-9]+)",
+                        device_replacement: "Softbank $1",
+                        other: !0
+                    },
+                    {
+                        regex: "(hiptop|avantgo|plucker|xiino|blazer|elaine|up.browser|up.link|mmp|smartphone|midp|wap|vodafone|o2|pocket|mobile|pda)",
+                        device_replacement: "Generic Smartphone"
+                    },
+                    {
+                        regex: "^(1207|3gso|4thp|501i|502i|503i|504i|505i|506i|6310|6590|770s|802s|a wa|acer|acs\\-|airn|alav|asus|attw|au\\-m|aur |aus |abac|acoo|aiko|alco|alca|amoi|anex|anny|anyw|aptu|arch|argo|bell|bird|bw\\-n|bw\\-u|beck|benq|bilb|blac|c55/|cdm\\-|chtm|capi|comp|cond|craw|dall|dbte|dc\\-s|dica|ds\\-d|ds12|dait|devi|dmob|doco|dopo|el49|erk0|esl8|ez40|ez60|ez70|ezos|ezze|elai|emul|eric|ezwa|fake|fly\\-|fly\\_|g\\-mo|g1 u|g560|gf\\-5|grun|gene|go.w|good|grad|hcit|hd\\-m|hd\\-p|hd\\-t|hei\\-|hp i|hpip|hs\\-c|htc |htc\\-|htca|htcg)",
+                        device_replacement: "Generic Feature Phone"
+                    },
+                    {
+                        regex: "^(htcp|htcs|htct|htc\\_|haie|hita|huaw|hutc|i\\-20|i\\-go|i\\-ma|i230|iac|iac\\-|iac/|ig01|im1k|inno|iris|jata|java|kddi|kgt|kgt/|kpt |kwc\\-|klon|lexi|lg g|lg\\-a|lg\\-b|lg\\-c|lg\\-d|lg\\-f|lg\\-g|lg\\-k|lg\\-l|lg\\-m|lg\\-o|lg\\-p|lg\\-s|lg\\-t|lg\\-u|lg\\-w|lg/k|lg/l|lg/u|lg50|lg54|lge\\-|lge/|lynx|leno|m1\\-w|m3ga|m50/|maui|mc01|mc21|mcca|medi|meri|mio8|mioa|mo01|mo02|mode|modo|mot |mot\\-|mt50|mtp1|mtv |mate|maxo|merc|mits|mobi|motv|mozz|n100|n101|n102|n202|n203|n300|n302|n500|n502|n505|n700|n701|n710|nec\\-|nem\\-|newg|neon)",
+                        device_replacement: "Generic Feature Phone"
+                    },
+                    {
+                        regex: "^(netf|noki|nzph|o2 x|o2\\-x|opwv|owg1|opti|oran|ot\\-s|p800|pand|pg\\-1|pg\\-2|pg\\-3|pg\\-6|pg\\-8|pg\\-c|pg13|phil|pn\\-2|pt\\-g|palm|pana|pire|pock|pose|psio|qa\\-a|qc\\-2|qc\\-3|qc\\-5|qc\\-7|qc07|qc12|qc21|qc32|qc60|qci\\-|qwap|qtek|r380|r600|raks|rim9|rove|s55/|sage|sams|sc01|sch\\-|scp\\-|sdk/|se47|sec\\-|sec0|sec1|semc|sgh\\-|shar|sie\\-|sk\\-0|sl45|slid|smb3|smt5|sp01|sph\\-|spv |spv\\-|sy01|samm|sany|sava|scoo|send|siem|smar|smit|soft|sony|t\\-mo|t218|t250|t600|t610|t618|tcl\\-|tdg\\-|telm|tim\\-|ts70|tsm\\-|tsm3|tsm5|tx\\-9|tagt)",
+                        device_replacement: "Generic Feature Phone"
+                    },
+                    {
+                        regex: "^(talk|teli|topl|tosh|up.b|upg1|utst|v400|v750|veri|vk\\-v|vk40|vk50|vk52|vk53|vm40|vx98|virg|vite|voda|vulc|w3c |w3c\\-|wapj|wapp|wapu|wapm|wig |wapi|wapr|wapv|wapy|wapa|waps|wapt|winc|winw|wonu|x700|xda2|xdag|yas\\-|your|zte\\-|zeto|aste|audi|avan|blaz|brew|brvw|bumb|ccwa|cell|cldc|cmd\\-|dang|eml2|fetc|hipt|http|ibro|idea|ikom|ipaq|jbro|jemu|jigs|keji|kyoc|kyok|libw|m\\-cr|midp|mmef|moto|mwbp|mywa|newt|nok6|o2im|pant|pdxg|play|pluc|port|prox|rozo|sama|seri|smal|symb|treo|upsi|vx52|vx53|vx60|vx61|vx70|vx80|vx81|vx83|vx85|wap\\-|webc|whit|wmlb|xda\\-|xda\\_)",
+                        device_replacement: "Generic Feature Phone"
+                    },
+                    {
+                        regex: "(bot|borg|google(^tv)|yahoo|slurp|msnbot|msrbot|openbot|archiver|netresearch|lycos|scooter|altavista|teoma|gigabot|baiduspider|blitzbot|oegp|charlotte|furlbot|http%20client|polybot|htdig|ichiro|mogimogi|larbin|pompos|scrubby|searchsight|seekbot|semanticdiscovery|silk|snappy|speedy|spider|voila|vortex|voyager|zao|zeal|fast\\-webcrawler|converacrawler|dataparksearch|findlinks)",
+                        device_replacement: "Spider"
+                    }],
+                    mobile_browser_families: ["Firefox Mobile", "Opera Mobile", "Opera Mini", "Mobile Safari", "webOS", "IE Mobile", "Playstation Portable", "Nokia", "Blackberry", "Palm", "Silk", "Android", "Maemo", "Obigo", "Netfront", "AvantGo", "Teleca", "SEMC-Browser", "Bolt", "Iris", "UP.Browser", "Symphony", "Minimo", "Bunjaloo", "Jasmine", "Dolfin", "Polaris", "BREW", "Chrome Mobile", "Chrome Mobile iOS", "UC Browser", "Tizen Browser"]
+                };
+            e.parsers = ["device_parsers", "browser_parsers", "os_parsers", "mobile_os_families", "mobile_browser_families"], e.types = ["browser", "os", "device"], e.regexes = r || function()
+            {
+                var r = {};
+                return e.parsers.map(function(e)
+                {
+                    r[e] = []
+                }), r
+            }(), e.families = function()
+            {
+                var r = {};
+                return e.types.map(function(e)
+                {
+                    r[e] = []
+                }), r
+            }();
+            var a = Array.prototype,
+                o = (Object.prototype, Function.prototype, a.forEach);
+            a.indexOf;
+            var i = function(e, r)
+                {
+                    for (var a = {}, o = 0; r.length > o && !(a = r[o](e)); o++);
+                    return a
+                },
+                n = function(e, r)
+                {
+                    t(e, function(e)
+                    {
+                        t(r, function(r)
+                        {
+                            delete e[r]
+                        })
+                    })
+                },
+                t = forEach = function(e, r, a)
+                {
+                    if (null != e)
+                        if (o && e.forEach === o) e.forEach(r, a);
+                        else if (e.length === +e.length)
+                        for (var i = 0, n = e.length; n > i; i++) r.call(a, e[i], i, e);
+                    else
+                        for (var t in e) _.has(e, t) && r.call(a, e[t], t, e)
+                },
+                l = function(e)
+                {
+                    return !(!e || e === undefined || null == e)
+                },
+                d = function(e)
+                {
+                    var r = "";
+                    return e = e ||
+                    {}, l(e) && l(e.major) && (r += e.major, l(e.minor) && (r += "." + e.minor, l(e.patch) && (r += "." + e.patch))), r
+                },
+                c = function(e)
+                {
+                    e = e ||
+                    {};
+                    var r = d(e);
+                    return r && (r = " " + r), e && l(e.family) ? e.family + r : ""
+                };
+            return e.parse = function(r)
+            {
+                var a = function(r)
+                    {
+                        return e.regexes[r + "_parsers"].map(function(e)
+                        {
+                            function a(r)
+                            {
+                                var a = r.match(o);
+                                if (!a) return null;
+                                var t = {};
+                                return t.family = (i ? i.replace("$1", a[1]) : a[1]) || "other", t.major = parseInt(n ? n : a[2]) || null, t.minor = a[3] ? parseInt(a[3]) : null, t.patch = a[4] ? parseInt(a[4]) : null, t.tablet = e.tablet, t.man = e.manufacturer || null, t
+                            }
+                            var o = RegExp(e.regex),
+                                i = e[("browser" === r ? "family" : r) + "_replacement"],
+                                n = e.major_version_replacement;
+                            return a
+                        })
+                    },
+                    o = function() {},
+                    t = a("browser"),
+                    m = a("os"),
+                    p = a("device"),
+                    s = new o;
+                s.source = r, s.browser = i(r, t), l(s.browser) ? (s.browser.name = c(s.browser), s.browser.version = d(s.browser)) : s.browser = {}, s.os = i(r, m), l(s.os) ? (s.os.name = c(s.os), s.os.version = d(s.os)) : s.os = {}, s.device = i(r, p), l(s.device) ? (s.device.name = c(s.device), s.device.version = d(s.device)) : s.device = {
+                    tablet: !1,
+                    family: "Other"
+                };
+                var g = {};
+                return e.regexes.mobile_browser_families.map(function(e)
+                {
+                    g[e] = !0
+                }), e.regexes.mobile_os_families.map(function(e)
+                {
+                    g[e] = !0
+                }), s.device.type = "Spider" === s.browser.family ? "Spider" : s.browser.tablet || s.os.tablet || s.device.tablet ? "Tablet" : g.hasOwnProperty(s.browser.family) ? "Mobile" : "Desktop", s.device.manufacturer = s.browser.man || s.os.man || s.device.man || null, n([s.browser, s.os, s.device], ["tablet", "man"]), s
+            }, e
+        }();
+        "undefined" != typeof exports ? ("undefined" != typeof module && module.exports && (exports = module.exports = r), exports.detect = r) : e.detect = r, "function" == typeof define && define.amd && define(function()
+        {
+            return r
+        })
+    })(window);
 
     var ua = detect.parse(navigator.userAgent);
-    
-    this.browser =
-    {
-        'name'    : ua.browser.family,
-        'version' : ua.browser.version,
-        'device'  : ua.device.type,
-        'os'      : ua.os.name
+
+    this.browser = {
+        'name': ua.browser.family,
+        'version': ua.browser.version,
+        'device': ua.device.type,
+        'os': ua.os.name
     };
 
     return this.browser;
@@ -4934,7 +6308,7 @@ JSHelper.prototype.getBrowser = function()
  */
 JSHelper.prototype.isMobile = function()
 {
-	return this.getBrowser()['device'] === 'Mobile';
+    return this.getBrowser()['device'] === 'Mobile';
 }
 
 /**
@@ -4961,7 +6335,6 @@ JSHelper.prototype.isRetina = function()
 
     return false;
 }
-
 	Container.singleton('JSHelper', JSHelper).get('JSHelper').getBrowser();
 
 })();
@@ -4995,17 +6368,25 @@ JSHelper.prototype.isRetina = function()
  * @see     https://github.com/cferdinandi/smooth-scroll
  * @see     waypoints.js
  */
-(function() {
+(function()
+{
 
-        (function (root, factory) {
-        if ( typeof define === 'function' && define.amd ) {
+    (function(root, factory)
+    {
+        if (typeof define === 'function' && define.amd)
+        {
             define([], factory(root));
-        } else if ( typeof exports === 'object' ) {
+        }
+        else if (typeof exports === 'object')
+        {
             module.exports = factory(root);
-        } else {
+        }
+        else
+        {
             root.smoothScroll = factory(root);
         }
-    })(typeof global !== 'undefined' ? global : this.window || this.global, function (root) {
+    })(typeof global !== 'undefined' ? global : this.window || this.global, function(root)
+    {
 
         'use strict';
 
@@ -5025,7 +6406,7 @@ JSHelper.prototype.isRetina = function()
             easing: 'easeInOutCubic',
             offset: 0,
             updateURL: true,
-            callback: function () {}
+            callback: function() {}
         };
 
 
@@ -5040,7 +6421,8 @@ JSHelper.prototype.isRetina = function()
          * @param {Object}   objects  The objects to merge together
          * @returns {Object}          Merged values of defaults and options
          */
-        var extend = function () {
+        var extend = function()
+        {
 
             // Variables
             var extended = {};
@@ -5049,19 +6431,26 @@ JSHelper.prototype.isRetina = function()
             var length = arguments.length;
 
             // Check if a deep merge
-            if ( Object.prototype.toString.call( arguments[0] ) === '[object Boolean]' ) {
+            if (Object.prototype.toString.call(arguments[0]) === '[object Boolean]')
+            {
                 deep = arguments[0];
                 i++;
             }
 
             // Merge the object into the extended object
-            var merge = function (obj) {
-                for ( var prop in obj ) {
-                    if ( Object.prototype.hasOwnProperty.call( obj, prop ) ) {
+            var merge = function(obj)
+            {
+                for (var prop in obj)
+                {
+                    if (Object.prototype.hasOwnProperty.call(obj, prop))
+                    {
                         // If deep merge and property is an object, merge properties
-                        if ( deep && Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
-                            extended[prop] = extend( true, extended[prop], obj[prop] );
-                        } else {
+                        if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]')
+                        {
+                            extended[prop] = extend(true, extended[prop], obj[prop]);
+                        }
+                        else
+                        {
                             extended[prop] = obj[prop];
                         }
                     }
@@ -5069,7 +6458,8 @@ JSHelper.prototype.isRetina = function()
             };
 
             // Loop through each object and conduct a merge
-            for ( ; i < length; i++ ) {
+            for (; i < length; i++)
+            {
                 var obj = arguments[i];
                 merge(obj);
             }
@@ -5084,8 +6474,9 @@ JSHelper.prototype.isRetina = function()
          * @param  {Node} elem The element to get the height of
          * @return {Number}    The element's height in pixels
          */
-        var getHeight = function ( elem ) {
-            return Math.max( elem.scrollHeight, elem.offsetHeight, elem.clientHeight );
+        var getHeight = function(elem)
+        {
+            return Math.max(elem.scrollHeight, elem.offsetHeight, elem.clientHeight);
         };
 
         /**
@@ -5095,7 +6486,8 @@ JSHelper.prototype.isRetina = function()
          * @param  {String}  selector Selector to match against (class, ID, data attribute, or tag)
          * @return {Boolean|Element}  Returns null if not match found
          */
-        var getClosest = function ( elem, selector ) {
+        var getClosest = function(elem, selector)
+        {
 
             // Variables
             var firstChar = selector.charAt(0);
@@ -5103,54 +6495,72 @@ JSHelper.prototype.isRetina = function()
             var attribute, value;
 
             // If selector is a data attribute, split attribute from value
-            if ( firstChar === '[' ) {
+            if (firstChar === '[')
+            {
                 selector = selector.substr(1, selector.length - 2);
-                attribute = selector.split( '=' );
+                attribute = selector.split('=');
 
-                if ( attribute.length > 1 ) {
+                if (attribute.length > 1)
+                {
                     value = true;
-                    attribute[1] = attribute[1].replace( /"/g, '' ).replace( /'/g, '' );
+                    attribute[1] = attribute[1].replace(/"/g, '').replace(/'/g, '');
                 }
             }
 
             // Get closest match
-            for ( ; elem && elem !== document; elem = elem.parentNode ) {
+            for (; elem && elem !== document; elem = elem.parentNode)
+            {
 
                 // If selector is a class
-                if ( firstChar === '.' ) {
-                    if ( supports ) {
-                        if ( elem.classList.contains( selector.substr(1) ) ) {
+                if (firstChar === '.')
+                {
+                    if (supports)
+                    {
+                        if (elem.classList.contains(selector.substr(1)))
+                        {
                             return elem;
                         }
-                    } else {
-                        if ( new RegExp('(^|\\s)' + selector.substr(1) + '(\\s|$)').test( elem.className ) ) {
+                    }
+                    else
+                    {
+                        if (new RegExp('(^|\\s)' + selector.substr(1) + '(\\s|$)').test(elem.className))
+                        {
                             return elem;
                         }
                     }
                 }
 
                 // If selector is an ID
-                if ( firstChar === '#' ) {
-                    if ( elem.id === selector.substr(1) ) {
+                if (firstChar === '#')
+                {
+                    if (elem.id === selector.substr(1))
+                    {
                         return elem;
                     }
                 }
 
                 // If selector is a data attribute
-                if ( firstChar === '[' ) {
-                    if ( elem.hasAttribute( attribute[0] ) ) {
-                        if ( value ) {
-                            if ( elem.getAttribute( attribute[0] ) === attribute[1] ) {
+                if (firstChar === '[')
+                {
+                    if (elem.hasAttribute(attribute[0]))
+                    {
+                        if (value)
+                        {
+                            if (elem.getAttribute(attribute[0]) === attribute[1])
+                            {
                                 return elem;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             return elem;
                         }
                     }
                 }
 
                 // If selector is a tag
-                if ( elem.tagName.toLowerCase() === selector ) {
+                if (elem.tagName.toLowerCase() === selector)
+                {
                     return elem;
                 }
 
@@ -5167,10 +6577,12 @@ JSHelper.prototype.isRetina = function()
          * @author Mathias Bynens
          * @link https://github.com/mathiasbynens/CSS.escape
          */
-        smoothScroll.escapeCharacters = function ( id ) {
+        smoothScroll.escapeCharacters = function(id)
+        {
 
             // Remove leading hash
-            if ( id.charAt(0) === '#' ) {
+            if (id.charAt(0) === '#')
+            {
                 id = id.substr(1);
             }
 
@@ -5180,14 +6592,16 @@ JSHelper.prototype.isRetina = function()
             var codeUnit;
             var result = '';
             var firstCodeUnit = string.charCodeAt(0);
-            while (++index < length) {
+            while (++index < length)
+            {
                 codeUnit = string.charCodeAt(index);
                 // Note: there’s no need to special-case astral symbols, surrogate
                 // pairs, or lone surrogates.
 
                 // If the character is NULL (U+0000), then throw an
                 // `InvalidCharacterError` exception and terminate these steps.
-                if (codeUnit === 0x0000) {
+                if (codeUnit === 0x0000)
+                {
                     throw new InvalidCharacterError(
                         'Invalid character: the input contains U+0000.'
                     );
@@ -5207,7 +6621,8 @@ JSHelper.prototype.isRetina = function()
                         codeUnit >= 0x0030 && codeUnit <= 0x0039 &&
                         firstCodeUnit === 0x002D
                     )
-                ) {
+                )
+                {
                     // http://dev.w3.org/csswg/cssom/#escape-a-character-as-code-point
                     result += '\\' + codeUnit.toString(16) + ' ';
                     continue;
@@ -5224,7 +6639,8 @@ JSHelper.prototype.isRetina = function()
                     codeUnit >= 0x0030 && codeUnit <= 0x0039 ||
                     codeUnit >= 0x0041 && codeUnit <= 0x005A ||
                     codeUnit >= 0x0061 && codeUnit <= 0x007A
-                ) {
+                )
+                {
                     // the character itself
                     result += string.charAt(index);
                     continue;
@@ -5248,20 +6664,21 @@ JSHelper.prototype.isRetina = function()
          * @param {Number} time Time animation should take to complete
          * @returns {Number}
          */
-        var easingPattern = function ( type, time ) {
+        var easingPattern = function(type, time)
+        {
             var pattern;
-            if ( type === 'easeInQuad' ) pattern = time * time; // accelerating from zero velocity
-            if ( type === 'easeOutQuad' ) pattern = time * (2 - time); // decelerating to zero velocity
-            if ( type === 'easeInOutQuad' ) pattern = time < 0.5 ? 2 * time * time : -1 + (4 - 2 * time) * time; // acceleration until halfway, then deceleration
-            if ( type === 'easeInCubic' ) pattern = time * time * time; // accelerating from zero velocity
-            if ( type === 'easeOutCubic' ) pattern = (--time) * time * time + 1; // decelerating to zero velocity
-            if ( type === 'easeInOutCubic' ) pattern = time < 0.5 ? 4 * time * time * time : (time - 1) * (2 * time - 2) * (2 * time - 2) + 1; // acceleration until halfway, then deceleration
-            if ( type === 'easeInQuart' ) pattern = time * time * time * time; // accelerating from zero velocity
-            if ( type === 'easeOutQuart' ) pattern = 1 - (--time) * time * time * time; // decelerating to zero velocity
-            if ( type === 'easeInOutQuart' ) pattern = time < 0.5 ? 8 * time * time * time * time : 1 - 8 * (--time) * time * time * time; // acceleration until halfway, then deceleration
-            if ( type === 'easeInQuint' ) pattern = time * time * time * time * time; // accelerating from zero velocity
-            if ( type === 'easeOutQuint' ) pattern = 1 + (--time) * time * time * time * time; // decelerating to zero velocity
-            if ( type === 'easeInOutQuint' ) pattern = time < 0.5 ? 16 * time * time * time * time * time : 1 + 16 * (--time) * time * time * time * time; // acceleration until halfway, then deceleration
+            if (type === 'easeInQuad') pattern = time * time; // accelerating from zero velocity
+            if (type === 'easeOutQuad') pattern = time * (2 - time); // decelerating to zero velocity
+            if (type === 'easeInOutQuad') pattern = time < 0.5 ? 2 * time * time : -1 + (4 - 2 * time) * time; // acceleration until halfway, then deceleration
+            if (type === 'easeInCubic') pattern = time * time * time; // accelerating from zero velocity
+            if (type === 'easeOutCubic') pattern = (--time) * time * time + 1; // decelerating to zero velocity
+            if (type === 'easeInOutCubic') pattern = time < 0.5 ? 4 * time * time * time : (time - 1) * (2 * time - 2) * (2 * time - 2) + 1; // acceleration until halfway, then deceleration
+            if (type === 'easeInQuart') pattern = time * time * time * time; // accelerating from zero velocity
+            if (type === 'easeOutQuart') pattern = 1 - (--time) * time * time * time; // decelerating to zero velocity
+            if (type === 'easeInOutQuart') pattern = time < 0.5 ? 8 * time * time * time * time : 1 - 8 * (--time) * time * time * time; // acceleration until halfway, then deceleration
+            if (type === 'easeInQuint') pattern = time * time * time * time * time; // accelerating from zero velocity
+            if (type === 'easeOutQuint') pattern = 1 + (--time) * time * time * time * time; // decelerating to zero velocity
+            if (type === 'easeInOutQuint') pattern = time < 0.5 ? 16 * time * time * time * time * time : 1 + 16 * (--time) * time * time * time * time; // acceleration until halfway, then deceleration
             return pattern || time; // no easing, no acceleration
         };
 
@@ -5273,9 +6690,11 @@ JSHelper.prototype.isRetina = function()
          * @param {Number} offset Number of pixels by which to offset scroll
          * @returns {Number}
          */
-        var getEndLocation = function ( anchor, headerHeight, offset ) {
+        var getEndLocation = function(anchor, headerHeight, offset)
+        {
             var location = 0;
-            if (anchor.offsetParent) {
+            if (anchor.offsetParent)
+            {
                 do {
                     location += anchor.offsetTop;
                     anchor = anchor.offsetParent;
@@ -5290,7 +6709,8 @@ JSHelper.prototype.isRetina = function()
          * @private
          * @returns {Number}
          */
-        var getDocumentHeight = function () {
+        var getDocumentHeight = function()
+        {
             return Math.max(
                 root.document.body.scrollHeight, root.document.documentElement.scrollHeight,
                 root.document.body.offsetHeight, root.document.documentElement.offsetHeight,
@@ -5304,8 +6724,10 @@ JSHelper.prototype.isRetina = function()
          * @param {String} options Link-specific options as a data attribute string
          * @returns {Object}
          */
-        var getDataOptions = function ( options ) {
-            return !options || !(typeof JSON === 'object' && typeof JSON.parse === 'function') ? {} : JSON.parse( options );
+        var getDataOptions = function(options)
+        {
+            return !options || !(typeof JSON === 'object' && typeof JSON.parse === 'function') ?
+            {} : JSON.parse(options);
         };
 
         /**
@@ -5314,14 +6736,17 @@ JSHelper.prototype.isRetina = function()
          * @param {Element} anchor The element to scroll to
          * @param {Boolean} url Whether or not to update the URL history
          */
-        var updateUrl = function ( anchor, url ) {
-            if ( root.history.pushState && (url || url === 'true') && root.location.protocol !== 'file:' ) {
-                root.history.pushState( null, null, [root.location.protocol, '//', root.location.host, root.location.pathname, root.location.search, anchor].join('') );
+        var updateUrl = function(anchor, url)
+        {
+            if (root.history.pushState && (url || url === 'true') && root.location.protocol !== 'file:')
+            {
+                root.history.pushState(null, null, [root.location.protocol, '//', root.location.host, root.location.pathname, root.location.search, anchor].join(''));
             }
         };
 
-        var getHeaderHeight = function ( header ) {
-            return header === null ? 0 : ( getHeight( header ) + header.offsetTop );
+        var getHeaderHeight = function(header)
+        {
+            return header === null ? 0 : (getHeight(header) + header.offsetTop);
         };
 
         /**
@@ -5331,27 +6756,36 @@ JSHelper.prototype.isRetina = function()
          * @param {Element} toggle The element that toggled the scroll event
          * @param {Object} options
          */
-        smoothScroll.animateScroll = function ( anchor, toggle, options ) {
+        smoothScroll.animateScroll = function(anchor, toggle, options)
+        {
 
             // Options and overrides
-            var overrides = getDataOptions( toggle ? toggle.getAttribute('data-options') : null );
-            var animateSettings = extend( settings || defaults, options || {}, overrides ); // Merge user options with defaults
+            var overrides = getDataOptions(toggle ? toggle.getAttribute('data-options') : null);
+            var animateSettings = extend(settings || defaults, options ||
+            {}, overrides); // Merge user options with defaults
 
             // Selectors and variables
-            var isNum = Object.prototype.toString.call( anchor ) === '[object Number]' ? true : false;
-            var anchorElem = isNum ? null : ( anchor === '#' ? root.document.documentElement : root.document.querySelector(anchor) );
-            if ( !isNum && !anchorElem ) return;
+            var isNum = Object.prototype.toString.call(anchor) === '[object Number]' ? true : false;
+            var anchorElem = isNum ? null : (anchor === '#' ? root.document.documentElement : root.document.querySelector(anchor));
+            if (!isNum && !anchorElem) return;
             var startLocation = root.pageYOffset; // Current location on the page
-            if ( !fixedHeader ) { fixedHeader = root.document.querySelector( animateSettings.selectorHeader ); }  // Get the fixed header if not already set
-            if ( !headerHeight ) { headerHeight = getHeaderHeight( fixedHeader ); } // Get the height of a fixed header if one exists and not already set
-            var endLocation = isNum ? anchor : getEndLocation( anchorElem, headerHeight, parseInt(animateSettings.offset, 10) ); // Location to scroll to
+            if (!fixedHeader)
+            {
+                fixedHeader = root.document.querySelector(animateSettings.selectorHeader);
+            } // Get the fixed header if not already set
+            if (!headerHeight)
+            {
+                headerHeight = getHeaderHeight(fixedHeader);
+            } // Get the height of a fixed header if one exists and not already set
+            var endLocation = isNum ? anchor : getEndLocation(anchorElem, headerHeight, parseInt(animateSettings.offset, 10)); // Location to scroll to
             var distance = endLocation - startLocation; // distance to travel
             var documentHeight = getDocumentHeight();
             var timeLapsed = 0;
             var percentage, position;
 
             // Update URL
-            if ( !isNum ) {
+            if (!isNum)
+            {
                 updateUrl(anchor, animateSettings.updateURL);
             }
 
@@ -5362,14 +6796,17 @@ JSHelper.prototype.isRetina = function()
              * @param {Number} endLocation Scroll to location
              * @param {Number} animationInterval How much to scroll on this loop
              */
-            var stopAnimateScroll = function (position, endLocation, animationInterval) {
+            var stopAnimateScroll = function(position, endLocation, animationInterval)
+            {
                 var currentLocation = root.pageYOffset;
-                if ( position == endLocation || currentLocation == endLocation || ( (root.innerHeight + currentLocation) >= documentHeight ) ) {
+                if (position == endLocation || currentLocation == endLocation || ((root.innerHeight + currentLocation) >= documentHeight))
+                {
                     clearInterval(animationInterval);
-                    if ( !isNum ) {
+                    if (!isNum)
+                    {
                         anchorElem.focus();
                     }
-                    animateSettings.callback( anchor, toggle ); // Run callbacks after animation complete
+                    animateSettings.callback(anchor, toggle); // Run callbacks after animation complete
                 }
             };
 
@@ -5377,12 +6814,13 @@ JSHelper.prototype.isRetina = function()
              * Loop scrolling animation
              * @private
              */
-            var loopAnimateScroll = function () {
+            var loopAnimateScroll = function()
+            {
                 timeLapsed += 16;
-                percentage = ( timeLapsed / parseInt(animateSettings.speed, 10) );
-                percentage = ( percentage > 1 ) ? 1 : percentage;
-                position = startLocation + ( distance * easingPattern(animateSettings.easing, percentage) );
-                root.scrollTo( 0, Math.floor(position) );
+                percentage = (timeLapsed / parseInt(animateSettings.speed, 10));
+                percentage = (percentage > 1) ? 1 : percentage;
+                position = startLocation + (distance * easingPattern(animateSettings.easing, percentage));
+                root.scrollTo(0, Math.floor(position));
                 stopAnimateScroll(position, endLocation, animationInterval);
             };
 
@@ -5390,7 +6828,8 @@ JSHelper.prototype.isRetina = function()
              * Set interval timer
              * @private
              */
-            var startAnimateScroll = function () {
+            var startAnimateScroll = function()
+            {
                 clearInterval(animationInterval);
                 animationInterval = setInterval(loopAnimateScroll, 16);
             };
@@ -5399,8 +6838,9 @@ JSHelper.prototype.isRetina = function()
              * Reset position to fix weird iOS bug
              * @link https://github.com/cferdinandi/smooth-scroll/issues/45
              */
-            if ( root.pageYOffset === 0 ) {
-                root.scrollTo( 0, 0 );
+            if (root.pageYOffset === 0)
+            {
+                root.scrollTo(0, 0);
             }
 
             // Start scrolling animation
@@ -5412,18 +6852,20 @@ JSHelper.prototype.isRetina = function()
          * If smooth scroll element clicked, animate scroll
          * @private
          */
-        var eventHandler = function (e) {
+        var eventHandler = function(e)
+        {
             e = e || window.event;
 
             // Don't run if right-click or command/control + click
-            if ( e.button !== 0 || e.metaKey || e.ctrlKey ) return;
+            if (e.button !== 0 || e.metaKey || e.ctrlKey) return;
 
             // If a smooth scroll link, animate it
-            var toggle = getClosest( e.target, settings.selector );
-            if ( toggle && toggle.tagName.toLowerCase() === 'a' ) {
+            var toggle = getClosest(e.target, settings.selector);
+            if (toggle && toggle.tagName.toLowerCase() === 'a')
+            {
                 e.preventDefault(); // Prevent default click event
-                var hash = smoothScroll.escapeCharacters( toggle.hash ); // Escape hash characters
-                smoothScroll.animateScroll( hash, toggle, settings); // Animate scroll
+                var hash = smoothScroll.escapeCharacters(toggle.hash); // Escape hash characters
+                smoothScroll.animateScroll(hash, toggle, settings); // Animate scroll
             }
 
         };
@@ -5434,11 +6876,14 @@ JSHelper.prototype.isRetina = function()
          * @param  {Function} eventTimeout Timeout function
          * @param  {Object} settings
          */
-        var eventThrottler = function (e) {
-            if ( !eventTimeout ) {
-                eventTimeout = setTimeout(function() {
+        var eventThrottler = function(e)
+        {
+            if (!eventTimeout)
+            {
+                eventTimeout = setTimeout(function()
+                {
                     eventTimeout = null; // Reset timeout
-                    headerHeight = getHeaderHeight( fixedHeader ); // Get the height of a fixed header if one exists
+                    headerHeight = getHeaderHeight(fixedHeader); // Get the height of a fixed header if one exists
                 }, 66);
             }
         };
@@ -5447,14 +6892,15 @@ JSHelper.prototype.isRetina = function()
          * Destroy the current initialization.
          * @public
          */
-        smoothScroll.destroy = function () {
+        smoothScroll.destroy = function()
+        {
 
             // If plugin isn't already initialized, stop
-            if ( !settings ) return;
+            if (!settings) return;
 
             // Remove event listeners
-            root.document.removeEventListener( 'click', eventHandler, false );
-            root.removeEventListener( 'resize', eventThrottler, false );
+            root.document.removeEventListener('click', eventHandler, false);
+            root.removeEventListener('resize', eventThrottler, false);
 
             // Reset varaibles
             settings = null;
@@ -5469,22 +6915,27 @@ JSHelper.prototype.isRetina = function()
          * @public
          * @param {Object} options User settings
          */
-        smoothScroll.init = function ( options ) {
+        smoothScroll.init = function(options)
+        {
 
             // feature test
-            if ( !supports ) return;
+            if (!supports) return;
 
             // Destroy any existing initializations
             smoothScroll.destroy();
 
             // Selectors and variables
-            settings = extend( defaults, options || {} ); // Merge user options with defaults
-            fixedHeader = root.document.querySelector( settings.selectorHeader ); // Get the fixed header
-            headerHeight = getHeaderHeight( fixedHeader );
+            settings = extend(defaults, options ||
+            {}); // Merge user options with defaults
+            fixedHeader = root.document.querySelector(settings.selectorHeader); // Get the fixed header
+            headerHeight = getHeaderHeight(fixedHeader);
 
             // When a toggle is clicked, run the click handler
-            root.document.addEventListener('click', eventHandler, false );
-            if ( fixedHeader ) { root.addEventListener( 'resize', eventThrottler, false ); }
+            root.document.addEventListener('click', eventHandler, false);
+            if (fixedHeader)
+            {
+                root.addEventListener('resize', eventThrottler, false);
+            }
 
         };
 
@@ -5636,11 +7087,11 @@ JSHelper.prototype.isRetina = function()
         }
 
         // Set class variables for use
-        this.word         = word;
-        this.lowercase    = strtolower(word);
-        this.upperCase    = strtoupper(word);
+        this.word = word;
+        this.lowercase = strtolower(word);
+        this.upperCase = strtoupper(word);
         this.sentenceCase = ucfirst(word);
-        this.casing       = this.getCasing();
+        this.casing = this.getCasing();
 
         // save some time in the case that singular and plural are the same
         if (this.isUncountable())
@@ -5709,8 +7160,7 @@ JSHelper.prototype.isRetina = function()
      */
     Pluralize.prototype.isUncountable = function()
     {
-        var uncountable =
-        [
+        var uncountable = [
             'gold',
             'audio',
             'police',
@@ -5757,131 +7207,130 @@ JSHelper.prototype.isRetina = function()
      */
     Pluralize.prototype.isIrregular = function()
     {
-        var irregular =
-        {
-            'addendum' : 'addenda',
-            'alga' : 'algae',
-            'alumna' : 'alumnae',
-            'alumnus' : 'alumni',
-            'analysis' : 'analyses',
-            'antenna' : 'antennae',
-            'apparatus' : 'apparatuses',
-            'appendix' : 'appendices',
-            'axis' : 'axes',
-            'bacillus' : 'bacilli',
-            'bacterium' : 'bacteria',
-            'basis' : 'bases',
-            'beau' : 'beaux',
-            'kilo' : 'kilos',
-            'bureau' : 'bureaus',
-            'bus' : 'buses',
-            'cactus' : 'cacti',
-            'calf' : 'calves',
-            'child' : 'children',
-            'corps' : 'corps',
-            'corpus' : 'corpora',
-            'crisis' : 'crises',
-            'criterion' : 'criteria',
-            'curriculum' : 'curricula',
-            'datum' : 'data',
-            'deer' : 'deer',
-            'die' : 'dice',
-            'dwarf' : 'dwarves',
-            'diagnosis' : 'diagnoses',
-            'echo' : 'echoes',
-            'elf' : 'elves',
-            'ellipsis' : 'ellipses',
-            'embargo' : 'embargoes',
-            'emphasis' : 'emphases',
-            'erratum' : 'errata',
-            'fireman' : 'firemen',
-            'fish' : 'fish',
-            'fly'  : 'flies',
-            'focus' : 'focuses',
-            'foot' : 'feet',
-            'formula' : 'formulas',
-            'fungus' : 'fungi',
-            'genus' : 'genera',
-            'goose' : 'geese',
-            'human' : 'humans',
-            'half' : 'halves',
-            'hero' : 'heroes',
-            'hippopotamus' : 'hippopotami',
-            'hoof' : 'hooves',
-            'hypothesis' : 'hypotheses',
-            'index' : 'indices',
-            'knife' : 'knives',
-            'leaf' : 'leaves',
-            'life' : 'lives',
-            'loaf' : 'loaves',
-            'louse' : 'lice',
-            'man' : 'men',
-            'matrix' : 'matrices',
-            'means' : 'means',
-            'medium' : 'media',
-            'memorandum' : 'memoranda',
-            'millennium' : 'millenniums',
-            'moose' : 'moose',
-            'mosquito' : 'mosquitoes',
-            'mouse' : 'mice',
-            'my' : 'our',
-            'nebula' : 'nebulae',
-            'neurosis' : 'neuroses',
-            'nucleus' : 'nuclei',
-            'neurosis' : 'neuroses',
-            'nucleus' : 'nuclei',
-            'oasis' : 'oases',
-            'octopus' : 'octopi',
-            'ovum' : 'ova',
-            'ox' : 'oxen',
-            'paralysis' : 'paralyses',
-            'parenthesis' : 'parentheses',
-            'person' : 'people',
-            'phenomenon' : 'phenomena',
-            'potato' : 'potatoes',
-            'quiz'  : 'quizzes',
-            'radius' : 'radii',
-            'scarf' : 'scarfs',
-            'self' : 'selves',
-            'series' : 'series',
-            'sheep' : 'sheep',
-            'shelf' : 'shelves',
-            'scissors' : 'scissors',
-            'species' : 'species',
-            'stimulus' : 'stimuli',
-            'stratum' : 'strata',
-            'syllabus' : 'syllabi',
-            'symposium' : 'symposia',
-            'synthesis' : 'syntheses',
-            'synopsis' : 'synopses',
-            'tableau' : 'tableaux',
-            'that' : 'those',
-            'thesis' : 'theses',
-            'thief' : 'thieves',
-            'this' : 'these',
-            'tomato' : 'tomatoes',
-            'tooth' : 'teeth',
-            'torpedo' : 'torpedoes',
-            'vertebra' : 'vertebrae',
-            'veto' : 'vetoes',
-            'vita' : 'vitae',
-            'virus'  : 'viri',
-            'watch' : 'watches',
-            'wife' : 'wives',
-            'wolf' : 'wolves',
-            'woman' : 'women',
-            'is' : 'are',
-            'was' : 'were',
-            'he' : 'they',
-            'she' : 'they',
-            'i' : 'we',
-            'zero' : 'zeroes',
+        var irregular = {
+            'addendum': 'addenda',
+            'alga': 'algae',
+            'alumna': 'alumnae',
+            'alumnus': 'alumni',
+            'analysis': 'analyses',
+            'antenna': 'antennae',
+            'apparatus': 'apparatuses',
+            'appendix': 'appendices',
+            'axis': 'axes',
+            'bacillus': 'bacilli',
+            'bacterium': 'bacteria',
+            'basis': 'bases',
+            'beau': 'beaux',
+            'kilo': 'kilos',
+            'bureau': 'bureaus',
+            'bus': 'buses',
+            'cactus': 'cacti',
+            'calf': 'calves',
+            'child': 'children',
+            'corps': 'corps',
+            'corpus': 'corpora',
+            'crisis': 'crises',
+            'criterion': 'criteria',
+            'curriculum': 'curricula',
+            'datum': 'data',
+            'deer': 'deer',
+            'die': 'dice',
+            'dwarf': 'dwarves',
+            'diagnosis': 'diagnoses',
+            'echo': 'echoes',
+            'elf': 'elves',
+            'ellipsis': 'ellipses',
+            'embargo': 'embargoes',
+            'emphasis': 'emphases',
+            'erratum': 'errata',
+            'fireman': 'firemen',
+            'fish': 'fish',
+            'fly': 'flies',
+            'focus': 'focuses',
+            'foot': 'feet',
+            'formula': 'formulas',
+            'fungus': 'fungi',
+            'genus': 'genera',
+            'goose': 'geese',
+            'human': 'humans',
+            'half': 'halves',
+            'hero': 'heroes',
+            'hippopotamus': 'hippopotami',
+            'hoof': 'hooves',
+            'hypothesis': 'hypotheses',
+            'index': 'indices',
+            'knife': 'knives',
+            'leaf': 'leaves',
+            'life': 'lives',
+            'loaf': 'loaves',
+            'louse': 'lice',
+            'man': 'men',
+            'matrix': 'matrices',
+            'means': 'means',
+            'medium': 'media',
+            'memorandum': 'memoranda',
+            'millennium': 'millenniums',
+            'moose': 'moose',
+            'mosquito': 'mosquitoes',
+            'mouse': 'mice',
+            'my': 'our',
+            'nebula': 'nebulae',
+            'neurosis': 'neuroses',
+            'nucleus': 'nuclei',
+            'neurosis': 'neuroses',
+            'nucleus': 'nuclei',
+            'oasis': 'oases',
+            'octopus': 'octopi',
+            'ovum': 'ova',
+            'ox': 'oxen',
+            'paralysis': 'paralyses',
+            'parenthesis': 'parentheses',
+            'person': 'people',
+            'phenomenon': 'phenomena',
+            'potato': 'potatoes',
+            'quiz': 'quizzes',
+            'radius': 'radii',
+            'scarf': 'scarfs',
+            'self': 'selves',
+            'series': 'series',
+            'sheep': 'sheep',
+            'shelf': 'shelves',
+            'scissors': 'scissors',
+            'species': 'species',
+            'stimulus': 'stimuli',
+            'stratum': 'strata',
+            'syllabus': 'syllabi',
+            'symposium': 'symposia',
+            'synthesis': 'syntheses',
+            'synopsis': 'synopses',
+            'tableau': 'tableaux',
+            'that': 'those',
+            'thesis': 'theses',
+            'thief': 'thieves',
+            'this': 'these',
+            'tomato': 'tomatoes',
+            'tooth': 'teeth',
+            'torpedo': 'torpedoes',
+            'vertebra': 'vertebrae',
+            'veto': 'vetoes',
+            'vita': 'vitae',
+            'virus': 'viri',
+            'watch': 'watches',
+            'wife': 'wives',
+            'wolf': 'wolves',
+            'woman': 'women',
+            'is': 'are',
+            'was': 'were',
+            'he': 'they',
+            'she': 'they',
+            'i': 'we',
+            'zero': 'zeroes',
         };
 
         if (typeof irregular[this.lowercase] !== 'undefined')
         {
             return irregular[this.lowercase];
-        }        
+        }
 
         return false;
     }
@@ -5955,11 +7404,11 @@ JSHelper.prototype.isRetina = function()
         {
             return word.toLowerCase();
         }
-        elseif (casing === 'upper')
+        elseif(casing === 'upper')
         {
             return word.toUpperCase();
         }
-        elseif (casing === 'sentence')
+        elseif(casing === 'sentence')
         {
             return word.charAt(0).toUpperCase() + word.slice(1);
         }
@@ -6036,7 +7485,46 @@ JSHelper.prototype.isRetina = function()
 (function()
 {
     /* Base64 Polyfill https://github.com/davidchambers/Base64.js */
-    !function(e){"use strict";if("object"==typeof exports&&null!=exports&&"number"!=typeof exports.nodeType)module.exports=e();else if("function"==typeof define&&null!=define.amd)define([],e);else{var t=e(),o="undefined"!=typeof self?self:$.global;"function"!=typeof o.btoa&&(o.btoa=t.btoa),"function"!=typeof o.atob&&(o.atob=t.atob)}}(function(){"use strict";var f="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";function c(e){this.message=e}return(c.prototype=new Error).name="InvalidCharacterError",{btoa:function(e){for(var t,o,r=String(e),n=0,a=f,i="";r.charAt(0|n)||(a="=",n%1);i+=a.charAt(63&t>>8-n%1*8)){if(255<(o=r.charCodeAt(n+=.75)))throw new c("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");t=t<<8|o}return i},atob:function(e){var t=String(e).replace(/[=]+$/,"");if(t.length%4==1)throw new c("'atob' failed: The string to be decoded is not correctly encoded.");for(var o,r,n=0,a=0,i="";r=t.charAt(a++);~r&&(o=n%4?64*o+r:r,n++%4)&&(i+=String.fromCharCode(255&o>>(-2*n&6))))r=f.indexOf(r);return i}}});
+    ! function(e)
+    {
+        "use strict";
+        if ("object" == typeof exports && null != exports && "number" != typeof exports.nodeType) module.exports = e();
+        else if ("function" == typeof define && null != define.amd) define([], e);
+        else
+        {
+            var t = e(),
+                o = "undefined" != typeof self ? self : $.global;
+            "function" != typeof o.btoa && (o.btoa = t.btoa), "function" != typeof o.atob && (o.atob = t.atob)
+        }
+    }(function()
+    {
+        "use strict";
+        var f = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+        function c(e)
+        {
+            this.message = e
+        }
+        return (c.prototype = new Error).name = "InvalidCharacterError",
+        {
+            btoa: function(e)
+            {
+                for (var t, o, r = String(e), n = 0, a = f, i = ""; r.charAt(0 | n) || (a = "=", n % 1); i += a.charAt(63 & t >> 8 - n % 1 * 8))
+                {
+                    if (255 < (o = r.charCodeAt(n += .75))) throw new c("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+                    t = t << 8 | o
+                }
+                return i
+            },
+            atob: function(e)
+            {
+                var t = String(e).replace(/[=]+$/, "");
+                if (t.length % 4 == 1) throw new c("'atob' failed: The string to be decoded is not correctly encoded.");
+                for (var o, r, n = 0, a = 0, i = ""; r = t.charAt(a++); ~r && (o = n % 4 ? 64 * o + r : r, n++ % 4) && (i += String.fromCharCode(255 & o >> (-2 * n & 6)))) r = f.indexOf(r);
+                return i
+            }
+        }
+    });
 
     /**
      * Cookie prefix
@@ -6054,7 +7542,7 @@ JSHelper.prototype.isRetina = function()
      */
     var Cookies = function()
     {
-    	return this;
+        return this;
     }
 
     /**
@@ -6071,16 +7559,16 @@ JSHelper.prototype.isRetina = function()
      */
     Cookies.prototype.set = function(key, value, days, path, secure, samesite)
     {
-    	value         = this._encodeCookieValue(value);
-    	key           = this._normaliseKey(key);
-    	path          = typeof path === 'undefined' ? '; path=/' : '; path=' + path;
-    	secure        = (typeof secure === 'undefined' || secure === true) && window.location.protocol === 'https:' ? '; secure' : '';
-    	samesite      = typeof samesite === 'undefined' ? '' : '; samesite=' + samesite;
-    	var expires   = expires = "; expires=" + this._normaliseExpiry(days | 365);
+        value = this._encodeCookieValue(value);
+        key = this._normaliseKey(key);
+        path = typeof path === 'undefined' ? '; path=/' : '; path=' + path;
+        secure = (typeof secure === 'undefined' || secure === true) && window.location.protocol === 'https:' ? '; secure' : '';
+        samesite = typeof samesite === 'undefined' ? '' : '; samesite=' + samesite;
+        var expires = expires = "; expires=" + this._normaliseExpiry(days | 365);
 
-    	document.cookie = key + '=' + value + expires + path + secure + samesite;
+        document.cookie = key + '=' + value + expires + path + secure + samesite;
 
-	    return value;
+        return value;
     }
 
     /**
@@ -6092,26 +7580,26 @@ JSHelper.prototype.isRetina = function()
      */
     Cookies.prototype.get = function(key)
     {
-    	key = this._normaliseKey(key);
-  		
-  		var ca = document.cookie.split(';');
+        key = this._normaliseKey(key);
 
-  		for(var i = 0; i <ca.length; i++)
-  		{
-		    var c = ca[i];
-		    
-		    while (c.charAt(0) == ' ')
-		    {
-		    	c = c.substring(1);
-		    }
-		    
-		    if (c.indexOf(key) == 0)
-		    {
-		    	return this._decodeCookieValue(c.split('=').pop());
-			}
-		}
-		
-		return false;
+        var ca = document.cookie.split(';');
+
+        for (var i = 0; i < ca.length; i++)
+        {
+            var c = ca[i];
+
+            while (c.charAt(0) == ' ')
+            {
+                c = c.substring(1);
+            }
+
+            if (c.indexOf(key) == 0)
+            {
+                return this._decodeCookieValue(c.split('=').pop());
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -6122,7 +7610,7 @@ JSHelper.prototype.isRetina = function()
      */
     Cookies.prototype.remove = function(key)
     {
-    	key = this._normaliseKey(key);
+        key = this._normaliseKey(key);
 
         document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     }
@@ -6136,11 +7624,11 @@ JSHelper.prototype.isRetina = function()
      */
     Cookies.prototype._normaliseExpiry = function(days)
     {
-    	var date = new Date();
-	        
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        
-       	return date.toUTCString();
+        var date = new Date();
+
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+
+        return date.toUTCString();
     }
 
     /**
@@ -6152,9 +7640,9 @@ JSHelper.prototype.isRetina = function()
      */
     Cookies.prototype._normaliseKey = function(key)
     {
-    	key = key.replace(/[^a-z0-9+]+/gi, '').toLowerCase();
+        key = key.replace(/[^a-z0-9+]+/gi, '').toLowerCase();
 
-    	return _prefix + key;
+        return _prefix + key;
     }
 
     /**
@@ -6166,16 +7654,16 @@ JSHelper.prototype.isRetina = function()
      */
     Cookies.prototype._encodeCookieValue = function(value)
     {
-    	try
-	    {
-	        value = this._base64_encode(JSON.stringify(value));
-	    }
-	    catch (e)
-	    {
-	        value = this._base64_encode(value);
-	    }
+        try
+        {
+            value = this._base64_encode(JSON.stringify(value));
+        }
+        catch (e)
+        {
+            value = this._base64_encode(value);
+        }
 
-	    return value;
+        return value;
     }
 
     /**
@@ -6187,18 +7675,18 @@ JSHelper.prototype.isRetina = function()
      */
     Cookies.prototype._decodeCookieValue = function(str)
     {
-    	var value = this._base64_decode(str);
+        var value = this._base64_decode(str);
 
-    	try
-	    {
-	        value = JSON.parse(value);
-	    }
-	    catch (e)
-	    {
-	    	return value;
-	    }
+        try
+        {
+            value = JSON.parse(value);
+        }
+        catch (e)
+        {
+            return value;
+        }
 
-	    return value;
+        return value;
     }
 
     /**
@@ -6235,7 +7723,7 @@ JSHelper.prototype.isRetina = function()
     Cookies.prototype._fromBinary = function(binary)
     {
         const bytes = new Uint8Array(binary.length);
-        
+
         for (var i = 0; i < bytes.length; i++)
         {
             bytes[i] = binary.charCodeAt(i);
@@ -6254,17 +7742,17 @@ JSHelper.prototype.isRetina = function()
     Cookies.prototype._toBinary = function(string)
     {
         const codeUnits = new Uint16Array(string.length);
-        
+
         for (var i = 0; i < codeUnits.length; i++)
         {
             codeUnits[i] = string.charCodeAt(i);
         }
-        
+
         return String.fromCharCode.apply(null, new Uint8Array(codeUnits.buffer));
     }
 
     // Register as DOM Module and invoke
-   	Container.singleton('Cookies', Cookies);
+    Container.singleton('Cookies', Cookies);
 
 })();
 /**
@@ -6274,7 +7762,8 @@ JSHelper.prototype.isRetina = function()
  * from 0 -> auto or from auto -> 0
  *
  */
- (function() {
+(function()
+{
 
     /**
      * @var Helper obj
@@ -6296,9 +7785,9 @@ JSHelper.prototype.isRetina = function()
     var ToggleHeight = function(el, initial, time, easing, withOpacity)
     {
         // Set defaults if values were not provided;
-        initial     = (typeof initial === 'undefined' ? 0 : initial);
-        time        = (typeof time === 'undefined' ? 300 : time);
-        easing      = (typeof easing === 'undefined' ? 'ease-in' : easing);
+        initial = (typeof initial === 'undefined' ? 0 : initial);
+        time = (typeof time === 'undefined' ? 300 : time);
+        easing = (typeof easing === 'undefined' ? 'ease-in' : easing);
         withOpacity = (typeof withOpacity === 'undefined' ? false : withOpacity);
 
         // Get the element's current height
@@ -6306,7 +7795,7 @@ JSHelper.prototype.isRetina = function()
 
         // Get the element's projected height
         var computedStyle = Helper._computeStyle(el);
-        var endHeight     = parseInt(el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTopWidth) + parseInt(computedStyle.borderBottomWidth));
+        var endHeight = parseInt(el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTopWidth) + parseInt(computedStyle.borderBottomWidth));
 
         // Dispatch appropriate function
         if (endHeight === actualHeight || actualHeight > endHeight)
@@ -6337,7 +7826,7 @@ JSHelper.prototype.isRetina = function()
         if (el.style.height === 'auto')
         {
             this._fromAuto(el, 0, time, easing, actualHeight, withOpacity);
-            
+
             return;
         }
 
@@ -6345,7 +7834,7 @@ JSHelper.prototype.isRetina = function()
         if (actualHeight === endHeight)
         {
             el.style.height = 'auto';
-            
+
             return;
         }
 
@@ -6356,16 +7845,16 @@ JSHelper.prototype.isRetina = function()
         // and force the browser to repaint
         Helper.css(el, 'height', actualHeight + 'px');
         el.offsetHeight;
-        
+
         // Run animations
         var remove = function()
         {
             Helper.css(el, 'height', 'auto');
         };
 
-        Helper.animate(el, 'height',  actualHeight + 'px', endHeight + 'px', time, easing, remove);
-        
-        if  (withOpacity)
+        Helper.animate(el, 'height', actualHeight + 'px', endHeight + 'px', time, easing, remove);
+
+        if (withOpacity)
         {
             Helper.animate(el, 'opacity', '0', '1', opacityTime, easing);
         }
@@ -6384,7 +7873,7 @@ JSHelper.prototype.isRetina = function()
      */
     ToggleHeight.prototype._fromAuto = function(el, initial, time, easing, actualHeight, withOpacity)
     {
-        var opacityTime = (15 * time) / 100 + time; 
+        var opacityTime = (15 * time) / 100 + time;
 
         // Set the height to the actual height (which could be zero)
         // and force the browser to repaint
@@ -6392,9 +7881,9 @@ JSHelper.prototype.isRetina = function()
         el.offsetHeight;
 
         // Run animations
-        Helper.animate(el, 'height',  actualHeight + 'px', '0px', time, easing);
-        
-        if  (withOpacity)
+        Helper.animate(el, 'height', actualHeight + 'px', '0px', time, easing);
+
+        if (withOpacity)
         {
             Helper.animate(el, 'opacity', '1', '0', opacityTime, easing);
         }
@@ -6410,8 +7899,8 @@ JSHelper.prototype.isRetina = function()
  * This class handles custom event firing and callback assigning.
  *
  */
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
@@ -6429,9 +7918,9 @@ JSHelper.prototype.isRetina = function()
      */
     var Events = function()
     {
-        
+
         this._callbacks = {};
-        
+
         return this;
     }
 
@@ -6467,7 +7956,7 @@ JSHelper.prototype.isRetina = function()
             if (callbackEvent === eventName)
             {
                 var callback = this._callbacks[key].callback;
-                
+
                 callback.apply(subject, args);
             }
         }
@@ -6484,18 +7973,18 @@ JSHelper.prototype.isRetina = function()
     {
         // Make sure the function is unique - unless it is ananonymous
         var callbackName = this._getFnName(callback);
-        
+
         if (callbackName === 'anonymous')
         {
             callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
         }
 
-        var key  = eventName+'______'+callbackName;
+        var key = eventName + '______' + callbackName;
 
         // Save the callback and event name
         this._callbacks[key] = {
-            name     : eventName,
-            callback : callback,
+            name: eventName,
+            callback: callback,
         };
     }
 
@@ -6516,7 +8005,7 @@ JSHelper.prototype.isRetina = function()
             }
 
             var callbackEvent = key.split('______')[0];
-            
+
             if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
             {
                 delete this._callbacks[key];
@@ -6534,7 +8023,7 @@ JSHelper.prototype.isRetina = function()
     Events.prototype._getFnName = function(fn)
     {
         var f = typeof fn == 'function';
-        
+
         var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
 
         return (!f && 'not a function') || (s && s[1] || 'anonymous');
@@ -6544,15 +8033,14 @@ JSHelper.prototype.isRetina = function()
     Container.singleton('Events', Events);
 
 }());
-
 /**
  * Filters
  *
  * This class handles custom event firing and callback assigning.
  *
  */
- (function()
- {
+(function()
+{
 
     /**
      * Module constructor
@@ -6565,7 +8053,7 @@ JSHelper.prototype.isRetina = function()
     var Filters = function()
     {
         this._callbacks = {};
-        
+
         return this;
     }
 
@@ -6602,7 +8090,7 @@ JSHelper.prototype.isRetina = function()
             if (callbackEvent === eventName)
             {
                 var callback = this._callbacks[key].callback;
-                
+
                 response = callback.call(response, response);
             }
         }
@@ -6621,19 +8109,18 @@ JSHelper.prototype.isRetina = function()
     {
         // Make sure the function is unique - unless it is ananonymous
         var callbackName = this._getFnName(callback);
-        
+
         if (callbackName === 'anonymous')
         {
             callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
         }
 
-        var key  = eventName+'______'+callbackName;
+        var key = eventName + '______' + callbackName;
 
         // Save the callback and event name
-        this._callbacks[key] =
-        {
-            name     : eventName,
-            callback : callback,
+        this._callbacks[key] = {
+            name: eventName,
+            callback: callback,
         };
     }
 
@@ -6654,7 +8141,7 @@ JSHelper.prototype.isRetina = function()
             }
 
             var callbackEvent = key.split('______')[0];
-            
+
             if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
             {
                 delete this._callbacks[key];
@@ -6672,7 +8159,7 @@ JSHelper.prototype.isRetina = function()
     Filters.prototype._getFnName = function(fn)
     {
         var f = typeof fn == 'function';
-        
+
         var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
 
         return (!f && 'not a function') || (s && s[1] || 'anonymous');
@@ -6682,20 +8169,511 @@ JSHelper.prototype.isRetina = function()
     Container.singleton('Filters', Filters);
 
 }());
-
 /**
  * InputMasker
  *
  * @see https://github.com/text-mask/text-mask/tree/master/vanilla
  */
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
      * @see https://github.com/text-mask/text-mask/tree/master/vanilla
      */
-    !function(e,r){"object"==typeof exports&&"object"==typeof module?module.exports=r():"function"==typeof define&&define.amd?define([],r):"object"==typeof exports?exports.vanillaTextMask=r():e.vanillaTextMask=r()}(this,function(){return function(e){function r(n){if(t[n])return t[n].exports;var o=t[n]={exports:{},id:n,loaded:!1};return e[n].call(o.exports,o,o.exports,r),o.loaded=!0,o.exports}var t={};return r.m=e,r.c=t,r.p="",r(0)}([function(e,r,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function o(e){var r=e.inputElement,t=(0,u.default)(e),n=function(e){var r=e.target.value;return t.update(r)};return r.addEventListener("input",n),t.update(r.value),{textMaskInputElement:t,_destroy:function(){r.removeEventListener("input",n)}}}Object.defineProperty(r,"__esModule",{value:!0}),r.conformToMask=void 0,r.maskInput=o;var i=t(2);Object.defineProperty(r,"conformToMask",{enumerable:!0,get:function(){return n(i).default}});var a=t(5),u=n(a);r.default=o},function(e,r){"use strict";Object.defineProperty(r,"__esModule",{value:!0}),r.placeholderChar="_",r.strFunction="function"},function(e,r,t){"use strict";function n(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:l,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:u,t=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{};if(!(0,i.isArray)(r)){if(("undefined"==typeof r?"undefined":o(r))!==a.strFunction)throw new Error("Text-mask:conformToMask; The mask property must be an array.");r=r(e,t),r=(0,i.processCaretTraps)(r).maskWithoutCaretTraps}var n=t.guide,s=void 0===n||n,f=t.previousConformedValue,d=void 0===f?l:f,c=t.placeholderChar,p=void 0===c?a.placeholderChar:c,v=t.placeholder,h=void 0===v?(0,i.convertMaskToPlaceholder)(r,p):v,m=t.currentCaretPosition,y=t.keepCharPositions,g=s===!1&&void 0!==d,b=e.length,C=d.length,k=h.length,x=r.length,P=b-C,T=P>0,O=m+(T?-P:0),M=O+Math.abs(P);if(y===!0&&!T){for(var w=l,S=O;S<M;S++)h[S]===p&&(w+=p);e=e.slice(0,O)+w+e.slice(O,b)}for(var _=e.split(l).map(function(e,r){return{char:e,isNew:r>=O&&r<M}}),j=b-1;j>=0;j--){var V=_[j].char;if(V!==p){var A=j>=O&&C===x;V===h[A?j-P:j]&&_.splice(j,1)}}var E=l,N=!1;e:for(var F=0;F<k;F++){var I=h[F];if(I===p){if(_.length>0)for(;_.length>0;){var L=_.shift(),R=L.char,J=L.isNew;if(R===p&&g!==!0){E+=p;continue e}if(r[F].test(R)){if(y===!0&&J!==!1&&d!==l&&s!==!1&&T){for(var W=_.length,q=null,z=0;z<W;z++){var B=_[z];if(B.char!==p&&B.isNew===!1)break;if(B.char===p){q=z;break}}null!==q?(E+=R,_.splice(q,1)):F--}else E+=R;continue e}N=!0}g===!1&&(E+=h.substr(F,k));break}E+=I}if(g&&T===!1){for(var D=null,G=0;G<E.length;G++)h[G]===p&&(D=G);E=null!==D?E.substr(0,D+1):l}return{conformedValue:E,meta:{someCharsRejected:N}}}Object.defineProperty(r,"__esModule",{value:!0});var o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};r.default=n;var i=t(3),a=t(1),u=[],l=""},function(e,r,t){"use strict";function n(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:s,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:l.placeholderChar;if(!o(e))throw new Error("Text-mask:convertMaskToPlaceholder; The mask property must be an array.");if(e.indexOf(r)!==-1)throw new Error("Placeholder character must not be used as part of the mask. Please specify a character that is not present in your mask as your placeholder character.\n\n"+("The placeholder character that was received is: "+JSON.stringify(r)+"\n\n")+("The mask that was received is: "+JSON.stringify(e)));return e.map(function(e){return e instanceof RegExp?r:e}).join("")}function o(e){return Array.isArray&&Array.isArray(e)||e instanceof Array}function i(e){return"string"==typeof e||e instanceof String}function a(e){return"number"==typeof e&&void 0===e.length&&!isNaN(e)}function u(e){for(var r=[],t=void 0;t=e.indexOf(f),t!==-1;)r.push(t),e.splice(t,1);return{maskWithoutCaretTraps:e,indexes:r}}Object.defineProperty(r,"__esModule",{value:!0}),r.convertMaskToPlaceholder=n,r.isArray=o,r.isString=i,r.isNumber=a,r.processCaretTraps=u;var l=t(1),s=[],f="[]"},function(e,r){"use strict";function t(e){var r=e.previousConformedValue,t=void 0===r?o:r,i=e.previousPlaceholder,a=void 0===i?o:i,u=e.currentCaretPosition,l=void 0===u?0:u,s=e.conformedValue,f=e.rawValue,d=e.placeholderChar,c=e.placeholder,p=e.indexesOfPipedChars,v=void 0===p?n:p,h=e.caretTrapIndexes,m=void 0===h?n:h;if(0===l||!f.length)return 0;var y=f.length,g=t.length,b=c.length,C=s.length,k=y-g,x=k>0,P=0===g,T=k>1&&!x&&!P;if(T)return l;var O=x&&(t===s||s===c),M=0,w=void 0,S=void 0;if(O)M=l-k;else{var _=s.toLowerCase(),j=f.toLowerCase(),V=j.substr(0,l).split(o),A=V.filter(function(e){return _.indexOf(e)!==-1});S=A[A.length-1];var E=a.substr(0,A.length).split(o).filter(function(e){return e!==d}).length,N=c.substr(0,A.length).split(o).filter(function(e){return e!==d}).length,F=N!==E,I=void 0!==a[A.length-1]&&void 0!==c[A.length-2]&&a[A.length-1]!==d&&a[A.length-1]!==c[A.length-1]&&a[A.length-1]===c[A.length-2];!x&&(F||I)&&E>0&&c.indexOf(S)>-1&&void 0!==f[l]&&(w=!0,S=f[l]);for(var L=v.map(function(e){return _[e]}),R=L.filter(function(e){return e===S}).length,J=A.filter(function(e){return e===S}).length,W=c.substr(0,c.indexOf(d)).split(o).filter(function(e,r){return e===S&&f[r]!==e}).length,q=W+J+R+(w?1:0),z=0,B=0;B<C;B++){var D=_[B];if(M=B+1,D===S&&z++,z>=q)break}}if(x){for(var G=M,H=M;H<=b;H++)if(c[H]===d&&(G=H),c[H]===d||m.indexOf(H)!==-1||H===b)return G}else if(w){for(var K=M-1;K>=0;K--)if(s[K]===S||m.indexOf(K)!==-1||0===K)return K}else for(var Q=M;Q>=0;Q--)if(c[Q-1]===d||m.indexOf(Q)!==-1||0===Q)return Q}Object.defineProperty(r,"__esModule",{value:!0}),r.default=t;var n=[],o=""},function(e,r,t){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}function o(e){var r={previousConformedValue:void 0,previousPlaceholder:void 0};return{state:r,update:function(t){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:e,o=n.inputElement,s=n.mask,d=n.guide,m=n.pipe,g=n.placeholderChar,b=void 0===g?v.placeholderChar:g,C=n.keepCharPositions,k=void 0!==C&&C,x=n.showMask,P=void 0!==x&&x;if("undefined"==typeof t&&(t=o.value),t!==r.previousConformedValue){("undefined"==typeof s?"undefined":l(s))===y&&void 0!==s.pipe&&void 0!==s.mask&&(m=s.pipe,s=s.mask);var T=void 0,O=void 0;if(s instanceof Array&&(T=(0,p.convertMaskToPlaceholder)(s,b)),s!==!1){var M=a(t),w=o.selectionEnd,S=r.previousConformedValue,_=r.previousPlaceholder,j=void 0;if(("undefined"==typeof s?"undefined":l(s))===v.strFunction){if(O=s(M,{currentCaretPosition:w,previousConformedValue:S,placeholderChar:b}),O===!1)return;var V=(0,p.processCaretTraps)(O),A=V.maskWithoutCaretTraps,E=V.indexes;O=A,j=E,T=(0,p.convertMaskToPlaceholder)(O,b)}else O=s;var N={previousConformedValue:S,guide:d,placeholderChar:b,pipe:m,placeholder:T,currentCaretPosition:w,keepCharPositions:k},F=(0,c.default)(M,O,N),I=F.conformedValue,L=("undefined"==typeof m?"undefined":l(m))===v.strFunction,R={};L&&(R=m(I,u({rawValue:M},N)),R===!1?R={value:S,rejected:!0}:(0,p.isString)(R)&&(R={value:R}));var J=L?R.value:I,W=(0,f.default)({previousConformedValue:S,previousPlaceholder:_,conformedValue:J,placeholder:T,rawValue:M,currentCaretPosition:w,placeholderChar:b,indexesOfPipedChars:R.indexesOfPipedChars,caretTrapIndexes:j}),q=J===T&&0===W,z=P?T:h,B=q?z:J;r.previousConformedValue=B,r.previousPlaceholder=T,o.value!==B&&(o.value=B,i(o,W))}}}}}function i(e,r){document.activeElement===e&&(g?b(function(){return e.setSelectionRange(r,r,m)},0):e.setSelectionRange(r,r,m))}function a(e){if((0,p.isString)(e))return e;if((0,p.isNumber)(e))return String(e);if(void 0===e||null===e)return h;throw new Error("The 'value' provided to Text Mask needs to be a string or a number. The value received was:\n\n "+JSON.stringify(e))}Object.defineProperty(r,"__esModule",{value:!0});var u=Object.assign||function(e){for(var r=1;r<arguments.length;r++){var t=arguments[r];for(var n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[n]=t[n])}return e},l="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};r.default=o;var s=t(4),f=n(s),d=t(2),c=n(d),p=t(3),v=t(1),h="",m="none",y="object",g="undefined"!=typeof navigator&&/Android/i.test(navigator.userAgent),b="undefined"!=typeof requestAnimationFrame?requestAnimationFrame:setTimeout}])});
+    ! function(e, r)
+    {
+        "object" == typeof exports && "object" == typeof module ? module.exports = r() : "function" == typeof define && define.amd ? define([], r) : "object" == typeof exports ? exports.vanillaTextMask = r() : e.vanillaTextMask = r()
+    }(this, function()
+    {
+        return function(e)
+        {
+            function r(n)
+            {
+                if (t[n]) return t[n].exports;
+                var o = t[n] = {
+                    exports:
+                    {},
+                    id: n,
+                    loaded: !1
+                };
+                return e[n].call(o.exports, o, o.exports, r), o.loaded = !0, o.exports
+            }
+            var t = {};
+            return r.m = e, r.c = t, r.p = "", r(0)
+        }([function(e, r, t)
+        {
+            "use strict";
+
+            function n(e)
+            {
+                return e && e.__esModule ? e :
+                {
+                    default: e
+                }
+            }
+
+            function o(e)
+            {
+                var r = e.inputElement,
+                    t = (0, u.default)(e),
+                    n = function(e)
+                    {
+                        var r = e.target.value;
+                        return t.update(r)
+                    };
+                return r.addEventListener("input", n), t.update(r.value),
+                {
+                    textMaskInputElement: t,
+                    _destroy: function()
+                    {
+                        r.removeEventListener("input", n)
+                    }
+                }
+            }
+            Object.defineProperty(r, "__esModule",
+            {
+                value: !0
+            }), r.conformToMask = void 0, r.maskInput = o;
+            var i = t(2);
+            Object.defineProperty(r, "conformToMask",
+            {
+                enumerable: !0,
+                get: function()
+                {
+                    return n(i).default
+                }
+            });
+            var a = t(5),
+                u = n(a);
+            r.default = o
+        }, function(e, r)
+        {
+            "use strict";
+            Object.defineProperty(r, "__esModule",
+            {
+                value: !0
+            }), r.placeholderChar = "_", r.strFunction = "function"
+        }, function(e, r, t)
+        {
+            "use strict";
+
+            function n()
+            {
+                var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : l,
+                    r = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : u,
+                    t = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] :
+                    {};
+                if (!(0, i.isArray)(r))
+                {
+                    if (("undefined" == typeof r ? "undefined" : o(r)) !== a.strFunction) throw new Error("Text-mask:conformToMask; The mask property must be an array.");
+                    r = r(e, t), r = (0, i.processCaretTraps)(r).maskWithoutCaretTraps
+                }
+                var n = t.guide,
+                    s = void 0 === n || n,
+                    f = t.previousConformedValue,
+                    d = void 0 === f ? l : f,
+                    c = t.placeholderChar,
+                    p = void 0 === c ? a.placeholderChar : c,
+                    v = t.placeholder,
+                    h = void 0 === v ? (0, i.convertMaskToPlaceholder)(r, p) : v,
+                    m = t.currentCaretPosition,
+                    y = t.keepCharPositions,
+                    g = s === !1 && void 0 !== d,
+                    b = e.length,
+                    C = d.length,
+                    k = h.length,
+                    x = r.length,
+                    P = b - C,
+                    T = P > 0,
+                    O = m + (T ? -P : 0),
+                    M = O + Math.abs(P);
+                if (y === !0 && !T)
+                {
+                    for (var w = l, S = O; S < M; S++) h[S] === p && (w += p);
+                    e = e.slice(0, O) + w + e.slice(O, b)
+                }
+                for (var _ = e.split(l).map(function(e, r)
+                    {
+                        return {
+                            char: e,
+                            isNew: r >= O && r < M
+                        }
+                    }), j = b - 1; j >= 0; j--)
+                {
+                    var V = _[j].char;
+                    if (V !== p)
+                    {
+                        var A = j >= O && C === x;
+                        V === h[A ? j - P : j] && _.splice(j, 1)
+                    }
+                }
+                var E = l,
+                    N = !1;
+                e: for (var F = 0; F < k; F++)
+                {
+                    var I = h[F];
+                    if (I === p)
+                    {
+                        if (_.length > 0)
+                            for (; _.length > 0;)
+                            {
+                                var L = _.shift(),
+                                    R = L.char,
+                                    J = L.isNew;
+                                if (R === p && g !== !0)
+                                {
+                                    E += p;
+                                    continue e
+                                }
+                                if (r[F].test(R))
+                                {
+                                    if (y === !0 && J !== !1 && d !== l && s !== !1 && T)
+                                    {
+                                        for (var W = _.length, q = null, z = 0; z < W; z++)
+                                        {
+                                            var B = _[z];
+                                            if (B.char !== p && B.isNew === !1) break;
+                                            if (B.char === p)
+                                            {
+                                                q = z;
+                                                break
+                                            }
+                                        }
+                                        null !== q ? (E += R, _.splice(q, 1)) : F--
+                                    }
+                                    else E += R;
+                                    continue e
+                                }
+                                N = !0
+                            }
+                        g === !1 && (E += h.substr(F, k));
+                        break
+                    }
+                    E += I
+                }
+                if (g && T === !1)
+                {
+                    for (var D = null, G = 0; G < E.length; G++) h[G] === p && (D = G);
+                    E = null !== D ? E.substr(0, D + 1) : l
+                }
+                return {
+                    conformedValue: E,
+                    meta:
+                    {
+                        someCharsRejected: N
+                    }
+                }
+            }
+            Object.defineProperty(r, "__esModule",
+            {
+                value: !0
+            });
+            var o = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(e)
+            {
+                return typeof e
+            } : function(e)
+            {
+                return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e
+            };
+            r.default = n;
+            var i = t(3),
+                a = t(1),
+                u = [],
+                l = ""
+        }, function(e, r, t)
+        {
+            "use strict";
+
+            function n()
+            {
+                var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : s,
+                    r = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : l.placeholderChar;
+                if (!o(e)) throw new Error("Text-mask:convertMaskToPlaceholder; The mask property must be an array.");
+                if (e.indexOf(r) !== -1) throw new Error("Placeholder character must not be used as part of the mask. Please specify a character that is not present in your mask as your placeholder character.\n\n" + ("The placeholder character that was received is: " + JSON.stringify(r) + "\n\n") + ("The mask that was received is: " + JSON.stringify(e)));
+                return e.map(function(e)
+                {
+                    return e instanceof RegExp ? r : e
+                }).join("")
+            }
+
+            function o(e)
+            {
+                return Array.isArray && Array.isArray(e) || e instanceof Array
+            }
+
+            function i(e)
+            {
+                return "string" == typeof e || e instanceof String
+            }
+
+            function a(e)
+            {
+                return "number" == typeof e && void 0 === e.length && !isNaN(e)
+            }
+
+            function u(e)
+            {
+                for (var r = [], t = void 0; t = e.indexOf(f), t !== -1;) r.push(t), e.splice(t, 1);
+                return {
+                    maskWithoutCaretTraps: e,
+                    indexes: r
+                }
+            }
+            Object.defineProperty(r, "__esModule",
+            {
+                value: !0
+            }), r.convertMaskToPlaceholder = n, r.isArray = o, r.isString = i, r.isNumber = a, r.processCaretTraps = u;
+            var l = t(1),
+                s = [],
+                f = "[]"
+        }, function(e, r)
+        {
+            "use strict";
+
+            function t(e)
+            {
+                var r = e.previousConformedValue,
+                    t = void 0 === r ? o : r,
+                    i = e.previousPlaceholder,
+                    a = void 0 === i ? o : i,
+                    u = e.currentCaretPosition,
+                    l = void 0 === u ? 0 : u,
+                    s = e.conformedValue,
+                    f = e.rawValue,
+                    d = e.placeholderChar,
+                    c = e.placeholder,
+                    p = e.indexesOfPipedChars,
+                    v = void 0 === p ? n : p,
+                    h = e.caretTrapIndexes,
+                    m = void 0 === h ? n : h;
+                if (0 === l || !f.length) return 0;
+                var y = f.length,
+                    g = t.length,
+                    b = c.length,
+                    C = s.length,
+                    k = y - g,
+                    x = k > 0,
+                    P = 0 === g,
+                    T = k > 1 && !x && !P;
+                if (T) return l;
+                var O = x && (t === s || s === c),
+                    M = 0,
+                    w = void 0,
+                    S = void 0;
+                if (O) M = l - k;
+                else
+                {
+                    var _ = s.toLowerCase(),
+                        j = f.toLowerCase(),
+                        V = j.substr(0, l).split(o),
+                        A = V.filter(function(e)
+                        {
+                            return _.indexOf(e) !== -1
+                        });
+                    S = A[A.length - 1];
+                    var E = a.substr(0, A.length).split(o).filter(function(e)
+                        {
+                            return e !== d
+                        }).length,
+                        N = c.substr(0, A.length).split(o).filter(function(e)
+                        {
+                            return e !== d
+                        }).length,
+                        F = N !== E,
+                        I = void 0 !== a[A.length - 1] && void 0 !== c[A.length - 2] && a[A.length - 1] !== d && a[A.length - 1] !== c[A.length - 1] && a[A.length - 1] === c[A.length - 2];
+                    !x && (F || I) && E > 0 && c.indexOf(S) > -1 && void 0 !== f[l] && (w = !0, S = f[l]);
+                    for (var L = v.map(function(e)
+                        {
+                            return _[e]
+                        }), R = L.filter(function(e)
+                        {
+                            return e === S
+                        }).length, J = A.filter(function(e)
+                        {
+                            return e === S
+                        }).length, W = c.substr(0, c.indexOf(d)).split(o).filter(function(e, r)
+                        {
+                            return e === S && f[r] !== e
+                        }).length, q = W + J + R + (w ? 1 : 0), z = 0, B = 0; B < C; B++)
+                    {
+                        var D = _[B];
+                        if (M = B + 1, D === S && z++, z >= q) break
+                    }
+                }
+                if (x)
+                {
+                    for (var G = M, H = M; H <= b; H++)
+                        if (c[H] === d && (G = H), c[H] === d || m.indexOf(H) !== -1 || H === b) return G
+                }
+                else if (w)
+                {
+                    for (var K = M - 1; K >= 0; K--)
+                        if (s[K] === S || m.indexOf(K) !== -1 || 0 === K) return K
+                }
+                else
+                    for (var Q = M; Q >= 0; Q--)
+                        if (c[Q - 1] === d || m.indexOf(Q) !== -1 || 0 === Q) return Q
+            }
+            Object.defineProperty(r, "__esModule",
+            {
+                value: !0
+            }), r.default = t;
+            var n = [],
+                o = ""
+        }, function(e, r, t)
+        {
+            "use strict";
+
+            function n(e)
+            {
+                return e && e.__esModule ? e :
+                {
+                    default: e
+                }
+            }
+
+            function o(e)
+            {
+                var r = {
+                    previousConformedValue: void 0,
+                    previousPlaceholder: void 0
+                };
+                return {
+                    state: r,
+                    update: function(t)
+                    {
+                        var n = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : e,
+                            o = n.inputElement,
+                            s = n.mask,
+                            d = n.guide,
+                            m = n.pipe,
+                            g = n.placeholderChar,
+                            b = void 0 === g ? v.placeholderChar : g,
+                            C = n.keepCharPositions,
+                            k = void 0 !== C && C,
+                            x = n.showMask,
+                            P = void 0 !== x && x;
+                        if ("undefined" == typeof t && (t = o.value), t !== r.previousConformedValue)
+                        {
+                            ("undefined" == typeof s ? "undefined" : l(s)) === y && void 0 !== s.pipe && void 0 !== s.mask && (m = s.pipe, s = s.mask);
+                            var T = void 0,
+                                O = void 0;
+                            if (s instanceof Array && (T = (0, p.convertMaskToPlaceholder)(s, b)), s !== !1)
+                            {
+                                var M = a(t),
+                                    w = o.selectionEnd,
+                                    S = r.previousConformedValue,
+                                    _ = r.previousPlaceholder,
+                                    j = void 0;
+                                if (("undefined" == typeof s ? "undefined" : l(s)) === v.strFunction)
+                                {
+                                    if (O = s(M,
+                                        {
+                                            currentCaretPosition: w,
+                                            previousConformedValue: S,
+                                            placeholderChar: b
+                                        }), O === !1) return;
+                                    var V = (0, p.processCaretTraps)(O),
+                                        A = V.maskWithoutCaretTraps,
+                                        E = V.indexes;
+                                    O = A, j = E, T = (0, p.convertMaskToPlaceholder)(O, b)
+                                }
+                                else O = s;
+                                var N = {
+                                        previousConformedValue: S,
+                                        guide: d,
+                                        placeholderChar: b,
+                                        pipe: m,
+                                        placeholder: T,
+                                        currentCaretPosition: w,
+                                        keepCharPositions: k
+                                    },
+                                    F = (0, c.default)(M, O, N),
+                                    I = F.conformedValue,
+                                    L = ("undefined" == typeof m ? "undefined" : l(m)) === v.strFunction,
+                                    R = {};
+                                L && (R = m(I, u(
+                                {
+                                    rawValue: M
+                                }, N)), R === !1 ? R = {
+                                    value: S,
+                                    rejected: !0
+                                } : (0, p.isString)(R) && (R = {
+                                    value: R
+                                }));
+                                var J = L ? R.value : I,
+                                    W = (0, f.default)(
+                                    {
+                                        previousConformedValue: S,
+                                        previousPlaceholder: _,
+                                        conformedValue: J,
+                                        placeholder: T,
+                                        rawValue: M,
+                                        currentCaretPosition: w,
+                                        placeholderChar: b,
+                                        indexesOfPipedChars: R.indexesOfPipedChars,
+                                        caretTrapIndexes: j
+                                    }),
+                                    q = J === T && 0 === W,
+                                    z = P ? T : h,
+                                    B = q ? z : J;
+                                r.previousConformedValue = B, r.previousPlaceholder = T, o.value !== B && (o.value = B, i(o, W))
+                            }
+                        }
+                    }
+                }
+            }
+
+            function i(e, r)
+            {
+                document.activeElement === e && (g ? b(function()
+                {
+                    return e.setSelectionRange(r, r, m)
+                }, 0) : e.setSelectionRange(r, r, m))
+            }
+
+            function a(e)
+            {
+                if ((0, p.isString)(e)) return e;
+                if ((0, p.isNumber)(e)) return String(e);
+                if (void 0 === e || null === e) return h;
+                throw new Error("The 'value' provided to Text Mask needs to be a string or a number. The value received was:\n\n " + JSON.stringify(e))
+            }
+            Object.defineProperty(r, "__esModule",
+            {
+                value: !0
+            });
+            var u = Object.assign || function(e)
+                {
+                    for (var r = 1; r < arguments.length; r++)
+                    {
+                        var t = arguments[r];
+                        for (var n in t) Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n])
+                    }
+                    return e
+                },
+                l = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(e)
+                {
+                    return typeof e
+                } : function(e)
+                {
+                    return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e
+                };
+            r.default = o;
+            var s = t(4),
+                f = n(s),
+                d = t(2),
+                c = n(d),
+                p = t(3),
+                v = t(1),
+                h = "",
+                m = "none",
+                y = "object",
+                g = "undefined" != typeof navigator && /Android/i.test(navigator.userAgent),
+                b = "undefined" != typeof requestAnimationFrame ? requestAnimationFrame : setTimeout
+        }])
+    });
 
     var vanillaMasker = vanillaTextMask;
 
@@ -6726,10 +8704,10 @@ JSHelper.prototype.isRetina = function()
         this._element = element;
 
         this._mask = null;
-    
+
         return this;
     }
-    
+
 
     /**
      * Mask Credit Card
@@ -6738,10 +8716,11 @@ JSHelper.prototype.isRetina = function()
      */
     InputMasker.prototype.creditcard = function()
     {
-        var _mask = vanillaMasker.maskInput({
-            inputElement : this._element,
-            guide        : false,
-            mask         : [/[0-9]/,/[0-9]/,/[0-9]/,/[0-9]/, ' ', /[0-9]/,/[0-9]/,/[0-9]/,/[0-9]/, ' ', /[0-9]/,/[0-9]/,/[0-9]/,/[0-9]/, ' ', /[0-9]/,/[0-9]/,/[0-9]/,/[0-9]/]
+        var _mask = vanillaMasker.maskInput(
+        {
+            inputElement: this._element,
+            guide: false,
+            mask: [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]
         });
 
         _mask['_element'] = this._element;
@@ -6754,12 +8733,12 @@ JSHelper.prototype.isRetina = function()
      *
      * @access public
      */
-    InputMasker.prototype.money = function() 
+    InputMasker.prototype.money = function()
     {
         var _filter = function(rawValue)
         {
             var mask = [];
-            
+
             if (rawValue.length > 1)
             {
                 for (var i = 0; i < rawValue.length; i++)
@@ -6773,10 +8752,11 @@ JSHelper.prototype.isRetina = function()
             return [/[0-9]/];
         };
 
-        var _mask = vanillaMasker.maskInput({
-            inputElement : this._element,
-            guide        : false,
-            mask         : _filter
+        var _mask = vanillaMasker.maskInput(
+        {
+            inputElement: this._element,
+            guide: false,
+            mask: _filter
         });
 
         _mask['_element'] = this._element;
@@ -6794,7 +8774,7 @@ JSHelper.prototype.isRetina = function()
         var _filter = function(rawValue)
         {
             var mask = [];
-            
+
             if (rawValue.length > 1)
             {
                 for (var i = 0; i < rawValue.length; i++)
@@ -6808,10 +8788,11 @@ JSHelper.prototype.isRetina = function()
             return [/[0-9]/];
         };
 
-        var _mask = vanillaMasker.maskInput({
-            inputElement : this._element,
-            guide        : false,
-            mask         : _filter
+        var _mask = vanillaMasker.maskInput(
+        {
+            inputElement: this._element,
+            guide: false,
+            mask: _filter
         });
 
         _mask['_element'] = this._element;
@@ -6829,7 +8810,7 @@ JSHelper.prototype.isRetina = function()
         var _filter = function(rawValue)
         {
             var mask = [];
-            
+
             if (rawValue.length > 1)
             {
                 for (var i = 0; i < rawValue.length; i++)
@@ -6843,10 +8824,11 @@ JSHelper.prototype.isRetina = function()
             return [/[0-9]/];
         };
 
-        var _mask = vanillaMasker.maskInput({
-            inputElement : this._element,
-            guide        : false,
-            mask         : _filter
+        var _mask = vanillaMasker.maskInput(
+        {
+            inputElement: this._element,
+            guide: false,
+            mask: _filter
         });
 
         _mask['_element'] = this._element;
@@ -6866,7 +8848,7 @@ JSHelper.prototype.isRetina = function()
             var mask = [];
 
             var regex = /[A-z0-9]/;
-            
+
             if (rawValue.length > 1)
             {
                 for (var i = 0; i < rawValue.length; i++)
@@ -6880,10 +8862,11 @@ JSHelper.prototype.isRetina = function()
             return [regex];
         };
 
-        var _mask = vanillaMasker.maskInput({
-            inputElement : this._element,
-            guide        : false,
-            mask         : _filter
+        var _mask = vanillaMasker.maskInput(
+        {
+            inputElement: this._element,
+            guide: false,
+            mask: _filter
         });
 
         _mask['_element'] = this._element;
@@ -6903,7 +8886,7 @@ JSHelper.prototype.isRetina = function()
             var mask = [];
 
             var regex = /[A-z ]/;
-            
+
             if (rawValue.length > 1)
             {
                 for (var i = 0; i < rawValue.length; i++)
@@ -6917,10 +8900,11 @@ JSHelper.prototype.isRetina = function()
             return [regex];
         };
 
-        var _mask = vanillaMasker.maskInput({
-            inputElement : this._element,
-            guide        : false,
-            mask         : _filter
+        var _mask = vanillaMasker.maskInput(
+        {
+            inputElement: this._element,
+            guide: false,
+            mask: _filter
         });
 
         _mask['_element'] = this._element;
@@ -6940,7 +8924,7 @@ JSHelper.prototype.isRetina = function()
             var mask = [];
 
             var regex = /[A-z-]/;
-            
+
             if (rawValue.length > 1)
             {
                 for (var i = 0; i < rawValue.length; i++)
@@ -6954,10 +8938,11 @@ JSHelper.prototype.isRetina = function()
             return [regex];
         };
 
-        var _mask = vanillaMasker.maskInput({
-            inputElement : this._element,
-            guide        : false,
-            mask         : _filter
+        var _mask = vanillaMasker.maskInput(
+        {
+            inputElement: this._element,
+            guide: false,
+            mask: _filter
         });
 
         _mask['_element'] = this._element;
@@ -6977,7 +8962,7 @@ JSHelper.prototype.isRetina = function()
             var mask = [];
 
             var regex = /[A-z0-9-]/;
-            
+
             if (rawValue.length > 1)
             {
                 for (var i = 0; i < rawValue.length; i++)
@@ -6991,10 +8976,11 @@ JSHelper.prototype.isRetina = function()
             return [regex];
         };
 
-        var _mask = vanillaMasker.maskInput({
-            inputElement : this._element,
-            guide        : false,
-            mask         : _filter
+        var _mask = vanillaMasker.maskInput(
+        {
+            inputElement: this._element,
+            guide: false,
+            mask: _filter
         });
 
         _mask['_element'] = this._element;
@@ -7013,7 +8999,7 @@ JSHelper.prototype.isRetina = function()
         var _filter = function(rawValue)
         {
             var mask = [];
-            
+
             if (rawValue.length > 1)
             {
                 for (var i = 0; i < rawValue.length; i++)
@@ -7027,10 +9013,11 @@ JSHelper.prototype.isRetina = function()
             return [pattern];
         };
 
-        var _mask = vanillaMasker.maskInput({
-            inputElement : this._element,
-            guide        : false,
-            mask         : _filter
+        var _mask = vanillaMasker.maskInput(
+        {
+            inputElement: this._element,
+            guide: false,
+            mask: _filter
         });
 
         _mask['_element'] = this._element;
@@ -7045,7 +9032,7 @@ JSHelper.prototype.isRetina = function()
      */
     InputMasker.prototype.remove = function()
     {
-        for (var i = _masks.length -1; i >= 0 ; i--)
+        for (var i = _masks.length - 1; i >= 0; i--)
         {
             if (_masks[i]['_element'] === this._element)
             {
@@ -7068,8 +9055,8 @@ JSHelper.prototype.isRetina = function()
  * display a modal.
  *
  */
- (function()
- {
+(function()
+{
     /**
      * @var obj
      */
@@ -7078,31 +9065,30 @@ JSHelper.prototype.isRetina = function()
     /**
      * @var obj
      */
-    var defaults = 
-    {
-        title            : '',
-        message          : '',
-        closeAnywhere    : true,
-        targetContent    : null,
+    var defaults = {
+        title: '',
+        message: '',
+        closeAnywhere: true,
+        targetContent: null,
 
-        cancelBtn        : true,
-        cancelText        : 'Cancel',
-        cancelClass       : 'btn btn-pure',
+        cancelBtn: true,
+        cancelText: 'Cancel',
+        cancelClass: 'btn btn-pure',
 
-        confirmBtn       : true,
-        confirmClass     : 'btn btn-pure btn-primary',
-        confirmText      : 'Confirm',
-        overlay          : 'light',
-        extras           : '',
+        confirmBtn: true,
+        confirmClass: 'btn btn-pure btn-primary',
+        confirmText: 'Confirm',
+        overlay: 'light',
+        extras: '',
 
-        onBuilt             : null,
-        onBuiltArgs         : null,
-        onRender            : null,
-        onRenderArgs        : null,
-        onClose             : null,
-        onCloseArgs         : null,
-        validateConfirm     : null,
-        validateConfirmArgs : null
+        onBuilt: null,
+        onBuiltArgs: null,
+        onRender: null,
+        onRenderArgs: null,
+        onClose: null,
+        onCloseArgs: null,
+        validateConfirm: null,
+        validateConfirmArgs: null
 
     };
 
@@ -7117,15 +9103,15 @@ JSHelper.prototype.isRetina = function()
      */
     var Modal = function(options)
     {
-        this._options    = Helper.array_merge(defaults, options);
-        this._timer      = null;
-        this._modal      = null;
-        this._overlay    = null;
+        this._options = Helper.array_merge(defaults, options);
+        this._timer = null;
+        this._modal = null;
+        this._overlay = null;
         this._modalInner = null;
 
         this._invoke();
 
-        return this;    
+        return this;
     };
 
     /**
@@ -7134,7 +9120,7 @@ JSHelper.prototype.isRetina = function()
      * @access private
      */
     Modal.prototype._invoke = function()
-    {   
+    {
         // Build the modal
         this._buildModal();
 
@@ -7153,12 +9139,12 @@ JSHelper.prototype.isRetina = function()
      * @access private
      */
     Modal.prototype._buildModal = function()
-    {  
-        var modal   = document.createElement('DIV');
-            modal.className   = 'modal-wrap';
+    {
+        var modal = document.createElement('DIV');
+        modal.className = 'modal-wrap';
 
         var overlay = document.createElement('DIV');
-            overlay.className = 'modal-overlay ' + this._options['overlay'];
+        overlay.className = 'modal-overlay ' + this._options['overlay'];
 
         var content = '';
 
@@ -7168,30 +9154,30 @@ JSHelper.prototype.isRetina = function()
         }
         else
         {
-            var closeButton   = this._options.cancelBtn === true ? '<button type="button" class="btn ' + this._options.cancelClass + ' js-modal-close js-modal-cancel">' + this._options.cancelText + '</button>' : '';
-            var confirmButton = this._options.confirmBtn === true  ? '<button type="button" class="btn ' + this._options.confirmClass +' js-modal-close js-modal-confirm">'+ this._options.confirmText +'</button>' : '';
-            
+            var closeButton = this._options.cancelBtn === true ? '<button type="button" class="btn ' + this._options.cancelClass + ' js-modal-close js-modal-cancel">' + this._options.cancelText + '</button>' : '';
+            var confirmButton = this._options.confirmBtn === true ? '<button type="button" class="btn ' + this._options.confirmClass + ' js-modal-close js-modal-confirm">' + this._options.confirmText + '</button>' : '';
+
             Helper.innerHTML(modal, [
                 '<div class="modal-dialog js-modal-dialog">',
-                    '<div class="card js-modal-panel">',
-                        '<div class="card-header">',
-                            '<h4 class="card-title">'+this._options.title+'</h4>',
-                        '</div>',
-                        this._options.extras,
-                        '<div class="card-block">',
-                            '<p class="card-text">'+ this._options.message +'</p>',
-                        '</div>',
-                        '<div class="card-actions">',
-                            closeButton,
-                            confirmButton,
-                        '</div>',
-                    '</div>',
+                '<div class="card js-modal-panel">',
+                '<div class="card-header">',
+                '<h4 class="card-title">' + this._options.title + '</h4>',
+                '</div>',
+                this._options.extras,
+                '<div class="card-block">',
+                '<p class="card-text">' + this._options.message + '</p>',
+                '</div>',
+                '<div class="card-actions">',
+                closeButton,
+                confirmButton,
+                '</div>',
+                '</div>',
                 '</div>',
             ]);
         }
 
-        this._modal      = modal;
-        this._overlay    = overlay;
+        this._modal = modal;
+        this._overlay = overlay;
         this._modalInner = Helper.$('.js-modal-dialog', modal);
         this._fireBuilt();
     }
@@ -7224,18 +9210,18 @@ JSHelper.prototype.isRetina = function()
         var _this = this;
         document.body.appendChild(this._overlay);
         document.body.appendChild(this._modal);
-       
+
         this._centerModal();
-        
+
         Helper.addClass(this._overlay, 'active');
-        
+
         this._fireRender();
-        
+
         Helper.addEventListener(window, 'resize', function modalResize()
         {
             _this._centerModal();
         });
-        
+
         Helper.addClass(document.body, 'no-scroll');
     }
 
@@ -7257,7 +9243,7 @@ JSHelper.prototype.isRetina = function()
                 if (this === _this._modal)
                 {
                     var clickedInner = Helper.closest(e.target, '.js-modal-dialog');
-                    
+
                     if (clickedInner)
                     {
                         return;
@@ -7268,26 +9254,26 @@ JSHelper.prototype.isRetina = function()
             e.preventDefault();
 
             clearTimeout(_this._timer);
-            
+
             if (Helper.hasClass(this, 'js-modal-confirm'))
             {
                 var canClose = _this._fireConfirmValidator();
-                
+
                 if (!canClose)
                 {
                     return;
                 }
             }
-            
+
             Helper.addClass(_this._overlay, 'transition-off');
-            
+
             _this._fireClosed();
-            
+
             if (Helper.hasClass(this, 'js-modal-confirm'))
             {
                 _this._fireConfirm();
             }
-            
+
             _this._timer = setTimeout(function()
             {
                 Helper.removeFromDOM(_this._overlay);
@@ -7295,7 +9281,7 @@ JSHelper.prototype.isRetina = function()
                 Helper.removeClass(document.body, 'no-scroll');
             }, 500);
         }
-        
+
         if (this._options.closeAnywhere === true)
         {
             Helper.addEventListener(this._modal, 'click', closeModal, false);
@@ -7304,7 +9290,7 @@ JSHelper.prototype.isRetina = function()
         var modalCloses = Helper.$All('.js-modal-close', this._modal);
         if (!Helper.empty(modalCloses))
         {
-             Helper.addEventListener(modalCloses, 'click', closeModal, false);
+            Helper.addEventListener(modalCloses, 'click', closeModal, false);
         }
 
         var modalCancel = Helper.$('.js-modal-cancel', this._modal);
@@ -7324,9 +9310,9 @@ JSHelper.prototype.isRetina = function()
         if (this._options.onRender !== null && Helper.isCallable(this._options.onRender))
         {
             var callback = this._options.onRender;
-            var args     = this._options.onRenderArgs;
+            var args = this._options.onRenderArgs;
             callback.apply(this._modal, args);
-            
+
         }
     }
 
@@ -7340,7 +9326,7 @@ JSHelper.prototype.isRetina = function()
         if (this._options.onClose !== null && Helper.isCallable(this._options.onClose))
         {
             var callback = this._options.onClose;
-            var args     = this._options.onCloseArgs;
+            var args = this._options.onCloseArgs;
             callback.apply(this._modal, args);
             Helper.removeClass(document.body, 'no-scroll');
         }
@@ -7356,7 +9342,7 @@ JSHelper.prototype.isRetina = function()
         if (this._options.onConfirm !== null && Helper.isCallable(this._options.onConfirm))
         {
             var callback = this._options.onConfirm;
-            var args     = this._options.onConfirmArgs;
+            var args = this._options.onConfirmArgs;
             callback.apply(this._modal, args);
         }
     }
@@ -7371,7 +9357,7 @@ JSHelper.prototype.isRetina = function()
         if (this._options.validateConfirm !== null && Helper.isCallable(this._options.validateConfirm))
         {
             var callback = this._options.validateConfirm;
-            var args     = this._options.validateConfirmArgs;
+            var args = this._options.validateConfirmArgs;
             return callback.apply(this._modal, args);
         }
 
@@ -7388,7 +9374,7 @@ JSHelper.prototype.isRetina = function()
         if (this._options.onBuilt !== null && Helper.isCallable(this._options.onBuilt))
         {
             var callback = this._options.onBuilt;
-            var args     = this._options.onBuiltArgs;
+            var args = this._options.onBuiltArgs;
             callback.apply(this._modal, args);
         }
     }
@@ -7400,22 +9386,22 @@ JSHelper.prototype.isRetina = function()
      */
     Modal.prototype._centerModal = function()
     {
-        var el            = this._modalInner;
+        var el = this._modalInner;
         var computedStyle = window.getComputedStyle(el);
-        var modalH        = parseInt(el.offsetHeight);
-        var windowH       = window.innerHeight|| document.documentElement.clientHeight|| getElementsByTagName('body')[0].clientHeight;
-        
+        var modalH = parseInt(el.offsetHeight);
+        var windowH = window.innerHeight || document.documentElement.clientHeight || getElementsByTagName('body')[0].clientHeight;
+
         // If the window height is less than the modal dialog
         // We need to adjust the dialog so it is at the top of the page
         if (windowH <= modalH)
         {
-            el.style.marginTop  = '0px';
-            el.style.top  = '0';
+            el.style.marginTop = '0px';
+            el.style.top = '0';
         }
         else
         {
-            el.style.marginTop  = '-' + (modalH/2) + 'px';
-            el.style.top  = '50%';
+            el.style.marginTop = '-' + (modalH / 2) + 'px';
+            el.style.top = '50%';
         }
     }
 
@@ -7455,14 +9441,14 @@ JSHelper.prototype.isRetina = function()
     var Notifications = function(options)
     {
         this._notifWrap = Helper.$('.js-nofification-wrap');
-        
+
         if (!Helper.nodeExists(this._notifWrap))
         {
             this._buildNotificationContainer();
         }
-        
+
         this._invoke(options);
-        
+
         return this;
     }
 
@@ -7491,21 +9477,22 @@ JSHelper.prototype.isRetina = function()
         if (typeof options.isCallback !== 'undefined' && options.isCallback === true)
         {
             this._invokeCallbackable(options);
-            
+
             return;
         }
 
-        var _this     = this;
-        var content   = '<div class="msg-body"><p>' + options.msg + '</p></div>';
-        var notif     = Helper.newNode('div', 'msg-'+ options.type + ' msg animate-notif', null, content, this._notifWrap);
-        var timeout   = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
+        var _this = this;
+        var content = '<div class="msg-body"><p>' + options.msg + '</p></div>';
+        var notif = Helper.newNode('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
+        var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
         Helper.addClass(this._notifWrap, 'active');
 
         // Timout remove automatically
-        _activeNotifs.push({
-            node    : notif,
-            timeout : setTimeout(function()
+        _activeNotifs.push(
+        {
+            node: notif,
+            timeout: setTimeout(function()
             {
                 _this._removeNotification(notif);
             }, timeout),
@@ -7526,22 +9513,23 @@ JSHelper.prototype.isRetina = function()
      */
     Notifications.prototype._invokeCallbackable = function(options)
     {
-        var _this        = this;
-        var confirmText  = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
-        var dismissX     = typeof options.showDismiss === 'undefined' ? '' : '<button type="button" class="btn btn-xs btn-pure btn-dismiss btn-circle js-dismiss"><span class="glyph-icon glyph-icon-cross2"></span></button>';
-        var timeout      = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
+        var _this = this;
+        var confirmText = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
+        var dismissX = typeof options.showDismiss === 'undefined' ? '' : '<button type="button" class="btn btn-xs btn-pure btn-dismiss btn-circle js-dismiss"><span class="glyph-icon glyph-icon-cross2"></span></button>';
+        var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
-        var content  = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX +'</div>';
+        var content = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX + '</div>';
 
-        var notif    = Helper.newNode('div', 'msg animate-notif', null, content, this._notifWrap);
-        var confirm  = Helper.$('.js-confirm', notif);
-        var dismiss  = Helper.$('.js-dismiss', notif);
-        
+        var notif = Helper.newNode('div', 'msg animate-notif', null, content, this._notifWrap);
+        var confirm = Helper.$('.js-confirm', notif);
+        var dismiss = Helper.$('.js-dismiss', notif);
+
         Helper.addClass(this._notifWrap, 'active');
-        
-        _activeNotifs.push({
-            node    : notif,
-            timeout : setTimeout(function()
+
+        _activeNotifs.push(
+        {
+            node: notif,
+            timeout: setTimeout(function()
             {
                 _this._removeNotification(notif);
             }, timeout),
@@ -7554,7 +9542,7 @@ JSHelper.prototype.isRetina = function()
             {
                 options.onDismiss(options.onDismissArgs);
             }
-                
+
             _this._removeNotification(notif);
         });
 
@@ -7678,10 +9666,10 @@ function complete(response)
      */
     var Queue = function(concurrency)
     {
-        this.running     = 0;
+        this.running = 0;
         this.concurrency = concurrency;
-        this.taskQueue   = [];
-        
+        this.taskQueue = [];
+
         return this;
     }
 
@@ -7698,7 +9686,7 @@ function complete(response)
     }
 
     Queue.prototype.next = function()
-    {        
+    {
         this.running--;
 
         if (this.taskQueue.length > 0)
@@ -7710,7 +9698,7 @@ function complete(response)
     }
 
     Queue.prototype._runTask = function(task, _this, _args)
-    {       
+    {
         this.running++;
 
         task.apply(_this, _args);
@@ -7720,9 +9708,9 @@ function complete(response)
     {
         this.taskQueue.push(
         {
-            'callback' : task,
-            '_this'    : _this,
-            '_args'    : _args
+            'callback': task,
+            '_this': _this,
+            '_args': _args
         });
     }
 
@@ -7737,22 +9725,21 @@ function complete(response)
      */
     var _Ajax = function()
     {
-        this._settings = 
-        {
-            'url'          : '',
-            'async'        : true,
-            'headers'      :
+        this._settings = {
+            'url': '',
+            'async': true,
+            'headers':
             {
-                'Content-Type'  : 'application/x-www-form-urlencoded',
-                'Accepts'       : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                'Cache-Control' : 'no-cache',
-                'Pragma'        : 'no-cache'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accepts': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
             },
         };
 
         this._complete = false;
         this._success = false;
-        this._error   = false;
+        this._error = false;
 
         return this;
     }
@@ -7803,7 +9790,7 @@ function complete(response)
     _Ajax.prototype.delete = function(url, data, success, error, complete, headers)
     {
         var instance = new _Ajax;
-        
+
         AjaxQueue.add(instance._call, instance, instance._normaliseArgs('DELETE', url, data, success, error, complete, headers));
 
         return instance;
@@ -7821,7 +9808,7 @@ function complete(response)
         {
             throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
         }
-        
+
         this._success = callback;
 
         return this;
@@ -7839,7 +9826,7 @@ function complete(response)
         {
             throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
         }
-        
+
         this._error = callback;
 
         return this;
@@ -7890,7 +9877,7 @@ function complete(response)
     _Ajax.prototype.upload = function(url, data, success, error, start, progress, complete)
     {
         var formData = new FormData();
-        
+
         for (var key in data)
         {
             if (data.hasOwnProperty(key))
@@ -7938,9 +9925,9 @@ function complete(response)
             try
             {
                 readyState = e.target.readyState;
-                text       = e.target.responseText;
-                status     = e.target.status;
-            } 
+                text = e.target.responseText;
+                status = e.target.status;
+            }
             catch (e)
             {
                 return;
@@ -7951,13 +9938,14 @@ function complete(response)
                 if (status >= 200 && status < 300 || status === 304)
                 {
                     var response = e.target.responseText;
-                    
+
                     if (_this.isFunction(success))
                     {
                         success(response);
                     }
-                } 
-                else {
+                }
+                else
+                {
                     // error callback
                     if (_this.isFunction(error))
                     {
@@ -8010,7 +9998,7 @@ function complete(response)
             {
                 _this._ready.call(_this, xhr, success, error, complete);
             }
-            
+
             xhr.send(data);
         }
         else
@@ -8040,9 +10028,10 @@ function complete(response)
 
         if (this._isObj(headers))
         {
-            this._settings['headers'] = Object.assign({}, this._settings['headers'], headers);
+            this._settings['headers'] = Object.assign(
+            {}, this._settings['headers'], headers);
         }
-                
+
         for (var k in this._settings['headers'])
         {
             if (this._settings['headers'].hasOwnProperty(k))
@@ -8096,7 +10085,7 @@ function complete(response)
         {
             data = this._params(data);
         }
-        
+
         return [method, url, data, success, error, complete, headers];
     }
     /**
@@ -8127,7 +10116,7 @@ function complete(response)
                 {
                     this._success.call(xhr, response);
                 }
-            } 
+            }
             else
             {
                 successfull = false;
@@ -8190,7 +10179,6 @@ function complete(response)
     Container.set('Ajax', _Ajax);
 
 })();
-
 /**
  * FormValidator
  *
@@ -8198,7 +10186,8 @@ function complete(response)
  * also apply and classes to display form results and input errors.
  *
  */
-(function() {
+(function()
+{
 
     /**
      * @var Helper obj
@@ -8214,49 +10203,53 @@ function complete(response)
      * @access public
      * @return this
      */
-    var FormValidator = function(form) {
+    var FormValidator = function(form)
+    {
 
         // Save inputs
-        this._form   = form;
+        this._form = form;
         this._inputs = Helper.getFormInputs(form);
 
         // Defaults
-        this._rulesIndex      = [];
-        this._invalids        = [];
-        this._formObj         = {};
-        this._nameIndex       = {};
-        this._validForm       = true;
+        this._rulesIndex = [];
+        this._invalids = [];
+        this._formObj = {};
+        this._nameIndex = {};
+        this._validForm = true;
 
         // Initialize
         this._indexInputs();
-    
+
         return this;
 
     };
 
     // PUBLIC ACCESS
-    
+
     /**
      *  Is the form valid?
      *
      * @access public
      * @return boolean
      */
-    FormValidator.prototype.isValid = function() {       
+    FormValidator.prototype.isValid = function()
+    {
         return this._validateForm();
     };
-    
+
     /**
      * Show invalid inputs
      *
      * @access public
      */
-    FormValidator.prototype.showInvalid = function() {
-        
+    FormValidator.prototype.showInvalid = function()
+    {
+
         this._clearForm();
 
         // Show the invalid inputs
-        for (var j = 0; j < this._invalids.length; j++) {
+        for (var j = 0; j < this._invalids.length; j++)
+        {
             var __wrap = Helper.closest(this._invalids[j], '.form-field');
             if (Helper.nodeExists(__wrap)) Helper.addClass(__wrap, 'danger');
         }
@@ -8277,30 +10270,33 @@ function complete(response)
      *
      * @access public
      */
-    FormValidator.prototype.showResult = function(result) {
+    FormValidator.prototype.showResult = function(result)
+    {
         this._clearForm();
         Helper.addClass(this._form, result);
     }
-    
+
     /**
      * Append a key/pair and return form obj
      *
      * @access public
      * @return obj
      */
-    FormValidator.prototype.append = function(key, value) {
+    FormValidator.prototype.append = function(key, value)
+    {
         this._formObj[key] = value;
-        return  this._generateForm();
+        return this._generateForm();
     };
-    
+
     /**
      * Get the form object
      *
      * @access public
      * @return obj
      */
-    FormValidator.prototype.form = function() {
-        return  this._generateForm();
+    FormValidator.prototype.form = function()
+    {
+        return this._generateForm();
     };
 
 
@@ -8311,12 +10307,15 @@ function complete(response)
      *
      * @access public
      */
-    FormValidator.prototype._indexInputs = function() {
-        for (var i = 0; i < this._inputs.length; i++) {
+    FormValidator.prototype._indexInputs = function()
+    {
+        for (var i = 0; i < this._inputs.length; i++)
+        {
             if (!this._inputs[i].name) continue;
             var name = this._inputs[i].name;
             this._nameIndex[name] = this._inputs[i];
-            this._rulesIndex.push({
+            this._rulesIndex.push(
+            {
                 node: this._inputs[i],
                 isRequired: this._inputs[i].dataset.jsRequired || null,
                 validationMinLength: this._inputs[i].dataset.jsMinLegnth || null,
@@ -8333,26 +10332,37 @@ function complete(response)
      * @access private
      * @return boolean
      */
-    FormValidator.prototype._validateForm = function() {
+    FormValidator.prototype._validateForm = function()
+    {
         this._invalids = [];
         this._validForm = true;
 
-        for (var i = 0; i < this._rulesIndex.length; i++) {
-            
+        for (var i = 0; i < this._rulesIndex.length; i++)
+        {
+
             this._rulesIndex[i].isValid = true;
 
-            var pos   = this._rulesIndex[i];
+            var pos = this._rulesIndex[i];
             var value = Helper.getInputValue(pos.node);
 
-            if (!pos.isRequired && value === '') {
+            if (!pos.isRequired && value === '')
+            {
                 continue;
-            } else if (pos.isRequired && value.replace(/ /g,'') === '') {
+            }
+            else if (pos.isRequired && value.replace(/ /g, '') === '')
+            {
                 this._devalidate(i);
-            } else if (pos.validationMinLength && !this._validateMinLength(value, pos.validationMinLength)) {
+            }
+            else if (pos.validationMinLength && !this._validateMinLength(value, pos.validationMinLength))
+            {
                 this._devalidate(i);
-            } else if (pos.validationMaxLength && !this._validateMaxLength(value, pos.validationMaxLength)) {
+            }
+            else if (pos.validationMaxLength && !this._validateMaxLength(value, pos.validationMaxLength))
+            {
                 this._devalidate(i);
-            } else if (pos.validationType) {
+            }
+            else if (pos.validationType)
+            {
                 var isValid = true;
                 if (pos.validationType === 'email') isValid = this._validateEmail(value);
                 if (pos.validationType === 'name') isValid = this._validateName(value);
@@ -8375,22 +10385,28 @@ function complete(response)
      * @access private
      * @return obj
      */
-    FormValidator.prototype._generateForm = function() {
-        for (var i = 0; i < this._inputs.length; i++) {
-            var name  = this._inputs[i].name;
+    FormValidator.prototype._generateForm = function()
+    {
+        for (var i = 0; i < this._inputs.length; i++)
+        {
+            var name = this._inputs[i].name;
             var value = Helper.getInputValue(this._inputs[i]);
-            if (this._inputs[i].type === 'radio' && this._inputs[i].checked == false) {
+            if (this._inputs[i].type === 'radio' && this._inputs[i].checked == false)
+            {
                 continue;
             }
-            if (this._inputs[i].type === 'checkbox') {
+            if (this._inputs[i].type === 'checkbox')
+            {
                 this._formObj[name] = (this._inputs[i].checked == true);
                 continue;
             }
-            if (name.indexOf('[]') > -1) {
+            if (name.indexOf('[]') > -1)
+            {
                 if (!Helper.isset(this._formObj[name])) this._formObj[name] = [];
                 this._formObj[name].push(value);
             }
-            else {
+            else
+            {
                 this._formObj[name] = value;
             }
         }
@@ -8403,7 +10419,8 @@ function complete(response)
      * @access private
      * @return obj
      */
-    FormValidator.prototype._devalidate = function(i) {
+    FormValidator.prototype._devalidate = function(i)
+    {
         this._rulesIndex[i].isValid = false;
         this._validForm = false;
         this._invalids.push(this._rulesIndex[i].node);
@@ -8415,12 +10432,14 @@ function complete(response)
      * @access private
      * @return obj
      */
-    FormValidator.prototype._clearForm = function(i) {
+    FormValidator.prototype._clearForm = function(i)
+    {
         // Remove the form result
         Helper.removeClass(this._form, ['info', 'success', 'warning', 'danger']);
 
         // Make all input elements 'valid' - i.e hide the error msg and styles.
-        for (var i = 0; i < this._inputs.length; i++) {
+        for (var i = 0; i < this._inputs.length; i++)
+        {
             var _wrap = Helper.closest(this._inputs[i], '.form-field');
             if (Helper.nodeExists(_wrap)) Helper.removeClass(_wrap, ['info', 'success', 'warning', 'danger'])
         }
@@ -8432,55 +10451,67 @@ function complete(response)
      * @access private
      * @return boolean
      */
-    FormValidator.prototype._validateEmail = function(value) {
+    FormValidator.prototype._validateEmail = function(value)
+    {
         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(value);
     };
-    FormValidator.prototype._validateName = function(value) {
+    FormValidator.prototype._validateName = function(value)
+    {
         var re = /^[A-z _-]+$/;
         return re.test(value);
     };
-    FormValidator.prototype._validateNumeric = function(value) {
+    FormValidator.prototype._validateNumeric = function(value)
+    {
         var re = /^[\d]+$/;
         return re.test(value);
     };
-    FormValidator.prototype._validatePassword = function(value) {
+    FormValidator.prototype._validatePassword = function(value)
+    {
         var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
         return re.test(value);
     };
-    FormValidator.prototype._validateUrl = function(value) {
+    FormValidator.prototype._validateUrl = function(value)
+    {
         re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
         return re.test(value);
     };
-    FormValidator.prototype._validateMinLength = function(value, min) {
+    FormValidator.prototype._validateMinLength = function(value, min)
+    {
         return value.length >= min;
     };
-    FormValidator.prototype._validateMaxLength = function(value, max) {
+    FormValidator.prototype._validateMaxLength = function(value, max)
+    {
         return value.length <= max;
     };
-    FormValidator.prototype._validateAplha = function(value) {
+    FormValidator.prototype._validateAplha = function(value)
+    {
         var re = /^[A-z _-]+$/;
         return re.test(value);
     };
-    FormValidator.prototype._validateAplhaNumeric = function(value) {
+    FormValidator.prototype._validateAplhaNumeric = function(value)
+    {
         var re = /^[A-z0-9]+$/;
         return re.test(value);
     };
-    FormValidator.prototype._validateList = function(value) {
+    FormValidator.prototype._validateList = function(value)
+    {
         var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
         return re.test(value);
     };
-    FormValidator.prototype._validateCreditCard = function(value) {
-        var arr   = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-        var ccNum = String(value).replace(/[- ]/g,''); 
+    FormValidator.prototype._validateCreditCard = function(value)
+    {
+        var arr = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+        var ccNum = String(value).replace(/[- ]/g, '');
 
-        var 
+        var
             len = ccNum.length,
             bit = 1,
             sum = 0,
             val;
 
-        while (len) {
+        while (len)
+        {
             val = parseInt(ccNum.charAt(--len), 10);
             sum += (bit ^= 1) ? arr[val] : val;
         }
@@ -8492,7 +10523,6 @@ function complete(response)
     Container.set('FormValidator', FormValidator);
 
 })();
-
 /**
  * Money Formatter
  *
@@ -8501,95 +10531,103 @@ function complete(response)
  * 
  */
 (function()
-{   
+{
     /**
      * number_format
      *
      * @see https://github.com/locutusjs/locutus/blob/e0a68222d482d43164e96ab96023b712d25680a6/src/php/strings/number_format.js
      */
-    function number_format (number, decimals, decPoint, thousandsSep) { // eslint-disable-line camelcase
-  //  discuss at: https://locutus.io/php/number_format/
-  // original by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
-  // improved by: Kevin van Zonneveld (https://kvz.io)
-  // improved by: davook
-  // improved by: Brett Zamir (https://brett-zamir.me)
-  // improved by: Brett Zamir (https://brett-zamir.me)
-  // improved by: Theriault (https://github.com/Theriault)
-  // improved by: Kevin van Zonneveld (https://kvz.io)
-  // bugfixed by: Michael White (https://getsprink.com)
-  // bugfixed by: Benjamin Lupton
-  // bugfixed by: Allan Jensen (https://www.winternet.no)
-  // bugfixed by: Howard Yeend
-  // bugfixed by: Diogo Resende
-  // bugfixed by: Rival
-  // bugfixed by: Brett Zamir (https://brett-zamir.me)
-  //  revised by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
-  //  revised by: Luke Smith (https://lucassmith.name)
-  //    input by: Kheang Hok Chin (https://www.distantia.ca/)
-  //    input by: Jay Klehr
-  //    input by: Amir Habibi (https://www.residence-mixte.com/)
-  //    input by: Amirouche
-  //   example 1: number_format(1234.56)
-  //   returns 1: '1,235'
-  //   example 2: number_format(1234.56, 2, ',', ' ')
-  //   returns 2: '1 234,56'
-  //   example 3: number_format(1234.5678, 2, '.', '')
-  //   returns 3: '1234.57'
-  //   example 4: number_format(67, 2, ',', '.')
-  //   returns 4: '67,00'
-  //   example 5: number_format(1000)
-  //   returns 5: '1,000'
-  //   example 6: number_format(67.311, 2)
-  //   returns 6: '67.31'
-  //   example 7: number_format(1000.55, 1)
-  //   returns 7: '1,000.6'
-  //   example 8: number_format(67000, 5, ',', '.')
-  //   returns 8: '67.000,00000'
-  //   example 9: number_format(0.9, 0)
-  //   returns 9: '1'
-  //  example 10: number_format('1.20', 2)
-  //  returns 10: '1.20'
-  //  example 11: number_format('1.20', 4)
-  //  returns 11: '1.2000'
-  //  example 12: number_format('1.2000', 3)
-  //  returns 12: '1.200'
-  //  example 13: number_format('1 000,50', 2, '.', ' ')
-  //  returns 13: '100 050.00'
-  //  example 14: number_format(1e-8, 8, '.', '')
-  //  returns 14: '0.00000001'
+    function number_format(number, decimals, decPoint, thousandsSep)
+    { // eslint-disable-line camelcase
+        //  discuss at: https://locutus.io/php/number_format/
+        // original by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
+        // improved by: Kevin van Zonneveld (https://kvz.io)
+        // improved by: davook
+        // improved by: Brett Zamir (https://brett-zamir.me)
+        // improved by: Brett Zamir (https://brett-zamir.me)
+        // improved by: Theriault (https://github.com/Theriault)
+        // improved by: Kevin van Zonneveld (https://kvz.io)
+        // bugfixed by: Michael White (https://getsprink.com)
+        // bugfixed by: Benjamin Lupton
+        // bugfixed by: Allan Jensen (https://www.winternet.no)
+        // bugfixed by: Howard Yeend
+        // bugfixed by: Diogo Resende
+        // bugfixed by: Rival
+        // bugfixed by: Brett Zamir (https://brett-zamir.me)
+        //  revised by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
+        //  revised by: Luke Smith (https://lucassmith.name)
+        //    input by: Kheang Hok Chin (https://www.distantia.ca/)
+        //    input by: Jay Klehr
+        //    input by: Amir Habibi (https://www.residence-mixte.com/)
+        //    input by: Amirouche
+        //   example 1: number_format(1234.56)
+        //   returns 1: '1,235'
+        //   example 2: number_format(1234.56, 2, ',', ' ')
+        //   returns 2: '1 234,56'
+        //   example 3: number_format(1234.5678, 2, '.', '')
+        //   returns 3: '1234.57'
+        //   example 4: number_format(67, 2, ',', '.')
+        //   returns 4: '67,00'
+        //   example 5: number_format(1000)
+        //   returns 5: '1,000'
+        //   example 6: number_format(67.311, 2)
+        //   returns 6: '67.31'
+        //   example 7: number_format(1000.55, 1)
+        //   returns 7: '1,000.6'
+        //   example 8: number_format(67000, 5, ',', '.')
+        //   returns 8: '67.000,00000'
+        //   example 9: number_format(0.9, 0)
+        //   returns 9: '1'
+        //  example 10: number_format('1.20', 2)
+        //  returns 10: '1.20'
+        //  example 11: number_format('1.20', 4)
+        //  returns 11: '1.2000'
+        //  example 12: number_format('1.2000', 3)
+        //  returns 12: '1.200'
+        //  example 13: number_format('1 000,50', 2, '.', ' ')
+        //  returns 13: '100 050.00'
+        //  example 14: number_format(1e-8, 8, '.', '')
+        //  returns 14: '0.00000001'
 
-  number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
-  const n = !isFinite(+number) ? 0 : +number
-  const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
-  const sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
-  const dec = (typeof decPoint === 'undefined') ? '.' : decPoint
-  let s = '';
+        number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
+        const n = !isFinite(+number) ? 0 : +number
+        const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+        const sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
+        const dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+        let s = '';
 
-  const toFixedFix = function (n, prec) {
-    if (('' + n).indexOf('e') === -1) {
-      return +(Math.round(n + 'e+' + prec) + 'e-' + prec)
-    } else {
-      const arr = ('' + n).split('e')
-      let sig = ''
-      if (+arr[1] + prec > 0) {
-        sig = '+'
-      }
-      return (+(Math.round(+arr[0] + 'e' + sig + (+arr[1] + prec)) + 'e-' + prec)).toFixed(prec)
+        const toFixedFix = function(n, prec)
+        {
+            if (('' + n).indexOf('e') === -1)
+            {
+                return +(Math.round(n + 'e+' + prec) + 'e-' + prec)
+            }
+            else
+            {
+                const arr = ('' + n).split('e')
+                let sig = ''
+                if (+arr[1] + prec > 0)
+                {
+                    sig = '+'
+                }
+                return (+(Math.round(+arr[0] + 'e' + sig + (+arr[1] + prec)) + 'e-' + prec)).toFixed(prec)
+            }
+        }
+
+        // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
+        s = (prec ? toFixedFix(n, prec).toString() : '' + Math.round(n)).split('.')
+        if (s[0].length > 3)
+        {
+            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
+        }
+        if ((s[1] || '').length < prec)
+        {
+            s[1] = s[1] || ''
+            s[1] += new Array(prec - s[1].length + 1).join('0')
+        }
+
+        return s.join(dec)
     }
-  }
-
-  // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
-  s = (prec ? toFixedFix(n, prec).toString() : '' + Math.round(n)).split('.')
-  if (s[0].length > 3) {
-    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
-  }
-  if ((s[1] || '').length < prec) {
-    s[1] = s[1] || ''
-    s[1] += new Array(prec - s[1].length + 1).join('0')
-  }
-
-  return s.join(dec)
-}
 
 
     /**
@@ -8610,937 +10648,936 @@ function complete(response)
      *
      * @var array
      */
-    var currencies =
-    {
-        'NGN' :
-        {
-            'code' : 'NGN',
-            'title' : 'Nigerian Naira',
-            'symbol' : '₦',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'ARS' :
-        {
-            'code' : 'ARS',
-            'title' : 'Argentine Peso',
-            'symbol' : 'AR$',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'AMD' :
-        {
-            'code' : 'AMD',
-            'title' : 'Armenian Dram',
-            'symbol' : 'Դ',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'AWG' :
-        {
-            'code' : 'AWG',
-            'title' : 'Aruban Guilder',
-            'symbol' : 'Afl. ',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'AUD' :
-        {
-            'code' : 'AUD',
-            'title' : 'Australian Dollar',
-            'symbol' : '$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'BSD' :
-        {
-            'code' : 'BSD',
-            'title' : 'Bahamian Dollar',
-            'symbol' : 'B$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'BHD' :
-        {
-            'code' : 'BHD',
-            'title' : 'Bahraini Dinar',
-            'symbol' : null,
-            'precision' : 3,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'BDT' :
-        {
-            'code' : 'BDT',
-            'title' : 'Bangladesh, Taka',
-            'symbol' : null,
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'BZD' :
-        {
-            'code' : 'BZD',
-            'title' : 'Belize Dollar',
-            'symbol' : 'BZ$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'BMD' :
-        {
-            'code' : 'BMD',
-            'title' : 'Bermudian Dollar',
-            'symbol' : 'BD$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'BOB' :
-        {
-            'code' : 'BOB',
-            'title' : 'Bolivia, Boliviano',
-            'symbol' : 'Bs',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'BAM' :
-        {
-            'code' : 'BAM',
-            'title' : 'Bosnia and Herzegovina convertible mark',
-            'symbol' : 'KM ',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'BWP' :
-        {
-            'code' : 'BWP',
-            'title' : 'Botswana, Pula',
-            'symbol' : 'p',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'BRL' :
-        {
-            'code' : 'BRL',
-            'title' : 'Brazilian Real',
-            'symbol' : 'R$',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'BND' :
-        {
-            'code' : 'BND',
-            'title' : 'Brunei Dollar',
-            'symbol' : 'B$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'CAD' :
-        {
-            'code' : 'CAD',
-            'title' : 'Canadian Dollar',
-            'symbol' : 'CA$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'KYD' :
-        {
-            'code' : 'KYD',
-            'title' : 'Cayman Islands Dollar',
-            'symbol' : 'CI$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'CLP' :
-        {
-            'code' : 'CLP',
-            'title' : 'Chilean Peso',
-            'symbol' : 'CLP$',
-            'precision' : 0,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : '',
-            'symbolPlacement' : 'before'
-        },
-        'CNY' :
-        {
-            'code' : 'CNY',
-            'title' : 'China Yuan Renminbi',
-            'symbol' : 'CN¥',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'COP' :
-        {
-            'code' : 'COP',
-            'title' : 'Colombian Peso',
-            'symbol' : 'COL$',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'CRC' :
-        {
-            'code' : 'CRC',
-            'title' : 'Costa Rican Colon',
-            'symbol' : '₡',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'HRK' :
-        {
-            'code' : 'HRK',
-            'title' : 'Croatian Kuna',
-            'symbol' : ' kn',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'after'
-        },
-        'CUC' :
-        {
-            'code' : 'CUC',
-            'title' : 'Cuban Convertible Peso',
-            'symbol' : 'CUC$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'CUP' :
-        {
-            'code' : 'CUP',
-            'title' : 'Cuban Peso',
-            'symbol' : 'CUP$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'CYP' :
-        {
-            'code' : 'CYP',
-            'title' : 'Cyprus Pound',
-            'symbol' : '£',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'CZK' :
-        {
-            'code' : 'CZK',
-            'title' : 'Czech Koruna',
-            'symbol' : ' Kč',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'after'
-        },
-        'DKK' :
-        {
-            'code' : 'DKK',
-            'title' : 'Danish Krone',
-            'symbol' : ' kr.',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'after'
-        },
-        'DOP' :
-        {
-            'code' : 'DOP',
-            'title' : 'Dominican Peso',
-            'symbol' : 'RD$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'XCD' :
-        {
-            'code' : 'XCD',
-            'title' : 'East Caribbean Dollar',
-            'symbol' : 'EC$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'EGP' :
-        {
-            'code' : 'EGP',
-            'title' : 'Egyptian Pound',
-            'symbol' : 'EGP',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'SVC' :
-        {
-            'code' : 'SVC',
-            'title' : 'El Salvador Colon',
-            'symbol' : '₡',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'EUR' :
-        {
-            'code' : 'EUR',
-            'title' : 'Euro',
-            'symbol' : '€',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'GHC' :
-        {
-            'code' : 'GHC',
-            'title' : 'Ghana, Cedi',
-            'symbol' : 'GH₵',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'GIP' :
-        {
-            'code' : 'GIP',
-            'title' : 'Gibraltar Pound',
-            'symbol' : '£',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'GTQ' :
-        {
-            'code' : 'GTQ',
-            'title' : 'Guatemala, Quetzal',
-            'symbol' : 'Q',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'HNL' :
-        {
-            'code' : 'HNL',
-            'title' : 'Honduras, Lempira',
-            'symbol' : 'L',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'HKD' :
-        {
-            'code' : 'HKD',
-            'title' : 'Hong Kong Dollar',
-            'symbol' : 'HK$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'HUF' :
-        {
-            'code' : 'HUF',
-            'title' : 'Hungary, Forint',
-            'symbol' : ' Ft',
-            'precision' : 0,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : '',
-            'symbolPlacement' : 'after'
-        },
-        'ISK' :
-        {
-            'code' : 'ISK',
-            'title' : 'Iceland Krona',
-            'symbol' : ' kr',
-            'precision' : 0,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : '',
-            'symbolPlacement' : 'after'
-        },
-        'INR' :
-        {
-            'code' : 'INR',
-            'title' : 'Indian Rupee ₹',
-            'symbol' : '₹',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'IDR' :
-        {
-            'code' : 'IDR',
-            'title' : 'Indonesia, Rupiah',
-            'symbol' : 'Rp',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'IRR' :
-        {
-            'code' : 'IRR',
-            'title' : 'Iranian Rial',
-            'symbol' : null,
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'JMD' :
-        {
-            'code' : 'JMD',
-            'title' : 'Jamaican Dollar',
-            'symbol' : 'J$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'JPY' :
-        {
-            'code' : 'JPY',
-            'title' : 'Japan, Yen',
-            'symbol' : '¥',
-            'precision' : 0,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '',
-            'symbolPlacement' : 'before'
-        },
-        'JOD' :
-        {
-            'code' : 'JOD',
-            'title' : 'Jordanian Dinar',
-            'symbol' : null,
-            'precision' : 3,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'KES' :
-        {
-            'code' : 'KES',
-            'title' : 'Kenyan Shilling',
-            'symbol' : 'KSh',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'KWD' :
-        {
-            'code' : 'KWD',
-            'title' : 'Kuwaiti Dinar',
-            'symbol' : 'K.D.',
-            'precision' : 3,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'KZT' :
-        {
-            'code' : 'KZT',
-            'title' : 'Kazakh tenge',
-            'symbol' : '₸',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'LVL' :
-        {
-            'code' : 'LVL',
-            'title' : 'Latvian Lats',
-            'symbol' : 'Ls',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'LBP' :
-        {
-            'code' : 'LBP',
-            'title' : 'Lebanese Pound',
-            'symbol' : 'LBP',
-            'precision' : 0,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '',
-            'symbolPlacement' : 'before'
-        },
-        'LTL' :
-        {
-            'code' : 'LTL',
-            'title' : 'Lithuanian Litas',
-            'symbol' : ' Lt',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'after'
-        },
-        'MKD' :
-        {
-            'code' : 'MKD',
-            'title' : 'Macedonia, Denar',
-            'symbol' : 'ден ',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'MYR' :
-        {
-            'code' : 'MYR',
-            'title' : 'Malaysian Ringgit',
-            'symbol' : 'RM',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'MTL' :
-        {
-            'code' : 'MTL',
-            'title' : 'Maltese Lira',
-            'symbol' : 'Lm',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'MUR' :
-        {
-            'code' : 'MUR',
-            'title' : 'Mauritius Rupee',
-            'symbol' : 'Rs',
-            'precision' : 0,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '',
-            'symbolPlacement' : 'before'
-        },
-        'MXN' :
-        {
-            'code' : 'MXN',
-            'title' : 'Mexican Peso',
-            'symbol' : 'MX$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'MZM' :
-        {
-            'code' : 'MZM',
-            'title' : 'Mozambique Metical',
-            'symbol' : 'MT',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'NPR' :
-        {
-            'code' : 'NPR',
-            'title' : 'Nepalese Rupee',
-            'symbol' : null,
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'ANG' :
-        {
-            'code' : 'ANG',
-            'title' : 'Netherlands Antillian Guilder',
-            'symbol' : 'NAƒ ',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'ILS' :
-        {
-            'code' : 'ILS',
-            'title' : 'New Israeli Shekel ₪',
-            'symbol' : ' ₪',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'after'
-        },
-        'TRY' :
-        {
-            'code' : 'TRY',
-            'title' : 'New Turkish Lira',
-            'symbol' : '₺',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'NZD' :
-        {
-            'code' : 'NZD',
-            'title' : 'New Zealand Dollar',
-            'symbol' : 'NZ$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'NOK' :
-        {
-            'code' : 'NOK',
-            'title' : 'Norwegian Krone',
-            'symbol' : 'kr ',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'PKR' :
-        {
-            'code' : 'PKR',
-            'title' : 'Pakistan Rupee',
-            'symbol' : null,
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'PEN' :
-        {
-            'code' : 'PEN',
-            'title' : 'Peru, Nuevo Sol',
-            'symbol' : 'S/.',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'UYU' :
-        {
-            'code' : 'UYU',
-            'title' : 'Peso Uruguayo',
-            'symbol' : '$U ',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'PHP' :
-        {
-            'code' : 'PHP',
-            'title' : 'Philippine Peso',
-            'symbol' : '₱',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'PLN' :
-        {
-            'code' : 'PLN',
-            'title' : 'Poland, Zloty',
-            'symbol' : ' zł',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'after'
-        },
-        'GBP' :
-        {
-            'code' : 'GBP',
-            'title' : 'Pound Sterling',
-            'symbol' : '£',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'OMR' :
-        {
-            'code' : 'OMR',
-            'title' : 'Rial Omani',
-            'symbol' : 'OMR',
-            'precision' : 3,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'RON' :
-        {
-            'code' : 'RON',
-            'title' : 'Romania, New Leu',
-            'symbol' : null,
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'ROL' :
-        {
-            'code' : 'ROL',
-            'title' : 'Romania, Old Leu',
-            'symbol' : null,
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'RUB' :
-        {
-            'code' : 'RUB',
-            'title' : 'Russian Ruble',
-            'symbol' : ' ₽',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'after'
-        },
-        'SAR' :
-        {
-            'code' : 'SAR',
-            'title' : 'Saudi Riyal',
-            'symbol' : 'SAR',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'SGD' :
-        {
-            'code' : 'SGD',
-            'title' : 'Singapore Dollar',
-            'symbol' : 'S$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'SKK' :
-        {
-            'code' : 'SKK',
-            'title' : 'Slovak Koruna',
-            'symbol' : ' SKK',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'after'
-        },
-        'SIT' :
-        {
-            'code' : 'SIT',
-            'title' : 'Slovenia, Tolar',
-            'symbol' : null,
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'ZAR' :
-        {
-            'code' : 'ZAR',
-            'title' : 'South Africa, Rand',
-            'symbol' : 'R',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'KRW' :
-        {
-            'code' : 'KRW',
-            'title' : 'South Korea, Won ₩',
-            'symbol' : '₩',
-            'precision' : 0,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '',
-            'symbolPlacement' : 'before'
-        },
-        'SZL' :
-        {
-            'code' : 'SZL',
-            'title' : 'Swaziland, Lilangeni',
-            'symbol' : 'E',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'SEK' :
-        {
-            'code' : 'SEK',
-            'title' : 'Swedish Krona',
-            'symbol' : ' kr',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'after'
-        },
-        'CHF' :
-        {
-            'code' : 'CHF',
-            'title' : 'Swiss Franc',
-            'symbol' : 'SFr ',
-            'precision' : 2,
-            'thousandSeparator' : '\'',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'TZS' :
-        {
-            'code' : 'TZS',
-            'title' : 'Tanzanian Shilling',
-            'symbol' : 'TSh',
-            'precision' : 0,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'THB' :
-        {
-            'code' : 'THB',
-            'title' : 'Thailand, Baht ฿',
-            'symbol' : '฿',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'TOP' :
-        {
-            'code' : 'TOP',
-            'title' : 'Tonga, Paanga',
-            'symbol' : 'T$ ',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'AED' :
-        {
-            'code' : 'AED',
-            'title' : 'UAE Dirham',
-            'symbol' : 'AED',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'UAH' :
-        {
-            'code' : 'UAH',
-            'title' : 'Ukraine, Hryvnia',
-            'symbol' : ' ₴',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'after'
-        },
-        'USD' :
-        {
-            'code' : 'USD',
-            'title' : 'US Dollar',
-            'symbol' : '$',
-            'precision' : 2,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
-        },
-        'VUV' :
-        {
-            'code' : 'VUV',
-            'title' : 'Vanuatu, Vatu',
-            'symbol' : 'VT',
-            'precision' : 0,
-            'thousandSeparator' : ',',
-            'decimalSeparator' : '',
-            'symbolPlacement' : 'before'
-        },
-        'VEF' :
-        {
-            'code' : 'VEF',
-            'title' : 'Venezuela Bolivares Fuertes',
-            'symbol' : 'Bs.',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'VEB' :
-        {
-            'code' : 'VEB',
-            'title' : 'Venezuela, Bolivar',
-            'symbol' : 'Bs.',
-            'precision' : 2,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : ',',
-            'symbolPlacement' : 'before'
-        },
-        'VND' :
-        {
-            'code' : 'VND',
-            'title' : 'Viet Nam, Dong ₫',
-            'symbol' : ' ₫',
-            'precision' : 0,
-            'thousandSeparator' : '.',
-            'decimalSeparator' : '',
-            'symbolPlacement' : 'after'
-        },
-        'ZWD' :
-        {
-            'code' : 'ZWD',
-            'title' : 'Zimbabwe Dollar',
-            'symbol' : 'Z$',
-            'precision' : 2,
-            'thousandSeparator' : ' ',
-            'decimalSeparator' : '.',
-            'symbolPlacement' : 'before'
+    var currencies = {
+        'NGN':
+        {
+            'code': 'NGN',
+            'title': 'Nigerian Naira',
+            'symbol': '₦',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'ARS':
+        {
+            'code': 'ARS',
+            'title': 'Argentine Peso',
+            'symbol': 'AR$',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'AMD':
+        {
+            'code': 'AMD',
+            'title': 'Armenian Dram',
+            'symbol': 'Դ',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'AWG':
+        {
+            'code': 'AWG',
+            'title': 'Aruban Guilder',
+            'symbol': 'Afl. ',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'AUD':
+        {
+            'code': 'AUD',
+            'title': 'Australian Dollar',
+            'symbol': '$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'BSD':
+        {
+            'code': 'BSD',
+            'title': 'Bahamian Dollar',
+            'symbol': 'B$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'BHD':
+        {
+            'code': 'BHD',
+            'title': 'Bahraini Dinar',
+            'symbol': null,
+            'precision': 3,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'BDT':
+        {
+            'code': 'BDT',
+            'title': 'Bangladesh, Taka',
+            'symbol': null,
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'BZD':
+        {
+            'code': 'BZD',
+            'title': 'Belize Dollar',
+            'symbol': 'BZ$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'BMD':
+        {
+            'code': 'BMD',
+            'title': 'Bermudian Dollar',
+            'symbol': 'BD$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'BOB':
+        {
+            'code': 'BOB',
+            'title': 'Bolivia, Boliviano',
+            'symbol': 'Bs',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'BAM':
+        {
+            'code': 'BAM',
+            'title': 'Bosnia and Herzegovina convertible mark',
+            'symbol': 'KM ',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'BWP':
+        {
+            'code': 'BWP',
+            'title': 'Botswana, Pula',
+            'symbol': 'p',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'BRL':
+        {
+            'code': 'BRL',
+            'title': 'Brazilian Real',
+            'symbol': 'R$',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'BND':
+        {
+            'code': 'BND',
+            'title': 'Brunei Dollar',
+            'symbol': 'B$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'CAD':
+        {
+            'code': 'CAD',
+            'title': 'Canadian Dollar',
+            'symbol': 'CA$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'KYD':
+        {
+            'code': 'KYD',
+            'title': 'Cayman Islands Dollar',
+            'symbol': 'CI$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'CLP':
+        {
+            'code': 'CLP',
+            'title': 'Chilean Peso',
+            'symbol': 'CLP$',
+            'precision': 0,
+            'thousandSeparator': '.',
+            'decimalSeparator': '',
+            'symbolPlacement': 'before'
+        },
+        'CNY':
+        {
+            'code': 'CNY',
+            'title': 'China Yuan Renminbi',
+            'symbol': 'CN¥',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'COP':
+        {
+            'code': 'COP',
+            'title': 'Colombian Peso',
+            'symbol': 'COL$',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'CRC':
+        {
+            'code': 'CRC',
+            'title': 'Costa Rican Colon',
+            'symbol': '₡',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'HRK':
+        {
+            'code': 'HRK',
+            'title': 'Croatian Kuna',
+            'symbol': ' kn',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'after'
+        },
+        'CUC':
+        {
+            'code': 'CUC',
+            'title': 'Cuban Convertible Peso',
+            'symbol': 'CUC$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'CUP':
+        {
+            'code': 'CUP',
+            'title': 'Cuban Peso',
+            'symbol': 'CUP$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'CYP':
+        {
+            'code': 'CYP',
+            'title': 'Cyprus Pound',
+            'symbol': '£',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'CZK':
+        {
+            'code': 'CZK',
+            'title': 'Czech Koruna',
+            'symbol': ' Kč',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'after'
+        },
+        'DKK':
+        {
+            'code': 'DKK',
+            'title': 'Danish Krone',
+            'symbol': ' kr.',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'after'
+        },
+        'DOP':
+        {
+            'code': 'DOP',
+            'title': 'Dominican Peso',
+            'symbol': 'RD$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'XCD':
+        {
+            'code': 'XCD',
+            'title': 'East Caribbean Dollar',
+            'symbol': 'EC$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'EGP':
+        {
+            'code': 'EGP',
+            'title': 'Egyptian Pound',
+            'symbol': 'EGP',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'SVC':
+        {
+            'code': 'SVC',
+            'title': 'El Salvador Colon',
+            'symbol': '₡',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'EUR':
+        {
+            'code': 'EUR',
+            'title': 'Euro',
+            'symbol': '€',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'GHC':
+        {
+            'code': 'GHC',
+            'title': 'Ghana, Cedi',
+            'symbol': 'GH₵',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'GIP':
+        {
+            'code': 'GIP',
+            'title': 'Gibraltar Pound',
+            'symbol': '£',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'GTQ':
+        {
+            'code': 'GTQ',
+            'title': 'Guatemala, Quetzal',
+            'symbol': 'Q',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'HNL':
+        {
+            'code': 'HNL',
+            'title': 'Honduras, Lempira',
+            'symbol': 'L',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'HKD':
+        {
+            'code': 'HKD',
+            'title': 'Hong Kong Dollar',
+            'symbol': 'HK$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'HUF':
+        {
+            'code': 'HUF',
+            'title': 'Hungary, Forint',
+            'symbol': ' Ft',
+            'precision': 0,
+            'thousandSeparator': ' ',
+            'decimalSeparator': '',
+            'symbolPlacement': 'after'
+        },
+        'ISK':
+        {
+            'code': 'ISK',
+            'title': 'Iceland Krona',
+            'symbol': ' kr',
+            'precision': 0,
+            'thousandSeparator': '.',
+            'decimalSeparator': '',
+            'symbolPlacement': 'after'
+        },
+        'INR':
+        {
+            'code': 'INR',
+            'title': 'Indian Rupee ₹',
+            'symbol': '₹',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'IDR':
+        {
+            'code': 'IDR',
+            'title': 'Indonesia, Rupiah',
+            'symbol': 'Rp',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'IRR':
+        {
+            'code': 'IRR',
+            'title': 'Iranian Rial',
+            'symbol': null,
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'JMD':
+        {
+            'code': 'JMD',
+            'title': 'Jamaican Dollar',
+            'symbol': 'J$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'JPY':
+        {
+            'code': 'JPY',
+            'title': 'Japan, Yen',
+            'symbol': '¥',
+            'precision': 0,
+            'thousandSeparator': ',',
+            'decimalSeparator': '',
+            'symbolPlacement': 'before'
+        },
+        'JOD':
+        {
+            'code': 'JOD',
+            'title': 'Jordanian Dinar',
+            'symbol': null,
+            'precision': 3,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'KES':
+        {
+            'code': 'KES',
+            'title': 'Kenyan Shilling',
+            'symbol': 'KSh',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'KWD':
+        {
+            'code': 'KWD',
+            'title': 'Kuwaiti Dinar',
+            'symbol': 'K.D.',
+            'precision': 3,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'KZT':
+        {
+            'code': 'KZT',
+            'title': 'Kazakh tenge',
+            'symbol': '₸',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'LVL':
+        {
+            'code': 'LVL',
+            'title': 'Latvian Lats',
+            'symbol': 'Ls',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'LBP':
+        {
+            'code': 'LBP',
+            'title': 'Lebanese Pound',
+            'symbol': 'LBP',
+            'precision': 0,
+            'thousandSeparator': ',',
+            'decimalSeparator': '',
+            'symbolPlacement': 'before'
+        },
+        'LTL':
+        {
+            'code': 'LTL',
+            'title': 'Lithuanian Litas',
+            'symbol': ' Lt',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'after'
+        },
+        'MKD':
+        {
+            'code': 'MKD',
+            'title': 'Macedonia, Denar',
+            'symbol': 'ден ',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'MYR':
+        {
+            'code': 'MYR',
+            'title': 'Malaysian Ringgit',
+            'symbol': 'RM',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'MTL':
+        {
+            'code': 'MTL',
+            'title': 'Maltese Lira',
+            'symbol': 'Lm',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'MUR':
+        {
+            'code': 'MUR',
+            'title': 'Mauritius Rupee',
+            'symbol': 'Rs',
+            'precision': 0,
+            'thousandSeparator': ',',
+            'decimalSeparator': '',
+            'symbolPlacement': 'before'
+        },
+        'MXN':
+        {
+            'code': 'MXN',
+            'title': 'Mexican Peso',
+            'symbol': 'MX$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'MZM':
+        {
+            'code': 'MZM',
+            'title': 'Mozambique Metical',
+            'symbol': 'MT',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'NPR':
+        {
+            'code': 'NPR',
+            'title': 'Nepalese Rupee',
+            'symbol': null,
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'ANG':
+        {
+            'code': 'ANG',
+            'title': 'Netherlands Antillian Guilder',
+            'symbol': 'NAƒ ',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'ILS':
+        {
+            'code': 'ILS',
+            'title': 'New Israeli Shekel ₪',
+            'symbol': ' ₪',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'after'
+        },
+        'TRY':
+        {
+            'code': 'TRY',
+            'title': 'New Turkish Lira',
+            'symbol': '₺',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'NZD':
+        {
+            'code': 'NZD',
+            'title': 'New Zealand Dollar',
+            'symbol': 'NZ$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'NOK':
+        {
+            'code': 'NOK',
+            'title': 'Norwegian Krone',
+            'symbol': 'kr ',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'PKR':
+        {
+            'code': 'PKR',
+            'title': 'Pakistan Rupee',
+            'symbol': null,
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'PEN':
+        {
+            'code': 'PEN',
+            'title': 'Peru, Nuevo Sol',
+            'symbol': 'S/.',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'UYU':
+        {
+            'code': 'UYU',
+            'title': 'Peso Uruguayo',
+            'symbol': '$U ',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'PHP':
+        {
+            'code': 'PHP',
+            'title': 'Philippine Peso',
+            'symbol': '₱',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'PLN':
+        {
+            'code': 'PLN',
+            'title': 'Poland, Zloty',
+            'symbol': ' zł',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'after'
+        },
+        'GBP':
+        {
+            'code': 'GBP',
+            'title': 'Pound Sterling',
+            'symbol': '£',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'OMR':
+        {
+            'code': 'OMR',
+            'title': 'Rial Omani',
+            'symbol': 'OMR',
+            'precision': 3,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'RON':
+        {
+            'code': 'RON',
+            'title': 'Romania, New Leu',
+            'symbol': null,
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'ROL':
+        {
+            'code': 'ROL',
+            'title': 'Romania, Old Leu',
+            'symbol': null,
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'RUB':
+        {
+            'code': 'RUB',
+            'title': 'Russian Ruble',
+            'symbol': ' ₽',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'after'
+        },
+        'SAR':
+        {
+            'code': 'SAR',
+            'title': 'Saudi Riyal',
+            'symbol': 'SAR',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'SGD':
+        {
+            'code': 'SGD',
+            'title': 'Singapore Dollar',
+            'symbol': 'S$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'SKK':
+        {
+            'code': 'SKK',
+            'title': 'Slovak Koruna',
+            'symbol': ' SKK',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'after'
+        },
+        'SIT':
+        {
+            'code': 'SIT',
+            'title': 'Slovenia, Tolar',
+            'symbol': null,
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'ZAR':
+        {
+            'code': 'ZAR',
+            'title': 'South Africa, Rand',
+            'symbol': 'R',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'KRW':
+        {
+            'code': 'KRW',
+            'title': 'South Korea, Won ₩',
+            'symbol': '₩',
+            'precision': 0,
+            'thousandSeparator': ',',
+            'decimalSeparator': '',
+            'symbolPlacement': 'before'
+        },
+        'SZL':
+        {
+            'code': 'SZL',
+            'title': 'Swaziland, Lilangeni',
+            'symbol': 'E',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'SEK':
+        {
+            'code': 'SEK',
+            'title': 'Swedish Krona',
+            'symbol': ' kr',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'after'
+        },
+        'CHF':
+        {
+            'code': 'CHF',
+            'title': 'Swiss Franc',
+            'symbol': 'SFr ',
+            'precision': 2,
+            'thousandSeparator': '\'',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'TZS':
+        {
+            'code': 'TZS',
+            'title': 'Tanzanian Shilling',
+            'symbol': 'TSh',
+            'precision': 0,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'THB':
+        {
+            'code': 'THB',
+            'title': 'Thailand, Baht ฿',
+            'symbol': '฿',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'TOP':
+        {
+            'code': 'TOP',
+            'title': 'Tonga, Paanga',
+            'symbol': 'T$ ',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'AED':
+        {
+            'code': 'AED',
+            'title': 'UAE Dirham',
+            'symbol': 'AED',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'UAH':
+        {
+            'code': 'UAH',
+            'title': 'Ukraine, Hryvnia',
+            'symbol': ' ₴',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'after'
+        },
+        'USD':
+        {
+            'code': 'USD',
+            'title': 'US Dollar',
+            'symbol': '$',
+            'precision': 2,
+            'thousandSeparator': ',',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
+        },
+        'VUV':
+        {
+            'code': 'VUV',
+            'title': 'Vanuatu, Vatu',
+            'symbol': 'VT',
+            'precision': 0,
+            'thousandSeparator': ',',
+            'decimalSeparator': '',
+            'symbolPlacement': 'before'
+        },
+        'VEF':
+        {
+            'code': 'VEF',
+            'title': 'Venezuela Bolivares Fuertes',
+            'symbol': 'Bs.',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'VEB':
+        {
+            'code': 'VEB',
+            'title': 'Venezuela, Bolivar',
+            'symbol': 'Bs.',
+            'precision': 2,
+            'thousandSeparator': '.',
+            'decimalSeparator': ',',
+            'symbolPlacement': 'before'
+        },
+        'VND':
+        {
+            'code': 'VND',
+            'title': 'Viet Nam, Dong ₫',
+            'symbol': ' ₫',
+            'precision': 0,
+            'thousandSeparator': '.',
+            'decimalSeparator': '',
+            'symbolPlacement': 'after'
+        },
+        'ZWD':
+        {
+            'code': 'ZWD',
+            'title': 'Zimbabwe Dollar',
+            'symbol': 'Z$',
+            'precision': 2,
+            'thousandSeparator': ' ',
+            'decimalSeparator': '.',
+            'symbolPlacement': 'before'
         },
     };
 
@@ -9744,7 +11781,7 @@ function complete(response)
     {
         return currencies;
     }
-    
+
     /**
      * Set currency
      * 
@@ -9792,7 +11829,7 @@ function complete(response)
 
         if (typeof currency === 'string')
         {
-            this._currency = new Currency(currency);           
+            this._currency = new Currency(currency);
         }
         else if (currency instanceof Currency)
         {
@@ -9849,7 +11886,7 @@ function complete(response)
         // Indian Rupee use special format
         if (this._currency.getCode() == 'INR')
         {
-            return this._amount.toString().split('.')[0].length > 3 ? this._amount.toString().substring(0,this._amount.toString().split('.')[0].length-3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + this._amount.toString().substring(this._amount.toString().split('.')[0].length-3): this._amount.toString();
+            return this._amount.toString().split('.')[0].length > 3 ? this._amount.toString().substring(0, this._amount.toString().split('.')[0].length - 3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + this._amount.toString().substring(this._amount.toString().split('.')[0].length - 3) : this._amount.toString();
         }
 
         // Return western format
@@ -9901,7 +11938,7 @@ function complete(response)
         {
             // make decimal separator regex safe
             var char = currency.getDecimalSeparator();
-            
+
             // remove all other characters
             // convert all decimal seperators to PHP/bcmath safe decimal '.'
 
@@ -9958,7 +11995,7 @@ function complete(response)
         this._options = options;
 
         this._options.onRenderArgs = typeof options.onRenderArgs === 'undefined' ? [] : options.onRenderArgs;
-        this._options.onErrorArgs  = typeof options.onErrorArgs === 'undefined'  ? [] : options.onErrorArgs;
+        this._options.onErrorArgs = typeof options.onErrorArgs === 'undefined' ? [] : options.onErrorArgs;
 
         if (Helper.nodeExists(Helper.$(this._options.trigger)))
         {
@@ -10015,11 +12052,12 @@ function complete(response)
     DynamicUiHandler.prototype._eventHandler = function()
     {
         var trigger = Helper.$(this._options.trigger);
-        var target  = Helper.$(this._options.target);
+        var target = Helper.$(this._options.target);
         var ajaxUrl = this._options.url;
-        var form    = this._options.form || {};
+        var form = this._options.form ||
+        {};
         var trigger = this._options.trigger;
-        var _this   = this;
+        var _this = this;
 
         // Return on loading or disabled
         if (Helper.hasClass(trigger, 'active') || trigger.disabled === true)
@@ -10033,30 +12071,30 @@ function complete(response)
 
         // Request the Ajax
         Ajax.post(ajaxUrl, form, function(success)
-        {
-            var responseObj = Helper.isJSON(success);
-
-            if (responseObj && responseObj.response === 'valid')
             {
-                _this._render(responseObj);
-                _this._fireRendered(responseObj);
-                Hubble.require('Events').fire('domChange', target);
-                Hubble.dom().refresh();
-            }
-            else
-            {
-                _this._fireErrored(success);
-            }
+                var responseObj = Helper.isJSON(success);
 
-            Helper.removeClass(trigger, 'active');
-            Helper.removeClass(target, 'active');
-        },
-        function(error)
-        {
-            Helper.removeClass(trigger, 'active');
-            Helper.removeClass(target, 'active');
-            _this._fireErrored(error);
-        });
+                if (responseObj && responseObj.response === 'valid')
+                {
+                    _this._render(responseObj);
+                    _this._fireRendered(responseObj);
+                    Hubble.require('Events').fire('domChange', target);
+                    Hubble.dom().refresh();
+                }
+                else
+                {
+                    _this._fireErrored(success);
+                }
+
+                Helper.removeClass(trigger, 'active');
+                Helper.removeClass(target, 'active');
+            },
+            function(error)
+            {
+                Helper.removeClass(trigger, 'active');
+                Helper.removeClass(target, 'active');
+                _this._fireErrored(error);
+            });
     }
 
     /**
@@ -10069,12 +12107,12 @@ function complete(response)
     {
         var details = response.details;
         var classes = this._options.classes;
-        var target  = Helper.$(this._options.target);
+        var target = Helper.$(this._options.target);
 
         for (var i = 0; i < classes.length; i++)
         {
             var content = details[classes[i]['key']] || null;
-            var node    = Helper.$(classes[i]['class'], target);
+            var node = Helper.$(classes[i]['class'], target);
 
             if (!content || !Helper.nodeExists(node))
             {
@@ -10091,11 +12129,11 @@ function complete(response)
      * @access private
      */
     DynamicUiHandler.prototype._fireRendered = function(response)
-    {        
+    {
         if (typeof this._options.onRender !== 'undefined')
         {
             var callback = this._options.onRender;
-            var args     = this._options.onRenderArgs;
+            var args = this._options.onRenderArgs;
             args.unshift(response);
 
             callback.apply(this._options.target, args);
@@ -10112,7 +12150,7 @@ function complete(response)
         if (typeof this._options.onError !== 'undefined')
         {
             var callback = this._options.onError;
-            var args     = this._options.onErrorArgs;
+            var args = this._options.onErrorArgs;
             args.unshift(error);
 
             callback.apply(this._options.target, args);
@@ -10158,7 +12196,7 @@ function complete(response)
         this._options = options;
 
         this._options.onRenderArgs = typeof options.onRenderArgs === 'undefined' ? [] : options.onRenderArgs;
-        this._options.onErrorArgs  = typeof options.onErrorArgs === 'undefined'  ? [] : options.onErrorArgs;
+        this._options.onErrorArgs = typeof options.onErrorArgs === 'undefined' ? [] : options.onErrorArgs;
 
         if (Helper.nodeExists(Helper.$(this._options.trigger)))
         {
@@ -10215,11 +12253,12 @@ function complete(response)
     DynamicUiHandler.prototype._eventHandler = function()
     {
         var trigger = Helper.$(this._options.trigger);
-        var target  = Helper.$(this._options.target);
+        var target = Helper.$(this._options.target);
         var ajaxUrl = this._options.url;
-        var form    = this._options.form || {};
+        var form = this._options.form ||
+        {};
         var trigger = this._options.trigger;
-        var _this   = this;
+        var _this = this;
 
         // Return on loading or disabled
         if (Helper.hasClass(trigger, 'active') || trigger.disabled === true)
@@ -10233,30 +12272,30 @@ function complete(response)
 
         // Request the Ajax
         Ajax.post(ajaxUrl, form, function(success)
-        {
-            var responseObj = Helper.isJSON(success);
-
-            if (responseObj && responseObj.response === 'valid')
             {
-                _this._render(responseObj);
-                _this._fireRendered(responseObj);
-                Hubble.require('Events').fire('domChange', target);
-                Hubble.dom().refresh();
-            }
-            else
-            {
-                _this._fireErrored(success);
-            }
+                var responseObj = Helper.isJSON(success);
 
-            Helper.removeClass(trigger, 'active');
-            Helper.removeClass(target, 'active');
-        },
-        function(error)
-        {
-            Helper.removeClass(trigger, 'active');
-            Helper.removeClass(target, 'active');
-            _this._fireErrored(error);
-        });
+                if (responseObj && responseObj.response === 'valid')
+                {
+                    _this._render(responseObj);
+                    _this._fireRendered(responseObj);
+                    Hubble.require('Events').fire('domChange', target);
+                    Hubble.dom().refresh();
+                }
+                else
+                {
+                    _this._fireErrored(success);
+                }
+
+                Helper.removeClass(trigger, 'active');
+                Helper.removeClass(target, 'active');
+            },
+            function(error)
+            {
+                Helper.removeClass(trigger, 'active');
+                Helper.removeClass(target, 'active');
+                _this._fireErrored(error);
+            });
     }
 
     /**
@@ -10269,12 +12308,12 @@ function complete(response)
     {
         var details = response.details;
         var classes = this._options.classes;
-        var target  = Helper.$(this._options.target);
+        var target = Helper.$(this._options.target);
 
         for (var i = 0; i < classes.length; i++)
         {
             var content = details[classes[i]['key']] || null;
-            var node    = Helper.$(classes[i]['class'], target);
+            var node = Helper.$(classes[i]['class'], target);
 
             if (!content || !Helper.nodeExists(node))
             {
@@ -10291,11 +12330,11 @@ function complete(response)
      * @access private
      */
     DynamicUiHandler.prototype._fireRendered = function(response)
-    {        
+    {
         if (typeof this._options.onRender !== 'undefined')
         {
             var callback = this._options.onRender;
-            var args     = this._options.onRenderArgs;
+            var args = this._options.onRenderArgs;
             args.unshift(response);
 
             callback.apply(this._options.target, args);
@@ -10312,7 +12351,7 @@ function complete(response)
         if (typeof this._options.onError !== 'undefined')
         {
             var callback = this._options.onError;
-            var args     = this._options.onErrorArgs;
+            var args = this._options.onErrorArgs;
             args.unshift(error);
 
             callback.apply(this._options.target, args);
@@ -10332,10 +12371,9 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
-	/**
+    /**
      * JS Helper
      * 
      * @var obj
@@ -10397,7 +12435,65 @@ function complete(response)
      * @var obj
      * @source https://github.com/krasimir/chain
      */
-    var Chain=function(){var n={},t=null,r=this,e={},o=[],i=[],u=function(f,t){return n[f]||(n[f]=[]),n[f].push(t),e},p=function(t,r){if(n[t])for(var o=0;f=n[t][o];o++)f(r,e)},l=function(){if(arguments.length>0){o=[];for(var n=0;r=arguments[n];n++)o.push(r);var f=o.shift();if("function"==typeof f)f(t,e);else if("object"==typeof f&&f.length>0){var r=f.shift();r.apply(r,f.concat([e.next]))}}else p("done",t);return e},a=function(){return arguments.length>0&&(2===arguments.length&&"string"==typeof arguments[0]&&"function"==typeof arguments[1]?u.apply(self,arguments):l.apply(self,arguments)),a};return e={on:u,off:function(t,r){if(n[t]){for(var o=[],i=0;f=n[t][i];i++)f!==r&&o.push(f);n[t]=o}return e},next:function(n){t=n,l.apply(r,o)},error:function(n){return void 0!==n?(i.push(n),e):i}},a};
+    var Chain = function()
+    {
+        var n = {},
+            t = null,
+            r = this,
+            e = {},
+            o = [],
+            i = [],
+            u = function(f, t)
+            {
+                return n[f] || (n[f] = []), n[f].push(t), e
+            },
+            p = function(t, r)
+            {
+                if (n[t])
+                    for (var o = 0; f = n[t][o]; o++) f(r, e)
+            },
+            l = function()
+            {
+                if (arguments.length > 0)
+                {
+                    o = [];
+                    for (var n = 0; r = arguments[n]; n++) o.push(r);
+                    var f = o.shift();
+                    if ("function" == typeof f) f(t, e);
+                    else if ("object" == typeof f && f.length > 0)
+                    {
+                        var r = f.shift();
+                        r.apply(r, f.concat([e.next]))
+                    }
+                }
+                else p("done", t);
+                return e
+            },
+            a = function()
+            {
+                return arguments.length > 0 && (2 === arguments.length && "string" == typeof arguments[0] && "function" == typeof arguments[1] ? u.apply(self, arguments) : l.apply(self, arguments)), a
+            };
+        return e = {
+            on: u,
+            off: function(t, r)
+            {
+                if (n[t])
+                {
+                    for (var o = [], i = 0; f = n[t][i]; i++) f !== r && o.push(f);
+                    n[t] = o
+                }
+                return e
+            },
+            next: function(n)
+            {
+                t = n, l.apply(r, o)
+            },
+            error: function(n)
+            {
+                return void 0 !== n ? (i.push(n), e) : i
+            }
+        }, a
+    };
 
     /**
      * DOM parser pollyfill (legacy support)
@@ -10405,9 +12501,42 @@ function complete(response)
      * @var obj
      * @source https://gist.github.com/1129031
      */
-    (function(DOMParser){var DOMParser_proto=DOMParser.prototype,real_parseFromString=DOMParser_proto.parseFromString;try{if((new DOMParser).parseFromString("","text/html")){return;}}catch(ex){}DOMParser_proto.parseFromString=function(markup,type){if(/^\s*text\/html\s*(?:;|$)/i.test(type)){var doc=document.implementation.createHTMLDocument(""),doc_elt=doc.documentElement,first_elt;doc_elt.innerHTML=markup;first_elt=doc_elt.firstElementChild;if(doc_elt.childElementCount===1&&first_elt.localName.toLowerCase()==="html"){doc.replaceChild(first_elt,doc_elt);}return doc;}else{return real_parseFromString.apply(this,arguments);}};}(DOMParser));
+    (function(DOMParser)
+    {
+        var DOMParser_proto = DOMParser.prototype,
+            real_parseFromString = DOMParser_proto.parseFromString;
+        try
+        {
+            if ((new DOMParser).parseFromString("", "text/html"))
+            {
+                return;
+            }
+        }
+        catch (ex)
+        {}
+        DOMParser_proto.parseFromString = function(markup, type)
+        {
+            if (/^\s*text\/html\s*(?:;|$)/i.test(type))
+            {
+                var doc = document.implementation.createHTMLDocument(""),
+                    doc_elt = doc.documentElement,
+                    first_elt;
+                doc_elt.innerHTML = markup;
+                first_elt = doc_elt.firstElementChild;
+                if (doc_elt.childElementCount === 1 && first_elt.localName.toLowerCase() === "html")
+                {
+                    doc.replaceChild(first_elt, doc_elt);
+                }
+                return doc;
+            }
+            else
+            {
+                return real_parseFromString.apply(this, arguments);
+            }
+        };
+    }(DOMParser));
 
-	/**
+    /**
      * Module constructor
      *
      * @constructor
@@ -10415,10 +12544,10 @@ function complete(response)
      */
     var Pjax = function()
     {
-    	if (!_invoked)
-    	{
-    		this._bind();
-    	}
+        if (!_invoked)
+        {
+            this._bind();
+        }
 
         return this;
     };
@@ -10430,14 +12559,14 @@ function complete(response)
      */
     Pjax.prototype.destruct = function()
     {
-    	// Keep the CAHCE so that state changes are retained
-    	_invoked   = false;
+        // Keep the CAHCE so that state changes are retained
+        _invoked = false;
         _listening = false;
-        
+
         window.removeEventListener('popstate', this._stateChange, false);
-	    
-	    Hubble.require('Events').off('pjax:start', this._onStart);
-	    Hubble.require('Events').off('pjax:complete', this._onComplete);
+
+        Hubble.require('Events').off('pjax:start', this._onStart);
+        Hubble.require('Events').off('pjax:complete', this._onComplete);
     }
 
     /**
@@ -10447,14 +12576,14 @@ function complete(response)
      */
     Pjax.prototype._bind = function()
     {
-    	_invoked = true;
+        _invoked = true;
 
         this._cachePage();
 
         _requestedUrls.push(this._normaliseUrl(window.location.href));
 
-	    Hubble.require('Events').on('pjax:start', this._onStart);
-	    Hubble.require('Events').on('pjax:complete', this._onComplete);
+        Hubble.require('Events').on('pjax:start', this._onStart);
+        Hubble.require('Events').on('pjax:complete', this._onComplete);
     }
 
     /**
@@ -10500,12 +12629,12 @@ function complete(response)
     Pjax.prototype.setState = function(url)
     {
         url = this._normaliseUrl(url)
-        
+
         if (this.requestedUrl(url))
         {
-            var _content  = this._cacheGet(url + '____content');
+            var _content = this._cacheGet(url + '____content');
             var _location = this._cacheGet(url + '____location');
-            
+
             if (!_content || !_location)
             {
                 window.location.href = url;
@@ -10523,7 +12652,7 @@ function complete(response)
      */
     Pjax.prototype._onStart = function()
     {
-    	Hubble.require('NProgress').start();
+        Hubble.require('NProgress').start();
     }
 
     /**
@@ -10533,8 +12662,8 @@ function complete(response)
      */
     Pjax.prototype._onComplete = function()
     {
-    	Hubble.require('NProgress').done();
-    	Hubble.dom().refresh();
+        Hubble.require('NProgress').done();
+        Hubble.dom().refresh();
     }
 
     /**
@@ -10549,16 +12678,16 @@ function complete(response)
      */
     Pjax.prototype.invoke = function(url, target, title, stateChange, singleRequest)
     {
-    	// Save the document's current state
-      	this._cachePage();
+        // Save the document's current state
+        this._cachePage();
 
-    	// If we are already loading a pjax request don't proceed
-       	if (_loading)
-       	{
-       		return;
-       	}
+        // If we are already loading a pjax request don't proceed
+        if (_loading)
+        {
+            return;
+        }
 
-       	// We are now loading
+        // We are now loading
         _loading = true;
 
         // Fallback title
@@ -10573,47 +12702,54 @@ function complete(response)
         // Normalize the url
         url = this._normaliseUrl(url.trim());
 
-      	// Are we changing the window state	
+        // Are we changing the window state 
         if (stateChange)
         {
-        	// Push the current state
-        	window.history.pushState(
-	        	{ id: window.location.href },
-	        	document.title, 
-	        	window.location.href
-	        );
+            // Push the current state
+            window.history.pushState(
+                {
+                    id: window.location.href
+                },
+                document.title,
+                window.location.href
+            );
         }
 
         // Create a new location object
-        var newLocation =
-        {
-            location : url,
-            target   : target,
-            title    : title,
-            scroll   : { left : 0, top : 0 },
+        var newLocation = {
+            location: url,
+            target: target,
+            title: title,
+            scroll:
+            {
+                left: 0,
+                top: 0
+            },
         };
 
         // Do we need to request fresh ?
         if (singleRequest === true && Helper.in_array(url, _requestedUrls))
-    	{
-    		if (stateChange === true)
-    		{
-    			if (title)
-    			{
-    				document.title = title;
-    			}
+        {
+            if (stateChange === true)
+            {
+                if (title)
+                {
+                    document.title = title;
+                }
 
                 window.history.pushState(
-                	{ id: url }, 
-                	title, 
-                	url
+                    {
+                        id: url
+                    },
+                    title,
+                    url
                 );
-    		}
+            }
 
-    		_loading = false;
-    		
-	        return;
-    	}
+            _loading = false;
+
+            return;
+        }
 
         // pjax GET the new content
         this._load(newLocation, stateChange, singleRequest);
@@ -10633,31 +12769,34 @@ function complete(response)
         var _this = this;
 
         // We have now requested this url  
-		_requestedUrls.push(locationObj['location']);
+        _requestedUrls.push(locationObj['location']);
 
         // Fire the start event
         Hubble.require('Events').fire('pjax:start', locationObj);
 
         // Send GET request
         Ajax.get(locationObj['location'], null, function(HTML)
-        {
-            // Fire the success event
-            Hubble.require('Events').fire('pjax:success', locationObj);
+            {
+                // Fire the success event
+                Hubble.require('Events').fire('pjax:success', locationObj);
 
-            // Handle the response
-            _this._handleSuccess(locationObj, HTML, stateChange);
+                // Handle the response
+                _this._handleSuccess(locationObj, HTML, stateChange);
 
-        },
-        // Handle the error
-        function(error)
-        {
-            // Fire the error event
-            Hubble.require('Events').fire('pjax:error', locationObj);
-
+            },
             // Handle the error
-            _this._handleError(locationObj, error);
+            function(error)
+            {
+                // Fire the error event
+                Hubble.require('Events').fire('pjax:error', locationObj);
 
-        }, [{'X-PJAX' : true}]);
+                // Handle the error
+                _this._handleError(locationObj, error);
+
+            }, [
+            {
+                'X-PJAX': true
+            }]);
     }
 
     /**
@@ -10692,40 +12831,40 @@ function complete(response)
 
         // Try to get the title
         var _title = this._findDomTitle(domCotent);
-        
+
         if (_title)
         {
-        	locationObj['title'] = _title;
+            locationObj['title'] = _title;
         }
         else
         {
-        	if (!locationObj['title'])
-        	{
-        		locationObj['title'] = document.title;
-        	}
+            if (!locationObj['title'])
+            {
+                locationObj['title'] = document.title;
+            }
         }
 
         // Set the title
         document.title = locationObj['title'];
-    
+
         // Find the target element in the new HTML and the current DOM
         // If the target is set to 'document-body' get the body
         // Otherwise get by id
         if (locationObj['target'] === 'document-body')
         {
-        	var targetEl  = document.body;
-        	var domTarget = domCotent.body;
+            var targetEl = document.body;
+            var domTarget = domCotent.body;
         }
         else
         {
-        	var targetEl  = document.getElementById(locationObj['target']);
-        	var domTarget = domCotent.getElementById(locationObj['target']);
+            var targetEl = document.getElementById(locationObj['target']);
+            var domTarget = domCotent.getElementById(locationObj['target']);
         }
-        
+
         // Cache the current document scripts to compare
-       	var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
-        var newScripts  = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
-        
+        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
+        var newScripts = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
+
         // Replace the target el's innerHTML
         if (typeof domTarget === 'undefined' || domTarget === null)
         {
@@ -10742,9 +12881,9 @@ function complete(response)
         if (!stateChange)
         {
             Hubble.require('Events').fire('pjax:complete', locationObj);
-            
+
             _loading = false;
-            
+
             return;
         }
 
@@ -10752,45 +12891,47 @@ function complete(response)
         // from the response
         var _this = this;
         Chain()
-        (
-            function(res, chain)
-            {
-            	// Append scripts, wait for load/execution and call next chain
-                _this._appendScripts(currScripts, newScripts, chain);
-            },
-            function(res, chain)
-            {
-            	// Push the history state
-                window.history.pushState(
-                	{ id: locationObj.location }, 
-                	locationObj.title, 
-                	locationObj.location
-                );
-                chain.next();
-            },
-            function(res, chain)
-            {
-            	// If we are not listening for any state changes
-            	// Add the listener
-                if (!_listening)
+            (
+                function(res, chain)
                 {
-                	_this._stateListener();
+                    // Append scripts, wait for load/execution and call next chain
+                    _this._appendScripts(currScripts, newScripts, chain);
+                },
+                function(res, chain)
+                {
+                    // Push the history state
+                    window.history.pushState(
+                        {
+                            id: locationObj.location
+                        },
+                        locationObj.title,
+                        locationObj.location
+                    );
+                    chain.next();
+                },
+                function(res, chain)
+                {
+                    // If we are not listening for any state changes
+                    // Add the listener
+                    if (!_listening)
+                    {
+                        _this._stateListener();
+                    }
+
+                    // Finished loading
+                    _loading = false;
+
+                    // Pjax complete event
+                    Hubble.require('Events').fire('pjax:complete', locationObj);
+
+                    // Wait for spinner to finish
+                    setTimeout(function()
+                    {
+                        _this._cachePage();
+
+                    }, 500);
                 }
-
-                // Finished loading
-                _loading = false;
-
-                // Pjax complete event
-                Hubble.require('Events').fire('pjax:complete', locationObj);
-
-                // Wait for spinner to finish
-                setTimeout(function()
-                { 
-                	_this._cachePage();
-
-                }, 500);                
-            }
-        );
+            );
     }
 
     /**
@@ -10802,7 +12943,7 @@ function complete(response)
     Pjax.prototype._stateListener = function()
     {
         window.addEventListener('popstate', this._onStateChange);
-        
+
         _listening = true;
     }
 
@@ -10815,15 +12956,15 @@ function complete(response)
     Pjax.prototype._onStateChange = function(e)
     {
         e = e || window.event;
-        
+
         var _this = Hubble.require('Pjax');
 
         // If this is a cached state
         if (e.state && typeof e.state.id !== 'undefined')
         {
-            var _content  = _this._cacheGet(e.state.id + '____content');
+            var _content = _this._cacheGet(e.state.id + '____content');
             var _location = _this._cacheGet(e.state.id + '____location');
-            
+
             // If the history state was 'broken' 
             // ie page1 -> pjax -> page2 -> leave -> page3 back <- page2 back <- page1
             // then the location object won't be available - refresh normally
@@ -10833,7 +12974,7 @@ function complete(response)
                 window.location.href = window.location.href;
                 return;
             }
-            
+
             // Prevent default
             e.preventDefault();
 
@@ -10842,7 +12983,7 @@ function complete(response)
         }
         else
         {
-        	history.back();
+            history.back();
         }
     }
 
@@ -10854,50 +12995,50 @@ function complete(response)
      * @param  string HTML        document.body.innerHTML
      */
     Pjax.prototype._restoreState = function(locationObj, HTML)
-    {    	
-    	// Parse the HTML
+    {
+        // Parse the HTML
         var domCotent = this._parseHTML(HTML);
 
         // Try to get the title
         var _title = this._findDomTitle(domCotent);
-        
+
         if (_title)
         {
-        	locationObj['title'] = _title;
+            locationObj['title'] = _title;
         }
         else
         {
-        	if (!locationObj['title'])
-        	{
-        		locationObj['title'] = document.title;
-        	}
+            if (!locationObj['title'])
+            {
+                locationObj['title'] = document.title;
+            }
         }
 
         // Set the title
         document.title = locationObj['title'];
-    
+
         document.body.innerHTML = HTML;
-        
+
         // Cache the current document scripts to compare
-       	var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
-        var newScripts  = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
+        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
+        var newScripts = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
 
         // Push the state change and append any new scripts
         // from the response
         var _this = this;
         Chain()
-        (
-            function(res, chain)
-            {
-            	// Append scripts, wait for load/execution and call next chain
-                _this._appendScripts(currScripts, newScripts, chain);
-            },
-            function(res, chain)
-            {
-            	_loading = false;
-            	Hubble.require('Events').fire('pjax:complete', locationObj);
-            }
-        );
+            (
+                function(res, chain)
+                {
+                    // Append scripts, wait for load/execution and call next chain
+                    _this._appendScripts(currScripts, newScripts, chain);
+                },
+                function(res, chain)
+                {
+                    _loading = false;
+                    Hubble.require('Events').fire('pjax:complete', locationObj);
+                }
+            );
     }
 
     /**
@@ -10918,48 +13059,48 @@ function complete(response)
 
         for (var i = 0; i < newScripts.length; i++)
         {
-        	// Script is not in the current DOM tree
+            // Script is not in the current DOM tree
             if (!this._hasScript(newScripts[i], currScripts))
             {
-            	// Create a new script
+                // Create a new script
                 var script = document.createElement('script');
-                script.type  = 'text/javascript';
+                script.type = 'text/javascript';
                 script.async = false;
 
                 // Is this an inline script or a src ?
                 if (newScripts[i]['src'] === true)
                 {
-                	// Listen for the script to load to chain next
-                	if (!this._havMoreScriptSources(i, newScripts))
-                	{
-                		script.addEventListener('load', function()
-		                {
-		                    chain.next();
-		                });
-		                listeningForChain = true;
-                	}
+                    // Listen for the script to load to chain next
+                    if (!this._havMoreScriptSources(i, newScripts))
+                    {
+                        script.addEventListener('load', function()
+                        {
+                            chain.next();
+                        });
+                        listeningForChain = true;
+                    }
 
-	                script.src = newScripts[i]['content'];
+                    script.src = newScripts[i]['content'];
                 }
                 else
                 {
-                	script.innerHTML = newScripts[i]['content'];
+                    script.innerHTML = newScripts[i]['content'];
 
-                	// If there are either no more scripts to load
-                	// Or no more src scripts to load:
-                	// and we haven't added a listener to call the next chain
-                	// Add a function so once this script executes the next chain will be called
-                	if (!listeningForChain && !this._havMoreScriptSources(i, newScripts))
-                	{
-                		listeningForChain = true;
-                		window.nextChain = function()
-                		{
-                			chain.next();
-                			delete window.nextChain;
-                		};
+                    // If there are either no more scripts to load
+                    // Or no more src scripts to load:
+                    // and we haven't added a listener to call the next chain
+                    // Add a function so once this script executes the next chain will be called
+                    if (!listeningForChain && !this._havMoreScriptSources(i, newScripts))
+                    {
+                        listeningForChain = true;
+                        window.nextChain = function()
+                        {
+                            chain.next();
+                            delete window.nextChain;
+                        };
 
-                		script.innerHTML += ';(function(){ nextChain(); })();';
-                	}
+                        script.innerHTML += ';(function(){ nextChain(); })();';
+                    }
                 }
 
                 // Append the new script
@@ -10970,7 +13111,7 @@ function complete(response)
         // If no listeners call next
         if (!listeningForChain)
         {
-        	chain.next();
+            chain.next();
         }
     }
 
@@ -10984,18 +13125,18 @@ function complete(response)
      */
     Pjax.prototype._havMoreScriptSources = function(i, scripts)
     {
-    	// Are we at the last iteration ?
-    	if (i < scripts.length - 1)
-    	{
-    		return false;
-    	}
-
-    	for (var k = 0; k < scripts.length; k++)
+        // Are we at the last iteration ?
+        if (i < scripts.length - 1)
         {
-        	if (k > i && scripts[k]['src'] === true)
-        	{
-        		return true;
-        	}
+            return false;
+        }
+
+        for (var k = 0; k < scripts.length; k++)
+        {
+            if (k > i && scripts[k]['src'] === true)
+            {
+                return true;
+            }
         }
 
         return false;
@@ -11011,27 +13152,37 @@ function complete(response)
     Pjax.prototype._filterScripts = function(nodes)
     {
         var result = [];
-        
+
         for (var i = 0; i < nodes.length; i++)
         {
             var src = nodes[i].getAttribute('src');
 
             if (src)
             {
-            	// Remove the query string
-            	src = src.split('?')[0];
-            	
-            	result.push( { 'src': true, 'inline' : false, 'content' : src} );
+                // Remove the query string
+                src = src.split('?')[0];
+
+                result.push(
+                {
+                    'src': true,
+                    'inline': false,
+                    'content': src
+                });
             }
             else
-            {	
-            	// Don't append JSON inline scripts
-            	if (Helper.isJSON(nodes[i].innerHTML.trim()))
-            	{
-            		continue;
-            	}
+            {
+                // Don't append JSON inline scripts
+                if (Helper.isJSON(nodes[i].innerHTML.trim()))
+                {
+                    continue;
+                }
 
-            	result.push({ 'src': false, 'inline' : true, 'content' : nodes[i].innerHTML.trim()});
+                result.push(
+                {
+                    'src': false,
+                    'inline': true,
+                    'content': nodes[i].innerHTML.trim()
+                });
             }
         }
 
@@ -11050,10 +13201,10 @@ function complete(response)
     {
         for (var i = 0; i < currScripts.length; i++)
         {
-        	if (script['content'] === currScripts[i]['content'])
-        	{
-        		return true;
-        	}
+            if (script['content'] === currScripts[i]['content'])
+            {
+                return true;
+            }
         }
 
         return false;
@@ -11068,11 +13219,11 @@ function complete(response)
      */
     Pjax.prototype._findDomTitle = function(DOM)
     {
-        var title  = DOM.getElementsByTagName('title');
-        
+        var title = DOM.getElementsByTagName('title');
+
         if (title.length)
         {
-        	return title[0].innerHTML.trim();
+            return title[0].innerHTML.trim();
         }
 
         return false;
@@ -11087,7 +13238,7 @@ function complete(response)
      */
     Pjax.prototype._parseHTML = function(html)
     {
-    	var parser = new DOMParser();
+        var parser = new DOMParser();
         return parser.parseFromString(html, 'text/html');
     }
 
@@ -11099,12 +13250,12 @@ function complete(response)
      */
     Pjax.prototype._getScrollPos = function()
     {
-        var doc  = document.documentElement;
-        var top  = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+        var doc = document.documentElement;
+        var top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
         var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
         return {
-            top  : top,
-            left : left
+            top: top,
+            left: left
         };
     }
 
@@ -11117,7 +13268,7 @@ function complete(response)
      */
     Pjax.prototype._cachePut = function(key, value)
     {
-    	for (var i = 0; i < _cache.length; i++)
+        for (var i = 0; i < _cache.length; i++)
         {
             if (_cache[i]['key'] === key)
             {
@@ -11125,8 +13276,12 @@ function complete(response)
                 return;
             }
         }
-        
-        _cache.push({key: key, value: value});
+
+        _cache.push(
+        {
+            key: key,
+            value: value
+        });
     }
 
     /**
@@ -11156,20 +13311,19 @@ function complete(response)
      */
     Pjax.prototype._cachePage = function()
     {
-    	var content = document.body.innerHTML;
+        var content = document.body.innerHTML;
 
-        var _location =
-        {
-            location : window.location.href,
-            target   : 'document-body',
-            title    : document.title,
-            scroll   : this._getScrollPos(),
+        var _location = {
+            location: window.location.href,
+            target: 'document-body',
+            title: document.title,
+            scroll: this._getScrollPos(),
         };
-        this._cachePut(window.location.href+'____location', _location);
-        this._cachePut(window.location.href+'____content', content);
+        this._cachePut(window.location.href + '____location', _location);
+        this._cachePut(window.location.href + '____content', content);
     }
 
-     /**
+    /**
      * Cache the current page DOM
      *
      * @access private
@@ -11177,45 +13331,45 @@ function complete(response)
      */
     Pjax.prototype._normaliseUrl = function(url)
     {
-    	// If the url was set as local
-    	
-    	// e.g www.foobar.com/foobar
-    	// foobar.com/foobar
-    	if (url.indexOf('http') < 0)
-    	{
-    		// Get the path
-    		var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;	
+        // If the url was set as local
 
-    		// e.g www.foobar.com/foobar
-    		if (url[0] === 'w')
-    		{
-    			var host = url.split('.com');
+        // e.g www.foobar.com/foobar
+        // foobar.com/foobar
+        if (url.indexOf('http') < 0)
+        {
+            // Get the path
+            var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;
 
-    			url = window.location.protocol + '//' + host[0] + '.com/' + path;
-    		}
-    		else
-    		{
-    			// foobar.com/foobar
-    			if (url.indexOf('.com') !== -1)
-    			{
-    				var host = url.split('.com');
-    				url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
-    			}
-    			// /foobar/bar/
-    			else
-    			{
-    				url = window.location.origin + '/' + path;
-    			}
-    			
-    		}
-    	}
+            // e.g www.foobar.com/foobar
+            if (url[0] === 'w')
+            {
+                var host = url.split('.com');
 
-    	return url;
+                url = window.location.protocol + '//' + host[0] + '.com/' + path;
+            }
+            else
+            {
+                // foobar.com/foobar
+                if (url.indexOf('.com') !== -1)
+                {
+                    var host = url.split('.com');
+                    url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
+                }
+                // /foobar/bar/
+                else
+                {
+                    url = window.location.origin + '/' + path;
+                }
+
+            }
+        }
+
+        return url;
     }
 
-	// Load into Hubble DOM core
+    // Load into Hubble DOM core
     Container.get('Hubble').dom().register('Pjax', Pjax);
-   
+
 })();
 /**
  * Pjax Links Module
@@ -11224,7 +13378,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -11239,7 +13392,10 @@ function complete(response)
      * 
      * @var function
      */
-    function boolval(l){return!1!==l&&("false"!==l&&(0!==l&&0!==l&&(""!==l&&"0"!==l&&((!Array.isArray(l)||0!==l.length)&&(null!==l&&void 0!==l)))))}
+    function boolval(l)
+    {
+        return !1 !== l && ("false" !== l && (0 !== l && 0 !== l && ("" !== l && "0" !== l && ((!Array.isArray(l) || 0 !== l.length) && (null !== l && void 0 !== l)))))
+    }
 
     /**
      * Module constructor
@@ -11253,9 +13409,9 @@ function complete(response)
 
         if (!Helper.empty(this._nodes))
         {
-        	this._bind();
+            this._bind();
         }
-        
+
         return this;
     }
 
@@ -11307,21 +13463,20 @@ function complete(response)
 
         e.preventDefault();
 
-        var trigger     = this;
-		var href        = trigger.dataset.pjaxHref;
-		var target      = trigger.dataset.pjaxTarget;
-		var title       = trigger.dataset.pjaxTitle || false;
-		var stateChange = boolval(trigger.dataset.pjaxStateChange);
+        var trigger = this;
+        var href = trigger.dataset.pjaxHref;
+        var target = trigger.dataset.pjaxTarget;
+        var title = trigger.dataset.pjaxTitle || false;
+        var stateChange = boolval(trigger.dataset.pjaxStateChange);
         var singleRequest = boolval(trigger.dataset.pjaxSingleRequest);
 
-		Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
+        Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
     }
 
     // Load into Hubble DOM core
     Container.get('Hubble').dom().register('PjaxLinks', PjaxLinks);
 
 }());
-
 /**
  * Scrollbars
  *
@@ -11330,16 +13485,19 @@ function complete(response)
  * This should not be used at all outside of the framework.
  * @see https://github.com/noraesae/perfect-scrollbar
  */
-(function() {
+(function()
+{
 
     var defaults = {
-        elements: {
+        elements:
+        {
             area: '.scrollbar-area',
             wrapper: '.scrollbar-wrapper',
             track: '.scrollbar-track',
             handle: '.scrollbar-handle'
         },
-        stateClasses: {
+        stateClasses:
+        {
             dragging: 'scrollbar-dragging',
             hover: 'scrollbar-hover'
         }
@@ -11347,23 +13505,28 @@ function complete(response)
 
     // SCROLLBAR HANDLER
     /*****************************************/
-    function Scrollbar(element, opts) {
+    function Scrollbar(element, opts)
+    {
 
         // handle constructor call without `new` keyword
-        if (!(this instanceof Scrollbar))  return new Scrollbar(element, opts);
+        if (!(this instanceof Scrollbar)) return new Scrollbar(element, opts);
 
         // is plugin already initialized?
-        if (this.el) {
+        if (this.el)
+        {
             return;
         }
 
         this.el = element;
-        this.opts = extend({}, defaults, opts || {});
+        this.opts = extend(
+        {}, defaults, opts ||
+        {});
 
         this._setupElements();
 
         // check if browser has physical scrollbars (usually desktop)
-        if (this.scrollbarWidth = getScrollbarWidth()) {
+        if (this.scrollbarWidth = getScrollbarWidth())
+        {
             this._enableTrack();
 
             this._observeHover(this.area);
@@ -11372,7 +13535,9 @@ function complete(response)
             this._enableDragging();
 
             this.refresh();
-        } else {
+        }
+        else
+        {
             this._allowNativeScroll();
         }
 
@@ -11384,7 +13549,8 @@ function complete(response)
     /**
      * Destroys plugin instance.
      */
-    Scrollbar.prototype.destroy = function() {
+    Scrollbar.prototype.destroy = function()
+    {
         var stateClasses = this.opts.stateClasses;
 
         this._removeAllListeners();
@@ -11404,25 +13570,31 @@ function complete(response)
     /**
      * Refreshes scrollbar by adjusting its handle's height and position.
      */
-    Scrollbar.prototype.refresh = function() {
+    Scrollbar.prototype.refresh = function()
+    {
         var newRatio;
 
-        if (!this.el || this.isNative()) {
+        if (!this.el || this.isNative())
+        {
             return;
         }
-        
-        if (this.wrapper.scrollHeight > this.wrapper.offsetHeight) {
+
+        if (this.wrapper.scrollHeight > this.wrapper.offsetHeight)
+        {
             this.track.style.display = 'block';
 
             newRatio = this.track.offsetHeight / this.wrapper.scrollHeight;
 
-            if (newRatio !== this.ratio) {
+            if (newRatio !== this.ratio)
+            {
                 this.ratio = newRatio;
 
                 this._resizeHandle();
                 this._positionHandle();
             }
-        } else {
+        }
+        else
+        {
             this.track.style.display = 'none';
         }
     }
@@ -11432,7 +13604,8 @@ function complete(response)
      *
      * @returns {Boolean}
      */
-    Scrollbar.prototype.isNative = function() {
+    Scrollbar.prototype.isNative = function()
+    {
         return !this.scrollbarWidth;
     }
 
@@ -11443,7 +13616,8 @@ function complete(response)
      *
      * @private
      */
-    Scrollbar.prototype._setupElements = function() {
+    Scrollbar.prototype._setupElements = function()
+    {
         var elements = this.opts.elements;
 
         this.area = this.el.querySelector(elements.area);
@@ -11458,39 +13632,45 @@ function complete(response)
      * @param {HTMLElement} element
      * @private
      */
-    Scrollbar.prototype._observeHover = function(element) {
-        var cls = this.opts.stateClasses.hover;
+    Scrollbar.prototype._observeHover = function(element)
+        {
+            var cls = this.opts.stateClasses.hover;
 
-        this._addListener(element, 'mouseenter', function() {
-            addClass(element, cls);
-        });
-        this._addListener(element, 'mouseleave', function() {
-            removeClass(element, cls);
-        });
-    },
+            this._addListener(element, 'mouseenter', function()
+            {
+                addClass(element, cls);
+            });
+            this._addListener(element, 'mouseleave', function()
+            {
+                removeClass(element, cls);
+            });
+        },
 
-    /**
-     * Enables scroll by overflowing native scrollbar and starting to listen to `scroll` event.
-     *
-     * @private
-     */
-    Scrollbar.prototype._enableScroll = function() {
-        this._addListener(this.wrapper, 'scroll', bind(this._positionHandle, this));
-    }
+        /**
+         * Enables scroll by overflowing native scrollbar and starting to listen to `scroll` event.
+         *
+         * @private
+         */
+        Scrollbar.prototype._enableScroll = function()
+        {
+            this._addListener(this.wrapper, 'scroll', bind(this._positionHandle, this));
+        }
 
     /**
      * Enables handle's dragging along the track.
      *
      * @private
      */
-    Scrollbar.prototype._enableDragging = function() {
+    Scrollbar.prototype._enableDragging = function()
+    {
         var cls = this.opts.stateClasses.dragging,
             initialPosition = null,
             initialTop = null,
             startDragging,
             stopDragging;
 
-        this._addListener(this.handle, 'mousedown', bind(function(e) {
+        this._addListener(this.handle, 'mousedown', bind(function(e)
+        {
             initialPosition = this.wrapper.scrollTop;
             initialTop = e.clientY;
 
@@ -11498,18 +13678,21 @@ function complete(response)
             this._addListener(document, 'mouseup', stopDragging);
         }, this));
 
-        startDragging = bind(function(e) {
+        startDragging = bind(function(e)
+        {
             var newPosition,
                 wrapperHeight,
                 wrapperInnerHeight;
 
-            if (initialTop !== null) {
+            if (initialTop !== null)
+            {
                 newPosition = Math.round(initialPosition + (e.clientY - initialTop) / this.ratio);
 
                 wrapperHeight = this.wrapper.offsetHeight;
                 wrapperInnerHeight = this.wrapper.scrollHeight;
 
-                if (newPosition + wrapperHeight > wrapperInnerHeight) {
+                if (newPosition + wrapperHeight > wrapperInnerHeight)
+                {
                     newPosition = wrapperInnerHeight - wrapperHeight;
                 }
 
@@ -11521,7 +13704,8 @@ function complete(response)
             }
         }, this);
 
-        stopDragging = bind(function() {
+        stopDragging = bind(function()
+        {
             initialTop = null;
             initialPosition = null;
 
@@ -11538,7 +13722,8 @@ function complete(response)
      *
      * @private
      */
-    Scrollbar.prototype._enableTrack = function() {
+    Scrollbar.prototype._enableTrack = function()
+    {
         this.wrapper.style.overflowY = 'scroll';
         this.wrapper.style.marginRight = -1 * this.scrollbarWidth + 'px';
     }
@@ -11548,7 +13733,8 @@ function complete(response)
      *
      * @private
      */
-    Scrollbar.prototype._allowNativeScroll = function() {
+    Scrollbar.prototype._allowNativeScroll = function()
+    {
         this.wrapper.style.overflowY = 'auto';
     }
 
@@ -11557,7 +13743,8 @@ function complete(response)
      *
      * @private
      */
-    Scrollbar.prototype._resizeHandle = function() {
+    Scrollbar.prototype._resizeHandle = function()
+    {
         this.handle.style.height = Math.ceil(this.ratio * this.track.offsetHeight) + 'px';
     }
 
@@ -11566,13 +13753,17 @@ function complete(response)
      *
      * @private
      */
-    Scrollbar.prototype._positionHandle = function() {
+    Scrollbar.prototype._positionHandle = function()
+    {
         var wrapperTop = this.wrapper.scrollTop,
             top;
 
-        if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight) {
+        if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight)
+        {
             top = Math.ceil(this.ratio * this.wrapper.scrollTop);
-        } else {
+        }
+        else
+        {
             // if scroll position has reached the end, force scrollbar to track's end
             top = this.track.offsetHeight - this.handle.offsetHeight;
         }
@@ -11588,17 +13779,21 @@ function complete(response)
      * @param {Function}    handler
      * @private
      */
-    Scrollbar.prototype._addListener = function(element, eventName, handler) {
+    Scrollbar.prototype._addListener = function(element, eventName, handler)
+    {
         var events = this._events;
 
-        if (!events) {
+        if (!events)
+        {
             this._events = events = {};
         }
-        if (!events[eventName]) {
+        if (!events[eventName])
+        {
             events[eventName] = [];
         }
 
-        events[eventName].push({
+        events[eventName].push(
+        {
             element: element,
             handler: handler
         });
@@ -11614,13 +13809,16 @@ function complete(response)
      * @param {Function}    handler
      * @private
      */
-    Scrollbar.prototype._removeListener = function(element, eventName, handler) {
+    Scrollbar.prototype._removeListener = function(element, eventName, handler)
+    {
         var event = this._events[eventName],
             index,
             total;
 
-        for (index = 0, total = event.length; index < total; index++) {
-            if (event[index].handler === handler) {
+        for (index = 0, total = event.length; index < total; index++)
+        {
+            if (event[index].handler === handler)
+            {
                 event.splice(index, 1);
                 removeEventListener.apply(null, arguments);
                 break;
@@ -11633,17 +13831,20 @@ function complete(response)
      *
      * @private
      */
-    Scrollbar.prototype._removeAllListeners = function() {
+    Scrollbar.prototype._removeAllListeners = function()
+    {
         var events = this._events,
             eventName,
             event,
             iter,
             total;
 
-        for (eventName in events) {
+        for (eventName in events)
+        {
             event = events[eventName];
 
-            for (iter = 0, total = event.length; iter < total; iter++) {
+            for (iter = 0, total = event.length; iter < total; iter++)
+            {
                 removeEventListener(event[iter].element, eventName, event[iter].handler);
             }
         }
@@ -11653,7 +13854,94 @@ function complete(response)
 
     // HELPER FUNCTIONS
     /*****************************************/
-    function bind(fn,context){return function(){fn.apply(context,arguments);};}function extend(){var iter;for(iter=1;iter<arguments.length;iter++){var key;for(key in arguments[iter]){if(arguments[iter].hasOwnProperty(key)){arguments[0][key]=arguments[iter][key];}}}return arguments[0];}function addEventListener(el,eventName,handler){if(el.addEventListener){el.addEventListener(eventName,handler);}else{el.attachEvent("on"+eventName,handler);}}function removeEventListener(el,eventName,handler){if(el.removeEventListener){el.removeEventListener(eventName,handler);}else{el.detachEvent("on"+eventName,handler);}}function addClass(el,className){if(el.classList){el.classList.add(className);}else{el.className+=" "+className;}}function removeClass(el,className){if(el.classList){el.classList.remove(className);}else{el.className=el.className.replace(new RegExp("(^|\\b)"+className.split(" ").join("|")+"(\\b|$)","gi")," ");}}function getScrollbarWidth(){var wrapper=document.createElement("div"),content=document.createElement("div"),width;wrapper.style.position="absolute";wrapper.style.top="-50px";wrapper.style.height="50px";wrapper.style.overflow="scroll";wrapper.appendChild(content);document.body.appendChild(wrapper);width=wrapper.offsetWidth-content.offsetWidth;document.body.removeChild(wrapper);return width;}
+    function bind(fn, context)
+    {
+        return function()
+        {
+            fn.apply(context, arguments);
+        };
+    }
+
+    function extend()
+    {
+        var iter;
+        for (iter = 1; iter < arguments.length; iter++)
+        {
+            var key;
+            for (key in arguments[iter])
+            {
+                if (arguments[iter].hasOwnProperty(key))
+                {
+                    arguments[0][key] = arguments[iter][key];
+                }
+            }
+        }
+        return arguments[0];
+    }
+
+    function addEventListener(el, eventName, handler)
+    {
+        if (el.addEventListener)
+        {
+            el.addEventListener(eventName, handler);
+        }
+        else
+        {
+            el.attachEvent("on" + eventName, handler);
+        }
+    }
+
+    function removeEventListener(el, eventName, handler)
+    {
+        if (el.removeEventListener)
+        {
+            el.removeEventListener(eventName, handler);
+        }
+        else
+        {
+            el.detachEvent("on" + eventName, handler);
+        }
+    }
+
+    function addClass(el, className)
+    {
+        if (el.classList)
+        {
+            el.classList.add(className);
+        }
+        else
+        {
+            el.className += " " + className;
+        }
+    }
+
+    function removeClass(el, className)
+    {
+        if (el.classList)
+        {
+            el.classList.remove(className);
+        }
+        else
+        {
+            el.className = el.className.replace(new RegExp("(^|\\b)" + className.split(" ").join("|") + "(\\b|$)", "gi"), " ");
+        }
+    }
+
+    function getScrollbarWidth()
+    {
+        var wrapper = document.createElement("div"),
+            content = document.createElement("div"),
+            width;
+        wrapper.style.position = "absolute";
+        wrapper.style.top = "-50px";
+        wrapper.style.height = "50px";
+        wrapper.style.overflow = "scroll";
+        wrapper.appendChild(content);
+        document.body.appendChild(wrapper);
+        width = wrapper.offsetWidth - content.offsetWidth;
+        document.body.removeChild(wrapper);
+        return width;
+    }
 
     Container.set('Scrollbar', Scrollbar);
 
@@ -11665,7 +13953,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -11683,7 +13970,7 @@ function complete(response)
      */
     var ScrollBars = function()
     {
-        this._nodes    = [];
+        this._nodes = [];
         this._handlers = [];
 
         // Find nodes
@@ -11697,7 +13984,7 @@ function complete(response)
                 this._invoke(this._nodes[i]);
             }
         }
-        
+
         return this;
     };
 
@@ -11713,7 +14000,7 @@ function complete(response)
             this._handlers[i].destroy();
         }
 
-        this._nodes    = [];
+        this._nodes = [];
         this._handlers = [];
     }
 
@@ -11736,19 +14023,19 @@ function complete(response)
         var needsScroller = this._needsScroller(el);
         if (!needsScroller) return;
 
-        var insertAfter  = false;
-        var parent       = el.parentNode;
-        var children     = Helper.firstChildren(el);
+        var insertAfter = false;
+        var parent = el.parentNode;
+        var children = Helper.firstChildren(el);
         if (el.nextSibling) insertAfter = el.nextSibling;
 
-        var scrollArea   = document.createElement('DIV');
-        var scrollWrap   = document.createElement('DIV');
-        var scrollTrack  = document.createElement('DIV');
+        var scrollArea = document.createElement('DIV');
+        var scrollWrap = document.createElement('DIV');
+        var scrollTrack = document.createElement('DIV');
         var scrollHandle = document.createElement('DIV');
 
-        scrollArea.className   = 'scrollbar-area';
-        scrollWrap.className   = 'scrollbar-wrapper';
-        scrollTrack.className  = 'scrollbar-track';
+        scrollArea.className = 'scrollbar-area';
+        scrollWrap.className = 'scrollbar-wrapper';
+        scrollTrack.className = 'scrollbar-track';
         scrollHandle.className = 'scrollbar-handle';
 
         scrollArea.appendChild(scrollWrap);
@@ -11776,8 +14063,8 @@ function complete(response)
         var computedStyle = window.getComputedStyle(el);
 
         // Is the element hidden?
-        var isHidden      = el.offsetParent === null;
-        var hiddenEl      = false;
+        var isHidden = el.offsetParent === null;
+        var hiddenEl = false;
         var inlineDisplay = false;
         var needsScroller = false;
 
@@ -11794,7 +14081,7 @@ function complete(response)
                 {
                     parent = parent.parentNode;
                     var parentStyle = window.getComputedStyle(parent);
-                    
+
                     if (parentStyle.display === 'none')
                     {
                         hiddenEl = parent
@@ -11812,11 +14099,11 @@ function complete(response)
             hiddenEl.style.display = 'block';
         }
         var endHeight = el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTop) + parseInt(computedStyle.borderBottom);
-        endHeight     = parseInt(endHeight);
+        endHeight = parseInt(endHeight);
         if (endHeight > el.offsetHeight)
         {
-            needsScroller   = true;
-            el.style.height = el.offsetHeight+'px';
+            needsScroller = true;
+            el.style.height = el.offsetHeight + 'px';
         }
         // Make invisible
         if (hiddenEl)
@@ -11825,11 +14112,12 @@ function complete(response)
             {
                 hiddenEl.style.display = inlineDisplay;
             }
-            else {
+            else
+            {
                 hiddenEl.style.removeProperty('display');
             }
         }
-        
+
         return needsScroller;
     }
 
@@ -11848,7 +14136,7 @@ function complete(response)
         for (var i = 0; i < this._handlers.length; i++)
         {
             var handler = this._handlers[i];
-            
+
             if (handler.el === elem) handler.refresh();
         }
     }
@@ -11870,7 +14158,7 @@ function complete(response)
             this._handlers.splice(i, 1);
         }
     }
-    
+
     /**
      * Get a handler by dom node .js-custom-scroll
      *
@@ -11883,7 +14171,7 @@ function complete(response)
         for (var i = 0; i < this._handlers.length; i++)
         {
             var handler = this._handlers[i];
-            
+
             if (handler.el === elem) return handler;
         }
     }
@@ -11899,7 +14187,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -11923,9 +14210,9 @@ function complete(response)
          * @var array
          */
         this._nodes = Helper.$All('.js-collapse');
-                
+
         this._bind();
-        
+
         return this;
     }
 
@@ -11981,15 +14268,15 @@ function complete(response)
         {
             e.preventDefault();
         }
-        
-        var clicked  = this;
-        var targetEl = Helper.$('#'+clicked.dataset.collapseTarget);
-        var speed    = parseInt(clicked.dataset.collapseSpeed) || 350;
-        var easing   = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
-        var opacity  = clicked.dataset.withOpacity;
+
+        var clicked = this;
+        var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
+        var speed = parseInt(clicked.dataset.collapseSpeed) || 350;
+        var easing = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
+        var opacity = clicked.dataset.withOpacity;
 
         Container.get('ToggleHeight', targetEl, 0, speed, easing, opacity);
-        
+
         Helper.toggleClass(clicked, 'active');
     }
 
@@ -11997,7 +14284,6 @@ function complete(response)
     Container.get('Hubble').dom().register('Collapse', Collapse);
 
 }());
-
 /**
  * Dropdown Buttons
  *
@@ -12005,7 +14291,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -12031,7 +14316,7 @@ function complete(response)
         this._triggers = Helper.$All('.js-drop-trigger');
 
         if (!Helper.empty(this._triggers))
-        { 
+        {
             this._bind();
         }
 
@@ -12088,8 +14373,8 @@ function complete(response)
         e = e || window.event;
         e.preventDefault();
 
-        var button   = this;
-        var _this    = Container.get('DropDowns');
+        var button = this;
+        var _this = Container.get('DropDowns');
 
         // Hide all dropdowns except this
         _this._hideDropDowns(button);
@@ -12151,7 +14436,7 @@ function complete(response)
         if (!Helper.hasClass(e.target, 'js-drop-trigger'))
         {
             var _this = Container.get('DropDowns');
-            
+
             _this._hideDropDowns();
         }
     }
@@ -12165,7 +14450,7 @@ function complete(response)
     DropDowns.prototype._hideDropDowns = function(exception)
     {
         dropTriggers = Helper.$All('.js-drop-trigger');
-        exception    = (typeof exception === 'undefined' ? false : exception);
+        exception = (typeof exception === 'undefined' ? false : exception);
 
         for (var i = 0; i < dropTriggers.length; i++)
         {
@@ -12191,7 +14476,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -12247,8 +14531,8 @@ function complete(response)
      */
     TabNav.prototype._bindDOMListeners = function(navWrap)
     {
-        var links  = Helper.$All('a', navWrap);
-        
+        var links = Helper.$All('a', navWrap);
+
         for (var i = 0; i < links.length; i++)
         {
             Helper.addEventListener(links[i], 'click', this._eventHandler);
@@ -12263,8 +14547,8 @@ function complete(response)
      */
     TabNav.prototype._unbindDOMListeners = function(navWrap)
     {
-        var links    = Helper.$All('a', navWrap);
-        
+        var links = Helper.$All('a', navWrap);
+
         for (var i = 0; i < links.length; i++)
         {
             Helper.removeEventListener(links[i], 'click', this._eventHandler);
@@ -12283,27 +14567,27 @@ function complete(response)
         e.preventDefault();
 
         var _this = Container.get('TabNav');
-        
+
         var node = this;
 
         if (Helper.hasClass(node, 'active')) return;
-        
-        var tab           = node.dataset.tab;
-        var tabNav        = Helper.closest(node, 'ul');
 
-        var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-        var tabPanel      = Helper.closest(tabPane, '.js-tab-panels-wrap');
-        var activePanel   = Helper.$('.tab-panel.active', tabPanel);
+        var tab = node.dataset.tab;
+        var tabNav = Helper.closest(node, 'ul');
 
-        var navWrap       = Helper.closest(node, '.js-tab-nav');
-        var activeNav     = Helper.$('a.active', navWrap);
+        var tabPane = Helper.$('[data-tab-panel="' + tab + '"]');
+        var tabPanel = Helper.closest(tabPane, '.js-tab-panels-wrap');
+        var activePanel = Helper.$('.tab-panel.active', tabPanel);
+
+        var navWrap = Helper.closest(node, '.js-tab-nav');
+        var activeNav = Helper.$('a.active', navWrap);
 
         Helper.removeClass(activeNav, 'active');
         Helper.removeClass(activePanel, 'active');
 
         Helper.addClass(node, 'active');
         Helper.addClass(tabPane, 'active');
-        
+
     }
 
     // Load into Hubble DOM core
@@ -12317,7 +14601,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -12326,7 +14609,7 @@ function complete(response)
      * @var object
      */
     var Helper = Hubble.helper();
-    
+
     /**
      * Module constructor
      *
@@ -12335,11 +14618,11 @@ function complete(response)
      */
     var _popHandler = function(options)
     {
-        this.trigger      = options.target;
-        this.options      = options;
-        this.el           = this.buildPopEl();
+        this.trigger = options.target;
+        this.options = options;
+        this.el = this.buildPopEl();
         this.el.className = options.classes;
-        this.animation    = false;
+        this.animation = false;
 
         if (options.animation === 'pop')
         {
@@ -12366,7 +14649,7 @@ function complete(response)
      */
     _popHandler.prototype.buildPopEl = function()
     {
-        var pop       = document.createElement('div');
+        var pop = document.createElement('div');
         pop.className = this.options.classes;
 
         if (typeof this.options.template === 'string')
@@ -12402,25 +14685,25 @@ function complete(response)
 
         if (this.options.direction === 'top')
         {
-            this.el.style.top  = targetCoords.top  - this.el.scrollHeight + 'px';
-            this.el.style.left = targetCoords.left - (this.el.offsetWidth /2) + (this.options.target.offsetWidth/2) + 'px';
+            this.el.style.top = targetCoords.top - this.el.scrollHeight + 'px';
+            this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
             return;
         }
         else if (this.options.direction === 'bottom')
         {
-            this.el.style.top  = targetCoords.top  + this.options.target.offsetHeight + 10 + 'px';
-            this.el.style.left = targetCoords.left - (this.el.offsetWidth /2) + (this.options.target.offsetWidth/2) + 'px';
+            this.el.style.top = targetCoords.top + this.options.target.offsetHeight + 10 + 'px';
+            this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
             return;
         }
         else if (this.options.direction === 'left')
         {
-            this.el.style.top  = targetCoords.top  - (this.el.offsetHeight/2) + (this.options.target.offsetHeight/2) + 'px';
+            this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
             this.el.style.left = targetCoords.left - this.el.offsetWidth - 10 + 'px';
             return;
         }
         else if (this.options.direction === 'right')
         {
-            this.el.style.top  = targetCoords.top  - (this.el.offsetHeight/2) + (this.options.target.offsetHeight/2) + 'px';
+            this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
             this.el.style.left = targetCoords.left + this.options.target.offsetWidth + 10 + 'px';
             return;
         }
@@ -12437,7 +14720,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -12455,7 +14737,7 @@ function complete(response)
      */
     var Popovers = function()
     {
-        this._pops  = [];
+        this._pops = [];
         this._nodes = [];
 
         // Find nodes
@@ -12494,8 +14776,8 @@ function complete(response)
         this._removeAll();
 
         this._nodes = [];
-        
-        this._pops  = [];
+
+        this._pops = [];
     }
 
     /**
@@ -12528,28 +14810,28 @@ function complete(response)
      */
     Popovers.prototype._bind = function(trigger)
     {
-        var direction      = trigger.dataset.popoverDirection;
-        var title          = trigger.dataset.popoverTitle;
-        var content        = trigger.dataset.popoverContent;
-        var evnt           = trigger.dataset.popoverEvent;
-        var animation      = trigger.dataset.popoverAnimate || 'pop';
-        var target         = trigger.dataset.popoverTarget;
-        var closeBtn       = evnt === 'click' ? '<button type="button" class="btn btn-xs btn-pure btn-circle js-remove-pop"><span class="glyph-icon glyph-icon-cross"></span></button>' : ''; 
-        var pop            = '<h3 class="popover-title">'+ title + closeBtn + '</h3><div class="popover-content"><p>' + content + '</p></div>';
+        var direction = trigger.dataset.popoverDirection;
+        var title = trigger.dataset.popoverTitle;
+        var content = trigger.dataset.popoverContent;
+        var evnt = trigger.dataset.popoverEvent;
+        var animation = trigger.dataset.popoverAnimate || 'pop';
+        var target = trigger.dataset.popoverTarget;
+        var closeBtn = evnt === 'click' ? '<button type="button" class="btn btn-xs btn-pure btn-circle js-remove-pop"><span class="glyph-icon glyph-icon-cross"></span></button>' : '';
+        var pop = '<h3 class="popover-title">' + title + closeBtn + '</h3><div class="popover-content"><p>' + content + '</p></div>';
 
         if (target)
         {
-            pop = Helper.$('#'+target).cloneNode(true);
+            pop = Helper.$('#' + target).cloneNode(true);
             pop.classList.remove('hidden');
         }
 
         var popHandler = Container.get('_popHandler',
         {
-            target    :  trigger,
-            direction :  direction,
-            template  :  pop,
-            animation :  animation,
-            classes   : 'popover '+ direction ,
+            target: trigger,
+            direction: direction,
+            template: pop,
+            animation: animation,
+            classes: 'popover ' + direction,
         });
 
         this._pops.push(popHandler);
@@ -12588,8 +14870,8 @@ function complete(response)
      */
     Popovers.prototype._hoverOver = function()
     {
-        var trigger    = this;
-        var _this      = Container.get('Popovers');
+        var trigger = this;
+        var _this = Container.get('Popovers');
         var popHandler = _this._getHandler(trigger);
         if (Helper.hasClass(trigger, 'popped')) return;
         popHandler.render();
@@ -12629,7 +14911,7 @@ function complete(response)
     Popovers.prototype._windowResize = function()
     {
         var _this = Container.get('Popovers');
-        
+
         for (var i = 0; i < _this._nodes.length; i++)
         {
             if (Helper.hasClass(_this._nodes[i], 'popped'))
@@ -12650,10 +14932,10 @@ function complete(response)
     {
         e = e || window.event;
         e.preventDefault();
-        var trigger    = this;
-        var _this      = Container.get('Popovers');
+        var trigger = this;
+        var _this = Container.get('Popovers');
         var popHandler = _this._getHandler(trigger);
-       
+
         if (Helper.hasClass(trigger, 'popped'))
         {
             _this._removeAll();
@@ -12677,7 +14959,7 @@ function complete(response)
     {
         var _this = this;
 
-        window.addEventListener('click', function (e)
+        window.addEventListener('click', function(e)
         {
             e = e || window.event;
             var clicked = e.target;
@@ -12685,7 +14967,7 @@ function complete(response)
             // Clicked inside the popver itself,
             // Clicked a popover trigger
             // Clicked a close trigger inside the popover
-            if ( (Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
+            if ((Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
             {
                 return;
             }
@@ -12693,7 +14975,7 @@ function complete(response)
             _this._removeAll();
         });
     }
-    
+
     /**
      * Get the handler for the trigger
      * 
@@ -12705,7 +14987,7 @@ function complete(response)
     {
         for (var i = 0; i < this._pops.length; i++)
         {
-           if (this._pops[i]['trigger'] === trigger) return this._pops[i];
+            if (this._pops[i]['trigger'] === trigger) return this._pops[i];
         }
 
         return false;
@@ -12737,7 +15019,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -12761,7 +15042,7 @@ function complete(response)
          * @var array
          */
         this._containers = Helper.$All('.js-ripple');
-        
+
         if (!Helper.empty(this._containers))
         {
             this._bind();
@@ -12817,17 +15098,17 @@ function complete(response)
     ButtonRipple.prototype._eventHandler = function(e)
     {
         e = e || window.event;
-        var container  = this;
-        var wave       = document.createElement('span');
+        var container = this;
+        var wave = document.createElement('span');
         wave.className = 'wave';
         container.appendChild(wave);
 
         var coords = Helper.getCoords(container);
-        var size   = container.offsetWidth;
-        var x      = e.pageX - coords.left - (container.offsetWidth / 2);
-        var y      = e.pageY - coords.top - (container.offsetHeight * 1.3);
-       
-        Helper.css(wave, 
+        var size = container.offsetWidth;
+        var x = e.pageX - coords.left - (container.offsetWidth / 2);
+        var y = e.pageY - coords.top - (container.offsetHeight * 1.3);
+
+        Helper.css(wave,
         {
             top: y + 'px',
             left: x + 'px',
@@ -12837,7 +15118,7 @@ function complete(response)
 
         Helper.addClass(wave, 'animate');
 
-        setTimeout(function ()
+        setTimeout(function()
         {
             container.removeChild(wave);
 
@@ -12848,7 +15129,6 @@ function complete(response)
     Container.get('Hubble').dom().register('ButtonRipple', ButtonRipple);
 
 })();
-
 /**
  * Input masker
  *
@@ -12856,8 +15136,8 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
@@ -12874,18 +15154,18 @@ function complete(response)
     var InputMasks = function()
     {
         // Private
-        this._nodes_money			 = [];
-        this._nodes_creditcard	     = [];
-        this._nodes_numeric          = [];
-        this._nodes_numericDecimal   = [];
-        this._nodes_alphaNumeric     = [];
-        this._nodes_alphaSpace       = [];
-        this._nodes_alphaDash        = [];
+        this._nodes_money = [];
+        this._nodes_creditcard = [];
+        this._nodes_numeric = [];
+        this._nodes_numericDecimal = [];
+        this._nodes_alphaNumeric = [];
+        this._nodes_alphaSpace = [];
+        this._nodes_alphaDash = [];
         this._nodes_AlphaNumericDash = [];
 
         // Constructor
         this._invoke();
-        
+
         return this;
     }
 
@@ -12904,13 +15184,13 @@ function complete(response)
         this._loopUnBind(this._nodes_alphaSpace);
         this._loopUnBind(this._nodes_alphaDash);
         this._loopUnBind(this._nodes_AlphaNumericDash);
-        this._nodes_money            = [];
-        this._nodes_creditcard       = [];
-        this._nodes_numeric          = [];
-        this._nodes_numericDecimal   = [];
-        this._nodes_alphaNumeric     = [];
-        this._nodes_alphaSpace       = [];
-        this._nodes_alphaDash        = [];
+        this._nodes_money = [];
+        this._nodes_creditcard = [];
+        this._nodes_numeric = [];
+        this._nodes_numericDecimal = [];
+        this._nodes_alphaNumeric = [];
+        this._nodes_alphaSpace = [];
+        this._nodes_alphaDash = [];
         this._nodes_AlphaNumericDash = [];
     }
 
@@ -12922,18 +15202,18 @@ function complete(response)
     InputMasks.prototype._invoke = function()
     {
         // Find all the nodes
-        this._nodes_money			 = Helper.$All('.js-mask-money');
-        this._nodes_creditcard	     = Helper.$All('.js-mask-creditcard');
-        this._nodes_numeric          = Helper.$All('.js-mask-numeric');
-        this._nodes_numericDecimal   = Helper.$All('.js-mask-numeric-decimal');
-        this._nodes_alphaNumeric     = Helper.$All('.js-mask-alpha-numeric');
-        this._nodes_alphaSpace       = Helper.$All('.js-mask-alpha-space');
-        this._nodes_alphaDash        = Helper.$All('.js-mask-alpha-dash');
+        this._nodes_money = Helper.$All('.js-mask-money');
+        this._nodes_creditcard = Helper.$All('.js-mask-creditcard');
+        this._nodes_numeric = Helper.$All('.js-mask-numeric');
+        this._nodes_numericDecimal = Helper.$All('.js-mask-numeric-decimal');
+        this._nodes_alphaNumeric = Helper.$All('.js-mask-alpha-numeric');
+        this._nodes_alphaSpace = Helper.$All('.js-mask-alpha-space');
+        this._nodes_alphaDash = Helper.$All('.js-mask-alpha-dash');
         this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
 
         if (!Helper.empty(this._nodes_money))
         {
-        	this._loopBind(this._nodes_money, 'money');
+            this._loopBind(this._nodes_money, 'money');
         }
         if (!Helper.empty(this._nodes_creditcard))
         {
@@ -12972,9 +15252,9 @@ function complete(response)
      */
     InputMasks.prototype._loopBind = function(nodes, mask)
     {
-    	for (var i = 0; i < nodes.length; i++)
+        for (var i = 0; i < nodes.length; i++)
         {
-    		Container.get('InputMasker', nodes[i])[mask]();
+            Container.get('InputMasker', nodes[i])[mask]();
         }
     }
 
@@ -12995,7 +15275,6 @@ function complete(response)
     Container.get('Hubble').dom().register('InputMasks', InputMasks);
 
 }());
-
 /**
  * Message closers
  *
@@ -13003,7 +15282,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -13022,9 +15300,9 @@ function complete(response)
     var MessageClosers = function()
     {
         this._triggers = Helper.$All('.js-close-msg');
-        
+
         if (!Helper.empty(this._triggers))
-        { 
+        {
             this._bind();
         }
 
@@ -13088,9 +15366,9 @@ function complete(response)
         {
             toRemove = toRemove.parentNode;
         }
-        
+
         Helper.animate(toRemove, 'opacity', '1', '0', 300, 'ease');
-        
+
         setTimeout(function()
         {
             Helper.removeFromDOM(toRemove);
@@ -13109,7 +15387,6 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -13145,7 +15422,7 @@ function complete(response)
                 this._bind(this._nodes[i]);
             }
         }
-        
+
         // Invoke pageload
         if (!pageLoaded)
         {
@@ -13167,7 +15444,7 @@ function complete(response)
         {
             this._unbind(this._nodes[i]);
         }
-        
+
         // Clear Nodes
         this._nodes = [];
     }
@@ -13204,20 +15481,20 @@ function complete(response)
     {
         e = e || window.event;
         e.preventDefault();
-        var trigger  = this;
+        var trigger = this;
         var waypoint = trigger.dataset.waypointTarget;
         var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
         if (Helper.nodeExists(targetEl))
         {
-            var id      = waypoint;
-            var speed   = typeof trigger.dataset.waypointSpeed  !== "undefined" ? trigger.dataset.waypointSpeed : 500;
-            var easing  = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
+            var id = waypoint;
+            var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
+            var easing = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
             targetEl.id = id;
 
             var options = {
-                easing : easing,
-                speed  : speed,
+                easing: easing,
+                speed: speed,
             };
 
             Container.get('SmoothScroll').animateScroll('#' + id, trigger, options);
@@ -13236,15 +15513,15 @@ function complete(response)
         if (Helper.isset(url['fragment']) && url['fragment'] !== '')
         {
             var waypoint = Helper.trim(url['fragment'], '/');
-            var options  = {
-                speed:   100,
+            var options = {
+                speed: 100,
                 easing: 'Linear'
             };
             var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
             if (Helper.nodeExists(targetEl))
             {
-                var id      = waypoint;
+                var id = waypoint;
                 targetEl.id = id;
                 Container.get('SmoothScroll').animateScroll('#' + id, null, options);
             }
@@ -13258,7 +15535,6 @@ function complete(response)
     Container.get('Hubble').dom().register('WayPoints', WayPoints);
 
 }());
-
 /**
  * Adds classes to inputs
  *
@@ -13431,9 +15707,8 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
@@ -13452,7 +15727,7 @@ function complete(response)
         this._nodes = Helper.$All('.js-file-input');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -13465,7 +15740,7 @@ function complete(response)
     {
         this._unbind();
 
-        this._nodes  = [];
+        this._nodes = [];
     }
 
     /**
@@ -13502,13 +15777,13 @@ function complete(response)
     FileInput.prototype._eventHandler = function()
     {
         var fileInput = this;
-        var wrap      = Helper.closest(fileInput, '.js-file-field');
+        var wrap = Helper.closest(fileInput, '.js-file-field');
         var showInput = Helper.$('.js-file-text', wrap);
-        var fullPath  = fileInput.value;
+        var fullPath = fileInput.value;
         if (fullPath)
         {
             var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            var filename   = fullPath.substring(startIndex);
+            var filename = fullPath.substring(startIndex);
             if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
             {
                 filename = filename.substring(1);
@@ -13521,18 +15796,16 @@ function complete(response)
     Container.get('Hubble').dom().register('FileInput', FileInput);
 
 }());
-
 /**
- * File inputs
+ * Chip inputs
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
-   /**
+(function()
+{
+    /**
      * JS Helper reference
      * 
      * @var object
@@ -13550,7 +15823,7 @@ function complete(response)
         this._wrappers = Helper.$All('.js-chips-input');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -13600,8 +15873,8 @@ function complete(response)
      */
     ChipInputs.prototype._initInput = function(_wrapper)
     {
-        var _removeBtns  = Helper.$All('.chip .remove-icon', _wrapper);
-        var _input       = Helper.$('.js-chip-input', _wrapper);
+        var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
+        var _input = Helper.$('.js-chip-input', _wrapper);
 
         Helper.addEventListener(_removeBtns, 'click', this._removeChip);
 
@@ -13621,8 +15894,8 @@ function complete(response)
      */
     ChipInputs.prototype._destroy = function(_wrapper)
     {
-        var _removeBtns  = Helper.$All('.chip .remove-icon', _wrapper);
-        var _input       = Helper.$('.js-chip-input', _wrapper);
+        var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
+        var _input = Helper.$('.js-chip-input', _wrapper);
 
         Helper.removeEventListener(_removeBtns, 'click', this._removeChip);
 
@@ -13643,7 +15916,7 @@ function complete(response)
     ChipInputs.prototype._preventSubmit = function(e)
     {
         e = e || window.event;
-        
+
         var _key = e.code || e.key || e.keyCode || e.charCode;
 
         if (_key == 'Enter' || _key === 13)
@@ -13653,12 +15926,12 @@ function complete(response)
             return false;
         }
         // Backspace
-        else if ( _key == 'Delete'  || _key == 'Backspace' || _key == 8 || _key == 46 )
+        else if (_key == 'Delete' || _key == 'Backspace' || _key == 8 || _key == 46)
         {
             if (this.value === '')
             {
                 var _wrapper = Helper.closest(this, '.js-chips-input');
-            
+
                 Container.ChipInputs()._removeLastChip(_wrapper);
             }
         }
@@ -13719,12 +15992,12 @@ function complete(response)
      */
     ChipInputs.prototype.addChip = function(_value, _wrapper, _icon)
     {
-        _icon          = typeof _icon === 'undefined' ? false : _icon;
-        var _name      = _wrapper.dataset.inputName;   
-        var _chip      = document.createElement('span');
-        var _children  = Helper.firstChildren(_wrapper);
-        var _classes   = _wrapper.dataset.chipClass;
-        var _iconStr   = '';
+        _icon = typeof _icon === 'undefined' ? false : _icon;
+        var _name = _wrapper.dataset.inputName;
+        var _chip = document.createElement('span');
+        var _children = Helper.firstChildren(_wrapper);
+        var _classes = _wrapper.dataset.chipClass;
+        var _iconStr = '';
 
         if (_classes)
         {
@@ -13733,7 +16006,7 @@ function complete(response)
 
         if (_icon)
         {
-            _iconStr = '<span class="chip-icon"><span class="glyph-icon glyph-icon-'+ _iconclass +'"></span></span>'; 
+            _iconStr = '<span class="chip-icon"><span class="glyph-icon glyph-icon-' + _iconclass + '"></span></span>';
         }
 
         _chip.className = 'chip';
@@ -13782,17 +16055,15 @@ function complete(response)
     Container.get('Hubble').dom().register('ChipInputs', ChipInputs);
 
 }());
-
 /**
- * File inputs
+ * Chip suggestions.
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
@@ -13811,7 +16082,7 @@ function complete(response)
         this._chips = Helper.$All('.js-chip-suggestions .chip');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -13856,11 +16127,11 @@ function complete(response)
     ChipSuggestions.prototype._clickHandler = function(e)
     {
         e = e || window.event;
-        
+
         var _wrapper = Helper.closest(this, '.js-chip-suggestions');
-        var _id      = _wrapper.dataset.inputTarget;
-        var _input   = Helper.$('#' + _id);
-        var _text    = this.innerText.trim();
+        var _id = _wrapper.dataset.inputTarget;
+        var _input = Helper.$('#' + _id);
+        var _text = this.innerText.trim();
 
         if (!_input || !Helper.nodeExists(_input))
         {
@@ -13879,15 +16150,15 @@ function complete(response)
             return;
         }
 
-        
-        var _chip       = document.createElement('span');
-        var _classes    = _wrapper.dataset.chipClass;
-        var _space      = '';
+
+        var _chip = document.createElement('span');
+        var _classes = _wrapper.dataset.chipClass;
+        var _space = '';
         _chip.className = 'chip';
 
         if (_classes)
         {
-            _chip.className +=  _classes;
+            _chip.className += _classes;
         }
 
         if (_input.value !== '')
@@ -13895,7 +16166,7 @@ function complete(response)
             _space = ' ';
         }
 
-        _input.value += _space +  _text;
+        _input.value += _space + _text;
 
         Helper.removeFromDOM(this);
     }
@@ -13905,18 +16176,16 @@ function complete(response)
 
 
 }());
-
 /**
- * File inputs
+ * Choice chips
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
-   /**
+(function()
+{
+    /**
      * JS Helper reference
      * 
      * @var object
@@ -13934,7 +16203,7 @@ function complete(response)
         this._chips = Helper.$All('.js-choice-chips .chip');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -13981,7 +16250,7 @@ function complete(response)
         e = e || window.event;
 
         var _wrapper = Helper.closest(this, '.js-choice-chips');
-        var _input   = Helper.$('.js-choice-input', _wrapper);
+        var _input = Helper.$('.js-choice-input', _wrapper);
 
         if (!Helper.hasClass(this, 'selected'))
         {
@@ -14002,7 +16271,6 @@ function complete(response)
     Container.get('Hubble').dom().register('ChoiceChips', ChoiceChips);
 
 }());
-
 /**
  * Filter chips
  *
@@ -14010,9 +16278,8 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
@@ -14031,7 +16298,7 @@ function complete(response)
         this._chips = Helper.$All('.js-filter-chips .chip');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -14086,7 +16353,6 @@ function complete(response)
     Container.get('Hubble').dom().register('FilterChips', FilterChips);
 
 }());
-
 /**
  * Clicking one element triggers a lick on another
  *
@@ -14218,7 +16484,7 @@ function complete(response)
         this._nodes = Helper.$All('.js-img-hover-zoom');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -14278,12 +16544,12 @@ function complete(response)
             return false;
         }
 
-        var _wrapper     = e.currentTarget;
-        var _zoomSrc     = Helper.parse_url(Helper.getStyle(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
+        var _wrapper = e.currentTarget;
+        var _zoomSrc = Helper.parse_url(Helper.getStyle(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
         var _dataZoomSrc = Helper.parse_url(_wrapper.dataset.zoomSrc);
 
         if (_zoomSrc.path !== _dataZoomSrc.path)
-        {            
+        {
             Helper.css(_wrapper, 'background-image', 'url(' + _wrapper.dataset.zoomSrc + ')');
         }
 
@@ -14315,18 +16581,17 @@ function complete(response)
             return false;
         }
 
-        x = offsetX/_wrapper.offsetWidth*100;
-        y = offsetY/_wrapper.offsetHeight*100;
+        x = offsetX / _wrapper.offsetWidth * 100;
+        y = offsetY / _wrapper.offsetHeight * 100;
 
 
         Helper.css(_wrapper, 'background-position', x + '% ' + y + '%');
     }
-    
+
     // Register as DOM Module and invoke
     Container.get('Hubble').dom().register('ImageZoom', ImageZoom);
 
 }());
-
 
 // Boot Hubble
 /**
@@ -14336,12 +16601,14 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     Container.get('Hubble').boot();
 
-    var hubbleReady = new CustomEvent('HubbleReady', { detail: Container.get('Hubble') });
+    var hubbleReady = new CustomEvent('HubbleReady',
+    {
+        detail: Container.get('Hubble')
+    });
 
     window.dispatchEvent(hubbleReady);
 })();

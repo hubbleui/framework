@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -23,7 +22,7 @@
      */
     var ScrollBars = function()
     {
-        this._nodes    = [];
+        this._nodes = [];
         this._handlers = [];
 
         // Find nodes
@@ -37,7 +36,7 @@
                 this._invoke(this._nodes[i]);
             }
         }
-        
+
         return this;
     };
 
@@ -53,7 +52,7 @@
             this._handlers[i].destroy();
         }
 
-        this._nodes    = [];
+        this._nodes = [];
         this._handlers = [];
     }
 
@@ -76,19 +75,19 @@
         var needsScroller = this._needsScroller(el);
         if (!needsScroller) return;
 
-        var insertAfter  = false;
-        var parent       = el.parentNode;
-        var children     = Helper.firstChildren(el);
+        var insertAfter = false;
+        var parent = el.parentNode;
+        var children = Helper.firstChildren(el);
         if (el.nextSibling) insertAfter = el.nextSibling;
 
-        var scrollArea   = document.createElement('DIV');
-        var scrollWrap   = document.createElement('DIV');
-        var scrollTrack  = document.createElement('DIV');
+        var scrollArea = document.createElement('DIV');
+        var scrollWrap = document.createElement('DIV');
+        var scrollTrack = document.createElement('DIV');
         var scrollHandle = document.createElement('DIV');
 
-        scrollArea.className   = 'scrollbar-area';
-        scrollWrap.className   = 'scrollbar-wrapper';
-        scrollTrack.className  = 'scrollbar-track';
+        scrollArea.className = 'scrollbar-area';
+        scrollWrap.className = 'scrollbar-wrapper';
+        scrollTrack.className = 'scrollbar-track';
         scrollHandle.className = 'scrollbar-handle';
 
         scrollArea.appendChild(scrollWrap);
@@ -116,8 +115,8 @@
         var computedStyle = window.getComputedStyle(el);
 
         // Is the element hidden?
-        var isHidden      = el.offsetParent === null;
-        var hiddenEl      = false;
+        var isHidden = el.offsetParent === null;
+        var hiddenEl = false;
         var inlineDisplay = false;
         var needsScroller = false;
 
@@ -134,7 +133,7 @@
                 {
                     parent = parent.parentNode;
                     var parentStyle = window.getComputedStyle(parent);
-                    
+
                     if (parentStyle.display === 'none')
                     {
                         hiddenEl = parent
@@ -152,11 +151,11 @@
             hiddenEl.style.display = 'block';
         }
         var endHeight = el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTop) + parseInt(computedStyle.borderBottom);
-        endHeight     = parseInt(endHeight);
+        endHeight = parseInt(endHeight);
         if (endHeight > el.offsetHeight)
         {
-            needsScroller   = true;
-            el.style.height = el.offsetHeight+'px';
+            needsScroller = true;
+            el.style.height = el.offsetHeight + 'px';
         }
         // Make invisible
         if (hiddenEl)
@@ -165,11 +164,12 @@
             {
                 hiddenEl.style.display = inlineDisplay;
             }
-            else {
+            else
+            {
                 hiddenEl.style.removeProperty('display');
             }
         }
-        
+
         return needsScroller;
     }
 
@@ -188,7 +188,7 @@
         for (var i = 0; i < this._handlers.length; i++)
         {
             var handler = this._handlers[i];
-            
+
             if (handler.el === elem) handler.refresh();
         }
     }
@@ -210,7 +210,7 @@
             this._handlers.splice(i, 1);
         }
     }
-    
+
     /**
      * Get a handler by dom node .js-custom-scroll
      *
@@ -223,7 +223,7 @@
         for (var i = 0; i < this._handlers.length; i++)
         {
             var handler = this._handlers[i];
-            
+
             if (handler.el === elem) return handler;
         }
     }

@@ -1,14 +1,13 @@
 /**
- * File inputs
+ * Choice chips
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
-   /**
+(function()
+{
+    /**
      * JS Helper reference
      * 
      * @var object
@@ -26,7 +25,7 @@
         this._chips = Helper.$All('.js-choice-chips .chip');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -73,7 +72,7 @@
         e = e || window.event;
 
         var _wrapper = Helper.closest(this, '.js-choice-chips');
-        var _input   = Helper.$('.js-choice-input', _wrapper);
+        var _input = Helper.$('.js-choice-input', _wrapper);
 
         if (!Helper.hasClass(this, 'selected'))
         {

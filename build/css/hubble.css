@@ -6589,25 +6589,25 @@ input[type=checkbox]:focus {
   border-width: 10px;
 }
 .checkbox input[type=checkbox]:checked + label:after {
-  content: "";
+  display: inline-block;
+  font: normal normal normal 14px/1 "IcoMoon";
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "";
   display: inline-block;
   position: absolute;
-  left: 37px;
-  height: 14px;
-  width: 6px;
+  font-size: 14px;
+  left: 30px;
   top: 2px;
-  border-bottom: 2px solid #fff;
-  border-right: 2px solid #fff;
-  -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
-       -o-transform: rotate(45deg);
-          transform: rotate(45deg);
+  color: #fff;
 }
 .checkbox input[type=checkbox]:focus + label:before {
   border-color: #2A2A2A;
   border-width: 10px;
   outline: thin dotted;
-  outline: 5px auto -webkit-focus-ring-color;
+  outline: 5px;
   outline-offset: -2px;
 }
 .checkbox input[type=checkbox].disabled, .checkbox input[type=checkbox]:disabled {

@@ -110,63 +110,63 @@
          */
         this.shortHandProps = {
             // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
-            'list-style':      ['-type', '-position', '-image'],
-            'margin':          ['-top', '-right', '-bottom', '-left'],
-            'outline':         ['-width', '-style', '-color'],
-            'padding':         ['-top', '-right', '-bottom', '-left'],
+            'list-style': ['-type', '-position', '-image'],
+            'margin': ['-top', '-right', '-bottom', '-left'],
+            'outline': ['-width', '-style', '-color'],
+            'padding': ['-top', '-right', '-bottom', '-left'],
 
             // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
-            'background':     ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
-            'border':         ['-width', '-style', '-color'],
-            'borderColor':    ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
-            'borderStyle':    ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
-            'borderWidth':    ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
-            'borderTop':      ['-width', '-style', '-color'],
-            'borderTight':    ['-width', '-style', '-color'],
-            'borderBottom':   ['-width', '-style', '-color'],
-            'borderLeft':     ['-width', '-style', '-color'],
-            'borderRadius':   ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
-            'borderImage':    ['-source', '-slice', '-width', '-outset', '-repeat'],
+            'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
+            'border': ['-width', '-style', '-color'],
+            'borderColor': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
+            'borderStyle': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
+            'borderWidth': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
+            'borderTop': ['-width', '-style', '-color'],
+            'borderTight': ['-width', '-style', '-color'],
+            'borderBottom': ['-width', '-style', '-color'],
+            'borderLeft': ['-width', '-style', '-color'],
+            'borderRadius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
+            'borderImage': ['-source', '-slice', '-width', '-outset', '-repeat'],
 
             // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
-            'font':            ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
-            'fontVariant':     ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
+            'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
+            'fontVariant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
 
             // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
-            'mask':            ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
-            'maskBorder':      ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
+            'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
+            'maskBorder': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
 
             // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
-            'columns':         ['column-width', 'column-count'],
-            'columnRule':      ['-width', '-style', '-color'],
+            'columns': ['column-width', 'column-count'],
+            'columnRule': ['-width', '-style', '-color'],
 
             // CSS Speech Module: http://www.w3.org/TR/css3-speech/
-            'cue':             ['-before', '-after'],
-            'pause':           ['-before', '-after'],
-            'rest':            ['-before', '-after'],
+            'cue': ['-before', '-after'],
+            'pause': ['-before', '-after'],
+            'rest': ['-before', '-after'],
 
             // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
-            'textDecoration':  ['-line', '-style', '-color'],
-            'textEmphasis':    ['-style', '-color'],
+            'textDecoration': ['-line', '-style', '-color'],
+            'textEmphasis': ['-style', '-color'],
 
             // CSS Animations (WD): http://www.w3.org/TR/css3-animations
             'webkitAnimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-            'MozAnimation':    ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-            'msAnimation':     ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-            'Oanimation':      ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-            'animation':       ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+            'MozAnimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+            'msAnimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+            'Oanimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+            'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
 
             // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
             'webkitTransition': ['-property', '-duration', '-timing-function', '-delay'],
-            'MozTransition':    ['-property', '-duration', '-timing-function', '-delay'],
-            'msTransition':     ['-property', '-duration', '-timing-function', '-delay'],
-            'OTransition':      ['-property', '-duration', '-timing-function', '-delay'],
-            'transition':       ['-property', '-duration', '-timing-function', '-delay'],
+            'MozTransition': ['-property', '-duration', '-timing-function', '-delay'],
+            'msTransition': ['-property', '-duration', '-timing-function', '-delay'],
+            'OTransition': ['-property', '-duration', '-timing-function', '-delay'],
+            'transition': ['-property', '-duration', '-timing-function', '-delay'],
 
             // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
-            'webkitFlex':      ['-grow', '-shrink', '-basis'],
-            'msFlex':          ['-grow', '-shrink', '-basis'],
-            'flex':            ['-grow', '-shrink', '-basis'],
+            'webkitFlex': ['-grow', '-shrink', '-basis'],
+            'msFlex': ['-grow', '-shrink', '-basis'],
+            'flex': ['-grow', '-shrink', '-basis'],
         };
 
         this._events = {};
@@ -183,4 +183,3 @@
     {
         this.clearEventListeners();
     }
-

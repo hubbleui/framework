@@ -46,10 +46,11 @@ JSHelper.prototype.addEventListener = function(element, eventName, handler, useC
     else
     {
         // Push the details to the events object
-        events[eventName].push({
-            element    : element,
-            handler    : handler,
-            useCapture : useCapture,
+        events[eventName].push(
+        {
+            element: element,
+            handler: handler,
+            useCapture: useCapture,
         });
 
         this._addListener(element, eventName, handler, useCapture);

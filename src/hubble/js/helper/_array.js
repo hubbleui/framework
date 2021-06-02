@@ -15,24 +15,31 @@
  * @param  bool   argStrict Compare strict
  * @return bool
  */
-JSHelper.prototype.in_array = function(needle, haystack, argStrict) {
+JSHelper.prototype.in_array = function(needle, haystack, argStrict)
+{
 
     var key = '',
-    strict = !!argStrict;
+        strict = !!argStrict;
 
     //we prevent the double check (strict && arr[key] === ndl) || (!strict && arr[key] == ndl)
     //in just one for, in order to improve the performance 
     //deciding wich type of comparation will do before walk array
-    if (strict) {
-        for (key in haystack) {
-            if (haystack[key] === needle) {
+    if (strict)
+    {
+        for (key in haystack)
+        {
+            if (haystack[key] === needle)
+            {
                 return true;
             }
         }
     }
-    else {
-        for (key in haystack) {
-            if (haystack[key] == needle) {
+    else
+    {
+        for (key in haystack)
+        {
+            if (haystack[key] == needle)
+            {
                 return true;
             }
         }
@@ -49,7 +56,8 @@ JSHelper.prototype.in_array = function(needle, haystack, argStrict) {
  * @param  int    count The amount of items to reduce the array to
  * @return array
  */
-JSHelper.prototype.array_reduce = function(array, count) {
+JSHelper.prototype.array_reduce = function(array, count)
+{
     return this.array_slice(array, 0, count);
 }
 
@@ -86,17 +94,20 @@ JSHelper.prototype.implode = function(array, prefix, suffix)
 
         glue = typeof prefix === 'undefined' ? '' : prefix;
 
-        separator = typeof suffix === 'undefined' ? '' : suffix; 
+        separator = typeof suffix === 'undefined' ? '' : suffix;
 
-        return this.rtrim(Object.keys(array).map(function (key, value) { return [key, array[key]].join(glue); }).join(separator), suffix);
+        return this.rtrim(Object.keys(array).map(function(key, value)
+        {
+            return [key, array[key]].join(glue);
+        }).join(separator), suffix);
     }
 
     var str = '';
 
     prefix = typeof prefix === 'undefined' ? '' : prefix;
 
-    suffix = typeof suffix === 'undefined' ? '' : suffix; 
-   
+    suffix = typeof suffix === 'undefined' ? '' : suffix;
+
     for (var i = 0; i < array.length; i++)
     {
         if (i === array.length - 1)
@@ -121,7 +132,8 @@ JSHelper.prototype.implode = function(array, prefix, suffix)
  * @param  bool  preserve_keys Preserve array keys (optional) (default false)
  * @return array
  */
-JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
+JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
+{
     //  discuss at: http://phpjs.org/functions/array_slice/
     // original by: Brett Zamir (http://brett-zamir.me)
     //  depends on: is_int
@@ -142,13 +154,15 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
     var key = '';
 
     if (Object.prototype.toString.call(arr) !== '[object Array]' ||
-        (preserve_keys && offst !== 0)) { // Assoc. array as input or if required as output
+        (preserve_keys && offst !== 0))
+    { // Assoc. array as input or if required as output
         var lgt = 0,
-    newAssoc = {};
-    for (key in arr) {
+            newAssoc = {};
+        for (key in arr)
+        {
             //if (key !== 'length') {
-                lgt += 1;
-                newAssoc[key] = arr[key];
+            lgt += 1;
+            newAssoc[key] = arr[key];
             //}
         }
         arr = newAssoc;
@@ -158,24 +172,30 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
 
         var assoc = {};
         var start = false,
-        it = -1,
-        arrlgth = 0,
-        no_pk_idx = 0;
-        for (key in arr) {
+            it = -1,
+            arrlgth = 0,
+            no_pk_idx = 0;
+        for (key in arr)
+        {
             ++it;
-            if (arrlgth >= lgth) {
+            if (arrlgth >= lgth)
+            {
                 break;
             }
-            if (it == offst) {
+            if (it == offst)
+            {
                 start = true;
             }
-            if (!start) {
+            if (!start)
+            {
                 continue;
             }++arrlgth;
-            if (this.is_int(key) && !preserve_keys) {
+            if (this.is_int(key) && !preserve_keys)
+            {
                 assoc[no_pk_idx++] = arr[key];
             }
-            else {
+            else
+            {
                 assoc[key] = arr[key];
             }
         }
@@ -183,13 +203,16 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
         return assoc;
     }
 
-    if (lgth === undefined) {
+    if (lgth === undefined)
+    {
         return arr.slice(offst);
     }
-    else if (lgth >= 0) {
+    else if (lgth >= 0)
+    {
         return arr.slice(offst, offst + lgth);
     }
-    else {
+    else
+    {
         return arr.slice(offst, lgth);
     }
 }
@@ -203,7 +226,8 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys) {
  * @param  int   limit Data per page
  * @return array
  */
-JSHelper.prototype.paginate = function(array, page, limit) {
+JSHelper.prototype.paginate = function(array, page, limit)
+{
     page = (page === false || page === 0 ? 1 : page);
     limit = (limit ? limit : 10);
     var total = count(array);
@@ -215,7 +239,8 @@ JSHelper.prototype.paginate = function(array, page, limit) {
 
     if (page > pages) return false;
 
-    for (var i = 0; i < pages; i++) {
+    for (var i = 0; i < pages; i++)
+    {
         offset = i * limit;
         paged.push(array.slice(offset, limit));
     }
@@ -231,16 +256,18 @@ JSHelper.prototype.paginate = function(array, page, limit) {
  * @param  closure callback  Callback to apply to each iteration
  * @param  array   args      Array of params to apply to callback (optional) (default null)
  */
-JSHelper.prototype.foreach = function(obj, callback, args) {
+JSHelper.prototype.foreach = function(obj, callback, args)
+{
     var value, i = 0,
-    length  = obj.length,
-    isArray = Object.prototype.toString.call(obj) === '[object Array]';
+        length = obj.length,
+        isArray = Object.prototype.toString.call(obj) === '[object Array]';
 
     if (Object.prototype.toString.call(args) === '[object Array]')
     {
         if (isArray)
         {
-            for (; i < length; i++) {
+            for (; i < length; i++)
+            {
 
                 var _currArgs = [i, obj[i]];
 
@@ -270,24 +297,28 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
 
         // A special, fast, case for the most common use of each
     }
-    else {
+    else
+    {
         if (isArray)
         {
             for (; i < length; i++)
             {
                 value = callback.call(obj, i, obj[i]);
 
-                if (value === false) {
+                if (value === false)
+                {
                     break;
                 }
             }
         }
-        else {
+        else
+        {
             for (i in obj)
             {
                 value = callback.call(obj, i, obj[i]);
 
-                if (value === false) {
+                if (value === false)
+                {
                     break;
                 }
             }
@@ -304,9 +335,11 @@ JSHelper.prototype.foreach = function(obj, callback, args) {
  * @param  object  src       The object to clone
  * @return object
  */
-JSHelper.prototype.cloneObj = function(src) {
+JSHelper.prototype.cloneObj = function(src)
+{
     var clone = {};
-    for (var prop in src) {
+    for (var prop in src)
+    {
         if (src.hasOwnProperty(prop)) clone[prop] = src[prop];
     }
     return clone;
@@ -319,67 +352,82 @@ JSHelper.prototype.cloneObj = function(src) {
  * @param  ...   List of arrays to merge
  * @return array
  */
-JSHelper.prototype.array_merge = function () {
-  //  discuss at: http://phpjs.org/functions/array_merge/
-  // original by: Brett Zamir (http://brett-zamir.me)
-  // bugfixed by: Nate
-  // bugfixed by: Brett Zamir (http://brett-zamir.me)
-  //    input by: josh
-  //   example 1: arr1 = {"color": "red", 0: 2, 1: 4}
-  //   example 1: arr2 = {0: "a", 1: "b", "color": "green", "shape": "trapezoid", 2: 4}
-  //   example 1: array_merge(arr1, arr2)
-  //   returns 1: {"color": "green", 0: 2, 1: 4, 2: "a", 3: "b", "shape": "trapezoid", 4: 4}
-  //   example 2: arr1 = []
-  //   example 2: arr2 = {1: "data"}
-  //   example 2: array_merge(arr1, arr2)
-  //   returns 2: {0: "data"}
+JSHelper.prototype.array_merge = function()
+{
+    //  discuss at: http://phpjs.org/functions/array_merge/
+    // original by: Brett Zamir (http://brett-zamir.me)
+    // bugfixed by: Nate
+    // bugfixed by: Brett Zamir (http://brett-zamir.me)
+    //    input by: josh
+    //   example 1: arr1 = {"color": "red", 0: 2, 1: 4}
+    //   example 1: arr2 = {0: "a", 1: "b", "color": "green", "shape": "trapezoid", 2: 4}
+    //   example 1: array_merge(arr1, arr2)
+    //   returns 1: {"color": "green", 0: 2, 1: 4, 2: "a", 3: "b", "shape": "trapezoid", 4: 4}
+    //   example 2: arr1 = []
+    //   example 2: arr2 = {1: "data"}
+    //   example 2: array_merge(arr1, arr2)
+    //   returns 2: {0: "data"}
 
-  var args = Array.prototype.slice.call(arguments),
-  argl = args.length,
-  arg,
-  retObj = {},
-  k = '',
-  argil = 0,
-  j = 0,
-  i = 0,
-  ct = 0,
-  toStr = Object.prototype.toString,
-  retArr = true;
+    var args = Array.prototype.slice.call(arguments),
+        argl = args.length,
+        arg,
+        retObj = {},
+        k = '',
+        argil = 0,
+        j = 0,
+        i = 0,
+        ct = 0,
+        toStr = Object.prototype.toString,
+        retArr = true;
 
-  for (var i = 0; i < argl; i++) {
-    if (toStr.call(args[i]) !== '[object Array]') {
-      retArr = false;
-      break;
-  }
-}
-
-if (retArr) {
-    retArr = [];
-    for (var i = 0; i < argl; i++) {
-      retArr = retArr.concat(args[i]);
-  }
-  return retArr;
-}
-
-for (i = 0, ct = 0; i < argl; i++) {
-    arg = args[i];
-    if (toStr.call(arg) === '[object Array]') {
-      for (j = 0, argil = arg.length; j < argil; j++) {
-        retObj[ct++] = arg[j];
+    for (var i = 0; i < argl; i++)
+    {
+        if (toStr.call(args[i]) !== '[object Array]')
+        {
+            retArr = false;
+            break;
+        }
     }
-} else {
-  for (k in arg) {
-    if (arg.hasOwnProperty(k)) {
-      if (parseInt(k, 10) + '' === k) {
-        retObj[ct++] = arg[k];
-    } else {
-        retObj[k] = arg[k];
+
+    if (retArr)
+    {
+        retArr = [];
+        for (var i = 0; i < argl; i++)
+        {
+            retArr = retArr.concat(args[i]);
+        }
+        return retArr;
     }
-}
-}
-}
-}
-return retObj;
+
+    for (i = 0, ct = 0; i < argl; i++)
+    {
+        arg = args[i];
+        if (toStr.call(arg) === '[object Array]')
+        {
+            for (j = 0, argil = arg.length; j < argil; j++)
+            {
+                retObj[ct++] = arg[j];
+            }
+        }
+        else
+        {
+            for (k in arg)
+            {
+                if (arg.hasOwnProperty(k))
+                {
+                    if (parseInt(k, 10) + '' === k)
+                    {
+                        retObj[ct++] = arg[k];
+                    }
+                    else
+                    {
+                        retObj[k] = arg[k];
+                    }
+                }
+            }
+        }
+    }
+    return retObj;
 }
 
 /**
@@ -389,9 +437,11 @@ return retObj;
  * @param  array array Target array to filter
  * @return array
  */
-JSHelper.prototype.array_filter = function(array) {
+JSHelper.prototype.array_filter = function(array)
+{
     var result = [];
-    for (var i = 0; i < array.length; i++) {
+    for (var i = 0; i < array.length; i++)
+    {
         if (array[i] === '' || this.empty(array[i])) continue;
         result.push(array[i]);
     }
@@ -419,7 +469,7 @@ JSHelper.prototype.array_unique = function(array)
             }
         }
     }
-    
+
     return result;
 }
 
@@ -432,7 +482,7 @@ JSHelper.prototype.array_unique = function(array)
  */
 JSHelper.prototype.is_obj = function(mixed_var)
 {
-    if( (typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null) )
+    if ((typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null))
     {
         return true;
     }

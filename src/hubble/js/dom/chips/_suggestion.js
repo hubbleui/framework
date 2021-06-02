@@ -1,13 +1,12 @@
 /**
- * File inputs
+ * Chip suggestions.
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
@@ -26,7 +25,7 @@
         this._chips = Helper.$All('.js-chip-suggestions .chip');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -71,11 +70,11 @@
     ChipSuggestions.prototype._clickHandler = function(e)
     {
         e = e || window.event;
-        
+
         var _wrapper = Helper.closest(this, '.js-chip-suggestions');
-        var _id      = _wrapper.dataset.inputTarget;
-        var _input   = Helper.$('#' + _id);
-        var _text    = this.innerText.trim();
+        var _id = _wrapper.dataset.inputTarget;
+        var _input = Helper.$('#' + _id);
+        var _text = this.innerText.trim();
 
         if (!_input || !Helper.nodeExists(_input))
         {
@@ -94,15 +93,15 @@
             return;
         }
 
-        
-        var _chip       = document.createElement('span');
-        var _classes    = _wrapper.dataset.chipClass;
-        var _space      = '';
+
+        var _chip = document.createElement('span');
+        var _classes = _wrapper.dataset.chipClass;
+        var _space = '';
         _chip.className = 'chip';
 
         if (_classes)
         {
-            _chip.className +=  _classes;
+            _chip.className += _classes;
         }
 
         if (_input.value !== '')
@@ -110,7 +109,7 @@
             _space = ' ';
         }
 
-        _input.value += _space +  _text;
+        _input.value += _space + _text;
 
         Helper.removeFromDOM(this);
     }

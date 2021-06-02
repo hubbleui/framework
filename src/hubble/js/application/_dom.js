@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -17,7 +16,7 @@
      */
     var Dom = function()
     {
-    	this._modules = {};
+        this._modules = {};
 
         return this;
     };
@@ -31,7 +30,7 @@
      */
     Dom.prototype.boot = function()
     {
-    	this._bindModules();
+        this._bindModules();
     }
 
     /**
@@ -91,7 +90,7 @@
 
             this._bindModules();
         }
-        
+
     }
 
     /**

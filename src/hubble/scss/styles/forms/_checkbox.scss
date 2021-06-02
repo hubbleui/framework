@@ -113,16 +113,14 @@ input[type="checkbox"]:focus
             }
             + label:after
             {
-                content: "";
+                @include glyph-icon;
+                content: "\ed71";
                 display: inline-block;
                 position: absolute;
-                left: $checkbox-size * 1.85;
-                height: 14px;
-                width: 6px;
+                font-size: 14px;
+                left: 30px;
                 top: 2px;
-                border-bottom: 2px solid #fff;
-                border-right: 2px solid #fff;
-                transform: rotate(45deg);
+                color: #fff;
             }
         }
         &:focus
@@ -132,7 +130,7 @@ input[type="checkbox"]:focus
                 border-color: $gray-darker;
                 border-width: $checkbox-size / 2;
                 outline: thin dotted;
-                outline: $checkbox-size / 4 auto -webkit-focus-ring-color;
+                outline: $checkbox-size / 4;
                 outline-offset: -2px;
             }
         }

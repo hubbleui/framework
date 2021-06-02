@@ -57,7 +57,7 @@ JSHelper.prototype._shortHandExpand = function(property, recurse)
         return [property];
     }
 
-    return props[property].map(function (p)
+    return props[property].map(function(p)
     {
         if (p.substr(0, 1) === '-')
         {
@@ -90,7 +90,7 @@ JSHelper.prototype._computeStyle = function(el, property)
         }
 
         return window.getComputedStyle(el, null);
-        
+
     }
     if (el.currentStyle)
     {
@@ -114,7 +114,7 @@ JSHelper.prototype._computeStyle = function(el, property)
  */
 JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
 {
-    var shorthand   = '';
+    var shorthand = '';
     var multiValArr = [];
 
     for (var j = 0, len = longHandProps.length; j < len; j++)
@@ -122,14 +122,14 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
         var longHandStyle = this._computeStyle(el, longHandProps[j]);
 
         if (longHandStyle)
-        {            
+        {
             if (longHandStyle.indexOf(',') >= 0)
-            {                        
+            {
                 multiValArr.push(longHandStyle.split(',').map(Function.prototype.call, String.prototype.trim));
             }
             else
             {
-                shorthand += ' '+longHandStyle;
+                shorthand += ' ' + longHandStyle;
             }
         }
     }
@@ -140,7 +140,7 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
         var multiValArrStrs = [];
         for (var k = 0, len = multiValArr.length; k < len; k++)
         {
-            multiValArr[k].map(function (val, n)
+            multiValArr[k].map(function(val, n)
             {
                 if (!_this.isset(multiValArrStrs[n]))
                 {
@@ -148,7 +148,7 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
                 }
                 else
                 {
-                    multiValArrStrs[n] += ' '+val;
+                    multiValArrStrs[n] += ' ' + val;
                 }
             });
         }
@@ -199,7 +199,7 @@ JSHelper.prototype.getStyle = function(el, prop)
     // console.log(window.getComputedStyle(document.body));
     // console.log(window.getComputedStyle(document.body).padding);
     // console.log(window.getComputedStyle(document.body).getPropertyValue('padding'));
-   
+
     // Additionally, some css values can be comma separated
     // e.g
     // transition height 300ms ease, width 300ms ease;
@@ -225,7 +225,7 @@ JSHelper.prototype.getStyle = function(el, prop)
         }
 
         var shorthand = this._concatShortHandProperties(el, longHands);
-        
+
         if (shorthand)
         {
             return shorthand;
@@ -258,7 +258,7 @@ JSHelper.prototype.css = function(el, property, value)
         }
     }
     else
-    {   
+    {
         // Normalise if this is an easing value - e.g display, 'ease-in-out'
         value = this._normalizeEasing(value);
 
@@ -286,15 +286,15 @@ JSHelper.prototype.css = function(el, property, value)
  * @param  function callback    Callback to apply when animation ends (optional)
  */
 JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
-{     
+{
     // Set defaults if values were not provided;
-    time     = (typeof time === 'undefined' ? 300 : time);
-    easing   = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
+    time = (typeof time === 'undefined' ? 300 : time);
+    easing = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
     callback = (typeof callback === 'undefined' ? false : callback);
 
     // Width and height need to use js to get the starting size
     // if it was set to auto/initial/null
-    if ((cssProperty === 'height' || cssProperty === 'width') && (from === 'initial' || from === 'auto' || !from) )
+    if ((cssProperty === 'height' || cssProperty === 'width') && (from === 'initial' || from === 'auto' || !from))
     {
         if (cssProperty === 'height')
         {
@@ -339,13 +339,13 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, c
         var transitions = existingTransitions.split(',').map(Function.prototype.call, String.prototype.trim);
         transitions.push(cssProperty + ' ' + time + 'ms ' + easing);
 
-        var props  = [];
+        var props = [];
         for (var i = transitions.length - 1; i >= 0; --i)
         {
             var prop = transitions[i].split(' ')[0];
             if (this.in_array(prop, props))
             {
-               transitions.splice(i, 1);
+                transitions.splice(i, 1);
             }
             props.push(prop);
         }
@@ -380,5 +380,3 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, c
 
     }, false);
 }
-
-

@@ -152,7 +152,8 @@ JSHelper.prototype.intval = function(mixed_var, base)
     {
         return mixed_var | 0;
     }
-    else {
+    else
+    {
         return 0;
     }
 }
@@ -313,9 +314,9 @@ JSHelper.prototype.url_query = function(name)
     {
         return results;
     }
-    
+
     name = decodeURIComponent(name);
-    
+
     if (name in results)
     {
         return results[name];
@@ -323,4 +324,3 @@ JSHelper.prototype.url_query = function(name)
 
     return false;
 }
-
