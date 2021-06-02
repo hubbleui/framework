@@ -7638,7 +7638,7 @@ form.success .msg-success {
           box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 .card:active {
-  background-color: rgba(0, 0, 0, 0.01);
+  background-color: #fcfcfc;
 }
 .card.flat {
   -webkit-box-shadow: none;
@@ -7681,6 +7681,9 @@ form.success .msg-success {
   padding: 18px 0;
 }
 .card .card-text:last-child {
+  padding-bottom: 0;
+}
+.card > .card-block > .card-text:last-child:last-of-type {
   padding-bottom: 0;
 }
 .card .card-title + .card-text,
@@ -8518,6 +8521,7 @@ a.label.label-danger.label-outline:hover {
 }
 .msg .msg-btn {
   padding: 0 20px;
+  white-space: nowrap;
 }
 .msg .msg-icon + .msg-body {
   padding: 30px 20px 30px 0px;
@@ -8561,11 +8565,11 @@ a.label.label-danger.label-outline:hover {
 }
 
 .modal-overlay.dark {
-  background-color: #000000;
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .modal-overlay.light {
-  background-color: #ffffff;
+  background-color: rgba(35, 47, 52, 0.32);
 }
 
 .modal-wrap {
@@ -8601,6 +8605,21 @@ a.label.label-danger.label-outline:hover {
   margin-left: auto;
   margin-right: auto;
 }
+.modal-dialog .card {
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
+          box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
+  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+.modal-dialog .card:hover {
+  -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+.modal-dialog .card:active {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
 
 .modal-closer {
   position: absolute;
@@ -8625,11 +8644,6 @@ a.label.label-danger.label-outline:hover {
   border: none;
 }
 
-.modal-overlay.dark + .modal-wrap .modal-closer {
-  background: rgba(63, 63, 63, 0.9);
-  color: #fff;
-}
-
 .modal-wrap .card-header {
   padding: 1.25rem;
 }
@@ -8639,7 +8653,7 @@ a.label.label-danger.label-outline:hover {
 
 .modal-overlay.active {
   visibility: visible;
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .modal-overlay.active + .modal-wrap {
@@ -8709,7 +8723,6 @@ a.label.label-danger.label-outline:hover {
 }
 .notification-wrap .msg {
   cursor: pointer;
-  opacity: 0.9;
   margin-bottom: 15px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
           box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
@@ -8724,9 +8737,6 @@ a.label.label-danger.label-outline:hover {
 .notification-wrap .msg:active {
   -webkit-box-shadow: none;
           box-shadow: none;
-}
-.notification-wrap .msg.msg-confirm {
-  cursor: default;
 }
 
 @media (min-width: 768px) {

@@ -111,9 +111,7 @@
                             <span class="icon glyph-icon glyph-icon-chevron-down"></span>
                         </div>
                         <ul class="list-unstyled " id="components">
-                            <li>
-                                <a class="" href="../badges/index.html"> Badges </a>
-                            </li>
+                            
                             <li>
                                 <a class="" href="../cards/index.html"> Cards </a>
                             </li>
@@ -257,7 +255,6 @@
                                     {
                                         Hubble.require('Notifications',
                                         {
-                                            type: 'success',
                                             msg: 'Hello! I\'m a notification.',
                                         });
                                     });
@@ -265,8 +262,8 @@
                                 </script>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-Hubble.require('Notifications', {
-    type : 'success',
+Hubble.require('Notifications',
+{
     msg  : 'Hello! I\'m a notification.',
 });
 -->
@@ -274,7 +271,7 @@ Hubble.require('Notifications', {
                         <hr>
                         <div class="row roof-xs floor-xs" data-waypoint="options">
                             <h2>Options</h2>
-                            <p> Notifications can also be used to confirm a user action via callbacks. Below is an example of a notification with all options. Please see the table for full details details. </p>
+                            <p>Notifications can also be used to confirm a user action via callbacks. Below is an example of a notification with all options. Please see the table for full details details.</p>
                             <div class="code-content-example">
                                 <button class="js-notif-trigger-2 btn btn-success"> Show Notification </button>
                                 <script type="text/javascript">
@@ -284,23 +281,21 @@ Hubble.require('Notifications', {
                                     {
                                         Hubble.require('Notifications',
                                         {
-                                            type: 'default',
-                                            msg: 'Are you POSITIVE you want to do this?',
+                                            msg: 'Connection lost.',
                                             isCallback: true,
-                                            cancelText: 'No thanks',
-                                            cancelClass: 'btn-default',
-                                            onCancel: function(args)
+                                            timeoutMs: 5000,
+                                            showDismiss: true,
+                                            onDismiss: function(args)
                                             {
                                                 console.log(args);
                                             },
-                                            onCancelArgs: ['variable1', 'variable2', 'variable3'],
-                                            confirmText: 'Yes do something',
-                                            confirmClass: 'btn-success',
+                                            onDismissArgs: ['dissmiss var 1', 'dismiss var 2', 'dismiss var 3'],
+                                            confirmText: 'Retry',
                                             onConfirm: function(args)
                                             {
                                                 console.log(args);
                                             },
-                                            onConfirmArgs: ['variable1', 'variable2', 'variable3'],
+                                            onConfirmArgs: ['confirm var 1', 'confirm var 2', 'confirm var 3'],
                                         });
                                     });
                                 });
@@ -308,18 +303,23 @@ Hubble.require('Notifications', {
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 Hubble.require('Notifications', {
-    type           : 'primary',
-    msg            : 'Are you POSITIVE you want to do this?',
-    isCallback     :  true,
-    cancelText     : 'No thanks',
-    cancelClass    : 'btn-default',
-    onCancel       :  function(args) { console.log(args); },
-    onCancelArgs   : ['variable1', 'variable2', 'variable3'],
-    
-    confirmText    : 'Yes do something',
-    confirmClass   : 'btn-success',
-    onConfirm      : function(args) { console.log(args); },
-    onConfirmArgs  : ['variable1', 'variable2', 'variable3'],
+    msg: 'Connection lost.',
+    timeoutMs: 5000,
+    isCallback: true,
+
+    confirmText: 'Retry',
+    onConfirm: function(args)
+    {
+        console.log(args);
+    },
+    onConfirmArgs: ['variable1', 'variable2', 'variable3'],
+
+    showDismiss: true,
+    onDismiss: function(args)
+    {
+        console.log(args);
+    },
+    onDismissArgs: ['variable1', 'variable2', 'variable3'],
 });
 -->
 </code></pre>
@@ -331,63 +331,63 @@ Hubble.require('Notifications', {
                                         <th>Option key</th>
                                         <th>Value</th>
                                         <th>Behavior</th>
+                                        <th>Required</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <th scope="row">type</th>
-                                        <td><code>string</code><code>primary|info|success|warning|danger</code></td>
-                                        <td>Contextualizes styling.</td>
-                                    </tr>
-                                    <tr>
                                         <th scope="row">msg</th>
                                         <td><code>string</code></td>
                                         <td>Text to be displayed inside the notification.</td>
+                                        <td><code>yes</code></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">timeoutMs</th>
+                                        <td><code>int</code></td>
+                                        <td>Time in milliseconds when notification will be auto-dismissed. Defaults to <code>6000</code>.</td>
+                                        <td><code>no</code></td>
                                     </tr>
                                     <tr>
                                         <th scope="row">isCallback</th>
                                         <td><code>boolean</code></td>
-                                        <td>Does the notification have a callback when it is closed by the user?</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">cancelText</th>
-                                        <td><code>string</code></td>
-                                        <td>Text to be displayed in cancel button.</td>
+                                        <td>Does the notification have a callback when it is closed by the user? If set to <code>true</code>, <code>confirmText</code> must be provided for the the button.</td>
+                                        <td><code>no</code></td>
                                     </tr>
                                     <tr>
                                         <th scope="row">confirmText</th>
                                         <td><code>string</code></td>
                                         <td>Text to be displayed in confirm button.</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">cancelClass</th>
-                                        <td><code>string</code></td>
-                                        <td>Classname to be applied to cancel button.</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">confirmClass</th>
-                                        <td><code>string</code></td>
-                                        <td>Classname to be applied to confirm button.</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">onCancel</th>
-                                        <td><code>function</code></td>
-                                        <td>JavaScript function to be called when the cancel button is clicked.</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">onCancelArgs</th>
-                                        <td><code>array</code></td>
-                                        <td>Array of arguments to be passed to the cancel callback.</td>
+                                        <td><code>no</code></td>
                                     </tr>
                                     <tr>
                                         <th scope="row">onConfirm</th>
                                         <td><code>string</code></td>
                                         <td>JavaScript function to be called when the confirm button is clicked.</td>
+                                        <td><code>no</code></td>
                                     </tr>
                                     <tr>
                                         <th scope="row">onConfirmArgs</th>
                                         <td><code>array</code></td>
                                         <td>Array of arguments to be passed to the confirm callback.</td>
+                                        <td><code>no</code></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">showDismiss</th>
+                                        <td><code>string</code></td>
+                                        <td>Should the dismiss "x" icon be displayed.</td>
+                                        <td><code>no</code></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">onDismiss</th>
+                                        <td><code>function</code></td>
+                                        <td>JavaScript function to be called when the dismiss "x" button is clicked.</td>
+                                        <td><code>no</code></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">onDismissArgs</th>
+                                        <td><code>array</code></td>
+                                        <td>Array of arguments to be passed to the dismiss callback.</td>
+                                        <td><code>no</code></td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -14,7 +14,7 @@
     }
     &:active
     {
-    	background-color: rgba(#000000, 0.01);
+    	background-color: rgba-to-rgb(rgba(#000000, 0.01));
     }
     &.flat
     {
@@ -71,6 +71,10 @@
 		{
 			padding-bottom: 0;
 		}
+	}
+	> .card-block > .card-text:last-child:last-of-type
+	{
+		padding-bottom: 0;
 	}
 	.card-title + .card-text,
 	.card-subtitle + .card-text

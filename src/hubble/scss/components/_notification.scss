@@ -19,13 +19,8 @@
 	.msg
 	{
 		cursor: pointer;
-		opacity: 0.9;
 		margin-bottom: 15px;
 		@include raised(3);
-		&.msg-confirm
-		{
-			cursor: default;
-		}
 	}
 }
 

@@ -7068,12 +7068,43 @@ JSHelper.prototype.isRetina = function()
  * display a modal.
  *
  */
- (function() {
-
+ (function()
+ {
     /**
-     * @var Helper obj
+     * @var obj
      */
     var Helper = Container.get('JSHelper');
+
+    /**
+     * @var obj
+     */
+    var defaults = 
+    {
+        title            : '',
+        message          : '',
+        closeAnywhere    : true,
+        targetContent    : null,
+
+        cancelBtn        : true,
+        cancelText        : 'Cancel',
+        cancelClass       : 'btn btn-pure',
+
+        confirmBtn       : true,
+        confirmClass     : 'btn btn-pure btn-primary',
+        confirmText      : 'Confirm',
+        overlay          : 'light',
+        extras           : '',
+
+        onBuilt             : null,
+        onBuiltArgs         : null,
+        onRender            : null,
+        onRenderArgs        : null,
+        onClose             : null,
+        onCloseArgs         : null,
+        validateConfirm     : null,
+        validateConfirmArgs : null
+
+    };
 
     /**
      * Module constructor
@@ -7084,61 +7115,13 @@ JSHelper.prototype.isRetina = function()
      * @access public
      * @return this
      */
-    var Modal = function(options) {
-        
-        this._options    = options;
+    var Modal = function(options)
+    {
+        this._options    = Helper.array_merge(defaults, options);
         this._timer      = null;
         this._modal      = null;
         this._overlay    = null;
         this._modalInner = null;
-
-
-        // Default options
-        this._options.overlay       = typeof options.overlay === 'undefined'  ? 'light' : options.overlay;
-        this._options.onRenderArgs  = typeof options.onRenderArgs === 'undefined'  ? []   : options.onRenderArgs;
-        this._options.onCloseArgs   = typeof options.onCloseArgs === 'undefined'   ? []   : options.onCloseArgs;
-        this._options.onBuiltArgs   = typeof options.onBuiltArgs === 'undefined'   ? []   : options.onBuiltArgs;
-        this._options.closeAnywhere = typeof options.closeAnywhere === 'undefined' ? true : options.closeAnywhere;
-        this._options.centered      = typeof options.centered === 'undefined' ? true : options.centered;
-        this._options.iconColor     = typeof options.type === 'undefined' ? '' : 'color-'+options.type
-
-        // Card class
-        var _cardclass = typeof options.type === 'undefined' ? '' : options.type;
-        if (_cardclass === 'primary') {
-            _cardclass = 'card-outline-primary';
-        }
-        else if (_cardclass === 'info') {
-            _cardclass = 'card-outline-info';
-        }
-        else if (_cardclass === 'success') {
-            _cardclass = 'card-outline-success';
-        }
-        else if (_cardclass === 'warning') {
-            _cardclass = 'card-outline-warning';
-        }
-        else if (_cardclass === 'danger') {
-            _cardclass = 'card-outline-danger';
-        }
-        this._options.cardclass = _cardclass;
-
-        // header class
-        var _headerclass = typeof options.header === 'undefined' ? '' : options.header;
-        if (_headerclass === 'primary') {
-            _headerclass = 'card-header-primary';
-        }
-        else if (_headerclass === 'info') {
-            _headerclass = 'card-header-info';
-        }
-        else if (_headerclass === 'success') {
-            _headerclass = 'card-header-success';
-        }
-        else if (_headerclass === 'warning') {
-            _headerclass = 'card-header-warning';
-        }
-        else if (_headerclass === 'danger') {
-            _headerclass = 'card-header-danger';
-        }
-        this._options.headerclass = _headerclass;
 
         this._invoke();
 
@@ -7150,8 +7133,8 @@ JSHelper.prototype.isRetina = function()
      *
      * @access private
      */
-    Modal.prototype._invoke = function() {
-        
+    Modal.prototype._invoke = function()
+    {   
         // Build the modal
         this._buildModal();
 
@@ -7169,46 +7152,66 @@ JSHelper.prototype.isRetina = function()
      *
      * @access private
      */
-    Modal.prototype._buildModal = function() {
-
+    Modal.prototype._buildModal = function()
+    {  
         var modal   = document.createElement('DIV');
             modal.className   = 'modal-wrap';
 
         var overlay = document.createElement('DIV');
-            overlay.className = 'modal-overlay '+this._options['overlay'];
+            overlay.className = 'modal-overlay ' + this._options['overlay'];
 
-        var closeClass    = typeof this._options.closeClass   === 'undefined'   ? '' : this._options.closeClass;
-        var closeButton   = typeof this._options.closeText    === 'undefined'   ? '' : '<button type="button" class="btn '+closeClass+' js-modal-close">'+this._options.closeText+'</button>';
-        var confirmClass  = typeof this._options.confirmClass === 'undefined'   ? 'btn-primary' : this._options.confirmClass;
-        var confirmButton = typeof this._options.confirmText  === 'undefined'   ? '' : '<button type="button" class="btn '+confirmClass+' js-modal-close js-modal-confirm">'+this._options.confirmText+'</button>';
-        var icon          = typeof this._options.icon  === 'undefined' ? '' : '<div class="row floor-sm roof-sm text-center"><span class="modal-icon '+this._options.iconColor+' glyph-icon glyph-icon-'+this._options.icon+'"></spam></div>';
-        var extras        = typeof this._options.extras  === 'undefined' ? '' : this._options.extras;
-        Helper.innerHTML(modal, [
-            '<div class="modal-dialog js-modal-dialog">',
-                '<span class="modal-closer glyph-icon glyph-icon-cross js-modal-cancel"></span>',
-                '<div class="card '+this._options.cardclass+' js-modal-panel">',
-                    '<div class="card-header '+this._options.headerclass+'">',
-                        '<h4>'+this._options.title+'</h4>',
-                    '</div>',
-                    '<div class="card-block text-center">',
-                            icon,
-                            '<p class="card-text">'+this._options.message+'</p>',
-                            extras,
-                            '<div class="btn-wrap">',
-                                closeButton,
-                                confirmButton,
-                            '</div>',
+        var content = '';
+
+        if (this._options.targetContent)
+        {
+            modal.innerHTML = this._buildTargetModal();
+        }
+        else
+        {
+            var closeButton   = this._options.cancelBtn === true ? '<button type="button" class="btn ' + this._options.cancelClass + ' js-modal-close js-modal-cancel">' + this._options.cancelText + '</button>' : '';
+            var confirmButton = this._options.confirmBtn === true  ? '<button type="button" class="btn ' + this._options.confirmClass +' js-modal-close js-modal-confirm">'+ this._options.confirmText +'</button>' : '';
+            
+            Helper.innerHTML(modal, [
+                '<div class="modal-dialog js-modal-dialog">',
+                    '<div class="card js-modal-panel">',
+                        '<div class="card-header">',
+                            '<h4 class="card-title">'+this._options.title+'</h4>',
                         '</div>',
-                        
+                        this._options.extras,
+                        '<div class="card-block">',
+                            '<p class="card-text">'+ this._options.message +'</p>',
+                        '</div>',
+                        '<div class="card-actions">',
+                            closeButton,
+                            confirmButton,
+                        '</div>',
                     '</div>',
                 '</div>',
-            '</div>',
-        ]);
+            ]);
+        }
 
-        this._modal = modal;
-        this._overlay = overlay;
+        this._modal      = modal;
+        this._overlay    = overlay;
         this._modalInner = Helper.$('.js-modal-dialog', modal);
         this._fireBuilt();
+    }
+
+    /**
+     * Get modal content from an existing DOM node
+     *
+     * @access private
+     * @return string
+     */
+    Modal.prototype._buildTargetModal = function()
+    {
+        var content = Helper.$(this._options.targetContent);
+
+        if (!Helper.nodeExists(content))
+        {
+            throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
+        }
+
+        return '<div class="modal-dialog js-modal-dialog"><div class="card js-modal-panel">' + content.innerHTML + '</div></div>';
     }
 
     /**
@@ -7216,17 +7219,99 @@ JSHelper.prototype.isRetina = function()
      *
      * @access private
      */
-    Modal.prototype._render = function() {
+    Modal.prototype._render = function()
+    {
         var _this = this;
         document.body.appendChild(this._overlay);
         document.body.appendChild(this._modal);
-        this._centerModal(_this._options.centered);
+       
+        this._centerModal();
+        
         Helper.addClass(this._overlay, 'active');
+        
         this._fireRender();
-        Helper.addEventListener(window, 'resize', function modalResize() {
-            _this._centerModal(_this._options.centered);
+        
+        Helper.addEventListener(window, 'resize', function modalResize()
+        {
+            _this._centerModal();
         });
+        
         Helper.addClass(document.body, 'no-scroll');
+    }
+
+    /**
+     * Bind event listeners inside the built modal
+     *
+     * @access private
+     */
+    Modal.prototype._bindListeners = function()
+    {
+        var _this = this;
+
+        var closeModal = function(e)
+        {
+            e = e || window.event;
+
+            if (_this._options.closeAnywhere === true)
+            {
+                if (this === _this._modal)
+                {
+                    var clickedInner = Helper.closest(e.target, '.js-modal-dialog');
+                    
+                    if (clickedInner)
+                    {
+                        return;
+                    }
+                }
+            }
+
+            e.preventDefault();
+
+            clearTimeout(_this._timer);
+            
+            if (Helper.hasClass(this, 'js-modal-confirm'))
+            {
+                var canClose = _this._fireConfirmValidator();
+                
+                if (!canClose)
+                {
+                    return;
+                }
+            }
+            
+            Helper.addClass(_this._overlay, 'transition-off');
+            
+            _this._fireClosed();
+            
+            if (Helper.hasClass(this, 'js-modal-confirm'))
+            {
+                _this._fireConfirm();
+            }
+            
+            _this._timer = setTimeout(function()
+            {
+                Helper.removeFromDOM(_this._overlay);
+                Helper.removeFromDOM(_this._modal);
+                Helper.removeClass(document.body, 'no-scroll');
+            }, 500);
+        }
+        
+        if (this._options.closeAnywhere === true)
+        {
+            Helper.addEventListener(this._modal, 'click', closeModal, false);
+        }
+
+        var modalCloses = Helper.$All('.js-modal-close', this._modal);
+        if (!Helper.empty(modalCloses))
+        {
+             Helper.addEventListener(modalCloses, 'click', closeModal, false);
+        }
+
+        var modalCancel = Helper.$('.js-modal-cancel', this._modal);
+        if (Helper.nodeExists(modalCancel))
+        {
+            Helper.addEventListener(modalCancel, 'click', closeModal, false);
+        }
     }
 
     /**
@@ -7234,8 +7319,10 @@ JSHelper.prototype.isRetina = function()
      *
      * @access private
      */
-    Modal.prototype._fireRender = function() {
-        if (typeof this._options.onRender !== 'undefined') {
+    Modal.prototype._fireRender = function()
+    {
+        if (this._options.onRender !== null && Helper.isCallable(this._options.onRender))
+        {
             var callback = this._options.onRender;
             var args     = this._options.onRenderArgs;
             callback.apply(this._modal, args);
@@ -7244,90 +7331,14 @@ JSHelper.prototype.isRetina = function()
     }
 
     /**
-     * Bind event listeners inside the built modal
-     *
-     * @access private
-     */
-    Modal.prototype._bindListeners = function() {
-        
-        var _this = this;
-
-        var closeModal = function(e) {
-            e = e || window.event;
-            if (_this._options.closeAnywhere === true) {
-                if (this === _this._modal) {
-                    var clickedInner = Helper.closest(e.target, '.js-modal-dialog');
-                    if (clickedInner) return;
-                }
-            }
-
-            e.preventDefault();
-            clearTimeout(_this._timer);
-            
-            if (Helper.hasClass(this, 'js-modal-confirm')) {
-                var canClose = _this._fireConfirmValidator();
-                if (!canClose) return;
-            }
-            
-            Helper.addClass(_this._overlay, 'transition-off');
-            _this._fireClosed();
-            if (Helper.hasClass(this, 'js-modal-confirm')) _this._fireConfirm();
-            _this._timer = setTimeout(function() {
-                Helper.removeFromDOM(_this._overlay);
-                Helper.removeFromDOM(_this._modal);
-                Helper.removeClass(document.body, 'no-scroll');
-            }, 500);
-        }
-        
-        if (this._options.closeAnywhere === true) {
-            Helper.addEventListener(this._modal, 'click', closeModal, false);
-        }
-
-        var modalCloses = Helper.$All('.js-modal-close', this._modal);
-        if (!Helper.empty(modalCloses)) {
-            for (var i=0; i < modalCloses.length; i++) {
-                Helper.addEventListener(modalCloses[i], 'click', closeModal, false);
-            }
-        }
-
-        var modalCancel = Helper.$('.js-modal-cancel', this._modal);
-        if (Helper.nodeExists(modalCancel)) {
-            Helper.addEventListener(modalCancel, 'click', closeModal, false);
-        }
-
-        var modalConfirm = Helper.$('.js-modal-confirm', this._modal);
-        var inputs = Helper.$All('input', this.modal);
-        if (!Helper.empty(inputs) && Helper.nodeExists(modalConfirm)) {
-            for (var j=0; j < inputs.length; j++) {
-                Helper.addEventListener(inputs[j], 'keyup', this._pressEnter);
-            }
-        } 
-    }
-
-    /**
-     * Event handler when user presses enter
-     *
-     * @param  e event
-     * @access private
-     */
-    Modal.prototype._pressEnter = function(e) {
-        e = e || window.event;
-        if (e.keyCode == 13) {
-            e.preventDefault();
-            e.stopPropagation();
-            var modal = Helper.closest(this, '.js-modal-dialog');
-            var modalConfirm = Helper.$('.js-modal-confirm', this._modal);
-            Helper.triggerEvent(modalConfirm, 'click');
-        }
-    }
-
-    /**
      * Fire the closed event
      *
      * @access private
      */
-    Modal.prototype._fireClosed = function() {
-        if (typeof this._options.onClose !== 'undefined') {
+    Modal.prototype._fireClosed = function()
+    {
+        if (this._options.onClose !== null && Helper.isCallable(this._options.onClose))
+        {
             var callback = this._options.onClose;
             var args     = this._options.onCloseArgs;
             callback.apply(this._modal, args);
@@ -7340,8 +7351,10 @@ JSHelper.prototype.isRetina = function()
      *
      * @access private
      */
-    Modal.prototype._fireConfirm = function() {
-        if (typeof this._options.onConfirm !== 'undefined') {
+    Modal.prototype._fireConfirm = function()
+    {
+        if (this._options.onConfirm !== null && Helper.isCallable(this._options.onConfirm))
+        {
             var callback = this._options.onConfirm;
             var args     = this._options.onConfirmArgs;
             callback.apply(this._modal, args);
@@ -7353,12 +7366,15 @@ JSHelper.prototype.isRetina = function()
      *
      * @access private
      */
-    Modal.prototype._fireConfirmValidator = function() {
-        if (typeof this._options.validateConfirm !== 'undefined') {
+    Modal.prototype._fireConfirmValidator = function()
+    {
+        if (this._options.validateConfirm !== null && Helper.isCallable(this._options.validateConfirm))
+        {
             var callback = this._options.validateConfirm;
             var args     = this._options.validateConfirmArgs;
             return callback.apply(this._modal, args);
         }
+
         return true;
     }
 
@@ -7367,8 +7383,10 @@ JSHelper.prototype.isRetina = function()
      *
      * @access private
      */
-    Modal.prototype._fireBuilt = function() {
-        if (typeof this._options.onBuilt !== 'undefined') {
+    Modal.prototype._fireBuilt = function()
+    {
+        if (this._options.onBuilt !== null && Helper.isCallable(this._options.onBuilt))
+        {
             var callback = this._options.onBuilt;
             var args     = this._options.onBuiltArgs;
             callback.apply(this._modal, args);
@@ -7380,7 +7398,8 @@ JSHelper.prototype.isRetina = function()
      *
      * @access private
      */
-    Modal.prototype._centerModal = function(centered) {
+    Modal.prototype._centerModal = function()
+    {
         var el            = this._modalInner;
         var computedStyle = window.getComputedStyle(el);
         var modalH        = parseInt(el.offsetHeight);
@@ -7388,22 +7407,15 @@ JSHelper.prototype.isRetina = function()
         
         // If the window height is less than the modal dialog
         // We need to adjust the dialog so it is at the top of the page
-        if (centered)
+        if (windowH <= modalH)
         {
-            if (windowH <= modalH)
-            {
-                el.style.marginTop  = '0px';
-                el.style.top  = '0';
-            }
-            else
-            {
-                el.style.marginTop  = '-' + (modalH/2) + 'px';
-                el.style.top  = '50%';
-            }
+            el.style.marginTop  = '0px';
+            el.style.top  = '0';
         }
         else
         {
-           el.style.top  = '0';
+            el.style.marginTop  = '-' + (modalH/2) + 'px';
+            el.style.top  = '50%';
         }
     }
 
@@ -7418,7 +7430,8 @@ JSHelper.prototype.isRetina = function()
  * display a notification.
  *
  */
-(function() {
+(function()
+{
 
     /**
      * @var Helper obj
@@ -7439,20 +7452,33 @@ JSHelper.prototype.isRetina = function()
      * @access public
      * @return this
      */
-    var Notifications = function(options) {
+    var Notifications = function(options)
+    {
         this._notifWrap = Helper.$('.js-nofification-wrap');
         
-        if (!Helper.nodeExists(this._notifWrap)) {
-            var wrap = document.createElement('DIV');
-            wrap.className = 'notification-wrap js-nofification-wrap';
-            document.body.appendChild(wrap);
-            this._notifWrap = Helper.$('.js-nofification-wrap');
+        if (!Helper.nodeExists(this._notifWrap))
+        {
+            this._buildNotificationContainer();
         }
         
         this._invoke(options);
         
         return this;
-    };
+    }
+
+    /**
+     * Build the notification container
+     *
+     * @access private
+     */
+    Notifications.prototype._buildNotificationContainer = function()
+    {
+        var wrap = document.createElement('DIV');
+        wrap.className = 'notification-wrap js-nofification-wrap';
+        document.body.appendChild(wrap);
+        this._notifWrap = Helper.$('.js-nofification-wrap');
+    }
+
 
     /**
      * Display the notification
@@ -7460,28 +7486,35 @@ JSHelper.prototype.isRetina = function()
      * @params options obj
      * @access private
      */
-    Notifications.prototype._invoke = function(options) {
-        if (typeof options.isCallback !== 'undefined' && options.isCallback === true) {
+    Notifications.prototype._invoke = function(options)
+    {
+        if (typeof options.isCallback !== 'undefined' && options.isCallback === true)
+        {
             this._invokeCallbackable(options);
+            
             return;
         }
 
-        var _this = this;
+        var _this     = this;
         var content   = '<div class="msg-body"><p>' + options.msg + '</p></div>';
-        var notif     = Helper.newNode('div', 'msg-'+options.type + ' msg animate-notif', null, content, this._notifWrap);
+        var notif     = Helper.newNode('div', 'msg-'+ options.type + ' msg animate-notif', null, content, this._notifWrap);
+        var timeout   = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
+
         Helper.addClass(this._notifWrap, 'active');
 
         // Timout remove automatically
         _activeNotifs.push({
             node    : notif,
-            timeout : setTimeout(function() {
-                _this._removeNotif(notif);
-            }, 6000),
+            timeout : setTimeout(function()
+            {
+                _this._removeNotification(notif);
+            }, timeout),
         });
 
         // Click to remove
-        notif.addEventListener('click', function() {
-            _this._removeNotif(notif);
+        notif.addEventListener('click', function()
+        {
+            _this._removeNotification(notif);
         });
     }
 
@@ -7491,35 +7524,63 @@ JSHelper.prototype.isRetina = function()
      * @params options obj
      * @access private
      */
-    Notifications.prototype._invokeCallbackable = function(options) {
+    Notifications.prototype._invokeCallbackable = function(options)
+    {
         var _this        = this;
-        var cancelText   = typeof options.cancelText === 'undefined'  ? 'Cacnel'  : options.cancelText;
         var confirmText  = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
-        var cancelClass  = typeof options.cancelClass === 'undefined'  ? 'btn-default'  : options.cancelClass;
-        var confirmClass = typeof options.confirmClass === 'undefined'  ? 'btn-success'  : options.confirmClass;
+        var dismissX     = typeof options.showDismiss === 'undefined' ? '' : '<button type="button" class="btn btn-xs btn-pure btn-dismiss btn-circle js-dismiss"><span class="glyph-icon glyph-icon-cross2"></span></button>';
+        var timeout      = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
-        var content  = '<div class="msg-body"><p>' + options.msg + '</p><div class="row roof-xs msg-buttons"><button type="button" class="btn '+cancelClass+' cancel-msg js-cancel">'+cancelText+'</button>&nbsp;&nbsp;<button type="button" class="btn '+confirmClass+' js-confirm">' + confirmText + '</button></div></div>';
-        var notif    = Helper.newNode('div', 'msg-'+options.type + ' msg animate-notif msg-confirm', null, content, this._notifWrap);
-        var cancel   = Helper.$('.js-cancel', notif);
+        var content  = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX +'</div>';
+
+        var notif    = Helper.newNode('div', 'msg animate-notif', null, content, this._notifWrap);
         var confirm  = Helper.$('.js-confirm', notif);
+        var dismiss  = Helper.$('.js-dismiss', notif);
+        
         Helper.addClass(this._notifWrap, 'active');
         
         _activeNotifs.push({
             node    : notif,
-            timeout : null,
+            timeout : setTimeout(function()
+            {
+                _this._removeNotification(notif);
+            }, timeout),
         });
 
-        // Click cancel to remove
-        cancel.addEventListener('click', function() {
-            if (Helper.isCallable(options.onCancel)) options.onCancel(options.onCancelArgs);
-            _this._removeNotif(notif);
+        // Click to remove
+        notif.addEventListener('click', function()
+        {
+            if (Helper.isCallable(options.onDismiss))
+            {
+                options.onDismiss(options.onDismissArgs);
+            }
+                
+            _this._removeNotification(notif);
         });
 
         // Click confirm to remove
-        confirm.addEventListener('click', function() {
-            if (Helper.isCallable(options.onConfirm)) options.onConfirm(options.onConfirmArgs);
-            _this._removeNotif(notif);
+        confirm.addEventListener('click', function()
+        {
+            if (Helper.isCallable(options.onConfirm))
+            {
+                options.onConfirm(options.onConfirmArgs);
+            }
+
+            _this._removeNotification(notif);
         });
+
+        if (dismiss)
+        {
+            dismiss.addEventListener('click', function()
+            {
+                if (Helper.isCallable(options.onDismiss))
+                {
+                    options.onDismiss(options.onDismissArgs);
+                }
+
+                _this._removeNotification(notif);
+            });
+        }
     }
 
     /**
@@ -7528,19 +7589,27 @@ JSHelper.prototype.isRetina = function()
      * @params _node node
      * @access private
      */
-    Notifications.prototype._removeNotif = function(_node) {
+    Notifications.prototype._removeNotification = function(_node)
+    {
         var _this = this;
         var i = _activeNotifs.length;
-        while (i--) {
-            if (_node === _activeNotifs[i].node) {
+        while (i--)
+        {
+            if (_node === _activeNotifs[i].node)
+            {
                 clearTimeout(_activeNotifs[i].timeout);
                 Helper.removeClass(_node, 'animate-notif');
                 Helper.animate(_node, 'opacity', '1', '0', 350, 'ease');
                 Helper.animate(_node, 'max-height', '100px', '0', 450, 'ease');
                 _activeNotifs.splice(i, 1);
-                setTimeout(function() {
+                setTimeout(function()
+                {
                     Helper.removeFromDOM(_node);
-                    if (_activeNotifs.length === 0) Helper.removeClass(_this._notifWrap, 'active');
+
+                    if (_activeNotifs.length === 0)
+                    {
+                        Helper.removeClass(_this._notifWrap, 'active');
+                    }
                 }, 450);
                 return;
             }
