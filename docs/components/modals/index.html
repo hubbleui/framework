@@ -199,6 +199,9 @@
                                 <a class="" href="../../javascript/events/index.html"> Events </a>
                             </li>
                             <li>
+                                <a class="" href="../../javascript/filters/index.html"> Filters </a>
+                            </li>
+                            <li>
                                 <a class="" href="../../javascript/dynamic-ui/index.html"> Dynamic UI </a>
                             </li>
                             <li>
@@ -258,7 +261,7 @@
                                 {
                                     document.querySelector('.js-modal-trigger-1').addEventListener('click', function()
                                     {
-                                        Hubble.require('Modal',
+                                        Container.Modal(
                                         {
                                             title: 'Great Idea',
                                             message: 'Would you like to continue?',
@@ -268,7 +271,7 @@
                                 </script>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-Hubble.require('Modal',
+Container.Modal(
 {
     title: 'Great Idea',
     message: 'Would you like to continue?',
@@ -286,7 +289,7 @@ Hubble.require('Modal',
                                 {
                                     document.querySelector('.js-modal-trigger-2').addEventListener('click', function()
                                     {
-                                        Hubble.require('Modal',
+                                        Container.Modal(
                                         {
                                             targetContent: '.js-my-custom-content'
                                         });
@@ -300,7 +303,7 @@ Hubble.require('Modal',
                                 </div>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-Hubble.require('Modal',
+Container.Modal(
 {
     title: 'Great Idea',
     message: 'Would you like to continue?',
@@ -318,7 +321,7 @@ Hubble.require('Modal',
                                 {
                                     document.querySelector('.js-notif-trigger-3').addEventListener('click', function()
                                     {
-                                        Hubble.require('Modal',
+                                        Container.Modal(
                                         {
                                             title: 'Great Idea',
                                             message: 'Would you like to continue?',
@@ -363,7 +366,7 @@ Hubble.require('Modal',
                                 </script>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-Hubble.require('Modal', {
+Container.Modal( {
     title            : 'Great Idea',
     message          : 'Would you like to continue?',
     closeAnywhere    : false,

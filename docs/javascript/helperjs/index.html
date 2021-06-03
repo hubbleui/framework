@@ -199,6 +199,9 @@
                                 <a class="" href="../../javascript/events/index.html"> Events </a>
                             </li>
                             <li>
+                                <a class="" href="../../javascript/filters/index.html"> Filters </a>
+                            </li>
+                            <li>
                                 <a class="" href="../../javascript/dynamic-ui/index.html"> Dynamic UI </a>
                             </li>
                             <li>
@@ -249,7 +252,7 @@
                             <p> If you're using Hubble's JavaScript, one of the components you will use the most is the <code>HelperJS</code> library. The library is used throughout the framework internally and is very useful. It is similar in <code>jQuery</code> although it does not return a node or nodelist wrapped around an object. </p>
                             <p> To access the library, use the <code>JSHelper</code> key via the module loader: </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-var helper = Hubble.require('JSHelper');
+var helper = Container.Helper();
 -->
 </code></pre>
                             <p> Once you have access to library you can call it's methods. For example to select a node, use <code>$</code>. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">

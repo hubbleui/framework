@@ -199,6 +199,9 @@
                                 <a class="" href="../../javascript/events/index.html"> Events </a>
                             </li>
                             <li>
+                                <a class="" href="../../javascript/filters/index.html"> Filters </a>
+                            </li>
+                            <li>
                                 <a class="" href="../../javascript/dynamic-ui/index.html"> Dynamic UI </a>
                             </li>
                             <li>
@@ -255,7 +258,7 @@
                                 {
                                     document.querySelector('.js-notif-trigger-1').addEventListener('click', function()
                                     {
-                                        Hubble.require('Notifications',
+                                        Container.Notification(
                                         {
                                             msg: 'Hello! I\'m a notification.',
                                         });
@@ -264,7 +267,7 @@
                                 </script>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-Hubble.require('Notifications',
+Container.Notification(
 {
     msg  : 'Hello! I\'m a notification.',
 });
@@ -281,7 +284,7 @@ Hubble.require('Notifications',
                                 {
                                     document.querySelector('.js-notif-trigger-2').addEventListener('click', function()
                                     {
-                                        Hubble.require('Notifications',
+                                        Container.Notification(
                                         {
                                             msg: 'Connection lost.',
                                             isCallback: true,
@@ -304,7 +307,7 @@ Hubble.require('Notifications',
                                 </script>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-Hubble.require('Notifications', {
+Container.Notification( {
     msg: 'Connection lost.',
     timeoutMs: 5000,
     isCallback: true,

@@ -229,6 +229,6 @@
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('ScrollBars', ScrollBars);
+    Container.get('Hubble').dom().register('Scrollbars', ScrollBars);
 
 })();

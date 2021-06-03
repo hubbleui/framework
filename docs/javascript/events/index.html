@@ -199,6 +199,9 @@
                                 <a class="active" href="../../javascript/events/index.html"> Events </a>
                             </li>
                             <li>
+                                <a class="" href="../../javascript/events/index.html"> Filters </a>
+                            </li>
+                            <li>
                                 <a class="" href="../../javascript/dynamic-ui/index.html"> Dynamic UI </a>
                             </li>
                             <li>
@@ -237,32 +240,38 @@
                         <hr>
                         <div class="row roof-xs floor-xs" data-waypoint="welcome">
                             <p> The events module allows you to set callbacks for and trigger custom events. This is useful for when you want to trigger a function when a specific 'event' or action happens in your code. </p>
-                            <p> To access the events module, use the <code>Events</code> key via the module loader. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> To access the events module, use the <code>Events</code> key via the <code>Container</code>. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-var events = Hubble.require('Events');
+var events = Container.Events();
 -->
 </code></pre>
                             <p> The <code>on()</code> method sets a callback for an event name. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-var callback = function(){
-    console.log('fired callback');
+var callback = function(arg1, arg2)
+{
+    ...
 }
 events.on('myEventName', callback);
 -->
 </code></pre>
                             <p> The <code>fire()</code> method calls all the callbacks on an event. They are fired in the order they were set. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-var callback = function(){
-    console.log('fired callback');
+var callback = function(arg1, arg2)
+{
+    console.log(this);
+    
+    console.log(arg1 + arg2);
 }
+
 events.on('myEventName', callback);
-events.fire('myEventName');
-// fired callback
+
+events.fire('myEventName', 'this value', 'arg1', 'arg2');
 -->
 </code></pre>
                             <p> The <code>off()</code> method removes a callback for an event name. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-if (somevar) {
+if (something)
+{
     events.off('myEventName', callback);
 }
 -->

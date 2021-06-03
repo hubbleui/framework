@@ -199,6 +199,9 @@
                                 <a class="" href="../../javascript/events/index.html"> Events </a>
                             </li>
                             <li>
+                                <a class="" href="../../javascript/filters/index.html"> Filters </a>
+                            </li>
+                            <li>
                                 <a class="" href="../../javascript/dynamic-ui/index.html"> Dynamic UI </a>
                             </li>
                             <li>
@@ -283,17 +286,19 @@
                             <p> There are two ways to initialize Flickity. </p>
                             <br>
                             <h4>Initialize with JavaScript</h4>
-                            <p> To retrieve the Flickity object, simply call it from the Module loader with <code>Hubble.require('Flickity');</code>. The constructor accepts two arguments: the carousel element and an options object. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> To retrieve the Flickity object, simply call it from the via the container with <code>Container.Flickity();</code>. The constructor accepts two arguments: the carousel element and an options object. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 var elem = document.querySelector('.main-carousel');
-var flkty = Hubble.require('Flickity', elem, {
+var flkty = Container.Flickity( elem,
+{
   // options
   cellAlign: 'left',
   contain: true
 });
 // element argument can be a selector string
 //   for an individual element
-var flkty = Hubble.require('Flickity', '.main-carousel', {
+var flkty = Container.Flickity( '.main-carousel',
+{
   // options
   cellAlign: 'left',
   contain: true

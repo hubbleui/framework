@@ -1,7 +1,7 @@
 /**
- * Notifications
+ * Notification
  *
- * The Notifications class is a utility class used to
+ * The Notification class is a utility class used to
  * display a notification.
  *
  */
@@ -27,7 +27,7 @@
      * @access public
      * @return this
      */
-    var Notifications = function(options)
+    var Notification = function(options)
     {
         this._notifWrap = Helper.$('.js-nofification-wrap');
 
@@ -46,7 +46,7 @@
      *
      * @access private
      */
-    Notifications.prototype._buildNotificationContainer = function()
+    Notification.prototype._buildNotificationContainer = function()
     {
         var wrap = document.createElement('DIV');
         wrap.className = 'notification-wrap js-nofification-wrap';
@@ -61,7 +61,7 @@
      * @params options obj
      * @access private
      */
-    Notifications.prototype._invoke = function(options)
+    Notification.prototype._invoke = function(options)
     {
         if (typeof options.isCallback !== 'undefined' && options.isCallback === true)
         {
@@ -100,7 +100,7 @@
      * @params options obj
      * @access private
      */
-    Notifications.prototype._invokeCallbackable = function(options)
+    Notification.prototype._invokeCallbackable = function(options)
     {
         var _this = this;
         var confirmText = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
@@ -166,7 +166,7 @@
      * @params _node node
      * @access private
      */
-    Notifications.prototype._removeNotification = function(_node)
+    Notification.prototype._removeNotification = function(_node)
     {
         var _this = this;
         var i = _activeNotifs.length;
@@ -194,6 +194,6 @@
     }
 
     // Add to container
-    Container.set('Notifications', Notifications);
+    Container.set('Notification', Notification);
 
 })();

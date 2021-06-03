@@ -142,8 +142,6 @@
         {
             var _value = Helper.getInputValue(this);
 
-            console.log(_value);
-
             if (_value === '')
             {
                 Helper.removeClass(this.parentNode, 'not-empty');

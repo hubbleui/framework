@@ -199,6 +199,9 @@
                                 <a class="" href="../../javascript/events/index.html"> Events </a>
                             </li>
                             <li>
+                                <a class="" href="../../javascript/filters/index.html"> Filters </a>
+                            </li>
+                            <li>
                                 <a class="" href="../../javascript/dynamic-ui/index.html"> Dynamic UI </a>
                             </li>
                             <li>
@@ -289,7 +292,7 @@
                             <h2>Usage</h2>
                             <p> To access the form validator use <code>FormValidator</code> key via the Module loader. You must pass a valid form DOM node to the constructor. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-var formValidator = Hubble.require('FormValidator', Helper.$('.myform'));
+var formValidator = Container.FormValidator(Helper.$('.myform'));
 -->
 </code></pre>
                             <p> Use the <code>isValid</code> method to check if a form is valid. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
@@ -380,8 +383,8 @@ formValidator.showResult('success');
                                     <script type="text/javascript">
                                     document.addEventListener('DOMContentLoaded', function()
                                     {
-                                        var Helper = Hubble.require('JSHelper');
-                                        var formValidator = Hubble.require('FormValidator', Helper.$('.js-form'));
+                                        var Helper = Container.Helper();
+                                        var formValidator = Container.FormValidator(Helper.$('.js-form'));
                                         var submitBtn = Helper.$('button[type=submit]', Helper.$('.js-form'));
                                         var fakeAjax;
                                         submitBtn.addEventListener('click', formHandler);
@@ -457,8 +460,8 @@ formValidator.showResult('success');
 </form>
 -->
 </code></pre> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
-var Helper        = Hubble.require('JSHelper');
-var formValidator = Hubble.require('FormValidator', Helper.$('.js-form'));
+var Helper        = Container.Helper();
+var formValidator = Container.FormValidator(Helper.$('.js-form'));
 var submitBtn     = Helper.$('button[type=submit]', Helper.$('.js-form'));
 var fakeAjax;
 submitBtn.addEventListener('click', formHandler);

@@ -12162,13 +12162,17 @@ Helper.prototype.isRetina = function()
     /**
      * Fire a custom event
      *
-     * @param eventName string The event name to fire
-     * @param subject   mixed  What should be given as "this" to the event callbacks
-     * @param subject   args   Array of arguments to push to function (optional)
+     * @param string eventName The event name to fire
+     * @param mixed  subject   What should be given as "this" to the event callbacks
+     * @param mixed  args      List of additional args to push (optional)
      * @access public
      */
-    Events.prototype.fire = function(eventName, subject, args)
+    Events.prototype.fire = function()
     {
+        var args = Array.prototype.slice.call(arguments);
+
+        var eventName = args.shift();
+
         for (var key in this._callbacks)
         {
             if (!this._callbacks.hasOwnProperty(key))
@@ -12180,9 +12184,17 @@ Helper.prototype.isRetina = function()
 
             if (callbackEvent === eventName)
             {
-                var callback = this._callbacks[key].callback;
+                var callback   = this._callbacks[key].callback;
+                var _this      = null;
 
-                callback.apply(subject, args);
+                if (args.length >= 1)
+                {
+                    _this = args[0];
+
+                    args.shift();
+                }
+
+                callback.apply(_this, args);
             }
         }
     }
@@ -12207,7 +12219,8 @@ Helper.prototype.isRetina = function()
         var key = eventName + '______' + callbackName;
 
         // Save the callback and event name
-        this._callbacks[key] = {
+        this._callbacks[key] =
+        {
             name: eventName,
             callback: callback,
         };
@@ -13639,9 +13652,9 @@ Helper.prototype.isRetina = function()
 })();
 
 /**
- * Notifications
+ * Notification
  *
- * The Notifications class is a utility class used to
+ * The Notification class is a utility class used to
  * display a notification.
  *
  */
@@ -13667,7 +13680,7 @@ Helper.prototype.isRetina = function()
      * @access public
      * @return this
      */
-    var Notifications = function(options)
+    var Notification = function(options)
     {
         this._notifWrap = Helper.$('.js-nofification-wrap');
 
@@ -13686,7 +13699,7 @@ Helper.prototype.isRetina = function()
      *
      * @access private
      */
-    Notifications.prototype._buildNotificationContainer = function()
+    Notification.prototype._buildNotificationContainer = function()
     {
         var wrap = document.createElement('DIV');
         wrap.className = 'notification-wrap js-nofification-wrap';
@@ -13701,7 +13714,7 @@ Helper.prototype.isRetina = function()
      * @params options obj
      * @access private
      */
-    Notifications.prototype._invoke = function(options)
+    Notification.prototype._invoke = function(options)
     {
         if (typeof options.isCallback !== 'undefined' && options.isCallback === true)
         {
@@ -13740,7 +13753,7 @@ Helper.prototype.isRetina = function()
      * @params options obj
      * @access private
      */
-    Notifications.prototype._invokeCallbackable = function(options)
+    Notification.prototype._invokeCallbackable = function(options)
     {
         var _this = this;
         var confirmText = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
@@ -13806,7 +13819,7 @@ Helper.prototype.isRetina = function()
      * @params _node node
      * @access private
      */
-    Notifications.prototype._removeNotification = function(_node)
+    Notification.prototype._removeNotification = function(_node)
     {
         var _this = this;
         var i = _activeNotifs.length;
@@ -13834,7 +13847,7 @@ Helper.prototype.isRetina = function()
     }
 
     // Add to container
-    Container.set('Notifications', Notifications);
+    Container.set('Notification', Notification);
 
 })();
 
@@ -18415,7 +18428,7 @@ function complete(response)
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('ScrollBars', ScrollBars);
+    Container.get('Hubble').dom().register('Scrollbars', ScrollBars);
 
 })();
 
@@ -20125,8 +20138,6 @@ function complete(response)
         if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
         {
             var _value = Helper.getInputValue(this);
-
-            console.log(_value);
 
             if (_value === '')
             {

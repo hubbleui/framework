@@ -42,13 +42,17 @@
     /**
      * Fire a custom event
      *
-     * @param eventName string The event name to fire
-     * @param subject   mixed  What should be given as "this" to the event callbacks
-     * @param subject   args   Array of arguments to push to function (optional)
+     * @param string eventName The event name to fire
+     * @param mixed  subject   What should be given as "this" to the event callbacks
+     * @param mixed  args      List of additional args to push (optional)
      * @access public
      */
-    Events.prototype.fire = function(eventName, subject, args)
+    Events.prototype.fire = function()
     {
+        var args = Array.prototype.slice.call(arguments);
+
+        var eventName = args.shift();
+
         for (var key in this._callbacks)
         {
             if (!this._callbacks.hasOwnProperty(key))
@@ -60,9 +64,17 @@
 
             if (callbackEvent === eventName)
             {
-                var callback = this._callbacks[key].callback;
+                var callback   = this._callbacks[key].callback;
+                var _this      = null;
 
-                callback.apply(subject, args);
+                if (args.length >= 1)
+                {
+                    _this = args[0];
+
+                    args.shift();
+                }
+
+                callback.apply(_this, args);
             }
         }
     }
@@ -87,7 +99,8 @@
         var key = eventName + '______' + callbackName;
 
         // Save the callback and event name
-        this._callbacks[key] = {
+        this._callbacks[key] =
+        {
             name: eventName,
             callback: callback,
         };
