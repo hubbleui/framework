@@ -240,45 +240,117 @@
                         <hr>
                         <div class="row roof-xs floor-xs" data-waypoint="welcome">
                             <p> Hubble's <code>Ajax</code> class allows you to easily handle Ajax calls and even upload files. </p>
-                            <p> To access the Ajax module, use the <code>Ajax</code> key via the module loader. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> To access the Ajax module, use the <code>Ajax</code> key via the <code>Container</code>. </p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 var Ajax = Container.Ajax();
 -->
 </code></pre>
-                            <p> The <code>post</code> method posts an ajax call with an object to a url. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> The <code>post</code> method posts an ajax call with an object to a url. </p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 Ajax.post('http://example.com', {foo:'bar'});
 -->
 </code></pre>
-                            <p> The <code>get</code> method calls a <code>GET</code> request to a given url. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> The <code>get</code> method calls a <code>GET</code> request to a given url. </p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 Ajax.get('http://example.com', {foo:'bar'});
 -->
 </code></pre>
-                            <p> You can specify a callback for <code>success</code> and <code>error</code> HTTP responses from the server for <code>get</code> and <code>post</code>. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> You can specify a callback for <code>success</code>, <code>error</code> and <code>complete</code> HTTP responses from the server for <code>get</code> and <code>post</code>. </p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-// Ajax.post(url, data, success, error)
-// Ajax.get(url, data, success, error)
-Ajax.post(
-    'http://example.com',
-    {foo:'bar'}, 
-    function(success_response) {
-        console.log('The server sent a valid response.');
-        console.log(success_response);
+Ajax.post('http://example.com', {foo:'bar'}, 
+    function success(response)
+    {
+        // this === XHR
+        console.log('success');
+        console.log(response);
     },
-    function(error_response) {
-        console.log('The server sent an error response.');
-        console.log(error_response);
+    function error(response)
+    {
+        // this === XHR
+        console.log('error');
+        console.log(response);
+    },
+    function complete(response, successful)
+    {
+        // this === XHR
+        console.log('Completed');
+        console.log(response);
     }
 });
 -->
 </code></pre>
-                            <p> The <code>upload</code> method calls an upload to a url. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                        <p> You can also swap out the second argument for a <code>complete</code> callback. </p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Ajax.get('http://example.com', function complete(response, successful)
+{
+    // this === XHR
+    console.log(response);
+    console.log('Completed');
+
+    if (successful)
+    {
+    
+    }
+    else
+    {
+    
+    }
+}
+-->
+</code></pre>
+                     <p> The <code>success</code>, <code>error</code>, <code>complete</code> and <code>then</code> methods provide different syntax for registering callbacks that you may prefer to you depending on your setup.</p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Ajax.get('http://example.com', {foo:'bar'})
+.success(function(response)
+{
+    // this === XHR
+    console.log('success');
+    console.log(response);
+})
+.error(function(response)
+{
+    // this === XHR
+    console.log('success');
+    console.log(response);
+})
+.complete(function(response, successful)
+{
+    // this === XHR
+    console.log('success');
+    console.log(response);
+    console.log(successful);
+})
+-->
+</code></pre>
+                    <p> Note that <code>then</code> and <code>complete</code> are the same function.</p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Ajax.get('http://example.com', {foo:'bar'})
+.then(function(response, successful)
+{
+    // this === XHR
+    console.log('success');
+    console.log(response);
+    console.log(successful);
+})
+-->
+</code></pre>
+
+
+                            <p> The <code>upload</code> method calls an upload to a url. </p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 Ajax.upload('http://example.com', fileObject);
 -->
 </code></pre>
-                            <p> You can specify callbacks for <code>success</code>, <code>error</code>, <code>start</code>, <code>progress</code> and <code>load</code>. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> You can specify callbacks for <code>success</code>, <code>error</code>, <code>start</code>, <code>progress</code> and <code>load</code>. </p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 // Ajax.upload(url, data, success, error, start, progress, load)
 Ajax.upload(
