@@ -87,6 +87,9 @@ $breakpoint-md:             768px !default;
 $breakpoint-lg:             992px !default;
 $breakpoint-xl:             1200px !default;
 
+// Drawer
+$drawer-width:              540px;
+
 // Responsive breakpoints
 $breakpoints: (
     xs: $breakpoint-xs,
@@ -200,5 +203,6 @@ $radio-size:                  24px;
 $z-index-tooltip:             100;
 $z-index-popover:             200;
 $z-index-dropdown:            300;
-$z-index-notification:        400;
-$z-index-modal:               500;
+$z-index-drawer:              400;
+$z-index-notification:        500;
+$z-index-modal:               600;

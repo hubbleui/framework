@@ -331,6 +331,8 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, c
     // We need to merge transitions into a single allied value
     var existingTransitions = this.getStyle(el, 'transition');
 
+    console.log(existingTransitions);
+
     if (existingTransitions !== 'none' && existingTransitions !== 'all 0s ease 0s')
     {
         // Don't apply the same transition value twice 

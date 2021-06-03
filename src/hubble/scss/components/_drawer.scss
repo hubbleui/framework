@@ -1,0 +1,38 @@
+.drawer
+{
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	z-index: $z-index-drawer;
+	width: 80%;
+	max-width: 500px;
+	background-color: $body-bg;
+	visibility: hidden;
+	overflow: hidden;
+	transform: translateX(-$drawer-width);
+	@include raised(3);
+	&.drawer-right
+	{
+		left: initial;
+		right: 0;
+		transform: translateX($drawer-width);
+	}
+}
+.drawer-overlay
+{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(35, 47, 52, .32);
+	z-index: ($z-index-drawer - 1);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s ease;
+	&.dark
+	{
+		background-color: rgba(#000, 0.8);
+	}
+}

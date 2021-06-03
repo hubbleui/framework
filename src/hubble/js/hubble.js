@@ -47,6 +47,7 @@
 @import 'dom/_collapse.js';
 @import 'dom/_dropdown.js';
 @import 'dom/_tabs.js';
+@import 'dom/_drawer.js';
 @import 'dom/popover/_handler.js';
 @import 'dom/popover/_popovers.js';
 @import 'dom/_buttonRipple.js';
