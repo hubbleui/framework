@@ -12,7 +12,7 @@
  * @param  mixed str String JSON
  * @return object|false
  */
-JSHelper.prototype.isJSON = function(str)
+Helper.prototype.isJSON = function(str)
 {
     var obj;
     try
@@ -32,7 +32,7 @@ JSHelper.prototype.isJSON = function(str)
  * @param  mixed str String JSON
  * @return object|false
  */
-JSHelper.prototype.json_encode = function(str)
+Helper.prototype.json_encode = function(str)
 {
     var obj;
     try
@@ -52,7 +52,7 @@ JSHelper.prototype.json_encode = function(str)
  * @param  mixed str String JSON
  * @return object|false
  */
-JSHelper.prototype.json_decode = function(str)
+Helper.prototype.json_decode = function(str)
 {
     var obj;
     try
@@ -73,7 +73,7 @@ JSHelper.prototype.json_decode = function(str)
  * @param  int    length String length
  * @return string
  */
-JSHelper.prototype.makeid = function(length)
+Helper.prototype.makeid = function(length)
 {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -92,7 +92,7 @@ JSHelper.prototype.makeid = function(length)
  * @param  mixed mixed_var Variable to validate
  * @return bool
  */
-JSHelper.prototype.is_numeric = function(mixed_var)
+Helper.prototype.is_numeric = function(mixed_var)
 {
     var whitespace =
         " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
@@ -107,7 +107,7 @@ JSHelper.prototype.is_numeric = function(mixed_var)
  * @param  string    component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT, PHP_URL_USER, PHP_URL_PASS, PHP_URL_PATH, PHP_URL_QUERY or PHP_URL_FRAGMENT to retrieve just a specific URL component as a string (except when PHP_URL_PORT is given, in which case the return value will be an integer).
  * @return object
  */
-JSHelper.prototype.parse_url = function(str, component)
+Helper.prototype.parse_url = function(str, component)
 {
     //       discuss at: http://phpjs.org/functions/parse_url/
     //      original by: Steven Levithan (http://blog.stevenlevithan.com)
@@ -180,7 +180,7 @@ JSHelper.prototype.parse_url = function(str, component)
 }
 
 /* Left trim */
-JSHelper.prototype.ltrim = function(str, charlist)
+Helper.prototype.ltrim = function(str, charlist)
 {
     //  discuss at: http://phpjs.org/functions/ltrim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -198,7 +198,7 @@ JSHelper.prototype.ltrim = function(str, charlist)
 }
 
 /* Left trim */
-JSHelper.prototype.rtrim = function(str, charlist)
+Helper.prototype.rtrim = function(str, charlist)
 {
     //  discuss at: http://phpjs.org/functions/rtrim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -218,7 +218,7 @@ JSHelper.prototype.rtrim = function(str, charlist)
 }
 
 /* Trim */
-JSHelper.prototype.trim = function(str, charlist)
+Helper.prototype.trim = function(str, charlist)
 {
     //  discuss at: http://phpjs.org/functions/trim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -278,7 +278,7 @@ JSHelper.prototype.trim = function(str, charlist)
 }
 
 /* regex escape */
-JSHelper.prototype.preg_quote = function(str, delimiter)
+Helper.prototype.preg_quote = function(str, delimiter)
 {
     //  discuss at: http://phpjs.org/functions/preg_quote/
     // original by: booeyOH
@@ -298,7 +298,7 @@ JSHelper.prototype.preg_quote = function(str, delimiter)
 }
 
 /* Preg match all */
-JSHelper.prototype.preg_match_all = function(pattern, subject)
+Helper.prototype.preg_match_all = function(pattern, subject)
 {
 
     // convert the pattern to regix
@@ -333,19 +333,19 @@ JSHelper.prototype.preg_match_all = function(pattern, subject)
 }
 
 /* split string at index */
-JSHelper.prototype.str_split_index = function(value, index)
+Helper.prototype.str_split_index = function(value, index)
 {
     return [value.substring(0, index + 1), value.substring(index + 1)];
 }
 
 /* Capatalize first letter */
-JSHelper.prototype.ucfirst = function(string)
+Helper.prototype.ucfirst = function(string)
 {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 /* Capatalize first letter of all words */
-JSHelper.prototype.ucwords = function(str)
+Helper.prototype.ucwords = function(str)
 {
     //  discuss at: http://phpjs.org/functions/ucwords/
     // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
@@ -367,7 +367,7 @@ JSHelper.prototype.ucwords = function(str)
 }
 
 /* Reduce a string to a x words/letters with (optional) suffix */
-JSHelper.prototype.strReduce = function(string, length, suffix, toChar)
+Helper.prototype.strReduce = function(string, length, suffix, toChar)
 {
 
     toChar = (typeof toChar === 'undefined' ? true : false);
@@ -384,7 +384,7 @@ JSHelper.prototype.strReduce = function(string, length, suffix, toChar)
 }
 
 /* Return human friendly time-ago */
-JSHelper.prototype.timeAgo = function(time, asArray)
+Helper.prototype.timeAgo = function(time, asArray)
 {
     asArray = (typeof asArray === 'undefined' ? false : true);
     time = isValidTimeStamp(time) ? parseInt(time) : strtotime(time);
@@ -447,7 +447,7 @@ JSHelper.prototype.timeAgo = function(time, asArray)
 }
 
 /* Convert a string-date to a timestamp */
-JSHelper.prototype.strtotime = function(text)
+Helper.prototype.strtotime = function(text)
 {
     var timestamp = Math.round(new Date(text).getTime() / 1000);
 
@@ -478,7 +478,7 @@ JSHelper.prototype.strtotime = function(text)
 }
 
 /* String replace */
-JSHelper.prototype.str_replace = function(search, replace, subject, count)
+Helper.prototype.str_replace = function(search, replace, subject, count)
 {
     //  discuss at: http://phpjs.org/functions/str_replace/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -563,7 +563,7 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count)
     return sa ? s : s[0];
 }
 
-JSHelper.prototype.str_split = function(string, split_length)
+Helper.prototype.str_split = function(string, split_length)
 {
     //  discuss at: http://phpjs.org/functions/str_split/
     // original by: Martijn Wieringa
@@ -595,7 +595,7 @@ JSHelper.prototype.str_split = function(string, split_length)
     return chunks;
 }
 
-JSHelper.prototype.toCamelCase = function(str)
+Helper.prototype.toCamelCase = function(str)
 {
     return str.toLowerCase()
         .replace(/['"]/g, '')
@@ -607,7 +607,7 @@ JSHelper.prototype.toCamelCase = function(str)
         .replace(/ /g, '');
 }
 
-JSHelper.prototype.camelCaseToHyphen = function(str)
+Helper.prototype.camelCaseToHyphen = function(str)
 {
     return str
         // insert a hyphen between lower & upper
@@ -617,7 +617,7 @@ JSHelper.prototype.camelCaseToHyphen = function(str)
 }
 
 
-JSHelper.prototype.explode = function(delimiter, string, limit)
+Helper.prototype.explode = function(delimiter, string, limit)
 {
     //  discuss at: http://phpjs.org/functions/explode/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -663,7 +663,7 @@ JSHelper.prototype.explode = function(delimiter, string, limit)
     return s;
 }
 
-JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, double_encode)
+Helper.prototype.htmlspecialchars = function(string, quote_style, charset, double_encode)
 {
     // http://kevin.vanzonneveld.net
     // +   original by: Mirek Slugen
@@ -740,7 +740,7 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
 }
 
 
-JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style)
+Helper.prototype.htmlspecialchars_decode = function(string, quote_style)
 {
     //       discuss at: http://phpjs.org/functions/htmlspecialchars_decode/
     //      original by: Mirek Slugen
@@ -816,7 +816,7 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style)
     return string;
 }
 
-JSHelper.prototype.get_html_translation_table = function(table, quoteStyle)
+Helper.prototype.get_html_translation_table = function(table, quoteStyle)
 {
 
     // eslint-disable-line camelcase
@@ -996,7 +996,7 @@ JSHelper.prototype.get_html_translation_table = function(table, quoteStyle)
     return hashMap
 }
 
-JSHelper.prototype.html_entity_decode = function(string, quote_style)
+Helper.prototype.html_entity_decode = function(string, quote_style)
 {
     //  discuss at: http://phpjs.org/functions/html_entity_decode/
     // original by: john (http://www.jd-tech.net)
@@ -1044,7 +1044,7 @@ JSHelper.prototype.html_entity_decode = function(string, quote_style)
     return tmp_str;
 }
 
-JSHelper.prototype.strcmp = function(str1, str2)
+Helper.prototype.strcmp = function(str1, str2)
 {
     //  discuss at: http://phpjs.org/functions/strcmp/
     // original by: Waldo Malqui Silva (http://waldo.malqui.info)
@@ -1059,7 +1059,7 @@ JSHelper.prototype.strcmp = function(str1, str2)
     return ((str1 == str2) ? 0 : ((str1 > str2) ? 1 : -1))
 }
 
-JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
+Helper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
 {
     //  discuss at: http://phpjs.org/functions/strnatcmp/
     // original by: Martijn Wieringa
@@ -1223,7 +1223,7 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
     return result
 }
 
-JSHelper.prototype.number_format = function(number, decimals, decPoint, thousandsSep)
+Helper.prototype.number_format = function(number, decimals, decPoint, thousandsSep)
 { // eslint-disable-line camelcase
     //  discuss at: http://locutus.io/php/number_format/
     // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
@@ -1315,7 +1315,7 @@ JSHelper.prototype.number_format = function(number, decimals, decPoint, thousand
     return s.join(dec)
 }
 
-JSHelper.prototype.urlencode = function(str)
+Helper.prototype.urlencode = function(str)
 {
     //       discuss at: https://locutus.io/php/urlencode/
     //      original by: Philip Peterson
@@ -1356,7 +1356,7 @@ JSHelper.prototype.urlencode = function(str)
         .replace(/%20/g, '+')
 }
 
-JSHelper.prototype.urldecode = function(str)
+Helper.prototype.urldecode = function(str)
 {
     //       discuss at: https://locutus.io/php/urldecode/
     //      original by: Philip Peterson

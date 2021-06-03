@@ -883,7 +883,7 @@ if (!String.prototype.replaceAll)
      */
     Application.prototype.helper = function()
     {
-        return Container.get('JSHelper');
+        return Container.Helper();
     }
 
     /**
@@ -988,7 +988,7 @@ if (!String.prototype.replaceAll)
 
                     this._bindModule(key);
 
-                    Container.get('JSHelper').collectGarbage();
+                    Container.Helper().collectGarbage();
                 }
             }
         }
@@ -996,7 +996,7 @@ if (!String.prototype.replaceAll)
         {
             this._unbindModules();
 
-            Container.get('JSHelper').collectGarbage();
+            Container.Helper().collectGarbage();
 
             this._bindModules();
         }
@@ -1104,7 +1104,7 @@ if (!String.prototype.replaceAll)
          * @access public
          * @constructor
          */
-        var JSHelper = function()
+        var Helper = function()
         {
 
             this.version = "1.0.0";
@@ -1267,16 +1267,16 @@ if (!String.prototype.replaceAll)
         };
 
         // reset the prototype
-        JSHelper.prototype = {};
+        Helper.prototype = {};
 
         // Destructor
-        JSHelper.prototype.destruct = function()
+        Helper.prototype.destruct = function()
         {
             this.clearEventListeners();
         }
 
 /**
- * JSHelper DOM helpers
+ * Helper DOM helpers
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
@@ -1291,7 +1291,7 @@ if (!String.prototype.replaceAll)
  * @param  node   context (optional) (default document)
  * @return node
  */
-JSHelper.prototype.$All = function(selector, context)
+Helper.prototype.$All = function(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
     return Array.prototype.slice.call(context.querySelectorAll(selector));
@@ -1305,7 +1305,7 @@ JSHelper.prototype.$All = function(selector, context)
  * @param  node   context (optional) (default document)
  * @return node
  */
-JSHelper.prototype.$ = function(selector, context)
+Helper.prototype.$ = function(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
     return context.querySelector(selector)
@@ -1319,7 +1319,7 @@ JSHelper.prototype.$ = function(selector, context)
  * @param  string type Node type to find
  * @return node\null
  */
-JSHelper.prototype.closest = function(el, type)
+Helper.prototype.closest = function(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -1383,7 +1383,7 @@ JSHelper.prototype.closest = function(el, type)
  * @param  string type Node type to find
  * @return node\null
  */
-JSHelper.prototype._closestClass = function(el, clas)
+Helper.prototype._closestClass = function(el, clas)
 {
     if (clas[0] === '.')
     {
@@ -1430,7 +1430,7 @@ JSHelper.prototype._closestClass = function(el, clas)
  * @param  node   el   Target element
  * @return node\null
  */
-JSHelper.prototype.firstChildren = function(el)
+Helper.prototype.firstChildren = function(el)
 {
     var children = [];
 
@@ -1455,7 +1455,7 @@ JSHelper.prototype.firstChildren = function(el)
  * @param  string type Target node type
  * @return node\null
  */
-JSHelper.prototype.next = function(el, type)
+Helper.prototype.next = function(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -1507,7 +1507,7 @@ JSHelper.prototype.next = function(el, type)
  * @param  string className Target node classname
  * @return node\null
  */
-JSHelper.prototype._nextUntillClass = function(el, className)
+Helper.prototype._nextUntillClass = function(el, className)
 {
     if (className[0] === '.')
     {
@@ -1543,7 +1543,7 @@ JSHelper.prototype._nextUntillClass = function(el, className)
  * @param  string type Target node type
  * @return node\null
  */
-JSHelper.prototype.previous = function(el, type)
+Helper.prototype.previous = function(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -1589,7 +1589,7 @@ JSHelper.prototype.previous = function(el, type)
  * @param  string className Target node classname
  * @return node\null
  */
-JSHelper.prototype._previousUntillClass = function(el, className)
+Helper.prototype._previousUntillClass = function(el, className)
 {
     if (className[0] === '.')
     {
@@ -1627,7 +1627,7 @@ JSHelper.prototype._previousUntillClass = function(el, className)
  * @param  node   target  Parent to append new node into
  * @return node
  */
-JSHelper.prototype.newNode = function(type, classes, ID, content, target)
+Helper.prototype.newNode = function(type, classes, ID, content, target)
 {
     var node = document.createElement(type);
     classes = (typeof classes === "undefined" ? null : classes);
@@ -1659,7 +1659,7 @@ JSHelper.prototype.newNode = function(type, classes, ID, content, target)
  * @param  node   element Target element
  * @return bool
  */
-JSHelper.prototype.nodeExists = function(element)
+Helper.prototype.nodeExists = function(element)
 {
     if (element === document.body)
     {
@@ -1685,7 +1685,7 @@ JSHelper.prototype.nodeExists = function(element)
  * @access public
  * @param  node   el Target element
  */
-JSHelper.prototype.removeFromDOM = function(el)
+Helper.prototype.removeFromDOM = function(el)
 {
     if (this.nodeExists(el))
     {
@@ -1709,7 +1709,7 @@ JSHelper.prototype.removeFromDOM = function(el)
  * @param  node   el   Target element
  * @param  string prop CSS property to removes
  */
-JSHelper.prototype.removeStyle = function(el, prop)
+Helper.prototype.removeStyle = function(el, prop)
 {
     if (typeof prop === 'undefined')
     {
@@ -1758,7 +1758,7 @@ JSHelper.prototype.removeStyle = function(el, prop)
  * @param  node         el         Target element
  * @param  array|string className  Class name(s) to add
  */
-JSHelper.prototype.addClass = function(el, className)
+Helper.prototype.addClass = function(el, className)
 {
     if (!this.nodeExists(el))
     {
@@ -1785,7 +1785,7 @@ JSHelper.prototype.addClass = function(el, className)
  * @param  node         el         Target element
  * @param  array|string className  Class name(s) to remove
  */
-JSHelper.prototype.removeClass = function(el, className)
+Helper.prototype.removeClass = function(el, className)
 {
     if (!this.nodeExists(el))
     {
@@ -1812,7 +1812,7 @@ JSHelper.prototype.removeClass = function(el, className)
  * @param  node         el         Target element
  * @param  string       className  Class name to toggle
  */
-JSHelper.prototype.toggleClass = function(el, className)
+Helper.prototype.toggleClass = function(el, className)
 {
     if (!this.nodeExists(el))
     {
@@ -1837,7 +1837,7 @@ JSHelper.prototype.toggleClass = function(el, className)
  * @param  string|array className  Class name(s) to check for
  * @return bool
  */
-JSHelper.prototype.hasClass = function(el, className)
+Helper.prototype.hasClass = function(el, className)
 {
     if (!this.nodeExists(el))
     {
@@ -1873,7 +1873,7 @@ JSHelper.prototype.hasClass = function(el, className)
  * @param  string NodeType   Node type to validate
  * @return bool
  */
-JSHelper.prototype.isNodeType = function(el, NodeType)
+Helper.prototype.isNodeType = function(el, NodeType)
 {
     return el.tagName.toUpperCase() === NodeType.toUpperCase();
 }
@@ -1885,7 +1885,7 @@ JSHelper.prototype.isNodeType = function(el, NodeType)
  * @param  node   el Target element
  * @return object
  */
-JSHelper.prototype.getCoords = function(el)
+Helper.prototype.getCoords = function(el)
 {
     var box = el.getBoundingClientRect();
     var body = document.body;
@@ -1920,7 +1920,7 @@ JSHelper.prototype.getCoords = function(el)
  * @param  node   el   Target element
  * @param  string type Valid event name
  */
-JSHelper.prototype.triggerEvent = function(el, type)
+Helper.prototype.triggerEvent = function(el, type)
 {
     if ("createEvent" in document)
     {
@@ -1943,7 +1943,7 @@ JSHelper.prototype.triggerEvent = function(el, type)
  * @param  node   el   Target element
  * @param  string text Text to replace
  */
-JSHelper.prototype.innerText = function(el, text)
+Helper.prototype.innerText = function(el, text)
 {
     if (this.isset(el.childNodes[0]))
     {
@@ -1958,7 +1958,7 @@ JSHelper.prototype.innerText = function(el, text)
  * @param  node   form Target element
  * @return array
  */
-JSHelper.prototype.getFormInputs = function(form)
+Helper.prototype.getFormInputs = function(form)
 {
     var allInputs = this.$All('input, textarea, select', form);
 
@@ -1984,7 +1984,7 @@ JSHelper.prototype.getFormInputs = function(form)
  * @param  node   input Target element
  * @return mixed
  */
-JSHelper.prototype.getInputValue = function(input)
+Helper.prototype.getInputValue = function(input)
 {
     if (input.type == "checkbox")
     {
@@ -2033,7 +2033,7 @@ JSHelper.prototype.getInputValue = function(input)
  * @param  node   form Target element
  * @return array
  */
-JSHelper.prototype.formArray = function(form)
+Helper.prototype.formArray = function(form)
 {
     var inputs = this.getFormInputs(form);
     var response = [];
@@ -2058,7 +2058,7 @@ JSHelper.prototype.formArray = function(form)
  * @param  string content Target content
  * @param  bool   append  Append innerHTML or replace (optional) (default false)
  */
-JSHelper.prototype.innerHTML = function(target, content, append)
+Helper.prototype.innerHTML = function(target, content, append)
 {
     content = this.is_array(content) ? content.join("\n") : content;
 
@@ -2079,7 +2079,7 @@ JSHelper.prototype.innerHTML = function(target, content, append)
  * @param  node   el Target DOM node
  * @return bool
  */
-JSHelper.prototype.inViewport = function(el)
+Helper.prototype.inViewport = function(el)
 {
 
     var rect = el.getBoundingClientRect();
@@ -2098,7 +2098,7 @@ JSHelper.prototype.inViewport = function(el)
  * @access public
  * @param  node   el Target DOM node
  */
-JSHelper.prototype.hideAria = function(el)
+Helper.prototype.hideAria = function(el)
 {
     el.setAttribute("aria-hidden", 'true');
 }
@@ -2109,7 +2109,7 @@ JSHelper.prototype.hideAria = function(el)
  * @access public
  * @param  node   el Target DOM node
  */
-JSHelper.prototype.showAria = function(el)
+Helper.prototype.showAria = function(el)
 {
     el.setAttribute("aria-hidden", 'false');
 }
@@ -2128,7 +2128,7 @@ JSHelper.prototype.showAria = function(el)
  * @param  mixed str String JSON
  * @return object|false
  */
-JSHelper.prototype.isJSON = function(str)
+Helper.prototype.isJSON = function(str)
 {
     var obj;
     try
@@ -2148,7 +2148,7 @@ JSHelper.prototype.isJSON = function(str)
  * @param  mixed str String JSON
  * @return object|false
  */
-JSHelper.prototype.json_encode = function(str)
+Helper.prototype.json_encode = function(str)
 {
     var obj;
     try
@@ -2168,7 +2168,7 @@ JSHelper.prototype.json_encode = function(str)
  * @param  mixed str String JSON
  * @return object|false
  */
-JSHelper.prototype.json_decode = function(str)
+Helper.prototype.json_decode = function(str)
 {
     var obj;
     try
@@ -2189,7 +2189,7 @@ JSHelper.prototype.json_decode = function(str)
  * @param  int    length String length
  * @return string
  */
-JSHelper.prototype.makeid = function(length)
+Helper.prototype.makeid = function(length)
 {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -2208,7 +2208,7 @@ JSHelper.prototype.makeid = function(length)
  * @param  mixed mixed_var Variable to validate
  * @return bool
  */
-JSHelper.prototype.is_numeric = function(mixed_var)
+Helper.prototype.is_numeric = function(mixed_var)
 {
     var whitespace =
         " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
@@ -2223,7 +2223,7 @@ JSHelper.prototype.is_numeric = function(mixed_var)
  * @param  string    component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT, PHP_URL_USER, PHP_URL_PASS, PHP_URL_PATH, PHP_URL_QUERY or PHP_URL_FRAGMENT to retrieve just a specific URL component as a string (except when PHP_URL_PORT is given, in which case the return value will be an integer).
  * @return object
  */
-JSHelper.prototype.parse_url = function(str, component)
+Helper.prototype.parse_url = function(str, component)
 {
     //       discuss at: http://phpjs.org/functions/parse_url/
     //      original by: Steven Levithan (http://blog.stevenlevithan.com)
@@ -2296,7 +2296,7 @@ JSHelper.prototype.parse_url = function(str, component)
 }
 
 /* Left trim */
-JSHelper.prototype.ltrim = function(str, charlist)
+Helper.prototype.ltrim = function(str, charlist)
 {
     //  discuss at: http://phpjs.org/functions/ltrim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -2314,7 +2314,7 @@ JSHelper.prototype.ltrim = function(str, charlist)
 }
 
 /* Left trim */
-JSHelper.prototype.rtrim = function(str, charlist)
+Helper.prototype.rtrim = function(str, charlist)
 {
     //  discuss at: http://phpjs.org/functions/rtrim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -2334,7 +2334,7 @@ JSHelper.prototype.rtrim = function(str, charlist)
 }
 
 /* Trim */
-JSHelper.prototype.trim = function(str, charlist)
+Helper.prototype.trim = function(str, charlist)
 {
     //  discuss at: http://phpjs.org/functions/trim/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -2394,7 +2394,7 @@ JSHelper.prototype.trim = function(str, charlist)
 }
 
 /* regex escape */
-JSHelper.prototype.preg_quote = function(str, delimiter)
+Helper.prototype.preg_quote = function(str, delimiter)
 {
     //  discuss at: http://phpjs.org/functions/preg_quote/
     // original by: booeyOH
@@ -2414,7 +2414,7 @@ JSHelper.prototype.preg_quote = function(str, delimiter)
 }
 
 /* Preg match all */
-JSHelper.prototype.preg_match_all = function(pattern, subject)
+Helper.prototype.preg_match_all = function(pattern, subject)
 {
 
     // convert the pattern to regix
@@ -2449,19 +2449,19 @@ JSHelper.prototype.preg_match_all = function(pattern, subject)
 }
 
 /* split string at index */
-JSHelper.prototype.str_split_index = function(value, index)
+Helper.prototype.str_split_index = function(value, index)
 {
     return [value.substring(0, index + 1), value.substring(index + 1)];
 }
 
 /* Capatalize first letter */
-JSHelper.prototype.ucfirst = function(string)
+Helper.prototype.ucfirst = function(string)
 {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 /* Capatalize first letter of all words */
-JSHelper.prototype.ucwords = function(str)
+Helper.prototype.ucwords = function(str)
 {
     //  discuss at: http://phpjs.org/functions/ucwords/
     // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
@@ -2483,7 +2483,7 @@ JSHelper.prototype.ucwords = function(str)
 }
 
 /* Reduce a string to a x words/letters with (optional) suffix */
-JSHelper.prototype.strReduce = function(string, length, suffix, toChar)
+Helper.prototype.strReduce = function(string, length, suffix, toChar)
 {
 
     toChar = (typeof toChar === 'undefined' ? true : false);
@@ -2500,7 +2500,7 @@ JSHelper.prototype.strReduce = function(string, length, suffix, toChar)
 }
 
 /* Return human friendly time-ago */
-JSHelper.prototype.timeAgo = function(time, asArray)
+Helper.prototype.timeAgo = function(time, asArray)
 {
     asArray = (typeof asArray === 'undefined' ? false : true);
     time = isValidTimeStamp(time) ? parseInt(time) : strtotime(time);
@@ -2563,7 +2563,7 @@ JSHelper.prototype.timeAgo = function(time, asArray)
 }
 
 /* Convert a string-date to a timestamp */
-JSHelper.prototype.strtotime = function(text)
+Helper.prototype.strtotime = function(text)
 {
     var timestamp = Math.round(new Date(text).getTime() / 1000);
 
@@ -2594,7 +2594,7 @@ JSHelper.prototype.strtotime = function(text)
 }
 
 /* String replace */
-JSHelper.prototype.str_replace = function(search, replace, subject, count)
+Helper.prototype.str_replace = function(search, replace, subject, count)
 {
     //  discuss at: http://phpjs.org/functions/str_replace/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -2679,7 +2679,7 @@ JSHelper.prototype.str_replace = function(search, replace, subject, count)
     return sa ? s : s[0];
 }
 
-JSHelper.prototype.str_split = function(string, split_length)
+Helper.prototype.str_split = function(string, split_length)
 {
     //  discuss at: http://phpjs.org/functions/str_split/
     // original by: Martijn Wieringa
@@ -2711,7 +2711,7 @@ JSHelper.prototype.str_split = function(string, split_length)
     return chunks;
 }
 
-JSHelper.prototype.toCamelCase = function(str)
+Helper.prototype.toCamelCase = function(str)
 {
     return str.toLowerCase()
         .replace(/['"]/g, '')
@@ -2723,7 +2723,7 @@ JSHelper.prototype.toCamelCase = function(str)
         .replace(/ /g, '');
 }
 
-JSHelper.prototype.camelCaseToHyphen = function(str)
+Helper.prototype.camelCaseToHyphen = function(str)
 {
     return str
         // insert a hyphen between lower & upper
@@ -2733,7 +2733,7 @@ JSHelper.prototype.camelCaseToHyphen = function(str)
 }
 
 
-JSHelper.prototype.explode = function(delimiter, string, limit)
+Helper.prototype.explode = function(delimiter, string, limit)
 {
     //  discuss at: http://phpjs.org/functions/explode/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -2779,7 +2779,7 @@ JSHelper.prototype.explode = function(delimiter, string, limit)
     return s;
 }
 
-JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, double_encode)
+Helper.prototype.htmlspecialchars = function(string, quote_style, charset, double_encode)
 {
     // http://kevin.vanzonneveld.net
     // +   original by: Mirek Slugen
@@ -2856,7 +2856,7 @@ JSHelper.prototype.htmlspecialchars = function(string, quote_style, charset, dou
 }
 
 
-JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style)
+Helper.prototype.htmlspecialchars_decode = function(string, quote_style)
 {
     //       discuss at: http://phpjs.org/functions/htmlspecialchars_decode/
     //      original by: Mirek Slugen
@@ -2932,7 +2932,7 @@ JSHelper.prototype.htmlspecialchars_decode = function(string, quote_style)
     return string;
 }
 
-JSHelper.prototype.get_html_translation_table = function(table, quoteStyle)
+Helper.prototype.get_html_translation_table = function(table, quoteStyle)
 {
 
     // eslint-disable-line camelcase
@@ -3112,7 +3112,7 @@ JSHelper.prototype.get_html_translation_table = function(table, quoteStyle)
     return hashMap
 }
 
-JSHelper.prototype.html_entity_decode = function(string, quote_style)
+Helper.prototype.html_entity_decode = function(string, quote_style)
 {
     //  discuss at: http://phpjs.org/functions/html_entity_decode/
     // original by: john (http://www.jd-tech.net)
@@ -3160,7 +3160,7 @@ JSHelper.prototype.html_entity_decode = function(string, quote_style)
     return tmp_str;
 }
 
-JSHelper.prototype.strcmp = function(str1, str2)
+Helper.prototype.strcmp = function(str1, str2)
 {
     //  discuss at: http://phpjs.org/functions/strcmp/
     // original by: Waldo Malqui Silva (http://waldo.malqui.info)
@@ -3175,7 +3175,7 @@ JSHelper.prototype.strcmp = function(str1, str2)
     return ((str1 == str2) ? 0 : ((str1 > str2) ? 1 : -1))
 }
 
-JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
+Helper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
 {
     //  discuss at: http://phpjs.org/functions/strnatcmp/
     // original by: Martijn Wieringa
@@ -3339,7 +3339,7 @@ JSHelper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
     return result
 }
 
-JSHelper.prototype.number_format = function(number, decimals, decPoint, thousandsSep)
+Helper.prototype.number_format = function(number, decimals, decPoint, thousandsSep)
 { // eslint-disable-line camelcase
     //  discuss at: http://locutus.io/php/number_format/
     // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
@@ -3431,7 +3431,7 @@ JSHelper.prototype.number_format = function(number, decimals, decPoint, thousand
     return s.join(dec)
 }
 
-JSHelper.prototype.urlencode = function(str)
+Helper.prototype.urlencode = function(str)
 {
     //       discuss at: https://locutus.io/php/urlencode/
     //      original by: Philip Peterson
@@ -3472,7 +3472,7 @@ JSHelper.prototype.urlencode = function(str)
         .replace(/%20/g, '+')
 }
 
-JSHelper.prototype.urldecode = function(str)
+Helper.prototype.urldecode = function(str)
 {
     //       discuss at: https://locutus.io/php/urldecode/
     //      original by: Philip Peterson
@@ -3532,7 +3532,7 @@ JSHelper.prototype.urldecode = function(str)
  * @param  bool   argStrict Compare strict
  * @return bool
  */
-JSHelper.prototype.in_array = function(needle, haystack, argStrict)
+Helper.prototype.in_array = function(needle, haystack, argStrict)
 {
 
     var key = '',
@@ -3573,7 +3573,7 @@ JSHelper.prototype.in_array = function(needle, haystack, argStrict)
  * @param  int    count The amount of items to reduce the array to
  * @return array
  */
-JSHelper.prototype.array_reduce = function(array, count)
+Helper.prototype.array_reduce = function(array, count)
 {
     return this.array_slice(array, 0, count);
 }
@@ -3586,7 +3586,7 @@ JSHelper.prototype.array_reduce = function(array, count)
  * @param  array  b
  * @return array
  */
-JSHelper.prototype.array_compare = function(a, b)
+Helper.prototype.array_compare = function(a, b)
 {
     return JSON.stringify(a) === JSON.stringify(b);;
 }
@@ -3600,7 +3600,7 @@ JSHelper.prototype.array_compare = function(a, b)
  * @param  string suffix Imploding sufix (optional) (default )
  * @return string
  */
-JSHelper.prototype.implode = function(array, prefix, suffix)
+Helper.prototype.implode = function(array, prefix, suffix)
 {
     if (this.is_obj(array))
     {
@@ -3649,7 +3649,7 @@ JSHelper.prototype.implode = function(array, prefix, suffix)
  * @param  bool  preserve_keys Preserve array keys (optional) (default false)
  * @return array
  */
-JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
+Helper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
 {
     //  discuss at: http://phpjs.org/functions/array_slice/
     // original by: Brett Zamir (http://brett-zamir.me)
@@ -3743,7 +3743,7 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
  * @param  int   limit Data per page
  * @return array
  */
-JSHelper.prototype.paginate = function(array, page, limit)
+Helper.prototype.paginate = function(array, page, limit)
 {
     page = (page === false || page === 0 ? 1 : page);
     limit = (limit ? limit : 10);
@@ -3773,7 +3773,7 @@ JSHelper.prototype.paginate = function(array, page, limit)
  * @param  closure callback  Callback to apply to each iteration
  * @param  array   args      Array of params to apply to callback (optional) (default null)
  */
-JSHelper.prototype.foreach = function(obj, callback, args)
+Helper.prototype.foreach = function(obj, callback, args)
 {
     var value, i = 0,
         length = obj.length,
@@ -3852,7 +3852,7 @@ JSHelper.prototype.foreach = function(obj, callback, args)
  * @param  object  src       The object to clone
  * @return object
  */
-JSHelper.prototype.cloneObj = function(src)
+Helper.prototype.cloneObj = function(src)
 {
     var clone = {};
     for (var prop in src)
@@ -3869,7 +3869,7 @@ JSHelper.prototype.cloneObj = function(src)
  * @param  ...   List of arrays to merge
  * @return array
  */
-JSHelper.prototype.array_merge = function()
+Helper.prototype.array_merge = function()
 {
     //  discuss at: http://phpjs.org/functions/array_merge/
     // original by: Brett Zamir (http://brett-zamir.me)
@@ -3954,7 +3954,7 @@ JSHelper.prototype.array_merge = function()
  * @param  array array Target array to filter
  * @return array
  */
-JSHelper.prototype.array_filter = function(array)
+Helper.prototype.array_filter = function(array)
 {
     var result = [];
     for (var i = 0; i < array.length; i++)
@@ -3972,7 +3972,7 @@ JSHelper.prototype.array_filter = function(array)
  * @param  array array Target array to filter
  * @return array
  */
-JSHelper.prototype.array_unique = function(array)
+Helper.prototype.array_unique = function(array)
 {
     var result = [];
 
@@ -3997,7 +3997,7 @@ JSHelper.prototype.array_unique = function(array)
  * @param  mixed mixed_var Target object to to check
  * @return bool
  */
-JSHelper.prototype.is_obj = function(mixed_var)
+Helper.prototype.is_obj = function(mixed_var)
 {
     if ((typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null))
     {
@@ -4015,7 +4015,7 @@ JSHelper.prototype.is_obj = function(mixed_var)
  * @param  array array Target array to filter
  * @return bool
  */
-JSHelper.prototype.is_array = function(mixed_var)
+Helper.prototype.is_array = function(mixed_var)
 {
     return Object.prototype.toString.call(mixed_var) === '[object Array]' || Object.prototype.toString.call(mixed_var) === '[object NodeList]';
 }
@@ -4035,7 +4035,7 @@ JSHelper.prototype.is_array = function(mixed_var)
  * @param  mixed  mixed_var Variable to check
  * @return bool
  */
-JSHelper.prototype.is_numeric = function(mixed_var)
+Helper.prototype.is_numeric = function(mixed_var)
 {
     var whitespace =
         " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
@@ -4050,7 +4050,7 @@ JSHelper.prototype.is_numeric = function(mixed_var)
  * @param  mixed  mixed_var Variable to check
  * @return bool
  */
-JSHelper.prototype.isCallable = function(obj)
+Helper.prototype.isCallable = function(obj)
 {
     return Object.prototype.toString.call(obj) === '[object Function]';
 }
@@ -4063,7 +4063,7 @@ JSHelper.prototype.isCallable = function(obj)
  * @param  string mode      Variable count mode
  * @return int
  */
-JSHelper.prototype.count = function(mixed_var, mode)
+Helper.prototype.count = function(mixed_var, mode)
 {
     var key, cnt = 0;
     if (mixed_var === null || typeof mixed_var === 'undefined')
@@ -4107,7 +4107,7 @@ JSHelper.prototype.count = function(mixed_var, mode)
  * @param  mixed  value Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.bool = function(value)
+Helper.prototype.bool = function(value)
 {
 
     value = (typeof value === 'undefined' ? false : value);
@@ -4137,7 +4137,7 @@ JSHelper.prototype.bool = function(value)
  * @param  mixed  mixed_var Variable to evaluate
  * @return int
  */
-JSHelper.prototype.intval = function(mixed_var, base)
+Helper.prototype.intval = function(mixed_var, base)
 {
     //  discuss at: http://phpjs.org/functions/intval/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -4187,7 +4187,7 @@ JSHelper.prototype.intval = function(mixed_var, base)
  * @param  mixed  mixed_var Variable to evaluate
  * @return float
  */
-JSHelper.prototype.floatval = function(mixedVar)
+Helper.prototype.floatval = function(mixedVar)
 {
     return (parseFloat(mixedVar) || 0)
 }
@@ -4199,7 +4199,7 @@ JSHelper.prototype.floatval = function(mixedVar)
  * @param  mixed  mixed_var Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.isset = function()
+Helper.prototype.isset = function()
 {
     //  discuss at: http://phpjs.org/functions/isset/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -4239,7 +4239,7 @@ JSHelper.prototype.isset = function()
  * @param  mixed  value Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.empty = function(value)
+Helper.prototype.empty = function(value)
 {
 
     value = (typeof value === 'undefined' ? false : value);
@@ -4271,7 +4271,7 @@ JSHelper.prototype.empty = function(value)
  * @param  mixed  mixed_var Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.is_object = function(mixed_var)
+Helper.prototype.is_object = function(mixed_var)
 {
     //  discuss at: http://phpjs.org/functions/is_object/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -4298,7 +4298,7 @@ JSHelper.prototype.is_object = function(mixed_var)
  * @param  mixed  nodes Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.isNodeList = function(nodes)
+Helper.prototype.isNodeList = function(nodes)
 {
     return nodes == '[object NodeList]';
 }
@@ -4310,7 +4310,7 @@ JSHelper.prototype.isNodeList = function(nodes)
  * @param  string  name String query to get (optional)
  * @return object|string
  */
-JSHelper.prototype.url_query = function(name)
+Helper.prototype.url_query = function(name)
 {
     var results = {};
 
@@ -4364,7 +4364,7 @@ JSHelper.prototype.url_query = function(name)
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype.addEventListener = function(element, eventName, handler, useCapture)
+Helper.prototype.addEventListener = function(element, eventName, handler, useCapture)
 {
     // Boolean use capture defaults to false
     useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
@@ -4419,7 +4419,7 @@ JSHelper.prototype.addEventListener = function(element, eventName, handler, useC
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
+Helper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
 {
     if (this.is_array(element))
     {
@@ -4470,7 +4470,7 @@ JSHelper.prototype.removeEventListener = function(element, eventName, handler, u
  *
  * @access public
  */
-JSHelper.prototype.clearEventListeners = function()
+Helper.prototype.clearEventListeners = function()
 {
     var events = this._events;
 
@@ -4492,7 +4492,7 @@ JSHelper.prototype.clearEventListeners = function()
  *
  * @access public
  */
-JSHelper.prototype.collectGarbage = function()
+Helper.prototype.collectGarbage = function()
 {
     var events = this._events;
     for (var eventName in events)
@@ -4518,7 +4518,7 @@ JSHelper.prototype.collectGarbage = function()
  * @access private
  * @param  node    element Target node element
  */
-JSHelper.prototype._removeElementListeners = function(element)
+Helper.prototype._removeElementListeners = function(element)
 {
     var events = this._events;
     for (var eventName in events)
@@ -4543,7 +4543,7 @@ JSHelper.prototype._removeElementListeners = function(element)
  * @param  node    element Target node element
  * @param  string  type    Event listener type
  */
-JSHelper.prototype._removeElementTypeListeners = function(element, type)
+Helper.prototype._removeElementTypeListeners = function(element, type)
 {
     var eventObj = this._events[type];
     var i = eventObj.length;
@@ -4566,7 +4566,7 @@ JSHelper.prototype._removeElementTypeListeners = function(element, type)
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype._addListener = function(el, eventName, handler, useCapture)
+Helper.prototype._addListener = function(el, eventName, handler, useCapture)
 {
     if (el.addEventListener)
     {
@@ -4587,7 +4587,7 @@ JSHelper.prototype._addListener = function(el, eventName, handler, useCapture)
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture)
+Helper.prototype._removeListener = function(el, eventName, handler, useCapture)
 {
     if (el.removeEventListener)
     {
@@ -4600,7 +4600,7 @@ JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture
 }
 
 /**
- * JSHelper Animation component
+ * Helper Animation component
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
@@ -4614,7 +4614,7 @@ JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture
  * @param  string property The CSS base property
  * @return array
  */
-JSHelper.prototype._vendorPrefix = function(property)
+Helper.prototype._vendorPrefix = function(property)
 {
     // Properties to return
     var props = [];
@@ -4647,7 +4647,7 @@ JSHelper.prototype._vendorPrefix = function(property)
  * @param  string property The CSS base property (in camelCase)
  * @return array
  */
-JSHelper.prototype._shortHandExpand = function(property, recurse)
+Helper.prototype._shortHandExpand = function(property, recurse)
 {
     var _this = this;
     var props = this.shortHandProps;
@@ -4681,7 +4681,7 @@ JSHelper.prototype._shortHandExpand = function(property, recurse)
  * @param  string prop CSS property to check (in camelCase) (optional)
  * @return mixed
  */
-JSHelper.prototype._computeStyle = function(el, property)
+Helper.prototype._computeStyle = function(el, property)
 {
     if (window.getComputedStyle)
     {
@@ -4713,7 +4713,7 @@ JSHelper.prototype._computeStyle = function(el, property)
  * @param  array  longHandProps Array of longhanded CSS properties in order (camelCased)
  * @return string
  */
-JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
+Helper.prototype._concatShortHandProperties = function(el, longHandProps)
 {
     var shorthand = '';
     var multiValArr = [];
@@ -4767,7 +4767,7 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
  * @param  string value easing value or string
  * @return array
  */
-JSHelper.prototype._normalizeEasing = function(value)
+Helper.prototype._normalizeEasing = function(value)
 {
     for (var camelCased in this.cssEasings)
     {
@@ -4793,7 +4793,7 @@ JSHelper.prototype._normalizeEasing = function(value)
  * @param  string prop CSS property to check
  * @return string
  */
-JSHelper.prototype.getStyle = function(el, prop)
+Helper.prototype.getStyle = function(el, prop)
 {
     // Firefox and otther browsers do not concatenate to the shorthand property even when
     // it was defined as shorthand in the stylsheet
@@ -4840,10 +4840,10 @@ JSHelper.prototype.getStyle = function(el, prop)
  * @access public
  * @param  node   el     Target DOM node
  * @param  string|object Assoc array of property->value or string property
- * @example JSHelper.css(node, { display : 'none' });
- * @example JSHelper.css(node, 'display', 'none');
+ * @example Helper.css(node, { display : 'none' });
+ * @example Helper.css(node, 'display', 'none');
  */
-JSHelper.prototype.css = function(el, property, value)
+Helper.prototype.css = function(el, property, value)
 {
     // If their is no value and property is an object
     if (this.is_object(property))
@@ -4886,7 +4886,7 @@ JSHelper.prototype.css = function(el, property, value)
  * @param  string   easing      Easing function
  * @param  function callback    Callback to apply when animation ends (optional)
  */
-JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
+Helper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
 {
     // Set defaults if values were not provided;
     time = (typeof time === 'undefined' ? 300 : time);
@@ -4998,7 +4998,7 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, c
  * @access public
  * @return object
  */
-JSHelper.prototype.getBrowser = function()
+Helper.prototype.getBrowser = function()
 {
     if (this.browser)
     {
@@ -6319,7 +6319,7 @@ JSHelper.prototype.getBrowser = function()
  *
  * @return bool
  */
-JSHelper.prototype.isMobile = function()
+Helper.prototype.isMobile = function()
 {
     return this.getBrowser()['device'] === 'Mobile';
 }
@@ -6329,7 +6329,7 @@ JSHelper.prototype.isMobile = function()
  *
  * @return bool
  */
-JSHelper.prototype.isRetina = function()
+Helper.prototype.isRetina = function()
 {
     var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
                       (min--moz-device-pixel-ratio: 1.5),\
@@ -6349,7 +6349,7 @@ JSHelper.prototype.isRetina = function()
     return false;
 }
 
-	Container.singleton('JSHelper', JSHelper).get('JSHelper').getBrowser();
+	Container.singleton('Helper', Helper).Helper().getBrowser();
 
 	})();
 
@@ -9456,7 +9456,7 @@ JSHelper.prototype.isRetina = function()
  * Pluralize
  * @see https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations
  * 
- * @example Container.get('JSHelper').pluralize('tomato', 5);
+ * @example Container.Helper().pluralize('tomato', 5);
  * 
  */
 (function()
@@ -11992,7 +11992,7 @@ JSHelper.prototype.isRetina = function()
     /**
      * @var Helper obj
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Container.Helper();
 
     /**
      * Module constructor
@@ -12918,7 +12918,7 @@ JSHelper.prototype.isRetina = function()
      * 
      * @var object
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Container.Helper();
 
     /**
      * Module constructor
@@ -13288,7 +13288,7 @@ JSHelper.prototype.isRetina = function()
     /**
      * @var obj
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Container.Helper();
 
     /**
      * @var obj
@@ -13651,7 +13651,7 @@ JSHelper.prototype.isRetina = function()
     /**
      * @var Helper obj
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Container.Helper();
 
     /**
      * @var _activeNotifs array
@@ -14423,7 +14423,7 @@ function complete(response)
     /**
      * @var Helper obj
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Container.Helper();
 
     /**
      * Module constructor

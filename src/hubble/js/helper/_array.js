@@ -15,7 +15,7 @@
  * @param  bool   argStrict Compare strict
  * @return bool
  */
-JSHelper.prototype.in_array = function(needle, haystack, argStrict)
+Helper.prototype.in_array = function(needle, haystack, argStrict)
 {
 
     var key = '',
@@ -56,7 +56,7 @@ JSHelper.prototype.in_array = function(needle, haystack, argStrict)
  * @param  int    count The amount of items to reduce the array to
  * @return array
  */
-JSHelper.prototype.array_reduce = function(array, count)
+Helper.prototype.array_reduce = function(array, count)
 {
     return this.array_slice(array, 0, count);
 }
@@ -69,7 +69,7 @@ JSHelper.prototype.array_reduce = function(array, count)
  * @param  array  b
  * @return array
  */
-JSHelper.prototype.array_compare = function(a, b)
+Helper.prototype.array_compare = function(a, b)
 {
     return JSON.stringify(a) === JSON.stringify(b);;
 }
@@ -83,7 +83,7 @@ JSHelper.prototype.array_compare = function(a, b)
  * @param  string suffix Imploding sufix (optional) (default )
  * @return string
  */
-JSHelper.prototype.implode = function(array, prefix, suffix)
+Helper.prototype.implode = function(array, prefix, suffix)
 {
     if (this.is_obj(array))
     {
@@ -132,7 +132,7 @@ JSHelper.prototype.implode = function(array, prefix, suffix)
  * @param  bool  preserve_keys Preserve array keys (optional) (default false)
  * @return array
  */
-JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
+Helper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
 {
     //  discuss at: http://phpjs.org/functions/array_slice/
     // original by: Brett Zamir (http://brett-zamir.me)
@@ -226,7 +226,7 @@ JSHelper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
  * @param  int   limit Data per page
  * @return array
  */
-JSHelper.prototype.paginate = function(array, page, limit)
+Helper.prototype.paginate = function(array, page, limit)
 {
     page = (page === false || page === 0 ? 1 : page);
     limit = (limit ? limit : 10);
@@ -256,7 +256,7 @@ JSHelper.prototype.paginate = function(array, page, limit)
  * @param  closure callback  Callback to apply to each iteration
  * @param  array   args      Array of params to apply to callback (optional) (default null)
  */
-JSHelper.prototype.foreach = function(obj, callback, args)
+Helper.prototype.foreach = function(obj, callback, args)
 {
     var value, i = 0,
         length = obj.length,
@@ -335,7 +335,7 @@ JSHelper.prototype.foreach = function(obj, callback, args)
  * @param  object  src       The object to clone
  * @return object
  */
-JSHelper.prototype.cloneObj = function(src)
+Helper.prototype.cloneObj = function(src)
 {
     var clone = {};
     for (var prop in src)
@@ -352,7 +352,7 @@ JSHelper.prototype.cloneObj = function(src)
  * @param  ...   List of arrays to merge
  * @return array
  */
-JSHelper.prototype.array_merge = function()
+Helper.prototype.array_merge = function()
 {
     //  discuss at: http://phpjs.org/functions/array_merge/
     // original by: Brett Zamir (http://brett-zamir.me)
@@ -437,7 +437,7 @@ JSHelper.prototype.array_merge = function()
  * @param  array array Target array to filter
  * @return array
  */
-JSHelper.prototype.array_filter = function(array)
+Helper.prototype.array_filter = function(array)
 {
     var result = [];
     for (var i = 0; i < array.length; i++)
@@ -455,7 +455,7 @@ JSHelper.prototype.array_filter = function(array)
  * @param  array array Target array to filter
  * @return array
  */
-JSHelper.prototype.array_unique = function(array)
+Helper.prototype.array_unique = function(array)
 {
     var result = [];
 
@@ -480,7 +480,7 @@ JSHelper.prototype.array_unique = function(array)
  * @param  mixed mixed_var Target object to to check
  * @return bool
  */
-JSHelper.prototype.is_obj = function(mixed_var)
+Helper.prototype.is_obj = function(mixed_var)
 {
     if ((typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null))
     {
@@ -498,7 +498,7 @@ JSHelper.prototype.is_obj = function(mixed_var)
  * @param  array array Target array to filter
  * @return bool
  */
-JSHelper.prototype.is_array = function(mixed_var)
+Helper.prototype.is_array = function(mixed_var)
 {
     return Object.prototype.toString.call(mixed_var) === '[object Array]' || Object.prototype.toString.call(mixed_var) === '[object NodeList]';
 }

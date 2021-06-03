@@ -241,7 +241,7 @@
                                 <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="components" data-waypoint-speed="400">Components</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="container" data-waypoint-speed="500">Container</a>
+                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="Container" data-waypoint-speed="500">Container</a>
                             </li>
                             <li>
                                 <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="dom" data-waypoint-speed="600">DOM</a>
@@ -255,9 +255,14 @@
 var hubbleInstance = Hubble;
 -->
 </code></pre>
-                            <p> The <code>container</code> method returns the component container. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> The <code>Container</code> method returns the component Container. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-var containerInstance = Hubble.container();
+var ContainerInstance = Hubble.Container();
+-->
+</code></pre>
+                            <p> The <code>Container</code> can also be accessed globally using the <code>Container</code> variable.</p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+var ContainerInstance = Container;
 -->
 </code></pre>
                             <p> The <code>helper</code> method returns the helper library component. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
@@ -265,12 +270,17 @@ var containerInstance = Hubble.container();
 var helper = Hubble.helper();
 -->
 </code></pre>
+                            <p> The helper library can also be accessed directly via the <code>Container</code>. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+var helper = Container.Helper();
+-->
+</code></pre>
                             <p> The <code>dom</code> method returns the DOM manager component. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 var domManager = Hubble.dom();
 -->
 </code></pre>
-                            <p> The <code>require</code> method returns a component/value from the container. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> The <code>require</code> method returns a component/value from the Container. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 var ajax = Hubble.require('Ajax');
 -->
@@ -281,17 +291,17 @@ var myModule = Hubble.require('myModule', 'param1', 'param2');
 -->
 </code></pre> </div>
                         <hr>
-                        <div class="row roof-xs floor-xs" data-waypoint="container">
+                        <div class="row roof-xs floor-xs" data-waypoint="Container">
                             <h2>Container</h2>
                             <p> The <code>Container</code> is a globally unique component that stores all Hubble modules/components and variables. </p>
                             <p> The <code>set</code> method sets a key value pair. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-container.set('foo', 'bar');
+Container.set('foo', 'bar');
 -->
 </code></pre>
                             <p> You can set any variable type as the <code>value</code>. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-container.set('foo', { foo: 'bar' } );
+Container.set('foo', { foo: 'bar' } );
 -->
 </code></pre>
                             <p> Settings an <code>object function</code> allows you to store a re-usable module. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
@@ -300,19 +310,68 @@ var myModule = function(arg1)
 {
     return this;
 };
-container.set('example', myModule);
+Container.set('example', myModule);
 -->
 </code></pre>
                             <p> You can also set an invoked instance as a value. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-container.set('example', new myModule() );
+Container.set('example', new myModule() );
 -->
 </code></pre>
-                            <p> The <code>singleton</code> method allows you to register a globally unique module. The module will not be instantiated until it is first called. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            <p> The <code>singleton</code> method allows you to register a globally unique module. The module will not be instantiated until it is first called and will only ever be instantiated once. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
-container.singleton('example', myModule);
+Container.singleton('example', myModule);
 -->
-</code></pre> </div>
+</code></pre> 
+                        <p> You can also set a key value pair using <code>dot.notation</code>. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Container.set('foo.bar', 'foobar');
+-->
+</code></pre>
+                        <p> You can also retrieve a key value pair using <code>dot.notation</code>. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+// Returns 'foobar'
+Container.get('foo.bar');
+
+// Returns { bar : 'foo'}
+Container.get('foo');
+
+-->
+</code></pre>
+                        <p> You can also set and retrieve a key value pairs using <code>array</code> notation. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Container.set('foo.bar', ['foo', 'bar']);
+
+// Returns { bar : ['foo', 'bar']}
+Container.get('foo');
+
+// Returns 'foo'
+Container.get('foo.bar[0]');
+
+// Returns 'bar'
+Container.get('foo.bar[1]');
+
+Container.set('foo.bar[0]', ['changed');
+
+// Returns 'changed'
+Container.get('foo.bar[0]')
+-->
+</code></pre>
+                        <p> Invokable or invoked objects and functions are automatically added to the Container prototype. This excludes values set using <code>dot.notation</code>. Also note that the first letter will always be capitalized in the Container <code>Prototype</code>.</p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+var myModule = function(arg1)
+{
+    console.log(arg1);
+
+    return this;
+};
+Container.set('example', myModule);
+
+var module = Container.Example('foo');
+-->
+</code></pre>
+
+                        </div>
                         <hr>
                         <div class="row roof-xs floor-xs" data-waypoint="dom">
                             <h2>DOM Manager</h2>
@@ -326,12 +385,37 @@ var domManager = Hubble.dom();
 Hubble.dom().register('example', myModule);
 -->
 </code></pre>
-                            <p> The <code>refresh</code> refreshes either all registered <code>DOM</code> modules or a module by name; </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+                            
+                            <p> If you are registering a DOM modules after already loading the Hubble core, you will need to pass a third argument to instantiate the module. </p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+Hubble.dom().register('example', myModule, true);
+-->
+</code></pre>
+                            <p> The <code>refresh</code> refreshes either all registered <code>DOM</code> modules or a module by name. This will unbind, collect event listener garbage and rebind the module(s).</p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
 <!--
 Hubble.dom().refresh();
 Hubble.dom().refresh('example');
 -->
-</code></pre> </div>
+</code></pre> 
+                            <p> Dom modules follow a specialized syntax and must contain a public <code>destruct</code> method.</p> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="javascript">
+<!--
+// Called whenever DOM instantiated, refreshed or module refreshed
+var myModule = function()
+{
+    this._bind()
+
+    return this;
+};
+
+// Called whenever DOM instantiated, refreshed or module refreshed
+myModule.prototype.destruct = function()
+{
+    this._unbind();
+}
+
+-->
+</code></pre> 
+</div>
                         <hr> </article>
                 </div>
             </div>

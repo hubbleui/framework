@@ -13,7 +13,7 @@
          * @access public
          * @constructor
          */
-        var JSHelper = function()
+        var Helper = function()
         {
 
             this.version = "1.0.0";
@@ -176,10 +176,10 @@
         };
 
         // reset the prototype
-        JSHelper.prototype = {};
+        Helper.prototype = {};
 
         // Destructor
-        JSHelper.prototype.destruct = function()
+        Helper.prototype.destruct = function()
         {
             this.clearEventListeners();
         }

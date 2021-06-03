@@ -60,7 +60,7 @@
      */
     Application.prototype.helper = function()
     {
-        return Container.get('JSHelper');
+        return Container.Helper();
     }
 
     /**

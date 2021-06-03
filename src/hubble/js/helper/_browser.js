@@ -12,7 +12,7 @@
  * @access public
  * @return object
  */
-JSHelper.prototype.getBrowser = function()
+Helper.prototype.getBrowser = function()
 {
     if (this.browser)
     {
@@ -1333,7 +1333,7 @@ JSHelper.prototype.getBrowser = function()
  *
  * @return bool
  */
-JSHelper.prototype.isMobile = function()
+Helper.prototype.isMobile = function()
 {
     return this.getBrowser()['device'] === 'Mobile';
 }
@@ -1343,7 +1343,7 @@ JSHelper.prototype.isMobile = function()
  *
  * @return bool
  */
-JSHelper.prototype.isRetina = function()
+Helper.prototype.isRetina = function()
 {
     var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
                       (min--moz-device-pixel-ratio: 1.5),\

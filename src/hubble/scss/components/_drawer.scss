@@ -6,7 +6,7 @@
 	height: 100%;
 	z-index: $z-index-drawer;
 	width: 80%;
-	max-width: 500px;
+	max-width: $drawer-width;
 	background-color: $body-bg;
 	visibility: hidden;
 	overflow: hidden;

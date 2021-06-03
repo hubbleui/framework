@@ -1,5 +1,5 @@
 /**
- * JSHelper Animation component
+ * Helper Animation component
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
@@ -13,7 +13,7 @@
  * @param  string property The CSS base property
  * @return array
  */
-JSHelper.prototype._vendorPrefix = function(property)
+Helper.prototype._vendorPrefix = function(property)
 {
     // Properties to return
     var props = [];
@@ -46,7 +46,7 @@ JSHelper.prototype._vendorPrefix = function(property)
  * @param  string property The CSS base property (in camelCase)
  * @return array
  */
-JSHelper.prototype._shortHandExpand = function(property, recurse)
+Helper.prototype._shortHandExpand = function(property, recurse)
 {
     var _this = this;
     var props = this.shortHandProps;
@@ -80,7 +80,7 @@ JSHelper.prototype._shortHandExpand = function(property, recurse)
  * @param  string prop CSS property to check (in camelCase) (optional)
  * @return mixed
  */
-JSHelper.prototype._computeStyle = function(el, property)
+Helper.prototype._computeStyle = function(el, property)
 {
     if (window.getComputedStyle)
     {
@@ -112,7 +112,7 @@ JSHelper.prototype._computeStyle = function(el, property)
  * @param  array  longHandProps Array of longhanded CSS properties in order (camelCased)
  * @return string
  */
-JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
+Helper.prototype._concatShortHandProperties = function(el, longHandProps)
 {
     var shorthand = '';
     var multiValArr = [];
@@ -166,7 +166,7 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
  * @param  string value easing value or string
  * @return array
  */
-JSHelper.prototype._normalizeEasing = function(value)
+Helper.prototype._normalizeEasing = function(value)
 {
     for (var camelCased in this.cssEasings)
     {
@@ -192,7 +192,7 @@ JSHelper.prototype._normalizeEasing = function(value)
  * @param  string prop CSS property to check
  * @return string
  */
-JSHelper.prototype.getStyle = function(el, prop)
+Helper.prototype.getStyle = function(el, prop)
 {
     // Firefox and otther browsers do not concatenate to the shorthand property even when
     // it was defined as shorthand in the stylsheet
@@ -239,10 +239,10 @@ JSHelper.prototype.getStyle = function(el, prop)
  * @access public
  * @param  node   el     Target DOM node
  * @param  string|object Assoc array of property->value or string property
- * @example JSHelper.css(node, { display : 'none' });
- * @example JSHelper.css(node, 'display', 'none');
+ * @example Helper.css(node, { display : 'none' });
+ * @example Helper.css(node, 'display', 'none');
  */
-JSHelper.prototype.css = function(el, property, value)
+Helper.prototype.css = function(el, property, value)
 {
     // If their is no value and property is an object
     if (this.is_object(property))
@@ -285,7 +285,7 @@ JSHelper.prototype.css = function(el, property, value)
  * @param  string   easing      Easing function
  * @param  function callback    Callback to apply when animation ends (optional)
  */
-JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
+Helper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
 {
     // Set defaults if values were not provided;
     time = (typeof time === 'undefined' ? 300 : time);

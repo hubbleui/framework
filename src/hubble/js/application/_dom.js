@@ -78,7 +78,7 @@
 
                     this._bindModule(key);
 
-                    Container.get('JSHelper').collectGarbage();
+                    Container.Helper().collectGarbage();
                 }
             }
         }
@@ -86,7 +86,7 @@
         {
             this._unbindModules();
 
-            Container.get('JSHelper').collectGarbage();
+            Container.Helper().collectGarbage();
 
             this._bindModules();
         }

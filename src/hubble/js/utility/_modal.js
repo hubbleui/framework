@@ -10,7 +10,7 @@
     /**
      * @var obj
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Container.Helper();
 
     /**
      * @var obj

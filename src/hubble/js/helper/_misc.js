@@ -13,7 +13,7 @@
  * @param  mixed  mixed_var Variable to check
  * @return bool
  */
-JSHelper.prototype.is_numeric = function(mixed_var)
+Helper.prototype.is_numeric = function(mixed_var)
 {
     var whitespace =
         " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
@@ -28,7 +28,7 @@ JSHelper.prototype.is_numeric = function(mixed_var)
  * @param  mixed  mixed_var Variable to check
  * @return bool
  */
-JSHelper.prototype.isCallable = function(obj)
+Helper.prototype.isCallable = function(obj)
 {
     return Object.prototype.toString.call(obj) === '[object Function]';
 }
@@ -41,7 +41,7 @@ JSHelper.prototype.isCallable = function(obj)
  * @param  string mode      Variable count mode
  * @return int
  */
-JSHelper.prototype.count = function(mixed_var, mode)
+Helper.prototype.count = function(mixed_var, mode)
 {
     var key, cnt = 0;
     if (mixed_var === null || typeof mixed_var === 'undefined')
@@ -85,7 +85,7 @@ JSHelper.prototype.count = function(mixed_var, mode)
  * @param  mixed  value Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.bool = function(value)
+Helper.prototype.bool = function(value)
 {
 
     value = (typeof value === 'undefined' ? false : value);
@@ -115,7 +115,7 @@ JSHelper.prototype.bool = function(value)
  * @param  mixed  mixed_var Variable to evaluate
  * @return int
  */
-JSHelper.prototype.intval = function(mixed_var, base)
+Helper.prototype.intval = function(mixed_var, base)
 {
     //  discuss at: http://phpjs.org/functions/intval/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -165,7 +165,7 @@ JSHelper.prototype.intval = function(mixed_var, base)
  * @param  mixed  mixed_var Variable to evaluate
  * @return float
  */
-JSHelper.prototype.floatval = function(mixedVar)
+Helper.prototype.floatval = function(mixedVar)
 {
     return (parseFloat(mixedVar) || 0)
 }
@@ -177,7 +177,7 @@ JSHelper.prototype.floatval = function(mixedVar)
  * @param  mixed  mixed_var Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.isset = function()
+Helper.prototype.isset = function()
 {
     //  discuss at: http://phpjs.org/functions/isset/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -217,7 +217,7 @@ JSHelper.prototype.isset = function()
  * @param  mixed  value Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.empty = function(value)
+Helper.prototype.empty = function(value)
 {
 
     value = (typeof value === 'undefined' ? false : value);
@@ -249,7 +249,7 @@ JSHelper.prototype.empty = function(value)
  * @param  mixed  mixed_var Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.is_object = function(mixed_var)
+Helper.prototype.is_object = function(mixed_var)
 {
     //  discuss at: http://phpjs.org/functions/is_object/
     // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
@@ -276,7 +276,7 @@ JSHelper.prototype.is_object = function(mixed_var)
  * @param  mixed  nodes Variable to evaluate
  * @return bool
  */
-JSHelper.prototype.isNodeList = function(nodes)
+Helper.prototype.isNodeList = function(nodes)
 {
     return nodes == '[object NodeList]';
 }
@@ -288,7 +288,7 @@ JSHelper.prototype.isNodeList = function(nodes)
  * @param  string  name String query to get (optional)
  * @return object|string
  */
-JSHelper.prototype.url_query = function(name)
+Helper.prototype.url_query = function(name)
 {
     var results = {};
 

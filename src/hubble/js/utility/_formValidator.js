@@ -11,7 +11,7 @@
     /**
      * @var Helper obj
      */
-    var Helper = Container.get('JSHelper');
+    var Helper = Container.Helper();
 
     /**
      * Module constructor

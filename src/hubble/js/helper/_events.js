@@ -15,7 +15,7 @@
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype.addEventListener = function(element, eventName, handler, useCapture)
+Helper.prototype.addEventListener = function(element, eventName, handler, useCapture)
 {
     // Boolean use capture defaults to false
     useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
@@ -70,7 +70,7 @@ JSHelper.prototype.addEventListener = function(element, eventName, handler, useC
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
+Helper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
 {
     if (this.is_array(element))
     {
@@ -121,7 +121,7 @@ JSHelper.prototype.removeEventListener = function(element, eventName, handler, u
  *
  * @access public
  */
-JSHelper.prototype.clearEventListeners = function()
+Helper.prototype.clearEventListeners = function()
 {
     var events = this._events;
 
@@ -143,7 +143,7 @@ JSHelper.prototype.clearEventListeners = function()
  *
  * @access public
  */
-JSHelper.prototype.collectGarbage = function()
+Helper.prototype.collectGarbage = function()
 {
     var events = this._events;
     for (var eventName in events)
@@ -169,7 +169,7 @@ JSHelper.prototype.collectGarbage = function()
  * @access private
  * @param  node    element Target node element
  */
-JSHelper.prototype._removeElementListeners = function(element)
+Helper.prototype._removeElementListeners = function(element)
 {
     var events = this._events;
     for (var eventName in events)
@@ -194,7 +194,7 @@ JSHelper.prototype._removeElementListeners = function(element)
  * @param  node    element Target node element
  * @param  string  type    Event listener type
  */
-JSHelper.prototype._removeElementTypeListeners = function(element, type)
+Helper.prototype._removeElementTypeListeners = function(element, type)
 {
     var eventObj = this._events[type];
     var i = eventObj.length;
@@ -217,7 +217,7 @@ JSHelper.prototype._removeElementTypeListeners = function(element, type)
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype._addListener = function(el, eventName, handler, useCapture)
+Helper.prototype._addListener = function(el, eventName, handler, useCapture)
 {
     if (el.addEventListener)
     {
@@ -238,7 +238,7 @@ JSHelper.prototype._addListener = function(el, eventName, handler, useCapture)
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture)
+Helper.prototype._removeListener = function(el, eventName, handler, useCapture)
 {
     if (el.removeEventListener)
     {

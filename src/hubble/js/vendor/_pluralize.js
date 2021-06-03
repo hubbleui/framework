@@ -2,7 +2,7 @@
  * Pluralize
  * @see https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations
  * 
- * @example Container.get('JSHelper').pluralize('tomato', 5);
+ * @example Container.Helper().pluralize('tomato', 5);
  * 
  */
 (function()
