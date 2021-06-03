@@ -232,13 +232,23 @@
                     <article class="docs-body">
                         <h1>Drawer</h1>
                         <hr>
+                        <ul class="list-bullet">
+                            <li>
+                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Example</a>
+                            </li>
+                            <li>
+                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="direction" data-waypoint-speed="500">Javascript</a>
+                            </li>
+                        </ul>
+                        <hr>
                         <div class="row roof-xs floor-xs" data-waypoint="example">
                             <p>Navigation drawers provide access to destinations and website functionality, such as switching accounts. They can open from the left or right of the screen.</p>
                             <div class="code-content-example">
                                 <div class="container-fuid">
                                     <iframe src="drawer-left.html"></iframe>
                                 </div>
-                            </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+                            </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
 <div class="container-fuid">
     <button type="button" class="btn btn-primary js-open-drawer-trigger">Open Drawer</button>
@@ -249,13 +259,15 @@
 </div>
 <div class="drawer-overlay js-drawer-overlay"></div>
 -->
-</code></pre> </div>
-                    <p>Drawes can be set to open on the right by adding <code>.drawer-right</code> class:</p>
-                    <div class="code-content-example">
+</code></pre>
+                            <br>
+                            <p>Drawes can be set to open on the right by adding <code>.drawer-right</code> class:</p>
+                            <div class="code-content-example">
                                 <div class="container-fuid">
                                     <iframe src="drawer-right.html"></iframe>
                                 </div>
-                            </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+                            </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
 <div class="container-fuid">
     <button type="button" class="btn btn-primary js-open-drawer-trigger">Open Drawer</button>
@@ -266,13 +278,15 @@
 </div>
 <div class="drawer-overlay js-drawer-overlay"></div>
 -->
-</code></pre> </div>
-                    <p>The overlay can be made darker by adding the <code>.dark</code> class:</p>
-                    <div class="code-content-example">
+</code></pre>
+                            <br>
+                            <p>The overlay can be made darker by adding the <code>.dark</code> class:</p>
+                            <div class="code-content-example">
                                 <div class="container-fuid">
                                     <iframe src="drawer-dark.html"></iframe>
                                 </div>
-                            </div><pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+                            </div>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
 <div class="container-fuid">
     <button type="button" class="btn btn-primary js-open-drawer-trigger">Open Drawer</button>
@@ -283,7 +297,20 @@
 </div>
 <div class="drawer-overlay dark js-drawer-overlay"></div>
 -->
-</code></pre> </div>
+</code></pre>
+                        </div>
+                        <div class="row roof-xs floor-xs" data-waypoint="javascript">
+                            <p>The drawer can be opened or closed via JS using the <code>open</code> and <code>close</code> methods:</p>
+<pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<script>
+Container.Drawer().open();
+
+Container.Drawer().close();
+</script>
+-->
+</code></pre>
+                        </div>
                     </article>
                 </div>
             </div>
