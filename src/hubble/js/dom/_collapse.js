@@ -53,10 +53,7 @@
      */
     Collapse.prototype._bind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.addEventListener(this._nodes[i], 'click', this._eventHandler);
-        }
+        Helper.addEventListener(this._nodes, 'click', this._eventHandler);
     }
 
     /**
@@ -66,10 +63,7 @@
      */
     Collapse.prototype._unbind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.removeEventListener(this._nodes[i], 'click', this._eventHandler);
-        }
+        Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
     }
 
     /**

@@ -131,10 +131,12 @@
 	.card-img-top,
 	.card-img-bottom
 	{
+		position: relative;
 		width: 100%;
 		height: auto;
 		margin: 0 auto;
 		display: block;
+		overflow: hidden;
 	}
 	.card-header
 	{

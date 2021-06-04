@@ -45,6 +45,7 @@
     DropDowns.prototype.destruct = function()
     {
         this._unbind();
+        
         this._triggers = [];
     }
 
@@ -55,10 +56,8 @@
      */
     DropDowns.prototype._bind = function()
     {
-        for (var i = 0; i < this._triggers.length; i++)
-        {
-            Helper.addEventListener(this._triggers[i], 'click', this._clickHandler);
-        }
+        Helper.addEventListener(this._triggers, 'click', this._clickHandler);
+
         Helper.addEventListener(window, 'click', this._windowClick);
     }
 
@@ -69,10 +68,8 @@
      */
     DropDowns.prototype._unbind = function()
     {
-        for (var i = 0; i < this._triggers.length; i++)
-        {
-            Helper.removeEventListener(this._triggers[i], 'click', this._clickHandler);
-        }
+        Helper.removeEventListener(this._triggers, 'click', this._clickHandler);
+
         Helper.removeEventListener(window, 'click', this._windowClick);
     }
 

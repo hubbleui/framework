@@ -48,10 +48,7 @@
      */
     FileInput.prototype._bind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.addEventListener(this._nodes[i], 'change', this._eventHandler);
-        }
+        Helper.addEventListener(this._nodes, 'change', this._eventHandler);
     }
 
     /**
@@ -61,10 +58,7 @@
      */
     FileInput.prototype._unbind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.removeEventListener(this._nodes[i], 'change', this._eventHandler);
-        }
+        Helper.removeEventListener(this._nodes, 'change', this._eventHandler);
     }
 
     /**

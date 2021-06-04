@@ -56,10 +56,7 @@
      */
     ClickTriggers.prototype._bind = function()
     {
-        for (var i = 0; i < this._containers.length; i++)
-        {
-            Helper.addEventListener(this._containers[i], 'click', this._eventHandler);
-        }
+        Helper.addEventListener(this._containers, 'click', this._eventHandler);
     }
 
     /**
@@ -69,10 +66,7 @@
      */
     ClickTriggers.prototype._unbind = function()
     {
-        for (var i = 0; i < this._containers.length; i++)
-        {
-            Helper.removeEventListener(this._containers[i], 'click', this._eventHandler);
-        }
+        Helper.removeEventListener(this._containers, 'click', this._eventHandler);
     }
 
     /**

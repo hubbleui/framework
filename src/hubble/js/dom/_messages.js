@@ -52,10 +52,7 @@
      */
     MessageClosers.prototype._bind = function()
     {
-        for (var i = 0; i < this._triggers.length; i++)
-        {
-            Helper.addEventListener(this._triggers[i], 'click', this._eventHandler);
-        }
+        Helper.addEventListener(this._triggers, 'click', this._eventHandler);
     }
 
     /**
@@ -65,10 +62,7 @@
      */
     MessageClosers.prototype._unbind = function()
     {
-        for (var i = 0; i < this._triggers.length; i++)
-        {
-            Helper.removeEventListener(this._triggers[i], 'click', this._eventHandler);
-        }
+        Helper.removeEventListener(this._triggers, 'click', this._eventHandler);
     }
 
     /**

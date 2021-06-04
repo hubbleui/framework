@@ -40,8 +40,6 @@
 @import 'utility/dynamicUI/_dynamicUi.js';
 
 // DOM Module
-@import 'dom/_pjax.js';
-@import 'dom/_pjaxLinks.js';
 @import 'dom/scrollbar/_handler.js';
 @import 'dom/scrollbar/_scrollbars.js';
 @import 'dom/_collapse.js';
@@ -50,7 +48,7 @@
 @import 'dom/_drawer.js';
 @import 'dom/popover/_handler.js';
 @import 'dom/popover/_popovers.js';
-@import 'dom/_buttonRipple.js';
+@import 'dom/_ripple.js';
 @import 'dom/_inputMasks.js';
 @import 'dom/_messages.js';
 @import 'dom/_waypoint.js';

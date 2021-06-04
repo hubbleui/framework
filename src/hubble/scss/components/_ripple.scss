@@ -1,0 +1,56 @@
+.js-ripple
+{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    mask-image: radial-gradient(circle, white, black);
+}
+.js-ripple.fill::after
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: "";
+}
+.js-ripple.fill
+{
+    border-radius: 1000000px;
+}
+.btn .js-ripple .ripple
+{
+    opacity: 0.5;
+    transition: transform 0.75s ease-out, opacity 0.75s ease-out;
+}
+.js-ripple .ripple
+{
+    position: absolute;
+    border-radius: 100%;
+    background: currentColor;
+    opacity: 0.12;
+    width: 0;
+    height: 0;
+    transition: transform 1s ease-out, opacity 1s ease-out;
+    transform: scale(0);
+    pointer-events: none;
+    touch-callout: none;
+    user-select: none;
+}
+
+.js-ripple .ripple.held
+{
+    opacity: 0.15;
+    transform: scale(1);
+}
+
+.js-ripple .ripple.done
+{
+    opacity: 0.0;
+}
+
