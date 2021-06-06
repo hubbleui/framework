@@ -9,6 +9,12 @@
     overflow: hidden;
     border-radius: inherit;
     mask-image: radial-gradient(circle, white, black);
+    visibility: hidden;
+}
+.js-ripple[data-event="mousedown"],
+.js-ripple[data-event="touchstart"]
+{
+    visibility: visible;
 }
 .js-ripple.fill::after
 {

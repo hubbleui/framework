@@ -32,6 +32,7 @@
 @import 'utility/_filters.js';
 @import 'utility/_inputMasker.js';
 @import 'utility/_modal.js';
+@import 'utility/_frontdrop.js';
 @import 'utility/_notification.js';
 @import 'utility/_ajax.js';
 @import 'utility/_formValidator.js';
@@ -45,6 +46,7 @@
 @import 'dom/_collapse.js';
 @import 'dom/_dropdown.js';
 @import 'dom/_tabs.js';
+@import 'dom/_bottomNav.js';
 @import 'dom/_drawer.js';
 @import 'dom/popover/_handler.js';
 @import 'dom/popover/_popovers.js';

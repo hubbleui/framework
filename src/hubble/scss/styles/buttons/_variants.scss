@@ -141,6 +141,10 @@
 {
     @include button($white, $black);
 }
+.btn-on-primary
+{
+    @include button(#fff, rgba(#000, 0.4));
+}
 
 // Outline variants
 .btn.btn-outline
@@ -171,13 +175,9 @@
 {
     @include button-outline($brand-danger);
 }
-.btn-white.btn-outline
+.btn-on-primary.btn-outline
 {
-    @include button-outline($white);
-}
-.btn-black.btn-outline
-{
-    @include button-outline($black);
+    @include button-outline(#fff);
 }
 
 // Pure variants
@@ -209,16 +209,12 @@
 {
     @include button-pure($brand-danger);
 }
-.btn-black.btn-pure
-{
-   @include button-pure($black);
-}
-.btn-white.btn-pure
+.btn-on-primary.btn-pure
 {
     @include button-pure($white);
     &:hover,
     &.hover
     {
-        opacity: 0.8;
+        background-color: rgba($white, 0.1);
     }
 }

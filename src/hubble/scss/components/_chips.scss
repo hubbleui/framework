@@ -59,20 +59,7 @@
         border-color: $gray-lighter;
         box-shadow: none;
     }
-    &.selected
-    {
-        color: $brand-primary;
-        background-color: rgba-to-rgb(rgba($brand-primary, 0.15));
-        border-color: rgba-to-rgb(rgba($brand-primary, 0.15));
-        
-        &.chip-outline
-        {
-            color: $brand-primary;
-            background-color: rgba-to-rgb(rgba($brand-primary, 0.15));
-            border-color: rgba-to-rgb(rgba($brand-primary, 0.4));
-        }
-    }
-
+    
     // Remove
     .remove-icon
     {
@@ -109,6 +96,20 @@
             background-color: $gray;
         }
 
+    }
+
+    &.selected
+    {
+        color: $brand-primary;
+        background-color: rgba-to-rgb(rgba($brand-primary, 0.15));
+        border-color: rgba-to-rgb(rgba($brand-primary, 0.15));
+        
+        &.chip-outline
+        {
+            color: $brand-primary;
+            background-color: rgba-to-rgb(rgba($brand-primary, 0.15));
+            border-color: rgba-to-rgb(rgba($brand-primary, 0.4));
+        }
     }
 }
 

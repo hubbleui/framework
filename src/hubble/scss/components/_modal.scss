@@ -53,24 +53,6 @@
 		@include raised(3);
 	}
 }
-.modal-closer
-{
-	position: absolute;
-	color: $black;
-	cursor: pointer;
-	top: 7px;
-    right: 20px;
-    font-size: 14px;
-    z-index: $z-index-modal;
-    border-radius: 26px;
-    padding: 5px 6px;
-    background: $gray-lightest;
-}
-.modal-closer:hover
-{
-	opacity: 1;
-	text-decoration: none;
-}
 .modal-wrap .panel
 {
 	border:none;
@@ -115,18 +97,6 @@
 	opacity: 0;
 	transform: translateY(-50px);
 }
-
-.modal-icon
-{
-	font-size: 3.1rem;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 50%;
-    width: 7rem;
-    height: 7rem;
-    line-height: 7rem;
-}
-
 .modal-dialog
 {
 	margin-left: auto;

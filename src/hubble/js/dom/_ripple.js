@@ -20,40 +20,13 @@
     var rippleTypeAttr = 'data-event';
 
     /**
-     * @param {!Event|!Touch} event
-     * @return {Node}
-     */
-    function getHolderWithRippleJsClass(event)
-    {
-        var holder = /** @type {!Node} */ (event.target);
-        var childNodesLength = holder.childNodes.length;
-
-        if (holder.localName !== 'button' || !childNodesLength)
-        {
-            return holder.classList.contains('js-ripple') ? holder : null;
-        }
-
-        // fix firefox event target issue https://bugzilla.mozilla.org/show_bug.cgi?id=1089326
-        for (var i = 0; i < childNodesLength; ++i)
-        {
-            var child = holder.childNodes[i];
-            var cl = child.classList;
-            if (cl && cl.contains('js-ripple'))
-            {
-                return child; // return valid holder
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @param {string} type
      * @param {!Event|!Touch} at
      */
-    function startRipple(type, at)
+    function startRipple(type, at, holder)
     {
-        var holder = getHolderWithRippleJsClass(at);
+        var holder = Helper.$('.js-ripple', holder);
+
         if (!holder)
         {
             return false; // ignore
@@ -230,8 +203,6 @@
             rip.className = 'js-ripple';
             
             wrapper.appendChild(rip);
-
-            wrapper.insertBefore(rip, wrapper.firstChild);
         }
         else
         {
@@ -243,9 +214,9 @@
             rip.className = 'js-ripple fill';
         }
 
-        Helper.addEventListener(wrapper, 'mousedown', this._mouseDown, { passive: true });
+        Helper.addEventListener(wrapper, 'mousedown', this._mouseDown);
 
-        Helper.addEventListener(wrapper, 'touchstart', this._touchStart, { passive: true })
+        Helper.addEventListener(wrapper, 'touchstart', this._touchStart)
   
     }
 
@@ -261,7 +232,7 @@
 
         if (e.button === 0)
         {
-            startRipple(e.type, e);
+            startRipple(e.type, e, this);
         }
     }
 
@@ -277,7 +248,7 @@
 
         for (var i = 0; i < e.changedTouches.length; ++i)
         {
-            startRipple(e.type, e.changedTouches[i]);
+            startRipple(e.type, e.changedTouches[i], this);
         }
     }
     
