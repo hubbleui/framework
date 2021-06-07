@@ -1,134 +1,220 @@
 // Standard buttons
-@mixin button($color, $background) {
-    
-    $active-background: darken($background, 5%);
-    
+@mixin button($color, $background)
+{    
     color: $color;
     background-color: $background;
-    border-color: darken($background, 1.5%);
-
+    box-shadow: 0 2px 2px 0 rgba($background, 14%), 0 3px 1px -2px rgb($background, 20%), 0 1px 5px 0 rgb($background, 12%);
     &:hover,
-    &.hover,
-    &:active,
-    &.active {
+    &.hover
+    {
         color: $color;
-        background-color: $active-background;
-        border-color: $active-background;
+        background-color: lighten($background, 5);
+        box-shadow: 0 14px 26px -12px rgb($background, 42%), 0 4px 23px 0 rgb(0 0 0 / 12%), 0 8px 10px -5px rgb($background, 20%);
     }
-
-    .loading-spinner .path {
+    &:focus,
+    &.focus
+    {
+        transition: background-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
+        color: $color;
+        background-color: lighten(saturate($background, 10), 15);
+    }
+    &:active,
+    &.active
+    {
+        color: $color;
+        background-color: lighten(saturate($background, 5), 15);
+        box-shadow: none;
+    }
+    .loading-spinner .path
+    {
         stroke: $color;
+    }
+    .glyph-icon
+    {
+        color: $color;
+    }
+    &.raised-2
+    {
+        @include raised(2);
+    }
+    &.raised-3
+    {
+        @include raised(3);
     }
 }
 
 // Outline buttons
-@mixin button-outline($color) {
+@mixin button-outline($color)
+{
     color: $color;
     background-color: transparent;
-    border-color: $color;
+    border: 1px solid $color;
+    box-shadow: none;
+
+    .glyph-icon
+    {
+        color: $color;
+    }
+    .loading-spinner .path
+    {
+        stroke: $white;
+    }
 
     &:hover,
-    &.hover,
-    &:active,
-    &.active {
-        color: $white;
-        background-color: $color;
-        border-color: $color;
+    &.hover
+    {
+        background-color: rgba($color, 0.04);
+        border: 1px solid $color;
     }
-    .loading-spinner .path {
-        stroke: $white;
+    &:focus,
+    &.focus
+    {
+        background-color: rgba($color, 0.07);
+    }
+    &:active,
+    &.active
+    {
+        background-color: rgba($color, 0.15);
+        border: 1px solid $color;
     }
 }
 
 // Pure buttons
-@mixin button-pure($color) {
+@mixin button-pure($color)
+{
     color: $color;
     background-color: transparent;
-    border-color: transparent;
+    box-shadow: none;
+
+    .glyph-icon
+    {
+        color: $color;
+    }
 
     &:hover,
-    &.hover,
+    &.hover
+    {
+        background-color: rgba($color, 0.04);
+    }
+    &:focus,
+    &.focus
+    {
+        background-color: rgba($color, 0.07);
+    }
     &:active,
-    &.active {
-        color: darken($color, 3%);
+    &.active
+    {
+        background-color: rgba($color, 0.15);
     }
 }
 
 // Color variants
-.btn-primary {
+.btn-primary
+{
     @include button($white, $brand-primary);
 }
-.btn-success {
+.btn-secondary
+{
+    @include button($white, $brand-secondary);
+}
+.btn-success
+{
     @include button($white, $brand-success);
 }
-.btn-info {
+.btn-info
+{
     @include button($white, $brand-info);
 }
-.btn-warning {
+.btn-warning
+{
     @include button($white, $brand-warning);
 }
-.btn-danger {
+.btn-danger
+{
     @include button($white, $brand-danger);
 }
-.btn-white {
+.btn-white
+{
     @include button($black, $white);
 }
-.btn-black {
+.btn-black
+{
     @include button($white, $black);
+}
+.btn-on-primary
+{
+    @include button(#fff, rgba(#000, 0.4));
 }
 
 // Outline variants
-.btn.btn-outline {
-    @include button-outline($btn-default-bg);
+.btn.btn-outline
+{
+    @include button-outline($gray);
 }
-.btn-primary.btn-outline {
+.btn-primary.btn-outline
+{
     @include button-outline($brand-primary);
 }
-.btn-success.btn-outline {
+.btn-secondary.btn-outline
+{
+    @include button-outline($brand-secondary);
+}
+.btn-success.btn-outline
+{
     @include button-outline($brand-success);
 }
-.btn-info.btn-outline {
+.btn-info.btn-outline
+{
     @include button-outline($brand-info);
 }
-.btn-warning.btn-outline {
+.btn-warning.btn-outline
+{
     @include button-outline($brand-warning);
 }
-.btn-danger.btn-outline {
+.btn-danger.btn-outline
+{
     @include button-outline($brand-danger);
 }
-.btn-white.btn-outline {
-    @include button-outline($white);
-}
-.btn-black.btn-outline {
-    @include button-outline($black);
+.btn-on-primary.btn-outline
+{
+    @include button-outline(#fff);
 }
 
 // Pure variants
-.btn.btn-pure {
-    @include button-pure($btn-default-bg);
+.btn.btn-pure
+{
+    @include button-pure($gray);
 }
-.btn-primary.btn-pure {
+.btn-primary.btn-pure
+{
     @include button-pure($brand-primary);
 }
-.btn-success.btn-pure {
+.btn-secondary.btn-pure
+{
+    @include button-pure($brand-secondary);
+}
+.btn-success.btn-pure
+{
     @include button-pure($brand-success);
 }
-.btn-info.btn-pure {
+.btn-info.btn-pure
+{
     @include button-pure($brand-info);
 }
-.btn-warning.btn-pure {
+.btn-warning.btn-pure
+{
     @include button-pure($brand-warning);
 }
-.btn-danger.btn-pure {
+.btn-danger.btn-pure
+{
     @include button-pure($brand-danger);
 }
-.btn-black.btn-pure {
-   @include button-pure($black);
-}
-.btn-white.btn-pure {
+.btn-on-primary.btn-pure
+{
     @include button-pure($white);
     &:hover,
-    &.hover {
-        opacity: 0.8;
+    &.hover
+    {
+        background-color: rgba($white, 0.1);
     }
 }

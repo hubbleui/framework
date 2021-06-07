@@ -1,3 +1,3 @@
-	Container.singleton('JSHelper', JSHelper).get('JSHelper').getBrowser();
+	Container.singleton('Helper', Helper).Helper().getBrowser();
 
-})();
+	})();

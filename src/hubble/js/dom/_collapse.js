@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -29,9 +28,9 @@
          * @var array
          */
         this._nodes = Helper.$All('.js-collapse');
-                
+
         this._bind();
-        
+
         return this;
     }
 
@@ -54,10 +53,7 @@
      */
     Collapse.prototype._bind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.addEventListener(this._nodes[i], 'click', this._eventHandler);
-        }
+        Helper.addEventListener(this._nodes, 'click', this._eventHandler);
     }
 
     /**
@@ -67,10 +63,7 @@
      */
     Collapse.prototype._unbind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.removeEventListener(this._nodes[i], 'click', this._eventHandler);
-        }
+        Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
     }
 
     /**
@@ -87,15 +80,15 @@
         {
             e.preventDefault();
         }
-        
-        var clicked  = this;
-        var targetEl = Helper.$('#'+clicked.dataset.collapseTarget);
-        var speed    = parseInt(clicked.dataset.collapseSpeed) || 350;
-        var easing   = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
-        var opacity  = clicked.dataset.withOpacity;
+
+        var clicked = this;
+        var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
+        var speed = parseInt(clicked.dataset.collapseSpeed) || 350;
+        var easing = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
+        var opacity = clicked.dataset.withOpacity;
 
         Container.get('ToggleHeight', targetEl, 0, speed, easing, opacity);
-        
+
         Helper.toggleClass(clicked, 'active');
     }
 

@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -14,7 +13,7 @@
      * @var object
      */
     var Helper = Hubble.helper();
-    
+
     /**
      * Module constructor
      *
@@ -23,11 +22,11 @@
      */
     var _popHandler = function(options)
     {
-        this.trigger      = options.target;
-        this.options      = options;
-        this.el           = this.buildPopEl();
+        this.trigger = options.target;
+        this.options = options;
+        this.el = this.buildPopEl();
         this.el.className = options.classes;
-        this.animation    = false;
+        this.animation = false;
 
         if (options.animation === 'pop')
         {
@@ -54,7 +53,7 @@
      */
     _popHandler.prototype.buildPopEl = function()
     {
-        var pop       = document.createElement('div');
+        var pop = document.createElement('div');
         pop.className = this.options.classes;
 
         if (typeof this.options.template === 'string')
@@ -90,25 +89,25 @@
 
         if (this.options.direction === 'top')
         {
-            this.el.style.top  = targetCoords.top  - this.el.scrollHeight + 'px';
-            this.el.style.left = targetCoords.left - (this.el.offsetWidth /2) + (this.options.target.offsetWidth/2) + 'px';
+            this.el.style.top = targetCoords.top - this.el.scrollHeight + 'px';
+            this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
             return;
         }
         else if (this.options.direction === 'bottom')
         {
-            this.el.style.top  = targetCoords.top  + this.options.target.offsetHeight + 10 + 'px';
-            this.el.style.left = targetCoords.left - (this.el.offsetWidth /2) + (this.options.target.offsetWidth/2) + 'px';
+            this.el.style.top = targetCoords.top + this.options.target.offsetHeight + 10 + 'px';
+            this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
             return;
         }
         else if (this.options.direction === 'left')
         {
-            this.el.style.top  = targetCoords.top  - (this.el.offsetHeight/2) + (this.options.target.offsetHeight/2) + 'px';
+            this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
             this.el.style.left = targetCoords.left - this.el.offsetWidth - 10 + 'px';
             return;
         }
         else if (this.options.direction === 'right')
         {
-            this.el.style.top  = targetCoords.top  - (this.el.offsetHeight/2) + (this.options.target.offsetHeight/2) + 'px';
+            this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
             this.el.style.left = targetCoords.left + this.options.target.offsetWidth + 10 + 'px';
             return;
         }

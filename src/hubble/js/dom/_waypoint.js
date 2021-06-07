@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -41,7 +40,7 @@
                 this._bind(this._nodes[i]);
             }
         }
-        
+
         // Invoke pageload
         if (!pageLoaded)
         {
@@ -63,7 +62,7 @@
         {
             this._unbind(this._nodes[i]);
         }
-        
+
         // Clear Nodes
         this._nodes = [];
     }
@@ -100,20 +99,20 @@
     {
         e = e || window.event;
         e.preventDefault();
-        var trigger  = this;
+        var trigger = this;
         var waypoint = trigger.dataset.waypointTarget;
         var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
         if (Helper.nodeExists(targetEl))
         {
-            var id      = waypoint;
-            var speed   = typeof trigger.dataset.waypointSpeed  !== "undefined" ? trigger.dataset.waypointSpeed : 500;
-            var easing  = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
+            var id = waypoint;
+            var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
+            var easing = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
             targetEl.id = id;
 
             var options = {
-                easing : easing,
-                speed  : speed,
+                easing: easing,
+                speed: speed,
             };
 
             Container.get('SmoothScroll').animateScroll('#' + id, trigger, options);
@@ -127,23 +126,20 @@
      */
     WayPoints.prototype._invokePageLoad = function()
     {
-
         var url = Helper.parse_url(window.location.href);
 
         if (Helper.isset(url['fragment']) && url['fragment'] !== '')
         {
             var waypoint = Helper.trim(url['fragment'], '/');
-            var options  = {
-                speed:   100,
+            var options = {
+                speed: 100,
                 easing: 'Linear'
             };
             var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
-            if (!Helper.nodeExists(targetEl)) targetEl = Helper.$('#' + waypoint);
-
             if (Helper.nodeExists(targetEl))
             {
-                var id      = waypoint;
+                var id = waypoint;
                 targetEl.id = id;
                 Container.get('SmoothScroll').animateScroll('#' + id, null, options);
             }

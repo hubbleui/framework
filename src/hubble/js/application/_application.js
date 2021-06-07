@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -61,7 +60,7 @@
      */
     Application.prototype.helper = function()
     {
-        return Container.get('JSHelper');
+        return Container.Helper();
     }
 
     /**
@@ -83,5 +82,5 @@
     {
         window.Hubble = Container.get('Hubble');
     }
-    
+
 })();

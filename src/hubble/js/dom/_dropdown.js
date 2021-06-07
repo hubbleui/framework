@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -31,7 +30,7 @@
         this._triggers = Helper.$All('.js-drop-trigger');
 
         if (!Helper.empty(this._triggers))
-        { 
+        {
             this._bind();
         }
 
@@ -46,6 +45,7 @@
     DropDowns.prototype.destruct = function()
     {
         this._unbind();
+        
         this._triggers = [];
     }
 
@@ -56,10 +56,8 @@
      */
     DropDowns.prototype._bind = function()
     {
-        for (var i = 0; i < this._triggers.length; i++)
-        {
-            Helper.addEventListener(this._triggers[i], 'click', this._clickHandler);
-        }
+        Helper.addEventListener(this._triggers, 'click', this._clickHandler);
+
         Helper.addEventListener(window, 'click', this._windowClick);
     }
 
@@ -70,10 +68,8 @@
      */
     DropDowns.prototype._unbind = function()
     {
-        for (var i = 0; i < this._triggers.length; i++)
-        {
-            Helper.removeEventListener(this._triggers[i], 'click', this._clickHandler);
-        }
+        Helper.removeEventListener(this._triggers, 'click', this._clickHandler);
+
         Helper.removeEventListener(window, 'click', this._windowClick);
     }
 
@@ -88,8 +84,8 @@
         e = e || window.event;
         e.preventDefault();
 
-        var button   = this;
-        var _this    = Container.get('DropDowns');
+        var button = this;
+        var _this = Container.get('DropDowns');
 
         // Hide all dropdowns except this
         _this._hideDropDowns(button);
@@ -144,14 +140,14 @@
     DropDowns.prototype._windowClick = function(e)
     {
         e = e || window.event;
-        if (Helper.closestClass(e.target, 'js-drop-trigger'))
+        if (Helper.closest(e.target, '.js-drop-trigger'))
         {
             return;
         }
         if (!Helper.hasClass(e.target, 'js-drop-trigger'))
         {
             var _this = Container.get('DropDowns');
-            
+
             _this._hideDropDowns();
         }
     }
@@ -165,7 +161,7 @@
     DropDowns.prototype._hideDropDowns = function(exception)
     {
         dropTriggers = Helper.$All('.js-drop-trigger');
-        exception    = (typeof exception === 'undefined' ? false : exception);
+        exception = (typeof exception === 'undefined' ? false : exception);
 
         for (var i = 0; i < dropTriggers.length; i++)
         {

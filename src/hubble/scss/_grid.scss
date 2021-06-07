@@ -1,96 +1,120 @@
 // Containers
 .container,
-.container-fluid {
+.container-fluid
+{
     margin-left: auto;
     margin-right: auto;
     @include _clearfix;
 }
 
 // basic rows
-.row {
+.row
+{
     @include _clearfix;
     width: 100%;
 }
 
 // basic columns
-.col {
+.col
+{
     float: left;
 }
 
 // containers are both fluid at xs screen size
 .container-fluid,
-.container {
+.container
+{
     padding-left:  map-get($container-gutters, xs);
     padding-right: map-get($container-gutters, xs);
     width: 100%;
 }
-.container-fluid {
+.container-fluid
+{
     max-width: $breakpoint-xl;
 }
 
 // breakpoint size elements
-.xl {
+.xl
+{
     display: none;
 }
-.lg {
+.lg
+{
     display: none;
 }
-.md {
+.md
+{
     display: none;
 }
-.sm {
+.sm
+{
     display: none;
 }
-.xs {
+.xs
+{
     display: block;
 }
-.xs-inline-block {
+.xs-inline-block
+{
     display: inline-block;
 }
-.xs-inline {
+.xs-inline
+{
     display: inline;
 }
 
 // Container breakpoints
-@include media-breakpoint-up(sm) { 
-    .container-fluid {
+@include media-breakpoint-up(sm)
+{ 
+    .container-fluid
+    {
         padding-left: map-get($container-gutters, sm);
         padding-right: map-get($container-gutters, sm);
     }
-    .container {
+    .container
+    {
         max-width: $breakpoint-sm;
         padding-left: map-get($container-gutters, sm);
         padding-right: map-get($container-gutters, sm);
     }
 }
-@include media-breakpoint-up(md) {
-    .container-fluid {
+@include media-breakpoint-up(md)
+{
+    .container-fluid
+    {
         padding-left: map-get($container-gutters, md);
         padding-right: map-get($container-gutters, md);
     }
-    .container {
+    .container
+    {
         max-width: $breakpoint-md;
         padding-left: map-get($container-gutters, md);
         padding-right: map-get($container-gutters, md);
     }
 }
-@include media-breakpoint-up(lg) {
-    .container-fluid {
+@include media-breakpoint-up(lg)
+{
+    .container-fluid
+    {
         padding-left: map-get($container-gutters, lg);
         padding-right: map-get($container-gutters, lg);
     }
-    .container {
+    .container
+    {
         max-width: $breakpoint-lg;
         padding-left: map-get($container-gutters, lg);
         padding-right: map-get($container-gutters, lg);
     }
 }
-@include media-breakpoint-up(xl) {
-    .container-fluid {
+@include media-breakpoint-up(xl)
+{
+    .container-fluid
+    {
         padding-left: map-get($container-gutters, xl);
         padding-right: map-get($container-gutters, xl);
     }
-    .container {
+    .container
+    {
         max-width: $breakpoint-xl;
         padding-left: map-get($container-gutters, xl);
         padding-right: map-get($container-gutters, xl);
@@ -101,20 +125,24 @@
 @include media-breakpoint-up(sm)
 {
     .xs-no-display
-    {
+   
+   {
         display: none;
     }
     .xs-inline-block,
     .xs-inline
-    {
+   
+   {
         display: none;
     }
     .sm-inline-block
-    {
+   
+   {
         display: inline-block;
     }
     .sm-inline
-    {
+   
+   {
         display: inline;
     }
     
@@ -122,20 +150,24 @@
 @include media-breakpoint-up(md)
 {
     .sm-no-display
-    {
+   
+   {
         display: none;
     }
     .sm-inline-block,
     .sm-inline
-    {
+   
+   {
         display: none;
     }
     .md-inline-block
-    {
+   
+   {
         display: inline-block;
     }
     .md-inline
-    {
+   
+   {
         display: inline;
     }
     
@@ -143,40 +175,48 @@
 @include media-breakpoint-up(lg)
 {
     .md-no-display
-    {
+   
+   {
         display: none;
     }
     .md-inline-block,
     .md-inline
-    {
+   
+   {
         display: none;
     }
     .lg-inline-block
-    {
+   
+   {
         display: inline-block;
     }
     .lg-inline
-    {
+   
+   {
         display: inline;
     }
 }
 @include media-breakpoint-up(xl)
 {
     .lg-no-display
-    {
+   
+   {
         display: none;
     }
     .lg-inline-block,
     .lg-inline
-    {
+   
+   {
         display: none;
     }
     .xl-inline-block
-    {
+   
+   {
         display: inline-block;
     }
     .xl-inline
-    {
+   
+   {
         display: inline;
     }
    
@@ -189,28 +229,32 @@ $curr-grid:       null;
 @import 'grid/grid';
 
 // sm grid
-@media (min-width: map-get($breakpoints, sm)) {
+@media (min-width: map-get($breakpoints, sm))
+{
     $prev-breakpoint: xs;
     $curr-grid:       sm;
     @import 'grid/grid';
 }
 
 // md grid
-@media (min-width: map-get($breakpoints, md)) { 
+@media (min-width: map-get($breakpoints, md))
+{ 
     $prev-breakpoint: sm;
     $curr-grid:       md;
     @import 'grid/grid';
 }
 
 // lg grid
-@media (min-width: map-get($breakpoints, lg)) { 
+@media (min-width: map-get($breakpoints, lg))
+{ 
     $prev-breakpoint: md;
     $curr-grid:       lg;
     @import 'grid/grid';
 }
 
 // xl grid
-@media (min-width: map-get($breakpoints, xl)) { 
+@media (min-width: map-get($breakpoints, xl))
+{ 
     $prev-breakpoint: lg;
     $curr-grid:       xl;
     @import 'grid/grid';

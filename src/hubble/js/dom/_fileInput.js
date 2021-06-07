@@ -5,9 +5,8 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
@@ -26,7 +25,7 @@
         this._nodes = Helper.$All('.js-file-input');
 
         this._bind();
-        
+
         return this;
     }
 
@@ -39,7 +38,7 @@
     {
         this._unbind();
 
-        this._nodes  = [];
+        this._nodes = [];
     }
 
     /**
@@ -49,10 +48,7 @@
      */
     FileInput.prototype._bind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.addEventListener(this._nodes[i], 'change', this._eventHandler);
-        }
+        Helper.addEventListener(this._nodes, 'change', this._eventHandler);
     }
 
     /**
@@ -62,10 +58,7 @@
      */
     FileInput.prototype._unbind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.removeEventListener(this._nodes[i], 'change', this._eventHandler);
-        }
+        Helper.removeEventListener(this._nodes, 'change', this._eventHandler);
     }
 
     /**
@@ -76,13 +69,13 @@
     FileInput.prototype._eventHandler = function()
     {
         var fileInput = this;
-        var wrap      = Helper.closestClass(fileInput, 'js-file-field');
+        var wrap = Helper.closest(fileInput, '.js-file-field');
         var showInput = Helper.$('.js-file-text', wrap);
-        var fullPath  = fileInput.value;
+        var fullPath = fileInput.value;
         if (fullPath)
         {
             var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            var filename   = fullPath.substring(startIndex);
+            var filename = fullPath.substring(startIndex);
             if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
             {
                 filename = filename.substring(1);

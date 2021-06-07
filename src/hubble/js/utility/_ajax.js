@@ -1,326 +1,571 @@
 /**
- * Ajax
+ * Ajax Utility
  *
- * Ajax utility module
- *
- */
-(function() {
+ * @example 
+
+var headers = {'foo' : 'bar'};
+var data    = {'foo' : 'bar'};
+
+_Ajax.get('https://stackoverflow.com', function complete(response)
+{
+    console.log('Completed');
+    
+});
+
+_Ajax.get('https://stackoverflow.com', function complete(response)
+{
+    console.log('Completed');
+    
+}, headers);
+
+_Ajax.post('https://stackoverflow.com', data,
+function success(response)
+{
+    console.log('success');
+    
+},
+function error(response)
+{
+    console.log('error');
+});
+
+_Ajax.post('https://stackoverflow.com', data,
+function success(response)
+{
+    console.log('success');
+    
+},
+function error(response)
+{
+    console.log('error');
+    
+},
+function complete(response)
+{
+    console.log('Completed');
+    
+}, headers);
+
+*/
+(function()
+{
+    /**
+     * JS Queue
+     *
+     * @see https://medium.com/@griffinmichl/asynchronous-javascript-queue-920828f6327
+     */
+    var Queue = function(concurrency)
+    {
+        this.running = 0;
+        this.concurrency = concurrency;
+        this.taskQueue = [];
+
+        return this;
+    }
+
+    Queue.prototype.add = function(task, _this, _args)
+    {
+        if (this.running < this.concurrency)
+        {
+            this._runTask(task, _this, _args);
+        }
+        else
+        {
+            this._enqueueTask(task, _this, _args);
+        }
+    }
+
+    Queue.prototype.next = function()
+    {
+        this.running--;
+
+        if (this.taskQueue.length > 0)
+        {
+            var task = this.taskQueue.shift();
+
+            this._runTask(task['callback'], task['_this'], task['_args']);
+        }
+    }
+
+    Queue.prototype._runTask = function(task, _this, _args)
+    {
+        this.running++;
+
+        task.apply(_this, _args);
+    }
+
+    Queue.prototype._enqueueTask = function(task, _this, _args)
+    {
+        this.taskQueue.push(
+        {
+            'callback': task,
+            '_this': _this,
+            '_args': _args
+        });
+    }
+
+    var AjaxQueue = new Queue(1);
 
     /**
-     * @namespace HelperAjax
+     * Module constructor
+     *
+     * @access public
+     * @constructor
+     * @return this
      */
-    var HelperAjax = {
-
-        /**
-         * @property {XMLHttpRequest|ActiveXObject}
-         */
-        xhr: null,
-
-        /**
-         * @property {Object} Default ajax settings
-         */
-        settings: {
-            url: '',
-            type: 'GET',
-            dataType: 'text', // text, html, json or xml
-            async: true,
-            cache: true,
-            data: null,
-            contentType: 'application/x-www-form-urlencoded',
-            success: null,
-            error: null,
-            complete: null,
-            headers: [],
-            accepts: {
-                text: 'text/plain',
-                html: 'text/html',
-                xml: 'application/xml, text/xml',
-                json: 'application/json, text/javascript'
-            }
-        },
-
-        construct: function() {},
-        destruct: function() {},
-
-        /**
-         * Ajax call
-         * @param {Object} [options] Overwrite the default settings (see ajaxSettings)
-         * @return {This}
-         */
-        call: function(options) {
-            var self = this,
-                xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
-                opts = (function(s, o) {
-                    var opts = {};
-
-                    for (var key in s)
-                        opts[key] = (typeof o[key] == 'undefined') ? s[key] : o[key];
-
-                    return opts;
-                })(this.settings, options),
-                ready = function() {
-                    if (xhr.readyState == 4) {
-                        if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
-                            // set data
-                            var data = (opts.dataType == 'xml') ? xhr.responseXML : xhr.responseText;
-
-                            //console.log(data);
-
-                            // parse json data
-                            if (opts.dataType == 'json')
-                                data = self.parseJSON(data);
-
-                            // success callback
-                            if (self.isFunction(opts.success))
-                                opts.success.call(opts, data, xhr.status, xhr);
-                        } else {
-                            // error callback
-                            if (self.isFunction(opts.error))
-                                opts.error.call(opts, xhr, xhr.status);
-                        }
-
-                        // complete callback
-                        if (self.isFunction(opts.complete))
-                            opts.complete.call(opts, xhr, xhr.status);
-                    }
-                };
-
-            this.xhr = xhr;
-
-            // prepare options
-            if (!opts.cache)
-                opts.url += ((opts.url.indexOf('?') > -1) ? '&' : '?') + '_nocache=' + (new Date()).getTime();
-
-            if (opts.data) {
-                if (opts.type == 'GET') {
-                    opts.url += ((opts.url.indexOf('?') > -1) ? '&' : '?') + this.param(opts.data);
-                    opts.data = null;
-                } else {
-                    opts.data = this.param(opts.data);
-                }
-            }
-
-            // set request
-            xhr.open(opts.type, opts.url, opts.async);
-            xhr.setRequestHeader('Content-type', opts.contentType);
-            xhr.setRequestHeader('REQUESTED-WITH', 'XMLHttpRequest');
-
-            if (opts.dataType && opts.accepts[opts.dataType])
-                xhr.setRequestHeader('Accept', opts.accepts[opts.dataType]);
-
-            if (opts.headers)
+    var _Ajax = function()
+    {
+        this._settings = {
+            'url': '',
+            'async': true,
+            'headers':
             {
-                for (var k = 0; k < opts.headers.length; k++)
-                {
-                    var header = opts.headers[k];
-                    var key    = Object.keys(header)[0];                    
-                    xhr.setRequestHeader(key, header[key]);
-                }
-            }
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accepts': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            },
+        };
 
-            if (opts.async) {
-                xhr.onreadystatechange = ready;
-                xhr.send(opts.data);
-            } else {
-                xhr.send(opts.data);
-                ready();
-            }
+        this._complete = false;
+        this._success = false;
+        this._error = false;
 
-            return this;
-        },
+        return this;
+    }
 
-        /**
-         * Ajax GET request
-         * @param {String} url
-         * @param {String|Object} [data] Containing GET values
-         * @param {Function} [success] Callback when request was succesfull
-         * @return {This}
-         */
-        get: function(url, data, success, error, headers) {
-            if (this.isFunction(data)) {
-                error   = success;
-                success = data;
-                data    = null;
-            }
+    /**
+     * Ajax Methods 
+     *
+     * @access public
+     * @param  string        url     Destination URL
+     * @param  string|object data    Data (optional)
+     * @param  function      success Success callback (optional)
+     * @param  function      error   Error callback (optional)
+     * @param  object        headers Request headers (optional)
+     * @return this
+     */
+    _Ajax.prototype.post = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
 
-            return this.call({
-                url: url,
-                type: 'GET',
-                data: data,
-                success: success,
-                error: error,
-                headers: headers
-            });
-        },
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('POST', url, data, success, error, complete, headers));
 
-        /**
-         * Ajax POST request
-         * @param {String} url
-         * @param {String|Object} [data] Containing POST values
-         * @param {Function} [success] Callback when request was succesfull
-         * @return {This}
-         */
-        post: function(url, data, success, error, headers) {
-            if (this.isFunction(data)) {
-                error   = success;
-                success = data;
-                data    = null;
-            }
+        return instance;
+    }
+    _Ajax.prototype.get = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
 
-            return this.call({
-                url: url,
-                type: 'POST',
-                data: data,
-                success: success,
-                error: error,
-                headers: headers
-            });
-        },
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('GET', url, data, success, error, complete, headers));
 
-        upload: function(url, data, success, error, start, progress, load)
+        return instance;
+    }
+    _Ajax.prototype.head = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
+
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('HEAD', url, data, success, error, complete, headers));
+
+        return instance;
+    }
+    _Ajax.prototype.put = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
+
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('PUT', url, data, success, error, complete, headers));
+
+        return instance;
+    }
+    _Ajax.prototype.delete = function(url, data, success, error, complete, headers)
+    {
+        var instance = new _Ajax;
+
+        AjaxQueue.add(instance._call, instance, instance._normaliseArgs('DELETE', url, data, success, error, complete, headers));
+
+        return instance;
+    }
+
+    /**
+     * Success function
+     *
+     * @param  function  callback Callback function
+     * @return this
+     */
+    _Ajax.prototype.success = function(callback)
+    {
+        if (!this._isFunc(callback))
         {
-            var formData = new FormData();
-            for (var key in data) {
-                
-                //formData.append(name, file, filename);
-                // skip loop if the property is from prototype
-                if (!data.hasOwnProperty(key)) continue;
+            throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
+        }
+
+        this._success = callback;
+
+        return this;
+    }
+
+    /**
+     * Error function
+     *
+     * @param  function  callback Callback function
+     * @return this
+     */
+    _Ajax.prototype.error = function(callback)
+    {
+        if (!this._isFunc(callback))
+        {
+            throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
+        }
+
+        this._error = callback;
+
+        return this;
+    }
+
+    /**
+     * Alias for complete
+     *
+     * @param  function  callback Callback function
+     * @return this
+     */
+    _Ajax.prototype.then = function(callback)
+    {
+        return this.complete(callback);
+    }
+
+    /**
+     * Complete function
+     *
+     * @param  function  callback Callback function
+     * @return this
+     */
+    _Ajax.prototype.complete = function(callback)
+    {
+        if (!this._isFunc(callback))
+        {
+            throw new Error('Error the provided argument "' + JSON.parse(callback) + '" is not a valid callback');
+        }
+
+        this._complete = callback;
+
+        return this;
+    }
+
+    /**
+     * Special Upload Function
+     *
+     * @access public
+     * @param  string        url      Destination URL
+     * @param  object        data     Form data
+     * @param  function      success  Success callback
+     * @param  function      error    Error callback
+     * @param  function      start    Start callback (optional)
+     * @param  function      progress Progress callback (optional)
+     * @param  function      complete Complete callback (optional)
+     * @return this
+     */
+    _Ajax.prototype.upload = function(url, data, success, error, start, progress, complete)
+    {
+        var formData = new FormData();
+
+        for (var key in data)
+        {
+            if (data.hasOwnProperty(key))
+            {
                 var value = data[key];
 
-                if (value['type']) {
+                if (value['type'])
+                {
                     formData.append(key, value, value.name);
                 }
-                else {
+                else
+                {
                     formData.append(key, value);
                 }
             }
-
-            var self = this;
-            var xhr  = new XMLHttpRequest();
-            if (this.isFunction(start)) {
-                xhr.upload.addEventListener("loadstart", start, false);
-            }
-            if (this.isFunction(progress)) {
-                 xhr.upload.addEventListener("progress", progress, false);
-            }
-            if (this.isFunction(load)) {
-                xhr.upload.addEventListener("load", load, false);
-            }
-            xhr.addEventListener("readystatechange", function(e) {
-                e = e || window.event;
-                var status, text, readyState;
-                try {
-                    readyState = e.target.readyState;
-                    text       = e.target.responseText;
-                    status     = e.target.status;
-                } 
-                catch (e) {
-                    return;
-                }
-
-                if (readyState == 4) {
-                    if (status >= 200 && status < 300 || status === 304) {
-                        var response = e.target.responseText;
-                        //console.log(response);
-                        if (self.isFunction(success)) success(response);
-                    } 
-                    else {
-                        // error callback
-                        if (self.isFunction(error)) error.call(status, xhr);
-                    }
-                }
-
-            }, false);
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader('REQUESTED-WITH', 'XMLHttpRequest');
-            xhr.send(formData);
-            
-
-        },
-
-        /**
-         * Set content loaded by an ajax call
-         * @param {DOMElement|String} el Can contain an element or the id of the element
-         * @param {String} url The url of the ajax call (include GET vars in querystring)
-         * @param {String} [data] The POST data, when set method will be set to POST
-         * @param {Function} [complete] Callback when loading is completed
-         * @return {This}
-         */
-        load: function(el, url, data, complete) {
-            if (typeof el == 'string')
-                el = document.getElementById(el);
-
-            return this.call({
-                url: url,
-                type: data ? 'POST' : 'GET',
-                data: data || null,
-                complete: complete || null,
-                success: function(html) {
-                    try {
-                        el.innerHTML = html;
-                    } catch (e) {
-                        var ph = document.createElement('div');
-                        ph.innerHTML = html;
-
-                        // empty element content
-                        while (el.firstChild)
-                            el.removeChild(el.firstChild);
-
-                        // set new html content
-                        for (var x = 0, max = ph.childNodes.length; x < max; x++)
-                            el.appendChild(ph.childNodes[x]);
-                    }
-                }
-            });
-        },
-
-        /**
-         * Make querystring outof object or array of values
-         * @param {Object|Array} obj Keys/values
-         * @return {String} The querystring
-         */
-        param: function(obj) {
-            var s = [];
-
-            for (var key in obj) {
-                s.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
-            }
-
-            return s.join('&');
-        },
-
-        /**
-         * Parse JSON string
-         * @param {String} data
-         * @return {Object} JSON object
-         */
-        parseJSON: function(data) {
-            if (typeof data !== 'string' || !data)
-                return null;
-
-            return eval('(' + this.trim(data) + ')');
-        },
-
-        /**
-         * Trim spaces
-         * @param {String} str
-         * @return {String}
-         */
-        trim: function(str) {
-            return str.replace(/^\s+/, '').replace(/\s+$/, '');
-        },
-
-        /**
-         * Check if argument is function
-         * @param {Mixed} obj
-         * @return {Boolean}
-         */
-        isFunction: function(obj) {
-            return Object.prototype.toString.call(obj) === '[object Function]';
         }
 
-    };
+        xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
-    Container.set('Ajax', HelperAjax);
+        if (data)
+        {
+            data = this._params(data);
+        }
+
+        xhr.requestURL = url;
+
+        xhr.method = 'POST';
+
+        if (this.isFunction(start))
+        {
+            xhr.upload.addEventListener('loadstart', start, false);
+        }
+        if (this.isFunction(progress))
+        {
+            xhr.upload.addEventListener('progress', progress, false);
+        }
+        if (this.isFunction(complete))
+        {
+            xhr.upload.addEventListener('load', complete, false);
+        }
+        xhr.addEventListener('readystatechange', function(e)
+        {
+            e = e || window.event;
+            var status, text, readyState;
+            try
+            {
+                readyState = e.target.readyState;
+                text = e.target.responseText;
+                status = e.target.status;
+            }
+            catch (e)
+            {
+                return;
+            }
+
+            if (readyState == 4)
+            {
+                if (status >= 200 && status < 300 || status === 304)
+                {
+                    var response = e.target.responseText;
+
+                    if (_this.isFunction(success))
+                    {
+                        success(response);
+                    }
+                }
+                else
+                {
+                    // error callback
+                    if (_this.isFunction(error))
+                    {
+                        error.call(status, xhr);
+                    }
+                }
+
+
+            }
+
+        }, false);
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('REQUESTED-WITH', 'XMLHttpRequest');
+        xhr.send(formData);
+    }
+
+    /**
+     * Ajax call 
+     *
+     * @access private
+     * @param  string        method  Request method
+     * @param  string        url     Destination URL
+     * @param  string|object data    Data (optional)
+     * @param  function      success Success callback (optional)
+     * @param  function      error   Error callback (optional)
+     * @param  function      complete Complete callback (optional)
+     * @param  object        headers Request headers (optional)
+     * @return this
+     */
+    _Ajax.prototype._call = function(method, url, data, success, error, complete, headers)
+    {
+
+        xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+        this._xhr = xhr;
+
+        xhr.requestURL = url;
+
+        xhr.mthod = method;
+
+        xhr.open(method, url, this._settings['async']);
+
+        this._sendHeaders(xhr, headers);
+
+        var _this = this;
+
+        if (this._settings['async'])
+        {
+            xhr.onreadystatechange = function()
+            {
+                _this._ready.call(_this, xhr, success, error, complete);
+            }
+
+            xhr.send(data);
+        }
+        else
+        {
+            xhr.send(data);
+
+            this._ready.call(this, xhr, success, error, complete);
+        }
+
+        return this;
+    }
+
+    /**
+     * Send XHR headers
+     *
+     * @access private
+     * @param  object    xhr     XHR object
+     * @param  object    headers Request headers (optional)
+     * @return {This}
+     */
+    _Ajax.prototype._sendHeaders = function(xhr, headers)
+    {
+        if (xhr.mthod === 'POST')
+        {
+            this._settings['headers']['REQUESTED-WITH'] = 'XMLHttpRequest';
+        }
+
+        if (this._isObj(headers))
+        {
+            this._settings['headers'] = Object.assign(
+            {}, this._settings['headers'], headers);
+        }
+
+        for (var k in this._settings['headers'])
+        {
+            if (this._settings['headers'].hasOwnProperty(k))
+            {
+                xhr.setRequestHeader(k, this._settings['headers'][k]);
+            }
+        }
+    }
+
+    /**
+     * Normalise arguments from original call function
+     *
+     * @param  string        method  Request method
+     * @param  string        url     Destination URL
+     * @param  string|object data    Data (optional)
+     * @param  function      success Success callback (optional)
+     * @param  function      error   Error callback (optional)
+     * @param  object        headers Request headers (optional)
+     * @return {This}
+     */
+    _Ajax.prototype._normaliseArgs = function(method, url, data, success, error, complete, headers)
+        {
+            var complete = typeof complete === 'undefined' ? 'false' : complete;
+
+            // (url, complete)
+            if (this._isFunc(data))
+            {
+                complete = data;
+
+                //OR (url, complete, headers)
+                if (this._isFunc(success))
+                {
+                    headers = success;
+                }
+
+                success = false;
+
+                error = false;
+            }
+
+            if (method !== 'POST')
+            {
+                if (this._isObj(data) && !this._isEmpty(data))
+                {
+                    url += url.includes('?') ? '&' : '?';
+                    url += this._params(data);
+                    data = null;
+                }
+            }
+            else if (this._isObj(data) && !this._isEmpty(data))
+            {
+                data = this._params(data);
+            }
+
+            return [method, url, data, success, error, complete, headers];
+        }
+        /**
+         * Ready callback
+         *
+         * @return string
+         */
+    _Ajax.prototype._ready = function(xhr, success, error, complete)
+    {
+        if (xhr.readyState == 4)
+        {
+            var successfull = false;
+
+            if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)
+            {
+                successfull = true;
+
+                // set data
+                var response = xhr.responseText;
+
+                // success callback
+                if (this._isFunc(success))
+                {
+                    success.call(xhr, response);
+                }
+
+                if (this._success)
+                {
+                    this._success.call(xhr, response);
+                }
+            }
+            else
+            {
+                successfull = false;
+
+                // error callback
+                if (this._isFunc(error))
+                {
+                    error.call(xhr, response);
+                }
+
+                if (this._error)
+                {
+                    this._error.call(xhr, response)
+                }
+            }
+
+            // Complete
+            if (this._isFunc(complete))
+            {
+                complete.call(xhr, response, successfull);
+            }
+
+            if (this._complete)
+            {
+                this._complete.call(xhr, response, successfull);
+            }
+
+            // Next queue
+            AjaxQueue.next();
+        }
+    }
+
+    _Ajax.prototype._isEmpty = function(mixedvar)
+    {
+        return mixedvar && Object.keys(mixedvar).length === 0 && mixedvar.constructor === Object;
+    }
+
+    _Ajax.prototype._isFunc = function(mixedvar)
+    {
+        return Object.prototype.toString.call(mixedvar) === '[object Function]';
+    }
+
+    _Ajax.prototype._isObj = function(mixedvar)
+    {
+        return Object.prototype.toString.call(mixedvar) === '[object Object]';
+    }
+
+    _Ajax.prototype._params = function(obj)
+    {
+        var s = [];
+
+        for (var key in obj)
+        {
+            s.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+        }
+
+        return s.join('&');
+    }
+
+    Container.set('Ajax', _Ajax);
 
 })();

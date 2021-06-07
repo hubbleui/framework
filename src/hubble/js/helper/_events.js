@@ -15,9 +15,8 @@
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype.addEventListener = function(element, eventName, handler, useCapture)
+Helper.prototype.addEventListener = function(element, eventName, handler, useCapture)
 {
-
     // Boolean use capture defaults to false
     useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
 
@@ -25,19 +24,37 @@ JSHelper.prototype.addEventListener = function(element, eventName, handler, useC
     var events = this._events;
 
     // Make sure events are set
-    if (!events) this._events = events = {};
+    if (!events)
+    {
+        this._events = events = {};
+    }
 
     // Make sure an array for the event type exists
-    if (!events[eventName]) events[eventName] = [];
+    if (!events[eventName])
+    {
+        events[eventName] = [];
+    }
 
-    // Push the details to the events object
-    events[eventName].push({
-        element    : element,
-        handler    : handler,
-        useCapture : useCapture,
-    });
+    // Arrays
+    if (this.is_array(element))
+    {
+        for (var i = 0; i < element.length; i++)
+        {
+            this.addEventListener(element[i], eventName, handler, useCapture);
+        }
+    }
+    else
+    {
+        // Push the details to the events object
+        events[eventName].push(
+        {
+            element: element,
+            handler: handler,
+            useCapture: useCapture,
+        });
 
-    this._addListener(element, eventName, handler, useCapture);
+        this._addListener(element, eventName, handler, useCapture);
+    }
 }
 
 /**
@@ -53,28 +70,48 @@ JSHelper.prototype.addEventListener = function(element, eventName, handler, useC
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
+Helper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
 {
-    // If the eventName name was not provided - remove all event handlers on element
-    if (!eventName) return this._removeElementListeners(element);
-
-    // If the callback was not provided - remove all events of the type on the element
-    if (!handler) return this._removeElementTypeListeners(element, eventName);
-
-    // Default use capture
-    useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
-
-    var eventObj = this._events[eventName];
-
-    if (typeof eventObj === 'undefined') return;
-
-    for (var i = 0, len = eventObj.length; i < len; i++)
+    if (this.is_array(element))
     {
-        if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
+        for (var j = 0; j < element.length; j++)
         {
-            this._removeListener(element, eventName, handler, useCapture);
-            this._events[eventName].splice(i, 1);
-            break;
+            this.removeEventListener(element[j], eventName, handler, useCapture);
+        }
+    }
+    else
+    {
+        // If the eventName name was not provided - remove all event handlers on element
+        if (!eventName)
+        {
+            return this._removeElementListeners(element);
+        }
+
+        // If the callback was not provided - remove all events of the type on the element
+        if (!handler)
+        {
+            return this._removeElementTypeListeners(element, eventName);
+        }
+
+        // Default use capture
+        useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
+
+        var eventObj = this._events[eventName];
+
+        if (typeof eventObj === 'undefined')
+        {
+            return;
+        }
+
+        // Loop stored events and match node, event name, handler, use capture
+        for (var i = 0, len = eventObj.length; i < len; i++)
+        {
+            if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
+            {
+                this._removeListener(element, eventName, handler, useCapture);
+                this._events[eventName].splice(i, 1);
+                break;
+            }
         }
     }
 }
@@ -84,7 +121,7 @@ JSHelper.prototype.removeEventListener = function(element, eventName, handler, u
  *
  * @access public
  */
-JSHelper.prototype.clearEventListeners = function()
+Helper.prototype.clearEventListeners = function()
 {
     var events = this._events;
 
@@ -106,7 +143,7 @@ JSHelper.prototype.clearEventListeners = function()
  *
  * @access public
  */
-JSHelper.prototype.collectGarbage = function()
+Helper.prototype.collectGarbage = function()
 {
     var events = this._events;
     for (var eventName in events)
@@ -132,7 +169,7 @@ JSHelper.prototype.collectGarbage = function()
  * @access private
  * @param  node    element Target node element
  */
-JSHelper.prototype._removeElementListeners = function(element)
+Helper.prototype._removeElementListeners = function(element)
 {
     var events = this._events;
     for (var eventName in events)
@@ -157,7 +194,7 @@ JSHelper.prototype._removeElementListeners = function(element)
  * @param  node    element Target node element
  * @param  string  type    Event listener type
  */
-JSHelper.prototype._removeElementTypeListeners = function(element, type)
+Helper.prototype._removeElementTypeListeners = function(element, type)
 {
     var eventObj = this._events[type];
     var i = eventObj.length;
@@ -180,7 +217,7 @@ JSHelper.prototype._removeElementTypeListeners = function(element, type)
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype._addListener = function(el, eventName, handler, useCapture)
+Helper.prototype._addListener = function(el, eventName, handler, useCapture)
 {
     if (el.addEventListener)
     {
@@ -201,7 +238,7 @@ JSHelper.prototype._addListener = function(el, eventName, handler, useCapture)
  * @param  closure handler    Callback event
  * @param  bool    useCapture Use capture (optional) (defaul false)
  */
-JSHelper.prototype._removeListener = function(el, eventName, handler, useCapture)
+Helper.prototype._removeListener = function(el, eventName, handler, useCapture)
 {
     if (el.removeEventListener)
     {

@@ -18,6 +18,7 @@ module.exports = function(grunt)
             object[key] = require(path + option);
         });
 
+
         return object;
     }
 
@@ -50,7 +51,18 @@ module.exports = function(grunt)
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-image');
     grunt.loadNpmTasks('grunt-svgmin');
+    grunt.loadNpmTasks('grunt-prettify');
+    grunt.loadNpmTasks("grunt-jsbeautifier");
 
-    // Default grunt task
-    grunt.registerTask('default', [ 'sass', 'autoprefixer', 'concat', 'cssmin', 'import', 'uglify', 'image', 'svgmin']);
+
+    // Default grunt task 
+    grunt.registerTask('default', [ 'sass', 'autoprefixer' ,'cssmin', 'concat', 'import', 'uglify', 'image', 'svgmin']);
+
+    grunt.registerTask('js', ['import', 'uglify']);
+
+    grunt.registerTask('css', ['sass', 'autoprefixer', 'cssmin', 'concat:css_core', 'concat:css_core_min']);
+
+    grunt.registerTask('images', ['image', 'svgmin']);
+
+    grunt.registerTask('dev', ['prettify', 'jsbeautifier']);
 };

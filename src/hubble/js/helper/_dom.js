@@ -1,5 +1,5 @@
 /**
- * JSHelper DOM helpers
+ * Helper DOM helpers
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
@@ -14,7 +14,7 @@
  * @param  node   context (optional) (default document)
  * @return node
  */
-JSHelper.prototype.$All = function(selector, context)
+Helper.prototype.$All = function(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
     return Array.prototype.slice.call(context.querySelectorAll(selector));
@@ -28,45 +28,91 @@ JSHelper.prototype.$All = function(selector, context)
  * @param  node   context (optional) (default document)
  * @return node
  */
-JSHelper.prototype.$ = function(selector, context)
+Helper.prototype.$ = function(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
     return context.querySelector(selector)
 }
 
 /**
- * Closest parent node by type
+ * Closest parent node by type/class or array of either
  *
  * @access public
  * @param  node   el   Target element
  * @param  string type Node type to find
  * @return node\null
  */
-JSHelper.prototype.closest = function(el, type)
+Helper.prototype.closest = function(el, type)
 {
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.closest(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this._closestClass(el, type);
+    }
+
     type = type.toLowerCase();
-    if (typeof el === "undefined") return null;
-    if (el.nodeName.toLowerCase() === type) return el;
-    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type) return el.parentNode;
+
+    if (typeof el === 'undefined')
+    {
+        return null;
+    }
+
+    if (el.nodeName.toLowerCase() === type)
+    {
+        return el;
+    }
+
+    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type)
+    {
+        return el.parentNode;
+    }
+
     var parent = el.parentNode;
+
     while (parent !== document.body && typeof parent !== "undefined" && parent !== null)
     {
         parent = parent.parentNode;
-        if (parent && parent.nodeName.toLowerCase() === type) return parent;
+
+        if (parent && parent.nodeName.toLowerCase() === type)
+        {
+            return parent;
+        }
     }
+
+
     return null;
 }
 
 /**
  * Closest parent node by class
  *
- * @access public
+ * @access private
  * @param  node   el   Target element
  * @param  string type Node type to find
  * @return node\null
  */
-JSHelper.prototype.closestClass = function(el, clas)
+Helper.prototype._closestClass = function(el, clas)
 {
+    if (clas[0] === '.')
+    {
+        clas = clas.substring(1);
+    }
+
     if (this.hasClass(el, clas))
     {
         return el;
@@ -76,10 +122,12 @@ JSHelper.prototype.closestClass = function(el, clas)
         return el.parentNode;
     }
     var parent = el.parentNode;
+
     if (parent === window.document)
     {
         return null;
     }
+
     while (parent !== document.body)
     {
         if (this.hasClass(parent, clas))
@@ -94,6 +142,7 @@ JSHelper.prototype.closestClass = function(el, clas)
 
         parent = parent.parentNode;
     }
+
     return null;
 }
 
@@ -104,51 +153,90 @@ JSHelper.prototype.closestClass = function(el, clas)
  * @param  node   el   Target element
  * @return node\null
  */
-JSHelper.prototype.firstChildren = function(el)
+Helper.prototype.firstChildren = function(el)
 {
     var children = [];
+
     var childnodes = el.childNodes;
+
     for (var i = 0; i < childnodes.length; i++)
     {
-        if (childnodes[i].nodeType == 1)  children.push(childnodes[i]);
+        if (childnodes[i].nodeType == 1)
+        {
+            children.push(childnodes[i]);
+        }
     }
+
     return children;
 }
 
 /**
- * Traverse nextSibling untill type
+ * Traverse nextSibling untill type or class or array of either
  *
  * @access public
  * @param  node   el   Target element
  * @param  string type Target node type
  * @return node\null
  */
-JSHelper.prototype.nextUntillType = function(el, type)
+Helper.prototype.next = function(el, type)
 {
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.next(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this._nextUntillClass(el, type);
+    }
+
     type = type.toLowerCase();
-    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type) return el.nextSibling;
+
+    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type)
+    {
+        return el.nextSibling;
+    }
     var next = el.nextSibling;
+
     while (next !== document.body && typeof next !== "undefined" && next !== null)
     {
         next = next.nextSibling;
+
         if (next && next.nodeName.toLowerCase() === type)
         {
             return next;
         }
     }
+
     return null;
 }
 
 /**
- * Traverse nextSibling untill class
+ * Traverse nextSibling untill class type or class or array of either
  *
  * @access public
  * @param  node   el        Target element
  * @param  string className Target node classname
  * @return node\null
  */
-JSHelper.prototype.nextUntillClass = function(el, className)
+Helper.prototype._nextUntillClass = function(el, className)
 {
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+
     if (el.nextSibling && this.hasClass(el.nextSibling, className))
     {
         return el.nextSibling;
@@ -162,7 +250,7 @@ JSHelper.prototype.nextUntillClass = function(el, className)
         {
             return next;
         }
-        
+
         next = next.nextSibling;
 
     }
@@ -178,8 +266,30 @@ JSHelper.prototype.nextUntillClass = function(el, className)
  * @param  string type Target node type
  * @return node\null
  */
-JSHelper.prototype.previousUntillType = function(el, type)
+Helper.prototype.previous = function(el, type)
 {
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.previous(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this._previousUntillClass(el, type);
+    }
+
+
     type = type.toLowerCase();
     if (el.previousSibling && el.previousSibling.nodeName.toLowerCase() === type) return el.previousSibling;
     var prev = el.previousSibling;
@@ -202,8 +312,13 @@ JSHelper.prototype.previousUntillType = function(el, type)
  * @param  string className Target node classname
  * @return node\null
  */
-JSHelper.prototype.previousUntillClass = function(el, className)
+Helper.prototype._previousUntillClass = function(el, className)
 {
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+
     if (el.previousSibling && this.hasClass(el.previousSibling, className))
     {
         return el.previousSibling;
@@ -235,13 +350,13 @@ JSHelper.prototype.previousUntillClass = function(el, className)
  * @param  node   target  Parent to append new node into
  * @return node
  */
-JSHelper.prototype.newNode = function(type, classes, ID, content, target)
+Helper.prototype.newNode = function(type, classes, ID, content, target)
 {
     var node = document.createElement(type);
-    classes  = (typeof classes === "undefined" ? null : classes);
-    ID       = (typeof ID === "undefined" ? null : ID);
-    content  = (typeof content === "undefined" ? null : content);
-    
+    classes = (typeof classes === "undefined" ? null : classes);
+    ID = (typeof ID === "undefined" ? null : ID);
+    content = (typeof content === "undefined" ? null : content);
+
     if (classes !== null)
     {
         node.className = classes
@@ -267,7 +382,7 @@ JSHelper.prototype.newNode = function(type, classes, ID, content, target)
  * @param  node   element Target element
  * @return bool
  */
-JSHelper.prototype.nodeExists = function(element)
+Helper.prototype.nodeExists = function(element)
 {
     if (element === document.body)
     {
@@ -293,14 +408,14 @@ JSHelper.prototype.nodeExists = function(element)
  * @access public
  * @param  node   el Target element
  */
-JSHelper.prototype.removeFromDOM = function(el)
+Helper.prototype.removeFromDOM = function(el)
 {
     if (this.nodeExists(el))
     {
         el.parentNode.removeChild(el);
-        
+
         var children = this.$All('*', el);
-        
+
         for (var i = 0, len = children.length; i < len; i++)
         {
             this.removeEventListener(children[i]);
@@ -317,7 +432,7 @@ JSHelper.prototype.removeFromDOM = function(el)
  * @param  node   el   Target element
  * @param  string prop CSS property to removes
  */
-JSHelper.prototype.removeStyle = function(el, prop)
+Helper.prototype.removeStyle = function(el, prop)
 {
     if (typeof prop === 'undefined')
     {
@@ -356,7 +471,7 @@ JSHelper.prototype.removeStyle = function(el, prop)
         }
     }
 
-    
+
 }
 
 /**
@@ -366,7 +481,7 @@ JSHelper.prototype.removeStyle = function(el, prop)
  * @param  node         el         Target element
  * @param  array|string className  Class name(s) to add
  */
-JSHelper.prototype.addClass = function(el, className)
+Helper.prototype.addClass = function(el, className)
 {
     if (!this.nodeExists(el))
     {
@@ -393,7 +508,7 @@ JSHelper.prototype.addClass = function(el, className)
  * @param  node         el         Target element
  * @param  array|string className  Class name(s) to remove
  */
-JSHelper.prototype.removeClass = function(el, className)
+Helper.prototype.removeClass = function(el, className)
 {
     if (!this.nodeExists(el))
     {
@@ -420,7 +535,7 @@ JSHelper.prototype.removeClass = function(el, className)
  * @param  node         el         Target element
  * @param  string       className  Class name to toggle
  */
-JSHelper.prototype.toggleClass = function(el, className)
+Helper.prototype.toggleClass = function(el, className)
 {
     if (!this.nodeExists(el))
     {
@@ -445,7 +560,7 @@ JSHelper.prototype.toggleClass = function(el, className)
  * @param  string|array className  Class name(s) to check for
  * @return bool
  */
-JSHelper.prototype.hasClass = function(el, className)
+Helper.prototype.hasClass = function(el, className)
 {
     if (!this.nodeExists(el))
     {
@@ -481,7 +596,7 @@ JSHelper.prototype.hasClass = function(el, className)
  * @param  string NodeType   Node type to validate
  * @return bool
  */
-JSHelper.prototype.isNodeType = function(el, NodeType)
+Helper.prototype.isNodeType = function(el, NodeType)
 {
     return el.tagName.toUpperCase() === NodeType.toUpperCase();
 }
@@ -493,31 +608,31 @@ JSHelper.prototype.isNodeType = function(el, NodeType)
  * @param  node   el Target element
  * @return object
  */
-JSHelper.prototype.getCoords = function(el)
+Helper.prototype.getCoords = function(el)
 {
-    var box        = el.getBoundingClientRect();
-    var body       = document.body;
-    var docEl      = document.documentElement;
-    var scrollTop  = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    var box = el.getBoundingClientRect();
+    var body = document.body;
+    var docEl = document.documentElement;
+    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
     var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-    var clientTop  = docEl.clientTop || body.clientTop || 0;
+    var clientTop = docEl.clientTop || body.clientTop || 0;
     var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var borderL    = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderR    = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderT    = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderB    = parseInt(this.getStyle(el, 'border-top-width'));
-    var top        = box.top  + scrollTop  - clientTop  - borderT - borderB;
-    var left       = box.left + scrollLeft - clientLeft + borderL - borderR;
-    var width      = parseFloat(this.getStyle(el, "width"));
-    var height     = parseFloat(this.getStyle(el, "height"));
+    var borderL = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderR = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderT = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderB = parseInt(this.getStyle(el, 'border-top-width'));
+    var top = box.top + scrollTop - clientTop - borderT - borderB;
+    var left = box.left + scrollLeft - clientLeft + borderL - borderR;
+    var width = parseFloat(this.getStyle(el, "width"));
+    var height = parseFloat(this.getStyle(el, "height"));
 
     return {
-        top    : top,
-        left   : left,
-        right  : left + width,
-        bottom : top + height,
-        height : height,
-        width  : width,
+        top: top,
+        left: left,
+        right: left + width,
+        bottom: top + height,
+        height: height,
+        width: width,
     };
 }
 
@@ -528,7 +643,7 @@ JSHelper.prototype.getCoords = function(el)
  * @param  node   el   Target element
  * @param  string type Valid event name
  */
-JSHelper.prototype.triggerEvent = function(el, type)
+Helper.prototype.triggerEvent = function(el, type)
 {
     if ("createEvent" in document)
     {
@@ -551,7 +666,7 @@ JSHelper.prototype.triggerEvent = function(el, type)
  * @param  node   el   Target element
  * @param  string text Text to replace
  */
-JSHelper.prototype.innerText = function(el, text)
+Helper.prototype.innerText = function(el, text)
 {
     if (this.isset(el.childNodes[0]))
     {
@@ -566,7 +681,7 @@ JSHelper.prototype.innerText = function(el, text)
  * @param  node   form Target element
  * @return array
  */
-JSHelper.prototype.getFormInputs = function(form)
+Helper.prototype.getFormInputs = function(form)
 {
     var allInputs = this.$All('input, textarea, select', form);
 
@@ -592,13 +707,13 @@ JSHelper.prototype.getFormInputs = function(form)
  * @param  node   input Target element
  * @return mixed
  */
-JSHelper.prototype.getInputValue = function(input)
+Helper.prototype.getInputValue = function(input)
 {
     if (input.type == "checkbox")
     {
-        var val    = '';
-        
-        var checks = this.$All('input[name='+input.name+']');
+        var val = '';
+
+        var checks = this.$All('input[name=' + input.name + ']');
 
         for (var i = 0, len = checks.length; i < len; i++)
         {
@@ -608,7 +723,12 @@ JSHelper.prototype.getInputValue = function(input)
             }
         }
 
-        return this.rtrim(val, ', '); 
+        return this.rtrim(val, ', ');
+    }
+
+    if (input.type == "number")
+    {
+        return parseInt(input.value);
     }
 
     if (input.type == "select")
@@ -630,6 +750,30 @@ JSHelper.prototype.getInputValue = function(input)
 }
 
 /**
+ * Get an array of name/value objects for all inputs in a form
+ *
+ * @access public
+ * @param  node   form Target element
+ * @return array
+ */
+Helper.prototype.formArray = function(form)
+{
+    var inputs = this.getFormInputs(form);
+    var response = [];
+
+    for (var i = 0; i < inputs.length; i++)
+    {
+        response.push(
+        {
+            'name': inputs[i].name,
+            'value': this.getInputValue(this.getInputValue(inputs[i]))
+        });
+    }
+
+    return response;
+}
+
+/**
  * Replace or append a node's innerHTML
  *
  * @access public
@@ -637,7 +781,7 @@ JSHelper.prototype.getInputValue = function(input)
  * @param  string content Target content
  * @param  bool   append  Append innerHTML or replace (optional) (default false)
  */
-JSHelper.prototype.innerHTML = function(target, content, append)
+Helper.prototype.innerHTML = function(target, content, append)
 {
     content = this.is_array(content) ? content.join("\n") : content;
 
@@ -658,9 +802,9 @@ JSHelper.prototype.innerHTML = function(target, content, append)
  * @param  node   el Target DOM node
  * @return bool
  */
-JSHelper.prototype.inViewport = function(el)
+Helper.prototype.inViewport = function(el)
 {
-    
+
     var rect = el.getBoundingClientRect();
 
     return (
@@ -677,7 +821,7 @@ JSHelper.prototype.inViewport = function(el)
  * @access public
  * @param  node   el Target DOM node
  */
-JSHelper.prototype.hideAria = function(el)
+Helper.prototype.hideAria = function(el)
 {
     el.setAttribute("aria-hidden", 'true');
 }
@@ -688,7 +832,7 @@ JSHelper.prototype.hideAria = function(el)
  * @access public
  * @param  node   el Target DOM node
  */
-JSHelper.prototype.showAria = function(el)
+Helper.prototype.showAria = function(el)
 {
     el.setAttribute("aria-hidden", 'false');
 }

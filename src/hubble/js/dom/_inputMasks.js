@@ -5,8 +5,8 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
- (function()
- {
+(function()
+{
     /**
      * JS Helper reference
      * 
@@ -23,18 +23,18 @@
     var InputMasks = function()
     {
         // Private
-        this._nodes_money			 = [];
-        this._nodes_creditcard	     = [];
-        this._nodes_numeric          = [];
-        this._nodes_numericDecimal   = [];
-        this._nodes_alphaNumeric     = [];
-        this._nodes_alphaSpace       = [];
-        this._nodes_alphaDash        = [];
+        this._nodes_money = [];
+        this._nodes_creditcard = [];
+        this._nodes_numeric = [];
+        this._nodes_numericDecimal = [];
+        this._nodes_alphaNumeric = [];
+        this._nodes_alphaSpace = [];
+        this._nodes_alphaDash = [];
         this._nodes_AlphaNumericDash = [];
 
         // Constructor
         this._invoke();
-        
+
         return this;
     }
 
@@ -53,13 +53,13 @@
         this._loopUnBind(this._nodes_alphaSpace);
         this._loopUnBind(this._nodes_alphaDash);
         this._loopUnBind(this._nodes_AlphaNumericDash);
-        this._nodes_money            = [];
-        this._nodes_creditcard       = [];
-        this._nodes_numeric          = [];
-        this._nodes_numericDecimal   = [];
-        this._nodes_alphaNumeric     = [];
-        this._nodes_alphaSpace       = [];
-        this._nodes_alphaDash        = [];
+        this._nodes_money = [];
+        this._nodes_creditcard = [];
+        this._nodes_numeric = [];
+        this._nodes_numericDecimal = [];
+        this._nodes_alphaNumeric = [];
+        this._nodes_alphaSpace = [];
+        this._nodes_alphaDash = [];
         this._nodes_AlphaNumericDash = [];
     }
 
@@ -71,18 +71,18 @@
     InputMasks.prototype._invoke = function()
     {
         // Find all the nodes
-        this._nodes_money			 = Helper.$All('.js-mask-money');
-        this._nodes_creditcard	     = Helper.$All('.js-mask-creditcard');
-        this._nodes_numeric          = Helper.$All('.js-mask-numeric');
-        this._nodes_numericDecimal   = Helper.$All('.js-mask-numeric-decimal');
-        this._nodes_alphaNumeric     = Helper.$All('.js-mask-alpha-numeric');
-        this._nodes_alphaSpace       = Helper.$All('.js-mask-alpha-space');
-        this._nodes_alphaDash        = Helper.$All('.js-mask-alpha-dash');
+        this._nodes_money = Helper.$All('.js-mask-money');
+        this._nodes_creditcard = Helper.$All('.js-mask-creditcard');
+        this._nodes_numeric = Helper.$All('.js-mask-numeric');
+        this._nodes_numericDecimal = Helper.$All('.js-mask-numeric-decimal');
+        this._nodes_alphaNumeric = Helper.$All('.js-mask-alpha-numeric');
+        this._nodes_alphaSpace = Helper.$All('.js-mask-alpha-space');
+        this._nodes_alphaDash = Helper.$All('.js-mask-alpha-dash');
         this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
 
         if (!Helper.empty(this._nodes_money))
         {
-        	this._loopBind(this._nodes_money, 'money');
+            this._loopBind(this._nodes_money, 'money');
         }
         if (!Helper.empty(this._nodes_creditcard))
         {
@@ -121,9 +121,9 @@
      */
     InputMasks.prototype._loopBind = function(nodes, mask)
     {
-    	for (var i = 0; i < nodes.length; i++)
+        for (var i = 0; i < nodes.length; i++)
         {
-    		Container.get('InputMasker', nodes[i])[mask]();
+            Container.get('InputMasker', nodes[i])[mask]();
         }
     }
 

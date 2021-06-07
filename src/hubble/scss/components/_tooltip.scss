@@ -1,13 +1,15 @@
-[data-tooltip]:after {
+[data-tooltip]:after
+{
   content: attr(data-tooltip) !important; 
-  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 }
-.tooltipped {
+.tooltipped
+{
     position: relative;
     overflow: visible !important;
 
     // Basic setup
-    &:after {
+    &:after
+    {
         position: absolute;
         display: none;
         border-radius: $border-radius;
@@ -16,7 +18,7 @@
         z-index: $z-index-tooltip;
         padding: 2px 8px;
         font-weight: 300;
-        line-height: 21px;
+        line-height: 23px;
         text-align: center;
         text-decoration: none;
         text-shadow: none;
@@ -25,128 +27,112 @@
         word-wrap: break-word;
         white-space: pre;
         pointer-events: none;
-        background-color: rgba(0,0,0,0.8);
+        background-color: $gray-dark;
         zoom: 101%;
         -webkit-font-smoothing: subpixel-antialiased;
+        @include raised(1);
     }
-    &:before {
+    &:before
+    {
         position: absolute;
         z-index: $z-index-tooltip;
         display: none;
         width: 0;
         height: 0;
-        color: rgba(0,0,0,0.8);
+        color: $gray-dark;
         pointer-events: none;
         content: "";
         border: 5px solid transparent;
     }
     &:hover:before,
-    &:hover:after {
+    &:hover:after
+    {
         display: inline-block;
         text-decoration: none;
     }
 
-    // all south shared
-    &.tooltipped-s:before,
-    &.tooltipped-se:before,
-    &.tooltipped-sw:before {
-        border-bottom-color: rgba(0,0,0,0.8);
-        top: auto;
-        bottom: -10px;
-
-    }
     &.tooltipped-s:after,
     &.tooltipped-se:after,
-    &.tooltipped-sw:after {
+    &.tooltipped-sw:after
+    {
         top: 100%;
         margin-top: 10px;
     }
 
 
     // south
-    &.tooltipped-s:before {
+    &.tooltipped-s:before
+    {
         right: 50%;
         margin-right: -5px;
         
     }
-    &.tooltipped-s:after {
+    &.tooltipped-s:after
+    {
         right: 50%;
         transform: translateX(50%);
     }
 
     // south/north east
     &.tooltipped-ne:before,
-    &.tooltipped-se:before {
+    &.tooltipped-se:before
+    {
         right: 6px;
     }
     &.tooltipped-ne:after,
-    &.tooltipped-se:after {
+    &.tooltipped-se:after
+    {
         right: 0px;
     }
 
     // south/north west
     &.tooltipped-nw:before,
-    &.tooltipped-sw:before {
+    &.tooltipped-sw:before
+    {
         left: 6px;
     }
     &.tooltipped-nw:after,
-    &.tooltipped-sw:after {
+    &.tooltipped-sw:after
+    {
         left: 0px; 
     }
 
-    // North all shared
-    &.tooltipped-n:before,
-    &.tooltipped-ne:before,
-    &.tooltipped-nw:before {
-        top: -10px;
-        border-top-color: rgba(0,0,0,0.8);
-        bottom: auto;
 
-    }
     &.tooltipped-n:after,
     &.tooltipped-ne:after,
-    &.tooltipped-nw:after {
+    &.tooltipped-nw:after
+    {
         bottom: 100%;
         margin-bottom: 10px;
     }
 
     // north
-    &.tooltipped-n:before {
+    &.tooltipped-n:before
+    {
         right: 50%;
         margin-right: -5px;
     }
-    &.tooltipped-n:after {
+    &.tooltipped-n:after
+    {
         right: 50%;
         transform: translateX(50%);
     }
 
     // East
-    &.tooltipped-e:after {
+    &.tooltipped-e:after
+    {
         bottom: 50%;
         left: 100%;
         margin-left: 5px;
         margin-bottom: -12px;
     }
-    &.tooltipped-e:before {
-        top: 50%;
-        right: -5px;
-        bottom: 50%;
-        margin-top: -5px;
-        border-right-color: rgba(0,0,0,0.8);
-    }
 
     // west
-    &.tooltipped-w:after {
+    &.tooltipped-w:after
+    {
         right: 100%;
         bottom: 50%;
         margin-right: 5px;
         margin-bottom: -12px;
-    }
-    &.tooltipped-w:before {
-        top: 50%;
-        bottom: 50%;
-        left: -6px;
-        margin-top: -5px;
-        border-left-color: rgba(0,0,0,0.8);
     }
 }

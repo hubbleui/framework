@@ -14,11 +14,11 @@
 	thead,
 	tfoot {		
 		th {
-			font-weight: $text-bolder;
+			font-weight: $text-bold;
 			text-align: left;
 			padding: $table-cell-pad-y $table-cell-pad-x;
-    		background-color: $table-head-bg;
-    		border-color: $table-head-bg;
+    		background-color: $gray;
+    		border-color: $gray;
 		    color: #fff;
 		}
 	}
@@ -36,21 +36,20 @@
 	> thead > tr > td,
 	> thead > tr > th {
 		padding: $table-cell-pad-y $table-cell-pad-x;
-		text-align: left;
-		border-bottom: 1px solid $table-border-color;
+		border-bottom: 1px solid $gray-lighter;
 	}
 	&.table-bordered {
 		td, th {
-			border: 1px solid $table-border-color;
+			border: 1px solid $gray-lighter;
 		}
 		thead th,
 		tfoot th {
-			border-color: $table-head-bg;
+			border-color: $gray;
 		}
 	}
 	&.table-hover {
 		tbody tr:hover {
-			background-color:$table-hover-bg;
+			background-color: rgba(0, 0, 0, 0.08);
 		}
 	}
 	&.table-transparent {
@@ -63,7 +62,7 @@
 			th {
 	    		background-color: #fff;
 	    		border-color: #fff;
-	    		border-bottom: 2px solid $table-head-bg;
+	    		border-bottom: 2px solid $gray;
 			    color: $gray;
 			}
 		}
@@ -171,7 +170,7 @@
 	    	white-space: nowrap;
 	    }
 	    &.bordered {
-	    	border: 1px solid $table-border-color;
+	    	border: 1px solid $gray-lighter;
 	    }
 	}
 

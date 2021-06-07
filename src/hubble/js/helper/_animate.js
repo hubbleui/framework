@@ -1,5 +1,5 @@
 /**
- * JSHelper Animation component
+ * Helper Animation component
  *
  * @author    Joe J. Howard
  * @copyright Joe J. Howard
@@ -13,7 +13,7 @@
  * @param  string property The CSS base property
  * @return array
  */
-JSHelper.prototype._vendorPrefix = function(property)
+Helper.prototype._vendorPrefix = function(property)
 {
     // Properties to return
     var props = [];
@@ -46,7 +46,7 @@ JSHelper.prototype._vendorPrefix = function(property)
  * @param  string property The CSS base property (in camelCase)
  * @return array
  */
-JSHelper.prototype._shortHandExpand = function(property, recurse)
+Helper.prototype._shortHandExpand = function(property, recurse)
 {
     var _this = this;
     var props = this.shortHandProps;
@@ -57,7 +57,7 @@ JSHelper.prototype._shortHandExpand = function(property, recurse)
         return [property];
     }
 
-    return props[property].map(function (p)
+    return props[property].map(function(p)
     {
         if (p.substr(0, 1) === '-')
         {
@@ -80,7 +80,7 @@ JSHelper.prototype._shortHandExpand = function(property, recurse)
  * @param  string prop CSS property to check (in camelCase) (optional)
  * @return mixed
  */
-JSHelper.prototype._computeStyle = function(el, property)
+Helper.prototype._computeStyle = function(el, property)
 {
     if (window.getComputedStyle)
     {
@@ -90,7 +90,7 @@ JSHelper.prototype._computeStyle = function(el, property)
         }
 
         return window.getComputedStyle(el, null);
-        
+
     }
     if (el.currentStyle)
     {
@@ -112,9 +112,9 @@ JSHelper.prototype._computeStyle = function(el, property)
  * @param  array  longHandProps Array of longhanded CSS properties in order (camelCased)
  * @return string
  */
-JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
+Helper.prototype._concatShortHandProperties = function(el, longHandProps)
 {
-    var shorthand   = '';
+    var shorthand = '';
     var multiValArr = [];
 
     for (var j = 0, len = longHandProps.length; j < len; j++)
@@ -122,14 +122,14 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
         var longHandStyle = this._computeStyle(el, longHandProps[j]);
 
         if (longHandStyle)
-        {            
+        {
             if (longHandStyle.indexOf(',') >= 0)
-            {                        
+            {
                 multiValArr.push(longHandStyle.split(',').map(Function.prototype.call, String.prototype.trim));
             }
             else
             {
-                shorthand += ' '+longHandStyle;
+                shorthand += ' ' + longHandStyle;
             }
         }
     }
@@ -140,7 +140,7 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
         var multiValArrStrs = [];
         for (var k = 0, len = multiValArr.length; k < len; k++)
         {
-            multiValArr[k].map(function (val, n)
+            multiValArr[k].map(function(val, n)
             {
                 if (!_this.isset(multiValArrStrs[n]))
                 {
@@ -148,7 +148,7 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
                 }
                 else
                 {
-                    multiValArrStrs[n] += ' '+val;
+                    multiValArrStrs[n] += ' ' + val;
                 }
             });
         }
@@ -166,7 +166,7 @@ JSHelper.prototype._concatShortHandProperties = function(el, longHandProps)
  * @param  string value easing value or string
  * @return array
  */
-JSHelper.prototype._normalizeEasing = function(value)
+Helper.prototype._normalizeEasing = function(value)
 {
     for (var camelCased in this.cssEasings)
     {
@@ -192,14 +192,14 @@ JSHelper.prototype._normalizeEasing = function(value)
  * @param  string prop CSS property to check
  * @return string
  */
-JSHelper.prototype.getStyle = function(el, prop)
+Helper.prototype.getStyle = function(el, prop)
 {
     // Firefox and otther browsers do not concatenate to the shorthand property even when
     // it was defined as shorthand in the stylsheet
     // console.log(window.getComputedStyle(document.body));
     // console.log(window.getComputedStyle(document.body).padding);
     // console.log(window.getComputedStyle(document.body).getPropertyValue('padding'));
-   
+
     // Additionally, some css values can be comma separated
     // e.g
     // transition height 300ms ease, width 300ms ease;
@@ -225,7 +225,7 @@ JSHelper.prototype.getStyle = function(el, prop)
         }
 
         var shorthand = this._concatShortHandProperties(el, longHands);
-        
+
         if (shorthand)
         {
             return shorthand;
@@ -239,10 +239,10 @@ JSHelper.prototype.getStyle = function(el, prop)
  * @access public
  * @param  node   el     Target DOM node
  * @param  string|object Assoc array of property->value or string property
- * @example JSHelper.css(node, { display : 'none' });
- * @example JSHelper.css(node, 'display', 'none');
+ * @example Helper.css(node, { display : 'none' });
+ * @example Helper.css(node, 'display', 'none');
  */
-JSHelper.prototype.css = function(el, property, value)
+Helper.prototype.css = function(el, property, value)
 {
     // If their is no value and property is an object
     if (this.is_object(property))
@@ -258,7 +258,7 @@ JSHelper.prototype.css = function(el, property, value)
         }
     }
     else
-    {   
+    {
         // Normalise if this is an easing value - e.g display, 'ease-in-out'
         value = this._normalizeEasing(value);
 
@@ -277,22 +277,24 @@ JSHelper.prototype.css = function(el, property, value)
  * Animate a css proprety
  *
  * @access public
- * @param  node   el          Target DOM node
- * @param  string cssProperty CSS property
- * @param  mixed  from        Start value
- * @param  mixed  to          Ending value
- * @param  int    time        Animation time in ms
- * @param  string easing      Easing function
+ * @param  node     el          Target DOM node
+ * @param  string   cssProperty CSS property
+ * @param  mixed    from        Start value
+ * @param  mixed    to          Ending value
+ * @param  int      time        Animation time in ms
+ * @param  string   easing      Easing function
+ * @param  function callback    Callback to apply when animation ends (optional)
  */
-JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
-{     
+Helper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
+{
     // Set defaults if values were not provided;
-    time   = (typeof time === 'undefined' ? 300 : time);
+    time = (typeof time === 'undefined' ? 300 : time);
     easing = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
+    callback = (typeof callback === 'undefined' ? false : callback);
 
     // Width and height need to use js to get the starting size
     // if it was set to auto/initial/null
-    if ((cssProperty === 'height' || cssProperty === 'width') && (from === 'initial' || from === 'auto' || !from) )
+    if ((cssProperty === 'height' || cssProperty === 'width') && (from === 'initial' || from === 'auto' || !from))
     {
         if (cssProperty === 'height')
         {
@@ -329,6 +331,8 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
     // We need to merge transitions into a single allied value
     var existingTransitions = this.getStyle(el, 'transition');
 
+    console.log(existingTransitions);
+
     if (existingTransitions !== 'none' && existingTransitions !== 'all 0s ease 0s')
     {
         // Don't apply the same transition value twice 
@@ -337,13 +341,13 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
         var transitions = existingTransitions.split(',').map(Function.prototype.call, String.prototype.trim);
         transitions.push(cssProperty + ' ' + time + 'ms ' + easing);
 
-        var props  = [];
+        var props = [];
         for (var i = transitions.length - 1; i >= 0; --i)
         {
             var prop = transitions[i].split(' ')[0];
             if (this.in_array(prop, props))
             {
-               transitions.splice(i, 1);
+                transitions.splice(i, 1);
             }
             props.push(prop);
         }
@@ -369,9 +373,12 @@ JSHelper.prototype.animate = function(el, cssProperty, from, to, time, easing)
             _this.removeStyle(el, 'transition');
 
             el.removeEventListener('transitionend', transitionEnd, false);
+
+            if (_this.isCallable(callback))
+            {
+                callback.call(null, el);
+            }
         }
 
     }, false);
 }
-
-

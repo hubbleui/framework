@@ -5,7 +5,6 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
-
 (function()
 {
     /**
@@ -24,9 +23,9 @@
     var MessageClosers = function()
     {
         this._triggers = Helper.$All('.js-close-msg');
-        
+
         if (!Helper.empty(this._triggers))
-        { 
+        {
             this._bind();
         }
 
@@ -53,10 +52,7 @@
      */
     MessageClosers.prototype._bind = function()
     {
-        for (var i = 0; i < this._triggers.length; i++)
-        {
-            Helper.addEventListener(this._triggers[i], 'click', this._eventHandler);
-        }
+        Helper.addEventListener(this._triggers, 'click', this._eventHandler);
     }
 
     /**
@@ -66,10 +62,7 @@
      */
     MessageClosers.prototype._unbind = function()
     {
-        for (var i = 0; i < this._triggers.length; i++)
-        {
-            Helper.removeEventListener(this._triggers[i], 'click', this._eventHandler);
-        }
+        Helper.removeEventListener(this._triggers, 'click', this._eventHandler);
     }
 
     /**
@@ -84,15 +77,15 @@
 
         e.preventDefault();
 
-        var toRemove = this.parentNode;
+        var toRemove = Helper.closest(this, '.msg');
 
         if (Helper.hasClass(this, 'js-rmv-parent'))
         {
             toRemove = toRemove.parentNode;
         }
-        
+
         Helper.animate(toRemove, 'opacity', '1', '0', 300, 'ease');
-        
+
         setTimeout(function()
         {
             Helper.removeFromDOM(toRemove);

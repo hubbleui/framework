@@ -43,6 +43,9 @@
 .spinner-primary .path {
     stroke: $brand-primary;
 }
+.spinner-secondary .path {
+    stroke: $brand-secondary;
+}
 .spinner-success .path {
     stroke: $brand-success;
 }

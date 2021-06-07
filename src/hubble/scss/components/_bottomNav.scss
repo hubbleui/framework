@@ -1,0 +1,59 @@
+.bottom-nav
+{
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	display: block;
+	transform: translateY(100%);
+	transition: opacity $base-easing-time $easeInExpo, transform $base-easing-time $easeInExpo, visibility 0s linear 500ms;
+	opacity: 0;
+	visibility: hidden;
+	&.active
+	{
+		visibility: visible;
+		opacity: 1;
+		transform: translateY(0);
+		transition: opacity $base-easing-time $easeOutExpo, transform $base-easing-time $easeOutExpo, visibility 0s linear;
+	}
+	ul
+	{
+		padding: 0;
+		margin: 0;
+		text-align: center;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		list-style: none;
+		display: flex;
+		width: 100%;
+		max-width: $breakpoint-md;
+		li
+		{
+			margin: 0;
+			flex: 1 1 0px;
+			display: block;
+			.btn
+			{
+				width: 100%;
+				display: block;
+				border-radius: 0;
+				font-size: 1.2rem;
+				letter-spacing: 0;
+    			text-transform: none;
+    			opacity: 0.4;
+    			padding-bottom: 8px;
+    			&.active
+    			{
+    				opacity: 1;
+    				background-color: transparent;
+    			}
+				.glyph-icon
+				{
+					font-size: 2rem;
+					display: block;
+					margin-bottom: 6px;
+				}
+			}
+		}
+	}
+}

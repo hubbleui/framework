@@ -6,17 +6,16 @@
 // Buttons
 @import 'styles/buttons/base';
 @import 'styles/buttons/variants';
-@import 'styles/buttons/wave';
 @import 'styles/buttons/groups';
 @import 'styles/buttons/spinners';
 @import 'styles/buttons/breakpoints';
 
 // Forms
 @import 'styles/forms/base';
-@import 'styles/forms/groups';
+@import 'styles/forms/unstyled';
+@import 'styles/forms/addons';
 @import 'styles/forms/checkbox';
 @import 'styles/forms/radio';
 @import 'styles/forms/switch';
 @import 'styles/forms/progress';
 @import 'styles/forms/results';
-@import 'styles/forms/file';

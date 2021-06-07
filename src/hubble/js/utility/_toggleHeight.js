@@ -5,14 +5,13 @@
  * from 0 -> auto or from auto -> 0
  *
  */
- (function() {
+(function()
+{
 
     /**
      * @var Helper obj
      */
-    var Helper = Container.get('JSHelper');
-
-    var timer;
+    var Helper = Container.Helper();
 
     /**
      * Module constructor
@@ -29,9 +28,9 @@
     var ToggleHeight = function(el, initial, time, easing, withOpacity)
     {
         // Set defaults if values were not provided;
-        initial     = (typeof initial === 'undefined' ? 0 : initial);
-        time        = (typeof time === 'undefined' ? 300 : time);
-        easing      = (typeof easing === 'undefined' ? 'ease-in' : easing);
+        initial = (typeof initial === 'undefined' ? 0 : initial);
+        time = (typeof time === 'undefined' ? 300 : time);
+        easing = (typeof easing === 'undefined' ? 'ease-in' : easing);
         withOpacity = (typeof withOpacity === 'undefined' ? false : withOpacity);
 
         // Get the element's current height
@@ -39,7 +38,7 @@
 
         // Get the element's projected height
         var computedStyle = Helper._computeStyle(el);
-        var endHeight     = parseInt(el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTopWidth) + parseInt(computedStyle.borderBottomWidth));
+        var endHeight = parseInt(el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTopWidth) + parseInt(computedStyle.borderBottomWidth));
 
         // Dispatch appropriate function
         if (endHeight === actualHeight || actualHeight > endHeight)
@@ -70,6 +69,7 @@
         if (el.style.height === 'auto')
         {
             this._fromAuto(el, 0, time, easing, actualHeight, withOpacity);
+
             return;
         }
 
@@ -77,10 +77,9 @@
         if (actualHeight === endHeight)
         {
             el.style.height = 'auto';
+
             return;
         }
-        
-        clearTimeout(timer);
 
         // Opacity timer
         var opacityTime = (75 * time) / 100 + time;
@@ -89,19 +88,19 @@
         // and force the browser to repaint
         Helper.css(el, 'height', actualHeight + 'px');
         el.offsetHeight;
-        
+
         // Run animations
-        Helper.animate(el, 'height',  actualHeight + 'px', endHeight + 'px', time, easing);
-        if  (withOpacity)
+        var remove = function()
+        {
+            Helper.css(el, 'height', 'auto');
+        };
+
+        Helper.animate(el, 'height', actualHeight + 'px', endHeight + 'px', time, easing, remove);
+
+        if (withOpacity)
         {
             Helper.animate(el, 'opacity', '0', '1', opacityTime, easing);
         }
-
-        timer = setTimeout(function()
-        {
-            Helper.css(el, 'height', 'auto');
-        }, time);
-
     }
 
     /**
@@ -117,8 +116,7 @@
      */
     ToggleHeight.prototype._fromAuto = function(el, initial, time, easing, actualHeight, withOpacity)
     {
-        clearTimeout(timer);
-        var opacityTime = (15 * time) / 100 + time; 
+        var opacityTime = (15 * time) / 100 + time;
 
         // Set the height to the actual height (which could be zero)
         // and force the browser to repaint
@@ -126,9 +124,9 @@
         el.offsetHeight;
 
         // Run animations
-        Helper.animate(el, 'height',  actualHeight + 'px', '0px', time, easing);
-        
-        if  (withOpacity)
+        Helper.animate(el, 'height', actualHeight + 'px', '0px', time, easing);
+
+        if (withOpacity)
         {
             Helper.animate(el, 'opacity', '1', '0', opacityTime, easing);
         }

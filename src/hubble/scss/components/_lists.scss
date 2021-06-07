@@ -1,0 +1,62 @@
+.list
+{
+	// reset
+	padding: 8px 0;
+    margin: 0;
+    list-style: none;
+    > li
+    {
+    	display: block;
+    	width: 100%;
+    	margin: 0;
+    	padding: 10px 15px;
+    	background-color: transparent;
+    	position: relative;
+    	&:hover
+    	{
+    		background-color: $gray-lightest;
+    		transition: background-color 0.15s $base-easing;
+    	}
+    	&:active,
+    	&:focus,
+    	&:focus-within
+    	{
+    		background-color: $gray-lighter;
+    	}
+    }
+
+    .item-body
+	{
+	    width: 10000px;
+	}
+	.item-body, 
+	.item-left, 
+	.item-right
+	{
+	    display: table-cell;
+	    vertical-align: middle;
+	    color: $gray;
+	}
+	.item-title
+	{
+		color: $body-color;
+		font-size: 1.8rem;
+	}
+	.item-subtitle
+	{
+		color: $gray-dark;
+	}
+	.item-left
+	{
+		padding-right: 20px;
+
+		.glyph-icon
+		{
+			vertical-align: middle;
+		}
+	}
+	.item-right
+	{
+		padding-left: 20px;
+	}
+}

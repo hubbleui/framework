@@ -1,50 +1,66 @@
-blockquote {
+blockquote
+{
     margin: 0 0 1em;
-    border-radius: $border-radius;
-    box-shadow: $bq-box-shadow;
-    padding: $bq-padding;
-    color: $bq-color;
-    background-color: $bq-bg;
+    border-radius: 4px;
+    padding: 2rem;
+    color: $body-color;
+    background-color: darken($body-bg, 5);
 
-    p {
+    p
+    {
     	padding: 0;
     }
     &.bq-danger,
     &.bq-success,
     &.bq-info,
     &.bq-warning,
-    &.bq-primary {
+    &.bq-primary,
+    &.bq-secondary
+    {
         
-    	p {
+    	p
+        {
     		color: rgba(0, 0, 0, 0.57);
     	}
-    	a {
+    	a
+        {
     		font-weight: $text-bold;
     		color: rgba(0, 0, 0, 0.6);
     	}
         code,
-        pre {
+        pre
+        {
             border: none;
             color: #fff;
             background-color: rgba(0, 0, 0, 0.22);            
         }
     }
-    &.bq-danger {
-    	background-color: lighten($brand-danger, 20);
+    &.bq-danger
+    {
+    	background-color: lighten($brand-danger, 10);
     }
-    &.bq-success {
-    	background-color: lighten($brand-success, 20);
+    &.bq-success
+    {
+    	background-color: lighten($brand-success, 10);
     }
-    &.bq-info {
-    	background-color: lighten($brand-info, 20);
+    &.bq-info
+    {
+    	background-color: lighten($brand-info, 10);
     }
-    &.bq-warning {
-    	background-color: lighten($brand-warning, 20);
+    &.bq-warning
+    {
+    	background-color: lighten($brand-warning, 10);
     }
-    &.bq-primary {
-        background-color: lighten($brand-primary, 20);
+    &.bq-primary
+    {
+        background-color: lighten($brand-primary, 10);
     }
-    >:last-child {
+    &.bq-secondary
+    {
+        background-color: lighten($brand-secondary, 10);
+    }
+    >:last-child
+    {
         margin-bottom: 0;
     }
 
@@ -52,7 +68,8 @@ blockquote {
         content: '\2014 \00A0';
     }
 
-    > footer {
+    > footer
+    {
         display: block;
         font-size: 85%;
         line-height: 1.42857143;
@@ -63,9 +80,12 @@ blockquote {
     &.bq-success,
     &.bq-info,
     &.bq-warning,
-    &.bq-primary {
-       > footer {
-            color: rgba(0, 0, 0, 0.4);
+    &.bq-primary,
+    &.bq-secondary
+    {
+       > footer
+        {
+            color: rgba(0, 0, 0, 0.8);
         }
     }
 

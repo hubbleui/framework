@@ -1,6 +1,7 @@
 // universal box sizing fix
 // https://css-tricks.com/box-sizing/
-*,:after,:before {
+*,:after,:before
+{
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -10,50 +11,60 @@
 // rem style px sizes 
 // e.g body { font-size: 1.4rem; } /* = 14px */
 // https://snook.ca/archives/html_and_css/font-size-with-rem
-html {
+html
+{
     font-size: 62.5%;
     -webkit-text-size-adjust: 100%;
 }
 
-html, body {
+html, body
+{
     background-color: $body-bg;
     color:            $body-color;
 }
-body {
+body
+{
     font-family:      $base-font-family;
     font-weight:      $base-font-weight;
     line-height:      $base-line-height;
     font-size:        1.45rem;
     @include _fontSmooth;
 }
-input, select, label, button, textarea {
+input, select, label, button, textarea
+{
     font-family: $base-font-family;
     font-size:   $base-font-size;
     @include _fontSmooth;
 }
 
 // Links
-a {
+a
+{
     color: $link-color;
-    text-decoration: $link-decoration;
+    text-decoration: none;
     background: transparent;
     &:active,
-    &:hover {
+    &:hover
+    {
         outline: 0;
         color: $link-hover-color;
-        text-decoration: $link-hover-decoration;
+        text-decoration: underline;
     }
-    &.no-link:hover {
+    &.no-link:hover
+    {
         text-decoration: none;
     }
 }
 
-// Raised
-.raised {
-    box-shadow: $box-shadow-out;
+// Clearfix
+.clearfix
+{
+    @include _clearfix;
 }
 
-// Clearfix
-.clearfix {
-    @include _clearfix;
+// no-scroll body
+body.no-scroll
+{
+    height: 100%;
+    overflow: hidden !important;
 }

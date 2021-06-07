@@ -1,15 +1,19 @@
 // Base styles
-.drop-container {
+.drop-container
+{
     position: relative;
     display: inline-block;
 }
-.btn-dropdown + .drop-menu {
+.btn-dropdown + .drop-menu
+{
     display: none;
 }
-.btn-dropdown.active + .drop-menu {
+.btn-dropdown.active + .drop-menu
+{
     display: block;
 }
-.drop-menu {
+.drop-menu
+{
     position: absolute;
     width: 100%;
     left: 0;
@@ -18,22 +22,25 @@
     top: ($btn-pad-y * 2 ) + ($btn-font-size * 2);
     min-width: $dropdown-width;
     width: auto;
-    .drop {
+    @include raised(3);
+    .drop
+    {
         border-radius: $border-radius;
         background-color: $dropdown-bg;
-        box-shadow: $box-shadow-out;
         padding: 8px 0px;
     }
 }
 
 // Dropdown list
-.drop ul {
+.drop ul
+{
     list-style: none;
     margin: 0;
     padding: 0;
     max-height: $dropdown-max-height;
     overflow-y: auto;
-    li {
+    li
+    {
         padding: 0;
         display: block;
         width: 100%;
@@ -41,69 +48,78 @@
         position: relative;
         margin: 0;
         font-size: $dropdown-font-size;
-        border-top: 1px solid $dropdown-border-color;
-        a {
+        a
+        {
             position: relative;
             background-color: transparent;
             width: 100%;
             @include _ellipsis();
             display: block;
-            color: $dropdown-color;
+            color: $body-color;
             padding: 12px;
             &:hover,
-            &.selected {
+            &.selected
+            {
                 text-decoration: none;
-                background-color: $dropdown-hover-bg;
+                background-color: $gray-lighter;
             }
         }
         // Show tick
-        a.selected:after {
+        a.selected:after
+        {
             position: absolute;
-            color: $dropdown-tick-color;
+            color: $brand-primary;
             right: 12px;
             font-family: 'IcoMoon';
             content:"\ed71";
         }
 
     }
-    .drop-header {
-        font-weight: $text-bolder;
+    .drop-header
+    {
+        font-weight: $text-bold;
         padding: 0px 12px 8px 12px;
-        border-bottom: 1px solid $dropdown-divider-color;
+        border-bottom: 1px solid $gray-lighter;
     }
-    .divider {
+    .divider
+    {
         padding-top: 3px;
         margin-bottom: 3px;
-        border-bottom: 1px solid $dropdown-divider-color;
+        border-bottom: 1px solid $gray-lighter;
     }
     .divider,
     .drop-header + li,
     .divider + li,
-    li:first-child {
+    li:first-child
+    {
         border-top-color: transparent;
     }
 }
 
 // POSITIONING
 // South
-.drop-s {
+.drop-s
+{
     left: 50%;
     right: 50%;
     margin-left: -80px;
 }
-.drop-se {
+.drop-se
+{
     right: 0;
     left: auto;
     left: initial;
 }
-.drop-sw {
+.drop-sw
+{
     left: 0;
     right: auto;
     right: initial;
 }
 
 // North
-.drop-n {
+.drop-n
+{
     top: auto;
     bottom: 100%;
     left: 50%;
@@ -111,7 +127,8 @@
     margin-left: -80px;
     margin-bottom: 8px;
 }
-.drop-ne {
+.drop-ne
+{
     top: auto;
     bottom: 100%;
     right: 0;
@@ -119,7 +136,8 @@
     left: initial;
     margin-bottom: 8px;
 }
-.drop-nw {
+.drop-nw
+{
     top: auto;
     bottom: 100%;
     left: 0;
@@ -129,24 +147,29 @@
 }
 
 // Drops with arrows need to drop down/up more
-.drop-menu.arrow {
+.drop-menu.arrow
+{
     &.drop-s,
     &.drop-se,
-    &.drop-sw {
+    &.drop-sw
+    {
         top: ($btn-pad-y * 4 );
     }
 }
-.drop-menu.arrow {
+.drop-menu.arrow
+{
     &.drop-n,
     &.drop-ne,
-    &.drop-nw {
+    &.drop-nw
+    {
         margin-bottom: 20px;
     }
 }
 
 .drop-menu.raised.arrow-s:before,
 .drop-menu.raised.arrow-se:before,
-.drop-menu.raised.arrow-sw:before {
+.drop-menu.raised.arrow-sw:before
+{
     border-top-color: #7b7b7b;
 }
 
@@ -156,7 +179,8 @@
     &.drop-s,
     &.drop-se,
     &.drop-sw
-    {
+   
+   {
         top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) - 1;
     }
 }
@@ -165,7 +189,8 @@
     &.drop-s,
     &.drop-se,
     &.drop-sw
-    {
+   
+   {
         top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) - 0.5;
     }
 }
@@ -174,7 +199,8 @@
     &.drop-s,
     &.drop-se,
     &.drop-sw
-    {
+   
+   {
         top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) + 1;
     }
 }
@@ -183,7 +209,8 @@
     &.drop-s,
     &.drop-se,
     &.drop-sw
-    {
+   
+   {
         top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) + 1.5;
     }
 }

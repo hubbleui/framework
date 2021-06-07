@@ -1,68 +1,54 @@
-.notification-wrap {
+.notification-wrap
+{
 	position: fixed;
 	right: 0;
 	left: 0;
 	margin: 0 auto;
 	display: none;
 	z-index: $z-index-notification;
-	top: -2px;
-	width: 100%;
-	.msg-buttons {
-		text-align: center;
+	bottom: 5px;
+    padding-left:  map-get($container-gutters, xs);
+    padding-right: map-get($container-gutters, xs);
+    width: 100%;
+    max-width: $breakpoint-xl;
+	
+	&.active
+	{
+		display: block;
+	}
+	.msg
+	{
+		cursor: pointer;
+		margin-bottom: 15px;
+		@include raised(3);
 	}
 }
-.notification-wrap.active {
-	display: block;
-}
-.notification-wrap .msg {
-	cursor: pointer;
-	opacity: 0.9;
-	margin-bottom: 15px;
-}
-.notification-wrap .msg.msg-confirm {
-	cursor: default;
-}
-.notification-wrap .msg.msg-confirm .msg-body {
-	padding: 15px 20px 15px 30px;
-}
-@include media-breakpoint-up(md) {
-	.notification-wrap {
+
+@include media-breakpoint-up(md)
+{
+	.notification-wrap
+	{
 		width: 450px;
 	}
 }
+@keyframes fadeInUp
+{
+	from
+  	{
+    	opacity: 0;
+    	transform: translate3d(0, 100%, 0);
+  	}
 
-
-
-@-webkit-keyframes fadeInDown {
-  from {
-    opacity: 0;
-    -webkit-transform: translate3d(0, -100%, 0);
-    transform: translate3d(0, -100%, 0);
-  }
-
-  to {
-    opacity: 1;
-    -webkit-transform: none;
-    transform: none;
-  }
+  	to
+  	{
+    	opacity: 1;
+    	transform: translate3d(0, 0, 0);
+  	}
 }
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    -webkit-transform: translate3d(0, -100%, 0);
-    transform: translate3d(0, -100%, 0);
-  }
-
-  to {
-    opacity: 1;
-    -webkit-transform: none;
-    transform: none;
-  }
-}
-
-.animate-notif {
+.animate-notif
+{
 	animation-duration: .3s;
  	animation-fill-mode: both;
-  	animation-name: fadeInDown;
+  	animation-name: fadeInUp;
 }
+

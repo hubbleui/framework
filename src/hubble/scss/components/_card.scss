@@ -1,273 +1,237 @@
-//
-// Base styles
-//
-.card {
+.card
+{
 	position: relative;
-	display: flex;
-	flex-direction: column;
-	background-color: $card-bg;
-	border: $card-border-width solid $card-border-color;
-	border-radius: $border-radius;
-}
-
-.card-block {
-  // Enable `flex-grow: 1` for decks and groups so that card blocks take up
-  // as much space as possible, ensuring footers are aligned to the bottom.
-  flex: 1 1 auto;
-  padding: $card-spacer-x;
-}
-.card-title {
-	margin-bottom: $card-spacer-y;
-}
-.card-subtitle {
-	margin-top: -($card-spacer-y / 2);
-}
-.card-text:last-child {
-	margin-bottom: 0;
-}
-.card-link {
-	&:hover {
-		text-decoration: none;
-	}
-
-	+ .card-link {
-		margin-left: $card-spacer-x;
-	}
-}
-
-// card image
-.card-img {
-  // margin: -1.325rem;
-  border-radius: $border-radius;
-}
-
-// Card image caps
-.card-img-top {
-	border-radius: 0;
-	border-top-left-radius: $border-radius;
-	border-top-right-radius: $border-radius;
-}
-.card-img-bottom {
-	border-radius: 0;
-	border-bottom-left-radius: $border-radius;
-	border-bottom-right-radius: $border-radius;
-}
-.card-img,
-.card-img-top,
-.card-img-bottom {
-	width: 100%;
-	height: auto;
-	margin: 0 auto;
 	display: block;
-}
-
-// car header/footer
-.card-header {
-	padding: $card-spacer-y $card-spacer-x;
-	margin-bottom: 0; // Removes the default margin-bottom of <hN>
-	background-color: $card-cap-bg;
-	border-bottom: $card-border-width solid $card-border-color;
-
-  	&:first-child {
-  		border-radius: 0;
-  		border-top-left-radius: $border-radius;
-  		border-top-right-radius: $border-radius;
-  	}
-  	> h1,h2,h3,h4,h5,h6,p {
-  		margin-bottom: 0;
-  	}
-}
-.card-footer {
-	padding: $card-spacer-y $card-spacer-x;
-	background-color: $card-cap-bg;
-	border-top: $card-border-width solid $card-border-color;
-
-	&:last-child {
-		border-radius: 0;
-  		border-bottom-left-radius: $border-radius;
-  		border-bottom-right-radius: $border-radius;
-	}
-}
-
-// outline contextual styles
-.card-outline-primary {
-	border-color: $brand-primary;
-}
-.card-outline-info {
-	border-color: $brand-info;
-}
-.card-outline-success {
-	border-color: $brand-success;
-}
-.card-outline-warning {
-	border-color: $brand-warning;
-}
-.card-outline-danger {
-	border-color: $brand-danger;
-}
-
-// header contextual styles
-.card-header-primary {
-	background-color: $brand-primary;
-	border-color: $brand-primary;
-	color: #fff;
-}
-.card-header-info {
-	background-color: $brand-info;
-	border-color: $brand-info;
-	color: #fff;
-}
-.card-header-success {
-	background-color: $brand-success;
-	border-color: $brand-success;
-	color: #fff;
-}
-.card-header-warning {
-	background-color: $brand-warning;
-	border-color: $brand-warning;
-	color: #fff;
-}
-.card-header-danger {
-	background-color: $brand-danger;
-	border-color: $brand-danger;
-	color: #fff;
-}
-.card-header-white {
-	background-color: #fff;
-}
-
-
-// Unstyled
-.card-unstyled {
-	border: none;
-	border-radius: 0;
-	.card-header,
-	.card-footer {
-		border: none;
-		border-radius: 0;
-		background-color: transparent;
-	}
-}
-
-// With table
-.card-table
-{
-	table tbody > tr:last-child td,
-	table tbody > tr:last-child th
+	width: 100%;
+	background-color: $card-bg;
+	border-radius: $card-border-radius;
+	box-shadow: $raised-level-two;
+    transition: box-shadow $base-easing-time $base-easing, background-color 0.15s $base-easing;
+    &:hover,
+    &:focus
+    {
+        box-shadow: $raised-level-two-hover;
+    }
+    &:active
+    {
+    	background-color: rgba-to-rgb(rgba(#000000, 0.01));
+    }
+    &.flat
+    {
+    	box-shadow: none;
+    	border: 1px solid $gray-lighter;
+    	&:active
+    	{
+    		background-color: transparent;
+    	}
+    }
+	.card-block
 	{
-		border-bottom: none;
-	}
-}
-.card-header.with-options
-{
-	line-height: 38px;
+		padding: 20px 16px;
 
-	.card-header-options
-	{
-		float: right;
-	}
-}
-
-// Groups
-.card-group .card, {
-	margin-bottom: $card-spacer-y;
-}
-.card-group .card:last-child {
-	margin-bottom: 0;
-}
-@include media-breakpoint-up(sm) {
-	.card-group
-	{
-	    display: flex;
-	    flex-flow: row wrap;
-
-		.card {
-		    -webkit-box-flex: 1;
-		    -webkit-flex: 1 0 0%;
-		    -ms-flex: 1 0 0%;
-		    flex: 1 0 0%;
-		    border-radius: 0;
-		    margin-bottom: 0;
-
-		    .card-header,
-		    .card-footer,
-		    .card-img-top,
-		    .card-img-bottom,
-		    .card-img {
-			    border-radius: 0;
-			}
-
-			&:not(::first-child),
-			&:not(::last-child) {
-				border-left: none;
-				border-right: none;
-			}
-
-		    &:first-child {
-		    	border-top-left-radius: $border-radius;
-	    		border-bottom-left-radius: $border-radius;
-	    		.card-header:first-child,
-	    		.card-img-top {
-	    			border-top-left-radius: $border-radius;
-	    		}
-			    .card-footer:last-child,
-			    .card-img-bottom {
-			    	
-	    			border-bottom-left-radius: $border-radius;
-			    }
-		    }
-		    &:last-child {
-		    	border-top-right-radius: $border-radius;
-	    		border-bottom-right-radius: $border-radius;
-	    		.card-header:first-child,
-	    		.card-img-top {
-	    			border-top-right-radius: $border-radius;
-	    		}
-			    .card-footer:last-child,
-			    .card-img-bottom {
-			    	
-	    			border-bottom-right-radius: $border-radius;
-			    }
-		    }
+		> div:first-child,
+		> p:first-child,
+		> h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child
+		{
+			padding-top: 0;
+			margin-top: 0;
+		}
+		> div:last-child,
+		> p:last-child,
+		> h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child
+		{
+			margin-bottom: 0;
+			padding-bottom: 0;
 		}
 	}
-}
+	.card-block
+	{
+		> div
+		{
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+	.card-title
+	{
+		margin-bottom: 17px;
+		font-weight: $text-bold;
+	}
+	.card-subtitle
+	{
+		color: $gray-dark;
+		margin-bottom: 18px;
+	}
+	.card-text
+	{
+		color: $gray-dark;
+		margin: 0;
+		padding: 18px 0;
+		&:last-child
+		{
+			padding-bottom: 0;
+		}
+	}
+	> .card-block > .card-text:last-child:last-of-type
+	{
+		padding-bottom: 0;
+	}
+	.card-title + .card-text,
+	.card-subtitle + .card-text
+	{
+		padding-top: 0;
+	}
+	.card-divider
+	{
+	    height: 1px;
+	    background: $gray-lighter;
+	    border: 0;
+	    margin: 10px 0;
+	}
+	
+	.card-text + .card-divider,
+	.card-block + .collapsed + .card-divider,
+	.card-block + .card-divider
+	{
+		margin-top: 0;
+	}
 
-// Decks
-.card-deck .card, {
-	margin-bottom: $card-spacer-y;
-}
-.card-deck .card:last-child {
-	margin-bottom: 0;
-}
-@include media-breakpoint-up(md) {
+	.card-divider + .card-block
+	{
+		padding-top: 8px;
+	}
 
-	.card-deck {
-    	display: flex;
-    	flex-flow: row wrap;
+	.card-img-top
+	{
+		background-color: $card-img-bg;
+		padding: $card-img-padding;
+		border-radius: 0;
+		border-top-left-radius: $card-border-radius;
+		border-top-right-radius: $card-border-radius;
+		.card-img
+		{
+			border-radius: 0;
+			border-top-left-radius: $card-border-radius;
+			border-top-right-radius: $card-border-radius;
+		}
+	}
+	.card-img-bottom
+	{
+		border-radius: 0;
+		border-bottom-left-radius: $card-border-radius;
+		border-bottom-right-radius: $card-border-radius;
+		.card-img
+		{
+			border-radius: 0;
+			border-bottom-left-radius: $card-border-radius;
+			border-bottom-right-radius: $card-border-radius;
+		}
+	}
+	.card-img,
+	.card-img-top,
+	.card-img-bottom
+	{
+		position: relative;
+		width: 100%;
+		height: auto;
+		margin: 0 auto;
+		display: block;
+		overflow: hidden;
+	}
+	.card-header
+	{
+		padding: 20px 16px;
+		margin-bottom: 0;
+		position: relative;
 
-    	.card {
-	      	display: flex;
-	      	flex: 1 0 0;
-	      	flex-direction: column;
-	      	margin-bottom: 0;
-	      	
-	      	// Selectively apply horizontal margins to cards to avoid doing the
-	      	// negative margin dance like our grid. This differs from the grid
-	      	// due to the use of margins as gutters instead of padding.
-	      	&:not(:first-child) { margin-left: $card-deck-margin; }
-	      	&:not(:last-child) { margin-right: $card-deck-margin; }
+	  	&:first-child
+	  	{
+	  		border-radius: 0;
+	  		border-top-left-radius: $card-border-radius;
+	  		border-top-right-radius: $card-border-radius;
+	  	}
+	  	> h1,h2,h3,h4,h5,h6,p
+	  	{
+	  		margin-bottom: 0;
+	  	}
+	  	.card-title + .card-subtitle
+	  	{
+	  		margin-top: 9px;
+	  	}
+	  	.card-icon
+	  	{
+	  		position: absolute;
+	  		width: 40px;
+		    height: 40px;
+		    border-radius: 50%;
+		    background-color: $gray;
+		    top: 50%;
+    		transform: translateY(-50%);
+    		padding: 0 10px;
+    		line-height: 48px;
+
+	  		.glyph-icon
+	  		{
+	  			color: $gray-dark;
+	  			font-size: 2rem;
+	  		}
+	  	}
+	  	.card-icon + .card-title,
+	  	.card-icon + .card-title + .card-subtitle
+	  	{
+	  		padding-left: 55px;
+	  	}
+	  	.card-overflow
+	  	{
+	  		position: absolute;
+		    top: 50%;
+		    right: 5px;
+		    transform: translateY(-50%);
+	  	}
+	}
+	.card-actions
+	{
+		padding: 20px 5px 20px 5px;
+
+		.actions-primary
+		{
+			overflow: hidden;
+    		width: 1000px;
+		}
+		.actions-primary,
+		.actions-extra
+		{
+			zoom: 1;
+			display: table-cell;
+    		vertical-align: middle;
+    		white-space: nowrap;
     	}
-  	}
-}
+		&:last-child
+		{
+			border-radius: 0;
+	  		border-bottom-left-radius: $card-border-radius;
+	  		border-bottom-right-radius: $card-border-radius;
+		}
+	}
+	.card-block + .card-actions
+	{
+		padding-top: 0;
+	}
+	.card-table
+	{
+		table tbody > tr:last-child td,
+		table tbody > tr:last-child th
+		{
+			border-bottom: none;
+		}
+	}
+	.card-header.with-options
+	{
+		line-height: 38px;
 
-// Columns (masonry)
-.card-columns {
-    column-count: 3;
-    column-gap: 1.25rem;
-    .card {
-	    display: inline-block;
-	    width: 100%;
-	    margin-bottom: 1.8rem;
+		.card-header-options
+		{
+			float: right;
+		}
 	}
 }

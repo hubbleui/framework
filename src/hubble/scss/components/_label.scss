@@ -1,92 +1,169 @@
 // Labels
-.label {
+.label
+{
     text-align: center;
     border-radius: $border-radius;
     display: inline;
-    background-color: $label-default-bg;
-    color: $label-default-color;
-    font-size: $label-font-size;
-    padding: $label-pad-y $label-pad-x;
+    background-color: $gray;
+    color: #fff;
+    font-size: $label-size * 1.2;
+    padding: ($label-size * 0.3) ($label-size - 1);
     line-height: 1;
     white-space: nowrap;
     vertical-align: baseline;
-    &:hover {
+    &:hover
+    {
         text-decoration: none;
     }
-    &.label-outline {
+    .glyph-icon
+    {
+        line-height: 2;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    &.label-outline
+    {
         background-color: transparent;
-        color: $label-default-bg;
-        border: 1px solid $label-default-bg;
-        &:hover {
-            background-color: $label-default-bg;
-            border-color: $label-default-bg;
-            color: $label-default-color;
+        color: $gray;
+        border: 1px solid $gray;
+        &:hover
+        {
+            background-color: $gray;
+            border-color: $gray;
+            color: #fff;
         }
     }
-    &.label-primary {
+    &.label-primary
+    {
         color: $white;
         background-color: $brand-primary;
-        &.label-outline {
+        &.label-outline
+        {
             background-color: transparent;
             color: $brand-primary;
             border: 1px solid $brand-primary;
-            &:hover {
+            &:hover
+            {
                 color: $white;
                 background-color: $brand-primary;
             }
         }
     }
-    &.label-success {
+    &.label-secondary
+    {
+        color: $white;
+        background-color: $brand-secondary;
+        &.label-outline
+        {
+            background-color: transparent;
+            color: $brand-secondary;
+            border: 1px solid $brand-secondary;
+            &:hover
+            {
+                color: $white;
+                background-color: $brand-secondary;
+            }
+        }
+    }
+    &.label-success
+    {
         color: $white;
         background-color: $brand-success;
-        &.label-outline {
+        &.label-outline
+        {
             background-color: transparent;
             color: $brand-success;
             border: 1px solid $brand-success;
-            &:hover {
+            &:hover
+            {
                 color: $white;
                 background-color: $brand-success;
             }
         }
     }
-    &.label-info {
+    &.label-info
+    {
         color: $white;
         background-color: $brand-info;
-        &.label-outline {
+        &.label-outline
+        {
             background-color: transparent;
             color: $brand-info;
             border: 1px solid $brand-info;
-            &:hover {
+            &:hover
+            {
                 color: $white;
                 background-color: $brand-info;
             }
         }
     }
-    &.label-warning {
+    &.label-warning
+    {
         color: $white;
         background-color: $brand-warning;
-        &.label-outline {
+        &.label-outline
+        {
             background-color: transparent;
             color: $brand-warning;
             border: 1px solid $brand-warning;
-            &:hover {
+            &:hover
+            {
                 color: $white;
                 background-color: $brand-warning;
             }
         }
     }
-    &.label-danger {
+    &.label-danger
+    {
         color: $white;
         background-color: $brand-danger;
-        &.label-outline {
+        &.label-outline
+        {
             background-color: transparent;
             color: $brand-danger;
             border: 1px solid $brand-danger;
-            &:hover {
+            &:hover
+            {
                 color: $white;
                 background-color: $brand-danger;
             }
         }
     }
+}
 
+// Override hover colors for <a>
+a.label
+{
+    &:hover
+    {
+        color: #fff;
+    }
+    &.label-outline:hover
+    {
+        color: #fff;
+    }
+    &.label-primary.label-outline:hover
+    {
+        color: $brand-primary;
+    }
+    &.label-secondary.label-outline:hover
+    {
+        color: $brand-secondary;
+    }
+    &.label-success.label-outline:hover
+    {
+        color: $brand-success;
+    }
+    &.label-info.label-outline:hover
+    {
+        color: $brand-info;
+    }
+    &.label-warning.label-outline:hover
+    {
+        color: $brand-warning;
+    }
+    &.label-danger.label-outline:hover
+    {
+        color: $brand-danger;
+    }
 }

@@ -12,6 +12,7 @@
     }
 }
 
+form.default .form-result,
 form.danger  .form-result,
 form.info    .form-result,
 form.warning .form-result,
@@ -20,6 +21,7 @@ form.success .form-result {
     animation-duration: .5s;
     animation-fill-mode: both;
 }
+form.default .msg-default,
 form.danger .msg-danger,
 form.info .msg-info,
 form.warning .msg-warning,
