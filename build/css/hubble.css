@@ -8085,20 +8085,20 @@ form.success .msg-success {
 }
 .chip:hover {
   text-decoration: none;
-  background-color: #bebebe;
-  border-color: #bebebe;
+  background-color: gainsboro;
+  border-color: gainsboro;
 }
 .chip:active {
   text-decoration: none;
-  background-color: #999a9d;
-  border-color: #999a9d;
+  background-color: #d0d0d0;
+  border-color: #d0d0d0;
   -webkit-box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.1), 0px 4px 5px 0px rgba(0, 0, 0, 0.12), 0px 1px 10px 0px rgba(0, 0, 0, 0.06);
           box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.1), 0px 4px 5px 0px rgba(0, 0, 0, 0.12), 0px 1px 10px 0px rgba(0, 0, 0, 0.06);
 }
-.chip:focus {
+.chip:focus, .chip:focus-within, .chip.focus {
   text-decoration: none;
-  background-color: #999a9d;
-  border-color: #999a9d;
+  background-color: #c3c3c3;
+  border-color: #c3c3c3;
 }
 .chip.disabled, .chip.disabled:focus, .chip.disabled:active, .chip.disabled:hover {
   cursor: not-allowed;
