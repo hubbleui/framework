@@ -13837,13 +13837,16 @@ Helper.prototype.isRetina = function()
      */
     var Frontdrop = function(options)
     {
-        this._options = Helper.array_merge(defaults, options);
-        this._timer = null;
-        this._modal = null;
-        this._overlay = null;
-        this._modalInner = null;
+        if (typeof options !== 'undefined')
+        {
+            this._options = Helper.array_merge(defaults, options);
+            this._timer = null;
+            this._modal = null;
+            this._overlay = null;
+            this._modalInner = null;
 
-        this._invoke();
+            this._invoke();
+        }
 
         return this;
     };
@@ -13880,48 +13883,37 @@ Helper.prototype.isRetina = function()
         var overlay = document.createElement('DIV');
         overlay.className = 'frontdrop-overlay ' + this._options['overlay'];
 
-        if (this._options.targetContent)
-        {
-            modal.innerHTML = this._buildTargetModal();
-        }
-        else
-        {
-            var close = '';
+        var close   = '';
+        var content = this._options.targetContent !== null ? this._getTargetContent() : this._options.content;
+        var confirm = this._options.confirmBtn === true ? '<button type="button" class="btn btn-xl ' + this._options.confirmClass + ' btn-confirm js-frontdrop-close js-frontdrop-confirm">' + this._options.confirmText + '</button>' : '';
 
-            if (this._options.closeBtn)
+        if (this._options.closeBtn)
+        {
+            if (this._options.closeText)
             {
-                if (this._options.closeText)
-                {
-                    close = '<button type="button" class="btn ' + this._options.closeClass + ' js-frontdrop-close js-frontdrop-cancel">' + this._options.closeText + '</button>';
-                }
-                else
-                {
-                    close = '<button type="button" class="btn btn-pure btn-sm btn-circle js-frontdrop-close js-frontdrop-cancel"><span class="glyph-icon glyph-icon-cross2"></span></button>';
-                }
+                close = '<button type="button" class="' + this._options.closeClass + ' js-frontdrop-close">' + this._options.closeText + '</button>';
             }
-
-            var confirmButton = this._options.confirmBtn === true ? '<button type="button" class="btn ' + this._options.confirmClass + ' js-frontdrop-close js-frontdrop-confirm">' + this._options.confirmText + '</button>' : '';
-
-            Helper.innerHTML(modal, [
-                '<div class="frontdrop-dialog js-frontdrop-dialog">',
-                    '<div class="card js-frontdrop-panel">',
-                        '<div class="card-header">',
-                            close,
-                            '<h4 class="card-title">' + this._options.title + '</h4>',
-                        '</div>',
-                        '<div class="card-block">',
-                            this._options.content,
-                        '</div>',
-                        '<div class="card-actions">',
-                            confirmButton,
-                        '</div>',
-                    '</div>',
-                '</div>',
-            ]);
+            else
+            {
+                close = '<button type="button" class="btn btn-pure btn-sm btn-circle btn-close js-frontdrop-close"><span class="glyph-icon glyph-icon-cross2"></span></button>';
+            }
         }
 
-        this._modal = modal;
-        this._overlay = overlay;
+        Helper.innerHTML(modal, [
+            '<div class="frontdrop-dialog js-frontdrop-dialog">',
+                '<div class="frontdrop-header">',
+                    close,
+                    '<h4 class="frontdrop-title">' + this._options.title + '</h4>',
+                '</div>',
+                '<div class="frontdrop-body">',
+                    content,
+                '</div>',
+                confirm,
+            '</div>',
+        ]);
+
+        this._modal      = modal;
+        this._overlay    = overlay;
         this._modalInner = Helper.$('.js-frontdrop-dialog', modal);
         this._fireBuilt();
     }
@@ -13932,7 +13924,7 @@ Helper.prototype.isRetina = function()
      * @access private
      * @return string
      */
-    Frontdrop.prototype._buildTargetModal = function()
+    Frontdrop.prototype._getTargetContent = function()
     {
         var content = Helper.$(this._options.targetContent);
 
@@ -13941,7 +13933,7 @@ Helper.prototype.isRetina = function()
             throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
         }
 
-        return '<div class="frontdrop-dialog js-frontdrop-dialog"><div class="card js-frontdrop-panel">' + content.innerHTML + '</div></div>';
+        return content.innerHTML.trim();
     }
 
     /**
