@@ -1,0 +1,15 @@
+html, body
+{
+	height: 100%;
+}
+body
+{
+	display: flex;
+	flex-flow: column;
+	height: auto;
+    min-height: 100%;
+}
+.sticky-footer
+{
+	margin-top: auto;
+}

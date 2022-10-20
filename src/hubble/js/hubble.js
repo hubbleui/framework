@@ -41,6 +41,8 @@
 @import 'utility/dynamicUI/_dynamicUi.js';
 
 // DOM Module
+@import "dom/_pjax.js";
+@import "dom/_pjaxLinks.js";
 @import 'dom/scrollbar/_handler.js';
 @import 'dom/scrollbar/_scrollbars.js';
 @import 'dom/_collapse.js';

@@ -62,7 +62,7 @@ Helper.prototype.closest = function(el, type)
 
     if (type[0] === '.')
     {
-        return this._closestClass(el, type);
+        return this.closestClass(el, type);
     }
 
     type = type.toLowerCase();
@@ -101,18 +101,13 @@ Helper.prototype.closest = function(el, type)
 /**
  * Closest parent node by class
  *
- * @access private
+ * @access public
  * @param  node   el   Target element
  * @param  string type Node type to find
  * @return node\null
  */
-Helper.prototype._closestClass = function(el, clas)
+JSHelper.prototype.closestClass = function(el, clas)
 {
-    if (clas[0] === '.')
-    {
-        clas = clas.substring(1);
-    }
-
     if (this.hasClass(el, clas))
     {
         return el;
@@ -122,12 +117,10 @@ Helper.prototype._closestClass = function(el, clas)
         return el.parentNode;
     }
     var parent = el.parentNode;
-
     if (parent === window.document)
     {
         return null;
     }
-
     while (parent !== document.body)
     {
         if (this.hasClass(parent, clas))
@@ -142,7 +135,6 @@ Helper.prototype._closestClass = function(el, clas)
 
         parent = parent.parentNode;
     }
-
     return null;
 }
 
@@ -198,7 +190,7 @@ Helper.prototype.next = function(el, type)
 
     if (type[0] === '.')
     {
-        return this._nextUntillClass(el, type);
+        return this.nextUntillClass(el, type);
     }
 
     type = type.toLowerCase();
@@ -230,7 +222,7 @@ Helper.prototype.next = function(el, type)
  * @param  string className Target node classname
  * @return node\null
  */
-Helper.prototype._nextUntillClass = function(el, className)
+Helper.prototype.nextUntillClass = function(el, className)
 {
     if (className[0] === '.')
     {
