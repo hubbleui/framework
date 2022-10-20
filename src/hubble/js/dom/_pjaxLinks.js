@@ -60,10 +60,7 @@
      */
     PjaxLinks.prototype._bind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.addEventListener(this._nodes[i], 'click', this._eventHandler, false);
-        }
+        Helper.addEventListener(this._nodes, 'click', this._eventHandler, false);
     }
 
     /**
@@ -73,10 +70,7 @@
      */
     PjaxLinks.prototype._unbind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.removeEventListener(this._nodes[i], 'click', this._eventHandler, false);
-        }
+        Helper.removeEventListener(this._nodes, 'click', this._eventHandler, false);
     }
 
     /**

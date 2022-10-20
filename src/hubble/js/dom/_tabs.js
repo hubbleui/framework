@@ -5,6 +5,7 @@
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
+
 (function()
 {
     /**
@@ -60,9 +61,12 @@
      */
     TabNav.prototype._bindDOMListeners = function(navWrap)
     {
-        var links = Helper.$All('a', navWrap);
-
-        Helper.addEventListener(links, 'click', this._eventHandler);
+        var links  = Helper.$All('a', navWrap);
+        
+        for (var i = 0; i < links.length; i++)
+        {
+            Helper.addEventListener(links[i], 'click', this._eventHandler);
+        }
     }
 
     /**
@@ -74,8 +78,11 @@
     TabNav.prototype._unbindDOMListeners = function(navWrap)
     {
         var links = Helper.$All('a', navWrap);
-
-        Helper.removeEventListener(links, 'click', this._eventHandler);
+        
+        for (var i = 0; i < links.length; i++)
+        {
+            Helper.removeEventListener(links[i], 'click', this._eventHandler);
+        }
     }
 
     /**
@@ -90,27 +97,27 @@
         e.preventDefault();
 
         var _this = Container.get('TabNav');
-
+        
         var node = this;
 
         if (Helper.hasClass(node, 'active')) return;
+        
+        var tab           = node.dataset.tab;
+        var tabNav        = Helper.closest(node, 'ul');
 
-        var tab = node.dataset.tab;
-        var tabNav = Helper.closest(node, 'ul');
+        var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
+        var tabPanel      = Helper.closestClass(tabPane, 'js-tab-panels-wrap');
+        var activePanel   = Helper.$('.tab-panel.active', tabPanel);
 
-        var tabPane = Helper.$('[data-tab-panel="' + tab + '"]');
-        var tabPanel = Helper.closest(tabPane, '.js-tab-panels-wrap');
-        var activePanel = Helper.$('.tab-panel.active', tabPanel);
-
-        var navWrap = Helper.closest(node, '.js-tab-nav');
-        var activeNav = Helper.$('a.active', navWrap);
+        var navWrap       = Helper.closestClass(node, 'js-tab-nav');
+        var activeNav     = Helper.$('a.active', navWrap);
 
         Helper.removeClass(activeNav, 'active');
         Helper.removeClass(activePanel, 'active');
 
         Helper.addClass(node, 'active');
         Helper.addClass(tabPane, 'active');
-
+        
     }
 
     // Load into Hubble DOM core

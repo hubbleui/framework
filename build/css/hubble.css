@@ -62,26 +62,6 @@ body.no-scroll {
   overflow: hidden !important;
 }
 
-html, body {
-  height: 100%;
-}
-
-body {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-flow: column;
-      -ms-flex-flow: column;
-          flex-flow: column;
-  height: auto;
-  min-height: 100%;
-}
-
-.sticky-footer {
-  margin-top: auto;
-}
-
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;

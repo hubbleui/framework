@@ -1511,24 +1511,44 @@ Helper.prototype.closest = function(el, type)
  *
  * @access public
  * @param  node   el   Target element
- * @param  string type Node type to find
+ * @param  string clas Node class to find
  * @return node\null
  */
-JSHelper.prototype.closestClass = function(el, clas)
+Helper.prototype.closestClass = function(el, clas)
 {
+    // Type is class
+    if (this.is_array(clas))
+    {
+        for (var i = 0; i < clas.length; i++)
+        {
+            var response = this.closestClass(el, clas[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
     if (this.hasClass(el, clas))
     {
         return el;
     }
+
     if (this.hasClass(el.parentNode, clas))
     {
         return el.parentNode;
     }
+
     var parent = el.parentNode;
+
     if (parent === window.document)
     {
         return null;
     }
+
     while (parent !== document.body)
     {
         if (this.hasClass(parent, clas))
@@ -1543,6 +1563,7 @@ JSHelper.prototype.closestClass = function(el, clas)
 
         parent = parent.parentNode;
     }
+
     return null;
 }
 
@@ -18069,7 +18090,7 @@ function complete(response)
 
         return url;
     }
-
+    
     // Load into Hubble DOM core
     Container.get('Hubble').dom().register('Pjax', Pjax);
 
@@ -18137,10 +18158,7 @@ function complete(response)
      */
     PjaxLinks.prototype._bind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.addEventListener(this._nodes[i], 'click', this._eventHandler, false);
-        }
+        Helper.addEventListener(this._nodes, 'click', this._eventHandler, false);
     }
 
     /**
@@ -18150,10 +18168,7 @@ function complete(response)
      */
     PjaxLinks.prototype._unbind = function()
     {
-        for (var i = 0; i < this._nodes.length; i++)
-        {
-            Helper.removeEventListener(this._nodes[i], 'click', this._eventHandler, false);
-        }
+        Helper.removeEventListener(this._nodes, 'click', this._eventHandler, false);
     }
 
     /**
@@ -19177,6 +19192,7 @@ function complete(response)
  * @copyright Joe J. Howard
  * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
  */
+
 (function()
 {
     /**
@@ -19232,9 +19248,12 @@ function complete(response)
      */
     TabNav.prototype._bindDOMListeners = function(navWrap)
     {
-        var links = Helper.$All('a', navWrap);
-
-        Helper.addEventListener(links, 'click', this._eventHandler);
+        var links  = Helper.$All('a', navWrap);
+        
+        for (var i = 0; i < links.length; i++)
+        {
+            Helper.addEventListener(links[i], 'click', this._eventHandler);
+        }
     }
 
     /**
@@ -19245,9 +19264,12 @@ function complete(response)
      */
     TabNav.prototype._unbindDOMListeners = function(navWrap)
     {
-        var links = Helper.$All('a', navWrap);
-
-        Helper.removeEventListener(links, 'click', this._eventHandler);
+        var links    = Helper.$All('a', navWrap);
+        
+        for (var i = 0; i < links.length; i++)
+        {
+            Helper.removeEventListener(links[i], 'click', this._eventHandler);
+        }
     }
 
     /**
@@ -19262,34 +19284,33 @@ function complete(response)
         e.preventDefault();
 
         var _this = Container.get('TabNav');
-
+        
         var node = this;
 
         if (Helper.hasClass(node, 'active')) return;
+        
+        var tab           = node.dataset.tab;
+        var tabNav        = Helper.closest(node, 'ul');
 
-        var tab = node.dataset.tab;
-        var tabNav = Helper.closest(node, 'ul');
+        var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
+        var tabPanel      = Helper.closestClass(tabPane, 'js-tab-panels-wrap');
+        var activePanel   = Helper.$('.tab-panel.active', tabPanel);
 
-        var tabPane = Helper.$('[data-tab-panel="' + tab + '"]');
-        var tabPanel = Helper.closest(tabPane, '.js-tab-panels-wrap');
-        var activePanel = Helper.$('.tab-panel.active', tabPanel);
-
-        var navWrap = Helper.closest(node, '.js-tab-nav');
-        var activeNav = Helper.$('a.active', navWrap);
+        var navWrap       = Helper.closestClass(node, 'js-tab-nav');
+        var activeNav     = Helper.$('a.active', navWrap);
 
         Helper.removeClass(activeNav, 'active');
         Helper.removeClass(activePanel, 'active');
 
         Helper.addClass(node, 'active');
         Helper.addClass(tabPane, 'active');
-
+        
     }
 
     // Load into Hubble DOM core
     Container.get('Hubble').dom().register('TabNav', TabNav);
 
 })();
-
 /**
  * Bottom nav
  *

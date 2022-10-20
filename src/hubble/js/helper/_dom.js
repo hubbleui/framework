@@ -103,24 +103,44 @@ Helper.prototype.closest = function(el, type)
  *
  * @access public
  * @param  node   el   Target element
- * @param  string type Node type to find
+ * @param  string clas Node class to find
  * @return node\null
  */
-JSHelper.prototype.closestClass = function(el, clas)
+Helper.prototype.closestClass = function(el, clas)
 {
+    // Type is class
+    if (this.is_array(clas))
+    {
+        for (var i = 0; i < clas.length; i++)
+        {
+            var response = this.closestClass(el, clas[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
     if (this.hasClass(el, clas))
     {
         return el;
     }
+
     if (this.hasClass(el.parentNode, clas))
     {
         return el.parentNode;
     }
+
     var parent = el.parentNode;
+
     if (parent === window.document)
     {
         return null;
     }
+
     while (parent !== document.body)
     {
         if (this.hasClass(parent, clas))
@@ -135,6 +155,7 @@ JSHelper.prototype.closestClass = function(el, clas)
 
         parent = parent.parentNode;
     }
+
     return null;
 }
 

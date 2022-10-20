@@ -1001,7 +1001,7 @@
 
         return url;
     }
-
+    
     // Load into Hubble DOM core
     Container.get('Hubble').dom().register('Pjax', Pjax);
 
