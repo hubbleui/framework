@@ -1,0 +1,312 @@
+.chip
+{
+    text-align: center;
+    border-radius: 30px;
+    display: inline-block;
+    background-color: map-get($theme, 'palette', '_gray', 300);
+    color: map-get($theme, 'palette', 'text', 'primary');
+    font-size: 14px;
+    line-height: 16px;
+    padding: 6px 14px;
+    white-space: nowrap;
+    vertical-align: baseline;
+    transition: box-shadow map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing'), width map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+    cursor: pointer;
+    box-shadow: none;
+    border: 1px solid map-get($theme, 'palette', '_gray', 300);
+    position: relative;
+    
+    > .glyph-icon
+    {
+        font-size: 14px;
+        line-height: 15px;
+        display: inline-block;
+        vertical-align: middle;
+
+        &:first-child
+        {
+            padding-right: 6px;
+            margin-left: -6px;
+        }
+    }
+
+    // States
+    &:hover
+    {
+        text-decoration: none;
+        background-color: darken(map-get($theme, 'palette', '_gray', 300), 5);
+        border-color: darken(map-get($theme, 'palette', '_gray', 300), 5);
+    }
+    &:active
+    {
+        text-decoration: none;
+        background-color: darken(map-get($theme, 'palette', '_gray', 300), 10);
+        border-color: darken(map-get($theme, 'palette', '_gray', 300), 10);
+        box-shadow: map-get($theme, 'paper', 'one', 'hover');
+    }
+    &:focus,
+    &:focus-within,
+    &.focus
+    {
+        text-decoration: none;
+        background-color: darken(map-get($theme, 'palette', '_gray', 300), 15);
+        border-color: darken(map-get($theme, 'palette', '_gray', 300), 15);
+    }
+    &.disabled,
+    &.disabled:focus,&.disabled:active,&.disabled:hover
+    {
+        cursor: not-allowed;
+        opacity: 0.5;
+        background-color: map-get($theme, 'palette', '_gray', 300);
+        border-color: map-get($theme, 'palette', '_gray', 300);
+        box-shadow: none;
+    }
+    
+    // Remove
+    .remove-icon
+    {
+        display: inline;
+        position: relative;
+        padding: 5px;
+        margin-right: -12px;
+        margin-top: -3px;
+
+        &:before
+        {
+            content: "\ed6d";
+            display: inline;
+            font-size: 11.2px;
+            background-color: map-get($theme, 'palette', '_gray', 800);
+            border-radius: 50%;
+            color: #fff;
+            padding: 2px 2px 2px 2px;
+            @include glyphIcon;
+        }
+    }
+
+    // Outline base
+    &.chip-outline
+    {
+        background-color: transparent;
+        border-color: map-get($theme, 'palette', '_gray', 600);
+        &:hover
+        {
+            background-color: map-get($theme, 'palette', '_gray', 300);
+        }
+        .remove-icon:before
+        {
+            background-color: map-get($theme, 'palette', '_gray', 600);
+        }
+
+    }
+
+    &.selected
+    {
+        color: map-get($theme, 'palette', 'primary', 'main');
+        background-color: rgba-to-rgb(rgba(map-get($theme, 'palette', 'primary', 'main'), 0.15));
+        border-color: rgba-to-rgb(rgba(map-get($theme, 'palette', 'primary', 'main'), 0.15));
+        
+        &.chip-outline
+        {
+            color: map-get($theme, 'palette', 'primary', 'main');
+            background-color: rgba-to-rgb(rgba(map-get($theme, 'palette', 'primary', 'main'), 0.15));
+            border-color: rgba-to-rgb(rgba(map-get($theme, 'palette', 'primary', 'main'), 0.4));
+        }
+    }
+}
+
+.filter-chips
+{
+    .chip
+    {
+        padding-left: 13px;
+
+        >.glyph-icon
+        {
+            position: absolute;
+            left: 23px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .glyph-icon + .chip-text
+        {
+            padding-left: 24px;
+        }
+        &:before
+        {
+            @include glyphIcon;
+            content: "\ed71";
+            line-height: 11px;
+            max-width: 0;
+            overflow: hidden;
+            transition: max-width 0.15s map-get($theme, 'transition', 'easing');
+            display: inline-block;
+        }
+        &.checked
+        {
+            &:before
+            {
+                max-width: 20px;
+                transition: max-width 0.15s map-get($theme, 'transition', 'easing');
+            }
+            >.glyph-icon
+            {
+                display: none;
+            }
+            .glyph-icon + .chip-text
+            {
+                padding-left: 4px;
+            }
+        }
+        
+    }
+}
+
+.chips-input
+{
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 100%;
+    line-height: 28px;
+    cursor: text;
+    .chip
+    {
+        margin-right: 5px;
+    }
+    input
+    {
+        border: none;
+        box-shadow: none;
+        outline: none;
+        background-color: transparent;
+        padding: 0 6px;
+        margin: 0;
+        width: auto;
+        max-width: inherit;
+    }
+}
+
+// Chip suggestions
+.chip-suggestions
+{
+    .chip,
+    .chip > .glyph-icon
+    {
+        color: darken(map-get($theme, 'palette', '_gray', 400), 15);
+        cursor: pointer;
+        &:hover
+        {
+            color: map-get($theme, 'palette', 'text', 'primary');
+        }
+    }
+}
+
+// Styled chips in
+.chips-input.form-field
+{
+    border: 1px solid map-get($theme, 'palette', '_gray', 600);
+    border-radius: 4px;
+
+    &:focus,
+    &:focus-within
+    {
+        box-shadow: inset 0 0 0 1px map-get($theme, 'palette', 'info', 'main');
+        border-color: map-get($theme, 'palette', 'info', 'main');
+    }
+    .chip
+    {
+        margin-top: 12px;
+        float: left;
+        &:first-child
+        {
+            margin-left: 10px;
+        }
+    }
+    .form-field
+    {
+        input
+        {
+            border-left: none;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border: none;
+            box-shadow: none;
+            &:focus,
+            &.focus
+            {
+                box-shadow: none;
+            }
+        }
+    }
+}
+
+.chip.chip-on-primary
+{
+    background-color: rgba-to-rgb(darken(map-get($theme, 'palette', 'primary', 'main'), 10));
+    border-color: rgba-to-rgb(darken(map-get($theme, 'palette', 'primary', 'main'), 10));
+    color: #fff;
+    .remove-icon:before
+    {
+        color: #fff;
+        background-color: rgba-to-rgb(darken(map-get($theme, 'palette', 'primary', 'main'), 25));
+    }
+    &:hover,
+    &.hover
+    {
+        background-color: rgba-to-rgb(darken(map-get($theme, 'palette', 'primary', 'main'), 15));
+        border-color: rgba-to-rgb(darken(map-get($theme, 'palette', 'primary', 'main'), 15));
+    }
+    &:active,
+    &.active
+    {
+        background-color: rgba-to-rgb(darken(map-get($theme, 'palette', 'primary', 'main'), 20));
+        border-color: rgba-to-rgb(darken(map-get($theme, 'palette', 'primary', 'main'), 20));
+    }
+    &.selected,
+    &.checked
+    {
+        color: map-get($theme, 'palette', 'primary', 'main');
+        background-color: #fff;
+        border-color: #fff;
+    }
+    &.disabled,
+    &.disabled:focus,&.disabled:active,&.disabled:hover
+    {
+        background-color: rgba-to-rgb(darken(map-get($theme, 'palette', 'primary', 'main'), 10));
+        border-color: rgba-to-rgb(darken(map-get($theme, 'palette', 'primary', 'main'), 10));
+        color: #fff;
+    }
+    &.chip-outline
+    {
+        background-color: transparent;
+        border-color: #fff;
+        &:hover
+        {
+            background-color: rgba(#fff, 0.2);
+            border-color: #fff;
+        }
+        &:active
+        {
+            background-color: rgba(#fff, 0.4);
+            border-color: #fff;
+        }
+        &.selected,
+        &.checked
+        {
+            color: map-get($theme, 'palette', 'primary', 'main');
+            background-color: #fff;
+            border-color: #fff;
+        }
+        .remove-icon:before
+        {
+            color: map-get($theme, 'palette', 'primary', 'main');
+            background-color: #fff;
+        }
+        &.disabled,
+        &.disabled:focus,&.disabled:active,&.disabled:hover
+        {
+            background-color: transparent;
+            border-color: #fff;;
+        }
+    }
+}

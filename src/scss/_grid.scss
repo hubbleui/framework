@@ -1,0 +1,241 @@
+// Containers
+.container,
+.container-fluid
+{
+    margin-left: auto;
+    margin-right: auto;
+    @include _clearfix;
+}
+
+// basic rows
+.row
+{
+    @include _clearfix;
+    width: 100%;
+}
+
+// basic columns
+.col
+{
+    float: left;
+}
+
+// containers are both fluid at xs screen size
+.container-fluid,
+.container
+{
+    padding-left:  map-get($theme, 'container', 'gutters', 'xs');
+    padding-right: map-get($theme, 'container', 'gutters', 'xs');
+    width: 100%;
+}
+.container-fluid
+{
+    max-width: map-get($theme, 'container', 'breakpoints', 'xl');
+}
+
+// breakpoint size elements
+.xl
+{
+    display: none;
+}
+.lg
+{
+    display: none;
+}
+.md
+{
+    display: none;
+}
+.sm
+{
+    display: none;
+}
+.xs
+{
+    display: block;
+}
+.xs-inline-block
+{
+    display: inline-block;
+}
+.xs-inline
+{
+    display: inline;
+}
+
+// Container breakpoints
+@include media-breakpoint-up(sm)
+{ 
+    .container-fluid
+    {
+        padding-left: map-get($theme, 'container', 'gutters', 'sm');
+        padding-right: map-get($theme, 'container', 'gutters', 'sm');
+    }
+    .container
+    {
+        max-width: map-get($theme, 'container', 'breakpoints', 'sm');
+        padding-left: map-get($theme, 'container', 'gutters', 'sm');
+        padding-right: map-get($theme, 'container', 'gutters', 'sm');
+    }
+}
+@include media-breakpoint-up(md)
+{
+    .container-fluid
+    {
+        padding-left: map-get($theme, 'container', 'gutters', 'md');
+        padding-right: map-get($theme, 'container', 'gutters', 'md');
+    }
+    .container
+    {
+        max-width: map-get($theme, 'container', 'breakpoints', 'md');
+        padding-left: map-get($theme, 'container', 'gutters', 'md');
+        padding-right: map-get($theme, 'container', 'gutters', 'md');
+    }
+}
+@include media-breakpoint-up(lg)
+{
+    .container-fluid
+    {
+        padding-left: map-get($theme, 'container', 'gutters', 'lg');
+        padding-right: map-get($theme, 'container', 'gutters', 'lg');
+    }
+    .container
+    {
+        max-width: map-get($theme, 'container', 'breakpoints', 'lg');
+        padding-left: map-get($theme, 'container', 'gutters', 'lg');
+        padding-right: map-get($theme, 'container', 'gutters', 'lg');
+    }
+}
+@include media-breakpoint-up(xl)
+{
+    .container-fluid
+    {
+        padding-left: map-get($theme, 'container', 'gutters', 'xl');
+        padding-right: map-get($theme, 'container', 'gutters', 'xl');
+    }
+    .container
+    {
+        max-width: map-get($theme, 'container', 'breakpoints', 'xl');
+        padding-left: map-get($theme, 'container', 'gutters', 'xl');
+        padding-right: map-get($theme, 'container', 'gutters', 'xl');
+    }
+}
+
+// Displays
+@include media-breakpoint-up(sm)
+{
+    .xs-no-display
+    {
+        display: none;
+    }
+    .xs-inline-block,
+    .xs-inline
+    {
+        display: none;
+    }
+    .sm-inline-block
+    {
+        display: inline-block;
+    }
+    .sm-inline
+    {
+        display: inline;
+    }
+}
+@include media-breakpoint-up(md)
+{
+    .sm-no-display
+    {
+        display: none;
+    }
+    .sm-inline-block,
+    .sm-inline
+    {
+        display: none;
+    }
+    .md-inline-block
+    {
+        display: inline-block;
+    }
+    .md-inline
+    {
+        display: inline;
+    }
+}
+@include media-breakpoint-up(lg)
+{
+    .md-no-display
+    {
+        display: none;
+    }
+    .md-inline-block,
+    .md-inline
+    {
+        display: none;
+    }
+    .lg-inline-block
+    {
+        display: inline-block;
+    }
+    .lg-inline
+    {
+        display: inline;
+    }
+}
+@include media-breakpoint-up(xl)
+{
+    .lg-no-display
+    {
+        display: none;
+    }
+    .lg-inline-block,
+    .lg-inline
+    {
+        display: none;
+    }
+    .xl-inline-block
+    {
+        display: inline-block;
+    }
+    .xl-inline
+    {
+        display: inline;
+    }
+}
+
+// Mobile first grid
+$prev-breakpoint: null;
+$curr-grid:       null;
+@import 'grid/grid';
+
+// sm grid
+@include media-breakpoint-up(sm)
+{
+    $prev-breakpoint: xs;
+    $curr-grid:       sm;
+    @import 'grid/grid';
+}
+
+// md grid
+@include media-breakpoint-up(md)
+{
+    $prev-breakpoint: sm;
+    $curr-grid:       md;
+    @import 'grid/grid';
+}
+
+// lg grid
+@include media-breakpoint-up(lg)
+{
+    $prev-breakpoint: md;
+    $curr-grid:       lg;
+    @import 'grid/grid';
+}
+
+// xl grid
+@include media-breakpoint-up(lg)
+{
+    $prev-breakpoint: lg;
+    $curr-grid:       xl;
+    @import 'grid/grid';
+}

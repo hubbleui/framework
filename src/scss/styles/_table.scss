@@ -1,0 +1,201 @@
+.table
+{
+	width: 100%;
+	font-size: map-get($theme, 'tables', 'font-size');
+	color: map-get($theme, 'tables', 'color');
+	background-color: map-get($theme, 'tables', 'bg');
+
+	caption
+	{
+		color: map-get($theme, 'palette', '_gray', 600);
+		text-align: left;
+	    padding-top: 8px;
+	    padding-bottom: 8px;
+	}
+
+	th, td
+	{
+		padding: map-get($theme, 'tables', 'padding', 'y') map-get($theme, 'tables', 'padding', 'x');
+	}
+	
+	thead,
+	tfoot
+	{		
+		th
+		{
+			font-weight: map-get($theme, 'typography', 'weights', 'bold');
+			text-align: left;
+    		background-color: map-get($theme, 'palette', '_gray', 600);
+    		border-color: map-get($theme, 'palette', '_gray', 600);
+		    color: #fff;
+		}
+	}
+
+	> tfoot > tr > th:first-child,
+	> thead > tr > th:first-child,
+	> tbody > tr > th:first-child
+	{
+		font-weight: map-get($theme, 'typography', 'weights', 'bold');
+	}
+
+	> tbody > tr > td,
+	> tbody > tr > th,
+	> tfoot > tr > td, 
+	> tfoot > tr > th,
+	> thead > tr > td,
+	> thead > tr > th
+	{
+		border-bottom: 1px solid map-get($theme, 'palette', '_gray', 300);
+	}
+	&.table-bordered
+	{
+		border-collapse: separate;
+  		border-spacing: 0;
+
+		td, th
+		{
+			border: solid 1px map-get($theme, 'palette', '_gray', 300);
+			border-style: none solid solid none;
+		}
+		thead th,
+		tfoot th
+		{
+			border: solid 1px map-get($theme, 'palette', '_gray', 600);
+			border-style: none solid solid none;
+		}
+
+		> thead > tr:first-child > th,
+    	> thead > tr:first-child > td,
+    	> tbody:first-child > tr:first-child > th,
+    	> tbody:first-child > tr:first-child > td
+    	{
+    		border-top-style: solid;
+    	}
+
+		tr > th:first-child,
+		tr > td:first-child
+		{
+			border-left-style: solid;
+		}
+	}
+
+	&.table-hover
+	{
+		tbody tr:hover
+		{
+			background-color: rgba(0, 0, 0, 0.08);
+		}
+	}
+	&.table-transparent
+	{
+		background-color: transparent;
+	}
+	&.table-plain
+	{
+		thead,
+		tfoot
+		{		
+			th
+			{
+	    		background-color: #fff;
+	    		border-color: #fff;
+	    		border-bottom: 2px solid map-get($theme, 'palette', '_gray', 600);
+			    color: map-get($theme, 'palette', '_gray', 600);
+			}
+		}
+
+	}
+
+	// Border radius
+    > thead > tr:first-child > th:first-child,
+    > thead > tr:first-child > td:first-child,
+    > tbody:first-child > tr:first-child > th:first-child,
+    > tbody:first-child > tr:first-child > td:first-child
+    {
+        border-top-left-radius: map-get($theme, 'border-radius');
+    }
+    > thead > tr:first-child > th:last-child,
+    > thead > tr:first-child > td:last-child,
+    > tbody:first-child > tr:first-child > th:last-child,
+    > tbody:first-child > tr:first-child > td:last-child
+    {
+        border-top-right-radius: map-get($theme, 'border-radius');
+    }
+    > tbody:last-child > tr:last-child > th:first-child,
+    > tbody:last-child > tr:last-child > td:first-child,
+    > tfoot:last-child > tr:last-child > th:first-child,
+    > tfoot:last-child > tr:last-child > td:first-child
+    {
+        border-bottom-left-radius: map-get($theme, 'border-radius');
+    }
+    > tbody:last-child > tr:last-child > th:last-child,
+    > tbody:last-child > tr:last-child > td:last-child,
+    > tfoot:last-child > tr:last-child > th:last-child,
+    > tfoot:last-child > tr:last-child > td:last-child
+    {
+        border-bottom-right-radius: map-get($theme, 'border-radius');
+    }
+
+    &.table-compact
+    {
+    	th, td
+		{
+			padding: (map-get($theme, 'tables', 'padding', 'y') / 2) (map-get($theme, 'tables', 'padding', 'x') / 2);
+		}
+    }
+}
+
+ // Raised
+.raised-1 > .table,
+.raised-2 > .table,
+.raised-3 > .table
+{
+	box-shadow: none;
+
+    tr > th:first-child,
+    tr > td:first-child
+    {
+        border-left: 1px solid transparent;
+    }
+    tr > th:last-child,
+    tr > td:last-child
+    {
+        border-right: none;
+    }
+    tbody:last-child > tr:last-child th,
+    tbody:last-child > tr:last-child td,
+    tfoot:last-child > tr:last-child th,
+    tfoot:last-child > tr:last-child td,
+    {
+        border-bottom: 1px solid transparent;
+    }
+}
+.raised-1:has(>.table),
+.raised-2:has(>.table),
+.raised-3:has(>.table)
+{
+	border-radius: map-get($theme, 'border-radius');
+}
+
+// Responsive table wrapped
+@include media-breakpoint-down(md)
+{
+	.table-responsive
+	{
+		width: 100%;
+	    margin-bottom: 15px;
+	    overflow-y: hidden;
+	    -ms-overflow-style: -ms-autohiding-scrollbar;
+	    min-height: .01%;
+	    overflow-x: auto;
+	    .table
+	    {
+	    	white-space: nowrap;
+	    }
+	    &.bordered
+	    {
+	    	border: 1px solid map-get($theme, 'palette', '_gray', 300);
+	    }
+	}
+
+}

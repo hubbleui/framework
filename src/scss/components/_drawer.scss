@@ -1,0 +1,38 @@
+.drawer
+{
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	z-index: map-get($theme, 'zindex', 'drawer');
+	width: 80%;
+	max-width: map-get($theme, 'drawer', 'width');
+	background-color: map-get($theme, 'palette', 'bodybg');
+	visibility: hidden;
+	overflow: hidden;
+	transform: translateX(-(map-get($theme, 'drawer', 'width')));
+	@include raised(3);
+	&.drawer-right
+	{
+		left: initial;
+		right: 0;
+		transform: translateX(map-get($theme, 'drawer', 'width'));
+	}
+}
+.drawer-overlay
+{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(35, 47, 52, .32);
+	z-index: (map-get($theme, 'zindex', 'drawer') - 1);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s ease;
+	&.dark
+	{
+		background-color: rgba(#000, 0.8);
+	}
+}

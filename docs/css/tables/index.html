@@ -246,22 +246,19 @@
                         <hr>
                         <ul class="list-bullet">
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="basic" data-waypoint-speed="400">Basic table</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="basic" data-waypoint-speed="400">Basic table</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="bordered" data-waypoint-speed="500">Bordered table</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="bordered" data-waypoint-speed="500">Bordered table</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="raised" data-waypoint-speed="600">Raised table</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="raised" data-waypoint-speed="600">Raised table</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="hover" data-waypoint-speed="700">Hover table</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="hover" data-waypoint-speed="700">Hover table</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="responsive" data-waypoint-speed="800">Responsive table</a>
-                            </li>
-                            <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="highlights" data-waypoint-speed="900">Table highlights</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="responsive" data-waypoint-speed="800">Responsive table</a>
                             </li>
                         </ul>
                         <hr>
@@ -271,7 +268,6 @@
                             <div class="code-content-example">
                                 <div class="container-fuid">
                                     <table class="table">
-                                        <caption>Optional table caption.</caption>
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -308,7 +304,53 @@
   ...
 </table>
 -->
+</code></pre>
+                            <p>Add the <code>.table-compact</code> class to a table to make it more compact:</p>
+                            <div class="code-content-example">
+                                <div class="container-fuid">
+                                    <div class="table-responsive">
+                                        <table class="table table-compact">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Username</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">1</th>
+                                                    <td>John</td>
+                                                    <td>Foobar</td>
+                                                    <td>@fbar</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">2</th>
+                                                    <td>Joe</td>
+                                                    <td>Thornton</td>
+                                                    <td>@fat</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">3</th>
+                                                    <td>James</td>
+                                                    <td>the Bird</td>
+                                                    <td>@twitter</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<div class="table-responsive">
+    <table class="table table-bordered">
+      ...
+    </table>
+</div>
+-->
 </code></pre> </div>
+
                         <hr>
                         <div class="row roof-xs floor-xs" data-waypoint="basic">
                             <h2>Bordered table</h2>
@@ -316,7 +358,6 @@
                             <div class="code-content-example">
                                 <div class="container-fuid">
                                     <table class="table table-bordered">
-                                        <caption>Optional table caption.</caption>
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -357,46 +398,49 @@
                         <hr>
                         <div class="row roof-xs floor-xs" data-waypoint="raised">
                             <h2>Raised table</h2>
-                            <p> Make a table raised by adding the <code>.raised-1</code>, <code>.raised-3</code> or <code>.raised-3</code> classes. </p>
+                            <p>Make a table raised by adding the <code>.raised-1</code>, <code>.raised-3</code> or <code>.raised-3</code> classes on a wrapper element </p>
                             <div class="code-content-example">
                                 <div class="container-fuid">
-                                    <table class="table table-bordered raised-1">
-                                        <caption>Optional table caption.</caption>
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>First Name</th>
-                                                <th>Last Name</th>
-                                                <th>Username</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>John</td>
-                                                <td>Foobar</td>
-                                                <td>@fbar</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">2</th>
-                                                <td>Joe</td>
-                                                <td>Thornton</td>
-                                                <td>@fat</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">3</th>
-                                                <td>James</td>
-                                                <td>the Bird</td>
-                                                <td>@twitter</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    <div class="raised-1">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Username</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">1</th>
+                                                    <td>John</td>
+                                                    <td>Foobar</td>
+                                                    <td>@fbar</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">2</th>
+                                                    <td>Joe</td>
+                                                    <td>Thornton</td>
+                                                    <td>@fat</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">3</th>
+                                                    <td>James</td>
+                                                    <td>the Bird</td>
+                                                    <td>@twitter</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
-<table class="table table-bordered raised-1">
-  ...
-</table>
+<div class="raised-1">
+    <table class="table table-bordered raised-1">
+      ...
+    </table>
+</div>
 -->
 </code></pre> </div>
                         <hr>
@@ -406,7 +450,6 @@
                             <div class="code-content-example">
                                 <div class="container-fuid">
                                     <table class="table table-bordered table-hover">
-                                        <caption>Optional table caption.</caption>
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -452,7 +495,6 @@
                                 <div class="container-fuid">
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
-                                            <caption>Optional table caption.</caption>
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
@@ -493,56 +535,7 @@
 </div>
 -->
 </code></pre> </div>
-                        <div class="row roof-xs floor-xs" data-waypoint="highlights">
-                            <h2>Table Highlights</h2>
-                            <p> You can highlight both rows and cells using Hubble's contextual classes. You can add the following classes <code>.info</code>, <code>.success</code>, <code>.warning</code>, <code>.danger</code> &amp; <code>.brand</code> to rows, cells, table footer and table header. </p>
-                            <div class="code-content-example">
-                                <div class="container-fuid">
-                                    <table class="table table-bordered">
-                                        <thead class="brand">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>First Name</th>
-                                                <th>Last Name</th>
-                                                <th>Username</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>John</td>
-                                                <td>Foobar</td>
-                                                <td>@fbar</td>
-                                            </tr>
-                                            <tr class="success">
-                                                <th scope="row">2</th>
-                                                <td>Joe</td>
-                                                <td>Thornton</td>
-                                                <td>@fat</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">3</th>
-                                                <td>James</td>
-                                                <td>the Bird</td>
-                                                <td>@twitter</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
-<!--
-&lt;!-- On rows --&gt;
-<tr class="brand">...</tr>
-&lt;!-- On cells (`td` or `th`) --&gt;
-<tr>
-  <td class="brand">...</td>
-</tr>
-&lt;!-- On table head (`thead`) --&gt;
-<thead class="brand">
-    ...
-</tr>
--->
-</code></pre> </div>
+
                     </article>
                 </div>
             </div>

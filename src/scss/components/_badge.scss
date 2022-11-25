@@ -1,0 +1,66 @@
+.badge
+{
+    display: inline-block;
+    text-align: center;
+    width:  map-get($theme, 'badge', 'size');
+    height:  map-get($theme, 'badge', 'size');
+    font-size:  map-get($theme, 'badge', 'font-size');
+    line-height:  map-get($theme, 'badge', 'size');
+    border-radius: 50%;
+    white-space: nowrap;
+    color: #ffffff;
+    background-color: map-get($theme, 'palette', '_gray', 600);
+
+    // Colors
+    &.badge-primary
+    {
+        color: #fff;
+        background-color: map-get($theme, 'palette', 'primary', 'main');
+    }
+    &.badge-secondary
+    {
+        color: #fff;
+        background-color: map-get($theme, 'palette', 'secondary', 'main');
+    }
+    &.badge-success
+    {
+        color: #fff;
+        background-color: map-get($theme, 'palette', 'success', 'main');
+    }
+    &.badge-info
+    {
+        color: #fff;
+        background-color: map-get($theme, 'palette', 'info', 'main');
+    }
+    &.badge-warning
+    {
+       color: #fff;
+        background-color: map-get($theme, 'palette', 'warning', 'main');
+    }
+    &.badge-danger
+    {
+        color: #fff;
+        background-color: map-get($theme, 'palette', 'danger', 'main');
+    }
+    &.badge-white
+    {
+        color: map-get($theme, 'palette', '_black');
+        background-color: map-get($theme, 'palette', '_white');
+    }
+}
+
+// In buttons
+.btn
+{
+    &.with-badge
+    {
+        overflow: visible;
+        position: relative;
+        .badge
+        {
+            position: absolute;
+            top: -9px;
+            right: -7px;
+        }
+    }
+}

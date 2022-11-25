@@ -1,0 +1,204 @@
+// resets 
+input[type=radio]
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+}
+input[type=radio]
+{
+    margin: 4px 0 0;
+    margin-top: 1px\9;
+    line-height: normal;
+    outline: none;
+}
+input[type=radio]:focus
+{
+    outline:0;
+}
+
+// styles
+.radio
+{
+    padding-left: map-get($theme, 'inputs', 'radio-size');
+    
+    label
+    {
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        vertical-align: middle;
+        padding-left: map-get($theme, 'inputs', 'radio-size') / 4;
+        min-height: map-get($theme, 'inputs', 'radio-size') + 2;
+        margin-bottom: 0;
+        line-height: map-get($theme, 'inputs', 'radio-size');
+        &:before
+        {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            left: 0;
+            border-radius: 50%;
+            background-color: transparent;
+            width: map-get($theme, 'inputs', 'radio-size');
+            height: map-get($theme, 'inputs', 'radio-size');
+            margin-left: - map-get($theme, 'inputs', 'radio-size');
+            border: 2px solid map-get($theme, 'palette', '_gray', 600);
+            transition: transform .15s ease-in-out 0s;
+        }
+        &:after
+        {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            border-radius: 50%;
+            background-color: map-get($theme, 'palette', '_gray', 900);
+            left: - (map-get($theme, 'inputs', 'radio-size') * 0.733);
+            top: (map-get($theme, 'inputs', 'radio-size') / 4);
+            width: map-get($theme, 'inputs', 'radio-size') / 2;
+            height: map-get($theme, 'inputs', 'radio-size') / 2;
+            transition: transform .15s ease-in-out 0s;
+            transform: scale(0);
+        }
+    }
+
+    input[type=radio]
+    {
+        position: absolute;
+        display: none;
+        opacity: 0;
+        margin-left: -(map-get($theme, 'inputs', 'radio-size'));
+        margin-top: 0;
+        margin-bottom: 0;
+        z-index: 1;
+        width: map-get($theme, 'inputs', 'radio-size');
+        height: map-get($theme, 'inputs', 'radio-size');
+        &:checked
+        {
+            + label:before
+            {
+                border-color: map-get($theme, 'palette', '_gray', 900);
+                transition: transform .15s ease-in-out 0s;
+            }
+            + label:after
+            {
+                transition: transform .15s ease-in-out 0s;
+                transform: scale(1);
+            }
+        }
+        &:focus
+        {
+            + label:before
+            {
+                border-color: map-get($theme, 'palette', '_gray', 900);
+                transition: transform .15s ease-in-out 0s;
+                outline: thin dotted;
+                outline: 5px auto -webkit-focus-ring-color;
+                outline-offset: -2px;
+            }
+        }
+        &.disabled,
+        &[disabled]
+        {
+            cursor: not-allowed;
+            + label
+            {
+                opacity: .65;
+                cursor: not-allowed;
+                &:before
+                {
+                    background-color: #f3f7f9;
+                    border-color: map-get($theme, 'palette', '_gray', 900);
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+
+    // Contextual
+    &.radio-primary
+    {
+        input[type=radio]
+        {
+            &:checked + label:before
+            {
+                border-color: map-get($theme, 'palette', 'primary', 'main');
+            }
+            &:checked + label:after
+            {
+                background-color: map-get($theme, 'palette', 'primary', 'main');
+            }
+        }
+    }
+    &.radio-secondary
+    {
+        input[type=radio]
+        {
+            &:checked + label:before
+            {
+                border-color: map-get($theme, 'palette', 'secondary', 'main');
+            }
+            &:checked + label:after
+            {
+                background-color: map-get($theme, 'palette', 'secondary', 'main');
+            }
+        }
+    }
+    &.radio-info
+    {
+        input[type=radio]
+        {
+            &:checked + label:before
+            {
+                border-color: map-get($theme, 'palette', 'info', 'main');
+            }
+            &:checked + label:after
+            {
+                background-color: map-get($theme, 'palette', 'info', 'main');
+            }
+        }
+    }
+    &.radio-success
+    {
+        input[type=radio]
+        {
+            &:checked + label:before
+            {
+                border-color: map-get($theme, 'palette', 'success', 'main');
+            }
+            &:checked + label:after
+            {
+                background-color: map-get($theme, 'palette', 'success', 'main');
+            }
+        }
+    }
+    &.radio-warning
+    {
+        input[type=radio]
+        {
+            &:checked + label:before
+            {
+                border-color: map-get($theme, 'palette', 'warning', 'main');
+            }
+            &:checked + label:after
+            {
+                background-color: map-get($theme, 'palette', 'warning', 'main');
+            }
+        }
+    }
+    &.radio-danger
+    {
+        input[type=radio]
+        {
+            &:checked + label:before
+            {
+                border-color: map-get($theme, 'palette', 'danger', 'main');
+            }
+            &:checked + label:after
+            {
+                background-color: map-get($theme, 'palette', 'danger', 'main');
+            }
+        }
+    }
+}

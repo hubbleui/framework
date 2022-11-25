@@ -1,0 +1,26 @@
+.help-danger,
+.help-warning
+{
+    overflow: hidden;
+    margin: 0;
+    font-weight: map-get($theme, 'typography', 'weights', 'bold');
+    max-height: 0;
+    transition: max-height map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+    font-size: map-get($theme, 'inputs', 'font-size') * 0.75;
+    font-style: italic;
+    line-height: 3.2rem;
+}
+.help-danger
+{
+    color: map-get($theme, 'palette', 'danger', 'main');
+}
+.help-warning
+{
+    color: map-get($theme, 'palette', 'warning', 'main');
+}
+.danger + .help-danger,
+.warning + .help-warning
+{
+    max-height: 50px;
+    transition: max-height map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+}

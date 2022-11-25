@@ -1,0 +1,117 @@
+// Message color variants
+.msg
+{
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: #323232;
+    border: none;
+    color: #ffffff;
+    
+    .msg-icon .glyph-icon
+    {
+       background-color: rgba(map-get($theme, 'palette', 'primary', 'main'), 0.3);
+       color: map-get($theme, 'palette', 'primary', 'main');
+    }
+    
+    // Layout
+    .msg-icon,
+    .msg-body,
+    .msg-btn
+    {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    // Message Icon
+    .msg-icon
+    {
+        text-align: center;
+        padding: 0 20px;
+        .glyph-icon
+        {
+            display: inline-block;
+            border-radius: 50%;
+            font-size: 16px;
+            width: 40px;
+            height: 40px;
+            line-height: 41px;
+        }
+    }
+
+    // Message Body
+    .msg-body
+    {
+        width: 10000px;
+        padding: 20px;
+
+        p
+        {
+            font-size: 1.4rem;
+            margin: 0;
+            a
+            {
+                color: rgba(0,0,0,0.3);
+                &:hover
+                {
+                    color: rgba(0,0,0,0.5);
+                }
+            }
+        }
+    }
+    .msg-btn
+    {
+        padding: 0 20px;
+        white-space: nowrap;
+    }
+    .msg-icon + .msg-body
+    {
+        padding: 30px 20px 30px 0px;
+    }
+    .msg-body + .msg-btn
+    {
+        padding-left: 0;
+    }
+
+    // Variants
+    &.msg-secondary
+    {
+        .msg-icon .glyph-icon
+        {
+            background-color: rgba(map-get($theme, 'palette', 'secondary', 'main'), 0.3);
+            color: map-get($theme, 'palette', 'secondary', 'main');
+        }
+    }
+    &.msg-info
+    {
+        .msg-icon .glyph-icon
+        {
+            background-color: rgba(map-get($theme, 'palette', 'info', 'main'), 0.3);
+            color: map-get($theme, 'palette', 'info', 'main');
+        }
+    }
+    &.msg-success
+    {
+        .msg-icon .glyph-icon
+        {
+            background-color: rgba(map-get($theme, 'palette', 'success', 'main'), 0.3);
+            color: map-get($theme, 'palette', 'success', 'main');
+        }
+    }
+    &.msg-warning
+    {
+        .msg-icon .glyph-icon
+        {
+            background-color: rgba(map-get($theme, 'palette', 'warning', 'main'), 0.3);
+            color: map-get($theme, 'palette', 'warning', 'main');
+        }
+    }
+    &.msg-danger
+    {
+        .msg-icon .glyph-icon
+        {
+           background-color: rgba(map-get($theme, 'palette', 'danger', 'main'), 0.3);
+           color: map-get($theme, 'palette', 'danger', 'main');
+        }
+    }
+}

@@ -1,0 +1,102 @@
+blockquote
+{
+    margin: 0 0 1em;
+    border-radius: 4px;
+    padding: 2rem;
+    color: map-get($theme, 'palette', 'text', 'primary');
+    background-color: darken(map-get($theme, 'palette', 'bodybg'), 5);
+
+    p
+    {
+    	padding: 0;
+    }
+    &.bq-danger,
+    &.bq-success,
+    &.bq-info,
+    &.bq-warning,
+    &.bq-primary,
+    &.bq-secondary
+    {
+        
+    	p
+        {
+    		color: rgba(0, 0, 0, 0.57);
+    	}
+    	a
+        {
+    		font-weight: map-get($theme, 'typography', 'weights', 'bold');
+    		color: rgba(0, 0, 0, 0.6);
+    	}
+        code,
+        pre
+        {
+            border: none;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.22);            
+        }
+    }
+    &.bq-danger
+    {
+    	background-color: lighten(map-get($theme, 'palette', 'danger', 'main'), 10);
+    }
+    &.bq-success
+    {
+    	background-color: lighten(map-get($theme, 'palette', 'success', 'main'), 10);
+    }
+    &.bq-info
+    {
+    	background-color: lighten(map-get($theme, 'palette', 'info', 'main'), 10);
+    }
+    &.bq-warning
+    {
+    	background-color: lighten(map-get($theme, 'palette', 'warning', 'main'), 10);
+    }
+    &.bq-primary
+    {
+        background-color: lighten(map-get($theme, 'palette', 'primary', 'main'), 10);
+    }
+    &.bq-secondary
+    {
+        background-color: lighten(map-get($theme, 'palette', 'secondary', 'main'), 10);
+    }
+    >:last-child
+    {
+        margin-bottom: 0;
+    }
+
+    > footer:before{
+        content: '\2014 \00A0';
+    }
+
+    > footer
+    {
+        display: block;
+        font-size: 85%;
+        line-height: 1.42857143;
+        color: map-get($theme, 'palette', '_gray', 800);
+    }
+
+    &.bq-danger,
+    &.bq-success,
+    &.bq-info,
+    &.bq-warning,
+    &.bq-primary,
+    &.bq-secondary
+    {
+       > footer
+        {
+            color: rgba(0, 0, 0, 0.8);
+        }
+    }
+}
+
+.dark-mode blockquote:not([class])
+{
+    color: map-get($theme, 'palette', 'dark-mode', 'text', 'primary');
+    background-color: lighten(map-get($theme, 'palette', 'dark-mode', 'bodybg'), 10);
+
+    > footer
+    {
+        color: map-get($theme, 'palette', 'dark-mode', 'text', 'secondary');
+    }
+}

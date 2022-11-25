@@ -1,0 +1,47 @@
+// Raised
+.raised-1
+{
+    box-shadow: map-get($theme, 'paper', 'one', 'base');
+    transition: box-shadow map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+    &:hover,
+    &:focus
+    {
+        box-shadow: map-get($theme, 'paper', 'one', 'hover');
+    }
+    &:active
+    {
+        box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%)
+    }
+}
+.raised-2
+{
+    box-shadow: map-get($theme, 'paper', 'two', 'base');
+    transition: box-shadow map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+    &:hover,
+    &:focus
+    {
+        box-shadow: map-get($theme, 'paper', 'two', 'hover');
+    }
+    &:active
+    {
+        box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%)
+    }
+}
+.raised-3
+{
+    box-shadow: map-get($theme, 'paper', 'three', 'base');
+    transition: box-shadow map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+    &:hover,
+    &:focus
+    {
+        box-shadow: map-get($theme, 'paper', 'three', 'hover');
+    }
+    &:active
+    {
+        box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%)
+    }
+}
+.flat
+{
+    box-shadow: none !important;
+}

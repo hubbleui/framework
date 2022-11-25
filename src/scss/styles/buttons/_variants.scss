@@ -1,0 +1,126 @@
+// Color variants
+.btn
+{
+    @include button(map-get($theme, 'buttons', 'color'), map-get($theme, 'buttons', 'bg'));
+}
+.dark-mode .btn:not([class*='btn-'])
+{
+    @include button(map-get($theme, 'palette', 'dark-mode', 'text', 'primary'), _lighten(map-get($theme, 'palette', 'dark-mode', 'bodybg'), 30));
+}
+.btn-primary
+{
+    @include button(map-get($theme, 'palette', '_white'), map-get($theme, 'palette', 'primary', 'main'));
+}
+.btn-secondary
+{
+    @include button(map-get($theme, 'palette', '_white'), map-get($theme, 'palette', 'secondary', 'main'));
+}
+.btn-success
+{
+    @include button(map-get($theme, 'palette', '_white'), map-get($theme, 'palette', 'success', 'main'));
+}
+.btn-info
+{
+    @include button(map-get($theme, 'palette', '_white'), map-get($theme, 'palette', 'info', 'main'));
+}
+.btn-warning
+{
+    @include button(map-get($theme, 'palette', '_white'), map-get($theme, 'palette', 'warning', 'main'));
+}
+.btn-danger
+{
+    @include button(map-get($theme, 'palette', '_white'), map-get($theme, 'palette', 'danger', 'main'));
+}
+.btn-white
+{
+    @include button(map-get($theme, 'palette', '_black'), map-get($theme, 'palette', '_white'));
+}
+.btn-black
+{
+    @include button(map-get($theme, 'palette', '_white'), map-get($theme, 'palette', '_black'));
+}
+.btn-on-primary
+{
+    @include button(#fff, rgba(#000, 0.4));
+}
+
+// Outline variants
+.btn-outline
+{
+    @include button-outline(map-get($theme, 'palette', '_gray', 600));
+}
+.dark-mode .btn-outline
+{
+    @include button-outline(map-get($theme, 'palette', 'dark-mode', 'text', 'primary'));
+}
+.btn-primary.btn-outline
+{
+    @include button-outline(map-get($theme, 'palette', 'primary', 'main'));
+}
+.btn-secondary.btn-outline
+{
+    @include button-outline(map-get($theme, 'palette', 'secondary', 'main'));
+}
+.btn-success.btn-outline
+{
+    @include button-outline(map-get($theme, 'palette', 'success', 'main'));
+}
+.btn-info.btn-outline
+{
+    @include button-outline(map-get($theme, 'palette', 'info', 'main'));
+}
+.btn-warning.btn-outline
+{
+    @include button-outline(map-get($theme, 'palette', 'warning', 'main'));
+}
+.btn-danger.btn-outline
+{
+    @include button-outline(map-get($theme, 'palette', 'danger', 'main'));
+}
+.btn-on-primary.btn-outline
+{
+    @include button-outline(#fff);
+}
+
+// Pure variants
+.btn-pure
+{
+    @include button-pure(map-get($theme, 'palette', '_gray', 600));
+}
+.dark-mode .btn-pure
+{
+    @include button-pure(map-get($theme, 'palette', 'dark-mode', 'text', 'primary'));
+}
+.btn-primary.btn-pure
+{
+    @include button-pure(map-get($theme, 'palette', 'primary', 'main'));
+}
+.btn-secondary.btn-pure
+{
+    @include button-pure(map-get($theme, 'palette', 'secondary', 'main'));
+}
+.btn-success.btn-pure
+{
+    @include button-pure(map-get($theme, 'palette', 'success', 'main'));
+}
+.btn-info.btn-pure
+{
+    @include button-pure(map-get($theme, 'palette', 'info', 'main'));
+}
+.btn-warning.btn-pure
+{
+    @include button-pure(map-get($theme, 'palette', 'warning', 'main'));
+}
+.btn-danger.btn-pure
+{
+    @include button-pure(map-get($theme, 'palette', 'danger', 'main'));
+}
+.btn-on-primary.btn-pure
+{
+    @include button-pure(map-get($theme, 'palette', '_white'));
+    &:hover,
+    &.hover
+    {
+        background-color: rgba(map-get($theme, 'palette', '_white'), 0.1);
+    }
+}

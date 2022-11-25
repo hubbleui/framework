@@ -1,0 +1,71 @@
+// Fonts
+.sans-serif   { font-family: map-get($theme, 'typography', 'fonts', 'sans') }
+.monospace    { font-family: map-get($theme, 'typography', 'fonts', 'monospace') }
+.serif        { font-family: map-get($theme, 'typography', 'fonts', 'serif') }
+.heading-font { font-family: map-get($theme, 'typography', 'fonts', 'headings') }
+
+// Font Weights
+.font-lightest { font-weight: map-get($theme, 'typography', 'weights', 'lightest') }
+.font-light    { font-weight: map-get($theme, 'typography', 'weights', 'light') }
+.font-normal   { font-weight: map-get($theme, 'typography', 'weights', 'normal') }
+.font-bold     { font-weight: map-get($theme, 'typography', 'weights', 'bold') }
+.font-bolder   { font-weight: map-get($theme, 'typography', 'weights', 'bolder') }
+.font-boldest  { font-weight: map-get($theme, 'typography', 'weights', 'boldest') }
+
+// Font Styles
+.text-normal    { font-style: normal; }
+.text-italic    { font-style: italic; }
+.text-ellipses  { @include _ellipsis(); }
+.text-strike    { text-decoration: line-through; }
+
+// Text Modifications
+.uppercase  { text-transform: uppercase; }
+.lowercase  { text-transform: lowercase; }
+.capitalize { text-transform: capitalize; }
+.no-text-decoration { text-decoration: none; }
+
+// Text Alignments
+.text-left    { text-align: left; }
+.text-right   { text-align: right; }
+.text-center  { text-align: center; }
+.text-justify { text-align: justify; }
+
+// Text colors
+.text-black   { color: #000; }
+.text-warning { color: map-get($theme, 'palette', 'warning', 'main') }
+.text-info    { color: map-get($theme, 'palette', 'info', 'main')    }
+.text-danger  { color: map-get($theme, 'palette', 'danger', 'main')  }
+.text-success { color: map-get($theme, 'palette', 'success', 'main') }
+.text-muted   { color:  map-get($theme, 'palette', '_gray', 400)   }
+
+// Misc
+.nowrap       { white-space: nowrap; }
+
+// Responsive text
+@include media-breakpoint-down(md)
+{
+	h1.responsive, .h1.responsive
+	{ 
+	    font-size: _minusPercent(map-get($theme, 'typography', 'h1', 'size'), 20);
+	}
+	h2.responsive, .h2.responsive
+	{ 
+	    font-size: _minusPercent(map-get($theme, 'typography', 'h2', 'size'), 20);
+	}
+	h3.responsive, .h3.responsive
+	{ 
+	    font-size: _minusPercent(map-get($theme, 'typography', 'h3', 'size'), 20);
+	}
+	h4.responsive, .h4.responsive
+	{ 
+	    font-size: _minusPercent(map-get($theme, 'typography', 'h4', 'size'), 20);
+	}
+	h5.responsive, .h5.responsive
+	{ 
+	    font-size: _minusPercent(map-get($theme, 'typography', 'h5', 'size'), 20);
+	}
+	h6.responsive, .h6.responsive
+	{ 
+	    font-size: _minusPercent(map-get($theme, 'typography', 'h6', 'size'), 20);
+	}
+}

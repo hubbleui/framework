@@ -1,0 +1,31 @@
+// Box shadows 
+.shadow-out  		    { box-shadow: map-get($theme, 'paper', 'one', 'base') }
+.shadow-in   		    { box-shadow: map-get($theme, 'paper', 'inset') }
+
+// South borders
+.border-s-gray-dark     { border-bottom: 1px solid map-get($theme, 'palette', '_gray', 800) }
+.border-s-gray          { border-bottom: 1px solid map-get($theme, 'palette', '_gray', 600) }
+.border-s-gray-light    { border-bottom: 1px solid map-get($theme, 'palette', '_gray', 400) }
+.border-s-gray-lighter  { border-bottom: 1px solid map-get($theme, 'palette', '_gray', 300) }
+.border-s-gray-lightest { border-bottom: 1px solid map-get($theme, 'palette', '_gray', 100) }
+
+// North borders
+.border-n-gray-dark     { border-top: 1px solid map-get($theme, 'palette', '_gray', 800) }
+.border-n-gray          { border-top: 1px solid map-get($theme, 'palette', '_gray', 600) }
+.border-n-gray-light    { border-top: 1px solid map-get($theme, 'palette', '_gray', 400) }
+.border-n-gray-lighter  { border-top: 1px solid map-get($theme, 'palette', '_gray', 300) }
+.border-n-gray-lightest { border-top: 1px solid map-get($theme, 'palette', '_gray', 100) }
+
+// East borders
+.border-e-gray-dark     { border-right: 1px solid map-get($theme, 'palette', '_gray', 800) }
+.border-e-gray          { border-right: 1px solid map-get($theme, 'palette', '_gray', 600) }
+.border-e-gray-light    { border-right: 1px solid map-get($theme, 'palette', '_gray', 400) }
+.border-e-gray-lighter  { border-right: 1px solid map-get($theme, 'palette', '_gray', 300) }
+.border-e-gray-lightest { border-right: 1px solid map-get($theme, 'palette', '_gray', 100) }
+
+// West borders
+.border-w-gray-dark     { border-left: 1px solid map-get($theme, 'palette', '_gray', 800) }
+.border-w-gray          { border-left: 1px solid map-get($theme, 'palette', '_gray', 600) }
+.border-w-gray-light    { border-left: 1px solid map-get($theme, 'palette', '_gray', 400) }
+.border-w-gray-lighter  { border-left: 1px solid map-get($theme, 'palette', '_gray', 300) }
+.border-w-gray-lightest { border-left: 1px solid map-get($theme, 'palette', '_gray', 100) }

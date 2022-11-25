@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark-mode">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -247,16 +247,16 @@
                         <hr>
                         <ul class="list-bullet">
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Example</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="example" data-waypoint-speed="400">Example</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="direction" data-waypoint-speed="500">Direction</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="direction" data-waypoint-speed="500">Direction</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="carets" data-waypoint-speed="600">Carets</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="carets" data-waypoint-speed="600">Carets</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="arrows" data-waypoint-speed="700">Arrows</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="arrows" data-waypoint-speed="700">Arrows</a>
                             </li>
                         </ul>
                         <hr>
@@ -786,6 +786,109 @@
 </div>
 -->
 </code></pre> </div>
+
+<hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="menus">
+                            <h2>Menus</h2>
+                            <p>To highlight or set an menu item, add the <code>.selected</code> class to a list item.</p>
+                          
+                            <div class="code-content-example">
+                                <div class="container-fuid">
+                                    <div class="drop-container">
+                                        <button type="button" class="btn btn-default btn-dropdown js-drop-trigger">Show menu</button>
+                                        <div class="drop-menu drop-sw raised">
+                                            <div class="drop">
+                                                <ul>
+                                                    <li class="drop-header">Examples</li>
+                                                    <li>
+                                                        <a href="#" title="">Menu 1</a>
+                                                    </li>
+                                                    <li class="selected">
+                                                        <a href="#" title="">.selected</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" title="">Menu 3</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    <li>
+                                                        <a href="#" title="">More 1</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" title="">More 2</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<div class="drop-container">
+    <button type="button" class="btn btn-default btn-dropdown js-drop-trigger">
+        Dropdown trigger
+    </button>
+    <div class="drop-menu drop-sw raised">
+        <div class="drop">
+            <ul>
+                ...
+                <li class="selected"><a href="#" title="">Menu 2</a></li>
+                ...
+            </ul>
+        </div>
+    </div>
+</div>
+-->
+</code></pre> </div>
+
+<hr>
+
+<div class="row roof-xs floor-xs" data-waypoint="selectable">
+                            <h2>Selectable</h2>
+                            <p>To make a dropdown function as selectable menu, add the <code>.js-selectable</code> class to the trigger button.</p>
+                            <blockquote><p>Optionally add a hidden input inside the <code>.drop-container</code> wrapper element and add a <code>data-value</code> to the anchor links to pass values.</p></blockquote>
+                            <div class="code-content-example">
+                                <div class="container-fuid">
+                                    <div class="drop-container">
+                                        <input type="hidden" name="select_menu" value="">
+                                        <button type="button" class="btn btn-default btn-dropdown js-drop-trigger js-selectable">Choose something</button>
+                                        <div class="drop-menu drop-sw raised">
+                                            <div class="drop">
+                                                <ul>
+                                                    <li class="drop-header">Countries</li>
+                                                    <li>
+                                                        <a href="#" data-value="AUS">Australia</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" data-value="NZ">New Zealand</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" data-value="USA">United States</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<div class="drop-container">
+    <button type="button" class="btn btn-default btn-dropdown js-drop-trigger">
+        Dropdown trigger
+    </button>
+    <div class="drop-menu drop-sw raised">
+        <div class="drop">
+            <ul>
+                ...
+                <li class="selected"><a href="#" title="">Menu 2</a></li>
+                ...
+            </ul>
+        </div>
+    </div>
+</div>
+-->
+</code></pre> </div>
+
                         <hr> </article>
                 </div>
             </div>

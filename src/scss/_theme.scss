@@ -1,0 +1,369 @@
+$htmlFontSize: 1.45rem !default;
+
+$theme :
+(
+    border-radius : 4px,
+    transition    :
+    (
+        easing : cubic-bezier(.4,0,1,1),
+        time   : 0.25s
+    ),
+    spacing:
+    (
+        xxs : 0.5rem,
+        xs  : 1.5rem,
+        sm  : 3.0rem,
+        md  : 4.5rem,
+        lg  : 6.0rem,
+        xl  : 8.0rem,
+    ),
+    container:
+    (
+        breakpoints:
+        (
+            xs: 0,
+            sm: 576px,
+            md: 768px,
+            lg: 992px,
+            xl: 1200px,
+        ),
+        gutters:
+        (
+            xxs : 0.5rem,
+            xs  : 1.5rem,
+            sm  : 3.0rem,
+            md  : 3.0rem,
+            lg  : 3.0rem,
+            xl  : 3.0rem,
+        ),
+    ),
+    grid:
+    (
+        gutters:
+        (
+            xxs : 0.5rem,
+            xs  : 1.5rem,
+            sm  : 2.0rem,
+            md  : 2.5rem,
+            lg  : 3.0rem,
+            xl  : 3.5rem,
+        ),
+        vgutters:
+        (
+            xxs : 0.5rem,
+            xs  : 1.5rem,
+            sm  : 3.0rem,
+            md  : 6.0rem,
+            lg  : 8.0rem,
+            xl  : 10.0rem,
+        ),
+    ),
+    paper:
+    (
+        one:
+        (
+            base   : (0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)),
+            hover  : (0px 2px 4px -1px rgb(0 0 0 / 10%), 0px 4px 5px 0px rgb(0 0 0 / 12%), 0px 1px 10px 0px rgb(0 0 0 / 6%)),
+        ),
+        two:
+        (
+            base   : (0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)),
+            hover  : (0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%)),
+        ),
+        three:
+        (
+            base  : (rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px),
+            hover : (0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)),
+        ),
+        inset : inset 0 5px 8px -2px rgba(0,0,0,.13),
+    ),
+
+    typography:
+    (
+        html-font-size   : $htmlFontSize,
+        html-line-height : 1.8,
+        font-smoothing   : true,
+
+        fonts:
+        (
+            body       : (system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif),
+            headings   : (system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif),
+            sans       : (system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif),
+            serif      : (Georgia, 'Times New Roman', Times, serif),
+            monospace  : (Menlo, Monaco, Consolas, 'Courier New', monospace),
+        ),
+        weights:
+        (
+            lightest: 100,
+            light:    300,
+            normal:   400,
+            bold:     500,
+            bolder:   800,
+            boldest:  900,
+        ),
+
+        h1:
+        (
+            size         : 3.8rem,
+            weight       : 400,
+            line-height  : 4rem,
+        ),
+        h2:
+        (
+            size         : 3.6rem,
+            weight       : 400,
+            line-height  : 3.8rem,
+        ),
+        h3:
+        (
+            size         : 3.4rem,
+            weight       : 400,
+            line-height  : 3.6rem,
+        ),
+        h4:
+        (
+            size         : 2.9rem,
+            weight       : 400,
+            line-height  : 3.2rem,
+        ),
+        h5:
+        (
+            size         : 2.1rem,
+            weight       : 400,
+            line-height  : 2.5rem,
+        ),
+        h6:
+        (
+            size        : $htmlFontSize,
+            weight      : 400,
+            line-height : 1.8,
+        ),
+
+        // Paragraph sizes
+        p1:
+        (
+            size         : 3.6rem,
+            weight       : 400,
+            line-height  : 3.8rem,
+        ),
+        p2:
+        (
+            size         : 2.9rem,
+            weight       : 400,
+            line-height  : 3.2rem,
+        ),
+        p3:
+        (
+            size         : 2.5rem,
+            weight       : 400,
+            line-height  : 2.75rem,
+        ),
+        p4:
+        (
+            size         : 2.1rem,
+            weight       : 400,
+            line-height  : 2.35rem,
+        ),
+        p5:
+        (
+            size         : 1.8rem,
+            weight       : 400,
+            line-height  : 1.95rem,
+        ),
+        p6:
+        (
+            size         : $htmlFontSize,
+            weight       : 400,
+            line-height  : 1.8
+        )
+    ),
+    palette:
+    (
+        dark-mode :
+        (
+            bodybg : #1c1c1c,
+            text   :
+            (
+                primary   : #ffffff,
+                secondary : #bdbdbd,
+                disabled  : #424242,
+            )
+        ),
+        _black   : #000000,
+        _white   : #ffffff,
+        bodybg   : #fafafa,
+        primary  :
+        (
+            main  : #ff007e,
+            light : #ff007e,
+            dark  : #ff007e,
+            contrastText : #ffffff
+        ),
+        secondary:
+        (
+            main  : #01aef0,
+            light : #01aef0,
+            dark  : #01aef0,
+            contrastText : #ffffff
+        ),
+        success:
+        (
+            main  : #33df73,
+            light : #62dc90,
+            dark  : #40dc7a,
+            contrastText : #ffffff
+        ),
+        info:
+        (
+            main  : #33a6ff,
+            light : #33a6ff,
+            dark  : #33a6ff,
+            contrastText : #ffffff
+        ),
+        warning:
+        (
+            main  : #ffd800,
+            light : #ffd800,
+            dark  : #ffd800,
+            contrastText : #ffffff
+        ),
+        danger:
+        (
+            main  : #ff0042,
+            light : #ff0042,
+            dark  : #ff0042,
+            contrastText : #ffffff
+        ),
+        _gray:
+        (
+            50  : #fafafa, 
+            100 : #f5f5f5,
+            200 : #eeeeee,
+            300 : #e0e0e0,
+            400 : #bdbdbd,
+            500 : #9e9e9e,
+            600 : #757575,
+            700 : #616161,
+            800 : #424242,
+            900 : #212121,
+        ),
+        text:
+        (
+            primary   : rgba(0, 0, 0, 0.8),
+            secondary : rgba(0, 0, 0, 0.6),
+            disabled  : rgba(0, 0, 0, 0.38),
+        )
+    ),
+    buttons:
+    (
+        uppercase   : true,
+        font-size   : 12px,
+        font-weight : 400,
+        color       : #212121,
+        bg          : #bdbdbd,
+        spacing     : 0.25px,
+        padding     :
+        (
+            x : 16px,
+            y : 12px,
+            xs :
+            (
+                x : 12px,
+                y : 8px,
+            ),
+            sm :
+            (
+                x : 14px,
+                y : 10px,
+            ),
+            lg :
+            (
+                x : 18px,
+                y : 14px,
+            ),
+            xl :
+            (
+                x : 20px,
+                y : 16px,
+            )
+        ),
+        circle:
+        (
+            font-size : 2.0rem,
+            size      : 16px
+        ),
+        icon:
+        (
+            font-size : 1.6rem,
+        )
+    ),
+    card:
+    (
+        bg      : #ffffff,
+        img-bg  : #f5f5f5,
+        padding : 
+        (
+            x : 10px,
+            y : 0px
+        )
+    ),
+    dropdown:
+    (
+        bg        : #ffffff,
+        font-size : 12px,
+        width     : 160px,
+        height    : 300px,
+
+    ),
+    popover:
+    (
+        bg        : #ffffff,
+        font-size : 12px,
+        width     : 270px,
+        height    : 300px,
+    ),
+    badge:
+    (
+        size      : 20px,
+        font-size : 1.2rem
+    ),
+    drawer:
+    (
+        widh: 540px,
+    ),
+    label:
+    (
+        size: 10px,
+    ),
+    status:
+    (
+        size: 10px,
+    ),
+    tables:
+    (
+        font-size : 1.3rem,
+        bg        : transparent,
+        color     : inherit,
+        padding   :
+        (
+            x : 12px,
+            y : 18px
+        )
+    ),
+    inputs:
+    (
+        font-size     : 14px,
+        size          : 56px,
+        checkbox-size : 20px,
+        radio-size    : 24px,
+    ),
+    zindex:
+    (
+        tooltip      : 100,
+        popover      : 200,
+        dropdown     : 300,
+        drawer       : 400,
+        notification : 500,
+        modal        : 600,
+    ),
+) !default;

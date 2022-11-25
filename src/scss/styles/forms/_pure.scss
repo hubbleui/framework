@@ -1,0 +1,116 @@
+// Pure
+$label-y-pure: ceil(map-get($theme, 'inputs', 'size') / 3);
+
+.form-field-pure
+{
+    position: relative;
+
+    @include _inputs
+    {
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: 0;
+        background-color: transparent;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+    }
+    label
+    {
+        left: 0;
+        transform: translateY(-$label-y-pure);
+    }
+
+    &:before
+    {
+        content: "";
+        bottom: 0;
+        height: 2px;
+        width: 0;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        position: absolute;
+        transition: width map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+    }
+
+    // Focus / not empty
+    &.focus,
+    &:focus-within,
+    &.not-empty
+    {
+        &:before
+        {
+            width: 100%;
+            transition: width map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+        }
+        label
+        {
+            transform: translateY(-$label-y) scale(0.8);
+        }
+    }
+    &.disabled
+    {
+        background-color: transparent !important;
+    }
+}
+
+// Pure
+.form-field-pure
+{
+    /* @include _formfieldPure(map-get($theme, 'palette', '_gray', 900), map-get($theme, 'palette', '_gray', 600), map-get($theme, 'palette', 'info', 'main'), lighten(map-get($theme, 'palette', 'bodybg')-dm, 20)); */
+}
+
+// Darkmode
+.dark-mode .form-field-pure
+{
+    /* @include _formfieldPure(map-get($theme, 'palette', '_white'), lighten(map-get($theme, 'palette', 'bodybg')-dm, 40), map-get($theme, 'palette', 'info', 'main'), lighten(map-get($theme, 'palette', 'bodybg')-dm, 20)); */
+}
+
+// States
+.form-field-pure,
+.dark-mode .form-field-pure
+{
+    // Danger / warning
+    &.danger,
+    &.danger.focus,
+    &.danger:focus-within
+    {
+        @include _inputs
+        {
+            border-color: map-get($theme, 'palette', 'danger', 'main');
+            box-shadow: none;
+        }
+        label
+        {
+            color: map-get($theme, 'palette', 'danger', 'main');
+        }
+       
+        &:before
+        {
+            background-color: map-get($theme, 'palette', 'danger', 'main');
+        }
+    }
+    &.warning,
+    &.warning.focus,
+    &.warning:focus-within
+    {
+        @include _inputs
+        {
+            border-color: map-get($theme, 'palette', 'warning', 'main');
+            box-shadow: none;
+        }
+        label
+        {
+            color: map-get($theme, 'palette', 'warning', 'main');
+        }
+        
+        &:before
+        {
+            background-color: map-get($theme, 'palette', 'warning', 'main');
+        }
+    }
+}
+

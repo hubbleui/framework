@@ -1,0 +1,27 @@
+// Resets
+.margin-center 		  { margin: 0 auto }
+.no-margin 	   		  { margin: 0 }
+
+// sm
+.margin-sm-n          { margin-top: map-get($theme, 'spacing' 'sm') }
+.margin-sm-e          { margin-right: map-get($theme, 'spacing' 'sm') }
+.margin-sm-s          { margin-bottom: map-get($theme, 'spacing' 'sm') }
+.margin-sm-w          { margin-left: map-get($theme, 'spacing' 'sm') }
+
+// md
+.margin-md-n          { margin-top: map-get($theme, 'spacing' 'md') }
+.margin-md-e          { margin-right: map-get($theme, 'spacing' 'md') }
+.margin-md-s          { margin-bottom: map-get($theme, 'spacing' 'md') }
+.margin-md-w          { margin-left: map-get($theme, 'spacing' 'md') }
+
+// lg
+.margin-lg-n          { margin-top: map-get($theme, 'spacing' 'lg') }
+.margin-lg-e          { margin-right: map-get($theme, 'spacing' 'lg') }
+.margin-lg-s          { margin-bottom: map-get($theme, 'spacing' 'lg') }
+.margin-lg-w          { margin-left: map-get($theme, 'spacing' 'lg') }
+
+// xl
+.margin-xl-n          { margin-top: map-get($theme, 'spacing' 'xl') }
+.margin-xl-e          { margin-right: map-get($theme, 'spacing' 'xl') }
+.margin-xl-s          { margin-bottom: map-get($theme, 'spacing' 'xl') }
+.margin-xl-w          { margin-left: map-get($theme, 'spacing' 'xl') }

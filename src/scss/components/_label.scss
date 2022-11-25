@@ -1,0 +1,169 @@
+// Labels
+.label
+{
+    text-align: center;
+    border-radius: map-get($theme, 'border-radius');
+    display: inline;
+    background-color: map-get($theme, 'palette', '_gray', 600);
+    color: #fff;
+    font-size:  map-get($theme, 'label', 'font-size');
+    padding: (map-get($theme, 'label', 'size') * 0.3) (map-get($theme, 'label', 'size') - 1);
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: baseline;
+    &:hover
+    {
+        text-decoration: none;
+    }
+    .glyph-icon
+    {
+        line-height: 2;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    &.label-outline
+    {
+        background-color: transparent;
+        color: map-get($theme, 'palette', '_gray', 600);
+        border: 1px solid map-get($theme, 'palette', '_gray', 600);
+        &:hover
+        {
+            background-color: map-get($theme, 'palette', '_gray', 600);
+            border-color: map-get($theme, 'palette', '_gray', 600);
+            color: #fff;
+        }
+    }
+    &.label-primary
+    {
+        color: map-get($theme, 'palette', '_white');
+        background-color: map-get($theme, 'palette', 'primary', 'main');
+        &.label-outline
+        {
+            background-color: transparent;
+            color: map-get($theme, 'palette', 'primary', 'main');
+            border: 1px solid map-get($theme, 'palette', 'primary', 'main');
+            &:hover
+            {
+                color: map-get($theme, 'palette', '_white');
+                background-color: map-get($theme, 'palette', 'primary', 'main');
+            }
+        }
+    }
+    &.label-secondary
+    {
+        color: map-get($theme, 'palette', '_white');
+        background-color: map-get($theme, 'palette', 'secondary', 'main');
+        &.label-outline
+        {
+            background-color: transparent;
+            color: map-get($theme, 'palette', 'secondary', 'main');
+            border: 1px solid map-get($theme, 'palette', 'secondary', 'main');
+            &:hover
+            {
+                color: map-get($theme, 'palette', '_white');
+                background-color: map-get($theme, 'palette', 'secondary', 'main');
+            }
+        }
+    }
+    &.label-success
+    {
+        color: map-get($theme, 'palette', '_white');
+        background-color: map-get($theme, 'palette', 'success', 'main');
+        &.label-outline
+        {
+            background-color: transparent;
+            color: map-get($theme, 'palette', 'success', 'main');
+            border: 1px solid map-get($theme, 'palette', 'success', 'main');
+            &:hover
+            {
+                color: map-get($theme, 'palette', '_white');
+                background-color: map-get($theme, 'palette', 'success', 'main');
+            }
+        }
+    }
+    &.label-info
+    {
+        color: map-get($theme, 'palette', '_white');
+        background-color: map-get($theme, 'palette', 'info', 'main');
+        &.label-outline
+        {
+            background-color: transparent;
+            color: map-get($theme, 'palette', 'info', 'main');
+            border: 1px solid map-get($theme, 'palette', 'info', 'main');
+            &:hover
+            {
+                color: map-get($theme, 'palette', '_white');
+                background-color: map-get($theme, 'palette', 'info', 'main');
+            }
+        }
+    }
+    &.label-warning
+    {
+        color: map-get($theme, 'palette', '_white');
+        background-color: map-get($theme, 'palette', 'warning', 'main');
+        &.label-outline
+        {
+            background-color: transparent;
+            color: map-get($theme, 'palette', 'warning', 'main');
+            border: 1px solid map-get($theme, 'palette', 'warning', 'main');
+            &:hover
+            {
+                color: map-get($theme, 'palette', '_white');
+                background-color: map-get($theme, 'palette', 'warning', 'main');
+            }
+        }
+    }
+    &.label-danger
+    {
+        color: map-get($theme, 'palette', '_white');
+        background-color: map-get($theme, 'palette', 'danger', 'main');
+        &.label-outline
+        {
+            background-color: transparent;
+            color: map-get($theme, 'palette', 'danger', 'main');
+            border: 1px solid map-get($theme, 'palette', 'danger', 'main');
+            &:hover
+            {
+                color: map-get($theme, 'palette', '_white');
+                background-color: map-get($theme, 'palette', 'danger', 'main');
+            }
+        }
+    }
+}
+
+// Override hover colors for <a>
+a.label
+{
+    &:hover
+    {
+        color: #fff;
+    }
+    &.label-outline:hover
+    {
+        color: #fff;
+    }
+    &.label-primary.label-outline:hover
+    {
+        color: map-get($theme, 'palette', 'primary', 'main');
+    }
+    &.label-secondary.label-outline:hover
+    {
+        color: map-get($theme, 'palette', 'secondary', 'main');
+    }
+    &.label-success.label-outline:hover
+    {
+        color: map-get($theme, 'palette', 'success', 'main');
+    }
+    &.label-info.label-outline:hover
+    {
+        color: map-get($theme, 'palette', 'info', 'main');
+    }
+    &.label-warning.label-outline:hover
+    {
+        color: map-get($theme, 'palette', 'warning', 'main');
+    }
+    &.label-danger.label-outline:hover
+    {
+        color: map-get($theme, 'palette', 'danger', 'main');
+    }
+}

@@ -1,0 +1,21 @@
+// Brand
+.bg-primary      { background-color: map-get($theme, 'palette', 'primary', 'main')}
+.bg-secondary    { background-color: map-get($theme, 'palette', 'secondary', 'main')}
+
+// Greys
+.bg-gray-dark 	  { background-color: map-get($theme, 'palette', '_gray', 800)}
+.bg-gray 	 	  { background-color: map-get($theme, 'palette', '_gray', 600)}
+.bg-gray-light 	  { background-color: map-get($theme, 'palette', '_gray', 400)}
+.bg-gray-lighter  { background-color: map-get($theme, 'palette', '_gray', 300)}
+.bg-gray-lightest { background-color: map-get($theme, 'palette', '_gray', 100)}	
+
+// Accents
+.bg-success      { background-color: map-get($theme, 'palette', 'success', 'main') }							
+.bg-info         { background-color: map-get($theme, 'palette', 'info', 'main') }
+.bg-danger       { background-color: map-get($theme, 'palette', 'danger', 'main') }
+.bg-warning      { background-color: map-get($theme, 'palette', 'warning', 'main') }
+
+// Defaults
+.bg-transparent  { background-color: transparent }
+.bg-white        { background-color: #fff }
+.bg-black        { background-color: map-get($theme, 'palette', '_black') }

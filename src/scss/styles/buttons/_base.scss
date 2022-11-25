@@ -1,0 +1,159 @@
+// Universal styles
+.btn
+{
+    display: inline-block;
+    margin: 0;
+    font-weight: normal;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    border-radius: map-get($theme, 'border-radius');
+    font-size: map-get($theme, 'buttons', 'font-size');
+    line-height: map-get($theme, 'buttons', 'font-size');
+    font-weight: map-get($theme, 'buttons', 'font-weight');
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing'), color map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing'), box-shadow map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+    padding: map-get($theme, 'buttons', 'padding', 'y') map-get($theme, 'buttons', 'padding', 'x');
+    letter-spacing: map-get($theme, 'buttons', 'spacing');
+
+    @if map-get($theme, 'buttons', 'uppercase')
+    {
+        text-transform: uppercase;
+    }
+
+    // Raised
+    &.raised-2
+    {
+        @include raised(2);
+    }
+    &.raised-3
+    {
+        @include raised(3);
+    }
+
+    // Hover/active/focus resets
+    &:hover,
+    &.hover,
+    &:active,
+    &.active,
+    &:focus,
+    &.focus
+    {
+        text-decoration: none;
+        outline: none;
+    }
+
+    // Disabled
+    &:disabled,
+    &.disabled,
+    &:disabled:hover,
+    &.disabled.hover,
+    &:disabled:active,
+    &:disabled.active,
+    &:disabled:focus,
+    &.disabled.focus
+    {
+        box-shadow: none;
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    // Flat
+    &.flat
+    {
+        box-shadow: none;
+        &:hover,
+        &.hover,
+        &:active,
+        &.active,
+        &:focus,
+        &.focus
+        {
+            box-shadow: none;
+        }
+    }
+    .glyph-icon
+    {
+        font-size: map-get($theme, 'buttons', 'icon', 'font-size');
+        line-height: _minusPercent(map-get($theme, 'buttons', 'icon', 'font-size'), 20);
+        vertical-align: bottom;
+    }
+    .loading-spinner .path
+    {
+        stroke: map-get($theme, 'buttons', 'color');
+    }
+}
+
+// Sizes
+.btn-xs
+{
+    padding: map-get($theme, 'buttons', 'padding', 'xs', 'y') map-get($theme, 'buttons', 'padding', 'xs', 'x');
+}
+.btn-sm
+{
+    padding: map-get($theme, 'buttons', 'padding', 'sm', 'y') map-get($theme, 'buttons', 'padding', 'sm', 'x');
+}
+.btn-lg
+{
+    padding: map-get($theme, 'buttons', 'padding', 'lg', 'y') map-get($theme, 'buttons', 'padding', 'lg', 'x');
+}
+.btn-xl
+{
+    padding: map-get($theme, 'buttons', 'padding', 'xl', 'y') map-get($theme, 'buttons', 'padding', 'xl', 'x');
+}
+
+// Circle default and sizes 
+.btn-circle
+{
+    border-radius: 50%;
+    font-size: map-get($theme, 'buttons', 'circle', 'font-size');
+    padding: map-get($theme, 'buttons', 'circle', 'size');
+
+    &.btn-xs
+    {
+       padding: _minusPercent(map-get($theme, 'buttons', 'circle', 'size'), 40);
+    }
+    &.btn-sm
+    {
+        padding: _minusPercent(map-get($theme, 'buttons', 'circle', 'size'), 20);
+    }
+    &.btn-lg
+    {
+        padding: _addPercent(map-get($theme, 'buttons', 'circle', 'size'), 30);
+    }
+    &.btn-xl
+    {
+       padding: _addPercent(map-get($theme, 'buttons', 'circle', 'size'), 50);
+    }
+    .glyph-icon
+    {
+        line-height: normal;
+        line-height: initial;
+    }
+}
+
+// Block buttons
+.btn-block
+{
+    display: block;
+    width: 100%;
+}
+.btn-block + .btn-block
+{
+    margin-top: 5px;
+}
+
+// Override input buttons
+input[type="submit"],
+input[type="reset"],
+input[type="button"]
+{
+    &.btn-block
+    {
+        width: 100%;
+    }
+}

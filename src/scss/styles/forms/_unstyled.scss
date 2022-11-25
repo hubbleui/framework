@@ -1,0 +1,15 @@
+.input-unstyled
+{
+	border: none;
+	outline: none;
+	box-shadow: none;
+    margin: 0;
+	padding: 5px 0;
+	display: inline-block;
+    /* font-size: map-get($theme, 'inputs', 'font-size'); */
+    font-weight: map-get($theme, 'typography', 'weights', 'normal');
+    /* line-height: $input-line-height; */
+    color: map-get($theme, 'palette', '_gray', 900);
+    background-color: transparent;
+    transition: none
+}

@@ -1,0 +1,24 @@
+@function is_gray($color)
+{
+    $result: false;
+
+    @if $color == grayscale($color)
+    {
+        $result: true;
+    }
+
+    @return $result;
+}
+
+@function _lighten($color, $weight)
+{
+    @return mix(white, $color, $weight);
+}
+@function _darken($color, $weight)
+{
+    @return mix(black, $color, $weight);
+}
+@function shift-color($color, $weight)
+{
+    @return if($weight > 0, _darken($color, $weight), _lighten($color, -$weight));
+}

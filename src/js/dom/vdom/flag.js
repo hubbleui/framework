@@ -1,0 +1,19 @@
+const NODE_FLAG = 
+{
+    ELEMENT: 1,
+    TEXT: 2,
+    COMPONENT: 3,
+    FRAGMENT: 4,
+}
+
+const CHILD_FLAG =
+{
+    NO_CHILD: 1,
+    SINGLE_CHILD: 2,
+    NO_KEY_CHILD: 3,
+    KEY_CHILD: 4
+}
+
+CHILD_FLAG.MULTI_CHILD = CHILD_FLAG.NO_KEY_CHILD | CHILD_FLAG.KEY_CHILD;
+
+export { NODE_FLAG, CHILD_FLAG };

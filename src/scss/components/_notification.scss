@@ -1,0 +1,54 @@
+.notification-wrap
+{
+	position: fixed;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	display: none;
+	z-index: map-get($theme, 'zindex', 'notification');
+	bottom: 5px;
+    padding-left:  map-get($theme, 'container', 'gutters', 'xs');
+    padding-right: map-get($theme, 'container', 'gutters', 'xs');
+    width: 100%;
+    max-width: map-get($theme, 'container', 'breakpoints', 'xl');
+	
+	&.active
+	{
+		display: block;
+	}
+	.msg
+	{
+		cursor: pointer;
+		margin-bottom: 15px;
+		@include raised(3);
+	}
+}
+
+@include media-breakpoint-up(md)
+{
+	.notification-wrap
+	{
+		width: 450px;
+	}
+}
+@keyframes fadeInUp
+{
+	from
+  	{
+    	opacity: 0;
+    	transform: translate3d(0, 100%, 0);
+  	}
+
+  	to
+  	{
+    	opacity: 1;
+    	transform: translate3d(0, 0, 0);
+  	}
+}
+.animate-notif
+{
+	animation-duration: .3s;
+ 	animation-fill-mode: both;
+  	animation-name: fadeInUp;
+}
+

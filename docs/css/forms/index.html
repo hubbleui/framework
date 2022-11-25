@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark-mode">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -246,31 +246,34 @@
                         <hr>
                         <ul class="list-bullet">
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="types" data-waypoint-speed="400">Field types</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="types" data-waypoint-speed="400">Field types</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="addons" data-waypoint-speed="500">Input add ons</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="styles" data-waypoint-speed="500">Styles</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="states" data-waypoint-speed="800">Input states</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="addons" data-waypoint-speed="600">Input add ons</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="checkbox" data-waypoint-speed="900">Checkbox</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="states" data-waypoint-speed="800">Input states</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="radio" data-waypoint-speed="1000">Radio</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="checkbox" data-waypoint-speed="900">Checkbox</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="switch" data-waypoint-speed="1100">Switch</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="radio" data-waypoint-speed="1000">Radio</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="progress" data-waypoint-speed="1200">Progress</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="switch" data-waypoint-speed="1100">Switch</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="validation" data-waypoint-speed="1300">Validation</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="progress" data-waypoint-speed="1200">Progress</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="results" data-waypoint-speed="1400">Form results</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="validation" data-waypoint-speed="1300">Validation</a>
+                            </li>
+                            <li>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="results" data-waypoint-speed="1400">Form results</a>
                             </li>
                         </ul>
                         <hr>
@@ -364,6 +367,12 @@
                                             </div>
                                         </div>
                                         <div class="row floor-xs">
+                                            <div class="form-field row">
+                                                <textarea name="textarea" id="textarea" placeholder="Write a story..." rows="5"></textarea>
+                                                <label for="textarea">Textarea Input</label>
+                                            </div>
+                                        </div>
+                                        <div class="row floor-xs">
                                             <div class="form-field file-field js-file-field">
                                                 <input type="text" class="js-file-text file-text" placeholder="Choose a file">
                                                 <label for="file_input">Upload Input</label>
@@ -380,12 +389,7 @@
                                                 <label for="color">Color Input</label>
                                             </div>
                                         </div>
-                                        <div class="row floor-xs">
-                                            <div class="form-field row">
-                                                <textarea name="textarea" id="textarea" placeholder="Write a story..." rows="5"></textarea>
-                                                <label for="textarea">Textarea Input</label>
-                                            </div>
-                                        </div>
+                                        
                                         <button type="submit" class="btn btn-default">Submit</button>
                                     </form>
                                 </div>
@@ -398,72 +402,7 @@
 			<label>Text Input</label>
 		</div>
 	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="email" id="email" type="email" placeholder="john@exampe.com">
-			<label for="email">Email Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="tel" id="tel" type="tel" placeholder="+61 0400 043 043">
-			<label for="tel">Tel Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="password" id="password" type="password" placeholder="Use a secure passowrd">
-			<label for="password">Password Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="url" id="url" type="url" placeholder="www.example.com">
-			<label>Url Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="number" id="number" type="number" placeholder="44">
-			<label>Number Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="search" id="search" type="search" placeholder="e.g Shoes">
-			<label for="search">Search Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="date" id="date" type="date" placeholder="01/05/2001">
-			<label for="date">Date Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="datetime-local" id="datetime-local" type="datetime-local" placeholder="01/05/2001 4:15am">
-			<label for="datetime-local">Datetime Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="month" id="month" type="month" placeholder="June 2001">
-			<label>Month Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="week" id="week" type="week" placeholder="Week 12, 2003">
-			<label for="week">Week Input</label>
-		</div>
-	</div>
-	<div class="row floor-xs">
-		<div class="form-field row">
-			<input name="time" id="time" type="time" placeholder="11:01 am">
-			<label>Time Input</label>
-		</div>
-	</div>
+	...
 	<div class="row floor-xs">
 		<div class="form-field row">
 			<select name="select" id="select" placeholder="Choose something nice">
@@ -497,6 +436,67 @@
 </form>
 -->
 </code></pre> </div>
+                        <hr>
+                        <div class="row roof-xs foor-xs" data-waypoint="styles">
+                            <h2>Input styles</h2>
+                            <p> Add the <code>.form-field-pure</code> class to wrapper if you prefer a more minimal styled input</p>
+                            <div class="code-content-example">
+                                <div class="container-fuid">
+                                    <form class="row clearfix" style="width: 400px;">
+                                        <div class="row floor-xs">
+                                            <div class="form-field form-field-pure row">
+                                                <input name="text_pure" id="text_pure" type="text" placeholder="Enter some text...">
+                                                <label>Text Input</label>
+                                            </div>
+                                        </div>
+                                        <div class="row floor-xs">
+                                            <div class="form-field form-field-pure row">
+                                                <input name="datetime-local-pure" id="datetime-local-pure" type="datetime-local" placeholder="01/05/2001 4:15am">
+                                                <label for="datetime-local-pure">Datetime Input</label>
+                                            </div>
+                                        </div>
+                                        <div class="row floor-xs">
+                                            <div class="form-field form-field-pure row">
+                                                <select name="select_pure" id="select_pure" placeholder="Choose something nice">
+                                                    <option value="">Choose an option</option>
+                                                    <option value="Option 1">Option 1</option>
+                                                    <option value="Option 2">Option 2</option>
+                                                    <option value="Option 3">Option 3</option>
+                                                </select>
+                                                <label for="select_pure">Select Input</label>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="row floor-xs">
+        <div class="form-field form-field-pure row">
+            <input name="text" id="text" type="text" placeholder="Enter some text...">
+            <label>Text Input</label>
+        </div>
+    </div>
+    <div class="row floor-xs">
+        <div class="form-field form-field-pure row">
+            <input name="datetime-local" id="datetime-local" type="datetime-local" placeholder="01/05/2001 4:15am">
+            <label for="datetime-local">Datetime Input</label>
+        </div>
+    </div>
+    <div class="row floor-xs">
+        <div class="form-field form-field-pure row">
+            <select name="select" id="select" placeholder="Choose something nice">
+                <option value="">Choose an option</option>
+                <option value="Option 1">Option 1</option>
+                <option value="Option 2">Option 2</option>
+                <option value="Option 3">Option 3</option>
+            </select>
+            <label for="select">Select Input</label>
+        </div>
+    </div>
+</form>
+-->
+</code></pre></div>
                         <hr>
                         <div class="row roof-xs foor-xs" data-waypoint="addons">
                             <h2>Input addons</h2>
@@ -598,22 +598,59 @@
                         <hr>
                         <div class="row roof-xs foor-xs" data-waypoint="states">
                             <h2>Input states</h2>
-                            <p> Input states are styled with the psuedo classes <code>:focus, :disabled</code>, you may also use these as classnames <code>.focus, .disabled</code> </p>
+                            <p> Input states are managed via classnames on the <code>form-field</code> wrapper element. JavaScript handles these for you, however you can always add them manually should you need to. Use <code>.focus, .disabled, .danger, .warning</code> classes to set a custom state.</p>
                             <div class="code-content-example">
                                 <div class="container-fuid">
-                                    <form>
+                                    <form style="max-width:450px">
                                         <div class="row floor-xs">
-                                            <div class="form-field row">
-                                                <input name="text" id="text" type="text" placeholder="Enter some text..." disabled class="disabled">
+                                            <div class="form-field row disabled">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text..." disabled>
                                                 <label>Disabled</label>
                                             </div>
                                         </div>
                                         <div class="row floor-xs">
-                                            <div class="form-field row focus">
-                                                <input name="text" id="text" type="text" placeholder="Enter some text..." class="focus">
+                                            <div class="form-field form-field-pure row disabled">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text..." disabled>
+                                                <label>Disabled</label>
+                                            </div>
+                                        </div>
+                                        <div class="row floor-xs">
+                                            <div class="form-field row focus not-empty">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text..." value="Hello world!">
                                                 <label>Focus</label>
                                             </div>
                                         </div>
+                                        <div class="row floor-xs">
+                                            <div class="form-field form-field-pure row focus not-empty">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text..." value="Hello world!">
+                                                <label>Focus</label>
+                                            </div>
+                                        </div>
+                                        <div class="row floor-xs">
+                                            <div class="form-field row danger">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text...">
+                                                <label>Danger</label>
+                                            </div>
+                                        </div>
+                                        <div class="row floor-xs">
+                                            <div class="form-field form-field-pure row danger">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text...">
+                                                <label>Danger</label>
+                                            </div>
+                                        </div>
+                                        <div class="row floor-xs">
+                                            <div class="form-field row warning">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text...">
+                                                <label>Warning</label>
+                                            </div>
+                                        </div>
+                                        <div class="row floor-xs">
+                                            <div class="form-field form-field-pure row warning">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text...">
+                                                <label>Warning</label>
+                                            </div>
+                                        </div>
+
                                     </form>
                                 </div>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
@@ -631,6 +668,18 @@
 			<label>Focus</label>
 		</div>
 	</div>
+    <div class="row floor-xs">
+        <div class="form-field row danger">
+            <input name="text" id="text" type="text" placeholder="Enter some text..." class="focus">
+            <label>Danger</label>
+        </div>
+    </div>
+    <div class="row floor-xs">
+        <div class="form-field row warning">
+            <input name="text" id="text" type="text" placeholder="Enter some text..." class="focus">
+            <label>Warning</label>
+        </div>
+    </div>
 </form>
 -->
 </code></pre> </div>

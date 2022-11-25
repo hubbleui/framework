@@ -1,0 +1,48 @@
+.status
+{
+	width: map-get($theme, 'status', 'size');
+	height: map-get($theme, 'status', 'size');
+	display: inline-block;
+	border-radius: 50%;
+	background-color: map-get($theme, 'palette', '_gray', 600);
+	&.status-primary
+	{
+		background-color: map-get($theme, 'palette', 'primary', 'main');
+	}
+	&.status-info
+	{
+		background-color: map-get($theme, 'palette', 'info', 'main');
+	}
+	&.status-success
+	{
+		background-color: map-get($theme, 'palette', 'success', 'main');
+	}
+	&.status-warning
+	{
+		background-color: map-get($theme, 'palette', 'warning', 'main');
+	}
+	&.status-danger
+	{
+		background-color: map-get($theme, 'palette', 'danger', 'main');
+	}
+}
+.status-xs
+{
+	width:  _minusPercent(map-get($theme, 'status', 'size'), 30);
+	height: _minusPercent(map-get($theme, 'status', 'size'), 30);
+}
+.status-md
+{
+	width:  _addPercent(map-get($theme, 'status', 'size'), 30);
+	height: _addPercent(map-get($theme, 'status', 'size'), 30);
+}
+.status-lg
+{
+	width:  _addPercent(map-get($theme, 'status', 'size'), 50);
+	height: _addPercent(map-get($theme, 'status', 'size'), 50);
+}
+.status-xl
+{
+	width:  _addPercent(map-get($theme, 'status', 'size'), 100);
+	height: _addPercent(map-get($theme, 'status', 'size'), 100);
+}

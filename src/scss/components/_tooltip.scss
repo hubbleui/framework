@@ -1,0 +1,138 @@
+[data-tooltip]:after
+{
+  content: attr(data-tooltip) !important; 
+}
+.tooltipped
+{
+    position: relative;
+    overflow: visible !important;
+
+    // Basic setup
+    &:after
+    {
+        position: absolute;
+        display: none;
+        border-radius: map-get($theme, 'border-radius');
+        color: #fff;
+        font-size: 12px !important;
+        z-index: map-get($theme, 'zindex', 'tooltip');
+        padding: 2px 8px;
+        font-weight: 300;
+        line-height: 23px;
+        text-align: center;
+        text-decoration: none;
+        text-shadow: none;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: break-word;
+        white-space: pre;
+        pointer-events: none;
+        background-color: map-get($theme, 'palette', '_gray', 800);
+        zoom: 101%;
+        -webkit-font-smoothing: subpixel-antialiased;
+        @include raised(1);
+    }
+    &:before
+    {
+        position: absolute;
+        z-index: map-get($theme, 'zindex', 'tooltip');
+        display: none;
+        width: 0;
+        height: 0;
+        color: map-get($theme, 'palette', '_gray', 800);
+        pointer-events: none;
+        content: "";
+        border: 5px solid transparent;
+    }
+    &:hover:before,
+    &:hover:after
+    {
+        display: inline-block;
+        text-decoration: none;
+    }
+
+    &.tooltipped-s:after,
+    &.tooltipped-se:after,
+    &.tooltipped-sw:after
+    {
+        top: 100%;
+        margin-top: 10px;
+    }
+
+
+    // south
+    &.tooltipped-s:before
+    {
+        right: 50%;
+        margin-right: -5px;
+        
+    }
+    &.tooltipped-s:after
+    {
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    // south/north east
+    &.tooltipped-ne:before,
+    &.tooltipped-se:before
+    {
+        right: 6px;
+    }
+    &.tooltipped-ne:after,
+    &.tooltipped-se:after
+    {
+        right: 0px;
+    }
+
+    // south/north west
+    &.tooltipped-nw:before,
+    &.tooltipped-sw:before
+    {
+        left: 6px;
+    }
+    &.tooltipped-nw:after,
+    &.tooltipped-sw:after
+    {
+        left: 0px; 
+    }
+
+
+    &.tooltipped-n:after,
+    &.tooltipped-ne:after,
+    &.tooltipped-nw:after
+    {
+        bottom: 100%;
+        margin-bottom: 10px;
+    }
+
+    // north
+    &.tooltipped-n:before
+    {
+        right: 50%;
+        margin-right: -5px;
+    }
+    &.tooltipped-n:after
+    {
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    // East
+    &.tooltipped-e:after
+    {
+        bottom: 50%;
+        left: 100%;
+        margin-left: 5px;
+        margin-bottom: -12px;
+    }
+
+    // west
+    &.tooltipped-w:after
+    {
+        right: 100%;
+        bottom: 50%;
+        margin-right: 5px;
+        margin-bottom: -12px;
+    }
+}

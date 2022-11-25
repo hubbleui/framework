@@ -1,0 +1,20 @@
+.btn .loading-spinner
+{
+	$spinner-size: map-get($theme, 'buttons', 'padding', 'y') + map-get($theme, 'buttons', 'padding', 'y') + map-get($theme, 'buttons', 'font-size') / 2;
+	$spinner-top:  $spinner-size / 2;
+    display: none;
+    position: absolute;
+    top: 50%;
+    height: $spinner-size;
+    width: $spinner-size;
+    left: map-get($theme, 'buttons', 'padding', 'x') / 2;
+    margin-top:  -$spinner-top;
+}
+.btn.with-spinner.active
+{
+    padding-left: map-get($theme, 'buttons', 'padding', 'x') * 3;
+}
+.btn.active .loading-spinner
+{
+    display: inline-block;
+}

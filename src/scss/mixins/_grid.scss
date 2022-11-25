@@ -1,0 +1,52 @@
+// Breakpoints
+@mixin media-breakpoint-up($name)
+{
+	$width: map-get($theme, 'container', 'breakpoints', $name);
+
+	@if $width
+    {
+		@media (min-width: $width)
+        {
+			@content;
+		}
+	}
+	@else
+    {
+		@media (min-width: $name)
+        {
+            @content;
+        }
+	}
+}
+@mixin media-breakpoint-down($name)
+{
+  	$width: map-get($theme, 'container', 'breakpoints', $name);
+    
+	@if $width
+    {
+		@media (max-width: $width)
+        {
+			@content;
+		}
+	}
+	@else
+    {
+        @media (max-width: $name)
+        {
+            @content;
+        }
+	}
+}
+
+// Retina
+@mixin media-retina($ratio : 1.25)
+{
+    @media only screen and (-o-min-device-pixel-ratio: $ratio),
+       only screen and (-webkit-min-device-pixel-ratio: $ratio),
+       only screen and (min--moz-device-pixel-ratio: $ratio),
+       only screen and (min-device-pixel-ratio: $ratio),
+       only screen and (min-resolution: #{$ratio}dppx)
+    {
+        @content;
+    }
+}

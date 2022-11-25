@@ -1,0 +1,60 @@
+// Spinner keyframes
+@keyframes loadingrotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes loadingdash {
+    0% {
+        stroke-dasharray: 1,200;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 150,200;
+        stroke-dashoffset: -50;
+    }
+
+    100% {
+        stroke-dasharray: 150,200;
+        stroke-dashoffset: -185;
+    }
+}
+
+// Spinner defaults
+.loading-spinner {
+    animation: loadingrotate 2s linear infinite;
+    height: 64px;
+    width: 65px;
+}
+.loading-spinner .path {
+    stroke-dasharray: 1,200;
+    stroke-dashoffset: 0;
+    -webkit-animation: loadingdash 1.5s ease-in-out infinite;
+    animation: loadingdash 1.5s ease-in-out infinite;
+    stroke-linecap: round;
+    stroke: #76838f;
+}
+
+
+.spinner-default .path {
+    stroke: map-get($theme, 'palette', '_gray', 600);
+}
+.spinner-primary .path {
+    stroke: map-get($theme, 'palette', 'primary', 'main');
+}
+.spinner-secondary .path {
+    stroke: map-get($theme, 'palette', 'secondary', 'main');
+}
+.spinner-success .path {
+    stroke: map-get($theme, 'palette', 'success', 'main');
+}
+.spinner-info .path {
+    stroke: map-get($theme, 'palette', 'info', 'main');
+}
+.spinner-warning .path {
+    stroke: map-get($theme, 'palette', 'warning', 'main');
+}
+.spinner-danger .path {
+    stroke: map-get($theme, 'palette', 'danger', 'main');
+}

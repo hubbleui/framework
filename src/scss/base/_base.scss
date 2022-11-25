@@ -1,0 +1,76 @@
+// universal box sizing fix
+// https://css-tricks.com/box-sizing/
+*,:after,:before
+{
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+// html font size at 62.5% allows for 
+// rem style px sizes 
+// e.g body { font-size: 1.4rem; } /* = 14px */
+// https://snook.ca/archives/html_and_css/font-size-with-rem
+html
+{
+    font-size: 62.5%;
+    -webkit-text-size-adjust: 100%;
+}
+
+html, body
+{
+    background-color: map-get($theme, 'palette', 'bodybg');
+    color:            map-get($theme, 'palette', 'text', 'primary');
+}
+html.dark-mode,
+html.dark-mode body
+{
+    background-color: map-get($theme, 'palette', 'dark-mode', 'bodybg');
+    color:            map-get($theme, 'palette', 'dark-mode', 'text', 'primary');
+}
+body
+{
+    font-family: map-get($theme, 'typography', 'fonts', 'body');
+    font-weight: 400;
+    line-height: map-get($theme, 'typography', 'html-line-height');
+    font-size:  1.45rem;
+    @include _fontSmooth;
+}
+input, select, label, button, textarea
+{
+    font-family: map-get($theme, 'typography', 'fonts', 'body');
+    font-size:   map-get($theme, 'typography', 'html-font-size');
+    @include _fontSmooth;
+}
+
+// Links
+a
+{
+    color: map-get($theme, 'palette', 'primary', 'main');
+    text-decoration: none;
+    background: transparent;
+    &:active,
+    &:hover
+    {
+        outline: 0;
+        color: map-get($theme, 'palette', 'primary', 'dark');
+        text-decoration: underline;
+    }
+    &.no-link:hover
+    {
+        text-decoration: none;
+    }
+}
+
+// Clearfix
+.clearfix
+{
+    @include _clearfix;
+}
+
+// no-scroll body
+body.no-scroll
+{
+    height: 100%;
+    overflow: hidden !important;
+}

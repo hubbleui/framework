@@ -1,0 +1,201 @@
+// resets
+input[type=checkbox]
+{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+}
+input[type=checkbox]
+{
+    margin: 4px 0 0;
+    margin-top: 1px\9;
+    line-height: normal;
+    outline: none;
+}
+input[type="checkbox"]:focus
+{
+    outline:0;
+}
+
+// styles
+.checkbox
+{
+    position: relative;
+    &:before
+    {
+        content: '';
+        display: inline-block;
+        width: map-get($theme, 'inputs', 'checkbox-size') * 1.8;
+        height: map-get($theme, 'inputs', 'checkbox-size') * 1.8;
+        background-color: map-get($theme, 'palette', '_gray', 900);
+        position: absolute;
+        border-radius: 50%;
+        left: 1px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: opacity .15s map-get($theme, 'transition', 'easing');
+    }
+    &:hover
+    {
+        &:before
+        {
+            opacity: 0.2;
+        }
+    }
+    &:active
+    {
+        &:before
+        {
+            opacity: 0.3;
+        }
+    }
+
+    label
+    {
+        display: inline-block;
+        cursor: pointer;
+        vertical-align: middle;
+        position: relative;
+        padding-left: map-get($theme, 'inputs', 'checkbox-size') * 2;
+        min-height: map-get($theme, 'inputs', 'checkbox-size') + 2;
+        margin-bottom: 0;
+        line-height: map-get($theme, 'inputs', 'checkbox-size');
+        &:before
+        {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            left: map-get($theme, 'inputs', 'checkbox-size') * 1.43;
+            border-radius: 2px;
+            background-color: transparent;
+            width: map-get($theme, 'inputs', 'checkbox-size');
+            height: map-get($theme, 'inputs', 'checkbox-size');
+            margin-left: -(map-get($theme, 'inputs', 'checkbox-size') - 1);
+            border: 2px solid map-get($theme, 'palette', '_gray', 600);
+            transition: border-width .15s map-get($theme, 'transition', 'easing');
+        }
+        &:after
+        {
+            display: inline-block;
+            position: absolute;
+            width: map-get($theme, 'inputs', 'checkbox-size');
+            height: map-get($theme, 'inputs', 'checkbox-size');
+            line-height: map-get($theme, 'inputs', 'checkbox-size');
+            left: 0;
+            top: 0;
+            margin-left: -(map-get($theme, 'inputs', 'checkbox-size'));
+            text-align: center;
+            padding-top: 1px;
+            font-size: 1.4rem;
+            color: map-get($theme, 'palette', '_gray', 900);
+        }
+    }
+
+    input[type=checkbox]
+    {
+        position: absolute;
+        display: none;
+        opacity: 0;
+        margin-left: -(map-get($theme, 'inputs', 'checkbox-size'));
+        margin-top: 0;
+        margin-bottom: 0;
+        z-index: 1;
+        width: map-get($theme, 'inputs', 'checkbox-size');
+        height: map-get($theme, 'inputs', 'checkbox-size');
+        &:checked
+        {
+            + label:before
+            {
+                border-color: map-get($theme, 'palette', '_gray', 900);
+                border-width: map-get($theme, 'inputs', 'checkbox-size') / 2;
+            }
+            + label:after
+            {
+                @include glyph-icon;
+                content: "\ed71";
+                display: inline-block;
+                position: absolute;
+                font-size: 14px;
+                left: 30px;
+                top: 2px;
+                color: #fff;
+            }
+        }
+        &:focus
+        {
+            + label:before
+            {
+                border-color: map-get($theme, 'palette', '_gray', 900);
+                border-width: map-get($theme, 'inputs', 'checkbox-size') / 2;
+                outline: thin dotted;
+                outline: map-get($theme, 'inputs', 'checkbox-size') / 4;
+                outline-offset: -2px;
+            }
+        }
+        &.disabled,
+        &:disabled
+        {
+            cursor: not-allowed;
+            + label
+            {
+                opacity: .4;
+                cursor: not-allowed;
+                &:before
+                {
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+}
+
+// Variants
+@mixin _checkbox($color)
+{
+    &:before
+    {
+        background-color: $color;
+    }
+    input[type=checkbox]
+    {
+        &:checked + label:before
+        {
+            background-color: $color;
+            border-color: $color;
+        }
+        &:checked + label:after
+        {
+            color: #fff;
+        }
+    }
+}
+.checkbox
+{
+    // Contextual
+    &.checkbox-primary
+    {
+        @include _checkbox(map-get($theme, 'palette', 'primary', 'main'));
+    }
+    &.checkbox-secondary
+    {
+        @include _checkbox(map-get($theme, 'palette', 'primary', 'main'));
+    }
+    &.checkbox-info
+    {
+        @include _checkbox(map-get($theme, 'palette', 'info', 'main'));
+    }
+    &.checkbox-success
+    {
+        @include _checkbox(map-get($theme, 'palette', 'success', 'main'));
+    }
+    &.checkbox-warning
+    {
+        @include _checkbox(map-get($theme, 'palette', 'warning', 'main'));
+    }
+    &.checkbox-danger
+    {
+        @include _checkbox(map-get($theme, 'palette', 'danger', 'main'));
+    }
+}

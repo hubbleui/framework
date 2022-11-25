@@ -1,0 +1,252 @@
+// Variables
+$input-x : ceil(map-get($theme, 'inputs', 'size') / 3.5);
+$label-y: ceil((map-get($theme, 'inputs', 'size') / 2) + 4);
+
+// Disabled reset
+input[type="hidden"]
+{
+    display: none !important;
+}
+
+.form-field
+{
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+
+    // Basic input styling
+    @include _inputs
+    {
+        display: block;
+        width: 100%;
+        font-size: map-get($theme, 'inputs', 'font-size');
+        padding: 24px $input-x 9px $input-x;
+        border-radius: map-get($theme, 'border-radius');
+        outline: none;
+        font-weight: map-get($theme, 'typography', 'weights', 'normal');
+        line-height: map-get($theme, 'inputs', 'font-size');
+        transition: background-color map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing'), border-color map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing'), color map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing'), box-shadow map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+        box-shadow: none;
+        height: map-get($theme, 'inputs', 'size');
+        appearance: none;
+        
+        // Basic placeholder styling
+        @include placeholder
+        {
+            font-size: map-get($theme, 'inputs', 'font-size') * 0.9;
+            font-weight: map-get($theme, 'typography', 'weights', 'normal');
+            line-height: map-get($theme, 'inputs', 'font-size');
+            opacity: 0;
+            transition: opacity map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing'), color map-get($theme, 'transition', 'time') map-get($theme, 'transition', 'easing');
+        }
+
+        // Disabled
+        &:disabled
+        {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    }
+
+    // Label basics
+    label
+    {
+        font-size: map-get($theme, 'inputs', 'font-size');
+        font-weight: map-get($theme, 'typography', 'weights', 'normal');
+        line-height: map-get($theme, 'inputs', 'font-size');
+        text-align: left;
+        position: absolute;
+        top: 50%;
+        left: $input-x;
+        height: map-get($theme, 'inputs', 'size');
+        line-height: map-get($theme, 'inputs', 'size');
+        transition: transform 0.15s map-get($theme, 'transition', 'easing');
+        transform: translateY(-(map-get($theme, 'inputs', 'size') / 2));
+        transform-origin: left top;
+        cursor: text;
+    }
+
+    // Focus / not-empty
+    &.focus,
+    &:focus-within,
+    &.not-empty
+    {
+        @include _inputs
+        {
+            @include placeholder
+            {
+                opacity: 1;
+            }
+        }
+        label
+        {
+            transform: translateY(-$label-y) scale(0.8);
+        }
+    }
+
+    // Select
+    &:has(> select):after
+    {
+        content: "";
+        width: 0; 
+        height: 0; 
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-3px);
+        right: 12px;
+    }
+    select
+    {
+        appearance: none;
+        cursor: default;
+        padding: 24px $input-x 9px $input-x;
+        position: relative;
+
+        + label
+        {
+            cursor: default;
+            z-index: 0;
+            height: 0;
+        }
+    }
+    &:empty select
+    {
+        color: transparent;
+    }
+    &:not(.focus):not(:focus-within):not(.not-empty) select
+    {
+        color: transparent;
+    }
+
+    // textarea,
+    textarea
+    {
+        resize: vertical;
+    }
+    textarea + label
+    {
+        top: 26px;
+    }
+
+    // Special inputs
+    input[type="search"]::-webkit-search-decoration,
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-results-button,
+    input[type="search"]::-webkit-search-results-decoration
+    {
+        display: none;
+    }
+    input[type="time"],
+    input[type="week"],
+    input[type="date"],
+    input[type="month"],
+    input[type="datetime-local"]
+    {
+        position: relative;
+        appearance: none;
+        text-indent: -99px;
+    }
+    input[type="time"]::-webkit-inner-spin-button,
+    input[type="week"]::-webkit-inner-spin-button,
+    input[type="date"]::-webkit-inner-spin-button,
+    input[type="month"]::-webkit-inner-spin-button,
+    input[type="datetime-local"]::-webkit-inner-spin-button
+    {
+        display: none;
+    }
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="week"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="month"]::-webkit-calendar-picker-indicator,
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator
+    {
+        opacity: 0;
+    }
+
+    input[type="time"]:before,
+    input[type="week"]:before,
+    input[type="month"]:before,
+    input[type="date"]:before,
+    input[type="datetime-local"]:before
+    {
+        @include glyph-icon;
+        content: "\ea60";
+        display: inline-block;
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        padding: 3px;
+        top: 50%;
+        right: 15px;
+        margin-top: -10px;
+        text-indent: 0;
+        cursor: pointer;
+    }
+    input[type="time"]:before
+    {
+        content: "\ea4d";
+    }
+
+    &.not-empty input[type="time"],
+    &.not-empty input[type="week"],
+    &.not-empty input[type="date"],
+    &.not-empty input[type="month"],
+    &.not-empty input[type="datetime-local"],
+
+    input[type="time"]:focus,
+    input[type="week"]:focus,
+    input[type="date"]:focus,
+    input[type="month"]:focus,
+    input[type="datetime-local"]:focus,
+    {
+        text-indent: 0;
+    }
+}
+
+// Base
+.form-field:not(.form-field-pure)
+{
+    @include _formfield(map-get($theme, 'palette', '_gray', 900), map-get($theme, 'palette', '_gray', 600), map-get($theme, 'palette', 'info', 'main'), map-get($theme, 'palette', '_gray', 400));
+}
+
+// Darkmode
+.dark-mode .form-field:not(.form-field-pure)
+{
+  /*   @include _formfield(map-get($theme, 'palette', '_white'), lighten(map-get($theme, 'palette', 'bodybg')-dm, 25), map-get($theme, 'palette', 'info', 'main'), lighten(map-get($theme, 'palette', 'bodybg')-dm, 15)); */
+}
+
+// States
+.form-field:not(.form-field-pure)
+{
+    // Danger / warning
+    &.danger,
+    &.danger.focus,
+    &.danger:focus-within
+    {
+        @include _inputs
+        {
+            border-color: map-get($theme, 'palette', 'danger', 'main');
+            box-shadow: inset 0 0 0 1px map-get($theme, 'palette', 'danger', 'main');
+        }
+        label
+        {
+            color: map-get($theme, 'palette', 'danger', 'main');
+        }
+    }
+    &.warning,
+    &.warning.focus,
+    &.warning:focus-within
+    {
+        @include _inputs
+        {
+            border-color: map-get($theme, 'palette', 'warning', 'main');
+            box-shadow: inset 0 0 0 1px map-get($theme, 'palette', 'warning', 'main');
+        }
+        label
+        {
+            color: map-get($theme, 'palette', 'warning', 'main');
+        }
+    }
+}

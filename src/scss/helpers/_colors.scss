@@ -1,0 +1,22 @@
+// Brand
+.color-primary       { color: map-get($theme, 'palette', 'primary', 'main')}
+.color-secondary     { color: map-get($theme, 'palette', 'secondary', 'main')}
+
+// Greys
+.color-gray-dark 	 { color: map-get($theme, 'palette', '_gray', 800)}
+.color-gray 	 	 { color: map-get($theme, 'palette', '_gray', 600)}
+.color-gray-light 	 { color: map-get($theme, 'palette', '_gray', 400)}
+.color-gray-lighter  { color: map-get($theme, 'palette', '_gray', 300)}
+.color-gray-lightest { color: map-get($theme, 'palette', '_gray', 100)}
+
+// Accents
+.color-success       { color: map-get($theme, 'palette', 'success', 'main') }							
+.color-info          { color: map-get($theme, 'palette', 'info', 'main') }
+.color-danger        { color: map-get($theme, 'palette', 'danger', 'main') }
+.color-warning       { color: map-get($theme, 'palette', 'warning', 'main') }
+.color-gold			 { color: #d5b245;}
+
+// Defaults
+.color-transparent   { color: transparent }
+.color-white         { color: #fff }
+.color-black         { color: map-get($theme, 'palette', '_black'); }
