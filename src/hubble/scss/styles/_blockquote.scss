@@ -1,91 +1,54 @@
 blockquote
 {
+    --hb-bq-bg: #{$bq-bg};
+    --hb-bq-radius: #{$bq-radius};
+    --hb-bq-pad-y: #{$bq-pad-y};
+    --hb-bq-pad-x: #{$bq-pad-x};
+
     margin: 0 0 1em;
-    border-radius: 4px;
-    padding: 2rem;
-    color: $body-color;
-    background-color: _darker($body-bg, 5%);
+    border-radius: var(--hb-bq-radius);
+    padding: var(--hb-bq-pad-y) var(--hb-bq-pad-x);
+    color: var(--hb-bq-color);
+    background-color: var(--hb-bq-bg);
 
     p
     {
-    	padding: 0;
+        padding: 0;
+        color: rgba(0, 0, 0, 0.57);
     }
-    &.bq-danger,
-    &.bq-success,
-    &.bq-info,
-    &.bq-warning,
-    &.bq-primary,
-    &.bq-secondary
+    a
     {
-        
-    	p
+        font-weight: $text-bold;
+        color: rgba(0, 0, 0, 0.6);
+    }
+    code,
+    pre
+    {
+        border: none;
+        color: var(--hb-white);
+        background-color: rgba(0, 0, 0, 0.3);            
+    }
+    > footer
+    {
+        display: block;
+        font-size: 85%;
+        line-height: 1.42857143;
+        color: rgba(0, 0, 0, 0.8);
+        & :before
         {
-    		color: rgba(0, 0, 0, 0.57);
-    	}
-    	a
-        {
-    		font-weight: $text-bold;
-    		color: rgba(0, 0, 0, 0.6);
-    	}
-        code,
-        pre
-        {
-            border: none;
-            color: #fff;
-            background-color: rgba(0, 0, 0, 0.22);            
+            content: '\2014 \00A0';
         }
-    }
-    &.bq-danger
-    {
-    	background-color: _lighter($brand-danger, 10%);
-    }
-    &.bq-success
-    {
-    	background-color: _lighter($brand-success, 10%);
-    }
-    &.bq-info
-    {
-    	background-color: _lighter($brand-info, 10%);
-    }
-    &.bq-warning
-    {
-    	background-color: _lighter($brand-warning, 10%);
-    }
-    &.bq-primary
-    {
-        background-color: _lighter($brand-primary, 10%);
-    }
-    &.bq-secondary
-    {
-        background-color: _lighter($brand-secondary, 10%);
     }
     >:last-child
     {
         margin-bottom: 0;
     }
 
-    > footer:before{
-        content: '\2014 \00A0';
-    }
-
-    > footer
-    {
-        display: block;
-        font-size: 85%;
-        line-height: 1.42857143;
-        color: var(--hb-gray-500);
-    }
-
-    &.bq-danger,
-    &.bq-success,
-    &.bq-info,
-    &.bq-warning,
-    &.bq-primary,
-    &.bq-secondary
-    {
-       > footer
+    @each $context, $colors in $contexts
+    {    
+        &.bq-#{$context}
         {
-            color: rgba(0, 0, 0, 0.8);
+            --hb-bq-bg: #{map-get($colors, "color")};
         }
     }
 }

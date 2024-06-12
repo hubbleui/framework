@@ -76,7 +76,7 @@
         &:before
         {
             content: "\ed6d";
-            @include glyphIcon;
+            @include glyph-icon;
         }
     }
 
@@ -146,9 +146,9 @@
             max-width: 0;
             overflow: hidden;
             transition: padding 0.1s $base-easing;
-            @include glyphIcon;
             padding-right: 0;
             color: $brand-primary;
+            @include glyph-icon;
         }
         &.checked
         {

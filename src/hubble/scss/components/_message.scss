@@ -98,28 +98,11 @@
     }
 
     // Variants
-    &.msg-primary
-    {
-        --hb-msg-icon-color: var(--hb-brand-primary);
-    }
-    &.msg-secondary
-    {
-        --hb-msg-icon-color: var(--hb-brand-secondary);
-    }
-    &.msg-info
-    {
-        --hb-msg-icon-color: var(--hb-brand-info);
-    }
-    &.msg-success
-    {
-        --hb-msg-icon-color: var(--hb-brand-success);
-    }
-    &.msg-warning
-    {
-        --hb-msg-icon-color: var(--hb-brand-warning);
-    }
-    &.msg-danger
-    {
-        --hb-msg-icon-color: var(--hb-brand-danger);
+    @each $context, $colors in $contexts
+    {    
+        &.msg-#{$context}
+        {
+            --hb-msg-icon-color: #{map-get($colors, "color")};
+        }
     }
 }

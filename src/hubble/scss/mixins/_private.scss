@@ -1,0 +1,75 @@
+@use 'sass:math';
+// Font smoothing
+@mixin _font-smooth()
+{
+    @if $font-smoothing
+    {
+      text-rendering: optimizeLegibility;
+      font-smoothing: antialiased;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+// Text ellipsis
+@mixin _ellipsis
+{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// Clearfix
+@mixin _clearfix
+{
+    &:after
+    {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+// Color mixing
+@function _lighter($color, $percentage)
+{
+    @return mix(white, $color, $percentage);
+}
+@function _darker($color, $percentage)
+{
+    @return mix(black, $color, $percentage);
+}
+
+// Utility
+@function _minusPercent($value, $percentage)
+{
+    $diff: $value * math.div($percentage, 100);
+    @return $value - $diff;
+}
+@function _addPercent($value, $percentage)
+{
+    $diff: $value * math.div($percentage, 100);
+    @return $value + $diff;
+}
+
+// Colors
+@function _to-rgb-vals($color)
+{
+    @return red($color) + ", " + green($color) + ", " + blue($color);
+}
+@function _str-replace($string, $search, $replace: '')
+{
+    $index: str-index($string, $search);
+  
+    @if $index
+    {
+        @return str-slice($string, 1, $index - 1) + $replace + _str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+    }
+  
+    @return $string;
+}
+@function _color-name-from-var($colorVar)
+{
+    @return _str-replace(_str-replace(_str-replace($colorVar, ')', ''),  'var(--', ''), 'hb-', '');
+}
+

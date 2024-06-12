@@ -1,7 +1,7 @@
 // Standard buttons
 @mixin button($color, $background)
 {
-    $colorName : color-name-from-var($background);
+    $colorName : _color-name-from-var($background);
     
     // Base
     --hb-btn-color: #{$color};
@@ -59,7 +59,7 @@
 // Outline buttons
 @mixin button-outline($color)
 {
-    $rgb: color-name-from-var($color) + '-rgb';
+    $rgb: _color-name-from-var($color) + '-rgb';
 
     // Base
     --hb-btn-color: #{$color};
@@ -82,7 +82,7 @@
 // Pure buttons
 @mixin button-pure($color)
 {
-    $rgb: color-name-from-var($color) + '-rgb';
+    $rgb: _color-name-from-var($color) + '-rgb';
 
     // Base
     --hb-btn-color: #{$color};

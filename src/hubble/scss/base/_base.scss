@@ -26,14 +26,14 @@ body
     font-weight:      $base-font-weight;
     line-height:      $base-line-height;
     font-size:        1.45rem;
-    @include _fontSmooth;
+    @include _font-smooth;
 }
 input, select, label, button, textarea
 {
     font-family: $base-font-family;
     font-size:   $base-font-size;
     color: $body-color;
-    @include _fontSmooth;
+    @include _font-smooth;
 }
 // Links
 a

@@ -35,7 +35,7 @@
     /* Contexts RGBA */
     @each $name, $color in $colors
     {
-        --hb-#{$name}-rgb: #{_toRGBVals($color)};
+        --hb-#{$name}-rgb: #{_to-rgb-vals($color)};
     }   
 
     /* Typeography */
