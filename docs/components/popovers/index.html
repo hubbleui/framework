@@ -88,7 +88,7 @@
                         </div>
                         <ul class="list-unstyled collapsed" id="css">
                             <li>
-                                <a class="" href="../../css/overview/index.html"> Overview </a>
+                                <a class="" href="../../css/overview/index.html">Overview</a>
                             </li>
                             <li>
                                 <a class="" href="../../css/grid/index.html"> Grid </a>
@@ -115,7 +115,7 @@
                                 <a class="" href="../cards/index.html"> Cards </a>
                             </li>
                             <li>
-                                <a class="" href="../carousel/index.html"> Carousel </a>
+                                <a class="" href="../slider/index.html">Slider</a>
                             </li>
                             <li>
                                 <a class="" href="../collapse/index.html"> Collapse </a>
@@ -169,6 +169,9 @@
                                 <a class="active" href="../popovers/index.html"> Popovers </a>
                             </li>
                             <li>
+                                <a class="" href="../../components/gallery/index.html"> Gallery </a>
+                            </li>
+                            <li>
                                 <a class="" href="../ripple/index.html"> Ripple </a>
                             </li>
                             <li>
@@ -217,6 +220,9 @@
                                 <a class="" href="../../javascript/pjax/index.html"> Pjax </a>
                             </li>
                             <li>
+                                <a class="" href="../../javascript/nprogress/index.html"> Nprogress </a>
+                            </li>
+                            <li>
                                 <a class="" href="../../javascript/helperjs/index.html"> HelperJS </a>
                             </li>
                             <li>
@@ -246,13 +252,13 @@
                         <hr>
                         <ul class="list-bullet">
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="example" data-waypoint-speed="400">Basic example</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="example" data-waypoint-speed="400">Basic example</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="attributes" data-waypoint-speed="500">Data attributes</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="attributes" data-waypoint-speed="500">Data attributes</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="templates" data-waypoint-speed="600">Templates</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="templates" data-waypoint-speed="600">Templates</a>
                             </li>
                         </ul>
                         <hr>
@@ -261,14 +267,14 @@
                             <p> Popovers use a combination of both <code>JavaScript</code> and <code>CSS</code> to display. The in initialization however is done entirely through HTML through classes and data attributes. </p>
                             <div class="code-content-example">
                                 <div class="container-fuid">
-                                    <span class="js-popover" data-popover-title="Popover Title" data-popover-content="This is the content!" data-popover-direction="top" data-popover-event="click"> Click me! </span>
+                                    <span class="js-popover" data-popover-title="Popover Title" data-popover-content="Aliqua commodo fugiat pariatur fugiat est dolor ut cillum dolore esse aliquip voluptate dolore labore." data-popover-direction="top" data-popover-event="click"> Click me! </span>
                                 </div>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
 <span
 class="js-popover"
 data-popover-title="Popover Title" 
-data-popover-content="This is the content!" 
+data-popover-content="Deserunt culpa..." 
 data-popover-direction="top">
 I have a popover!
 </span>
@@ -287,6 +293,11 @@ I have a popover!
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    tr>
+                                        <th><code>data-popover-theme</code></th>
+                                        <th><code>dark|light</code></th>
+                                        <th>Changes the theme of the popover.</th>
+                                    </tr>
                                     <tr>
                                         <th><code>data-popover-direction</code></th>
                                         <th><code>top|bottom|left|right</code></th>
@@ -326,14 +337,14 @@ I have a popover!
                             </table>
                             <div class="code-content-example">
                                 <div class="container-fuid">
-                                    <button class="btn btn-default js-popover" data-popover-title="Popover Title" data-popover-content="This is the content!" data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="click" data-popover-animate="pop"> Click Me! </button>
-                                    <button class="btn btn-default js-popover" data-popover-title="Popover Title" data-popover-content="This is the content!" data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="hover" data-popover-animate="fade"> Hover Me! </button>
+                                    <button class="btn btn-default js-popover" data-popover-title="Popover Title" data-popover-content="Laborum qui aute nulla reprehenderit culpa dolore non eu proident do ut tempor aliqua magna." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="click" data-popover-animate="pop"> Click Me! </button>
+                                    <button class="btn btn-default js-popover" data-popover-title="Popover Title" data-popover-content="Ullamco laborum velit dolore do minim cillum minim labore sint excepteur sint laboris cupidatat proident dolor." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="hover" data-popover-animate="fade"> Hover Me! </button>
                                 </div>
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
  <button class="btn btn-default js-popover"
 data-popover-title="Popover Title" 
-data-popover-content="This is the content!"  
+data-popover-content="Anim dolor..."  
 data-popover-direction="top" 
 data-popover-type="popover-primary" 
 data-popover-event="click" 
@@ -343,7 +354,7 @@ Click Me!
 </button>
 <button class="btn btn-default js-popover"
 data-popover-title="Popover Title" 
-data-popover-content="This is the content!"  
+data-popover-content="Consequat ad..."  
 data-popover-direction="top" 
 data-popover-type="popover-primary" 
 data-popover-event="hover" 

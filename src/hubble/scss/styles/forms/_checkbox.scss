@@ -28,7 +28,7 @@ input[type="checkbox"]:focus
         display: inline-block;
         width: $checkbox-size * 1.8;
         height: $checkbox-size * 1.8;
-        background-color: $gray-darker;
+        background-color: var(--hb-gray-700);
         position: absolute;
         border-radius: 50%;
         left: 1px;
@@ -89,7 +89,7 @@ input[type="checkbox"]:focus
             text-align: center;
             padding-top: 1px;
             font-size: 1.4rem;
-            color: $gray-darker;
+            color: var(--hb-gray-700);
         }
     }
 
@@ -108,7 +108,7 @@ input[type="checkbox"]:focus
         {
             + label:before
             {
-                border-color: $gray-darker;
+                border-color: var(--hb-gray-700);
                 border-width: $checkbox-size / 2;
             }
             + label:after
@@ -127,7 +127,7 @@ input[type="checkbox"]:focus
         {
             + label:before
             {
-                border-color: $gray-darker;
+                border-color: var(--hb-gray-700);
                 border-width: $checkbox-size / 2;
                 outline: thin dotted;
                 outline: $checkbox-size / 4;

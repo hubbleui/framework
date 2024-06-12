@@ -267,10 +267,7 @@
         {
             this.data[key] = value;
 
-            if (this._isInvokable(value) || this._isInvoked(value))
-            {
-                this._setProto(key);
-            }
+            this._setProto(key, this._isInvokable(value) || this._isInvoked(value));
         }
     }
 
@@ -281,7 +278,7 @@
      * @param  string key   The data key
      * @return mixed
      */
-    Container.prototype._setProto = function(key)
+    Container.prototype._setProto = function(key, invokable)
     {
         var _this = this;
 
@@ -295,7 +292,12 @@
 
             args.unshift(key);
 
-            return _this.get.apply(_this, args);
+            if (invokable)
+            {
+                return _this.get.apply(_this, args);
+            }
+
+            return _this.get(key);
         };
     }
 

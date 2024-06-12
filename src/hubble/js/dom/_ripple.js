@@ -25,12 +25,13 @@
      */
     function startRipple(type, at, holder)
     {
-        var holder = Helper.$('.js-ripple', holder);
+        holder = Helper.$('.js-ripple-container', holder);
 
         if (!holder)
         {
             return false; // ignore
         }
+        
         var cl = holder.classList;
 
         // Store the event use to generate this ripple on the holder: don't allow
@@ -126,7 +127,6 @@
             '.tab-nav li a',
             '.card-img',
             '.card-img-top',
-            '.card',
             '.js-ripple'
         ];
 
@@ -169,11 +169,20 @@
      */
     Ripple.prototype._unbind = function()
     {
-        var ripples = Helper.$All('.js-ripple');
-
-        for (var i = 0; i < ripples.length; i++)
+        for (var i = 0; i < this._nodes.length; i++)
         {
-            Helper.removeFromDOM(ripples[i]);
+            var wrapper = this._nodes[i];
+
+            var ripples = Helper.$All('.js-ripple-container', wrapper);
+
+            Helper.removeEventListener(wrapper, 'mousedown', this._mouseDown);
+
+            Helper.removeEventListener(wrapper, 'touchstart', this._touchStart);
+
+            for (var j = 0; j < ripples.length; j++)
+            {
+                Helper.removeFromDOM(ripples[j]);
+            }
         }
     }
 
@@ -185,38 +194,21 @@
      */
     Ripple.prototype._insertRipple = function(wrapper)
     {
-        // Don't ripple on cards with ripples inside them
-        if (Helper.hasClass(wrapper, 'card'))
-        {
-            var children = Helper.$All(this._classes.join(','), wrapper);
-
-            if (!Helper.empty(children))
-            {
-                return;
-            }
-        }
-
-        if (!Helper.hasClass(wrapper, 'js-ripple'))
-        {
-            var rip  = document.createElement('span');
+        // If this is a user-defined JS-Ripple we need to insert it
+        var rip  = document.createElement('span');
             
-            rip.className = 'js-ripple';
-            
-            wrapper.appendChild(rip);
-        }
-        else
-        {
-            wrapper = wrapper.parentNode;
-        }
+        rip.className = 'ripple-container js-ripple-container';
 
         if (Helper.hasClass(wrapper, 'chip'))
         { 
-            rip.className = 'js-ripple fill';
+            rip.className = 'ripple-container fill js-ripple-container';
         }
+        
+        Helper.preapend(rip, wrapper);
 
-        Helper.addEventListener(wrapper, 'mousedown', this._mouseDown);
+        Helper.addEventListener(wrapper, 'mousedown', this._mouseDown, true, 'foo', 'bar');
 
-        Helper.addEventListener(wrapper, 'touchstart', this._touchStart)
+        Helper.addEventListener(wrapper, 'touchstart', this._touchStart, true, 'foo', 'bar');
   
     }
 
@@ -234,6 +226,7 @@
         {
             startRipple(e.type, e, this);
         }
+
     }
 
     /**
@@ -242,7 +235,7 @@
      * @access private
      * @param  event|null   e
      */
-    Ripple.prototype._touchStart = function(ev)
+    Ripple.prototype._touchStart = function(e, foo, bar)
     {
         e = e || window.event;
 

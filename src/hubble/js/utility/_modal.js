@@ -229,7 +229,7 @@
                 Helper.removeFromDOM(_this._overlay);
                 Helper.removeFromDOM(_this._modal);
                 Helper.removeClass(document.body, 'no-scroll');
-            }, 500);
+            }, 600);
         }
 
         if (this._options.closeAnywhere === true)

@@ -7,6 +7,18 @@
  */
 
 /**
+ * Copys an array
+ *
+ * @access public
+ * @param  array  arr  The target array to copy
+ * @return array
+ */
+Helper.prototype.array_copy = function(arr)
+{
+    return Array.prototype.slice.call(arr);
+}
+
+/**
  * Checks if an array contains a value
  *
  * @access public

@@ -1,21 +1,38 @@
-// Misc
+/* styles/list'; */
 @import 'styles/list';
+/* styles/table'; */
 @import 'styles/table';
+/* styles/blockquote'; */
 @import 'styles/blockquote';
 
-// Buttons
+/* --------------------------------- BUTTONS --------------------------------------- */
+/* --------------------------------------------------------------------------------- */
+/* styles/buttons/base'; */
 @import 'styles/buttons/base';
+/* styles/buttons/variants'; */
 @import 'styles/buttons/variants';
+/* styles/buttons/groups'; */
 @import 'styles/buttons/groups';
+/* styles/buttons/spinners'; */
 @import 'styles/buttons/spinners';
+/* styles/buttons/breakpoints'; */
 @import 'styles/buttons/breakpoints';
 
-// Forms
+/* ----------------------------------- FORMS --------------------------------------- */
+/* --------------------------------------------------------------------------------- */
+/* styles/forms/base'; */
 @import 'styles/forms/base';
+/* styles/forms/unstyled'; */
 @import 'styles/forms/unstyled';
+/* styles/forms/addons'; */
 @import 'styles/forms/addons';
+/* styles/forms/checkbox'; */
 @import 'styles/forms/checkbox';
+/* styles/forms/radio'; */
 @import 'styles/forms/radio';
+/* styles/forms/switch'; */
 @import 'styles/forms/switch';
+/* styles/forms/progress'; */
 @import 'styles/forms/progress';
+/* styles/forms/results'; */
 @import 'styles/forms/results';

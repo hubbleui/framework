@@ -1,126 +1,121 @@
 .popover
 {
-    position: absolute;
-    border-radius: 4px;
-    background-color: #fff;
-    max-width: $popover-max-width;
-    box-shadow: $raised-level-one;
-    z-index: $z-index-popover;
-    color: $gray-dark;
-    @include raised(3);
+    --hb-popover-max-width: #{$popover-max-width};
+    --hb-popover-shadow: #{$popover-shadow};
+    --hb-popover-font-size: #{$popover-font-size};
+    --hb-popover-title-size: #{$popover-title-size};
+    --hb-popover-radius: #{$popover-radius};
+    --hb-popover-pad-y: #{$popover-pad-y};
+    --hb-popover-pad-x: #{$popover-pad-x};
 
-    p:last-child
-    {
-        margin-bottom: 0;
-    }
-}
-.popover-title
-{
-    color: $gray-darker;
-    background-color: transparent;
-    font-weight: $text-bold;
-    font-size: 1.4rem;
-    padding: 8px 14px;
-    margin-bottom: 0;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-}
-.popover-content
-{
-    padding: 20px;
-    border-top: none;
-}
-.popover-title .glyph-icon
-{
+    --hb-popover-bg-light: #{$popover-bg-light};
+    --hb-popover-color-light: #{$popover-color-light};
+    --hb-popover-title-color-light: #{$popover-title-color-light};
+    --hb-popover-title-border-light: #{$popover-title-border-light};
+
+    --hb-popover-bg-dark: #{$popover-bg-dark};
+    --hb-popover-color-dark: #{$popover-color-dark};
+    --hb-popover-title-color-dark: #{$popover-title-color-dark};
+    --hb-popover-title-border-dark: #{$popover-title-border-dark};
+
+    --hb-popover-bg: none;
+    --hb-popover-color: none;
+    --hb-popover-title-color: none;
+    --hb-popover-title-border: none;
     position: absolute;
-    cursor: pointer;
-    top: 9px;
-    right: 10px;
-    opacity: 0.3;
-}
-.popover-title .glyph-icon:hover
-{
-    opacity: 1;
-}
-.popover-title + .popover-content
-{
-    padding: 0 20px 10px 20px;
+    z-index: $z-index-popover;
+    font-size: var(--hb-popover-font-size);
+    border-radius: var(--hb-popover-radius);
+    max-width: var(--hb-popover-max-width);
+    box-shadow: var(--hb-popover-shadow);
+    @include raise(--hb-popover-shadow, $popover-shadow, $black);
+    background-color: var(--hb-popover-bg);
+    color: var(--hb-popover-color);
+
+    .popover-title
+    {
+        font-size: var(--hb-popover-title-size);
+        color: var(--hb-popover-title-color);
+        border-bottom: var(--hb-popover-title-border);
+        border-top-left-radius: var(--hb-popover-radius);
+        border-top-right-radius: var(--hb-popover-radius);
+        margin-bottom: 0;
+        padding: var(--hb-popover-pad-y) var(--hb-popover-pad-x);
+    }
+    .popover-content
+    {
+        padding: var(--hb-popover-pad-y) var(--hb-popover-pad-x);
+    }
+    
+    // Themes
+    &.dark
+    {
+        --hb-popover-bg: var(--hb-popover-bg-dark);
+        --hb-popover-color: var(--hb-popover-color-dark);
+        --hb-popover-title-color: var(--hb-popover-title-color-dark);
+        --hb-popover-title-border: var(--hb-popover-title-border-dark);
+    }
+    &.light
+    {
+        --hb-popover-bg: var(--hb-popover-bg-light);
+        --hb-popover-color: var(--hb-popover-color-light);
+        --hb-popover-title-color: var(--hb-popover-title-color-light);
+        --hb-popover-title-border: var(--hb-popover-title-border-light);
+    }
+    p
+    {
+        padding: 0;
+        font-size: var(--hb-popover-font-size);
+        &:last-child
+        {
+            margin-bottom: 0;
+        }
+    }
+    .close-btn
+    {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        right: 0;
+    }
 }
 
 // Animations
-
-@-webkit-keyframes popoverfade
-{
-  from
-  {
-    opacity: 0;
-  }
-
-  to
-  {
-    opacity: 1;
-  }
-}
-
 @keyframes popoverfade
 {
-  from
-  {
-    opacity: 0;
-  }
+    from
+    {
+        opacity: 0;
+    }
 
-  to
-  {
-    opacity: 1;
-  }
+    to
+    {
+        opacity: 1;
+    }
 }
-@-webkit-keyframes popoverpop
-{
-  from
-  {
-    opacity: 0;
-    -webkit-transform: scale3d(.3, .3, .3);
-    transform: scale3d(.3, .3, .3);
-  }
-
-  50%
-  {
-    opacity: 1;
-  }
-}
-
 @keyframes popoverpop
 {
-  from
-  {
-    opacity: 0;
-    -webkit-transform: scale3d(.3, .3, .3);
-    transform: scale3d(.3, .3, .3);
-  }
-
-  50%
-  {
-    opacity: 1;
-  }
+    from
+    {
+        opacity: 0;
+        transform: scale3d(.3, .3, .3);
+    }
+    50%
+    {
+        opacity: 1;
+    }
 }
 
 .popover-fade
 {
-    -webkit-animation-name: popoverfade;
     animation-name: popoverfade;
-    -webkit-animation-duration: .3s;
     animation-duration: .3s;
-    -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
 }
 
 .popover-pop
 {
-    -webkit-animation-name: popoverpop;
     animation-name: popoverpop;
-    -webkit-animation-duration: .1s;
     animation-duration: .1s;
-    -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
 }
-

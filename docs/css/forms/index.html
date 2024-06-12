@@ -88,7 +88,7 @@
                         </div>
                         <ul class="list-unstyled " id="css">
                             <li>
-                                <a class="" href="../../css/overview/index.html"> Overview </a>
+                                <a class="" href="../../css/overview/index.html">Overview</a>
                             </li>
                             <li>
                                 <a class="" href="../../css/grid/index.html"> Grid </a>
@@ -115,7 +115,7 @@
                                 <a class="" href="../../components/cards/index.html"> Cards </a>
                             </li>
                             <li>
-                                <a class="" href="../../components/carousel/index.html"> Carousel </a>
+                                <a class="" href="../../components/slider/index.html">Slider</a>
                             </li>
                             <li>
                                 <a class="" href="../../components/collapse/index.html"> Collapse </a>
@@ -166,7 +166,10 @@
                                 <a class="" href="../../components/pagination/index.html"> Pagination </a>
                             </li>
                             <li>
-                                <a class="" href="../../components/popovers/index.html"> Popovers </a>
+                                <a class="" href="../components/popovers/index.html"> Popovers </a>
+                            </li>
+                            <li>
+                                <a class="" href="../../components/gallery/index.html"> Gallery </a>
                             </li>
                             <li>
                                 <a class="" href="../../components/ripple/index.html"> Ripple </a>
@@ -217,6 +220,9 @@
                                 <a class="" href="../../javascript/pjax/index.html"> Pjax </a>
                             </li>
                             <li>
+                                <a class="" href="../../javascript/nprogress/index.html"> Nprogress </a>
+                            </li>
+                            <li>
                                 <a class="" href="../../javascript/helperjs/index.html"> HelperJS </a>
                             </li>
                             <li>
@@ -246,31 +252,31 @@
                         <hr>
                         <ul class="list-bullet">
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="types" data-waypoint-speed="400">Field types</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="types" data-waypoint-speed="400">Field types</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="addons" data-waypoint-speed="500">Input add ons</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="addons" data-waypoint-speed="500">Input add ons</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="states" data-waypoint-speed="800">Input states</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="states" data-waypoint-speed="800">Input states</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="checkbox" data-waypoint-speed="900">Checkbox</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="checkbox" data-waypoint-speed="900">Checkbox</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="radio" data-waypoint-speed="1000">Radio</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="radio" data-waypoint-speed="1000">Radio</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="switch" data-waypoint-speed="1100">Switch</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="switch" data-waypoint-speed="1100">Switch</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="progress" data-waypoint-speed="1200">Progress</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="progress" data-waypoint-speed="1200">Progress</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="validation" data-waypoint-speed="1300">Validation</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="validation" data-waypoint-speed="1300">Validation</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="results" data-waypoint-speed="1400">Form results</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="results" data-waypoint-speed="1400">Form results</a>
                             </li>
                         </ul>
                         <hr>
@@ -493,7 +499,7 @@
 			<label for="textarea">Textarea Input</label>
 		</div>
 	</div>
-    <button type="submit" class="btn btn-default">Submit</button>
+    <button type="submit" class="btn">Submit</button>
 </form>
 -->
 </code></pre> </div>
@@ -633,11 +639,47 @@
 	</div>
 </form>
 -->
+</code></pre>
+                            <p>You may also use these as classnames <code>.danger</code> and <code>.warning</code>. Note that these classes can be added added automatically on AJAX forms using the JavaScript <a href="/javascript/form-validation/index.html">Form Validation</a> component.</p>
+                            <div class="code-content-example">
+                                <div class="container-fuid">
+                                    <form>
+                                        <div class="row floor-xs">
+                                            <div class="form-field row warning">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text...">
+                                                <label>Focus</label>
+                                            </div>
+                                        </div>
+                                        <div class="row floor-xs">
+                                            <div class="form-field row danger">
+                                                <input name="text" id="text" type="text" placeholder="Enter some text...">
+                                                <label>Focus</label>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
+<!--
+<form>
+    <div class="row floor-xs">
+        <div class="form-field row warning">
+            <input name="text" id="text" type="text" placeholder="Enter some text...">
+            <label>Focus</label>
+        </div>
+    </div>
+    <div class="row floor-xs">
+        <div class="form-field row danger">
+            <input name="text" id="text" type="text" placeholder="Enter some text...">
+            <label>Focus</label>
+        </div>
+    </div>
+</form>
+-->
 </code></pre> </div>
                         <hr>
                         <div class="row roof-xs foor-xs" data-waypoint="checkbox">
                             <h2>Checkbox</h2>
-                            <p> Custom styled checkboxes can be used by simply wrapping the label and input in <code>.checkbox</code> classed element. Checkboxes can be further contextualized using the <code>.checkbox-default, .checkbox-primary, .checkbox-info, .checkbox-success, .checkbox-warning, .checkbox-danger</code> classes. </p>
+                            <p> Custom styled checkboxes can be used by simply wrapping the label and input in <code>.checkbox</code> classed element. Checkboxes can be further contextualized using the <code>.checkbox-primary, .checkbox-info, .checkbox-success, .checkbox-warning, .checkbox-danger</code> classes. </p>
                             <div class="code-content-example">
                                 <div class="container-fuid">
                                     <form>
@@ -646,26 +688,27 @@
                                                 <input type="checkbox" name="input_12" id="input_12" checked="true" />
                                                 <label for="input_12">Check me out</label>
                                             </span>
-                                            <span class="checkbox checkbox-default">
-                                                <input type="checkbox" name="input_13" id="input_13" checked="true" />
-                                                <label for="input_13">Check me out</label>
-                                            </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="checkbox checkbox-primary">
                                                 <input type="checkbox" name="input_14" id="input_14" checked="true" />
                                                 <label for="input_14">Check me out</label>
                                             </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="checkbox checkbox-info">
                                                 <input type="checkbox" name="input_15" id="input_15" checked="true" />
                                                 <label for="input_15">Check me out</label>
                                             </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="checkbox checkbox-success">
                                                 <input type="checkbox" name="input_16" id="input_16" checked="true" />
                                                 <label for="input_16">Check me out</label>
                                             </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="checkbox checkbox-warning">
                                                 <input type="checkbox" name="input_17" id="input_17" checked="true" />
                                                 <label for="input_17">Check me out</label>
                                             </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="checkbox checkbox-danger">
                                                 <input type="checkbox" name="input_18" id="input_18" checked="true" />
                                                 <label for="input_18">Check me out</label>
@@ -680,10 +723,6 @@
         <span class="checkbox">
             <input type="checkbox" name="input_12" id="input_12" checked="true" />
             <label for="input_12">Check me out</label>
-        </span>
-        <span class="checkbox checkbox-default">
-            <input type="checkbox" name="input_13" id="input_13" checked="true" />
-            <label for="input_13">Check me out</label>
         </span>
         <span class="checkbox checkbox-primary">
             <input type="checkbox" name="input_14" id="input_14" checked="true" />
@@ -712,7 +751,7 @@
                         <hr>
                         <div class="row roof-xs foor-xs" data-waypoint="radio">
                             <h2>Radio</h2>
-                            <p> Custom styled radios can be used by simply wrapping the label and input in <code>.radio</code> classed element. Radios can be further contextualized using the <code>.radio-default, .radio-primary, .radio-info, .radio-success, .radio-warning, .radio-danger</code> classes. </p>
+                            <p> Custom styled radios can be used by simply wrapping the label and input in <code>.radio</code> classed element. Radios can be further contextualized using the <code>.radio-primary, .radio-info, .radio-success, .radio-warning, .radio-danger</code> classes. </p>
                             <div class="code-content-example">
                                 <div class="container-fuid">
                                     <form>
@@ -721,26 +760,27 @@
                                                 <input type="radio" name="radio_1" id="input_19" checked="true" />
                                                 <label for="input_19">Check me out</label>
                                             </span>
-                                            <span class="radio radio-default">
-                                                <input type="radio" name="radio_1" id="input_20" checked="true" />
-                                                <label for="input_20">Check me out</label>
-                                            </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="radio radio-primary">
                                                 <input type="radio" name="radio_1" id="input_21" checked="true" />
                                                 <label for="input_21">Check me out</label>
                                             </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="radio radio-info">
                                                 <input type="radio" name="radio_1" id="input_22" checked="true" />
                                                 <label for="input_22">Check me out</label>
                                             </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="radio radio-success">
                                                 <input type="radio" name="radio_1" id="input_23" checked="true" />
                                                 <label for="input_23">Check me out</label>
                                             </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="radio radio-warning">
                                                 <input type="radio" name="radio_1" id="input_24" checked="true" />
                                                 <label for="input_24">Check me out</label>
                                             </span>
+                                            <div class="row roof-xs"></div>
                                             <span class="radio radio-danger">
                                                 <input type="radio" name="radio_1" id="input_25" checked="true" />
                                                 <label for="input_25">Check me out</label>
@@ -755,10 +795,6 @@
         <span class="radio">
             <input type="radio" name="radio_1" id="input_19" checked="true" />
             <label for="input_19">Check me out</label>
-        </span>
-        <span class="radio radio-default">
-            <input type="radio" name="radio_1" id="input_20" checked="true" />
-            <label for="input_20">Check me out</label>
         </span>
         <span class="radio radio-primary">
             <input type="radio" name="radio_1" id="input_21" checked="true" />
@@ -787,7 +823,7 @@
                         <hr>
                         <div class="row roof-xs foor-xs" data-waypoint="switch">
                             <h2>Switch</h2>
-                            <p> Switches are a custom styled <code>checkbox</code> element. Switches can be further contextualized using the <code>.switch-default, .switch-primary, .switch-info, .switch-success, .switch-warning, .switch-danger</code> classes. </p>
+                            <p> Switches are a custom styled <code>checkbox</code> element. Switches can be further contextualized using the <code>.switch-primary, .switch-info, .switch-success, .switch-warning, .switch-danger</code> classes. </p>
                             <div class="code-content-example">
                                 <div class="container-fuid">
                                     <form>
@@ -797,31 +833,31 @@
                                                 <span class="toggle-on">On</span>
                                                 <span class="toggle-off">Off</span>
                                             </label>
-                                            <input type="checkbox" id="input_27" name="input_27" class="switch switch-default" checked>
-                                            <label for="input_27"> Switch
-                                                <span class="toggle-on">On</span>
-                                                <span class="toggle-off">Off</span>
-                                            </label>
+                                            <div class="row roof-xs"></div>
                                             <input type="checkbox" id="input_28" name="input_28" class="switch switch-primary" checked>
                                             <label for="input_28"> Switch
                                                 <span class="toggle-on">On</span>
                                                 <span class="toggle-off">Off</span>
                                             </label>
+                                            <div class="row roof-xs"></div>
                                             <input type="checkbox" id="input_29" name="input_29" class="switch switch-info" checked>
                                             <label for="input_29"> Switch
                                                 <span class="toggle-on">On</span>
                                                 <span class="toggle-off">Off</span>
                                             </label>
+                                            <div class="row roof-xs"></div>
                                             <input type="checkbox" id="input_30" name="input_30" class="switch switch-success" checked>
                                             <label for="input_30"> Switch
                                                 <span class="toggle-on">On</span>
                                                 <span class="toggle-off">Off</span>
                                             </label>
+                                            <div class="row roof-xs"></div>
                                             <input type="checkbox" id="input_31" name="input_31" class="switch switch-warning" checked>
                                             <label for="input_31"> Switch
                                                 <span class="toggle-on">On</span>
                                                 <span class="toggle-off">Off</span>
                                             </label>
+                                            <div class="row roof-xs"></div>
                                             <input type="checkbox" id="input_32" name="input_32" class="switch switch-danger" checked>
                                             <label for="input_32"> Switch
                                                 <span class="toggle-on">On</span>
@@ -836,12 +872,6 @@
     <div class="form-field">
         <input type="checkbox" id="input_26" name="input_26" class="switch" checked>
         <label for="input_26">
-            Switch 
-            <span class="toggle-on">On</span>
-            <span class="toggle-off">Off</span>
-        </label>
-        <input type="checkbox" id="input_27" name="input_27" class="switch switch-default" checked>
-        <label for="input_27">
             Switch 
             <span class="toggle-on">On</span>
             <span class="toggle-off">Off</span>
@@ -883,17 +913,12 @@
                         <hr>
                         <div class="row roof-xs foor-xs" data-waypoint="progress">
                             <h2>Progress</h2>
-                            <p> Custom styled progress bars can be used in upload forms or Ajax tasks. Progress bars can be further contextualized using the <code>.progress-default, .progress-primary, .progress-info, .progress-success, .progress-warning, .progress-danger, .progress-gradient</code> classes. </p>
+                            <p> Custom styled progress bars can be used in upload forms or Ajax tasks. Progress bars can be further contextualized using the <code>.progress-primary, .progress-info, .progress-success, .progress-warning, .progress-danger, .progress-gradient</code> classes. </p>
                             <div class="code-content-example">
                                 <div class="container-fuid">
                                     <div class="row floor-xs">
                                         <span class="progress-bar">
                                             <span class="progress" style="width: 20%"></span>
-                                        </span>
-                                    </div>
-                                    <div class="row floor-xs">
-                                        <span class="progress-bar progress-default">
-                                            <span class="progress" style="width: 30%"></span>
                                         </span>
                                     </div>
                                     <div class="row floor-xs">
@@ -927,11 +952,6 @@
 <div class="row floor-xs">
     <span class="progress-bar">
         <span class="progress" style="width: 20%"></span>
-    </span>
-</div>
-<div class="row floor-xs">
-    <span class="progress-bar progress-default">
-        <span class="progress" style="width: 30%"></span>
     </span>
 </div>
 <div class="row floor-xs">

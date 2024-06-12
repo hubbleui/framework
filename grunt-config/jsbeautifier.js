@@ -10,24 +10,24 @@ module.exports =
     {
         js:
         {
-          braceStyle: "expand",
-          breakChainedMethods: false,
-          e4x: false,
-          evalCode: false,
-          indentChar: " ",
-          indentLevel: 0,
-          indentSize: 4,
-          indentWithTabs: false,
-          jslintHappy: false,
-          keepArrayIndentation: false,
-          keepFunctionIndentation: false,
-          maxPreserveNewlines: 5,
-          preserveNewlines: true,
-          spaceBeforeConditional: true,
-          spaceInParen: false,
-          unescapeStrings: false,
-          wrapLineLength: 0,
-          endWithNewline: true
+            braceStyle: "expand",
+            breakChainedMethods: false,
+            e4x: false,
+            evalCode: false,
+            indentChar: " ",
+            indentLevel: 0,
+            indentSize: 4,
+            indentWithTabs: false,
+            jslintHappy: false,
+            keepArrayIndentation: false,
+            keepFunctionIndentation: false,
+            maxPreserveNewlines: 5,
+            preserveNewlines: true,
+            spaceBeforeConditional: true,
+            spaceInParen: false,
+            unescapeStrings: false,
+            wrapLineLength: 0,
+            endWithNewline: true
         }
     }
 };

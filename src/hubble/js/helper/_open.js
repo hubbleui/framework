@@ -6,7 +6,8 @@
  * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
  */
 (function()
-    {
+{
+        
         /**
          * Module constructor
          *

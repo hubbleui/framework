@@ -97,12 +97,19 @@
     {
         var direction = trigger.dataset.popoverDirection;
         var title = trigger.dataset.popoverTitle;
+        var theme = trigger.dataset.popoverTheme || 'dark';
         var content = trigger.dataset.popoverContent;
         var evnt = trigger.dataset.popoverEvent;
         var animation = trigger.dataset.popoverAnimate || 'pop';
         var target = trigger.dataset.popoverTarget;
-        var closeBtn = evnt === 'click' ? '<button type="button" class="btn btn-xs btn-pure btn-circle js-remove-pop"><span class="glyph-icon glyph-icon-cross"></span></button>' : '';
-        var pop = '<h3 class="popover-title">' + title + closeBtn + '</h3><div class="popover-content"><p>' + content + '</p></div>';
+        var closeBtn = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="glyph-icon glyph-icon-cross3"></span></button>' : '';
+        var pop = '<div class="popover-content"><p>' + content + '</p></div>';
+
+
+        if (title)
+        {
+            pop = closeBtn + '<h5 class="popover-title">' + title + '</h5>' + pop;
+        }
 
         if (target)
         {
@@ -116,7 +123,7 @@
             direction: direction,
             template: pop,
             animation: animation,
-            classes: 'popover ' + direction,
+            classes: 'popover ' + direction + ' ' + theme,
         });
 
         this._pops.push(popHandler);
@@ -249,10 +256,22 @@
             e = e || window.event;
             var clicked = e.target;
 
-            // Clicked inside the popver itself,
+            // Clicked the close button
+            if (Helper.hasClass(clicked, 'js-remove-pop') || Helper.closest(clicked, '.js-remove-pop'))
+            {
+                _this._removeAll();
+
+                return;
+            }
+
+            // Clicked inside the popover
+            if (Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover'))
+            {
+                return;
+            }
+
             // Clicked a popover trigger
-            // Clicked a close trigger inside the popover
-            if ((Helper.hasClass(clicked, 'js-popover') || Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover')) && !Helper.hasClass(clicked, 'js-remove-pop'))
+            if (Helper.hasClass(clicked, 'js-popover') || Helper.closest(clicked, '.js-popover'))
             {
                 return;
             }

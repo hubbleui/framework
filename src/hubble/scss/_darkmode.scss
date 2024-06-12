@@ -1,0 +1,306 @@
+.darkmode .chip
+{
+    background-color: _lighter($body-bg-darkmode, 15%);
+    color: $body-color-darkmode;
+    border: 1px solid _lighter($body-bg-darkmode, 15%);
+
+    // States
+    &:hover
+    {
+        background-color: _lighter($body-bg-darkmode, 20%);
+        border-color: _lighter($body-bg-darkmode, 20%);
+    }
+    &:active
+    {
+        background-color: _lighter($body-bg-darkmode, 25%);
+        border-color: _lighter($body-bg-darkmode, 25%);
+    }
+    &:focus,
+    &:focus-within,
+    &.focus
+    {
+        background-color: _lighter($body-bg-darkmode, 25%);
+        border-color: _lighter($body-bg-darkmode, 25%);
+    }
+    &.disabled,
+    &.disabled:focus,&.disabled:active,&.disabled:hover
+    {
+        opacity: 0.5;
+        background-color: var(--hb-gray-300);
+        border-color: var(--hb-gray-300);
+    }
+    
+    // Remove
+    .remove-icon
+    {
+        color: $body-color-darkmode;
+        &:hover
+        {
+            color: $brand-primary;
+        }
+    }
+
+    // Outline base
+    &.chip-outline
+    {
+        background-color: transparent;
+        border-color: _lighter($body-bg-darkmode, 15%);
+        &:hover
+        {
+            background-color: _lighter($body-bg-darkmode, 15%);
+        }
+        .remove-icon:before
+        {
+            background-color: transparent;
+            color: $body-color-darkmode;
+        }
+    }
+
+    &.selected
+    {
+        color: $brand-primary;
+        background-color: RGBAtoRGB(rgba($brand-primary, 0.15));
+        border-color: RGBAtoRGB(rgba($brand-primary, 0.15));
+        
+        &.chip-outline
+        {
+            color: $brand-primary;
+            background-color: RGBAtoRGB(rgba($brand-primary, 0.15));
+            border-color: RGBAtoRGB(rgba($brand-primary, 0.4));
+        }
+    }
+}
+
+.darkmode .card
+{
+    background-color: _darker($body-bg-darkmode, 10);
+    &:active
+    {
+        background-color: _darker($body-bg-darkmode, 20);
+    }
+    &.flat
+    {
+        box-shadow: none;
+        border: 1px solid _lighter($body-bg-darkmode, 10);
+        &:active
+        {
+            background-color: transparent;
+        }
+    }
+    .card-subtitle
+    {
+        color: _darker($body-color-darkmode, 10);
+    }
+    .card-text
+    {
+        color: _darker($body-color-darkmode, 10);
+    }
+    .card-img-top
+    {
+        background-color: _lighter($body-bg-darkmode, 10);
+    }
+    .card-header
+    {
+        .card-icon
+        {
+            background-color: _lighter($body-bg-darkmode, 10);
+
+            .glyph-icon
+            {
+                color: _darker($body-bg-darkmode, 10)
+            }
+        }
+    }
+    .card-divider
+    {
+        height: 1px;
+        background: _lighter($body-bg-darkmode, 1%);
+        border: 0;
+        margin: 10px 0;
+    }
+    
+}
+.darkmode .table
+{
+    caption
+    {
+        color: _darker($body-color-darkmode, 5%);
+    }
+
+    color: _darker($body-color-darkmode, 5%);
+    background-color: transparent;
+
+    thead,
+    tfoot
+    {       
+        th, td
+        {
+            background-color: _darker($body-bg-darkmode, 30%);
+            border-color: _darker($body-bg-darkmode, 30%);
+            color: #fff;
+        }
+    }
+    > tbody > tr > td,
+    > tbody > tr > th
+    {
+        border-bottom: 1px solid _lighter($body-bg-darkmode, 10%);
+    }
+
+
+    &.table-bordered
+    {
+        td, th
+        {
+            border: 1px solid _lighter($body-bg-darkmode, 10%);
+        }
+        thead th,
+        tfoot th
+        {
+            border-color: _lighter($body-bg-darkmode, 10%);
+        }
+    }
+    &.table-transparent
+    {
+        background-color: transparent;
+    }
+    &.table-plain
+    {
+        thead,
+        tfoot
+        {       
+            th
+            {
+                background-color: #fff;
+                border-color: #fff;
+                border-bottom: 2px solid _lighter($body-bg-darkmode, 5%);
+                color: _lighter($body-bg-darkmode, 5%);
+            }
+        }
+
+    }
+}
+
+// Responsive table wrapped
+@include media-breakpoint-down(md)
+{
+    .darkmode .table-responsive.bordered
+    {
+        border: 1px solid _lighter($body-bg-darkmode, 5%);
+    }
+}
+
+.darkmode .drop-menu.raised.arrow-s:before,
+.darkmode .drop-menu.raised.arrow-se:before,
+.darkmode .drop-menu.raised.arrow-sw:before
+{
+    border-top-color: _lighter($body-bg-darkmode, 10%);
+}
+
+// Darkmode
+.darkmode .tab-nav {
+    border-bottom: 1px solid _lighter($body-bg-darkmode, 30%);
+}
+
+.darkmode .tab-nav > li a {
+    color: _darker($body-color-darkmode, 30%);
+}
+.darkmode .tab-nav > li a:hover {
+    border-bottom: 2px solid _lighter($body-bg-darkmode, 30%);
+}
+.darkmode .tab-nav > li a.active {
+    color: $body-color-darkmode;
+    border-bottom: 2px solid $brand-primary;
+}
+
+//Pill style
+.darkmode .tab-pill {
+    border-bottom: none;
+    > li a {
+        border: 1px solid _lighter($body-bg-darkmode, 30%);
+        &.active,
+        &.active:hover {
+            border: 1px solid $brand-primary;
+            color: $body-color-darkmode;
+            background-color: $brand-primary;
+        }
+        &:hover {
+            border: 1px solid _lighter($body-bg-darkmode, 30%);
+            background-color: _lighter($body-bg-darkmode, 30%);
+        }
+    }
+}
+
+// Bordered
+.darkmode .tab-border {
+    
+    > li a {
+        border-bottom: 2px solid transparent;
+        &.active,
+        &.active:hover {
+            border: 1px solid _lighter($body-bg-darkmode, 30%);
+            border-bottom: 2px solid  $brand-primary;
+            color: $brand-primary;
+        }
+        &:hover {
+            background-color: _lighter($body-bg-darkmode, 30%)er;
+            border-bottom: 2px solid transparent;
+        }
+    }
+}
+
+.darkmode .list
+{
+    > li
+    {
+        &:hover
+        {
+            background-color: _lighter($body-bg-darkmode, 10%);
+        }
+        &:active,
+        &:focus,
+        &:focus-within
+        {
+            background-color: _lighter($body-bg-darkmode, 20%);
+        }
+    }
+
+    .item-body, 
+    .item-left, 
+    .item-right
+    {
+        color: _darker($body-color-darkmode, 20%);
+    }
+    .item-title
+    {
+        color: $body-color-darkmode;
+    }
+    .item-subtitle
+    {
+        color: _darker($body-color-darkmode, 10%);
+    }
+}
+
+.darkmode code, .darkmode pre
+{
+    background: _darker($body-bg-darkmode, 10);
+    border: 1px solid _darker($body-bg-darkmode, 10);
+}
+.darkmode code
+{
+    color: $body-color-darkmode;
+}
+.darkmode pre
+{
+    color: $body-color-darkmode;
+}
+.darkmode pre > code
+{
+    color: $body-color-darkmode;
+}
+.darkmode
+{
+    input, label, textarea, select
+    {
+        color: $body-color-darkmode;
+    }
+}

@@ -61,7 +61,7 @@
      */
     TabNav.prototype._bindDOMListeners = function(navWrap)
     {
-        var links  = Helper.$All('a', navWrap);
+        var links  = Helper.$All('li > *', navWrap);
         
         for (var i = 0; i < links.length; i++)
         {
@@ -77,7 +77,7 @@
      */
     TabNav.prototype._unbindDOMListeners = function(navWrap)
     {
-        var links = Helper.$All('a', navWrap);
+        var links = Helper.$All('li > *', navWrap);
         
         for (var i = 0; i < links.length; i++)
         {
@@ -110,13 +110,20 @@
         var activePanel   = Helper.$('.tab-panel.active', tabPanel);
 
         var navWrap       = Helper.closestClass(node, 'js-tab-nav');
-        var activeNav     = Helper.$('a.active', navWrap);
+        var activeNav     = Helper.$('.active', navWrap);
+        var activeClass   = navWrap.dataset.activeClass;
+        var activeClasses = ['active'];
 
-        Helper.removeClass(activeNav, 'active');
-        Helper.removeClass(activePanel, 'active');
+        if (!Helper.empty(activeClass))
+        {
+            activeClasses.push(activeClass);
+        }
 
-        Helper.addClass(node, 'active');
-        Helper.addClass(tabPane, 'active');
+        Helper.removeClass(activeNav, activeClasses);
+        Helper.removeClass(activePanel, activeClasses);
+
+        Helper.addClass(node, activeClasses);
+        Helper.addClass(tabPane, activeClasses);
         
     }
 

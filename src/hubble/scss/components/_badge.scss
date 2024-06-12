@@ -1,51 +1,26 @@
 .badge
 {
+    --hb-badge-size: 2rem;
+    --hb-badge-color: var(--hb-white);
+    --hb-badge-bg: var(--hb-gray);
     display: inline-block;
     text-align: center;
-    width: $badge-size;
-    height: $badge-size;
-    font-size: $badge-size * 0.7;
-    line-height: $badge-size;
     border-radius: 50%;
+    font-size: 14px;
     white-space: nowrap;
-    color: #ffffff;
-    background-color: $gray;
+    width: var(--hb-badge-size);
+    height: var(--hb-badge-size);
+    line-height: var(--hb-badge-size);
+    color: var(--hb-badge-color);
+    background-color: var(--hb-badge-bg);
 
-    // Colors
-    &.badge-primary
+    @each $context, $colors in $contexts
     {
-        color: #fff;
-        background-color: $brand-primary;
-    }
-    &.badge-secondary
-    {
-        color: #fff;
-        background-color: $brand-secondary;
-    }
-    &.badge-success
-    {
-        color: #fff;
-        background-color: $brand-success;
-    }
-    &.badge-info
-    {
-        color: #fff;
-        background-color: $brand-info;
-    }
-    &.badge-warning
-    {
-       color: #fff;
-        background-color: $brand-warning;
-    }
-    &.badge-danger
-    {
-        color: #fff;
-        background-color: $brand-danger;
-    }
-    &.badge-white
-    {
-        color: $black;
-        background-color: $white;
+        &.badge-#{$context}
+        {
+            --hb-badge-color: #{map-get($colors, "contrast")};
+            --hb-badge-bg: #{map-get($colors, "color")}
+        }
     }
 }
 

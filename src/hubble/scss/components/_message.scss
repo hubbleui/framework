@@ -1,17 +1,30 @@
 // Message color variants
 .msg
 {
+    --hb-msg-bg: #{$msg-bg};
+    --hb-msg-color: #{$msg-color};
+    --hb-msg-icon-color: #{$msg-icon-color};
+    --hb-msg-spacer-y: #{$msg-spacer-y};
+    --hb-msg-spacer-x: #{$msg-spacer-x};
+    --hb-msg-border-radius: #{$msg-border-radius};
+    --hb-msg-font-size: #{$msg-font-size};
     position: relative;
     overflow: hidden;
-    border-radius: 4px;
-    background-color: #323232;
+    border-radius: var(--hb-msg-border-radius);
+    background-color: var(--hb-msg-bg);
     border: none;
-    color: #ffffff;
+    color: var(--hb-msg-color);
     
     .msg-icon .glyph-icon
     {
-       background-color: rgba($brand-primary, 0.3);
-       color: $brand-primary;
+       color: var(--hb-msg-icon-color);
+       position: relative;
+
+        &:after
+        {
+            background-color: var(--hb-msg-icon-color);
+            opacity: 0.2;
+        }
     }
     
     // Layout
@@ -27,15 +40,26 @@
     .msg-icon
     {
         text-align: center;
-        padding: 0 20px;
+        padding: 0 var(--hb-msg-spacer-x);
         .glyph-icon
         {
             display: inline-block;
-            border-radius: 50%;
             font-size: 16px;
             width: 40px;
             height: 40px;
             line-height: 41px;
+
+            &:after
+            {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                
+            }
         }
     }
 
@@ -43,11 +67,11 @@
     .msg-body
     {
         width: 10000px;
-        padding: 20px;
+        padding: var(--hb-msg-spacer-y) var(--hb-msg-spacer-x);
 
         p
         {
-            font-size: 1.4rem;
+            font-size: var(--hb-msg-font-size);
             margin: 0;
             a
             {
@@ -61,12 +85,12 @@
     }
     .msg-btn
     {
-        padding: 0 20px;
+        padding: 0 var(--hb-msg-spacer-x);
         white-space: nowrap;
     }
     .msg-icon + .msg-body
     {
-        padding: 30px 20px 30px 0px;
+        padding: var(--hb-msg-spacer-y) var(--hb-msg-spacer-x) var(--hb-msg-spacer-y) 0px;
     }
     .msg-body + .msg-btn
     {
@@ -74,44 +98,28 @@
     }
 
     // Variants
+    &.msg-primary
+    {
+        --hb-msg-icon-color: var(--hb-brand-primary);
+    }
     &.msg-secondary
     {
-        .msg-icon .glyph-icon
-        {
-            background-color: rgba($brand-secondary, 0.3);
-            color: $brand-secondary;
-        }
+        --hb-msg-icon-color: var(--hb-brand-secondary);
     }
     &.msg-info
     {
-        .msg-icon .glyph-icon
-        {
-            background-color: rgba($brand-info, 0.3);
-            color: $brand-info;
-        }
+        --hb-msg-icon-color: var(--hb-brand-info);
     }
     &.msg-success
     {
-        .msg-icon .glyph-icon
-        {
-            background-color: rgba($brand-success, 0.3);
-            color: $brand-success;
-        }
+        --hb-msg-icon-color: var(--hb-brand-success);
     }
     &.msg-warning
     {
-        .msg-icon .glyph-icon
-        {
-            background-color: rgba($brand-warning, 0.3);
-            color: $brand-warning;
-        }
+        --hb-msg-icon-color: var(--hb-brand-warning);
     }
     &.msg-danger
     {
-        .msg-icon .glyph-icon
-        {
-           background-color: rgba($brand-danger, 0.3);
-           color: $brand-danger;
-        }
+        --hb-msg-icon-color: var(--hb-brand-danger);
     }
 }

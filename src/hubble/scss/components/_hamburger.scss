@@ -1,58 +1,47 @@
 // Hamburger
-.hamburger {
+.hamburger
+{
+    --hb-hamburger-color: #{$hamburger-color};
+    --hb-hamburger-color-active: #{$hamburger-color-active};
+    @include button-unstyled();
     margin: 0;
-    background-color: $brand-primary;
     color: $white;
     overflow: hidden;
-    border-radius: $border-radius;
     background-color: transparent;
     display: inline-block;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding: 10px;
     height: 35px;
     width: 40px;
-    text-indent: -60px;
-    line-height: 23px;
-    @include button-unstyled();
-}
-.hamburger .hamburger-bun,
-.hamburger .hamburger-patty {
-    display: block;
-    background-color: $brand-primary;
-    width: 20px;
-    height: 1px;
-    margin: 0 auto 6px;
-    transition: $base-easing-time $base-easing;
-}
-.hamburger.active .hamburger-bun,
-.hamburger.active .hamburger-patty {
-    background-color: $brand-primary;
-    position: relative;
-}
-.hamburger.active .hamburger-bun--top {
-    top: 6px;
-    -webkit-transform: rotate(45deg);
-    -moz-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg)
-}
-.hamburger.active .hamburger-patty {
-    top: -1px;
-    -webkit-transform: rotate(45deg);
-    -moz-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg);
-    -webkit-opacity: 0;
-    -moz-opacity: 0;
-    opacity: 0
-}
-.hamburger.active .hamburger-bun--btm {
-    bottom: 8px;
-    -webkit-transform: rotate(-45deg);
-    -moz-transform: rotate(-45deg);
-    -o-transform: rotate(-45deg);
-    -ms-transform: rotate(-45deg);
-    transform: rotate(-45deg)
+    .hamburger-bun,
+    .hamburger-patty
+    {
+        display: block;
+        background-color: var(--hb-hamburger-color);
+        width: 20px;
+        height: 1px;
+        margin: 0 auto 6px;
+        transition: $base-easing-time $base-easing;
+    }
+    &.active .hamburger-bun,
+    &.active .hamburger-patty
+    {
+        background-color: var(--hb-hamburger-color-active);
+        position: relative;
+    }
+    &.active .hamburger-bun--top
+    {
+        top: 6px;
+        transform: rotate(45deg)
+    }
+    &.active .hamburger-patty
+    {
+        top: -1px;
+        transform: rotate(45deg);
+        opacity: 0
+    }
+    &.active .hamburger-bun--btm
+    {
+        bottom: 8px;
+        transform: rotate(-45deg)
+    }
 }

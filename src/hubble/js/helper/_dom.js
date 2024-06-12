@@ -107,7 +107,7 @@ Helper.prototype.closest = function(el, type)
  * @return node\null
  */
 Helper.prototype.closestClass = function(el, clas)
-{
+{    
     // Type is class
     if (this.is_array(clas))
     {
@@ -389,6 +389,21 @@ Helper.prototype.newNode = function(type, classes, ID, content, target)
 }
 
 /**
+ * Inserts node as first child
+ *
+ * @access public
+ * @param  node node     New node to insert
+ * @param  node wrapper  Parent to preappend new node into
+ * @return node
+ */
+Helper.prototype.preapend = function(node, wrapper)
+{
+    wrapper.insertBefore(node, wrapper.firstChild);
+
+    return node;
+}
+
+/**
  * Check if a node exists in the DOM
  *
  * @access public
@@ -596,6 +611,24 @@ Helper.prototype.hasClass = function(el, className)
     if (!el.classList)
     {
         return false;
+    }
+
+    var classNames = className.split('.');
+
+    if ((classNames.length - 1) > 1)
+    {
+        for (var i = 0; i < classNames.length; i++)
+        {
+            if (el.classList.contains(classNames[i]))
+            {
+                return true;
+            }
+        }
+    }
+
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
     }
 
     return el.classList.contains(className);

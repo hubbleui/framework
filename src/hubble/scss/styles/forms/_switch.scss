@@ -49,11 +49,11 @@ input[type=checkbox].switch
     {
         &:before
         {
-            background-color: lighten($gray-dark, 20);
+            background-color: var(--hb-gray-300);
         }
         &:after
         {
-            background-color: $gray-dark;
+            background-color: var(--hb-gray-500);
             transform: translate(80%, -50%);
         }
         .toggle-on
@@ -74,7 +74,7 @@ input[type=checkbox].switch
     {
         &:before
         {
-            background-color: lighten($color, 20);
+            background-color: _lighter($color, 20);
         }
         &:after
         {

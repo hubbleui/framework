@@ -1,7 +1,9 @@
 
 // Rows
-@if $curr-grid != null {
-    .flex-row-#{$curr-grid} {
+@if $curr-grid != null
+{
+    .flex-row-#{$curr-grid}
+    {
         box-sizing: border-box;
         display: flex;
         flex: 0 1 auto;
@@ -12,15 +14,20 @@
 }
 
 // colums
-@for $i from 1 through 12 {
-    @if $curr-grid == null {
-        .flex-col-#{$i} {
+@for $i from 1 through 12
+{
+    @if $curr-grid == null
+    {
+        .flex-col-#{$i}
+        {
             flex-basis: unquote('#{100 / 12 * $i}%');
             max-width: unquote('#{100 / 12 * $i}%');
         }
     }
-    @else {
-        .flex-col-#{$curr-grid}-#{$i} {
+    @else
+    {
+        .flex-col-#{$curr-grid}-#{$i}
+        {
             flex-basis: unquote('#{100 / 12 * $i}%');
             max-width: unquote('#{100 / 12 * $i}%');
         }
@@ -28,26 +35,36 @@
 }
 
 // Pushers
-@for $i from 1 through 12 {
-    @if $curr-grid == null {
-        .col-#{$i}-push-r {
+@for $i from 1 through 12
+{
+    @if $curr-grid == null
+    {
+        .col-#{$i}-push-r
+        {
             margin-left: unquote('#{100 / 12 * (12-$i)}%');
         }
     }
-    @else {
-        .col-#{$curr-grid}-#{$i}-push-r {
+    @else
+    {
+        .col-#{$curr-grid}-#{$i}-push-r
+        {
             margin-left: unquote('#{100 / 12 * (12-$i)}%');
         }
     }
 }
-@for $i from 1 through 12 {
-    @if $curr-grid == null {
-        .col-#{$i}-push-l {
+@for $i from 1 through 12
+{
+    @if $curr-grid == null
+    {
+        .col-#{$i}-push-l
+        {
             margin-right: unquote('#{100 / 12 * (12-$i)}%');
         }
     }
-    @else {
-        .col-#{$curr-grid}-#{$i}-push-l {
+    @else
+    {
+        .col-#{$curr-grid}-#{$i}-push-l
+        {
             margin-right: unquote('#{100 / 12 * (12-$i)}%');
         }
     }

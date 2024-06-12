@@ -1,51 +1,108 @@
 .btn
 {
-    display: inline-block;
-    margin: 0;
-    font-weight: normal;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    border: none;
-    border-radius: $border-radius;
-    font-size: $btn-font-size;
-    line-height: $btn-font-size;
-    background-color: $gray-light;
-    color: $gray-dark;
-    font-weight: $btn-font-weight;
-    text-transform: $btn-text-transform;
-    white-space: nowrap;
-    vertical-align: middle;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
-    padding: $btn-pad-y $btn-pad-x;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 2px 0 rgba($gray, 14%), 0 3px 1px -2px rgb($gray, 20%), 0 1px 5px 0 rgb($gray, 12%);
+    --hb-btn-block: inline-block;
+    --hb-btn-margin: 0;
+    --hb-btn-font-weight: normal;
+    --hb-btn-text-align: center;
+    --hb-btn-position: relative;
+    --hb-btn-overflow: hidden;
+    --hb-btn-border: none;
+    --hb-btn-width: auto;
+    --hb-btn-border-radius: #{$border-radius};
+    --hb-btn-font-size: #{$btn-font-size};
+    --hb-btn-line-height: #{$btn-font-size};
+    --hb-btn-bg-color: var(--hb-gray-200);
+    --hb-btn-color: var(--hb-gray-700);
+    --hb-btn-font-weight: #{$btn-font-weight};
+    --hb-btn-text-transform: #{$btn-text-transform};
+    --hb-btn-white-space: nowrap;
+    --hb-btn-vertical-align: middle;
+    --hb-btn-cursor: pointer;
+    --hb-btn-text-decoration: none;
+    --hb-btn-transition: none;
+    --hb-btn-padding-y: #{$btn-pad-y};
+    --hb-btn-padding-x: #{$btn-pad-x};
+    --hb-btn-letter-spacing: 0.5px;
+    --hb-btn-loader-color: var(--hb-btn-color);
+    --hb-btn-icon-color: inherit;
+    --hb-btn-box-shadow: none;
+    // Hover
+    --hb-btn-color-hover: var(--hb-gray-700);
+    --hb-btn-bg-color-hover:var(--hb-gray-300);
+    --hb-btn-box-shadow-hover: none;
+    // Active
+    --hb-btn-color-active: var(--hb-gray-700);
+    --hb-btn-bg-color-active: var(--hb-gray-200);
+    --hb-btn-box-shadow-active: none;
+    
+    // Setup
+    font-weight: var(--hb-btn-font-weight);
+    text-align: var(--hb-btn-text-align);
+    position: var(--hb-btn-position);
+    overflow: var(--hb-btn-overflow);
+    border: var(--hb-btn-border);
+    border-radius: var(--hb-btn-border-radius);
+    font-size: var(--hb-btn-font-size);
+    line-height: var(--hb-btn-line-height);
+    background-color: var(--hb-btn-bg-color);
+    color: var(--hb-btn-color);
+    font-weight: var(--hb-btn-font-weight);
+    text-transform: var(--hb-btn-text-transform);
+    white-space: var(--hb-btn-white-space);
+    vertical-align: var(--hb-btn-vertical-align);
+    cursor: var(--hb-btn-cursor);
+    text-decoration: var(--hb-btn-text-decoration);
+    transition: var(--hb-btn-transition);
+    padding: var(--hb-btn-padding-y) var(--hb-btn-padding-x);
+    letter-spacing: var(--hb-btn-letter-spacing);
+    box-shadow: var(--hb-btn-box-shadow);
+    
+    // Icon / Spinner
+    .glyph-icon
+    {
+        vertical-align: $btn-icon-vertical-align;
+        color: var(--hb-btn-icon-color);
+        transition: color ($ripple-easing-time/2) $base-easing;
+    }
+    .loading-spinner .path
+    {
+        stroke: var(--hb-btn-loader-color);
+    }
 
     &:hover,
     &.hover
     {
-        background-color: lighten($gray-light, 5);
-        color: $gray-dark;
-        box-shadow: 0 14px 26px -12px rgb($gray, 42%), 0 4px 23px 0 rgb(0 0 0 / 12%), 0 8px 10px -5px rgb($gray, 20%);
+        color: var(--hb-btn-color-hover);
+        background-color: var(--hb-btn-bg-color-hover);
+        box-shadow: var(--hb-btn-box-shadow-hover);
+        --hb-btn-icon-color: var(--hb-btn-color-hover);
     }
     &:active,
     &.active
     {
-        background-color: lighten($gray-light, 10);
-        color: $gray-dark;
-        box-shadow: none;
+        color: var(--hb-btn-color-active);
+        background-color: var(--hb-btn-bg-color-active);
+        box-shadow: var(--hb-btn-box-shadow-active);
+        --hb-btn-transition: #{background-color ($ripple-easing-time/2) $base-easing, color ($ripple-easing-time/2) $base-easing, box-shadow ($ripple-easing-time/2) $base-easing};
+        --hb-btn-icon-color: var(--hb-btn-color-active);
+        .glyph-icon
+        {
+            transition: color ($ripple-easing-time/2) $base-easing;
+        }
     }
-
+    
     // Raised
+    &.raised-1
+    {
+        @include raise(--hb-btn-box-shadow, 1, $black);
+    }
     &.raised-2
     {
-        @include raised(2);
+        @include raise(--hb-btn-box-shadow, 2, $black);
     }
     &.raised-3
     {
-        @include raised(3);
+        @include raise(--hb-btn-box-shadow, 3, $black);
     }
 
     // Hover/active/focus resets
@@ -70,7 +127,7 @@
     &:disabled:focus,
     &.disabled.focus
     {
-        box-shadow: none;
+        --hb-btn-box-shadow: none;
         opacity: 0.4;
         cursor: not-allowed;
     }
@@ -78,81 +135,72 @@
     // Flat
     &.flat
     {
-        box-shadow: none;
-        &:hover,
-        &.hover,
-        &:active,
-        &.active,
-        &:focus,
-        &.focus
-        {
-            box-shadow: none;
-        }
-    }
-    .glyph-icon
-    {
-        font-size: $btn-icon-font-size;
-        line-height: $btn-icon-line-height;
-        vertical-align: $btn-icon-vertical-align;
-    }
-    .loading-spinner .path
-    {
-        stroke: #fff;
+        --hb-btn-box-shadow: none;
+        --hb-btn-box-shadow-hover: none;
+        --hb-btn-box-shadow-active: none;
     }
 }
 
 // Sizes
 .btn-xs
 {
-    padding: $btn-xs-pad-y $btn-xs-pad-x;
+    --hb-btn-padding-y: #{$btn-xs-pad-y};
+    --hb-btn-padding-x: #{$btn-xs-pad-x};
 }
 .btn-sm
 {
-    padding: $btn-sm-pad-y $btn-sm-pad-x;
+    --hb-btn-padding-y: #{$btn-sm-pad-y};
+    --hb-btn-padding-x: #{$btn-sm-pad-x};
 }
 .btn-lg
 {
-    padding: $btn-lg-pad-y $btn-lg-pad-x;
+    --hb-btn-padding-y: #{$btn-lg-pad-y};
+    --hb-btn-padding-x: #{$btn-lg-pad-x};
 }
 .btn-xl
 {
-    padding: $btn-xl-pad-y $btn-xl-pad-x;
+    --hb-btn-padding-y: #{$btn-xl-pad-y};
+    --hb-btn-padding-x: #{$btn-xl-pad-x};
 }
 
 // Circle default and sizes 
 .btn-circle
 {
-    border-radius: 50%;
-    font-size: $circle-btn-font-size;
-    padding: $btn-font-size;
+    --hb-btn-border-radius: 50%;
+    --hb-btn-font-size: #{$circle-btn-font-size};
+    --hb-btn-padding-y: #{$btn-font-size};
+    --hb-btn-padding-x: #{$btn-font-size};
     &.btn-xs
     {
-       padding: _minusPercent($btn-font-size, 40);
+        --hb-btn-font-size: #{_minusPercent($circle-btn-font-size, 40)};
+        --hb-btn-padding-y: #{_minusPercent($btn-font-size, 40)};
+        --hb-btn-padding-x: #{_minusPercent($btn-font-size, 40)};
     }
     &.btn-sm
     {
-        padding: _minusPercent($btn-font-size, 20);
+        --hb-btn-font-size: #{_minusPercent($circle-btn-font-size, 30)};
+        --hb-btn-padding-y: #{_minusPercent($btn-font-size, 20)};
+        --hb-btn-padding-x: #{_minusPercent($btn-font-size, 20)};
     }
     &.btn-lg
     {
-        padding: _addPercent($btn-font-size, 30);
+        --hb-btn-font-size: #{_addPercent($circle-btn-font-size, 10)};
+        --hb-btn-padding-y: #{_addPercent($btn-font-size, 30)};
+        --hb-btn-padding-x: #{_addPercent($btn-font-size, 30)};
     }
     &.btn-xl
     {
-       padding: _addPercent($btn-font-size, 50);
-    }
-    .glyph-icon
-    {
-        line-height: normal;
-        line-height: initial;
+        --hb-btn-font-size: #{_addPercent($circle-btn-font-size, 15)};
+        --hb-btn-padding-y: #{_addPercent($btn-font-size, 50)};
+        --hb-btn-padding-x: #{_addPercent($btn-font-size, 50)};
     }
 }
 
 // Block buttons
 .btn-block
 {
-    display: block;
-    width: 100%;
+    --hb-btn-block: block;
+    --hb-btn-width: 100%;
 }
 .btn-block + .btn-block
 {
@@ -166,6 +214,6 @@ input[type="button"]
 {
     &.btn-block
     {
-        width: 100%;
+        --hb-btn-width: 100%;
     }
 }

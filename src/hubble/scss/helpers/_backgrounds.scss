@@ -1,21 +1,21 @@
 // Brand
-.bg-primary      { background-color: $brand-primary}
-.bg-secondary    { background-color: $brand-secondary}
+.bg-primary      { background-color: var(--hb-brand-primary)}
+.bg-secondary    { background-color: var(--hb-brand-secondary)}
 
 // Greys
-.bg-gray-dark 	  { background-color: $gray-dark}
-.bg-gray 	 	  { background-color: $gray}
-.bg-gray-light 	  { background-color: $gray-light}
-.bg-gray-lighter  { background-color: $gray-lighter}
-.bg-gray-lightest { background-color: $gray-lightest}	
+.bg-gray-dark 	  { background-color: var(--hb-gray-500)}
+.bg-gray 	 	  { background-color: var(--hb-gray)}
+.bg-gray-light 	  { background-color: var(--hb-gray-400)}
+.bg-gray-lighter  { background-color: var(--hb-gray-300)}
+.bg-gray-lightest { background-color: var(--hb-gray-100)}	
 
 // Accents
-.bg-success      { background-color: $brand-success }							
-.bg-info         { background-color: $brand-info }
-.bg-danger       { background-color: $brand-danger }
-.bg-warning      { background-color: $brand-warning }
+.bg-success      { background-color: var(--hb-brand-success)}							
+.bg-info         { background-color: var(--hb-brand-info)}
+.bg-danger       { background-color: var(--hb-brand-danger)}
+.bg-warning      { background-color: var(--hb-brand-warning)}
 
 // Defaults
-.bg-transparent  { background-color: transparent }
-.bg-white        { background-color: #fff }
-.bg-black        { background-color: $black }
+.bg-transparent  { background-color: transparent}
+.bg-white        { background-color: var(--hb-white)}
+.bg-black        { background-color: var(--hb-black);}

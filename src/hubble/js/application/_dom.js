@@ -31,6 +31,17 @@
     Dom.prototype.boot = function()
     {
         this._bindModules();
+
+        var _this = this;
+
+        var hubbleDomReady = new CustomEvent('hubbleDomReady',
+        {
+            detail: _this
+        });
+
+        window.dispatchEvent(hubbleDomReady);
+
+        document.hubbleDomReady = true;
     }
 
     /**

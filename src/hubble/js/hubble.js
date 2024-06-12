@@ -20,10 +20,8 @@
 // Vendors
 @import 'vendor/_promise.js';
 @import 'vendor/_smoothScroll.js';
-@import 'vendor/_flickity.js';
 @import 'vendor/_nprogress.js';
 @import 'vendor/_pluralize.js';
-@import 'vendor/_photoswipe.js';
 
 // Utility
 @import 'utility/_cookie.js';

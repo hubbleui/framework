@@ -53,7 +53,7 @@ input[type=radio]:focus
             display: inline-block;
             position: absolute;
             border-radius: 50%;
-            background-color: $gray-darker;
+            background-color: var(--hb-gray-700);
             left: - ($radio-size * 0.733);
             top: ($radio-size / 4);
             width: $radio-size / 2;
@@ -78,7 +78,7 @@ input[type=radio]:focus
         {
             + label:before
             {
-                border-color: $gray-darker;
+                border-color: var(--hb-gray-700);
                 transition: transform .15s ease-in-out 0s;
             }
             + label:after
@@ -91,7 +91,7 @@ input[type=radio]:focus
         {
             + label:before
             {
-                border-color: $gray-darker;
+                border-color: var(--hb-gray-700);
                 transition: transform .15s ease-in-out 0s;
                 outline: thin dotted;
                 outline: 5px auto -webkit-focus-ring-color;
@@ -109,13 +109,26 @@ input[type=radio]:focus
                 &:before
                 {
                     background-color: #f3f7f9;
-                    border-color: $gray-darker;
+                    border-color: var(--hb-gray-700);
                     cursor: not-allowed;
                 }
             }
         }
     }
-
+}
+.darkmode .radio
+{
+    input[type=radio]:checked + label:before
+    {
+        border-color: $body-color-darkmode;
+    }
+    input[type=radio]:checked + label:after
+    {
+        background-color: $body-color-darkmode;
+    }
+}
+.radio
+{
     // Contextual
     &.radio-primary
     {
@@ -202,3 +215,5 @@ input[type=radio]:focus
         }
     }
 }
+
+

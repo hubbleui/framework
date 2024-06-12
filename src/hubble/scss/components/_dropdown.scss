@@ -1,100 +1,121 @@
-// Base styles
 .drop-container
 {
+    --hb-dropdown-border-radius:  #{$dropdown-border-radius};
+    --hb-dropdown-bg:  #{$dropdown-bg};
+    --hb-dropdown-color:  #{$dropdown-color};
+    --hb-dropdown-link-color:  #{$dropdown-link-color};
+    --hb-dropdown-link-bg-active:  #{$dropdown-link-bg-active};
+    --hb-dropdown-width:  #{$dropdown-width};
+    --hb-dropdown-height:  #{$dropdown-height};
+    --hb-dropdown-font-size:  #{$dropdown-font-size};
+    --hb-dropdown-divider-size:  #{$dropdown-divider-size};
+    --hb-dropdown-divider-color:  #{$dropdown-divider-color};
+    --hb-dropdown-divider-space:  #{$dropdown-divider-space};
+    --hb-dropdown-header-divider-color:  #{$dropdown-header-divider-color};
+    --hb-dropdown-link-spacer-y:  #{$dropdown-link-spacer-y};
+    --hb-dropdown-link-spacer-x:  #{$dropdown-link-spacer-x};
+
     position: relative;
     display: inline-block;
-}
-.btn-dropdown + .drop-menu
-{
-    display: none;
-}
-.btn-dropdown.active + .drop-menu
-{
-    display: block;
-}
-.drop-menu
-{
-    position: absolute;
-    width: 100%;
-    left: 0;
-    border-radius: $border-radius;
-    z-index: $z-index-dropdown;
-    top: ($btn-pad-y * 2 ) + ($btn-font-size * 2);
-    min-width: $dropdown-width;
-    width: auto;
-    @include raised(3);
-    .drop
-    {
-        border-radius: $border-radius;
-        background-color: $dropdown-bg;
-        padding: 8px 0px;
-    }
-}
 
-// Dropdown list
-.drop ul
-{
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-height: $dropdown-max-height;
-    overflow-y: auto;
-    li
+    .btn-dropdown + .drop-menu
     {
-        padding: 0;
+        display: none;
+    }
+    .btn-dropdown.active + .drop-menu
+    {
         display: block;
+    }
+    .drop-menu
+    {
+        color: var(--hb-dropdown-color);
+        font-size: var(--hb-dropdown-font-size);
+        position: absolute;
         width: 100%;
-        overflow: hidden;
-        position: relative;
-        margin: 0;
-        font-size: $dropdown-font-size;
-        a
+        left: 0;
+        border-radius: var(--hb-dropdown-border-radius);
+        z-index: $z-index-dropdown;
+        top: $btn-height + 5;
+        min-width: var(--hb-dropdown-width);
+        width: auto;
+        @include raised(3);
+        .drop
         {
-            position: relative;
-            background-color: transparent;
-            width: 100%;
-            @include _ellipsis();
-            display: block;
-            color: $body-color;
-            padding: 12px;
-            &:hover,
-            &.selected
-            {
-                text-decoration: none;
-                background-color: $gray-lighter;
-            }
+            border-radius: var(--hb-dropdown-border-radius);
+            background-color: var(--hb-dropdown-bg);
+            padding: var(--hb-dropdown-link-spacer-y) 0px;
         }
-        // Show tick
-        a.selected:after
-        {
-            position: absolute;
-            color: $brand-primary;
-            right: 12px;
-            font-family: 'IcoMoon';
-            content:"\ed71";
-        }
+    }
+    .darkmode .drop-menu .drop
+    {
+        background-color: _lighter($body-bg-darkmode, 10%);
+    }
 
-    }
-    .drop-header
+    // Dropdown list
+    .drop ul
     {
-        font-weight: $text-bold;
-        padding: 0px 12px 8px 12px;
-        border-bottom: 1px solid $gray-lighter;
-    }
-    .divider
-    {
-        padding-top: 3px;
-        margin-bottom: 3px;
-        border-bottom: 1px solid $gray-lighter;
-    }
-    .divider,
-    .drop-header + li,
-    .divider + li,
-    li:first-child
-    {
-        border-top-color: transparent;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: var(--hb-dropdown-height);
+        overflow-y: auto;
+        li
+        {
+            padding: 0;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            margin: 0;
+            a
+            {
+                display: block;
+                position: relative;
+                background-color: transparent;
+                width: 100%;
+                color: var(--hb-dropdown-link-color);
+                padding: var(--hb-dropdown-link-spacer-x);
+                @include _ellipsis();
+                &:hover,
+                &.selected
+                {
+                    text-decoration: none;
+                    background-color: var(--hb-dropdown-link-bg-active);
+                }
+            }
+            // Show tick
+            a.selected:after
+            {
+                font-family: 'IcoMoon';
+                content:"\ed71";
+                position: absolute;
+                color: var(--hb-brand-primary);
+                right: var(--hb-dropdown-link-spacer-x);
+            }
+
+        }
+        .drop-header
+        {
+            font-weight: $text-bold;
+            padding: 0px var(--hb-dropdown-link-spacer-x) var(--hb-dropdown-link-spacer-y) var(--hb-dropdown-link-spacer-x);
+            border-bottom: var(--hb-dropdown-divider-size) solid var(--hb-dropdown-header-divider-color);
+        }
+        .divider
+        {
+            padding-top: var(--hb-dropdown-divider-space);
+            margin-bottom: var(--hb-dropdown-divider-space);
+            border-bottom: var(--hb-dropdown-divider-size) solid var(--hb-dropdown-divider-color);
+        }
+        .divider,
+        .drop-header + li,
+        .divider + li,
+        li:first-child
+        {
+            border-top-color: transparent;
+        }
     }
 }
+
 
 // POSITIONING
 // South
@@ -166,21 +187,13 @@
     }
 }
 
-.drop-menu.raised.arrow-s:before,
-.drop-menu.raised.arrow-se:before,
-.drop-menu.raised.arrow-sw:before
-{
-    border-top-color: #7b7b7b;
-}
-
 // size specific
 .btn-xs + .drop-menu
 {
     &.drop-s,
     &.drop-se,
     &.drop-sw
-   
-   {
+    {
         top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) - 1;
     }
 }

@@ -8,7 +8,7 @@
 	top: 0;
 	left: 0;
 	z-index: $z-index-modal;
-	transition: opacity .3s $ease;
+	transition: opacity .3s var(--hb-ease);
 }
 .frontdrop-overlay.dark
 {
@@ -77,7 +77,7 @@
 		content: "";
 		width: 40px;
 		height: 3px;
-		background-color: $gray-lighter;
+		background-color: var(--hb-gray-300);
 		border-radius: 5px;
 		position: absolute;
 		top: 20px;
@@ -90,7 +90,7 @@
 		content: "";
 		width: calc(100vw - 40px);
 		height: 1px;
-		background-color: $gray-lighter;
+		background-color: var(--hb-gray-300);
 		position: absolute;
 		bottom: 0;
 		left: 0;
@@ -109,7 +109,7 @@
 	width: 100%;
 	opacity: 0;
 	transform: translateY(50%);
-	transition: opacity .3s $ease, transform .15s $ease;
+	transition: opacity .3s var(--hb-ease), transform .15s var(--hb-ease);
 	margin-left: auto;
     margin-right: auto;	
 }

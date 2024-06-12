@@ -88,7 +88,7 @@
                         </div>
                         <ul class="list-unstyled " id="css">
                             <li>
-                                <a class="" href="../../css/overview/index.html"> Overview </a>
+                                <a class="" href="../../css/overview/index.html">Overview</a>
                             </li>
                             <li>
                                 <a class="" href="../../css/grid/index.html"> Grid </a>
@@ -115,7 +115,7 @@
                                 <a class="" href="../../components/cards/index.html"> Cards </a>
                             </li>
                             <li>
-                                <a class="" href="../../components/carousel/index.html"> Carousel </a>
+                                <a class="" href="../../components/slider/index.html">Slider</a>
                             </li>
                             <li>
                                 <a class="" href="../../components/collapse/index.html"> Collapse </a>
@@ -166,7 +166,10 @@
                                 <a class="" href="../../components/pagination/index.html"> Pagination </a>
                             </li>
                             <li>
-                                <a class="" href="../../components/popovers/index.html"> Popovers </a>
+                                <a class="" href="../components/popovers/index.html"> Popovers </a>
+                            </li>
+                            <li>
+                                <a class="" href="../../components/gallery/index.html"> Gallery </a>
                             </li>
                             <li>
                                 <a class="" href="../../components/ripple/index.html"> Ripple </a>
@@ -217,6 +220,9 @@
                                 <a class="" href="../../javascript/pjax/index.html"> Pjax </a>
                             </li>
                             <li>
+                                <a class="" href="../../javascript/nprogress/index.html"> Nprogress </a>
+                            </li>
+                            <li>
                                 <a class="" href="../../javascript/helperjs/index.html"> HelperJS </a>
                             </li>
                             <li>
@@ -246,22 +252,22 @@
                         <hr>
                         <ul class="list-bullet">
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="basic" data-waypoint-speed="400">Basic table</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="basic" data-waypoint-speed="400">Basic table</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="bordered" data-waypoint-speed="500">Bordered table</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="bordered" data-waypoint-speed="500">Bordered table</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="raised" data-waypoint-speed="600">Raised table</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="raised" data-waypoint-speed="600">Raised table</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="hover" data-waypoint-speed="700">Hover table</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="hover" data-waypoint-speed="700">Hover table</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="responsive" data-waypoint-speed="800">Responsive table</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="responsive" data-waypoint-speed="800">Responsive table</a>
                             </li>
                             <li>
-                                <a href="#" class="js-waypoint-trigger text-black" data-waypoint-target="highlights" data-waypoint-speed="900">Table highlights</a>
+                                <a href="#" class="js-waypoint-trigger" data-waypoint-target="highlights" data-waypoint-speed="900">Table highlights</a>
                             </li>
                         </ul>
                         <hr>
@@ -495,11 +501,11 @@
 </code></pre> </div>
                         <div class="row roof-xs floor-xs" data-waypoint="highlights">
                             <h2>Table Highlights</h2>
-                            <p> You can highlight both rows and cells using Hubble's contextual classes. You can add the following classes <code>.info</code>, <code>.success</code>, <code>.warning</code>, <code>.danger</code> &amp; <code>.brand</code> to rows, cells, table footer and table header. </p>
+                            <p> You can highlight both rows and cells using Hubble's contextual classes. You can add the following classes <code>.info</code>, <code>.success</code>, <code>.warning</code>, <code>.danger</code> &amp; <code>.primary</code> to rows, cells, table footer and table header. </p>
                             <div class="code-content-example">
                                 <div class="container-fuid">
                                     <table class="table table-bordered">
-                                        <thead class="brand">
+                                        <thead class="primary">
                                             <tr>
                                                 <th>#</th>
                                                 <th>First Name</th>
@@ -532,13 +538,13 @@
                             </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="html">
 <!--
 &lt;!-- On rows --&gt;
-<tr class="brand">...</tr>
+<tr class="primary">...</tr>
 &lt;!-- On cells (`td` or `th`) --&gt;
 <tr>
-  <td class="brand">...</td>
+  <td class="primary">...</td>
 </tr>
 &lt;!-- On table head (`thead`) --&gt;
-<thead class="brand">
+<thead class="primary">
     ...
 </tr>
 -->

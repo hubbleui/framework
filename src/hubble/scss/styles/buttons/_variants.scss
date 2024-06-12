@@ -1,220 +1,132 @@
+@function str-replace($string, $search, $replace: '')
+{
+    $index: str-index($string, $search);
+  
+    @if $index
+    {
+        @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+    }
+  
+    @return $string;
+}
+@function color-name-from-var($colorVar)
+{
+    @return str-replace(str-replace($colorVar, ')', ''),  'var(--', '');
+}
+
 // Standard buttons
 @mixin button($color, $background)
-{    
-    color: $color;
-    background-color: $background;
-    box-shadow: 0 2px 2px 0 rgba($background, 14%), 0 3px 1px -2px rgb($background, 20%), 0 1px 5px 0 rgb($background, 12%);
-    &:hover,
-    &.hover
-    {
-        color: $color;
-        background-color: lighten($background, 5);
-        box-shadow: 0 14px 26px -12px rgb($background, 42%), 0 4px 23px 0 rgb(0 0 0 / 12%), 0 8px 10px -5px rgb($background, 20%);
-    }
-    &:focus,
-    &.focus
-    {
-        transition: background-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
-        color: $color;
-        background-color: lighten(saturate($background, 10), 15);
-    }
-    &:active,
-    &.active
-    {
-        color: $color;
-        background-color: lighten(saturate($background, 5), 15);
-        box-shadow: none;
-    }
-    .loading-spinner .path
-    {
-        stroke: $color;
-    }
-    .glyph-icon
-    {
-        color: $color;
-    }
-    &.raised-2
-    {
-        @include raised(2);
-    }
-    &.raised-3
-    {
-        @include raised(3);
-    }
+{
+    $colorName : color-name-from-var($background);
+    $levelBase: if($colorName == 'hb-on-primary', var(--#{$colorName}-800), $background);
+    $levelHvr:  if($colorName == 'hb-on-primary', 600, 500);
+    $levelActv: if($colorName == 'hb-on-primary', 900, 600);
+
+    // Base
+    --hb-btn-color: #{$color};
+    --hb-btn-bg-color: #{$levelBase};
+
+    // Hover
+    --hb-btn-bg-color-hover: var(--#{$colorName}-#{$levelHvr});
+
+    // Active
+    --hb-btn-color-active: #{$color};
+    --hb-btn-bg-color-active: var(--#{$colorName}-#{$levelActv});
+    --hb-btn-box-shadow-active: none;
+
+    // Loader / Icon
+    --hb-btn-loader-color: #{$color};
+    --hb-btn-color-hover: #{$color};
 }
 
 // Outline buttons
 @mixin button-outline($color)
 {
-    color: $color;
-    background-color: transparent;
-    border: 1px solid $color;
-    box-shadow: none;
+    $colorName: color-name-from-var($color);
 
-    .glyph-icon
+    @if $colorName == 'hb-on-primary'
     {
-        color: $color;
-    }
-    .loading-spinner .path
-    {
-        stroke: $white;
+        $colorName: 'hb-white';
+        $color:  var(--hb-white);
     }
 
-    &:hover,
-    &.hover
-    {
-        background-color: rgba($color, 0.04);
-        border: 1px solid $color;
-    }
-    &:focus,
-    &.focus
-    {
-        background-color: rgba($color, 0.07);
-    }
-    &:active,
-    &.active
-    {
-        background-color: rgba($color, 0.15);
-        border: 1px solid $color;
-    }
+    // Base
+    --hb-btn-color: #{$color};
+    --hb-btn-bg-color: transparent;
+    --hb-btn-border:  1px solid #{$color};
+    --hb-btn-box-shadow: none;
+
+    // Hover
+    --hb-btn-color-hover: #{$color};
+    --hb-btn-bg-color-hover: var(--#{$colorName}-100);
+
+    // Active
+    --hb-btn-color-active: #{$color};
+    --hb-btn-bg-color-active: var(--#{$colorName}-200);
+
+    // Icon / Loader
+    --hb-btn-loader-color: #{$color};
 }
 
 // Pure buttons
 @mixin button-pure($color)
 {
-    color: $color;
-    background-color: transparent;
-    box-shadow: none;
+    $colorName: color-name-from-var($color);
 
-    .glyph-icon
+    @if $colorName == 'hb-on-primary'
     {
-        color: $color;
+        $colorName: 'hb-white';
+        $color:  var(--hb-white);
     }
 
-    &:hover,
-    &.hover
-    {
-        background-color: rgba($color, 0.04);
-    }
-    &:focus,
-    &.focus
-    {
-        background-color: rgba($color, 0.07);
-    }
-    &:active,
-    &.active
-    {
-        background-color: rgba($color, 0.15);
-    }
+    // Base
+    --hb-btn-color: #{$color};
+    --hb-btn-bg-color :transparent;
+    --hb-btn-box-shadow: none;
+
+    // Hover
+    --hb-btn-color-hover: #{$color};
+    --hb-btn-bg-color-hover: var(--#{$colorName}-100); 
+    
+    // Active
+    --hb-btn-color-active: #{$color};
+    --hb-btn-bg-color-active :var(--#{$colorName}-200);
+
+    // Icon / Loader
+    --hb-btn-loader-color: #{$color};
 }
 
 // Color variants
-.btn-primary
-{
-    @include button($white, $brand-primary);
-}
-.btn-secondary
-{
-    @include button($white, $brand-secondary);
-}
-.btn-success
-{
-    @include button($white, $brand-success);
-}
-.btn-info
-{
-    @include button($white, $brand-info);
-}
-.btn-warning
-{
-    @include button($white, $brand-warning);
-}
-.btn-danger
-{
-    @include button($white, $brand-danger);
-}
-.btn-white
-{
-    @include button($black, $white);
-}
-.btn-black
-{
-    @include button($white, $black);
-}
-.btn-on-primary
-{
-    @include button(#fff, rgba(#000, 0.4));
+@each $context, $colors in $contexts
+{    
+    .btn.btn-#{$context}
+    {
+        @include button( map-get($colors, "contrast"), map-get($colors, "color"));
+    }
 }
 
 // Outline variants
 .btn.btn-outline
 {
-    @include button-outline($gray);
+    @include button-outline( var(--hb-gray) );
 }
-.btn-primary.btn-outline
-{
-    @include button-outline($brand-primary);
-}
-.btn-secondary.btn-outline
-{
-    @include button-outline($brand-secondary);
-}
-.btn-success.btn-outline
-{
-    @include button-outline($brand-success);
-}
-.btn-info.btn-outline
-{
-    @include button-outline($brand-info);
-}
-.btn-warning.btn-outline
-{
-    @include button-outline($brand-warning);
-}
-.btn-danger.btn-outline
-{
-    @include button-outline($brand-danger);
-}
-.btn-on-primary.btn-outline
-{
-    @include button-outline(#fff);
+@each $context, $colors in $contexts
+{    
+    .btn.btn-#{$context}.btn-outline
+    {
+        @include button-outline( map-get($colors, "color") );
+    }
 }
 
 // Pure variants
 .btn.btn-pure
 {
-    @include button-pure($gray);
+    @include button-pure( var(--hb-gray) );
 }
-.btn-primary.btn-pure
+@each $context, $colors in $contexts
 {
-    @include button-pure($brand-primary);
-}
-.btn-secondary.btn-pure
-{
-    @include button-pure($brand-secondary);
-}
-.btn-success.btn-pure
-{
-    @include button-pure($brand-success);
-}
-.btn-info.btn-pure
-{
-    @include button-pure($brand-info);
-}
-.btn-warning.btn-pure
-{
-    @include button-pure($brand-warning);
-}
-.btn-danger.btn-pure
-{
-    @include button-pure($brand-danger);
-}
-.btn-on-primary.btn-pure
-{
-    @include button-pure($white);
-    &:hover,
-    &.hover
+    .btn.btn-#{$context}.btn-pure
     {
-        background-color: rgba($white, 0.1);
+        @include button-pure( map-get($colors, "color") );
     }
 }

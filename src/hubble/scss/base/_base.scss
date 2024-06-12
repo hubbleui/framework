@@ -6,21 +6,25 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-
 // html font size at 62.5% allows for 
 // rem style px sizes 
-// e.g body { font-size: 1.4rem; } /* = 14px */
+// e.g b{ font-size: 1.4rem; } /* = 14px */
 // https://snook.ca/archives/html_and_css/font-size-with-rem
 html
 {
     font-size: 62.5%;
     -webkit-text-size-adjust: 100%;
 }
-
 html, body
 {
     background-color: $body-bg;
     color:            $body-color;
+}
+html.darkmode,
+.darkmode body
+{
+    background-color: $body-bg-darkmode;
+    color:            $body-color-darkmode;
 }
 body
 {
@@ -34,9 +38,9 @@ input, select, label, button, textarea
 {
     font-family: $base-font-family;
     font-size:   $base-font-size;
+    color: $body-color;
     @include _fontSmooth;
 }
-
 // Links
 a
 {
@@ -47,7 +51,7 @@ a
     &:hover
     {
         outline: 0;
-        color: $link-hover-color;
+        color: darken($link-color, 10%);
         text-decoration: underline;
     }
     &.no-link:hover
@@ -55,7 +59,6 @@ a
         text-decoration: none;
     }
 }
-
 // Clearfix
 .clearfix
 {

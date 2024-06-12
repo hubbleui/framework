@@ -36,7 +36,7 @@
 .text-info    { color: $brand-info    }
 .text-danger  { color: $brand-danger  }
 .text-success { color: $brand-success }
-.text-muted   { color:  $gray-light   }
+.text-muted   { color:  var(--hb-gray-400)   }
 
 // Misc
 .nowrap       { white-space: nowrap; }

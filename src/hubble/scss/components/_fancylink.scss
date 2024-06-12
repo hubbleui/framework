@@ -1,7 +1,9 @@
-.fancy-link {
+.fancy-link
+{
 	position: relative;
 	transition: .2s ease;
-	&:after {
+	&:after
+	{
 		content: "";
 	    bottom: -8px;
 	    height: 1px;
@@ -13,10 +15,12 @@
 		background-color: $brand-primary;
 		transition: .2s ease;
 	}
-	&:hover {
+	&:hover
+	{
 		text-decoration: none;
 		color: $brand-primary;
-		&:after {
+		&:after
+		{
 			width: 100%;
 		}
 	}

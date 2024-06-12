@@ -1,0 +1,86 @@
+.carousel
+{
+	--hb-slider-bg: #{$slider-bg};
+	--hb-slider-height: #{$slider-height};
+	--hb-slider-dots-color: #{$slider-dots-color};
+	--hb-slider-dots-color-active: #{$slider-dots-color-active};
+	--hb-slider-dots-size: #{$slider-dots-size};
+	--hb-slider-nav-btn-size: #{$slider-nav-btn-size};
+	--hb-slider-nav-icon-size: #{$slider-nav-icon-size};
+	--hb-slider-nav-btn-color: #{$slider-nav-btn-color};
+	--hb-slider-nav-btn-color-hover: #{$slider-nav-btn-color-hover};
+
+	width: 100%;
+	background-color: var(--hb-slider-bg);
+	.cell
+	{
+		height: var(--hb-slider-height);
+		width: 100%;
+		.inner
+		{
+			width: 100%;
+			height: var(--hb-slider-height);
+		}
+	}
+	.flickity-page-dots
+	{
+		bottom: 30px;
+		.dot
+		{
+			background-color: var(--hb-slider-dots-color);
+			opacity: 1;
+			width: var(--hb-slider-dots-size);
+			height: var(--hb-slider-dots-size);
+			&.is-selected
+			{
+				--hb-slider-dots-color: var(--hb-slider-dots-color-active);
+			}
+		}
+	}
+	.flickity-prev-next-button
+	{
+		background-color: transparent;
+		opacity: 0;
+		color: var(--hb-slider-nav-btn-color);
+		transition: opacity $base-easing-time $base-easing;
+		
+		&:hover,&:active
+		{
+			background-color: transparent;
+			box-shadow: none;
+			--hb-slider-nav-btn-color: var(--hb-slider-nav-btn-color-hover);
+		}
+		&:after
+		{
+			@include glyph-icon;
+			font-size: var(--hb-slider-nav-icon-size);
+		}
+		&.previous:after
+		{
+			content: "\edc6";
+		}
+		&.next:after
+		{
+			content: "\edbe";
+		}
+		svg
+		{
+			display: none !important;
+		}
+	}
+	&:hover
+	{
+		.flickity-prev-next-button
+		{
+			opacity: 1;
+		}
+	}
+}
+
+@include media-breakpoint-down(md)
+{
+	.flickity-prev-next-button
+	{
+		display: none;
+	}
+}

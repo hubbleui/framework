@@ -1,22 +1,22 @@
 // Brand
-.color-primary       { color: $brand-primary}
-.color-secondary     { color: $brand-secondary}
+.color-primary       { color: var(--hb-brand-primary)}
+.color-secondary     { color: var(--hb-brand-secondary)}
 
 // Greys
-.color-gray-dark 	 { color: $gray-dark}
-.color-gray 	 	 { color: $gray}
-.color-gray-light 	 { color: $gray-light}
-.color-gray-lighter  { color: $gray-lighter}
-.color-gray-lightest { color: $gray-lightest}
+.color-gray-dark 	 { color: var(--hb-gray-500)}
+.color-gray 	 	 { color: var(--hb-gray)}
+.color-gray-light 	 { color: var(--hb-gray-400)}
+.color-gray-lighter  { color: var(--hb-gray-300)}
+.color-gray-lightest { color: var(--hb-gray-100)}
 
 // Accents
-.color-success       { color: $brand-success }							
-.color-info          { color: $brand-info }
-.color-danger        { color: $brand-danger }
-.color-warning       { color: $brand-warning }
+.color-success       { color: var(--hb-brand-success)}
+.color-info          { color: var(--hb-brand-info)}
+.color-danger        { color: var(--hb-brand-danger)}
+.color-warning       { color: var(--hb-brand-warning)}
 .color-gold			 { color: #d5b245;}
 
 // Defaults
 .color-transparent   { color: transparent }
 .color-white         { color: #fff }
-.color-black         { color: $black; }
+.color-black         { color: var(--hb-black)}

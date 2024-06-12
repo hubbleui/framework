@@ -1,5 +1,25 @@
 .list
 {
+	--hb-list-bg: #{$list-bg};
+	--hb-list-color: #{$list-color};
+	--hb-list-icon-color: #{$list-icon-color};
+	--hb-list-pad-y: #{$list-pad-y};
+	--hb-list-pad-x: #{$list-pad-x};
+	--hb-list-font-size: #{$list-font-size};
+	--hb-list-transition: #{$list-transition};
+
+	--hb-list-title-color: #{$list-title-color};
+	--hb-list-subtitle-color: #{$list-subtitle-color};
+
+	--hb-list-title-font-size: #{$list-title-font-size};
+	--hb-list-subtitle-font-size: #{$list-subtitle-font-size};
+
+	--hb-list-bg-hover: #{$list-bg-hover};
+	--hb-list-color-hover: #{$list-color-hover};
+
+	--hb-list-bg-active: #{$list-bg-active};
+	--hb-list-color-active: #{$list-color-active};
+
 	// reset
 	padding: 8px 0;
     margin: 0;
@@ -9,22 +29,24 @@
     	display: block;
     	width: 100%;
     	margin: 0;
-    	padding: 10px 15px;
-    	background-color: transparent;
+    	padding: var(--hb-list-pad-y) var(--hb-list-pad-x);
+    	background-color: var(--hb-list-bg);
+    	font-size: var(--hb-list-font-size);
     	position: relative;
     	&:hover
     	{
-    		background-color: $gray-lightest;
-    		transition: background-color 0.15s $base-easing;
+    		background-color: var(--hb-list-bg-hover);
+    		color: var(--hb-list-color-hover);
+    		transition: var(--hb-list-transition);
     	}
     	&:active,
     	&:focus,
     	&:focus-within
     	{
-    		background-color: $gray-lighter;
+    		background-color: var(--hb-list-bg-active);
+    		color: var(--hb-list-color-active);
     	}
     }
-
     .item-body
 	{
 	    width: 10000px;
@@ -35,20 +57,21 @@
 	{
 	    display: table-cell;
 	    vertical-align: middle;
-	    color: $gray;
+	    color: var(--hb-list-icon-color);
 	}
 	.item-title
 	{
-		color: $body-color;
-		font-size: 1.8rem;
+		color: var(--hb-list-title-color);
+		font-size: var(--hb-list-title-font-size);
 	}
 	.item-subtitle
 	{
-		color: $gray-dark;
+		color: var(--hb-list-subtitle-color);
+		font-size: var(--hb-list-subtitle-font-size);
 	}
 	.item-left
 	{
-		padding-right: 20px;
+		padding-right: 2rem;
 
 		.glyph-icon
 		{
@@ -57,6 +80,7 @@
 	}
 	.item-right
 	{
-		padding-left: 20px;
+		padding-left: 2rem;
 	}
 }
+

@@ -1,32 +1,49 @@
-.table {
+.table
+{
+	--hb-table-font-size: #{$table-font-size};
+	--hb-table-bg: #{$table-bg};
+	--hb-table-color: #{$table-color};
+	--hb-table-bg-hover: #{$table-bg-hover};
+	--hb-table-cell-pad-y: #{$table-cell-pad-y};
+	--hb-table-cell-pad-x: #{$table-cell-pad-x};
+	--hb-table-border-color: #{$table-border-color};
+	--hb-table-head-bg: #{$table-head-bg};
+	--hb-table-head-color: #{$table-head-color};
+	--hb-table-head-weight: #{$table-head-weight};
+	--hb-table-caption-color: #{$table-caption-color};
+	--hb-table-plain-bg: #{$table-plain-bg};
+	--hb-table-plain-color: #{$table-plain-color};
 
-	caption {
-		color: $gray;
+	caption
+	{
+		color: var(--hb-table-caption-color);
 		text-align: left;
 	    padding-top: 8px;
 	    padding-bottom: 8px;
 	}
 
 	width: 100%;
-	font-size: $table-font-size;
-	color: $table-color;
-	background-color: $table-bg;
+	font-size: var(--hb-table-font-size);
+	color: var(--hb-table-color);
+	background-color: var(--hb-table-bg);
 	thead,
-	tfoot {		
-		th {
-			font-weight: $text-bold;
+	tfoot
+	{		
+		th
+		{
 			text-align: left;
-			padding: $table-cell-pad-y $table-cell-pad-x;
-    		background-color: $gray;
-    		border-color: $gray;
-		    color: #fff;
+			font-weight: var(--hb-table-head-weight);
+			padding: var(--hb-table-cell-pad-y) var(--hb-table-cell-pad-x);
+    		background-color: var(--hb-table-head-bg);
+    		border-color: var(--hb-table-border-color);
+		    color: var(--hb-table-head-color);
 		}
 	}
-
 	> tfoot > tr > th:first-child,
 	> thead > tr > th:first-child,
-	> tbody > tr > th:first-child {
-		font-weight: $text-bold;
+	> tbody > tr > th:first-child
+	{
+		font-weight: var(--hb-table-head-weight);
 	}
 
 	> tbody > tr > td,
@@ -34,144 +51,161 @@
 	> tfoot > tr > td, 
 	> tfoot > tr > th,
 	> thead > tr > td,
-	> thead > tr > th {
-		padding: $table-cell-pad-y $table-cell-pad-x;
-		border-bottom: 1px solid $gray-lighter;
+	> thead > tr > th
+	{
+		padding: var(--hb-table-cell-pad-y) var(--hb-table-cell-pad-x);
+		border-bottom: 1px solid var(--hb-table-border-color);
 	}
-	&.table-bordered {
-		td, th {
-			border: 1px solid $gray-lighter;
+	th, td
+	{
+		background-color: var(--hb-table-bg);
+	}
+	&.table-bordered
+	{
+		td, th
+		{
+			border: 1px solid var(--hb-table-border-color);
 		}
 		thead th,
-		tfoot th {
-			border-color: $gray;
+		tfoot th
+		{
+			border-color: var(--hb-table-border-color);
 		}
 	}
-	&.table-hover {
-		tbody tr:hover {
-			background-color: rgba(0, 0, 0, 0.08);
+	&.table-hover
+	{
+		tbody tr:hover
+		{
+			background-color: var(--hb-table-bg-hover);
 		}
 	}
-	&.table-transparent {
-		background-color: transparent;
+	&.table-transparent
+	{
+		--hb-table-bg: transparent;
+		--hb-table-bg-hover: transparent;
 	}
 	&.table-plain
 	{
 		thead,
-		tfoot {		
-			th {
-	    		background-color: #fff;
-	    		border-color: #fff;
-	    		border-bottom: 2px solid $gray;
-			    color: $gray;
+		tfoot
+		{		
+			th
+			{
+	    		background-color: var(--hb-table-plain-bg);
+	    		border-color: var(--hb-table-plain-bg);
+	    		border-bottom: 2px solid var(--hb-table-plain-color);
+			    color: var(--hb-table-plain-color);
 			}
 		}
-
 	}
 
-
 	// Contextual classes
-	thead.info th,
-	thead.success th,
-	thead.warning th, 
-	thead.danger th,
-	tfoot.info th,
-	tfoot.success th,
-	tfoot.warning th, 
-	tfoot.danger th {
-		color: rgba(0, 0, 0, 0.57);
-		a {
+	.primary,
+	.secondary,
+	.info,
+	.success,
+	.warning,
+	.danger
+	{
+		a
+		{
     		font-weight: $text-bold;
     		color: rgba(0, 0, 0, 0.6);
     	}
 	}
 
-	// Success
-	thead.success th,
-	tfoot.success th {
-		background-color: lighten($brand-success, 20);
-		border-color: lighten($brand-success, 20);
+	.primary th,
+	.primary td,
+	th.primary,
+	td.primary
+	{
+		--hb-table-head-color: #{$white};
+		--hb-table-color: #{$white};
+		--hb-table-bg: var(--hb-brand-primary);
+		--hb-table-border-color: var(--hb-brand-primary);
+		--hb-table-head-bg: var(--hb-brand-primary);
+		--hb-table-head-color: #{$white};
 	}
-	tbody > tr.success,
-	tbody > tr.success > th,
-	tbody > tr.success > td,
-	tbody > tr > th.success,
-	tbody > tr > td.success {
-		background-color: lighten($brand-success, 20);
+	.secondary th,
+	.secondary td,
+	th.secondary,
+	td.secondary
+	{
+		--hb-table-head-color: #{$white};
+		--hb-table-color: #{$white};
+		--hb-table-bg: var(--hb-brand-secondary);
+		--hb-table-border-color: var(--hb-brand-secondary);
+		--hb-table-head-bg: var(--hb-brand-secondary);
+		--hb-table-head-color: #{$white};
 	}
-
-	// Info
-	thead.info th,
-	tfoot.info th {
-		background-color: lighten($brand-info, 20);
-		border-color: lighten($brand-info, 20);
+	.info th,
+	.info td,
+	th.info,
+	td.info
+	{
+		--hb-table-head-color: #{$white};
+		--hb-table-color: #{$white};
+		--hb-table-bg: var(--hb-brand-info);
+		--hb-table-border-color: var(--hb-brand-info);
+		--hb-table-head-bg: var(--hb-brand-info);
+		--hb-table-head-color: #{$white};
 	}
-	tbody > tr.info,
-	tbody > tr.info > th,
-	tbody > tr.info > td,
-	tbody > tr > th.info,
-	tbody > tr > td.info {
-		background-color: lighten($brand-info, 20);
+	.success th,
+	.success td,
+	th.success,
+	td.success
+	{
+		--hb-table-head-color: #{$white};
+		--hb-table-color: #{$white};
+		--hb-table-bg: var(--hb-brand-success);
+		--hb-table-border-color: var(--hb-brand-success);
+		--hb-table-head-bg: var(--hb-brand-success);
+		--hb-table-head-color: #{$white};
 	}
-
-	// warning
-	thead.warning th,
-	tfoot.warning th {
-		background-color: lighten($brand-warning, 20);
-		border-color: lighten($brand-warning, 20);
+	.warning th,
+	.warning td,
+	th.warning,
+	td.warning
+	{
+		--hb-table-head-color: #{$white};
+		--hb-table-color: #{$white};
+		--hb-table-bg: var(--hb-brand-warning);
+		--hb-table-border-color: var(--hb-brand-warning);
+		--hb-table-head-bg: var(--hb-brand-warning);
+		--hb-table-head-color: #{$white};
 	}
-	tbody > tr.warning,
-	tbody > tr.warning > th,
-	tbody > tr.warning > td,
-	tbody > tr > th.warning,
-	tbody > tr > td.warning {
-		background-color: lighten($brand-warning, 20);
-	}
-
-	// danger
-	thead.danger th,
-	tfoot.danger th {
-		background-color: lighten($brand-danger, 20);
-		border-color: lighten($brand-danger, 20);
-	}
-	tbody > tr.danger,
-	tbody > tr.danger > th,
-	tbody > tr.danger > td,
-	tbody > tr > th.danger,
-	tbody > tr > td.danger {
-		background-color: lighten($brand-danger, 20);
-	}
-
-	// brand
-	thead.brand th,
-	tfoot.brand th {
-		background-color: $brand-primary;
-		border-color: $brand-primary;
-	}
-	tbody > tr.brand,
-	tbody > tr.brand > th,
-	tbody > tr.brand > td,
-	tbody > tr > th.brand,
-	tbody > tr > td.brand {
-		background-color: $brand-primary;
+	.danger th,
+	.danger td,
+	th.danger,
+	td.danger
+	{
+		--hb-table-head-color: #{$white};
+		--hb-table-color: #{$white};
+		--hb-table-bg: var(--hb-brand-danger);
+		--hb-table-border-color: var(--hb-brand-danger);
+		--hb-table-head-bg: var(--hb-brand-danger);
+		--hb-table-head-color: #{$white};
 	}
 }
 
 // Responsive table wrapped
-@include media-breakpoint-down(md) {
-	.table-responsive {
+@include media-breakpoint-down(md)
+{
+	.table-responsive
+	{
 		width: 100%;
 	    margin-bottom: 15px;
 	    overflow-y: hidden;
 	    -ms-overflow-style: -ms-autohiding-scrollbar;
 	    min-height: .01%;
 	    overflow-x: auto;
-	    .table {
+	    .table
+	    {
 	    	white-space: nowrap;
 	    }
-	    &.bordered {
-	    	border: 1px solid $gray-lighter;
+	    &.bordered
+	    {
+	    	border: 1px solid var(--hb-table-border-color);
 	    }
 	}
-
 }

@@ -1,38 +1,37 @@
-.status {
+.status
+{
+	--hb-status-color: #{$status-color};
 	width: $status-size;
 	height: $status-size;
 	display: inline-block;
 	border-radius: 50%;
-	background-color: $gray;
-	&.status-primary {
-		background-color: $brand-primary;
-	}
-	&.status-info {
-		background-color: $brand-info;
-	}
-	&.status-success {
-		background-color: $brand-success;
-	}
-	&.status-warning {
-		background-color: $brand-warning;
-	}
-	&.status-danger {
-		background-color: $brand-danger;
-	}
+	background-color: var(--hb-status-color);
+
+	@each $context, $colorVar in $contexts
+    {
+        &.status-#{$context}
+        {
+            --hb-status-color: #{map-get($colors, "color")};
+        }
+    }
 }
-.status-xs {
+.status-xs
+{
 	width:  _minusPercent($status-size, 30);
 	height: _minusPercent($status-size, 30);
 }
-.status-md {
+.status-md
+{
 	width:  _addPercent($status-size, 30);
 	height: _addPercent($status-size, 30);
 }
-.status-lg {
+.status-lg
+{
 	width:  _addPercent($status-size, 50);
 	height: _addPercent($status-size, 50);
 }
-.status-xl {
+.status-xl
+{
 	width:  _addPercent($status-size, 100);
 	height: _addPercent($status-size, 100);
 }

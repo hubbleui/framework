@@ -1,25 +1,49 @@
 .card
 {
+	--hb-card-bg:               #ffffff;
+	--hb-card-bg-focus:         #ffffff;
+	--hb-card-color:            var(--hb-gray-500);
+	--hb-card-title-color:      var(--hb-body-color);
+	--hb-card-line-height:      1.8;
+	--hb-card-border-radius:    var(--hb-border-radius);
+	--hb-card-border-width:     0;
+	--hb-card-border-color:     var(--hb-gray-300);
+	--hb-card-box-shadow:       var(--hb-raised-level-two);
+	--hb-card-box-shadow-hover: var(--hb-raised-level-two-hover);
+	--hb-card-spacer-y:         2rem;
+	--hb-card-spacer-x:         1.6rem;
+	--hb-card-title-spacer-y:   1.7rem;
+	--hb-card-divider-color:    var(--hb-gray-300);
+	--hb-card-divider-size:     1px;
+	--hb-card-divier-space:     1rem;
+	--hb-card-actions-spacer-y: 2rem;
+	--hb-card-actions-spacer-x: 0.5rem;
+	--hb-card-icon-color: var(--hb-gray-500);
+	--hb-card-icon-bg: var(--hb-gray-200);
+
 	position: relative;
 	display: block;
 	width: 100%;
-	background-color: $card-bg;
-	border-radius: $card-border-radius;
-	box-shadow: $raised-level-two;
+	color: var(--hb-card-color);
+	background-color: var(--hb-card-bg);
+	border: var(--hb-card-border-width) solid var(--hb-card-border-color);
+	border-radius: var(--hb-card-border-radius);
+	box-shadow: var(--hb-card-box-shadow);
     transition: box-shadow $base-easing-time $base-easing, background-color 0.15s $base-easing;
+
     &:hover,
     &:focus
     {
-        box-shadow: $raised-level-two-hover;
+        box-shadow: var(--hb-card-box-shadow-hover);
     }
     &:active
     {
-    	background-color: rgba-to-rgb(rgba(#000000, 0.01));
+    	background-color: var(--hb-card-bg-focus);
     }
     &.flat
     {
     	box-shadow: none;
-    	border: 1px solid $gray-lighter;
+    	border: 1px solid var(--hb-card-border-color);
     	&:active
     	{
     		background-color: transparent;
@@ -27,7 +51,7 @@
     }
 	.card-block
 	{
-		padding: 20px 16px;
+		padding: var(--hb-card-spacer-y) var(--hb-card-spacer-x);
 
 		> div:first-child,
 		> p:first-child,
@@ -54,19 +78,18 @@
 	}
 	.card-title
 	{
-		margin-bottom: 17px;
-		font-weight: $text-bold;
+		color: var(--hb-card-title-color);
+		margin-bottom: var(--hb-card-title-spacer-y);
 	}
 	.card-subtitle
 	{
-		color: $gray-dark;
-		margin-bottom: 18px;
+		margin-bottom: var(--hb-card-spacer-y);
 	}
 	.card-text
 	{
-		color: $gray-dark;
 		margin: 0;
-		padding: 18px 0;
+		padding: var(--hb-card-spacer-y) 0;
+		line-height: var(--hb-card-line-height);
 		&:last-child
 		{
 			padding-bottom: 0;
@@ -83,10 +106,10 @@
 	}
 	.card-divider
 	{
-	    height: 1px;
-	    background: $gray-lighter;
+	    height: var(--hb-card-divider-size);
+	    background: var(--hb-card-divider-color);
 	    border: 0;
-	    margin: 10px 0;
+	    margin: var(--hb-card-divier-space) 0;
 	}
 	
 	.card-text + .card-divider,
@@ -106,25 +129,25 @@
 		background-color: $card-img-bg;
 		padding: $card-img-padding;
 		border-radius: 0;
-		border-top-left-radius: $card-border-radius;
-		border-top-right-radius: $card-border-radius;
+		border-top-left-radius: var(--card-border-radius);
+		border-top-right-radius: var(--card-border-radius);
 		.card-img
 		{
 			border-radius: 0;
-			border-top-left-radius: $card-border-radius;
-			border-top-right-radius: $card-border-radius;
+			border-top-left-radius: var(--card-border-radius);
+			border-top-right-radius: var(--card-border-radius);
 		}
 	}
 	.card-img-bottom
 	{
 		border-radius: 0;
-		border-bottom-left-radius: $card-border-radius;
-		border-bottom-right-radius: $card-border-radius;
+		border-bottom-left-radius: var(--card-border-radius);
+		border-bottom-right-radius: var(--card-border-radius);
 		.card-img
 		{
 			border-radius: 0;
-			border-bottom-left-radius: $card-border-radius;
-			border-bottom-right-radius: $card-border-radius;
+			border-bottom-left-radius: var(--card-border-radius);
+			border-bottom-right-radius: var(--card-border-radius);
 		}
 	}
 	.card-img,
@@ -140,15 +163,16 @@
 	}
 	.card-header
 	{
-		padding: 20px 16px;
+		padding: var(--hb-card-spacer-y) var(--hb-card-spacer-x);
 		margin-bottom: 0;
 		position: relative;
+		z-index: $z-index-dropdown;
 
 	  	&:first-child
 	  	{
 	  		border-radius: 0;
-	  		border-top-left-radius: $card-border-radius;
-	  		border-top-right-radius: $card-border-radius;
+	  		border-top-left-radius: var(--card-border-radius);
+	  		border-top-right-radius: var(--card-border-radius);
 	  	}
 	  	> h1,h2,h3,h4,h5,h6,p
 	  	{
@@ -164,7 +188,7 @@
 	  		width: 40px;
 		    height: 40px;
 		    border-radius: 50%;
-		    background-color: $gray;
+		    background-color: var(--hb-card-icon-bg);
 		    top: 50%;
     		transform: translateY(-50%);
     		padding: 0 10px;
@@ -172,7 +196,7 @@
 
 	  		.glyph-icon
 	  		{
-	  			color: $gray-dark;
+	  			color: var(--hb-card-icon-color);
 	  			font-size: 2rem;
 	  		}
 	  	}
@@ -191,7 +215,7 @@
 	}
 	.card-actions
 	{
-		padding: 20px 5px 20px 5px;
+		padding: var(--hb-card-actions-spacer-y) var(--hb-card-actions-spacer-x);
 
 		.actions-primary
 		{
@@ -209,8 +233,8 @@
 		&:last-child
 		{
 			border-radius: 0;
-	  		border-bottom-left-radius: $card-border-radius;
-	  		border-bottom-right-radius: $card-border-radius;
+	  		border-bottom-left-radius: var(--card-border-radius);
+	  		border-bottom-right-radius: var(--card-border-radius);
 		}
 	}
 	.card-block + .card-actions

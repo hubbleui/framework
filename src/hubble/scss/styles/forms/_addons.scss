@@ -17,7 +17,7 @@
 	> .glyph-icon + select,
 	> .glyph-icon + textarea
 	{
-		padding-left: 45px;
+		padding-left: 45px !important;
 	}
 	> .glyph-icon:first-child
 	{
@@ -27,7 +27,7 @@
 	> .glyph-icon + input + label,
 	> .glyph-icon + input + label
 	{
-		left: 45px;
+		left: 45px !important;
 	}
 
 	// Right

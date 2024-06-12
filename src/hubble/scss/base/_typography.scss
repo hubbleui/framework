@@ -1,57 +1,70 @@
 // Headings
 h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6 {
+.h1, .h2, .h3, .h4, .h5, .h6
+{
     font-family: $font-family-headings;
     font-weight: $headings-font-weight;
     margin-bottom: 1rem;
     font-style: normal;
 }
 
-h1 { 
+h1
+{ 
     font-size: $text-size-h1;
     line-height: $text-size-h1 * 0.9;
 }
-h2 { 
+h2
+{ 
     font-size: $text-size-h2;
     line-height: $text-size-h2 * 0.9;
 }
-h3 { 
+h3
+{ 
     font-size: $text-size-h3;
     line-height: $text-size-h3 * 0.9;
 }
-h4 { 
+h4
+{ 
     font-size: $text-size-h4;
     line-height: $text-size-h4 * 0.9;
 }
-h5 { 
+h5
+{ 
     font-size: $text-size-h5;
     line-height: $text-size-h5 * 0.9;
 }
-h6 { 
+h6
+{ 
     font-size:$text-size-h6;
     line-height: $text-size-h6 * 0.9;
 }
-.h1 { 
+.h1
+{ 
     font-size: $text-size-h1;
     line-height: $text-size-h1 * 0.9;
 }
-.h2 { 
+.h2
+{ 
     font-size: $text-size-h2;
     line-height: $text-size-h2 * 0.9;
 }
-.h3 { 
+.h3
+{ 
     font-size: $text-size-h3;
     line-height: $text-size-h3 * 0.9;
 }
-.h4 { 
+.h4
+{ 
     font-size: $text-size-h4;
     line-height: $text-size-h4 * 0.9;
 }
-.h5 { 
+.h5
+{ 
     font-size: $text-size-h5;
     line-height: $text-size-h5 * 0.9;
 }
-.h6 { 
+.h6
+{ 
     font-size: $text-size-h6;
     line-height: $text-size-h6 * 0.9;
 }
@@ -59,31 +72,38 @@ h6 {
 
 // Text sizes
 // Paragraph
-p { 
+p
+{ 
     margin: 0 0 1rem 0; 
     font-size: $base-font-size;
 }
-.p1 {
+.p1
+{
     font-size: $text-size-p1;
     line-height: $text-size-p1 * 1.88;
 }
-.p2 {
+.p2
+{
     font-size: $text-size-p2;
     line-height: $text-size-p2 * 1.88;
 }
-.p3 {
+.p3
+{
     font-size: $text-size-p3;
     line-height: $text-size-p3 * 1.88;
 }
-.p4 {
+.p4
+{
     font-size: $text-size-p4;
     line-height: $text-size-p4 * 1.88;
 }
-.p5 {
+.p5
+{
     font-size: $text-size-p5;
     line-height: $text-size-p5 * 1.88;
 }
-.p6 {
+.p6
+{
     font-size: $text-size-p6;
     line-height: $text-size-p6 * 1.88;
 }
@@ -91,24 +111,28 @@ p {
 // Bold and Italics
 b,
 strong,
-.strong {
+.strong
+{
     font-weight: $text-bold;
 }
 em,
-.em {
+.em
+{
     font-style: italic;
 }
 
 // Small
 small,
-.small {
+.small
+{
   font-size: 80%;
   font-weight: normal;
 }
 
 // Horizontal rules
 hr,
-.hr {
+.hr
+{
     -moz-box-sizing: content-box;
     box-sizing: content-box;
     height: 1px;
@@ -117,37 +141,51 @@ hr,
 }
 
 // Abbreviation
-abbr[title], .abbr[title] { border-bottom: 1px dotted; }
+abbr[title], .abbr[title]
+{ border-bottom: 1px dotted; }
 
 // Definition
-dfn { font-style: italic; }
+dfn
+{ font-style: italic; }
 
 // Mark
 mark,
-.mark {
+.mark
+{
     background: #ff0;
     color: $black;
+}
+.darkmode mark,
+.darkmode .mark
+{
+    background: _lighter($body-bg-darkmode, 10);
+    color: _darker($body-color-darkmode, 10);
 }
 
 // Sub and Sup
 sub,
 .sub,
 sup,
-.sup {
+.sup
+{
     font-size: 75%;
     line-height: 0;
     position: relative;
     vertical-align: baseline;
 }
-sup, .sup { top: -0.5em; }
-sub, .sub { bottom: -0.25em; }
+sup, .sup
+{ top: -0.5em; }
+sub, .sub
+{ bottom: -0.25em; }
 
 // Del
-del, .del { text-decoration: line-through; }
+del, .del
+{ text-decoration: line-through; }
 
 // address
 address,
-.address {
+.address
+{
     font-family: $base-font-family;
     font-weight: $base-font-weight;
     line-height: $base-line-height;
@@ -155,9 +193,15 @@ address,
     font-size:   $base-font-size;
     margin: 0 0 1rem 0;
 }
+.darkmode address,
+.darkmode .address
+{
+    color: $body-color-darkmode;
+}
 
 // Very basic code/pre
-code, pre {
+code, pre
+{
     font-family: $font-family-monospace;
     line-height: $base-line-height;
     font-size: 1.2rem;
@@ -165,20 +209,23 @@ code, pre {
     -moz-osx-font-smoothing: auto;
     -webkit-font-smoothing: initial;
     -moz-osx-font-smoothing: initial;
-    background-color: $gray-lightest;
+    background-color: var(--hb-gray-100);
     border-radius: $border-radius;
-    border: 1px solid $gray-lightest;
+    border: 1px solid var(--hb-gray-100);
 }
-code {
+code
+{
     padding: .2rem .4rem;
     color: #c7254e;
 }
-pre {
+pre
+{
     padding: 1.5rem 2rem;
     overflow: auto;
     color: $black;
 }
-pre > code {
+pre > code
+{
     color: $black;
     border: none;
     background-color: transparent;

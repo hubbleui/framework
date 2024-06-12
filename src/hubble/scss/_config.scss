@@ -1,19 +1,15 @@
 // Colors
-$white:                     #ffffff !default;
-$black:                     #000000 !default;
-$gray-darker:               #2A2A2A !default;
-$gray-dark:                 #585858 !default;
-$gray:                      #999a9d !default;
-$gray-light:                #bebebe !default;
-$gray-lighter:              #e9e9e9 !default;
-$gray-lightest:             #f4f4f4 !default;
+$white:                     #FFFFFF !default;
+$black:                     #323232 !default;
+$gray:                      #9597a0 !default;
 
-$brand-primary:             #ff007e !default;
+$brand-primary:             #c942ff !default;
 $brand-secondary:           #01aef0 !default;
 $brand-success:             #40dc7a !default;
 $brand-info:                #33a6ff !default;
 $brand-warning:             #ffd800 !default;
 $brand-danger:              #ff0042 !default;
+$on-primary:                $brand-primary !default;
 
 // Body
 $body-bg:                   #fafafa !default;
@@ -21,28 +17,58 @@ $body-color:                #1d1d1d !default;
 
 // Links
 $link-color:                $brand-primary !default;
-$link-hover-color:          darken($link-color, 10%) !default;
+
+// Darkmode
+$body-bg-darkmode:                   #2a2a2a !default;
+$body-color-darkmode:                $white !default;
+
+// Colors
+$colors: (
+    "gray"            : $gray,
+    "brand-primary"   : $brand-primary,
+    "brand-secondary" : $brand-secondary,
+    "brand-success"   : $brand-success,
+    "brand-info"      : $brand-info,
+    "brand-warning"   : $brand-warning,
+    "brand-danger"    : $brand-danger,
+    "on-primary"      : $on-primary
+) !default;
+
+// Contexts
+// This map is used to generate color loops for applying context classes
+// to things like buttons, badges, labels etc...
+$contexts: (
+    "primary"    : ("contrast" : var(--hb-white), "color": var(--hb-brand-primary)),
+    "secondary"  : ("contrast" : var(--hb-white), "color": var(--hb-brand-secondary)),
+    "info"       : ("contrast" : var(--hb-white), "color": var(--hb-brand-info)),
+    "success"    : ("contrast" : var(--hb-white), "color": var(--hb-brand-success)),
+    "warning"    : ("contrast" : var(--hb-white), "color": var(--hb-brand-warning)),
+    "danger"     : ("contrast" : var(--hb-white), "color": var(--hb-brand-danger)),
+    "white"      : ("contrast" : var(--hb-black), "color": var(--hb-white)),
+    "black"      : ("contrast" : var(--hb-white), "color": var(--hb-black)),
+    "on-primary" : ("contrast" : var(--hb-white), "color": var(--hb-on-primary)),
+) !default;
 
 // Global font families
-$font-family-sans-serif:    'Roboto', "Helvetica Neue", Arial, sans-serif !default;
+$font-family-sans-serif:    -apple-system, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !default;
 $font-family-serif:         Georgia, "Times New Roman", Times, serif !default;
 $font-family-monospace:     Menlo, Monaco, Consolas, "Courier New", monospace !default;
 $base-font-family:          $font-family-sans-serif !default;
 $font-family-headings:      $font-family-sans-serif !default;
 
 // Default font weights
-$text-lightest:             100;
-$text-light:                300;
-$text-normal:               400;
-$text-bold:                 500;
-$text-bolder:               800;
-$text-boldest:              900;
+$text-lightest:             100 !default;
+$text-light:                300 !default;
+$text-normal:               400 !default;
+$text-bold:                 500 !default;
+$text-bolder:               800 !default;
+$text-boldest:              900 !default;
 
 // Global base font styles
 $base-font-size:            1.45rem !default;
 $base-line-height:          1.8 !default;
 $base-font-weight:          $text-normal !default;
-$font-smoothing:            true;
+$font-smoothing:            true !default;
 
 // Headings sizes
 $text-size-h1:              ($base-font-size * 3.1) !default;
@@ -61,11 +87,11 @@ $text-size-p5:              ($base-font-size * 1.3) !default;
 $text-size-p6:              $base-font-size !default;
 
 // Heading styles
-$headings-font-weight:      $text-normal !default;
+$headings-font-weight:      $text-bold !default;
 $headings-line-height:      1.1 !default;
 
 // Base aesthetics
-$border-radius:             4px !default;
+$border-radius:             3px !default;
 
 // Raised levels
 $raised-level-one:          0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !default;
@@ -73,12 +99,12 @@ $raised-level-one-hover:    0px 2px 4px -1px rgb(0 0 0 / 10%), 0px 4px 5px 0px r
 $raised-level-two:          0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24) !default;
 $raised-level-two-hover:    0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%) !default;
 $raised-level-three:        rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px !default;
-$raised-level-three-hover:  0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)!default;
+$raised-level-three-hover:  0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23) !default;
 $box-shadow-in:             inset 0 5px 8px -2px rgba(0,0,0,.13) !default;
 
 // Base transitions
-$base-easing:               cubic-bezier(.4,0,1,1);
-$base-easing-time:          .2s;
+$base-easing:               cubic-bezier(.4,0,1,1) !default;
+$base-easing-time:          .2s !default;
 
 // Grid breakpoints
 $breakpoint-xs:             0 !default;
@@ -88,7 +114,7 @@ $breakpoint-lg:             992px !default;
 $breakpoint-xl:             1200px !default;
 
 // Drawer
-$drawer-width:              540px;
+$drawer-width:              540px !default;
 
 // Responsive breakpoints
 $breakpoints: (
@@ -140,69 +166,267 @@ $margin-sizes: (
 ) !default;
 
 // Button
-$btn-text-transform:        uppercase !default;
-$btn-pad-x:                 1.6rem !default;
-$btn-pad-y:                 1.2rem !default;
-$btn-font-size:             1.4rem !default;
-$btn-font-weight:           $text-bold !default;
+$btn-height:                    38px !default;
+$btn-text-transform:            uppercase !default;
+$btn-pad-x:                     1.6rem !default;
+$btn-pad-y:                     1.2rem !default;
+$btn-font-size:                 1.4rem !default;
+$btn-font-weight:               $text-bold !default;
 
-$btn-xs-pad-x:              _minusPercent($btn-pad-x, 30) !default;
-$btn-xs-pad-y:              _minusPercent($btn-pad-y, 30) !default;
+$btn-xs-pad-x:                  _minusPercent($btn-pad-x, 30) !default;
+$btn-xs-pad-y:                  _minusPercent($btn-pad-y, 30) !default;
 
-$btn-sm-pad-x:              _minusPercent($btn-pad-x, 20) !default;
-$btn-sm-pad-y:              _minusPercent($btn-pad-y, 20) !default;
+$btn-sm-pad-x:                  _minusPercent($btn-pad-x, 20) !default;
+$btn-sm-pad-y:                  _minusPercent($btn-pad-y, 20) !default;
 
-$btn-lg-pad-x:              _addPercent($btn-pad-x, 30) !default;
-$btn-lg-pad-y:              _addPercent($btn-pad-y, 30) !default;
+$btn-lg-pad-x:                  _addPercent($btn-pad-x, 30) !default;
+$btn-lg-pad-y:                  _addPercent($btn-pad-y, 30) !default;
 
-$btn-xl-pad-x:              _addPercent($btn-pad-x, 50) !default;
-$btn-xl-pad-y:              _addPercent($btn-pad-y, 50) !default;
+$btn-xl-pad-x:                  _addPercent($btn-pad-x, 50) !default;
+$btn-xl-pad-y:                  _addPercent($btn-pad-y, 50) !default;
 
-$circle-btn-font-size:      2.0rem;
+$circle-btn-font-size:          2.0rem !default;
 
-$btn-icon-font-size:        1.6rem;
-$btn-icon-line-height:      1.4rem;
-$btn-icon-vertical-align:   bottom;
+$btn-icon-font-size:            1.6rem !default;
+$btn-icon-line-height:          1.4rem !default;
+$btn-icon-vertical-align:       text-top !default;
+
+$btn-group-radius:              var(--hb-border-radius);
+
+// Lists
+$list-bg:                       transparent !default;
+$list-color:                    transparent !default;
+$list-icon-color:               var(--hb-gray) !default;
+$list-pad-y:                    1rem !default;
+$list-pad-x:                    1.5rem !default;
+$list-font-size:                var(--hb-base-font-size) !default;
+$list-transition:               background-color 0.15s #{$base-easing} !default;
+$list-title-color:              var(--hb-body-color) !default;
+$list-subtitle-color:           var(--hb-gray-500) !default;
+$list-title-font-size:          1.4rem !default;
+$list-subtitle-font-size:       1.35rem !default;
+$list-bg-hover:                 var(--hb-gray-100) !default;
+$list-color-hover:              inherit !default;
+$list-bg-active:                var(--hb-gray-300) !default;
+$list-color-active:             inherit !default;
 
 // Dropdown
-$dropdown-bg:               #fff !default;
-$dropdown-font-size:        1.2rem;
-$dropdown-width:            160px !default;
-$dropdown-max-height:       300px !default;
+$dropdown-border-radius:        var(--hb-border-radius) !default;
+$dropdown-bg:                   var(--hb-white) !default;
+$dropdown-color:                var(--hb-body-color) !default;
+$dropdown-link-color:           var(--hb-body-color) !default;
+$dropdown-link-bg-active:       var(--hb-gray-300) !default;
+$dropdown-width:                16rem !default;
+$dropdown-height:               30rem !default;
+$dropdown-font-size:            1.2rem !default;
+$dropdown-divider-size:         1px !default;
+$dropdown-divider-color:        var(--hb-gray-300) !default;
+$dropdown-divider-space:        0.3rem !default;
+$dropdown-header-divider-color: var(--hb-gray-300) !default;
+$dropdown-link-spacer-y:        0.8rem !default;
+$dropdown-link-spacer-x:        1.2rem !default;
 
 // Inline elements
-$badge-size:                20px;
-$label-size:                10px;
-$status-size:               10px;
+$badge-size:                    20px !default;
 
 // Table
-$table-font-size:           1.3rem !default;
-$table-bg:                  transparent !default;
-$table-color:               inherit !default;
-$table-cell-pad-y:          1.2rem !default;
-$table-cell-pad-x:          1.8rem !default;
+$table-font-size:              1.3rem !default;
+$table-bg:                     transparent !default;
+$table-bg-hover:               rgba(0, 0, 0, 0.08) !default;
+$table-color:                  inherit !default;
+$table-cell-pad-y:             1.2rem !default;
+$table-cell-pad-x:             1.8rem !default;
+$table-border-color:           var(--hb-gray-200) !default;
+$table-head-bg:                var(--hb-gray-200) !default;
+$table-head-color:             var(--hb-gray-900) !default;
+$table-head-weight:            $text-bold !default;
+$table-caption-color:          var(--hb-gray) !default;
+$table-plain-bg:               var(--hb-white) !default;
+$table-plain-color:            var(--hb-gray) !default;
 
-// Popovers
-$popover-max-width:         270px;
+// Messages
+$msg-bg:                       var(--hb-black) !default;
+$msg-color:                    $white !default;
+$msg-icon-color:               var(--hb-brand-primary) !default;
+$msg-spacer-y:                 30px !default;
+$msg-spacer-x:                 2rem !default;
+$msg-font-size:                1.4rem !default;
+$msg-border-radius:            var(--hb-border-radius) !default;
+
+// Modals
+$modal-shadow:                 3 !default; //0,1,2,3 
+$modal-overlay-bg:             $white !default;
+$modal-overlay-bg-dark:        #020103 !default;
+$modal-overlay-opacity:        0.8 !default;
+$modal-title-size:             1.8rem !default;
+$modal-transition-on:          opacity .2s .3s ease, transform .3s .3s ease !default;
+$modal-transition-off:         opacity .4s  ease, transform .5s ease !default;
+$modal-overlay-transition-on:  opacity .5s ease !default;
+$modal-overlay-transition-off: opacity .5s ease !default;
 
 // Card
-$card-bg:                   #ffffff;
-$card-border-radius:        4px;
-$card-img-bg:               $gray-lightest;
-$card-img-padding:          0;
+$card-bg:                   $white !default;
+$card-border-radius:        4px !default;
+$card-img-bg:               var(--hb-gray-100) !default;
+$card-img-padding:          0 !default;
 
 // Inputs
-$input-font-size:             1.6rem !default;
-$input-line-height:           1.6rem !default;
-$input-pad-y:                 12px !default;
-$input-pad-x:                 12px !default;
-$checkbox-size:               20px;
-$radio-size:                  24px;
-        
+$input-font-size:           1.6rem !default;
+$input-line-height:         1.6rem !default;
+$input-pad-y:               12px !default;
+$input-pad-x:               12px !default;
+$input-bg:                  transparent;
+$input-bg-focus:            transparent;
+$input-border-width:        1px;
+$input-border-color:        var(--hb-gray-400) !default;
+$input-focus-color:         var(--hb-brand-info) !default;
+$input-label-color:         var(--hb-gray-400) !default;
+$input-placeholder-color:   var(--hb-gray-200) !default;
+
+$checkbox-size:             2rem !default;
+$checkbox-color:            var(--hb-gray);
+
+$radio-size:                2.4rem !default;
+$radio-color:               var(--hb-gray);
+
+$switch-size:               2rem;
+$switch-off-color:          var(--hb-gray);
+$switch-on-color:           var(--hb-brand-info);
+
+$progress-size:             1rem;
+
+
+// Tabs
+$tab-nav-color:              var(--hb-gray-700) !default;
+$tab-nav-color-active:       var(--hb-body-color) !default;
+$tab-nav-color-highlight:    var(--hb-brand-primary) !default;
+$tab-nav-divider-color:      var(--hb-gray-200) !default;
+$tab-nav-font-size:          1.3rem !default;
+$tab-nav-font-weight:        $text-normal !default;
+$tab-nav-font-weight-active: $text-bold !default;
+$tab-nav-border-radius:      $border-radius !default;
+$tab-nav-pad-y:              0.8rem !default;
+$tab-nav-pad-x:              0.4rem !default;
+$tab-transition:             $base-easing-time $base-easing !default;
+
+// Carousel
+$slider-bg:                  var(--body-bg) !default;
+$slider-height:              420px !default;
+$slider-dots-color:          var(--hb-white) !default;
+$slider-dots-color-active:   var(--hb-brand-primary) !default;
+$slider-dots-size:           0.8rem !default;
+$slider-nav-btn-size:        4rem !default;
+$slider-nav-icon-size:       2rem !default;
+$slider-nav-btn-color:       var(--hb-white) !default;
+$slider-nav-btn-color-hover: var(--hb-brand-primary) !default;
+
+// Chips
+$chip-height:                2.9rem !default;
+$chip-font-size:             1.4rem !default;
+$chip-ln-height:             2.9rem !default;
+$chip-icon-size:             1.4rem !default;
+$chip-radius:                3rem !default;
+$chip-pad-x:                 1.4rem !default;
+
+$chip-color:                 var(--hb-gray-700) !default;
+$chip-color-hover:           var(--hb-gray-700) !default;
+
+$chip-bg:                    var(--hb-gray-200) !default;
+$chip-bg-hover:              var(--hb-gray-300) !default;
+
+$chip-border:                none !default;
+$chip-border-hover:          none !default;
+
+$chip-selected-bg:           var(--hb-brand-primary-200) !default;
+$chip-selected-color:        var(--hb-brand-primary) !default;
+
+$chip-transition:            box-shadow #{$base-easing-time} #{$base-easing}, width #{$base-easing-time} #{$base-easing} !default;
+
+// Tooltips
+$tooltip-bg:                 var(--hb-gray-900) !default;
+$tooltip-color:              $white !default;
+$tooltip-font-size:          1.1rem !default;
+$tooltip-font-weight:        $text-light !default;
+$tooltip-line-height:        2rem !default;
+$tooltip-radius:             3px !default;
+$tooltip-pad-y:              0.2rem !default;
+$tooltip-pad-x:              0.8rem !default;
+$tooltop-target-space:       0.5rem !default;
+$tooltop-target-space-neg:   -0.5rem !default;
+
+// Nprogress
+$nprogress-color:           var(--hb-brand-primary) !default;
+
+// Popovers
+$popover-max-width:         270px !default;
+$popover-shadow:            2 !default; // 0,1,2,3
+$popover-font-size:         1.2rem !default;
+$popover-title-size:        1.2rem !default;
+$popover-radius:            var(--hb-border-radius) !default;
+$popover-pad-y:             1rem !default;
+$popover-pad-x:             1.5rem !default;
+
+$popover-bg-light:          var(--hb-white) !default;     
+$popover-color-light:       var(--hb-body-color) !default;
+$popover-title-color-light: var(--hb-brand-primary) !default;
+$popover-title-border-light: 1px solid !default;
+
+$popover-bg-dark:           var(--hb-black) !default;
+$popover-color-dark:        var(--hb-white) !default;
+$popover-title-color-dark:  var(--hb-brand-primary) !default;
+$popover-title-border-dark: 1px solid !default;
+
+// Labels
+$label-font-size:            1.1rem !default;
+$label-color:                var(--hb-white) !default;
+$label-bg:                   var(--hb-gray) !default;
+$label-pad-y:                0.3rem !default;
+$label-pad-x:                0.9rem !default;
+$label-radius:               var(--hb-border-radius) !default;
+
+// Status
+$status-size:                10px !default;
+$status-color:               var(--hb-gray) !default;
+
+// Notifications
+$notif-bg:                   var(--hb-black) !default;
+$notif-color:                var(--hb-white) !default;
+$notif-font-size:            1.2rem !default;
+$notif-icon-color:           var(--hb-brand-primary) !default;
+$notif-spacer-y:             2rem !default;
+$notif-spacer-x:             2rem !default;
+$notif-border-radius:        var(--hb-border-radius) !default;
+$notif-shadow:               3 !default;
+
+// Hamburger
+$hamburger-color:            var(--hb-body-color) !default;
+$hamburger-color-active:     var(--hb-brand-primary) !default;
+
+// Spinner
+$spinner-color:              var(--hb-gray) !default;
+$spinner-size:               6.4rem !default;
+
+// Ripple
+$ripple-color:               currentColor !default;
+$ripple-opacity:             0.5 !default;
+$ripple-easing:              ease-out !default;
+$ripple-easing-time:         1s !default;
+
+// Scrollbars
+$scrollbar-size:             0.8rem !default;
+$scrollbar-transition:       background-color .05s linear !default;
+$scrollbar-track-color:      rgba(0, 0, 0, 0.07) !default;
+$scrollbar-track-hover:      rgba(0, 0, 0, 0.07) !default;
+$scrollbar-track-active:     rgba(0, 0, 0, 0.07) !default;
+
+$scrollbar-handle-color:     rgba(0, 0, 0, 0.2) !default;
+$scrollbar-handle-hover:     rgba(0, 0, 0, 0.3) !default;
+$scrollbar-handle-active:    rgba(0, 0, 0, 0.35) !default;
+
 // Zindexs
-$z-index-tooltip:             100;
-$z-index-popover:             200;
-$z-index-dropdown:            300;
-$z-index-drawer:              400;
-$z-index-notification:        500;
-$z-index-modal:               600;
+$z-index-tooltip:             100 !default;
+$z-index-popover:             200 !default;
+$z-index-dropdown:            300 !default;
+$z-index-drawer:              400 !default;
+$z-index-notification:        500 !default;
+$z-index-modal:               600 !default;

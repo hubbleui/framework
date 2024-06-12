@@ -9,7 +9,7 @@
     font-size: $input-font-size;
     font-weight: $text-normal;
     line-height: $input-line-height;
-    color: $gray-darker;
+    color: var(--hb-gray-700);
     background-color: transparent;
     transition: none
 }

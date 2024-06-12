@@ -18,21 +18,7 @@ input[type="hidden"]
     display: inline-block;
 
     // Label Setup
-    input[type="date"] + label,
-    input[type="datetime-local"] + label,
-    input[type="email"] + label,
-    input[type="file"] + label,
-    input[type="image"] + label,
-    input[type="month"] + label,
-    input[type="number"] + label,
-    input[type="password"] + label,
-    input[type="reset"] + label,
-    input[type="search"] + label,
-    input[type="tel"] + label,
-    input[type="text"] + label,
-    input[type="time"] + label,
-    input[type="url"] + label,
-    input[type="week"] + label,
+    input:not([type="radio"]):not([type="checkbox"]) + label,
     textarea + label,
     select + label
     {
@@ -56,21 +42,7 @@ input[type="hidden"]
     &:focus-within,
     &.not-empty
     {
-        input[type="date"] + label,
-        input[type="datetime-local"] + label,
-        input[type="email"] + label,
-        input[type="file"] + label,
-        input[type="image"] + label,
-        input[type="month"] + label,
-        input[type="number"] + label,
-        input[type="password"] + label,
-        input[type="reset"] + label,
-        input[type="search"] + label,
-        input[type="tel"] + label,
-        input[type="text"] + label,
-        input[type="time"] + label,
-        input[type="url"] + label,
-        input[type="week"] + label,
+        input:not([type="radio"]):not([type="checkbox"]) + label,
         textarea + label,
         select + label
         {
@@ -82,21 +54,7 @@ input[type="hidden"]
     &.focus,
     &:focus-within
     {
-        input[type="date"] + label,
-        input[type="datetime-local"] + label,
-        input[type="email"] + label,
-        input[type="file"] + label,
-        input[type="image"] + label,
-        input[type="month"] + label,
-        input[type="number"] + label,
-        input[type="password"] + label,
-        input[type="reset"] + label,
-        input[type="search"] + label,
-        input[type="tel"] + label,
-        input[type="text"] + label,
-        input[type="time"] + label,
-        input[type="url"] + label,
-        input[type="week"] + label,
+        input:not([type="radio"]):not([type="checkbox"]) + label,
         textarea + label,
         select + label
         {
@@ -105,21 +63,7 @@ input[type="hidden"]
     }
 
     // Placeholder basics
-    input[type="date"],
-    input[type="datetime-local"],
-    input[type="email"],
-    input[type="file"],
-    input[type="image"],
-    input[type="month"],
-    input[type="number"],
-    input[type="password"],
-    input[type="reset"],
-    input[type="search"],
-    input[type="tel"],
-    input[type="text"],
-    input[type="time"],
-    input[type="url"],
-    input[type="week"],
+    input:not([type="radio"]):not([type="checkbox"]),
     textarea,
     select
     {
@@ -138,29 +82,16 @@ input[type="hidden"]
     &.focus,
     &:focus-within
     {
-        input[type="date"],
-        input[type="datetime-local"],
-        input[type="email"],
-        input[type="file"],
-        input[type="image"],
-        input[type="month"],
-        input[type="number"],
-        input[type="password"],
-        input[type="reset"],
-        input[type="search"],
-        input[type="tel"],
-        input[type="text"],
-        input[type="time"],
-        input[type="url"],
-        input[type="week"],
+        input:not([type="radio"]):not([type="checkbox"]),
         textarea,
         select
         {
             @include placeholder
             {
                 opacity: 1;
-                color: $gray-light;
+                color: var(--hb-gray-400);
             }
+
         }
     }
 
@@ -169,46 +100,20 @@ input[type="hidden"]
     &:focus-within,
     &.not-empty
     {
-        input[type="date"],
-        input[type="datetime-local"],
-        input[type="email"],
-        input[type="file"],
-        input[type="image"],
-        input[type="month"],
-        input[type="number"],
-        input[type="password"],
-        input[type="reset"],
-        input[type="search"],
-        input[type="tel"],
-        input[type="text"],
-        input[type="time"],
-        input[type="url"],
-        input[type="week"],
+        input:not([type="radio"]):not([type="checkbox"]),
         textarea,
         select
         {
             @include placeholder
             {
                 opacity: 1;
-                color: $gray-light;
+                color: var(--hb-gray-400);
             }
         }
     }
 
     // Basic input styling
-    input[type="file"],
-    input[type="week"],
-    input[type="time"],
-    input[type="month"],
-    input[type="datetime-local"],
-    input[type="date"],
-    input[type="email"],
-    input[type="number"],
-    input[type="password"],
-    input[type="search"],
-    input[type="tel"],
-    input[type="text"],
-    input[type="url"],
+    input:not([type="radio"]):not([type="checkbox"]),
     textarea,
     select,
     {
@@ -220,7 +125,7 @@ input[type="hidden"]
         outline: none;
         font-weight: $text-normal;
         line-height: $input-line-height;
-        color: $gray-darker;
+        color: var(--hb-gray-700);
         background-color: transparent;
         border: 1px solid $gray;
         transition: background-color $base-easing-time $base-easing, border-color $base-easing-time $base-easing, color $base-easing-time $base-easing, box-shadow $base-easing-time $base-easing;
@@ -402,12 +307,16 @@ input[type="hidden"]
         line-height: 19px;
     }
 
-    &.danger input
+    &.danger input:not([type="radio"]):not([type="checkbox"]),
+    &.danger textarea,
+    &.danger select
     {
         border-color: $brand-danger;
         box-shadow: inset 0 0 0 1px $brand-danger;
     }
-    &.warning input
+    &.warning input:not([type="radio"]):not([type="checkbox"]),
+    &.warning textarea,
+    &.warning select
     {
         border-color: $brand-warning;
         box-shadow: inset 0 0 0 1px $brand-warning;
@@ -440,3 +349,125 @@ input[type="hidden"]
     max-height: 50px;
     transition: max-height $base-easing-time $base-easing;
 }
+
+.darkmode .form-field
+{
+    position: relative;
+    display: inline-block;
+
+    // Label Setup
+    input:not([type="radio"]):not([type="checkbox"]) + label,
+    textarea + label,
+    select + label
+    {
+        color: _lighter($body-bg-darkmode, 20%);
+    }
+
+    // Focus label
+    &.focus,
+    &:focus-within
+    {
+        input:not([type="radio"]):not([type="checkbox"]) + label,
+        textarea + label,
+        select + label
+        {
+            color: $brand-info;
+        }
+    }
+
+    // Focus placeholder
+    &.focus,
+    &:focus-within
+    {
+        input:not([type="radio"]):not([type="checkbox"]),
+        textarea,
+        select
+        {
+            @include placeholder
+            {
+                color: $brand-info;
+            }
+        }
+    }
+
+    // Not empty placeholder
+    &.focus,
+    &:focus-within,
+    &.not-empty
+    {
+        input:not([type="radio"]):not([type="checkbox"]),
+        textarea,
+        select
+        {
+            @include placeholder
+            {
+                color: _lighter($body-bg-darkmode, 20%);
+            }
+        }
+    }
+
+    // Basic input styling
+    input:not([type="radio"]):not([type="checkbox"]),
+    textarea,
+    select,
+    {
+        color: $body-color-darkmode;
+        &.disabled,
+        &:disabled
+        {
+            background-color: rgba(0,0,0,0.5);
+        }
+        &:focus
+        {
+
+        }
+    }
+
+    input[type="time"]:before,
+    input[type="week"]:before,
+    input[type="month"]:before,
+    input[type="date"]:before,
+    input[type="datetime-local"]:before
+    {
+        color: _lighter($body-bg-darkmode, 20%);
+    }
+
+    // Context
+    &.danger input
+    {
+        border-color: $brand-danger;
+        box-shadow: inset 0 0 0 1px $brand-danger;
+    }
+    &.warning input
+    {
+        border-color: $brand-warning;
+        box-shadow: inset 0 0 0 1px $brand-warning;
+    }
+    &.danger
+    {
+        &.focus,
+        &:focus-within
+        {
+            input:not([type="radio"]):not([type="checkbox"]) + label,
+            textarea + label,
+            select + label
+            {
+                color: $brand-danger;
+            }
+        }
+    }
+    &.warning
+    {
+        &.focus,
+        &:focus-within
+        {
+            input:not([type="radio"]):not([type="checkbox"]) + label,
+            textarea + label,
+            select + label
+            {
+                color: $brand-warning;
+            }
+        }
+    }
+}
+

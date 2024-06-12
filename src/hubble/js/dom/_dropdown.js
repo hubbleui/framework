@@ -14,165 +14,155 @@
      */
     var Helper = Hubble.helper();
 
-    /**
-     * Module constructor
-     *
-     * @access public
-     * @constructor
-     */
-    var DropDowns = function()
+    class DropDowns
     {
+        constructor()
+        {
+            this._triggers = Helper.$All('.js-drop-trigger');
+
+            if (!Helper.empty(this._triggers))
+            {
+                this._bind();
+            }
+        }
+ 
         /**
-         * Array of click-triggers
-         * 
-         * @var array
+         * Module destructor
+         *
+         * @access public
          */
-        this._triggers = Helper.$All('.js-drop-trigger');
-
-        if (!Helper.empty(this._triggers))
+        destruct()
         {
-            this._bind();
+            this._unbind();
+            
+            this._triggers = [];
         }
 
-        return this;
-    };
-
-    /**
-     * Module destructor
-     *
-     * @access public
-     */
-    DropDowns.prototype.destruct = function()
-    {
-        this._unbind();
-        
-        this._triggers = [];
-    }
-
-    /**
-     * Bind click listener to containers
-     *
-     * @access private
-     */
-    DropDowns.prototype._bind = function()
-    {
-        Helper.addEventListener(this._triggers, 'click', this._clickHandler);
-
-        Helper.addEventListener(window, 'click', this._windowClick);
-    }
-
-    /**
-     * Unbind listener to containers
-     *
-     * @access private
-     */
-    DropDowns.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._triggers, 'click', this._clickHandler);
-
-        Helper.removeEventListener(window, 'click', this._windowClick);
-    }
-
-    /**
-     * Click event handler
-     *
-     * @param  event|null e JavaScript Click event
-     * @access private
-     */
-    DropDowns.prototype._clickHandler = function(e)
-    {
-        e = e || window.event;
-        e.preventDefault();
-
-        var button = this;
-        var _this = Container.get('DropDowns');
-
-        // Hide all dropdowns except this
-        _this._hideDropDowns(button);
-
-        // Remove active and return
-        if (Helper.hasClass(button, 'active'))
+        /**
+         * Bind click listener to containers
+         *
+         * @access private
+         */
+        _bind()
         {
-            _this._hideDrop(button);
+            Helper.addEventListener(this._triggers, 'click', this._clickHandler);
+
+            Helper.addEventListener(window, 'click', this._windowClick);
         }
-        else
+
+        /**
+         * Unbind listener to containers
+         *
+         * @access private
+         */
+        _unbind()
         {
-            _this._showDrop(button);
+            Helper.removeEventListener(this._triggers, 'click', this._clickHandler);
+
+            Helper.removeEventListener(window, 'click', this._windowClick);
         }
-    }
 
-    /**
-     * Click event handler
-     *
-     * @param  event|null e JavaScript Click event
-     * @access private
-     */
-    DropDowns.prototype._hideDrop = function(button)
-    {
-        var drop = Helper.$('.drop-menu', button.parentNode);
-        Helper.removeClass(button, 'active');
-        button.setAttribute('aria-pressed', 'false');
-        Helper.hideAria(drop);
-        drop.blur();
-    }
-
-    /**
-     * Click event handler
-     *
-     * @param  event|null e JavaScript Click event
-     * @access private
-     */
-    DropDowns.prototype._showDrop = function(button)
-    {
-        var drop = Helper.$('.drop-menu', button.parentNode);
-        Helper.addClass(button, 'active');
-        button.setAttribute('aria-pressed', 'true');
-        Helper.showAria(drop);
-        drop.focus();
-    }
-
-    /**
-     * Window click event
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    DropDowns.prototype._windowClick = function(e)
-    {
-        e = e || window.event;
-        if (Helper.closest(e.target, '.js-drop-trigger'))
+        /**
+         * Click event handler
+         *
+         * @param  event|null e JavaScript Click event
+         * @access private
+         */
+        _clickHandler(e)
         {
-            return;
-        }
-        if (!Helper.hasClass(e.target, 'js-drop-trigger'))
-        {
+            e = e || window.event;
+            e.preventDefault();
+
+            var button = this;
             var _this = Container.get('DropDowns');
 
-            _this._hideDropDowns();
-        }
-    }
+            // Hide all dropdowns except this
+            _this._hideDropDowns(button);
 
-    /**
-     * Hide all dropdowns
-     *
-     * @param exception (optional) Button to skip
-     * @access private
-     */
-    DropDowns.prototype._hideDropDowns = function(exception)
-    {
-        dropTriggers = Helper.$All('.js-drop-trigger');
-        exception = (typeof exception === 'undefined' ? false : exception);
-
-        for (var i = 0; i < dropTriggers.length; i++)
-        {
-            var node = dropTriggers[i];
-
-            if (node === exception)
+            // Remove active and return
+            if (Helper.hasClass(button, 'active'))
             {
-                continue;
+                _this._hideDrop(button);
             }
+            else
+            {
+                _this._showDrop(button);
+            }
+        }
 
-            this._hideDrop(node);
+        /**
+         * Click event handler
+         *
+         * @param  event|null e JavaScript Click event
+         * @access private
+         */
+        _hideDrop(button)
+        {
+            var drop = Helper.$('.drop-menu', button.parentNode);
+            Helper.removeClass(button, 'active');
+            button.setAttribute('aria-pressed', 'false');
+            Helper.hideAria(drop);
+            drop.blur();
+        }
+
+        /**
+         * Click event handler
+         *
+         * @param  event|null e JavaScript Click event
+         * @access private
+         */
+        _showDrop(button)
+        {
+            var drop = Helper.$('.drop-menu', button.parentNode);
+            Helper.addClass(button, 'active');
+            button.setAttribute('aria-pressed', 'true');
+            Helper.showAria(drop);
+            drop.focus();
+        }
+
+        /**
+         * Window click event
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _windowClick(e)
+        {
+            e = e || window.event;
+            if (Helper.closest(e.target, '.js-drop-trigger'))
+            {
+                return;
+            }
+            if (!Helper.hasClass(e.target, 'js-drop-trigger'))
+            {
+                var _this = Container.get('DropDowns');
+
+                _this._hideDropDowns();
+            }
+        }
+
+        /**
+         * Hide all dropdowns
+         *
+         * @param exception (optional) Button to skip
+         * @access private
+         */
+        _hideDropDowns(exception)
+        {
+            var dropTriggers = Helper.$All('.js-drop-trigger');
+            var exception = (typeof exception === 'undefined' ? false : exception);
+
+            for (var i = 0; i < dropTriggers.length; i++)
+            {
+                var node = dropTriggers[i];
+
+                if (node === exception)
+                {
+                    continue;
+                }
+
+                this._hideDrop(node);
+            }
         }
     }
 

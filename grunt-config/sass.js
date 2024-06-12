@@ -24,10 +24,10 @@ module.exports =
     {
         options:
         {
-            precision  : 6,
-            style      : 'compressed',
+            sourcemap  : false,
             trace      : true,
-            bundleExec : false
+            bundleExec : false,
+            style      : 'compressed'
         },
         files:
         {

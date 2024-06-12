@@ -4,7 +4,7 @@ blockquote
     border-radius: 4px;
     padding: 2rem;
     color: $body-color;
-    background-color: darken($body-bg, 5);
+    background-color: _darker($body-bg, 5);
 
     p
     {
@@ -37,27 +37,27 @@ blockquote
     }
     &.bq-danger
     {
-    	background-color: lighten($brand-danger, 10);
+    	background-color: _lighter($brand-danger, 10);
     }
     &.bq-success
     {
-    	background-color: lighten($brand-success, 10);
+    	background-color: _lighter($brand-success, 10);
     }
     &.bq-info
     {
-    	background-color: lighten($brand-info, 10);
+    	background-color: _lighter($brand-info, 10);
     }
     &.bq-warning
     {
-    	background-color: lighten($brand-warning, 10);
+    	background-color: _lighter($brand-warning, 10);
     }
     &.bq-primary
     {
-        background-color: lighten($brand-primary, 10);
+        background-color: _lighter($brand-primary, 10);
     }
     &.bq-secondary
     {
-        background-color: lighten($brand-secondary, 10);
+        background-color: _lighter($brand-secondary, 10);
     }
     >:last-child
     {
@@ -73,7 +73,7 @@ blockquote
         display: block;
         font-size: 85%;
         line-height: 1.42857143;
-        color: $gray-dark;
+        color: var(--hb-gray-500);
     }
 
     &.bq-danger,
@@ -88,6 +88,14 @@ blockquote
             color: rgba(0, 0, 0, 0.8);
         }
     }
+}
+.darkmode blockquote:not(.bq-danger):not(.bq-success):not(.bq-info):not(.bq-warning):not(.bq-primary):not(.bq-secondary)
+{
+    background-color: _lighter($body-bg-darkmode, 10%);
+    color: _darker($body-color-darkmode, 10%);
 
-
+    > footer
+        {
+            color: _darker($body-color-darkmode, 30%);
+        }
 }
