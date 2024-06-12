@@ -110,138 +110,142 @@
      */
     var Helper = Hubble.helper();
 
-    /**
-     * Module constructor
-     *
-     * @access public
-     * @constructor
-     */
-    var Ripple = function()
+    
+    class Ripple
     {
-        this._classes =
-        [
-            '.btn',
-            '.chip',
-            '.list > li',
-            '.pagination li a',
-            '.tab-nav li a',
-            '.card-img',
-            '.card-img-top',
-            '.js-ripple'
-        ];
-
-        this._nodes = Helper.$All(this._classes.join(','));
-
-        this._bind();
-
-        return this;
-    };
-
-    /**
-     * Module destructor - removes event listeners
-     *
-     * @access public
-     */
-    Ripple.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._nodes = [];
-    }
-
-    /**
-     * Insert ripples
-     *
-     * @access private
-     */
-    Ripple.prototype._bind = function()
-    {
-        for (var i = 0; i < this._nodes.length; i++)
+        /**
+         * Module constructor
+         *
+         * @access public
+         * @constructor
+         */
+        constructor()
         {
-            this._insertRipple(this._nodes[i]);
+            this._classes =
+            [
+                '.btn',
+                '.chip',
+                '.list > li',
+                '.pagination li a',
+                '.tab-nav li a',
+                '.card-img',
+                '.card-img-top',
+                '.js-ripple'
+            ];
+
+            this._nodes = Helper.$All(this._classes.join(','));
+
+            this._bind();
+
+            return this;
+        };
+
+        /**
+         * Module destructor - removes event listeners
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
+
+            this._nodes = [];
         }
-    }
 
-    /**
-     * Remove ripples
-     *
-     * @access private
-     */
-    Ripple.prototype._unbind = function()
-    {
-        for (var i = 0; i < this._nodes.length; i++)
+        /**
+         * Insert ripples
+         *
+         * @access private
+         */
+        _bind()
         {
-            var wrapper = this._nodes[i];
-
-            var ripples = Helper.$All('.js-ripple-container', wrapper);
-
-            Helper.removeEventListener(wrapper, 'mousedown', this._mouseDown);
-
-            Helper.removeEventListener(wrapper, 'touchstart', this._touchStart);
-
-            for (var j = 0; j < ripples.length; j++)
+            for (var i = 0; i < this._nodes.length; i++)
             {
-                Helper.removeFromDOM(ripples[j]);
+                this._insertRipple(this._nodes[i]);
             }
         }
-    }
 
-    /**
-     * Insert ripple
-     *
-     * @access private
-     * @param  node    wrapper
-     */
-    Ripple.prototype._insertRipple = function(wrapper)
-    {
-        // If this is a user-defined JS-Ripple we need to insert it
-        var rip  = document.createElement('span');
+        /**
+         * Remove ripples
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            for (var i = 0; i < this._nodes.length; i++)
+            {
+                var wrapper = this._nodes[i];
+
+                var ripples = Helper.$All('.js-ripple-container', wrapper);
+
+                Helper.removeEventListener(wrapper, 'mousedown', this._mouseDown);
+
+                Helper.removeEventListener(wrapper, 'touchstart', this._touchStart);
+
+                for (var j = 0; j < ripples.length; j++)
+                {
+                    Helper.removeFromDOM(ripples[j]);
+                }
+            }
+        }
+
+        /**
+         * Insert ripple
+         *
+         * @access private
+         * @param  node    wrapper
+         */
+        _insertRipple(wrapper)
+        {
+            // If this is a user-defined JS-Ripple we need to insert it
+            var rip  = document.createElement('span');
+                
+            rip.className = 'ripple-container js-ripple-container';
+
+            if (Helper.hasClass(wrapper, 'chip'))
+            { 
+                rip.className = 'ripple-container fill js-ripple-container';
+            }
             
-        rip.className = 'ripple-container js-ripple-container';
+            Helper.preapend(rip, wrapper);
 
-        if (Helper.hasClass(wrapper, 'chip'))
-        { 
-            rip.className = 'ripple-container fill js-ripple-container';
-        }
-        
-        Helper.preapend(rip, wrapper);
+            Helper.addEventListener(wrapper, 'mousedown', this._mouseDown, true, 'foo', 'bar');
 
-        Helper.addEventListener(wrapper, 'mousedown', this._mouseDown, true, 'foo', 'bar');
-
-        Helper.addEventListener(wrapper, 'touchstart', this._touchStart, true, 'foo', 'bar');
-  
-    }
-
-    /**
-     * On mousedown
-     *
-     * @access private
-     * @param  event|null e
-     */
-    Ripple.prototype._mouseDown = function(e)
-    {
-        e = e || window.event;
-
-        if (e.button === 0)
-        {
-            startRipple(e.type, e, this);
+            Helper.addEventListener(wrapper, 'touchstart', this._touchStart, true, 'foo', 'bar');
+      
         }
 
-    }
-
-    /**
-     * On touchstart
-     *
-     * @access private
-     * @param  event|null   e
-     */
-    Ripple.prototype._touchStart = function(e, foo, bar)
-    {
-        e = e || window.event;
-
-        for (var i = 0; i < e.changedTouches.length; ++i)
+        /**
+         * On mousedown
+         *
+         * @access private
+         * @param  event|null e
+         */
+        _mouseDown(e)
         {
-            startRipple(e.type, e.changedTouches[i], this);
+            e = e || window.event;
+
+            if (e.button === 0)
+            {
+                startRipple(e.type, e, this);
+            }
+
+        }
+
+        /**
+         * On touchstart
+         *
+         * @access private
+         * @param  event|null   e
+         */
+        _touchStart(e, foo, bar)
+        {
+            e = e || window.event;
+
+            for (var i = 0; i < e.changedTouches.length; ++i)
+            {
+                startRipple(e.type, e.changedTouches[i], this);
+            }
         }
     }
     

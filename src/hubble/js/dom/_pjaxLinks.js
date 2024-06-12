@@ -1,11 +1,3 @@
-/**
- * Pjax Links Module
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
-
 (function()
 {
     /**
@@ -24,75 +16,85 @@
     {
         return !1 !== l && ("false" !== l && (0 !== l && 0 !== l && ("" !== l && "0" !== l && ((!Array.isArray(l) || 0 !== l.length) && (null !== l && void 0 !== l)))))
     }
-
+    
     /**
-     * Module constructor
+     * Pjax Links Module
      *
-     * @access public
-     * @constructor
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var PjaxLinks = function()
+    class PjaxLinks
     {
-        this._nodes = Helper.$All('.js-pjax-link');
-
-        if (!Helper.empty(this._nodes))
+        /**
+         * Module constructor
+         *
+         * @access public
+         * @constructor
+         */
+    	constructor()
         {
-            this._bind();
+            this._nodes = Helper.$All('.js-pjax-link');
+
+            if (!Helper.empty(this._nodes))
+            {
+                this._bind();
+            }
+
+            return this;
         }
 
-        return this;
-    }
+        /**
+         * Module destructor
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
+        }
 
-    /**
-     * Module destructor
-     *
-     * @access public
-     */
-    PjaxLinks.prototype.destruct = function()
-    {
-        this._unbind();
-    }
+        /**
+         * Event binder - Binds all events on node click
+         *
+         * @access private
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._nodes, 'click', this._eventHandler, false);
+        }
 
-    /**
-     * Event binder - Binds all events on node click
-     *
-     * @access private
-     */
-    PjaxLinks.prototype._bind = function()
-    {
-        Helper.addEventListener(this._nodes, 'click', this._eventHandler, false);
-    }
+        /**
+         * Event unbinder - Removes all events on node click
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._nodes, 'click', this._eventHandler, false);
+        }
 
-    /**
-     * Event unbinder - Removes all events on node click
-     *
-     * @access private
-     */
-    PjaxLinks.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._nodes, 'click', this._eventHandler, false);
-    }
+        /**
+         * Handle the click event
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _eventHandler(e)
+        {
+            e = e || window.event;
 
-    /**
-     * Handle the click event
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    PjaxLinks.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
+            e.preventDefault();
 
-        e.preventDefault();
+            var trigger = this;
+            var href = trigger.dataset.pjaxHref;
+            var target = trigger.dataset.pjaxTarget;
+            var title = trigger.dataset.pjaxTitle || false;
+            var stateChange = boolval(trigger.dataset.pjaxStateChange);
+            var singleRequest = boolval(trigger.dataset.pjaxSingleRequest);
 
-        var trigger = this;
-        var href = trigger.dataset.pjaxHref;
-        var target = trigger.dataset.pjaxTarget;
-        var title = trigger.dataset.pjaxTitle || false;
-        var stateChange = boolval(trigger.dataset.pjaxStateChange);
-        var singleRequest = boolval(trigger.dataset.pjaxSingleRequest);
-
-        Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
+            Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
+        }
     }
 
     // Load into Hubble DOM core

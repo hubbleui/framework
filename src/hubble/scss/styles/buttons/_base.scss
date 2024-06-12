@@ -1,3 +1,4 @@
+@use "sass:math";
 .btn
 {
     --hb-btn-block: inline-block;
@@ -62,7 +63,7 @@
     {
         vertical-align: $btn-icon-vertical-align;
         color: var(--hb-btn-icon-color);
-        transition: color ($ripple-easing-time/2) $base-easing;
+        transition: color math.div($ripple-easing-time, 2) $base-easing;
     }
     .loading-spinner .path
     {
@@ -83,11 +84,11 @@
         color: var(--hb-btn-color-active);
         background-color: var(--hb-btn-bg-color-active);
         box-shadow: var(--hb-btn-box-shadow-active);
-        --hb-btn-transition: #{background-color ($ripple-easing-time/2) $base-easing, color ($ripple-easing-time/2) $base-easing, box-shadow ($ripple-easing-time/2) $base-easing};
+        --hb-btn-transition: #{background-color math.div($ripple-easing-time, 2) $base-easing, color math.div($ripple-easing-time, 2) $base-easing, box-shadow math.div($ripple-easing-time, 2) $base-easing};
         --hb-btn-icon-color: var(--hb-btn-color-active);
         .glyph-icon
         {
-            transition: color ($ripple-easing-time/2) $base-easing;
+            transition: color math.div($ripple-easing-time, 2) $base-easing;
         }
     }
     

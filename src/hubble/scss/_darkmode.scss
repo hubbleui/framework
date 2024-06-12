@@ -1,3 +1,77 @@
+html.darkmode,
+.darkmode body
+{
+    background-color: $body-bg-darkmode;
+    color:            $body-color-darkmode;
+}
+.darkmode mark,
+.darkmode .mark
+{
+    background: _lighter($body-bg-darkmode, 10%);
+    color: _darker($body-color-darkmode, 10%);
+}
+.darkmode address,
+.darkmode .address
+{
+    color: $body-color-darkmode;
+}
+.darkmode .drawer
+{
+    background-color: lighten($body-bg-darkmode, 10%);
+    color: $body-color-darkmode;
+}
+.darkmode .drawer-overlay.dark
+{
+    background-color: rgb(0 0 0 / 86%);
+}
+.darkmode .drawer-overlay.light
+{
+    background-color: rgb(68 68 68 / 77%);
+}
+ .darkmode .drop-menu .drop
+    {
+        background-color: _lighter($body-bg-darkmode, 10%);
+    }
+.darkmode .pagination>li>a,
+.darkmode .pagination>li>span {
+    color: _lighter($body-bg-darkmode, 30%);
+    border: 1px solid _lighter($body-bg-darkmode, 30%);
+}
+.darkmode .pagination>.active>a, 
+.darkmode .pagination>.active>a:focus,
+.darkmode .pagination>.active>a:hover,
+.darkmode .pagination>.active>span,
+.darkmode .pagination>.active>span:focus,
+.darkmode .pagination>.active>span:hover {
+    color: #ffffff;
+    background-color: $brand-primary;
+    border-color: $brand-primary;
+}
+
+.pagination>li>a:focus, 
+.pagination>li>a:hover, 
+.pagination>li>span:focus, 
+.pagination>li>span:hover {
+    color: $brand-primary;
+    background-color: var(--hb-gray-300);
+}
+.pagination>li.elips>span:focus,
+.pagination>li.elips>span:hover {
+    color: #76838f;
+    background-color: #fff;
+}
+.darkmode .pagination>li>a:focus, 
+.darkmode .pagination>li>a:hover, 
+.darkmode .pagination>li>span:focus, 
+.darkmode .pagination>li>span:hover {
+    color: $brand-primary;
+    background-color: _lighter($body-bg-darkmode, 30%);
+}
+.darkmode .pagination>li.elips>span:focus,
+.darkmode .pagination>li.elips>span:hover {
+    color: _lighter($body-bg-darkmode, 30%);
+    background-color: transparent;
+}
 .darkmode .chip
 {
     background-color: _lighter($body-bg-darkmode, 15%);
@@ -73,15 +147,15 @@
 
 .darkmode .card
 {
-    background-color: _darker($body-bg-darkmode, 10);
+    background-color: _darker($body-bg-darkmode, 10%);
     &:active
     {
-        background-color: _darker($body-bg-darkmode, 20);
+        background-color: _darker($body-bg-darkmode, 20%);
     }
     &.flat
     {
         box-shadow: none;
-        border: 1px solid _lighter($body-bg-darkmode, 10);
+        border: 1px solid _lighter($body-bg-darkmode, 10%);
         &:active
         {
             background-color: transparent;
@@ -89,25 +163,25 @@
     }
     .card-subtitle
     {
-        color: _darker($body-color-darkmode, 10);
+        color: _darker($body-color-darkmode, 10%);
     }
     .card-text
     {
-        color: _darker($body-color-darkmode, 10);
+        color: _darker($body-color-darkmode, 10%);
     }
     .card-img-top
     {
-        background-color: _lighter($body-bg-darkmode, 10);
+        background-color: _lighter($body-bg-darkmode, 10%);
     }
     .card-header
     {
         .card-icon
         {
-            background-color: _lighter($body-bg-darkmode, 10);
+            background-color: _lighter($body-bg-darkmode, 10%);
 
             .glyph-icon
             {
-                color: _darker($body-bg-darkmode, 10)
+                color: _darker($body-bg-darkmode, 10%)
             }
         }
     }
@@ -302,5 +376,147 @@
     input, label, textarea, select
     {
         color: $body-color-darkmode;
+    }
+}
+.darkmode blockquote:not(.bq-danger):not(.bq-success):not(.bq-info):not(.bq-warning):not(.bq-primary):not(.bq-secondary)
+{
+    background-color: _lighter($body-bg-darkmode, 10%);
+    color: _darker($body-color-darkmode, 10%);
+
+    > footer
+        {
+            color: _darker($body-color-darkmode, 30%);
+        }
+}
+.darkmode .form-field
+{
+    position: relative;
+    display: inline-block;
+
+    // Label Setup
+    input:not([type="radio"]):not([type="checkbox"]) + label,
+    textarea + label,
+    select + label
+    {
+        color: _lighter($body-bg-darkmode, 20%);
+    }
+
+    // Focus label
+    &.focus,
+    &:focus-within
+    {
+        input:not([type="radio"]):not([type="checkbox"]) + label,
+        textarea + label,
+        select + label
+        {
+            color: $brand-info;
+        }
+    }
+
+    // Focus placeholder
+    &.focus,
+    &:focus-within
+    {
+        input:not([type="radio"]):not([type="checkbox"]),
+        textarea,
+        select
+        {
+            @include placeholder
+            {
+                color: $brand-info;
+            }
+        }
+    }
+
+    // Not empty placeholder
+    &.focus,
+    &:focus-within,
+    &.not-empty
+    {
+        input:not([type="radio"]):not([type="checkbox"]),
+        textarea,
+        select
+        {
+            @include placeholder
+            {
+                color: _lighter($body-bg-darkmode, 20%);
+            }
+        }
+    }
+
+    // Basic input styling
+    input:not([type="radio"]):not([type="checkbox"]),
+    textarea,
+    select,
+    {
+        color: $body-color-darkmode;
+        &.disabled,
+        &:disabled
+        {
+            background-color: rgba(0,0,0,0.5);
+        }
+        &:focus
+        {
+
+        }
+    }
+
+    input[type="time"]:before,
+    input[type="week"]:before,
+    input[type="month"]:before,
+    input[type="date"]:before,
+    input[type="datetime-local"]:before
+    {
+        color: _lighter($body-bg-darkmode, 20%);
+    }
+
+    // Context
+    &.danger input
+    {
+        border-color: $brand-danger;
+        box-shadow: inset 0 0 0 1px $brand-danger;
+    }
+    &.warning input
+    {
+        border-color: $brand-warning;
+        box-shadow: inset 0 0 0 1px $brand-warning;
+    }
+    &.danger
+    {
+        &.focus,
+        &:focus-within
+        {
+            input:not([type="radio"]):not([type="checkbox"]) + label,
+            textarea + label,
+            select + label
+            {
+                color: $brand-danger;
+            }
+        }
+    }
+    &.warning
+    {
+        &.focus,
+        &:focus-within
+        {
+            input:not([type="radio"]):not([type="checkbox"]) + label,
+            textarea + label,
+            select + label
+            {
+                color: $brand-warning;
+            }
+        }
+    }
+}
+
+.darkmode .radio
+{
+    input[type=radio]:checked + label:before
+    {
+        border-color: $body-color-darkmode;
+    }
+    input[type=radio]:checked + label:after
+    {
+        background-color: $body-color-darkmode;
     }
 }

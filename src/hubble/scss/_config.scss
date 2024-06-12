@@ -9,20 +9,20 @@ $brand-success:             #40dc7a !default;
 $brand-info:                #33a6ff !default;
 $brand-warning:             #ffd800 !default;
 $brand-danger:              #ff0042 !default;
-$on-primary:                $brand-primary !default;
+$on-primary:                #7c25a3 !default;
 
-// Body
+// Basic element coloring
 $body-bg:                   #fafafa !default;
 $body-color:                #1d1d1d !default;
-
-// Links
-$link-color:                $brand-primary !default;
+$link-color:                var(--hb-brand-primary) !default;
+$link-color-hover:          var(--hb-brand-primary-500) !default;
 
 // Darkmode
-$body-bg-darkmode:                   #2a2a2a !default;
-$body-color-darkmode:                $white !default;
+$body-bg-darkmode:         var(--hb-black) !default;
+$body-color-darkmode:      var(--hb-white) !default;
 
 // Colors
+// These are used in root.scss to generate color palettes
 $colors: (
     "gray"            : $gray,
     "brand-primary"   : $brand-primary,
@@ -191,7 +191,7 @@ $btn-icon-font-size:            1.6rem !default;
 $btn-icon-line-height:          1.4rem !default;
 $btn-icon-vertical-align:       text-top !default;
 
-$btn-group-radius:              var(--hb-border-radius);
+$btn-group-radius:              var(--hb-border-radius) !default;
 
 // Lists
 $list-bg:                       transparent !default;
@@ -225,6 +225,7 @@ $dropdown-divider-space:        0.3rem !default;
 $dropdown-header-divider-color: var(--hb-gray-300) !default;
 $dropdown-link-spacer-y:        0.8rem !default;
 $dropdown-link-spacer-x:        1.2rem !default;
+$dropdown-shadow-level:         2 !default;
 
 // Inline elements
 $badge-size:                    20px !default;
@@ -265,35 +266,53 @@ $modal-overlay-transition-on:  opacity .5s ease !default;
 $modal-overlay-transition-off: opacity .5s ease !default;
 
 // Card
-$card-bg:                   $white !default;
-$card-border-radius:        4px !default;
-$card-img-bg:               var(--hb-gray-100) !default;
-$card-img-padding:          0 !default;
+$card-bg:               var(--hb-white) !default;
+$card-bg-focus:         var(--hb-white) !default;
+$card-color:            var(--hb-gray-500) !default;
+$card-title-color:      var(--hb-body-color) !default;
+$card-line-height:      1.8 !default;
+$card-border-radius:    var(--hb-border-radius) !default;
+$card-border-width:     0 !default;
+$card-border-color:     var(--hb-gray-300) !default;
+$card-box-shadow:       var(--hb-raised-level-two) !default;
+$card-box-shadow-hover: var(--hb-raised-level-two-hover) !default;
+$card-spacer-y:         2rem !default;
+$card-spacer-x:         1.6rem !default;
+$card-title-spacer-y:   1.7rem !default;
+$card-divider-color:    var(--hb-gray-300) !default;
+$card-divider-size:     1px !default;
+$card-divier-space:     1rem !default;
+$card-actions-spacer-y: 2rem !default;
+$card-actions-spacer-x: 0.5rem !default;
+$card-icon-color:       var(--hb-gray-500) !default;
+$card-icon-bg:          var(--hb-gray-200) !default;
+$card-img-padding:      0 !default;
+$card-img-bg:           var(--hb-gray-100) !default;
 
 // Inputs
 $input-font-size:           1.6rem !default;
 $input-line-height:         1.6rem !default;
 $input-pad-y:               12px !default;
 $input-pad-x:               12px !default;
-$input-bg:                  transparent;
-$input-bg-focus:            transparent;
-$input-border-width:        1px;
+$input-bg:                  transparent !default;
+$input-bg-focus:            transparent !default;
+$input-border-width:        1px !default;
 $input-border-color:        var(--hb-gray-400) !default;
 $input-focus-color:         var(--hb-brand-info) !default;
 $input-label-color:         var(--hb-gray-400) !default;
 $input-placeholder-color:   var(--hb-gray-200) !default;
 
 $checkbox-size:             2rem !default;
-$checkbox-color:            var(--hb-gray);
+$checkbox-color:            var(--hb-gray) !default;
 
 $radio-size:                2.4rem !default;
-$radio-color:               var(--hb-gray);
+$radio-color:               var(--hb-gray) !default;
 
-$switch-size:               2rem;
-$switch-off-color:          var(--hb-gray);
-$switch-on-color:           var(--hb-brand-info);
+$switch-size:               2rem !default;
+$switch-off-color:          var(--hb-gray) !default;
+$switch-on-color:           var(--hb-brand-info) !default;
 
-$progress-size:             1rem;
+$progress-size:             1rem !default;
 
 
 // Tabs

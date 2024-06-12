@@ -8,8 +8,8 @@
  */
 (function()
 {
-
-    var defaults = {
+    var defaults =
+    {
         elements:
         {
             area: '.scrollbar-area',
@@ -26,134 +26,134 @@
 
     // SCROLLBAR HANDLER
     /*****************************************/
-    function Scrollbar(element, opts)
+    class _ScrollbarHandler
     {
-
-        // handle constructor call without `new` keyword
-        if (!(this instanceof Scrollbar)) return new Scrollbar(element, opts);
-
-        // is plugin already initialized?
-        if (this.el)
+        constructor(element, opts)
         {
-            return;
-        }
 
-        this.el = element;
-        this.opts = extend(
-        {}, defaults, opts ||
-        {});
+            // handle constructor call without `new` keyword
+            if (!(this instanceof _ScrollbarHandler)) return new _ScrollbarHandler(element, opts);
 
-        this._setupElements();
-
-        // check if browser has physical scrollbars (usually desktop)
-        if (this.scrollbarWidth = getScrollbarWidth())
-        {
-            this._enableTrack();
-
-            this._observeHover(this.area);
-            this._observeHover(this.track);
-            this._enableScroll();
-            this._enableDragging();
-
-            this.refresh();
-        }
-        else
-        {
-            this._allowNativeScroll();
-        }
-
-        return this;
-    }
-
-    // PUBLIC API
-    /*****************************************/
-    /**
-     * Destroys plugin instance.
-     */
-    Scrollbar.prototype.destroy = function()
-    {
-        var stateClasses = this.opts.stateClasses;
-
-        this._removeAllListeners();
-
-        this.wrapper.style.overflowY = '';
-        this.wrapper.style.marginRight = '';
-        this.track.style.display = '';
-
-        removeClass(document.body, stateClasses.dragging);
-        removeClass(this.area, stateClasses.dragging);
-        removeClass(this.area, stateClasses.hover);
-        removeClass(this.track, stateClasses.hover);
-
-        delete this.el;
-    }
-
-    /**
-     * Refreshes scrollbar by adjusting its handle's height and position.
-     */
-    Scrollbar.prototype.refresh = function()
-    {
-        var newRatio;
-
-        if (!this.el || this.isNative())
-        {
-            return;
-        }
-
-        if (this.wrapper.scrollHeight > this.wrapper.offsetHeight)
-        {
-            this.track.style.display = 'block';
-
-            newRatio = this.track.offsetHeight / this.wrapper.scrollHeight;
-
-            if (newRatio !== this.ratio)
+            // is plugin already initialized?
+            if (this.el)
             {
-                this.ratio = newRatio;
+                return;
+            }
 
-                this._resizeHandle();
-                this._positionHandle();
+            this.el = element;
+            this.opts = extend({}, defaults, opts || {});
+
+            this._setupElements();
+
+            // check if browser has physical scrollbars (usually desktop)
+            if (this.scrollbarWidth = getScrollbarWidth())
+            {
+                this._enableTrack();
+
+                this._observeHover(this.area);
+                this._observeHover(this.track);
+                this._enableScroll();
+                this._enableDragging();
+
+                this.refresh();
+            }
+            else
+            {
+                this._allowNativeScroll();
+            }
+
+            return this;
+        }
+
+        // PUBLIC API
+        /*****************************************/
+        /**
+         * Destroys plugin instance.
+         */
+        destroy()
+        {
+            var stateClasses = this.opts.stateClasses;
+
+            this._removeAllListeners();
+
+            this.wrapper.style.overflowY = '';
+            this.wrapper.style.marginRight = '';
+            this.track.style.display = '';
+
+            removeClass(document.body, stateClasses.dragging);
+            removeClass(this.area, stateClasses.dragging);
+            removeClass(this.area, stateClasses.hover);
+            removeClass(this.track, stateClasses.hover);
+
+            delete this.el;
+        }
+
+        /**
+         * Refreshes scrollbar by adjusting its handle's height and position.
+         */
+        refresh()
+        {
+            var newRatio;
+
+            if (!this.el || this.isNative())
+            {
+                return;
+            }
+
+            if (this.wrapper.scrollHeight > this.wrapper.offsetHeight)
+            {
+                this.track.style.display = 'block';
+
+                newRatio = this.track.offsetHeight / this.wrapper.scrollHeight;
+
+                if (newRatio !== this.ratio)
+                {
+                    this.ratio = newRatio;
+
+                    this._resizeHandle();
+                    this._positionHandle();
+                }
+            }
+            else
+            {
+                this.track.style.display = 'none';
             }
         }
-        else
+
+        /**
+         * Checks if native scroll is enabled.
+         *
+         * @returns {Boolean}
+         */
+        isNative()
         {
-            this.track.style.display = 'none';
+            return !this.scrollbarWidth;
         }
-    }
 
-    /**
-     * Checks if native scroll is enabled.
-     *
-     * @returns {Boolean}
-     */
-    Scrollbar.prototype.isNative = function()
-    {
-        return !this.scrollbarWidth;
-    }
+        // PRIVATE API
+        /*****************************************/
+        /**
+         * Sets up elements.
+         *
+         * @private
+         */
+        _setupElements()
+        {
+            var elements = this.opts.elements;
 
-    // PRIVATE API
-    /*****************************************/
-    /**
-     * Sets up elements.
-     *
-     * @private
-     */
-    Scrollbar.prototype._setupElements = function()
-    {
-        var elements = this.opts.elements;
+            this.area = this.el.querySelector(elements.area);
+            this.wrapper = this.el.querySelector(elements.wrapper);
+            this.handle = this.el.querySelector(elements.handle);
+            this.track = this.el.querySelector(elements.track);
+        }
 
-        this.area = this.el.querySelector(elements.area);
-        this.wrapper = this.el.querySelector(elements.wrapper);
-        this.handle = this.el.querySelector(elements.handle);
-        this.track = this.el.querySelector(elements.track);
-    }
-
-    /**
-     * Observes when element is hovered and toggles corresponding class.
-     *
-     * @param {HTMLElement} element
-     * @private
-     */
-    Scrollbar.prototype._observeHover = function(element)
+        /**
+         * Observes when element is hovered and toggles corresponding class.
+         *
+         * @param {HTMLElement} element
+         * @private
+         */
+        _observeHover(element)
         {
             var cls = this.opts.stateClasses.hover;
 
@@ -165,212 +165,213 @@
             {
                 removeClass(element, cls);
             });
-        },
+        }
 
         /**
          * Enables scroll by overflowing native scrollbar and starting to listen to `scroll` event.
          *
          * @private
          */
-        Scrollbar.prototype._enableScroll = function()
+        _enableScroll()
         {
             this._addListener(this.wrapper, 'scroll', bind(this._positionHandle, this));
         }
 
-    /**
-     * Enables handle's dragging along the track.
-     *
-     * @private
-     */
-    Scrollbar.prototype._enableDragging = function()
-    {
-        var cls = this.opts.stateClasses.dragging,
-            initialPosition = null,
-            initialTop = null,
-            startDragging,
-            stopDragging;
-
-        this._addListener(this.handle, 'mousedown', bind(function(e)
+        /**
+         * Enables handle's dragging along the track.
+         *
+         * @private
+         */
+        _enableDragging()
         {
-            initialPosition = this.wrapper.scrollTop;
-            initialTop = e.clientY;
+            var cls = this.opts.stateClasses.dragging,
+                initialPosition = null,
+                initialTop = null,
+                startDragging,
+                stopDragging;
 
-            this._addListener(document, 'mousemove', startDragging);
-            this._addListener(document, 'mouseup', stopDragging);
-        }, this));
-
-        startDragging = bind(function(e)
-        {
-            var newPosition,
-                wrapperHeight,
-                wrapperInnerHeight;
-
-            if (initialTop !== null)
+            this._addListener(this.handle, 'mousedown', bind(function(e)
             {
-                newPosition = Math.round(initialPosition + (e.clientY - initialTop) / this.ratio);
+                initialPosition = this.wrapper.scrollTop;
+                initialTop = e.clientY;
 
-                wrapperHeight = this.wrapper.offsetHeight;
-                wrapperInnerHeight = this.wrapper.scrollHeight;
+                this._addListener(document, 'mousemove', startDragging);
+                this._addListener(document, 'mouseup', stopDragging);
+            }, this));
 
-                if (newPosition + wrapperHeight > wrapperInnerHeight)
+            startDragging = bind(function(e)
+            {
+                var newPosition,
+                    wrapperHeight,
+                    wrapperInnerHeight;
+
+                if (initialTop !== null)
                 {
-                    newPosition = wrapperInnerHeight - wrapperHeight;
+                    newPosition = Math.round(initialPosition + (e.clientY - initialTop) / this.ratio);
+
+                    wrapperHeight = this.wrapper.offsetHeight;
+                    wrapperInnerHeight = this.wrapper.scrollHeight;
+
+                    if (newPosition + wrapperHeight > wrapperInnerHeight)
+                    {
+                        newPosition = wrapperInnerHeight - wrapperHeight;
+                    }
+
+                    this.wrapper.scrollTop = newPosition;
+                    this._positionHandle();
+
+                    addClass(document.body, cls);
+                    addClass(this.area, cls);
                 }
+            }, this);
 
-                this.wrapper.scrollTop = newPosition;
-                this._positionHandle();
-
-                addClass(document.body, cls);
-                addClass(this.area, cls);
-            }
-        }, this);
-
-        stopDragging = bind(function()
-        {
-            initialTop = null;
-            initialPosition = null;
-
-            removeClass(document.body, cls);
-            removeClass(this.area, cls);
-
-            this._removeListener(document, 'mousemove', startDragging);
-            this._removeListener(document, 'mouseup', stopDragging);
-        }, this);
-    }
-
-    /**
-     * Enables track.
-     *
-     * @private
-     */
-    Scrollbar.prototype._enableTrack = function()
-    {
-        this.wrapper.style.overflowY = 'scroll';
-        this.wrapper.style.marginRight = -1 * this.scrollbarWidth + 'px';
-    }
-
-    /**
-     * Allows native scrolling by making sure that div is scrollable.
-     *
-     * @private
-     */
-    Scrollbar.prototype._allowNativeScroll = function()
-    {
-        this.wrapper.style.overflowY = 'auto';
-    }
-
-    /**
-     * Resizes handle by adjusting its `height`.
-     *
-     * @private
-     */
-    Scrollbar.prototype._resizeHandle = function()
-    {
-        this.handle.style.height = Math.ceil(this.ratio * this.track.offsetHeight) + 'px';
-    }
-
-    /**
-     * Positions handle by adjusting its `top` position.
-     *
-     * @private
-     */
-    Scrollbar.prototype._positionHandle = function()
-    {
-        var wrapperTop = this.wrapper.scrollTop,
-            top;
-
-        if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight)
-        {
-            top = Math.ceil(this.ratio * this.wrapper.scrollTop);
-        }
-        else
-        {
-            // if scroll position has reached the end, force scrollbar to track's end
-            top = this.track.offsetHeight - this.handle.offsetHeight;
-        }
-
-        this.handle.style.top = top + 'px';
-    }
-
-    /**
-     * Adds event listener and keeps track of it.
-     *
-     * @param {HTMLElement} element
-     * @param {String}      eventName
-     * @param {Function}    handler
-     * @private
-     */
-    Scrollbar.prototype._addListener = function(element, eventName, handler)
-    {
-        var events = this._events;
-
-        if (!events)
-        {
-            this._events = events = {};
-        }
-        if (!events[eventName])
-        {
-            events[eventName] = [];
-        }
-
-        events[eventName].push(
-        {
-            element: element,
-            handler: handler
-        });
-
-        addEventListener.apply(null, arguments);
-    }
-
-    /**
-     * Removes event listener.
-     *
-     * @param {HTMLElement} element
-     * @param {String}      eventName
-     * @param {Function}    handler
-     * @private
-     */
-    Scrollbar.prototype._removeListener = function(element, eventName, handler)
-    {
-        var event = this._events[eventName],
-            index,
-            total;
-
-        for (index = 0, total = event.length; index < total; index++)
-        {
-            if (event[index].handler === handler)
+            stopDragging = bind(function()
             {
-                event.splice(index, 1);
-                removeEventListener.apply(null, arguments);
-                break;
-            }
+                initialTop = null;
+                initialPosition = null;
+
+                removeClass(document.body, cls);
+                removeClass(this.area, cls);
+
+                this._removeListener(document, 'mousemove', startDragging);
+                this._removeListener(document, 'mouseup', stopDragging);
+            }, this);
         }
-    }
 
-    /**
-     * Removes all event listeners.
-     *
-     * @private
-     */
-    Scrollbar.prototype._removeAllListeners = function()
-    {
-        var events = this._events,
-            eventName,
-            event,
-            iter,
-            total;
-
-        for (eventName in events)
+        /**
+         * Enables track.
+         *
+         * @private
+         */
+        _enableTrack()
         {
-            event = events[eventName];
+            this.wrapper.style.overflowY = 'scroll';
+            this.wrapper.style.marginRight = -1 * this.scrollbarWidth + 'px';
+        }
 
-            for (iter = 0, total = event.length; iter < total; iter++)
+        /**
+         * Allows native scrolling by making sure that div is scrollable.
+         *
+         * @private
+         */
+        _allowNativeScroll()
+        {
+            this.wrapper.style.overflowY = 'auto';
+        }
+
+        /**
+         * Resizes handle by adjusting its `height`.
+         *
+         * @private
+         */
+        _resizeHandle()
+        {
+            this.handle.style.height = Math.ceil(this.ratio * this.track.offsetHeight) + 'px';
+        }
+
+        /**
+         * Positions handle by adjusting its `top` position.
+         *
+         * @private
+         */
+        _positionHandle()
+        {
+            var wrapperTop = this.wrapper.scrollTop,
+                top;
+
+            if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight)
             {
-                removeEventListener(event[iter].element, eventName, event[iter].handler);
+                top = Math.ceil(this.ratio * this.wrapper.scrollTop);
+            }
+            else
+            {
+                // if scroll position has reached the end, force scrollbar to track's end
+                top = this.track.offsetHeight - this.handle.offsetHeight;
+            }
+
+            this.handle.style.top = top + 'px';
+        }
+
+        /**
+         * Adds event listener and keeps track of it.
+         *
+         * @param {HTMLElement} element
+         * @param {String}      eventName
+         * @param {Function}    handler
+         * @private
+         */
+        _addListener(element, eventName, handler)
+        {
+            var events = this._events;
+
+            if (!events)
+            {
+                this._events = events = {};
+            }
+            if (!events[eventName])
+            {
+                events[eventName] = [];
+            }
+
+            events[eventName].push(
+            {
+                element: element,
+                handler: handler
+            });
+
+            addEventListener.apply(null, arguments);
+        }
+
+        /**
+         * Removes event listener.
+         *
+         * @param {HTMLElement} element
+         * @param {String}      eventName
+         * @param {Function}    handler
+         * @private
+         */
+        _removeListener(element, eventName, handler)
+        {
+            var event = this._events[eventName],
+                index,
+                total;
+
+            for (index = 0, total = event.length; index < total; index++)
+            {
+                if (event[index].handler === handler)
+                {
+                    event.splice(index, 1);
+                    removeEventListener.apply(null, arguments);
+                    break;
+                }
             }
         }
 
-        delete this._events;
+        /**
+         * Removes all event listeners.
+         *
+         * @private
+         */
+        _removeAllListeners()
+        {
+            var events = this._events,
+                eventName,
+                event,
+                iter,
+                total;
+
+            for (eventName in events)
+            {
+                event = events[eventName];
+
+                for (iter = 0, total = event.length; iter < total; iter++)
+                {
+                    removeEventListener(event[iter].element, eventName, event[iter].handler);
+                }
+            }
+
+            delete this._events;
+        }
     }
 
     // HELPER FUNCTIONS
@@ -464,6 +465,6 @@
         return width;
     }
 
-    Container.set('Scrollbar', Scrollbar);
+    Container.set('_ScrollbarHandler', _ScrollbarHandler);
 
 })();

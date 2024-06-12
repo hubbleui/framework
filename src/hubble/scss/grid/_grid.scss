@@ -1,3 +1,4 @@
+@use "sass:math";
 
 // Hide previous breakpoint
 @if $prev-breakpoint
@@ -34,14 +35,14 @@
     {
         .col-#{$i}
         {
-            width: unquote('#{100 / 12 * $i}%');
+            width: unquote('#{math.div(100, 12) * $i}%');
         }
     }
     @else
     {
         .col-#{$curr-grid}-#{$i}
         {
-            width: unquote('#{100 / 12 * $i}%');
+            width: unquote('#{math.div(100, 12) * $i}%');
         }
     }
 }
@@ -53,14 +54,14 @@
     {
         .col-#{$i}-push-r
         {
-            margin-left: unquote('#{100 / 12 * (12-$i)}%');
+            margin-left: unquote('#{math.div(100, 12) * (12-$i)}%');
         }
     }
     @else
     {
         .col-#{$curr-grid}-#{$i}-push-r
         {
-            margin-left: unquote('#{100 / 12 * (12-$i)}%');
+            margin-left: unquote('#{math.div(100, 12) * (12-$i)}%');
         }
     }
 }
@@ -70,14 +71,14 @@
     {
         .col-#{$i}-push-l
         {
-            margin-right: unquote('#{100 / 12 * (12-$i)}%');
+            margin-right: unquote('#{math.div(100, 12) * (12-$i)}%');
         }
     }
     @else
     {
         .col-#{$curr-grid}-#{$i}-push-l
         {
-            margin-right: unquote('#{100 / 12 * (12-$i)}%');
+            margin-right: unquote('#{math.div(100, 12) * (12-$i)}%');
         }
     }
 }

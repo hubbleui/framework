@@ -1,3 +1,4 @@
+@use "sass:math";
 :root
 {
     /* Base Colors */
@@ -19,17 +20,23 @@
     @each $name, $color in $colors
     {
         /* #{$name} */
-        --hb-#{$name}-100: #{_lighter($color, 90)};
-        --hb-#{$name}-200: #{_lighter($color, 80)};
-        --hb-#{$name}-300: #{_lighter($color, 50)};
-        --hb-#{$name}-400: #{_lighter($color, 35)};
+        --hb-#{$name}-100: #{_lighter($color, 90%)};
+        --hb-#{$name}-200: #{_lighter($color, 80%)};
+        --hb-#{$name}-300: #{_lighter($color, 50%)};
+        --hb-#{$name}-400: #{_lighter($color, 35%)};
         --hb-#{$name}-D00: #{$color};
-        --hb-#{$name}-500: #{_darker($color, 5)};
-        --hb-#{$name}-600: #{_darker($color, 20)};
-        --hb-#{$name}-700: #{_darker($color, 25)};
-        --hb-#{$name}-800: #{_darker($color, 30)};
-        --hb-#{$name}-900: #{_darker($color, 40)};
+        --hb-#{$name}-500: #{_darker($color, 5%)};
+        --hb-#{$name}-600: #{_darker($color, 20%)};
+        --hb-#{$name}-700: #{_darker($color, 25%)};
+        --hb-#{$name}-800: #{_darker($color, 30%)};
+        --hb-#{$name}-900: #{_darker($color, 40%)};
     }
+
+    /* Contexts RGBA */
+    @each $name, $color in $colors
+    {
+        --hb-#{$name}-rgb: #{_toRGBVals($color)};
+    }   
 
     /* Typeography */
     --hb-font-sans-serif: #{$font-family-sans-serif};
@@ -60,11 +67,11 @@
     --hb-headings-line-height: #{$headings-line-height};
 
     /* Raised Levels */
-    --hb-raised-level-one:          0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-    --hb-raised-level-one-hover:    0px 2px 4px -1px rgb(0 0 0 / 10%), 0px 4px 5px 0px rgb(0 0 0 / 12%), 0px 1px 10px 0px rgb(0 0 0 / 6%);
+    --hb-raised-level-one:          0px 2px 1px -1px rgba(0, 0, 0, 0.20), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    --hb-raised-level-one-hover:    0px 2px 4px -1px rgba(0, 0, 0, 0.10), 0px 4px 5px 0px rgba(0, 0, 0, 0.12), 0px 1px 10px 0px rgba(0, 0, 0,0. 6);
     --hb-raised-level-two:          0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    --hb-raised-level-two-hover:    0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
-    --hb-raised-level-three:        rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px;
+    --hb-raised-level-two-hover:    0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    --hb-raised-level-three:        rgba(0, 0, 0, 0.20) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
     --hb-raised-level-three-hover:  0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     --hb-box-shadow-in:             inset 0 5px 8px -2px rgba(0,0,0,.13);
 
@@ -77,7 +84,6 @@
     --hb-breakpoint-md: #{$breakpoint-md};
     --hb-breakpoint-lg: #{$breakpoint-lg};
     --hb-breakpoint-xl: #{$breakpoint-xl};
-
 
     /* Easings */
     /* Base transitions */

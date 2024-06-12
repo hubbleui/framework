@@ -423,230 +423,245 @@ if (!Array.prototype.map) {
 (function(window)
 {
     /**
-     * Module constructor
+     * Array Helper utility
+     * 
+     * Handles Object with built in "dot.notation" set,get,isset,delete methods.
      *
      * @class
-     * @constructor
-     * @access public
      */
-    var ArrayHelper = function()
+    class ArrayHelper
     {
-        return this;
-    };
-
-    /**
-     * Set a key using dot/bracket notation on an object or array
-     *
-     * @access public
-     * @param  string       path   Path to set
-     * @param  mixed        value  Value to set
-     * @param  object|array object Object to set into
-     * @return object|array
-     */
-    ArrayHelper.prototype.set = function(path, value, object)
-    {
-        this._setRecursive(this._keySegment(path), value, object);
-
-        return object;
-    }
-
-    /**
-     * Gets an from an array/object using dot/bracket notation
-     *
-     * @access public
-     * @param  string       path   Path to get
-     * @param  object|array object Object to get from
-     * @return mixed
-     */
-    ArrayHelper.prototype.get = function(path, object)
-    {
-        return this._getRecursive(this._keySegment(path), object);
-    }
-
-    /**
-     * Checks if array/object contains path using dot/bracket notation
-     *
-     * @access public
-     * @param  string       path   Path to check
-     * @param  object|array object Object to check on
-     * @return bool
-     */
-    ArrayHelper.prototype.has = function(path, object)
-    {
-        return typeof this.get(path, object) !== 'undefined';
-    }
-
-    /**
-     * Deletes from an array/object using dot/bracket notation
-     *
-     * @access public
-     * @param  string       path   Path to delete
-     * @param  object|array object Object to delete from
-     * @return object|array
-     */
-    ArrayHelper.prototype.delete = function(path, object)
-    {
-        this._deleteRecursive(this._keySegment(path), object);
-
-        return object;
-    }
-
-    /**
-     * Recursively delete from array/object
-     *
-     * @access private
-     * @param  array        keys   Keys in search order
-     * @param  object|array object Object to get from
-     * @return mixed
-     */
-    ArrayHelper.prototype._deleteRecursive = function(keys, object)
-    {
-        var key = keys.shift();
-        var islast = keys.length === 0;
-
-        if (islast)
+        /**
+         * Module constructor
+         *
+         * @class
+         * @constructor
+         * @access public
+         */
+        constructor()
         {
-            if (Object.prototype.toString.call(object) === '[object Array]')
-            {
-                object.splice(key, 1);
-            }
-            else
-            {
-                delete object[key];
-            }
+            return this;
         }
 
-        if (!object[key])
+        /**
+         * Set a key using dot/bracket notation on an object or array
+         *
+         * @access public
+         * @param  string       path   Path to set
+         * @param  mixed        value  Value to set
+         * @param  object|array object Object to set into
+         * @return object|array
+         */
+        set(path, value, object)
         {
-            return false;
+            this._setRecursive(this._keySegment(path), value, object);
+
+            return object;
         }
 
-        return this._deleteRecursive(keys, object[key]);
-
-    }
-
-    /**
-     * Recursively search array/object
-     *
-     * @access private
-     * @param  array        keys   Keys in search order
-     * @param  object|array object Object to get from
-     * @return mixed
-     */
-    ArrayHelper.prototype._getRecursive = function(keys, object)
-    {
-        var key = keys.shift();
-        var islast = keys.length === 0;
-
-        if (islast)
+        /**
+         * Gets an from an array/object using dot/bracket notation
+         *
+         * @access public
+         * @param  string       path   Path to get
+         * @param  object|array object Object to get from
+         * @return mixed
+         */
+        get(path, object)
         {
-            return object[key];
+            return this._getRecursive(this._keySegment(path), object);
         }
 
-        if (!object[key])
+        /**
+         * Checks if array/object contains path using dot/bracket notation
+         *
+         * @access public
+         * @param  string       path   Path to check
+         * @param  object|array object Object to check on
+         * @return bool
+         */
+        has(path, object)
         {
-            return undefined;
+            return typeof this.get(path, object) !== 'undefined';
         }
 
-        return this._getRecursive(keys, object[key]);
-    }
-
-    /**
-     * Recursively set array/object
-     *
-     * @access private
-     * @param  array        keys   Keys in search order
-     * @param  mixed        value  Value to set
-     * @param  parent       object|array or null
-     * @param  object|array object Object to set on
-     */
-    ArrayHelper.prototype._setRecursive = function(keys, value, object, nextKey)
-    {
-        var key = keys.shift();
-        var islast = keys.length === 0;
-        var lastObj = object;
-        object = !nextKey ? object : object[nextKey];
-
-        // Trying to set a value on nested array that doesn't exist
-        if (!['object', 'function'].includes(typeof object))
+        /**
+         * Deletes from an array/object using dot/bracket notation
+         *
+         * @access public
+         * @param  string       path   Path to delete
+         * @param  object|array object Object to delete from
+         * @return object|array
+         */
+        delete(path, object)
         {
-            throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
+            this._deleteRecursive(this._keySegment(path), object);
+
+            return object;
         }
 
-        if (!object[key])
+        /**
+         * Recursively delete from array/object
+         *
+         * @access private
+         * @param  array        keys   Keys in search order
+         * @param  object|array object Object to get from
+         * @return mixed
+         */
+        _deleteRecursive(keys, object)
         {
-            // Trying to put object key into an array
-            if (Object.prototype.toString.call(object) === '[object Array]' && typeof key === 'string')
+            var key = keys.shift();
+            var islast = keys.length === 0;
+
+            if (islast)
             {
-                var converted = Object.assign(
-                {}, object);
-
-                lastObj[nextKey] = converted;
-
-                object = converted;
-            }
-
-            if (keys[0] && typeof keys[0] === 'string')
-            {
-                object[key] = {};
-            }
-            else
-            {
-                object[key] = [];
-            }
-        }
-
-        if (islast)
-        {
-            object[key] = value;
-
-            return;
-        }
-
-        this._setRecursive(keys, value, object, key);
-    }
-
-    /**
-     * Segments an array/object path using dot notation
-     *
-     * @access private
-     * @param  string  path Path to parse
-     * @return array
-     */
-    ArrayHelper.prototype._keySegment = function(path)
-    {
-        var result = [];
-        var segments = path.split('.');
-
-        for (var i = 0; i < segments.length; i++)
-        {
-            var segment = segments[i];
-
-            if (!segment.includes('['))
-            {
-                result.push(segment);
-
-                continue;
-            }
-
-            var subSegments = segment.split('[');
-
-            for (var j = 0; j < subSegments.length; j++)
-            {
-                if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
+                if (Object.prototype.toString.call(object) === '[object Array]')
                 {
-                    result.push(parseInt(subSegments[j].replace(']')));
+                    object.splice(key, 1);
                 }
-                else if (subSegments[j] !== '')
+                else
                 {
-                    result.push(subSegments[j])
+                    delete object[key];
                 }
             }
+
+            if (!object[key])
+            {
+                return false;
+            }
+
+            return this._deleteRecursive(keys, object[key]);
+
         }
 
-        return result;
+        /**
+         * Recursively search array/object
+         *
+         * @access private
+         * @param  array        keys   Keys in search order
+         * @param  object|array object Object to get from
+         * @return mixed
+         */
+        _getRecursive(keys, object)
+        {
+            var key = keys.shift();
+            var islast = keys.length === 0;
+
+            if (islast)
+            {
+                return object[key];
+            }
+
+            if (!object[key])
+            {
+                return undefined;
+            }
+
+            return this._getRecursive(keys, object[key]);
+        }
+
+        /**
+         * Recursively set array/object
+         *
+         * @access private
+         * @param  array        keys   Keys in search order
+         * @param  mixed        value  Value to set
+         * @param  parent       object|array or null
+         * @param  object|array object Object to set on
+         */
+        _setRecursive(keys, value, object, nextKey)
+        {
+            var key = keys.shift();
+            var islast = keys.length === 0;
+            var lastObj = object;
+            object = !nextKey ? object : object[nextKey];
+
+            // Trying to set a value on nested array that doesn't exist
+            if (!['object', 'function'].includes(typeof object))
+            {
+                throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
+            }
+
+            if (!object[key])
+            {
+                // Trying to put object key into an array
+                if (Object.prototype.toString.call(object) === '[object Array]' && typeof key === 'string')
+                {
+                    var converted = Object.assign(
+                    {}, object);
+
+                    lastObj[nextKey] = converted;
+
+                    object = converted;
+                }
+
+                if (keys[0] && typeof keys[0] === 'string')
+                {
+                    object[key] = {};
+                }
+                else
+                {
+                    object[key] = [];
+                }
+            }
+
+            if (islast)
+            {
+                object[key] = value;
+
+                return;
+            }
+
+            this._setRecursive(keys, value, object, key);
+        }
+
+        /**
+         * Segments an array/object path using dot notation
+         *
+         * @access private
+         * @param  string  path Path to parse
+         * @return array
+         */
+        _keySegment(path)
+        {
+            var result = [];
+            var segments = path.split('.');
+
+            for (var i = 0; i < segments.length; i++)
+            {
+                var segment = segments[i];
+
+                if (!segment.includes('['))
+                {
+                    result.push(segment);
+
+                    continue;
+                }
+
+                var subSegments = segment.split('[');
+
+                for (var j = 0; j < subSegments.length; j++)
+                {
+                    if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
+                    {
+                        result.push(parseInt(subSegments[j].replace(']')));
+                    }
+                    else if (subSegments[j] !== '')
+                    {
+                        result.push(subSegments[j])
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 
+    /**
+     * Array Helper instance
+     * 
+     * @var object
+     */
     var Arr = new ArrayHelper;
 
     /**
@@ -656,289 +671,292 @@ if (!Array.prototype.map) {
      * @constructor
      * @access public
      */
-    var Container = function()
+    class Container
     {
-        this.data = {};
-
-        this.singletons = {};
-
-        return this;
-    };
-
-    /**
-     * Set data key to value
-     *
-     * @access public
-     * @param string key   The data key
-     * @param mixed  value The data value
-     */
-    Container.prototype.set = function(key, value)
-    {
-        if (key.includes('.') || key.includes('['))
+        constructor()
         {
-            Arr.set(key, value, this.data);
+            this.data = {};
+
+            this.singletons = {};
+
+            return this;
         }
-        else
+
+        /**
+         * Set data key to value
+         *
+         * @access public
+         * @param string key   The data key
+         * @param mixed  value The data value
+         */
+        set(key, value)
         {
-            this.data[key] = value;
-
-            this._setProto(key, this._isInvokable(value) || this._isInvoked(value));
-        }
-    }
-
-    /**
-     * Sets the key as a prototype method
-     *
-     * @access public
-     * @param  string key   The data key
-     * @return mixed
-     */
-    Container.prototype._setProto = function(key, invokable)
-    {
-        var _this = this;
-
-        var _key = this._normalizeKey(key);
-
-        var _proto = Object.getPrototypeOf(this);
-
-        _proto[_key] = function()
-        {
-            var args = Array.prototype.slice.call(arguments);
-
-            args.unshift(key);
-
-            if (invokable)
+            if (key.includes('.') || key.includes('['))
             {
-                return _this.get.apply(_this, args);
+                Arr.set(key, value, this.data);
+            }
+            else
+            {
+                this.data[key] = value;
+
+                this._setProto(key, this._isInvokable(value) || this._isInvoked(value));
+            }
+        }
+
+        /**
+         * Sets the key as a prototype method
+         *
+         * @access public
+         * @param  string key   The data key
+         * @return mixed
+         */
+        _setProto(key, invokable)
+        {
+            var _this = this;
+
+            var _key = this._normalizeKey(key);
+
+            var _proto = Object.getPrototypeOf(this);
+
+            _proto[_key] = function()
+            {
+                var args = Array.prototype.slice.call(arguments);
+
+                args.unshift(key);
+
+                if (invokable)
+                {
+                    return _this.get.apply(_this, args);
+                }
+
+                return _this.get(key);
+            };
+        }
+
+        /**
+         * Remove a key/value
+         *
+         * @access public
+         * @param string key   The data key
+         */
+        delete(key)
+        {
+            if (key.includes('.') || key.includes('['))
+            {
+                Arr.delete(key, this.data);
+
+                return;
             }
 
-            return _this.get(key);
-        };
-    }
+            delete this.data[key];
 
-    /**
-     * Remove a key/value
-     *
-     * @access public
-     * @param string key   The data key
-     */
-    Container.prototype.delete = function(key)
-    {
-        if (key.includes('.') || key.includes('['))
-        {
-            Arr.delete(key, this.data);
+            key = this._normalizeKey(key);
 
-            return;
-        }
+            var _proto = Object.getPrototypeOf(this);
 
-        delete this.data[key];
-
-        key = this._normalizeKey(key);
-
-        var _proto = Object.getPrototypeOf(this);
-
-        if (typeof _proto[key] !== 'undefined')
-        {
-            _proto[key] = null;
-        }
-    }
-
-    /**
-     * Stores a globally unique singleton
-     *
-     * @access public
-     * @param  string key      The value or object name
-     * @param  object classObj The closure that defines the object
-     * @return this
-     */
-    Container.prototype.singleton = function(key, classObj)
-    {
-        if (key.includes('.') || key.includes('['))
-        {
-            throw new Error('Cannot set singletons using dot notation.');
-        }
-
-        var args = this._normalizeArgs(arguments);
-
-        var instance;
-
-        if (this._isInvoked(classObj))
-        {
-            instance = classObj;
-        }
-
-        this.singletons[key] = true;
-
-        this.set(key, function()
-        {
-            if (!instance)
+            if (typeof _proto[key] !== 'undefined')
             {
-                if (!this._isInvoked(instance))
+                _proto[key] = null;
+            }
+        }
+
+        /**
+         * Stores a globally unique singleton
+         *
+         * @access public
+         * @param  string key      The value or object name
+         * @param  object classObj The closure that defines the object
+         * @return this
+         */
+        singleton(key, classObj)
+        {
+            if (key.includes('.') || key.includes('['))
+            {
+                throw new Error('Cannot set singletons using dot notation.');
+            }
+
+            var args = this._normalizeArgs(arguments);
+
+            var instance;
+
+            if (this._isInvoked(classObj))
+            {
+                instance = classObj;
+            }
+
+            this.singletons[key] = true;
+
+            this.set(key, function()
+            {
+                if (!instance)
                 {
-                    instance = this._newInstance(classObj, args);
+                    if (!this._isInvoked(instance))
+                    {
+                        instance = this._newInstance(classObj, args);
+                    }
+                }
+
+                return instance;
+            });
+
+            return this;
+        }
+
+        /**
+         * Get data value with key
+         *
+         * @access public
+         * @param  string key The data key
+         * @param  mixed  ... Any additional parameters to pass to the constructor (optional) (default null)
+         * @return mixed      The data value
+         */
+        get(key)
+        {
+            if (key.includes('.') || key.includes('['))
+            {
+                return Arr.get(key, this.data);
+            }
+
+            if (this.has(key))
+            {
+                if (this._isSingleton(key))
+                {
+                    return this.data[key].apply(this);
+                }
+                else if (this._isInvokable(this.data[key]))
+                {
+                    return this._newInstance(this.data[key], arguments);
+                }
+
+                return this.data[key];
+            }
+
+            return false;
+        }
+
+        /**
+         * Does this set contain a key?
+         *
+         * @access public
+         * @param  string  key The data key
+         * @return boolean
+         */
+        has(key)
+        {
+            if (key.includes('.') || key.includes('['))
+            {
+                return Arr.has(key, this.data);
+            }
+
+            for (var _key in this.data)
+            {
+                if (_key === key)
+                {
+                    return true;
                 }
             }
 
-            return instance;
-        });
-
-        return this;
-    }
-
-    /**
-     * Get data value with key
-     *
-     * @access public
-     * @param  string key The data key
-     * @param  mixed  ... Any additional parameters to pass to the constructor (optional) (default null)
-     * @return mixed      The data value
-     */
-    Container.prototype.get = function(key)
-    {
-        if (key.includes('.') || key.includes('['))
-        {
-            return Arr.get(key, this.data);
+            return false;
         }
 
-        if (this.has(key))
+        /**
+         * Checks if key is a singleton
+         *
+         * @access private
+         * @
+         * @return bool
+         */
+        _isSingleton(key)
         {
-            if (this._isSingleton(key))
+            for (var _key in this.singletons)
             {
-                return this.data[key].apply(this);
-            }
-            else if (this._isInvokable(this.data[key]))
-            {
-                return this._newInstance(this.data[key], arguments);
+                if (_key === key)
+                {
+                    return true;
+                }
             }
 
-            return this.data[key];
+            return false;
         }
 
-        return false;
-    }
-
-    /**
-     * Does this set contain a key?
-     *
-     * @access public
-     * @param  string  key The data key
-     * @return boolean
-     */
-    Container.prototype.has = function(key)
-    {
-        if (key.includes('.') || key.includes('['))
+        /**
+         * Checks if a variable is invokable
+         *
+         * @access private
+         * @param  mixed mixedVar The object instance or reference
+         * @return bool
+         */
+        _isInvokable(mixedVar)
         {
-            return Arr.has(key, this.data);
+            return Object.prototype.toString.call(mixedVar) === '[object Function]';
         }
 
-        for (var _key in this.data)
+        /**
+         * Checks if a class object has been invoked
+         *
+         * @access private
+         * @param  mixed classObj The object instance or reference
+         * @return bool
+         */
+        _isInvoked(classObj)
         {
-            if (_key === key)
+            return typeof classObj === 'object' && classObj.constructor && typeof classObj.constructor === 'function' && classObj.constructor.toString().includes('function (');
+        }
+
+        /**
+         * Invokes and returns a new class instance
+         *
+         * @access private
+         * @param  mixed classObj The object instance or reference
+         * @param  array args     Arguements to pass to class constructor (optional) (default null)
+         * @return object
+         */
+        _newInstance(reference, args)
+        {
+            return new(Function.prototype.bind.apply(reference, args));
+        }
+
+        /**
+         * Fixes args passed to constructors 
+         *
+         * @access private
+         * @param  array args Array of args passed to origional function
+         * @return array
+         */
+        _normalizeArgs(args)
+        {
+            if (Object.prototype.toString.call(args) === '[object Arguments]')
             {
-                return true;
+                var _args = Array.prototype.slice.call(args);
+
+                _args.shift();
+
+                return _args;
             }
+
+            return args;
         }
 
-        return false;
-    }
-
-    /**
-     * Checks if key is a singleton
-     *
-     * @access private
-     * @
-     * @return bool
-     */
-    Container.prototype._isSingleton = function(key)
-    {
-        for (var _key in this.singletons)
+        /**
+         * Normalizes key for prototypes
+         *
+         * @access private
+         * @param  string key Key to normalize
+         * @return string
+         */
+        _normalizeKey(key)
         {
-            if (_key === key)
-            {
-                return true;
-            }
+            key = key.replace(/['"]/g, '').replace(/\W+/g, ' ')
+                .replace(/ (.)/g, function($1)
+                {
+                    return $1.toUpperCase();
+                })
+                .replace(/ /g, '');
+
+            key = key.charAt(0).toUpperCase() + key.slice(1);
+
+            return key;
         }
-
-        return false;
-    }
-
-    /**
-     * Checks if a variable is invokable
-     *
-     * @access private
-     * @param  mixed mixedVar The object instance or reference
-     * @return bool
-     */
-    Container.prototype._isInvokable = function(mixedVar)
-    {
-        return Object.prototype.toString.call(mixedVar) === '[object Function]';
-    }
-
-    /**
-     * Checks if a class object has been invoked
-     *
-     * @access private
-     * @param  mixed classObj The object instance or reference
-     * @return bool
-     */
-    Container.prototype._isInvoked = function(classObj)
-    {
-        return typeof classObj === 'object' && classObj.constructor && typeof classObj.constructor === 'function' && classObj.constructor.toString().includes('function (');
-    }
-
-    /**
-     * Invokes and returns a new class instance
-     *
-     * @access private
-     * @param  mixed classObj The object instance or reference
-     * @param  array args     Arguements to pass to class constructor (optional) (default null)
-     * @return object
-     */
-    Container.prototype._newInstance = function(reference, args)
-    {
-        return new(Function.prototype.bind.apply(reference, args));
-    }
-
-    /**
-     * Fixes args passed to constructors 
-     *
-     * @access private
-     * @param  array args Array of args passed to origional function
-     * @return array
-     */
-    Container.prototype._normalizeArgs = function(args)
-    {
-        if (Object.prototype.toString.call(args) === '[object Arguments]')
-        {
-            var _args = Array.prototype.slice.call(args);
-
-            _args.shift();
-
-            return _args;
-        }
-
-        return args;
-    }
-
-    /**
-     * Normalizes key for prototypes
-     *
-     * @access private
-     * @param  string key Key to normalize
-     * @return string
-     */
-    Container.prototype._normalizeKey = function(key)
-    {
-        key = key.replace(/['"]/g, '').replace(/\W+/g, ' ')
-            .replace(/ (.)/g, function($1)
-            {
-                return $1.toUpperCase();
-            })
-            .replace(/ /g, '');
-
-        key = key.charAt(0).toUpperCase() + key.slice(1);
-
-        return key;
     }
 
     /**
@@ -13368,64 +13386,90 @@ function complete(response)
      * @var obj
      * @source https://github.com/krasimir/chain
      */
-    var Chain = function()
-    {
-        var n = {},
-            t = null,
-            r = this,
-            e = {},
-            o = [],
-            i = [],
-            u = function(f, t)
-            {
-                return n[f] || (n[f] = []), n[f].push(t), e
-            },
-            p = function(t, r)
-            {
-                if (n[t])
-                    for (var o = 0; f = n[t][o]; o++) f(r, e)
-            },
-            l = function()
-            {
-                if (arguments.length > 0)
-                {
-                    o = [];
-                    for (var n = 0; r = arguments[n]; n++) o.push(r);
-                    var f = o.shift();
-                    if ("function" == typeof f) f(t, e);
-                    else if ("object" == typeof f && f.length > 0)
-                    {
-                        var r = f.shift();
-                        r.apply(r, f.concat([e.next]))
+    var Chain = function() {
+
+        var _listeners = {},
+            _resultOfPreviousFunc = null,
+            _self = this,
+            _api = {},
+            _funcs = [],
+            _errors = [];
+
+        var on = function(type, listener) {
+            if(!_listeners[type]) _listeners[type] = [];
+            _listeners[type].push(listener);
+            return _api;
+        }
+        var off = function(type, listener) {
+            if(_listeners[type]) {
+                var arr = [];
+                for(var i=0; f=_listeners[type][i]; i++) {
+                    if(f !== listener) {
+                        arr.push(f);
                     }
                 }
-                else p("done", t);
-                return e
-            },
-            a = function()
-            {
-                return arguments.length > 0 && (2 === arguments.length && "string" == typeof arguments[0] && "function" == typeof arguments[1] ? u.apply(self, arguments) : l.apply(self, arguments)), a
-            };
-        return e = {
-            on: u,
-            off: function(t, r)
-            {
-                if (n[t])
-                {
-                    for (var o = [], i = 0; f = n[t][i]; i++) f !== r && o.push(f);
-                    n[t] = o
-                }
-                return e
-            },
-            next: function(n)
-            {
-                t = n, l.apply(r, o)
-            },
-            error: function(n)
-            {
-                return void 0 !== n ? (i.push(n), e) : i
+                _listeners[type] = arr;
             }
-        }, a
+            return _api;
+        }
+        var dispatch = function(type, param) {
+            if(_listeners[type]) {
+                for(var i=0; f=_listeners[type][i]; i++) {
+                    f(param, _api);
+                }
+            }
+        }
+        var run = function() {
+            if(arguments.length > 0) {
+                _funcs = [];
+                for(var i=0; f=arguments[i]; i++) _funcs.push(f);
+                var element = _funcs.shift();
+                if(typeof element === 'function') {
+                    element(_resultOfPreviousFunc, _api);
+                } else if(typeof element === 'object' && element.length > 0) {
+                    var f = element.shift();
+                    f.apply(f, element.concat([_api.next]));
+                }
+                
+            } else {
+                dispatch("done", _resultOfPreviousFunc);
+            }
+            return _api;
+        }
+        var next = function(res) {
+            _resultOfPreviousFunc = res;
+            run.apply(_self, _funcs);
+        }
+        var error = function(err) {
+            if(typeof err != 'undefined') {
+                _errors.push(err);
+                return _api;
+            } else {
+                return _errors;
+            }       
+        }
+        var process = function() {
+            if(arguments.length > 0) {
+                // on method
+                if(arguments.length === 2 && typeof arguments[0] === 'string' && typeof arguments[1] === 'function') {
+                    on.apply(self, arguments);
+                // run method
+                } else {
+                    run.apply(self, arguments);
+                }
+            }
+            return process;
+        }
+
+        _api = {
+            on: on,
+            off: off,
+            next: next,
+            error: error
+        }
+        
+        return process;
+
     };
 
     /**
@@ -14305,14 +14349,6 @@ function complete(response)
 
 })();
 
-/**
- * Pjax Links Module
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
-
 (function()
 {
     /**
@@ -14331,75 +14367,85 @@ function complete(response)
     {
         return !1 !== l && ("false" !== l && (0 !== l && 0 !== l && ("" !== l && "0" !== l && ((!Array.isArray(l) || 0 !== l.length) && (null !== l && void 0 !== l)))))
     }
-
+    
     /**
-     * Module constructor
+     * Pjax Links Module
      *
-     * @access public
-     * @constructor
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var PjaxLinks = function()
+    class PjaxLinks
     {
-        this._nodes = Helper.$All('.js-pjax-link');
-
-        if (!Helper.empty(this._nodes))
+        /**
+         * Module constructor
+         *
+         * @access public
+         * @constructor
+         */
+    	constructor()
         {
-            this._bind();
+            this._nodes = Helper.$All('.js-pjax-link');
+
+            if (!Helper.empty(this._nodes))
+            {
+                this._bind();
+            }
+
+            return this;
         }
 
-        return this;
-    }
+        /**
+         * Module destructor
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
+        }
 
-    /**
-     * Module destructor
-     *
-     * @access public
-     */
-    PjaxLinks.prototype.destruct = function()
-    {
-        this._unbind();
-    }
+        /**
+         * Event binder - Binds all events on node click
+         *
+         * @access private
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._nodes, 'click', this._eventHandler, false);
+        }
 
-    /**
-     * Event binder - Binds all events on node click
-     *
-     * @access private
-     */
-    PjaxLinks.prototype._bind = function()
-    {
-        Helper.addEventListener(this._nodes, 'click', this._eventHandler, false);
-    }
+        /**
+         * Event unbinder - Removes all events on node click
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._nodes, 'click', this._eventHandler, false);
+        }
 
-    /**
-     * Event unbinder - Removes all events on node click
-     *
-     * @access private
-     */
-    PjaxLinks.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._nodes, 'click', this._eventHandler, false);
-    }
+        /**
+         * Handle the click event
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _eventHandler(e)
+        {
+            e = e || window.event;
 
-    /**
-     * Handle the click event
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    PjaxLinks.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
+            e.preventDefault();
 
-        e.preventDefault();
+            var trigger = this;
+            var href = trigger.dataset.pjaxHref;
+            var target = trigger.dataset.pjaxTarget;
+            var title = trigger.dataset.pjaxTitle || false;
+            var stateChange = boolval(trigger.dataset.pjaxStateChange);
+            var singleRequest = boolval(trigger.dataset.pjaxSingleRequest);
 
-        var trigger = this;
-        var href = trigger.dataset.pjaxHref;
-        var target = trigger.dataset.pjaxTarget;
-        var title = trigger.dataset.pjaxTitle || false;
-        var stateChange = boolval(trigger.dataset.pjaxStateChange);
-        var singleRequest = boolval(trigger.dataset.pjaxSingleRequest);
-
-        Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
+            Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
+        }
     }
 
     // Load into Hubble DOM core
@@ -14417,8 +14463,8 @@ function complete(response)
  */
 (function()
 {
-
-    var defaults = {
+    var defaults =
+    {
         elements:
         {
             area: '.scrollbar-area',
@@ -14435,134 +14481,134 @@ function complete(response)
 
     // SCROLLBAR HANDLER
     /*****************************************/
-    function Scrollbar(element, opts)
+    class _ScrollbarHandler
     {
-
-        // handle constructor call without `new` keyword
-        if (!(this instanceof Scrollbar)) return new Scrollbar(element, opts);
-
-        // is plugin already initialized?
-        if (this.el)
+        constructor(element, opts)
         {
-            return;
-        }
 
-        this.el = element;
-        this.opts = extend(
-        {}, defaults, opts ||
-        {});
+            // handle constructor call without `new` keyword
+            if (!(this instanceof _ScrollbarHandler)) return new _ScrollbarHandler(element, opts);
 
-        this._setupElements();
-
-        // check if browser has physical scrollbars (usually desktop)
-        if (this.scrollbarWidth = getScrollbarWidth())
-        {
-            this._enableTrack();
-
-            this._observeHover(this.area);
-            this._observeHover(this.track);
-            this._enableScroll();
-            this._enableDragging();
-
-            this.refresh();
-        }
-        else
-        {
-            this._allowNativeScroll();
-        }
-
-        return this;
-    }
-
-    // PUBLIC API
-    /*****************************************/
-    /**
-     * Destroys plugin instance.
-     */
-    Scrollbar.prototype.destroy = function()
-    {
-        var stateClasses = this.opts.stateClasses;
-
-        this._removeAllListeners();
-
-        this.wrapper.style.overflowY = '';
-        this.wrapper.style.marginRight = '';
-        this.track.style.display = '';
-
-        removeClass(document.body, stateClasses.dragging);
-        removeClass(this.area, stateClasses.dragging);
-        removeClass(this.area, stateClasses.hover);
-        removeClass(this.track, stateClasses.hover);
-
-        delete this.el;
-    }
-
-    /**
-     * Refreshes scrollbar by adjusting its handle's height and position.
-     */
-    Scrollbar.prototype.refresh = function()
-    {
-        var newRatio;
-
-        if (!this.el || this.isNative())
-        {
-            return;
-        }
-
-        if (this.wrapper.scrollHeight > this.wrapper.offsetHeight)
-        {
-            this.track.style.display = 'block';
-
-            newRatio = this.track.offsetHeight / this.wrapper.scrollHeight;
-
-            if (newRatio !== this.ratio)
+            // is plugin already initialized?
+            if (this.el)
             {
-                this.ratio = newRatio;
+                return;
+            }
 
-                this._resizeHandle();
-                this._positionHandle();
+            this.el = element;
+            this.opts = extend({}, defaults, opts || {});
+
+            this._setupElements();
+
+            // check if browser has physical scrollbars (usually desktop)
+            if (this.scrollbarWidth = getScrollbarWidth())
+            {
+                this._enableTrack();
+
+                this._observeHover(this.area);
+                this._observeHover(this.track);
+                this._enableScroll();
+                this._enableDragging();
+
+                this.refresh();
+            }
+            else
+            {
+                this._allowNativeScroll();
+            }
+
+            return this;
+        }
+
+        // PUBLIC API
+        /*****************************************/
+        /**
+         * Destroys plugin instance.
+         */
+        destroy()
+        {
+            var stateClasses = this.opts.stateClasses;
+
+            this._removeAllListeners();
+
+            this.wrapper.style.overflowY = '';
+            this.wrapper.style.marginRight = '';
+            this.track.style.display = '';
+
+            removeClass(document.body, stateClasses.dragging);
+            removeClass(this.area, stateClasses.dragging);
+            removeClass(this.area, stateClasses.hover);
+            removeClass(this.track, stateClasses.hover);
+
+            delete this.el;
+        }
+
+        /**
+         * Refreshes scrollbar by adjusting its handle's height and position.
+         */
+        refresh()
+        {
+            var newRatio;
+
+            if (!this.el || this.isNative())
+            {
+                return;
+            }
+
+            if (this.wrapper.scrollHeight > this.wrapper.offsetHeight)
+            {
+                this.track.style.display = 'block';
+
+                newRatio = this.track.offsetHeight / this.wrapper.scrollHeight;
+
+                if (newRatio !== this.ratio)
+                {
+                    this.ratio = newRatio;
+
+                    this._resizeHandle();
+                    this._positionHandle();
+                }
+            }
+            else
+            {
+                this.track.style.display = 'none';
             }
         }
-        else
+
+        /**
+         * Checks if native scroll is enabled.
+         *
+         * @returns {Boolean}
+         */
+        isNative()
         {
-            this.track.style.display = 'none';
+            return !this.scrollbarWidth;
         }
-    }
 
-    /**
-     * Checks if native scroll is enabled.
-     *
-     * @returns {Boolean}
-     */
-    Scrollbar.prototype.isNative = function()
-    {
-        return !this.scrollbarWidth;
-    }
+        // PRIVATE API
+        /*****************************************/
+        /**
+         * Sets up elements.
+         *
+         * @private
+         */
+        _setupElements()
+        {
+            var elements = this.opts.elements;
 
-    // PRIVATE API
-    /*****************************************/
-    /**
-     * Sets up elements.
-     *
-     * @private
-     */
-    Scrollbar.prototype._setupElements = function()
-    {
-        var elements = this.opts.elements;
+            this.area = this.el.querySelector(elements.area);
+            this.wrapper = this.el.querySelector(elements.wrapper);
+            this.handle = this.el.querySelector(elements.handle);
+            this.track = this.el.querySelector(elements.track);
+        }
 
-        this.area = this.el.querySelector(elements.area);
-        this.wrapper = this.el.querySelector(elements.wrapper);
-        this.handle = this.el.querySelector(elements.handle);
-        this.track = this.el.querySelector(elements.track);
-    }
-
-    /**
-     * Observes when element is hovered and toggles corresponding class.
-     *
-     * @param {HTMLElement} element
-     * @private
-     */
-    Scrollbar.prototype._observeHover = function(element)
+        /**
+         * Observes when element is hovered and toggles corresponding class.
+         *
+         * @param {HTMLElement} element
+         * @private
+         */
+        _observeHover(element)
         {
             var cls = this.opts.stateClasses.hover;
 
@@ -14574,212 +14620,213 @@ function complete(response)
             {
                 removeClass(element, cls);
             });
-        },
+        }
 
         /**
          * Enables scroll by overflowing native scrollbar and starting to listen to `scroll` event.
          *
          * @private
          */
-        Scrollbar.prototype._enableScroll = function()
+        _enableScroll()
         {
             this._addListener(this.wrapper, 'scroll', bind(this._positionHandle, this));
         }
 
-    /**
-     * Enables handle's dragging along the track.
-     *
-     * @private
-     */
-    Scrollbar.prototype._enableDragging = function()
-    {
-        var cls = this.opts.stateClasses.dragging,
-            initialPosition = null,
-            initialTop = null,
-            startDragging,
-            stopDragging;
-
-        this._addListener(this.handle, 'mousedown', bind(function(e)
+        /**
+         * Enables handle's dragging along the track.
+         *
+         * @private
+         */
+        _enableDragging()
         {
-            initialPosition = this.wrapper.scrollTop;
-            initialTop = e.clientY;
+            var cls = this.opts.stateClasses.dragging,
+                initialPosition = null,
+                initialTop = null,
+                startDragging,
+                stopDragging;
 
-            this._addListener(document, 'mousemove', startDragging);
-            this._addListener(document, 'mouseup', stopDragging);
-        }, this));
-
-        startDragging = bind(function(e)
-        {
-            var newPosition,
-                wrapperHeight,
-                wrapperInnerHeight;
-
-            if (initialTop !== null)
+            this._addListener(this.handle, 'mousedown', bind(function(e)
             {
-                newPosition = Math.round(initialPosition + (e.clientY - initialTop) / this.ratio);
+                initialPosition = this.wrapper.scrollTop;
+                initialTop = e.clientY;
 
-                wrapperHeight = this.wrapper.offsetHeight;
-                wrapperInnerHeight = this.wrapper.scrollHeight;
+                this._addListener(document, 'mousemove', startDragging);
+                this._addListener(document, 'mouseup', stopDragging);
+            }, this));
 
-                if (newPosition + wrapperHeight > wrapperInnerHeight)
+            startDragging = bind(function(e)
+            {
+                var newPosition,
+                    wrapperHeight,
+                    wrapperInnerHeight;
+
+                if (initialTop !== null)
                 {
-                    newPosition = wrapperInnerHeight - wrapperHeight;
+                    newPosition = Math.round(initialPosition + (e.clientY - initialTop) / this.ratio);
+
+                    wrapperHeight = this.wrapper.offsetHeight;
+                    wrapperInnerHeight = this.wrapper.scrollHeight;
+
+                    if (newPosition + wrapperHeight > wrapperInnerHeight)
+                    {
+                        newPosition = wrapperInnerHeight - wrapperHeight;
+                    }
+
+                    this.wrapper.scrollTop = newPosition;
+                    this._positionHandle();
+
+                    addClass(document.body, cls);
+                    addClass(this.area, cls);
                 }
+            }, this);
 
-                this.wrapper.scrollTop = newPosition;
-                this._positionHandle();
-
-                addClass(document.body, cls);
-                addClass(this.area, cls);
-            }
-        }, this);
-
-        stopDragging = bind(function()
-        {
-            initialTop = null;
-            initialPosition = null;
-
-            removeClass(document.body, cls);
-            removeClass(this.area, cls);
-
-            this._removeListener(document, 'mousemove', startDragging);
-            this._removeListener(document, 'mouseup', stopDragging);
-        }, this);
-    }
-
-    /**
-     * Enables track.
-     *
-     * @private
-     */
-    Scrollbar.prototype._enableTrack = function()
-    {
-        this.wrapper.style.overflowY = 'scroll';
-        this.wrapper.style.marginRight = -1 * this.scrollbarWidth + 'px';
-    }
-
-    /**
-     * Allows native scrolling by making sure that div is scrollable.
-     *
-     * @private
-     */
-    Scrollbar.prototype._allowNativeScroll = function()
-    {
-        this.wrapper.style.overflowY = 'auto';
-    }
-
-    /**
-     * Resizes handle by adjusting its `height`.
-     *
-     * @private
-     */
-    Scrollbar.prototype._resizeHandle = function()
-    {
-        this.handle.style.height = Math.ceil(this.ratio * this.track.offsetHeight) + 'px';
-    }
-
-    /**
-     * Positions handle by adjusting its `top` position.
-     *
-     * @private
-     */
-    Scrollbar.prototype._positionHandle = function()
-    {
-        var wrapperTop = this.wrapper.scrollTop,
-            top;
-
-        if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight)
-        {
-            top = Math.ceil(this.ratio * this.wrapper.scrollTop);
-        }
-        else
-        {
-            // if scroll position has reached the end, force scrollbar to track's end
-            top = this.track.offsetHeight - this.handle.offsetHeight;
-        }
-
-        this.handle.style.top = top + 'px';
-    }
-
-    /**
-     * Adds event listener and keeps track of it.
-     *
-     * @param {HTMLElement} element
-     * @param {String}      eventName
-     * @param {Function}    handler
-     * @private
-     */
-    Scrollbar.prototype._addListener = function(element, eventName, handler)
-    {
-        var events = this._events;
-
-        if (!events)
-        {
-            this._events = events = {};
-        }
-        if (!events[eventName])
-        {
-            events[eventName] = [];
-        }
-
-        events[eventName].push(
-        {
-            element: element,
-            handler: handler
-        });
-
-        addEventListener.apply(null, arguments);
-    }
-
-    /**
-     * Removes event listener.
-     *
-     * @param {HTMLElement} element
-     * @param {String}      eventName
-     * @param {Function}    handler
-     * @private
-     */
-    Scrollbar.prototype._removeListener = function(element, eventName, handler)
-    {
-        var event = this._events[eventName],
-            index,
-            total;
-
-        for (index = 0, total = event.length; index < total; index++)
-        {
-            if (event[index].handler === handler)
+            stopDragging = bind(function()
             {
-                event.splice(index, 1);
-                removeEventListener.apply(null, arguments);
-                break;
-            }
+                initialTop = null;
+                initialPosition = null;
+
+                removeClass(document.body, cls);
+                removeClass(this.area, cls);
+
+                this._removeListener(document, 'mousemove', startDragging);
+                this._removeListener(document, 'mouseup', stopDragging);
+            }, this);
         }
-    }
 
-    /**
-     * Removes all event listeners.
-     *
-     * @private
-     */
-    Scrollbar.prototype._removeAllListeners = function()
-    {
-        var events = this._events,
-            eventName,
-            event,
-            iter,
-            total;
-
-        for (eventName in events)
+        /**
+         * Enables track.
+         *
+         * @private
+         */
+        _enableTrack()
         {
-            event = events[eventName];
+            this.wrapper.style.overflowY = 'scroll';
+            this.wrapper.style.marginRight = -1 * this.scrollbarWidth + 'px';
+        }
 
-            for (iter = 0, total = event.length; iter < total; iter++)
+        /**
+         * Allows native scrolling by making sure that div is scrollable.
+         *
+         * @private
+         */
+        _allowNativeScroll()
+        {
+            this.wrapper.style.overflowY = 'auto';
+        }
+
+        /**
+         * Resizes handle by adjusting its `height`.
+         *
+         * @private
+         */
+        _resizeHandle()
+        {
+            this.handle.style.height = Math.ceil(this.ratio * this.track.offsetHeight) + 'px';
+        }
+
+        /**
+         * Positions handle by adjusting its `top` position.
+         *
+         * @private
+         */
+        _positionHandle()
+        {
+            var wrapperTop = this.wrapper.scrollTop,
+                top;
+
+            if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight)
             {
-                removeEventListener(event[iter].element, eventName, event[iter].handler);
+                top = Math.ceil(this.ratio * this.wrapper.scrollTop);
+            }
+            else
+            {
+                // if scroll position has reached the end, force scrollbar to track's end
+                top = this.track.offsetHeight - this.handle.offsetHeight;
+            }
+
+            this.handle.style.top = top + 'px';
+        }
+
+        /**
+         * Adds event listener and keeps track of it.
+         *
+         * @param {HTMLElement} element
+         * @param {String}      eventName
+         * @param {Function}    handler
+         * @private
+         */
+        _addListener(element, eventName, handler)
+        {
+            var events = this._events;
+
+            if (!events)
+            {
+                this._events = events = {};
+            }
+            if (!events[eventName])
+            {
+                events[eventName] = [];
+            }
+
+            events[eventName].push(
+            {
+                element: element,
+                handler: handler
+            });
+
+            addEventListener.apply(null, arguments);
+        }
+
+        /**
+         * Removes event listener.
+         *
+         * @param {HTMLElement} element
+         * @param {String}      eventName
+         * @param {Function}    handler
+         * @private
+         */
+        _removeListener(element, eventName, handler)
+        {
+            var event = this._events[eventName],
+                index,
+                total;
+
+            for (index = 0, total = event.length; index < total; index++)
+            {
+                if (event[index].handler === handler)
+                {
+                    event.splice(index, 1);
+                    removeEventListener.apply(null, arguments);
+                    break;
+                }
             }
         }
 
-        delete this._events;
+        /**
+         * Removes all event listeners.
+         *
+         * @private
+         */
+        _removeAllListeners()
+        {
+            var events = this._events,
+                eventName,
+                event,
+                iter,
+                total;
+
+            for (eventName in events)
+            {
+                event = events[eventName];
+
+                for (iter = 0, total = event.length; iter < total; iter++)
+                {
+                    removeEventListener(event[iter].element, eventName, event[iter].handler);
+                }
+            }
+
+            delete this._events;
+        }
     }
 
     // HELPER FUNCTIONS
@@ -14873,17 +14920,10 @@ function complete(response)
         return width;
     }
 
-    Container.set('Scrollbar', Scrollbar);
+    Container.set('_ScrollbarHandler', _ScrollbarHandler);
 
 })();
 
-/**
- * Custom Scrollbars
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -14894,216 +14934,227 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Custom Scrollbars
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var ScrollBars = function()
+    class ScrollBars
     {
-        this._nodes = [];
-        this._handlers = [];
 
-        // Find nodes
-        this._nodes = Helper.$All('.js-custom-scroll');
-
-        // Bind DOM listeners
-        if (!Helper.empty(this._nodes))
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
         {
-            for (var i = 0; i < this._nodes.length; i++)
+            this._nodes = [];
+            this._handlers = [];
+
+            // Find nodes
+            this._nodes = Helper.$All('.js-custom-scroll');
+
+            // Bind DOM listeners
+            if (!Helper.empty(this._nodes))
             {
-                this._invoke(this._nodes[i]);
-            }
-        }
-
-        return this;
-    };
-
-    /**
-     * Module destructor - removes handler
-     *
-     * @access public
-     */
-    ScrollBars.prototype.desctruct = function()
-    {
-        for (var i = 0; i < this._handlers.length; i++)
-        {
-            this._handlers[i].destroy();
-        }
-
-        this._nodes = [];
-        this._handlers = [];
-    }
-
-    /**
-     * Create the necessary nodes for the scroller to work.
-     * Also check if the element has overflow
-     *
-     * @params el node
-     * @access private
-     */
-    ScrollBars.prototype._invoke = function(el)
-    {
-        if (Helper.hasClass(el, 'js-auto-scroll-invoked'))
-        {
-            var handler = Container.get('Scrollbar', el);
-            this._handlers.push(handler);
-            return;
-        }
-
-        var needsScroller = this._needsScroller(el);
-        if (!needsScroller) return;
-
-        var insertAfter = false;
-        var parent = el.parentNode;
-        var children = Helper.firstChildren(el);
-        if (el.nextSibling) insertAfter = el.nextSibling;
-
-        var scrollArea = document.createElement('DIV');
-        var scrollWrap = document.createElement('DIV');
-        var scrollTrack = document.createElement('DIV');
-        var scrollHandle = document.createElement('DIV');
-
-        scrollArea.className = 'scrollbar-area';
-        scrollWrap.className = 'scrollbar-wrapper';
-        scrollTrack.className = 'scrollbar-track';
-        scrollHandle.className = 'scrollbar-handle';
-
-        scrollArea.appendChild(scrollWrap);
-        for (var i = 0; i < children.length; i++)
-        {
-            scrollWrap.appendChild(children[i]);
-        }
-        scrollWrap.appendChild(scrollTrack);
-        scrollTrack.appendChild(scrollHandle);
-        el.appendChild(scrollArea);
-        var handler = Container.get('Scrollbar', el);
-        this._handlers.push(handler);
-        Helper.addClass(el, 'js-auto-scroll-invoked');
-    }
-
-    /**
-     * Check if an element needs to be scrolled or not.
-     *
-     * @params el node
-     * @access private
-     * @return boolean
-     */
-    ScrollBars.prototype._needsScroller = function(el)
-    {
-        var computedStyle = window.getComputedStyle(el);
-
-        // Is the element hidden?
-        var isHidden = el.offsetParent === null;
-        var hiddenEl = false;
-        var inlineDisplay = false;
-        var needsScroller = false;
-
-        if (isHidden)
-        {
-            if (computedStyle.display === 'none')
-            {
-                hiddenEl = el;
-            }
-            else
-            {
-                var parent = el;
-                while (parent !== document.body)
+                for (var i = 0; i < this._nodes.length; i++)
                 {
-                    parent = parent.parentNode;
-                    var parentStyle = window.getComputedStyle(parent);
+                    this._invoke(this._nodes[i]);
+                }
+            }
 
-                    if (parentStyle.display === 'none')
+            return this;
+        }
+
+        /**
+         * Module destructor - removes handler
+         *
+         * @access public
+         */
+        desctruct()
+        {
+            for (var i = 0; i < this._handlers.length; i++)
+            {
+                this._handlers[i].destroy();
+            }
+
+            this._nodes = [];
+            this._handlers = [];
+        }
+
+        /**
+         * Create the necessary nodes for the scroller to work.
+         * Also check if the element has overflow
+         *
+         * @params el node
+         * @access private
+         */
+        _invoke(el)
+        {
+            if (Helper.hasClass(el, 'js-auto-scroll-invoked'))
+            {
+                var handler = Container.get('_ScrollbarHandler', el);
+                this._handlers.push(handler);
+                return;
+            }
+
+            var needsScroller = this._needsScroller(el);
+            if (!needsScroller) return;
+
+            var insertAfter = false;
+            var parent = el.parentNode;
+            var children = Helper.firstChildren(el);
+            if (el.nextSibling) insertAfter = el.nextSibling;
+
+            var scrollArea = document.createElement('DIV');
+            var scrollWrap = document.createElement('DIV');
+            var scrollTrack = document.createElement('DIV');
+            var scrollHandle = document.createElement('DIV');
+
+            scrollArea.className = 'scrollbar-area';
+            scrollWrap.className = 'scrollbar-wrapper';
+            scrollTrack.className = 'scrollbar-track';
+            scrollHandle.className = 'scrollbar-handle';
+
+            scrollArea.appendChild(scrollWrap);
+            for (var i = 0; i < children.length; i++)
+            {
+                scrollWrap.appendChild(children[i]);
+            }
+            scrollWrap.appendChild(scrollTrack);
+            scrollTrack.appendChild(scrollHandle);
+            el.appendChild(scrollArea);
+            var handler = Container.get('_ScrollbarHandler', el);
+            this._handlers.push(handler);
+            Helper.addClass(el, 'js-auto-scroll-invoked');
+        }
+
+        /**
+         * Check if an element needs to be scrolled or not.
+         *
+         * @params el node
+         * @access private
+         * @return boolean
+         */
+        _needsScroller(el)
+        {
+            var computedStyle = window.getComputedStyle(el);
+
+            // Is the element hidden?
+            var isHidden = el.offsetParent === null;
+            var hiddenEl = false;
+            var inlineDisplay = false;
+            var needsScroller = false;
+
+            if (isHidden)
+            {
+                if (computedStyle.display === 'none')
+                {
+                    hiddenEl = el;
+                }
+                else
+                {
+                    var parent = el;
+                    while (parent !== document.body)
                     {
-                        hiddenEl = parent
+                        parent = parent.parentNode;
+                        var parentStyle = window.getComputedStyle(parent);
 
-                        break;
+                        if (parentStyle.display === 'none')
+                        {
+                            hiddenEl = parent
+
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        // Make visible
-        if (hiddenEl)
-        {
-            inlineDisplay = hiddenEl.style.display;
-            hiddenEl.style.display = 'block';
-        }
-        var endHeight = el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTop) + parseInt(computedStyle.borderBottom);
-        endHeight = parseInt(endHeight);
-        if (endHeight > el.offsetHeight)
-        {
-            needsScroller = true;
-            el.style.height = el.offsetHeight + 'px';
-        }
-        // Make invisible
-        if (hiddenEl)
-        {
-            if (inlineDisplay)
+            // Make visible
+            if (hiddenEl)
             {
-                hiddenEl.style.display = inlineDisplay;
+                inlineDisplay = hiddenEl.style.display;
+                hiddenEl.style.display = 'block';
             }
-            else
+            var endHeight = el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTop) + parseInt(computedStyle.borderBottom);
+            endHeight = parseInt(endHeight);
+            if (endHeight > el.offsetHeight)
             {
-                hiddenEl.style.removeProperty('display');
+                needsScroller = true;
+                el.style.height = el.offsetHeight + 'px';
+            }
+            // Make invisible
+            if (hiddenEl)
+            {
+                if (inlineDisplay)
+                {
+                    hiddenEl.style.display = inlineDisplay;
+                }
+                else
+                {
+                    hiddenEl.style.removeProperty('display');
+                }
+            }
+
+            return needsScroller;
+        }
+
+        /**
+         * Refresh the scroll position
+         *
+         * This can be usefull if you have custom scrollbars
+         * on an element but change it's height (e.g responsive or add/remove children)
+         *
+         * @params elem node
+         * @access public
+         * @example Container.get('ScrollBars').refresh(node) // Node = $.('.js-custom-scroll');
+         */
+        refresh(elem)
+        {
+            for (var i = 0; i < this._handlers.length; i++)
+            {
+                var handler = this._handlers[i];
+
+                if (handler.el === elem) handler.refresh();
             }
         }
 
-        return needsScroller;
-    }
-
-    /**
-     * Refresh the scroll position
-     *
-     * This can be usefull if you have custom scrollbars
-     * on an element but change it's height (e.g responsive or add/remove children)
-     *
-     * @params elem node
-     * @access public
-     * @example Container.get('ScrollBars').refresh(node) // Node = $.('.js-custom-scroll');
-     */
-    ScrollBars.prototype.refresh = function(elem)
-    {
-        for (var i = 0; i < this._handlers.length; i++)
+        /**
+         * Destroy a handler by dom node .js-custom-scroll
+         *
+         * @params elem node
+         * @access public
+         */
+        destroy(elem)
         {
-            var handler = this._handlers[i];
+            var i = this._handlers.length;
 
-            if (handler.el === elem) handler.refresh();
+            while (i--)
+            {
+                var handler = this._handlers[i];
+                if (handler.el === elem) handler.destroy();
+                this._handlers.splice(i, 1);
+            }
         }
-    }
 
-    /**
-     * Destroy a handler by dom node .js-custom-scroll
-     *
-     * @params elem node
-     * @access public
-     */
-    ScrollBars.prototype.destroy = function(elem)
-    {
-        var i = this._handlers.length;
-
-        while (i--)
+        /**
+         * Get a handler by dom node .js-custom-scroll
+         *
+         * @params elem node
+         * @access public
+         * @return mixed
+         */
+        getHandler(elem)
         {
-            var handler = this._handlers[i];
-            if (handler.el === elem) handler.destroy();
-            this._handlers.splice(i, 1);
-        }
-    }
+            for (var i = 0; i < this._handlers.length; i++)
+            {
+                var handler = this._handlers[i];
 
-    /**
-     * Get a handler by dom node .js-custom-scroll
-     *
-     * @params elem node
-     * @access public
-     * @return mixed
-     */
-    ScrollBars.prototype.getHandler = function(elem)
-    {
-        for (var i = 0; i < this._handlers.length; i++)
-        {
-            var handler = this._handlers[i];
-
-            if (handler.el === elem) return handler;
+                if (handler.el === elem) return handler;
+            }
         }
     }
 
@@ -15112,13 +15163,6 @@ function complete(response)
 
 })();
 
-/**
- * Toggle height on click
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -15129,81 +15173,91 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Toggle height on click
      *
-     * @access public
-     * @constructor
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var Collapse = function()
+    class Collapse
     {
         /**
-         * Array of click-triggers
-         * 
-         * @var array
+         * Module constructor
+         *
+         * @access public
+         * @constructor
          */
-        this._nodes = Helper.$All('.js-collapse');
-
-        this._bind();
-
-        return this;
-    }
-
-    /**
-     * Module destructor
-     *
-     * @access public
-     */
-    Collapse.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._nodes = [];
-    }
-
-    /**
-     * Event binder - Binds all events on button click
-     *
-     * @access private
-     */
-    Collapse.prototype._bind = function()
-    {
-        Helper.addEventListener(this._nodes, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event unbinder - Removes all events on button click
-     *
-     * @access private
-     */
-    Collapse.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
-    }
-
-    /**
-     * Handle the click event
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    Collapse.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-
-        if (Helper.isNodeType(this, 'a'))
+    	constructor()
         {
-            e.preventDefault();
+            /**
+             * Array of click-triggers
+             * 
+             * @var array
+             */
+            this._nodes = Helper.$All('.js-collapse');
+
+            this._bind();
+
+            return this;
         }
 
-        var clicked = this;
-        var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
-        var speed = parseInt(clicked.dataset.collapseSpeed) || 350;
-        var easing = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
-        var opacity = clicked.dataset.withOpacity;
+        /**
+         * Module destructor
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
 
-        Container.get('ToggleHeight', targetEl, 0, speed, easing, opacity);
+            this._nodes = [];
+        }
 
-        Helper.toggleClass(clicked, 'active');
+        /**
+         * Event binder - Binds all events on button click
+         *
+         * @access private
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
+        }
+
+        /**
+         * Event unbinder - Removes all events on button click
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
+        }
+
+        /**
+         * Handle the click event
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _eventHandler(e)
+        {
+            e = e || window.event;
+
+            if (Helper.isNodeType(this, 'a'))
+            {
+                e.preventDefault();
+            }
+
+            var clicked = this;
+            var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
+            var speed = parseInt(clicked.dataset.collapseSpeed) || 350;
+            var easing = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
+            var opacity = clicked.dataset.withOpacity;
+
+            Container.get('ToggleHeight', targetEl, 0, speed, easing, opacity);
+
+            Helper.toggleClass(clicked, 'active');
+        }
     }
 
     // Load into Hubble DOM core
@@ -15211,13 +15265,6 @@ function complete(response)
 
 }());
 
-/**
- * Dropdown Buttons
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -15227,8 +15274,20 @@ function complete(response)
      */
     var Helper = Hubble.helper();
 
+    /**
+     * Dropdown Buttons
+     *
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     */
     class DropDowns
     {
+        /**
+         * Module constructor
+         *
+         * @access public
+         */
         constructor()
         {
             this._triggers = Helper.$All('.js-drop-trigger');
@@ -15384,14 +15443,6 @@ function complete(response)
 
 })();
 
-/**
- * Tab Nav
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
-
 (function()
 {
     /**
@@ -15402,128 +15453,131 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Tab Nav
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var TabNav = function()
+    class TabNav
     {
-        // Find nodes
-        this._nodes = Helper.$All('.js-tab-nav');
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
+        {
+            // Find nodes
+            this._nodes = Helper.$All('.js-tab-nav');
 
-        // If nothing to do destruct straight away
-        if (!Helper.empty(this._nodes))
+            // If nothing to do destruct straight away
+            if (!Helper.empty(this._nodes))
+            {
+                for (var i = 0; i < this._nodes.length; i++)
+                {
+                    this._bindDOMListeners(this._nodes[i]);
+                }
+            }
+
+            return this;
+        };
+
+        /**
+         * Module destructor - unbinds click events
+         *
+         * @access public
+         */
+        destruct()
         {
             for (var i = 0; i < this._nodes.length; i++)
             {
-                this._bindDOMListeners(this._nodes[i]);
+                this._unbindDOMListeners(this._nodes[i]);
+            }
+
+            this._nodes = [];
+        }
+
+        /**
+         * Bind click events on all <a> tags in a .js-tab-nav
+         *
+         * @params navWrap node
+         * @access private
+         */
+        _bindDOMListeners(navWrap)
+        {
+            var links  = Helper.$All('li > *', navWrap);
+            
+            for (var i = 0; i < links.length; i++)
+            {
+                Helper.addEventListener(links[i], 'click', this._eventHandler);
             }
         }
 
-        return this;
-    };
-
-    /**
-     * Module destructor - unbinds click events
-     *
-     * @access public
-     */
-    TabNav.prototype.destruct = function()
-    {
-        for (var i = 0; i < this._nodes.length; i++)
+        /**
+         * Unbind click events on all <a> tags in a .js-tab-nav
+         *
+         * @params navWrap node
+         * @access private
+         */
+        _unbindDOMListeners(navWrap)
         {
-            this._unbindDOMListeners(this._nodes[i]);
+            var links = Helper.$All('li > *', navWrap);
+            
+            for (var i = 0; i < links.length; i++)
+            {
+                Helper.removeEventListener(links[i], 'click', this._eventHandler);
+            }
         }
 
-        this._nodes = [];
-    }
-
-    /**
-     * Bind click events on all <a> tags in a .js-tab-nav
-     *
-     * @params navWrap node
-     * @access private
-     */
-    TabNav.prototype._bindDOMListeners = function(navWrap)
-    {
-        var links  = Helper.$All('li > *', navWrap);
-        
-        for (var i = 0; i < links.length; i++)
+        /**
+         * Click event handler
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _eventHandler(e)
         {
-            Helper.addEventListener(links[i], 'click', this._eventHandler);
+            e = e || window.event;
+            e.preventDefault();
+
+            var _this = Container.get('TabNav');
+            
+            var node = this;
+
+            if (Helper.hasClass(node, 'active')) return;
+            
+            var tab           = node.dataset.tab;
+            var tabNav        = Helper.closest(node, 'ul');
+
+            var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
+            var tabPanel      = Helper.closestClass(tabPane, 'js-tab-panels-wrap');
+            var activePanel   = Helper.$('.tab-panel.active', tabPanel);
+
+            var navWrap       = Helper.closestClass(node, 'js-tab-nav');
+            var activeNav     = Helper.$('.active', navWrap);
+            var activeClass   = navWrap.dataset.activeClass;
+            var activeClasses = ['active'];
+
+            if (!Helper.empty(activeClass))
+            {
+                activeClasses.push(activeClass);
+            }
+
+            Helper.removeClass(activeNav, activeClasses);
+            Helper.removeClass(activePanel, activeClasses);
+
+            Helper.addClass(node, activeClasses);
+            Helper.addClass(tabPane, activeClasses);
+            
         }
-    }
-
-    /**
-     * Unbind click events on all <a> tags in a .js-tab-nav
-     *
-     * @params navWrap node
-     * @access private
-     */
-    TabNav.prototype._unbindDOMListeners = function(navWrap)
-    {
-        var links = Helper.$All('li > *', navWrap);
-        
-        for (var i = 0; i < links.length; i++)
-        {
-            Helper.removeEventListener(links[i], 'click', this._eventHandler);
-        }
-    }
-
-    /**
-     * Click event handler
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    TabNav.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-        e.preventDefault();
-
-        var _this = Container.get('TabNav');
-        
-        var node = this;
-
-        if (Helper.hasClass(node, 'active')) return;
-        
-        var tab           = node.dataset.tab;
-        var tabNav        = Helper.closest(node, 'ul');
-
-        var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-        var tabPanel      = Helper.closestClass(tabPane, 'js-tab-panels-wrap');
-        var activePanel   = Helper.$('.tab-panel.active', tabPanel);
-
-        var navWrap       = Helper.closestClass(node, 'js-tab-nav');
-        var activeNav     = Helper.$('.active', navWrap);
-        var activeClass   = navWrap.dataset.activeClass;
-        var activeClasses = ['active'];
-
-        if (!Helper.empty(activeClass))
-        {
-            activeClasses.push(activeClass);
-        }
-
-        Helper.removeClass(activeNav, activeClasses);
-        Helper.removeClass(activePanel, activeClasses);
-
-        Helper.addClass(node, activeClasses);
-        Helper.addClass(tabPane, activeClasses);
-        
     }
 
     // Load into Hubble DOM core
     Container.get('Hubble').dom().register('TabNav', TabNav);
 
 })();
-/**
- * Bottom nav
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -15534,117 +15588,127 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Bottom nav
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var BottomNav = function()
+    class BottomNav
     {
-        // Find nodes
-        this._nav = Helper.$('.js-bottom-nav');
-
-        if (Helper.nodeExists(this._nav))
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+        constructor()
         {
-            this._bind();
-        }
+            // Find nodes
+            this._nav = Helper.$('.js-bottom-nav');
 
-        return this;
-    };
-
-    /**
-     * Show nav
-     *
-     * @access public
-     */
-    BottomNav.prototype.show = function()
-    {
-        if (Helper.nodeExists(this._nav))
-        {
-            Helper.addClass(this._nav, 'active');
-        }
-    }
-
-    /**
-     * Hide nav
-     *
-     * @access public
-     */
-    BottomNav.prototype.hide = function()
-    {
-        if (Helper.nodeExists(this._nav))
-        {
-            Helper.removeClass(this._nav, 'active');
-        }
-    }
-
-    /**
-     * Show nav
-     *
-     * @access public
-     */
-    BottomNav.prototype.state = function()
-    {
-        if (Helper.nodeExists(this._nav))
-        {
-            if (Helper.hasClass(this._nav, 'active'))
+            if (Helper.nodeExists(this._nav))
             {
-                return 'show';
+                this._bind();
+            }
+
+            return this;
+        }
+
+        /**
+         * Show nav
+         *
+         * @access public
+         */
+        show()
+        {
+            if (Helper.nodeExists(this._nav))
+            {
+                Helper.addClass(this._nav, 'active');
             }
         }
 
-        return 'hide';
-    }
+        /**
+         * Hide nav
+         *
+         * @access public
+         */
+        hide()
+        {
+            if (Helper.nodeExists(this._nav))
+            {
+                Helper.removeClass(this._nav, 'active');
+            }
+        }
 
-    /**
-     * Module destructor - unbinds click events
-     *
-     * @access public
-     */
-    BottomNav.prototype.destruct = function()
-    {
-        if (Helper.nodeExists(this._nav))
+        /**
+         * Show nav
+         *
+         * @access public
+         */
+        state()
+        {
+            if (Helper.nodeExists(this._nav))
+            {
+                if (Helper.hasClass(this._nav, 'active'))
+                {
+                    return 'show';
+                }
+            }
+
+            return 'hide';
+        }
+
+        /**
+         * Module destructor - unbinds click events
+         *
+         * @access public
+         */
+        destruct()
+        {
+            if (Helper.nodeExists(this._nav))
+            {
+                var links = Helper.$All('.btn', this._nav);
+
+                Helper.removeEventListener(links, 'click', this._eventHandler);
+
+                this._nav = null;
+            }
+        }
+
+        /**
+         * Bind click events on all button
+         *
+         * @access private
+         */
+        _bind()
         {
             var links = Helper.$All('.btn', this._nav);
 
-            Helper.removeEventListener(links, 'click', this._eventHandler);
-
-            this._nav = null;
+            Helper.addEventListener(links, 'click', this._eventHandler);
         }
-    }
 
-    /**
-     * Bind click events on all button
-     *
-     * @access private
-     */
-    BottomNav.prototype._bind = function()
-    {
-        var links = Helper.$All('.btn', this._nav);
-
-        Helper.addEventListener(links, 'click', this._eventHandler);
-    }
-
-    /**
-     * Click event handler
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    BottomNav.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-
-        e.preventDefault();
-
-        if (Helper.hasClass(this, 'active'))
+        /**
+         * Click event handler
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _eventHandler(e)
         {
-            return;
+            e = e || window.event;
+
+            e.preventDefault();
+
+            if (Helper.hasClass(this, 'active'))
+            {
+                return;
+            }
+
+            Helper.removeClass(Helper.$('.js-bottom-nav .btn.active'), 'active');
+
+            Helper.addClass(this, 'active');
         }
-
-        Helper.removeClass(Helper.$('.js-bottom-nav .btn.active'), 'active');
-
-        Helper.addClass(this, 'active');
     }
 
     // Load into Hubble DOM core
@@ -15652,10 +15716,6 @@ function complete(response)
 
 })();
 
-/**
- * Drawer
- * 
- */
 (function()
 {
     /**
@@ -15687,163 +15747,170 @@ function complete(response)
     var lastScrollY;
 
     /**
-     * Module constructor
-     *
-     * @access public
-     * @constructor
-     * @return this
+     * Drawer
+     * 
      */
-    var Drawer = function()
+    class Drawer
     {
-        this._openTriggers = Helper.$All('.js-open-drawer-trigger');
-        this._closeTriggers = Helper.$All('.js-close-drawer-trigger');
-        this._drawerEl = Helper.$('.js-drawer');
-        this._overlayEl = Helper.$('.js-drawer-overlay');
-
-        if (Helper.nodeExists(this._drawerEl))
+        /**
+         * Module constructor
+         *
+         * @access public
+         * @constructor
+         * @return this
+         */
+    	constructor()
         {
-            this._bind();
+            this._openTriggers = Helper.$All('.js-open-drawer-trigger');
+            this._closeTriggers = Helper.$All('.js-close-drawer-trigger');
+            this._drawerEl = Helper.$('.js-drawer');
+            this._overlayEl = Helper.$('.js-drawer-overlay');
+
+            if (Helper.nodeExists(this._drawerEl))
+            {
+                this._bind();
+            }
+
+            return this;
         }
 
-        return this;
-    }
-
-    /**
-     * Module destructor
-     *
-     * @access public
-     */
-    Drawer.prototype.destruct = function()
-    {
-        this._unbind();
-    }
-
-    /**
-     * Bind event listeners
-     *
-     * @access private
-     */
-    Drawer.prototype._bind = function()
-    {
-        this._drawerWidth = Helper.getStyle(this._drawerEl, 'max-width');
-
-        Helper.addEventListener(this._openTriggers, 'click', this.open);
-
-        Helper.addEventListener(this._closeTriggers, 'click', this.close);
-
-        Helper.addEventListener(this._overlayEl, 'click', this.close);
-    }
-
-    /**
-     * Unbind event listeners
-     *
-     * @access private
-     */
-    Drawer.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._openTriggers, 'click', this.open);
-
-        Helper.removeEventListener(this._closeTriggers, 'click', this.close);
-
-        Helper.removeEventListener(this._overlayEl, 'click', this.close);
-    }
-
-    /**
-     * Handle show sidebar
-     *
-     * @access private
-     * @param  event|null e Button click even
-     */
-    Drawer.prototype.open = function(e)
-    {
-        e = e || window.event;
-
-        if (e && e.target && Helper.isNodeType(e.target, 'a'))
+        /**
+         * Module destructor
+         *
+         * @access public
+         */
+        destruct()
         {
-            e.preventDefault();
+            this._unbind();
         }
 
-        lastScrollY = document.documentElement.scrollTop || document.body.scrollTop;
-
-        clearTimeout(overleyTimer);
-        clearTimeout(toggleTimer);
-
-        var _this = Container.Drawer();
-
-        // Overlay
-        Helper.css(_this._overlayEl, 'visibility', 'visible');
-        Helper.animate(_this._overlayEl, 'opacity', 0, 1, 200, 'easeOutCubic');
-        Helper.showAria(_this._overlayEl);
-
-        // Sidebar
-        Helper.css(_this._drawerEl, 'visibility', 'visible');
-        if (Helper.hasClass(_this._drawerEl, 'drawer-right'))
+        /**
+         * Bind event listeners
+         *
+         * @access private
+         */
+        _bind()
         {
-            Helper.animate(_this._drawerEl, 'transform', 'translateX('+ _this._drawerWidth + ')', 'translateX(0)', 200, 'easeOutCubic');
-        }
-        else
-        {
-            Helper.animate(_this._drawerEl, 'transform', 'translateX(-' + _this._drawerWidth +')', 'translateX(0)', 200, 'easeOutCubic');
+            this._drawerWidth = Helper.getStyle(this._drawerEl, 'max-width');
+
+            Helper.addEventListener(this._openTriggers, 'click', this.open);
+
+            Helper.addEventListener(this._closeTriggers, 'click', this.close);
+
+            Helper.addEventListener(this._overlayEl, 'click', this.close);
         }
 
-        Helper.addClass(document.body, 'no-scroll');
-        Helper.showAria(_this._drawerEl);
-        Helper.addClass(_this._drawerEl, 'active');
-        _this._drawerEl.focus();
-    }
-
-    /**
-     * Handle hide sidebar
-     *
-     * @access public
-     * @param  event|null e Button click even
-     */
-    Drawer.prototype.close = function(e)
-    {
-        e = e || window.event;
-
-        if (e && e.target && Helper.isNodeType(e.target, 'a'))
+        /**
+         * Unbind event listeners
+         *
+         * @access private
+         */
+        _unbind()
         {
-            e.preventDefault();
+            Helper.removeEventListener(this._openTriggers, 'click', this.open);
+
+            Helper.removeEventListener(this._closeTriggers, 'click', this.close);
+
+            Helper.removeEventListener(this._overlayEl, 'click', this.close);
         }
 
-        clearTimeout(overleyTimer);
-        clearTimeout(toggleTimer);
-
-        var _this = Container.Drawer();
-
-        // Overlay
-        Helper.animate(_this._overlayEl, 'opacity', 1, 0, 200, 'easeOutCubic');
-        overleyTimer = setTimeout(function()
+        /**
+         * Handle show sidebar
+         *
+         * @access private
+         * @param  event|null e Button click even
+         */
+        open(e)
         {
-            Helper.css(_this._overlayEl, 'visibility', 'hidden');
+            e = e || window.event;
 
-        }, 250);
-        Helper.hideAria(_this._overlayEl);
+            if (e && e.target && Helper.isNodeType(e.target, 'a'))
+            {
+                e.preventDefault();
+            }
 
-        // Sidebar
-        if (Helper.hasClass(_this._drawerEl, 'drawer-right'))
-        {
-            Helper.animate(_this._drawerEl, 'transform', 'translateX(0)', 'translateX(' + _this._drawerWidth + ')', 200, 'easeOutCubic');
+            lastScrollY = document.documentElement.scrollTop || document.body.scrollTop;
+
+            clearTimeout(overleyTimer);
+            clearTimeout(toggleTimer);
+
+            var _this = Container.Drawer();
+
+            // Overlay
+            Helper.css(_this._overlayEl, 'visibility', 'visible');
+            Helper.animate(_this._overlayEl, 'opacity', 0, 1, 200, 'easeOutCubic');
+            Helper.showAria(_this._overlayEl);
+
+            // Sidebar
+            Helper.css(_this._drawerEl, 'visibility', 'visible');
+            if (Helper.hasClass(_this._drawerEl, 'drawer-right'))
+            {
+                Helper.animate(_this._drawerEl, 'transform', 'translateX('+ _this._drawerWidth + ')', 'translateX(0)', 200, 'easeOutCubic');
+            }
+            else
+            {
+                Helper.animate(_this._drawerEl, 'transform', 'translateX(-' + _this._drawerWidth +')', 'translateX(0)', 200, 'easeOutCubic');
+            }
+
+            Helper.addClass(document.body, 'no-scroll');
+            Helper.showAria(_this._drawerEl);
+            Helper.addClass(_this._drawerEl, 'active');
+            _this._drawerEl.focus();
         }
-        else
-        {
-            Helper.animate(_this._drawerEl, 'transform', 'translateX(0)', 'translateX(-' + _this._drawerWidth + ')', 200, 'easeOutCubic');
-        }
 
-        toggleTimer = setTimeout(function()
+        /**
+         * Handle hide sidebar
+         *
+         * @access public
+         * @param  event|null e Button click even
+         */
+        close(e)
         {
-            Helper.css(_this._drawerEl, 'visibility', 'hidden');
-            
-        }, 250);
+            e = e || window.event;
 
-        Helper.removeClass(document.body, 'no-scroll');
-        Helper.hideAria(_this._drawerEl);
-        _this._drawerEl.blur();
+            if (e && e.target && Helper.isNodeType(e.target, 'a'))
+            {
+                e.preventDefault();
+            }
 
-        if (lastScrollY)
-        {
-            window.scrollTo(0, lastScrollY);
+            clearTimeout(overleyTimer);
+            clearTimeout(toggleTimer);
+
+            var _this = Container.Drawer();
+
+            // Overlay
+            Helper.animate(_this._overlayEl, 'opacity', 1, 0, 200, 'easeOutCubic');
+            overleyTimer = setTimeout(function()
+            {
+                Helper.css(_this._overlayEl, 'visibility', 'hidden');
+
+            }, 250);
+            Helper.hideAria(_this._overlayEl);
+
+            // Sidebar
+            if (Helper.hasClass(_this._drawerEl, 'drawer-right'))
+            {
+                Helper.animate(_this._drawerEl, 'transform', 'translateX(0)', 'translateX(' + _this._drawerWidth + ')', 200, 'easeOutCubic');
+            }
+            else
+            {
+                Helper.animate(_this._drawerEl, 'transform', 'translateX(0)', 'translateX(-' + _this._drawerWidth + ')', 200, 'easeOutCubic');
+            }
+
+            toggleTimer = setTimeout(function()
+            {
+                Helper.css(_this._drawerEl, 'visibility', 'hidden');
+                
+            }, 250);
+
+            Helper.removeClass(document.body, 'no-scroll');
+            Helper.hideAria(_this._drawerEl);
+            _this._drawerEl.blur();
+
+            if (lastScrollY)
+            {
+                window.scrollTo(0, lastScrollY);
+            }
         }
     }
 
@@ -15851,13 +15918,6 @@ function complete(response)
     Hubble.dom().register('Drawer', Drawer, true);
 
 }());
-/**
- * Popover Handler
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -15868,101 +15928,111 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Popover Handler
      *
-     * @access public
-     * @constructor
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var _popHandler = function(options)
+    class _popHandler
     {
-        this.trigger = options.target;
-        this.options = options;
-        this.el = this.buildPopEl();
-        this.el.className = options.classes;
-        this.animation = false;
+        /**
+         * Module constructor
+         *
+         * @access public
+         * @constructor
+         */
+    	constructor(options)
+        {
+            this.trigger = options.target;
+            this.options = options;
+            this.el = this.buildPopEl();
+            this.el.className = options.classes;
+            this.animation = false;
 
-        if (options.animation === 'pop')
-        {
-            this.animation = 'popover-pop';
-        }
-        else if (options.animation === 'fade')
-        {
-            this.animation = 'popover-fade';
+            if (options.animation === 'pop')
+            {
+                this.animation = 'popover-pop';
+            }
+            else if (options.animation === 'fade')
+            {
+                this.animation = 'popover-fade';
+            }
+
+            this.render = function()
+            {
+                document.body.appendChild(this.el);
+                this.stylePop();
+                this.el.classList.add(this.animation);
+            }
+            return this;
         }
 
-        this.render = function()
+        /**
+         * Build the popover
+         *
+         * @access private
+         */
+        buildPopEl()
         {
-            document.body.appendChild(this.el);
-            this.stylePop();
-            this.el.classList.add(this.animation);
-        }
-        return this;
-    }
+            var pop = document.createElement('div');
+            pop.className = this.options.classes;
 
-    /**
-     * Build the popover
-     *
-     * @access private
-     */
-    _popHandler.prototype.buildPopEl = function()
-    {
-        var pop = document.createElement('div');
-        pop.className = this.options.classes;
-
-        if (typeof this.options.template === 'string')
-        {
-            pop.innerHTML = this.options.template;
+            if (typeof this.options.template === 'string')
+            {
+                pop.innerHTML = this.options.template;
+            }
+            else
+            {
+                pop.appendChild(this.options.template);
+            }
+            return pop;
         }
-        else
-        {
-            pop.appendChild(this.options.template);
-        }
-        return pop;
-    }
 
-    /**
-     * Remove the popover
-     *
-     * @access public
-     */
-    _popHandler.prototype.remove = function()
-    {
-        if (Helper.nodeExists(this.el)) this.el.parentNode.removeChild(this.el);
-    }
-
-    /**
-     * Position the popover
-     *
-     * @access public
-     */
-    _popHandler.prototype.stylePop = function()
-    {
-
-        var targetCoords = Helper.getCoords(this.options.target);
-
-        if (this.options.direction === 'top')
+        /**
+         * Remove the popover
+         *
+         * @access public
+         */
+        remove()
         {
-            this.el.style.top = targetCoords.top - this.el.scrollHeight + 'px';
-            this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
-            return;
+            if (Helper.nodeExists(this.el)) this.el.parentNode.removeChild(this.el);
         }
-        else if (this.options.direction === 'bottom')
+
+        /**
+         * Position the popover
+         *
+         * @access public
+         */
+        stylePop()
         {
-            this.el.style.top = targetCoords.top + this.options.target.offsetHeight + 10 + 'px';
-            this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
-            return;
-        }
-        else if (this.options.direction === 'left')
-        {
-            this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
-            this.el.style.left = targetCoords.left - this.el.offsetWidth - 10 + 'px';
-            return;
-        }
-        else if (this.options.direction === 'right')
-        {
-            this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
-            this.el.style.left = targetCoords.left + this.options.target.offsetWidth + 10 + 'px';
-            return;
+
+            var targetCoords = Helper.getCoords(this.options.target);
+
+            if (this.options.direction === 'top')
+            {
+                this.el.style.top = targetCoords.top - this.el.scrollHeight + 'px';
+                this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
+                return;
+            }
+            else if (this.options.direction === 'bottom')
+            {
+                this.el.style.top = targetCoords.top + this.options.target.offsetHeight + 10 + 'px';
+                this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
+                return;
+            }
+            else if (this.options.direction === 'left')
+            {
+                this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
+                this.el.style.left = targetCoords.left - this.el.offsetWidth - 10 + 'px';
+                return;
+            }
+            else if (this.options.direction === 'right')
+            {
+                this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
+                this.el.style.left = targetCoords.left + this.options.target.offsetWidth + 10 + 'px';
+                return;
+            }
         }
     }
 
@@ -15971,13 +16041,6 @@ function complete(response)
 
 }());
 
-/**
- * Popovers
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -15988,300 +16051,310 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Popovers
      *
-     * @access public
-     * @constructor
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var Popovers = function()
+    class Popovers
     {
-        this._pops = [];
-        this._nodes = [];
-
-        // Find nodes
-        this._nodes = Helper.$All('.js-popover');
-
-        // Bind events
-        if (!Helper.empty(this._nodes))
+        /**
+         * Module constructor
+         *
+         * @access public
+         * @constructor
+         */
+    	constructor()
         {
-            for (var i = 0; i < this._nodes.length; i++)
+            this._pops = [];
+            this._nodes = [];
+
+            // Find nodes
+            this._nodes = Helper.$All('.js-popover');
+
+            // Bind events
+            if (!Helper.empty(this._nodes))
             {
-                this._bind(this._nodes[i]);
-            }
-
-            this._addWindowClickEvent();
-        }
-
-        return this;
-    };
-
-    /**
-     * Module destructor
-     *
-     * @access public
-     * @return this
-     */
-    Popovers.prototype.destruct = function()
-    {
-        if (!Helper.empty(this._nodes))
-        {
-            for (var i = 0; i < this._nodes.length; i++)
-            {
-                this._unbind(this._nodes[i]);
-            }
-        }
-
-        this._removeAll();
-
-        this._nodes = [];
-
-        this._pops = [];
-    }
-
-    /**
-     * Unbind event listeners on a trigger
-     *
-     * @param trigger node
-     * @access private
-     */
-    Popovers.prototype._unbind = function(trigger)
-    {
-        var evnt = trigger.dataset.popoverEvent;
-
-        if (evnt === 'click')
-        {
-            Helper.removeEventListener(trigger, 'click', this._clickHandler);
-            window.removeEventListener('resize', this._windowResize);
-        }
-        else
-        {
-            Helper.removeEventListener(trigger, 'mouseenter', this._hoverOver);
-            Helper.removeEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
-        }
-    }
-
-    /**
-     * Initialize the handlers on a trigger
-     *
-     * @access private
-     * @param  node trigger Click/hover trigger
-     */
-    Popovers.prototype._bind = function(trigger)
-    {
-        var direction = trigger.dataset.popoverDirection;
-        var title = trigger.dataset.popoverTitle;
-        var theme = trigger.dataset.popoverTheme || 'dark';
-        var content = trigger.dataset.popoverContent;
-        var evnt = trigger.dataset.popoverEvent;
-        var animation = trigger.dataset.popoverAnimate || 'pop';
-        var target = trigger.dataset.popoverTarget;
-        var closeBtn = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="glyph-icon glyph-icon-cross3"></span></button>' : '';
-        var pop = '<div class="popover-content"><p>' + content + '</p></div>';
-
-
-        if (title)
-        {
-            pop = closeBtn + '<h5 class="popover-title">' + title + '</h5>' + pop;
-        }
-
-        if (target)
-        {
-            pop = Helper.$('#' + target).cloneNode(true);
-            pop.classList.remove('hidden');
-        }
-
-        var popHandler = Container.get('_popHandler',
-        {
-            target: trigger,
-            direction: direction,
-            template: pop,
-            animation: animation,
-            classes: 'popover ' + direction + ' ' + theme,
-        });
-
-        this._pops.push(popHandler);
-
-        if (evnt === 'click')
-        {
-            Helper.addEventListener(trigger, 'click', this._clickHandler);
-            window.addEventListener('resize', this._windowResize);
-        }
-        else
-        {
-            var _this = this;
-            Helper.addEventListener(trigger, 'mouseenter', this._hoverOver);
-            Helper.addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
-        }
-    }
-
-    /**
-     * Timeout handler for hoverleave
-     *
-     * @access private
-     */
-    Popovers.prototype._hoverLeavTimeout = function(e)
-    {
-        e = e || window.event;
-        setTimeout(function()
-        {
-            Container.get('Popovers')._hoverLeave(e);
-        }, 300);
-    }
-
-    /**
-     * Hover over event handler
-     *
-     * @access private
-     */
-    Popovers.prototype._hoverOver = function()
-    {
-        var trigger = this;
-        var _this = Container.get('Popovers');
-        var popHandler = _this._getHandler(trigger);
-        if (Helper.hasClass(trigger, 'popped')) return;
-        popHandler.render();
-        Helper.addClass(trigger, 'popped');
-    }
-
-    /**
-     * Hover leave event handler
-     *
-     * @access private
-     */
-    Popovers.prototype._hoverLeave = function(e)
-    {
-        var _this = Container.get('Popovers');
-        var hovers = Helper.$All(':hover');
-        for (var i = 0; i < hovers.length; i++)
-        {
-            if (Helper.hasClass(hovers[i], 'popover'))
-            {
-                hovers[i].addEventListener('mouseleave', function(_e)
+                for (var i = 0; i < this._nodes.length; i++)
                 {
-                    _e = _e || window.event;
-                    _this._hoverLeave(_e);
-                });
-                return;
+                    this._bind(this._nodes[i]);
+                }
+
+                this._addWindowClickEvent();
             }
+
+            return this;
         }
 
-        _this._removeAll();
-    }
-
-    /**
-     * Window resize event handler
-     *
-     * @access private
-     */
-    Popovers.prototype._windowResize = function()
-    {
-        var _this = Container.get('Popovers');
-
-        for (var i = 0; i < _this._nodes.length; i++)
+        /**
+         * Module destructor
+         *
+         * @access public
+         * @return this
+         */
+        destruct()
         {
-            if (Helper.hasClass(_this._nodes[i], 'popped'))
+            if (!Helper.empty(this._nodes))
             {
-                var popHandler = _this._getHandler(_this._nodes[i]);
-                popHandler.stylePop();
+                for (var i = 0; i < this._nodes.length; i++)
+                {
+                    this._unbind(this._nodes[i]);
+                }
+            }
+
+            this._removeAll();
+
+            this._nodes = [];
+
+            this._pops = [];
+        }
+
+        /**
+         * Unbind event listeners on a trigger
+         *
+         * @param trigger node
+         * @access private
+         */
+        _unbind(trigger)
+        {
+            var evnt = trigger.dataset.popoverEvent;
+
+            if (evnt === 'click')
+            {
+                Helper.removeEventListener(trigger, 'click', this._clickHandler);
+                window.removeEventListener('resize', this._windowResize);
+            }
+            else
+            {
+                Helper.removeEventListener(trigger, 'mouseenter', this._hoverOver);
+                Helper.removeEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
             }
         }
-    }
 
-    /**
-     * Click event handler
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    Popovers.prototype._clickHandler = function(e)
-    {
-        e = e || window.event;
-        e.preventDefault();
-        var trigger = this;
-        var _this = Container.get('Popovers');
-        var popHandler = _this._getHandler(trigger);
-
-        if (Helper.hasClass(trigger, 'popped'))
+        /**
+         * Initialize the handlers on a trigger
+         *
+         * @access private
+         * @param  node trigger Click/hover trigger
+         */
+        _bind(trigger)
         {
-            _this._removeAll();
-            popHandler.remove();
-            Helper.removeClass(trigger, 'popped');
+            var direction = trigger.dataset.popoverDirection;
+            var title = trigger.dataset.popoverTitle;
+            var theme = trigger.dataset.popoverTheme || 'dark';
+            var content = trigger.dataset.popoverContent;
+            var evnt = trigger.dataset.popoverEvent;
+            var animation = trigger.dataset.popoverAnimate || 'pop';
+            var target = trigger.dataset.popoverTarget;
+            var closeBtn = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="glyph-icon glyph-icon-cross3"></span></button>' : '';
+            var pop = '<div class="popover-content"><p>' + content + '</p></div>';
+
+
+            if (title)
+            {
+                pop = closeBtn + '<h5 class="popover-title">' + title + '</h5>' + pop;
+            }
+
+            if (target)
+            {
+                pop = Helper.$('#' + target).cloneNode(true);
+                pop.classList.remove('hidden');
+            }
+
+            var popHandler = Container.get('_popHandler',
+            {
+                target: trigger,
+                direction: direction,
+                template: pop,
+                animation: animation,
+                classes: 'popover ' + direction + ' ' + theme,
+            });
+
+            this._pops.push(popHandler);
+
+            if (evnt === 'click')
+            {
+                Helper.addEventListener(trigger, 'click', this._clickHandler);
+                window.addEventListener('resize', this._windowResize);
+            }
+            else
+            {
+                var _this = this;
+                Helper.addEventListener(trigger, 'mouseenter', this._hoverOver);
+                Helper.addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
+            }
         }
-        else
+
+        /**
+         * Timeout handler for hoverleave
+         *
+         * @access private
+         */
+        _hoverLeavTimeout(e)
         {
-            _this._removeAll();
+            e = e || window.event;
+            setTimeout(function()
+            {
+                Container.get('Popovers')._hoverLeave(e);
+            }, 300);
+        }
+
+        /**
+         * Hover over event handler
+         *
+         * @access private
+         */
+        _hoverOver()
+        {
+            var trigger = this;
+            var _this = Container.get('Popovers');
+            var popHandler = _this._getHandler(trigger);
+            if (Helper.hasClass(trigger, 'popped')) return;
             popHandler.render();
             Helper.addClass(trigger, 'popped');
         }
-    }
 
-    /**
-     * Remove all popovers when anything is clicked
-     *
-     * @access private
-     */
-    Popovers.prototype._addWindowClickEvent = function()
-    {
-        var _this = this;
-
-        window.addEventListener('click', function(e)
+        /**
+         * Hover leave event handler
+         *
+         * @access private
+         */
+        _hoverLeave(e)
         {
-            e = e || window.event;
-            var clicked = e.target;
-
-            // Clicked the close button
-            if (Helper.hasClass(clicked, 'js-remove-pop') || Helper.closest(clicked, '.js-remove-pop'))
+            var _this = Container.get('Popovers');
+            var hovers = Helper.$All(':hover');
+            for (var i = 0; i < hovers.length; i++)
             {
-                _this._removeAll();
-
-                return;
-            }
-
-            // Clicked inside the popover
-            if (Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover'))
-            {
-                return;
-            }
-
-            // Clicked a popover trigger
-            if (Helper.hasClass(clicked, 'js-popover') || Helper.closest(clicked, '.js-popover'))
-            {
-                return;
+                if (Helper.hasClass(hovers[i], 'popover'))
+                {
+                    hovers[i].addEventListener('mouseleave', function(_e)
+                    {
+                        _e = _e || window.event;
+                        _this._hoverLeave(_e);
+                    });
+                    return;
+                }
             }
 
             _this._removeAll();
-        });
-    }
-
-    /**
-     * Get the handler for the trigger
-     * 
-     * @access private
-     * @param  node    trigger DOM node that triggered event
-     * @return object|false
-     */
-    Popovers.prototype._getHandler = function(trigger)
-    {
-        for (var i = 0; i < this._pops.length; i++)
-        {
-            if (this._pops[i]['trigger'] === trigger) return this._pops[i];
         }
 
-        return false;
-    }
-
-    /**
-     * Remove all the popovers currently being displayed
-     *
-     * @access private
-     */
-    Popovers.prototype._removeAll = function()
-    {
-        for (var i = 0; i < this._pops.length; i++)
+        /**
+         * Window resize event handler
+         *
+         * @access private
+         */
+        _windowResize()
         {
-            this._pops[i].remove();
+            var _this = Container.get('Popovers');
 
-            Helper.removeClass(this._pops[i].options.target, 'popped');
+            for (var i = 0; i < _this._nodes.length; i++)
+            {
+                if (Helper.hasClass(_this._nodes[i], 'popped'))
+                {
+                    var popHandler = _this._getHandler(_this._nodes[i]);
+                    popHandler.stylePop();
+                }
+            }
+        }
+
+        /**
+         * Click event handler
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _clickHandler(e)
+        {
+            e = e || window.event;
+            e.preventDefault();
+            var trigger = this;
+            var _this = Container.get('Popovers');
+            var popHandler = _this._getHandler(trigger);
+
+            if (Helper.hasClass(trigger, 'popped'))
+            {
+                _this._removeAll();
+                popHandler.remove();
+                Helper.removeClass(trigger, 'popped');
+            }
+            else
+            {
+                _this._removeAll();
+                popHandler.render();
+                Helper.addClass(trigger, 'popped');
+            }
+        }
+
+        /**
+         * Remove all popovers when anything is clicked
+         *
+         * @access private
+         */
+        _addWindowClickEvent()
+        {
+            var _this = this;
+
+            window.addEventListener('click', function(e)
+            {
+                e = e || window.event;
+                var clicked = e.target;
+
+                // Clicked the close button
+                if (Helper.hasClass(clicked, 'js-remove-pop') || Helper.closest(clicked, '.js-remove-pop'))
+                {
+                    _this._removeAll();
+
+                    return;
+                }
+
+                // Clicked inside the popover
+                if (Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover'))
+                {
+                    return;
+                }
+
+                // Clicked a popover trigger
+                if (Helper.hasClass(clicked, 'js-popover') || Helper.closest(clicked, '.js-popover'))
+                {
+                    return;
+                }
+
+                _this._removeAll();
+            });
+        }
+
+        /**
+         * Get the handler for the trigger
+         * 
+         * @access private
+         * @param  node    trigger DOM node that triggered event
+         * @return object|false
+         */
+        _getHandler(trigger)
+        {
+            for (var i = 0; i < this._pops.length; i++)
+            {
+                if (this._pops[i]['trigger'] === trigger) return this._pops[i];
+            }
+
+            return false;
+        }
+
+        /**
+         * Remove all the popovers currently being displayed
+         *
+         * @access private
+         */
+        _removeAll()
+        {
+            for (var i = 0; i < this._pops.length; i++)
+            {
+                this._pops[i].remove();
+
+                Helper.removeClass(this._pops[i].options.target, 'popped');
+            }
         }
     }
 
@@ -16402,138 +16475,142 @@ function complete(response)
      */
     var Helper = Hubble.helper();
 
-    /**
-     * Module constructor
-     *
-     * @access public
-     * @constructor
-     */
-    var Ripple = function()
+    
+    class Ripple
     {
-        this._classes =
-        [
-            '.btn',
-            '.chip',
-            '.list > li',
-            '.pagination li a',
-            '.tab-nav li a',
-            '.card-img',
-            '.card-img-top',
-            '.js-ripple'
-        ];
-
-        this._nodes = Helper.$All(this._classes.join(','));
-
-        this._bind();
-
-        return this;
-    };
-
-    /**
-     * Module destructor - removes event listeners
-     *
-     * @access public
-     */
-    Ripple.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._nodes = [];
-    }
-
-    /**
-     * Insert ripples
-     *
-     * @access private
-     */
-    Ripple.prototype._bind = function()
-    {
-        for (var i = 0; i < this._nodes.length; i++)
+        /**
+         * Module constructor
+         *
+         * @access public
+         * @constructor
+         */
+        constructor()
         {
-            this._insertRipple(this._nodes[i]);
+            this._classes =
+            [
+                '.btn',
+                '.chip',
+                '.list > li',
+                '.pagination li a',
+                '.tab-nav li a',
+                '.card-img',
+                '.card-img-top',
+                '.js-ripple'
+            ];
+
+            this._nodes = Helper.$All(this._classes.join(','));
+
+            this._bind();
+
+            return this;
+        };
+
+        /**
+         * Module destructor - removes event listeners
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
+
+            this._nodes = [];
         }
-    }
 
-    /**
-     * Remove ripples
-     *
-     * @access private
-     */
-    Ripple.prototype._unbind = function()
-    {
-        for (var i = 0; i < this._nodes.length; i++)
+        /**
+         * Insert ripples
+         *
+         * @access private
+         */
+        _bind()
         {
-            var wrapper = this._nodes[i];
-
-            var ripples = Helper.$All('.js-ripple-container', wrapper);
-
-            Helper.removeEventListener(wrapper, 'mousedown', this._mouseDown);
-
-            Helper.removeEventListener(wrapper, 'touchstart', this._touchStart);
-
-            for (var j = 0; j < ripples.length; j++)
+            for (var i = 0; i < this._nodes.length; i++)
             {
-                Helper.removeFromDOM(ripples[j]);
+                this._insertRipple(this._nodes[i]);
             }
         }
-    }
 
-    /**
-     * Insert ripple
-     *
-     * @access private
-     * @param  node    wrapper
-     */
-    Ripple.prototype._insertRipple = function(wrapper)
-    {
-        // If this is a user-defined JS-Ripple we need to insert it
-        var rip  = document.createElement('span');
+        /**
+         * Remove ripples
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            for (var i = 0; i < this._nodes.length; i++)
+            {
+                var wrapper = this._nodes[i];
+
+                var ripples = Helper.$All('.js-ripple-container', wrapper);
+
+                Helper.removeEventListener(wrapper, 'mousedown', this._mouseDown);
+
+                Helper.removeEventListener(wrapper, 'touchstart', this._touchStart);
+
+                for (var j = 0; j < ripples.length; j++)
+                {
+                    Helper.removeFromDOM(ripples[j]);
+                }
+            }
+        }
+
+        /**
+         * Insert ripple
+         *
+         * @access private
+         * @param  node    wrapper
+         */
+        _insertRipple(wrapper)
+        {
+            // If this is a user-defined JS-Ripple we need to insert it
+            var rip  = document.createElement('span');
+                
+            rip.className = 'ripple-container js-ripple-container';
+
+            if (Helper.hasClass(wrapper, 'chip'))
+            { 
+                rip.className = 'ripple-container fill js-ripple-container';
+            }
             
-        rip.className = 'ripple-container js-ripple-container';
+            Helper.preapend(rip, wrapper);
 
-        if (Helper.hasClass(wrapper, 'chip'))
-        { 
-            rip.className = 'ripple-container fill js-ripple-container';
-        }
-        
-        Helper.preapend(rip, wrapper);
+            Helper.addEventListener(wrapper, 'mousedown', this._mouseDown, true, 'foo', 'bar');
 
-        Helper.addEventListener(wrapper, 'mousedown', this._mouseDown, true, 'foo', 'bar');
-
-        Helper.addEventListener(wrapper, 'touchstart', this._touchStart, true, 'foo', 'bar');
-  
-    }
-
-    /**
-     * On mousedown
-     *
-     * @access private
-     * @param  event|null e
-     */
-    Ripple.prototype._mouseDown = function(e)
-    {
-        e = e || window.event;
-
-        if (e.button === 0)
-        {
-            startRipple(e.type, e, this);
+            Helper.addEventListener(wrapper, 'touchstart', this._touchStart, true, 'foo', 'bar');
+      
         }
 
-    }
-
-    /**
-     * On touchstart
-     *
-     * @access private
-     * @param  event|null   e
-     */
-    Ripple.prototype._touchStart = function(e, foo, bar)
-    {
-        e = e || window.event;
-
-        for (var i = 0; i < e.changedTouches.length; ++i)
+        /**
+         * On mousedown
+         *
+         * @access private
+         * @param  event|null e
+         */
+        _mouseDown(e)
         {
-            startRipple(e.type, e.changedTouches[i], this);
+            e = e || window.event;
+
+            if (e.button === 0)
+            {
+                startRipple(e.type, e, this);
+            }
+
+        }
+
+        /**
+         * On touchstart
+         *
+         * @access private
+         * @param  event|null   e
+         */
+        _touchStart(e, foo, bar)
+        {
+            e = e || window.event;
+
+            for (var i = 0; i < e.changedTouches.length; ++i)
+            {
+                startRipple(e.type, e.changedTouches[i], this);
+            }
         }
     }
     
@@ -16542,13 +16619,6 @@ function complete(response)
 
 })();
 
-/**
- * Input masker
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -16559,128 +16629,138 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Input masker
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var InputMasks = function()
+    class InputMasks
     {
-        // Private
-        this._nodes_money = [];
-        this._nodes_creditcard = [];
-        this._nodes_numeric = [];
-        this._nodes_numericDecimal = [];
-        this._nodes_alphaNumeric = [];
-        this._nodes_alphaSpace = [];
-        this._nodes_alphaDash = [];
-        this._nodes_AlphaNumericDash = [];
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
+        {
+            // Private
+            this._nodes_money = [];
+            this._nodes_creditcard = [];
+            this._nodes_numeric = [];
+            this._nodes_numericDecimal = [];
+            this._nodes_alphaNumeric = [];
+            this._nodes_alphaSpace = [];
+            this._nodes_alphaDash = [];
+            this._nodes_AlphaNumericDash = [];
 
-        // Constructor
-        this._invoke();
+            // Constructor
+            this._invoke();
 
-        return this;
-    }
+            return this;
+        }
 
-    /**
-     * Public destructor remove all masks
-     *
-     * @access public
-     */
-    InputMasks.prototype.destruct = function()
-    {
-        this._loopUnBind(this._nodes_money);
-        this._loopUnBind(this._nodes_creditcard);
-        this._loopUnBind(this._nodes_numeric);
-        this._loopUnBind(this._nodes_numericDecimal);
-        this._loopUnBind(this._nodes_alphaNumeric);
-        this._loopUnBind(this._nodes_alphaSpace);
-        this._loopUnBind(this._nodes_alphaDash);
-        this._loopUnBind(this._nodes_AlphaNumericDash);
-        this._nodes_money = [];
-        this._nodes_creditcard = [];
-        this._nodes_numeric = [];
-        this._nodes_numericDecimal = [];
-        this._nodes_alphaNumeric = [];
-        this._nodes_alphaSpace = [];
-        this._nodes_alphaDash = [];
-        this._nodes_AlphaNumericDash = [];
-    }
+        /**
+         * Public destructor remove all masks
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._loopUnBind(this._nodes_money);
+            this._loopUnBind(this._nodes_creditcard);
+            this._loopUnBind(this._nodes_numeric);
+            this._loopUnBind(this._nodes_numericDecimal);
+            this._loopUnBind(this._nodes_alphaNumeric);
+            this._loopUnBind(this._nodes_alphaSpace);
+            this._loopUnBind(this._nodes_alphaDash);
+            this._loopUnBind(this._nodes_AlphaNumericDash);
+            this._nodes_money = [];
+            this._nodes_creditcard = [];
+            this._nodes_numeric = [];
+            this._nodes_numericDecimal = [];
+            this._nodes_alphaNumeric = [];
+            this._nodes_alphaSpace = [];
+            this._nodes_alphaDash = [];
+            this._nodes_AlphaNumericDash = [];
+        }
 
-    /**
-     * Find all the nodes and apply any masks
-     *
-     * @access private
-     */
-    InputMasks.prototype._invoke = function()
-    {
-        // Find all the nodes
-        this._nodes_money = Helper.$All('.js-mask-money');
-        this._nodes_creditcard = Helper.$All('.js-mask-creditcard');
-        this._nodes_numeric = Helper.$All('.js-mask-numeric');
-        this._nodes_numericDecimal = Helper.$All('.js-mask-numeric-decimal');
-        this._nodes_alphaNumeric = Helper.$All('.js-mask-alpha-numeric');
-        this._nodes_alphaSpace = Helper.$All('.js-mask-alpha-space');
-        this._nodes_alphaDash = Helper.$All('.js-mask-alpha-dash');
-        this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
+        /**
+         * Find all the nodes and apply any masks
+         *
+         * @access private
+         */
+        _invoke()
+        {
+            // Find all the nodes
+            this._nodes_money = Helper.$All('.js-mask-money');
+            this._nodes_creditcard = Helper.$All('.js-mask-creditcard');
+            this._nodes_numeric = Helper.$All('.js-mask-numeric');
+            this._nodes_numericDecimal = Helper.$All('.js-mask-numeric-decimal');
+            this._nodes_alphaNumeric = Helper.$All('.js-mask-alpha-numeric');
+            this._nodes_alphaSpace = Helper.$All('.js-mask-alpha-space');
+            this._nodes_alphaDash = Helper.$All('.js-mask-alpha-dash');
+            this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
 
-        if (!Helper.empty(this._nodes_money))
-        {
-            this._loopBind(this._nodes_money, 'money');
+            if (!Helper.empty(this._nodes_money))
+            {
+                this._loopBind(this._nodes_money, 'money');
+            }
+            if (!Helper.empty(this._nodes_creditcard))
+            {
+                this._loopBind(this._nodes_creditcard, 'creditcard');
+            }
+            if (!Helper.empty(this._nodes_numeric))
+            {
+                this._loopBind(this._nodes_numeric, 'numeric');
+            }
+            if (!Helper.empty(this._nodes_numericDecimal))
+            {
+                this._loopBind(this._nodes_numericDecimal, 'numericDecimal');
+            }
+            if (!Helper.empty(this._nodes_alphaNumeric))
+            {
+                this._loopBind(this._nodes_alphaNumeric, 'alphaNumeric');
+            }
+            if (!Helper.empty(this._nodes_alphaSpace))
+            {
+                this._loopBind(this._nodes_alphaSpace, 'alphaSpace');
+            }
+            if (!Helper.empty(this._nodes_alphaDash))
+            {
+                this._loopBind(this._nodes_alphaDash, 'alphaDash');
+            }
+            if (!Helper.empty(this._nodes_AlphaNumericDash))
+            {
+                this._loopBind(this._nodes_AlphaNumericDash, 'alphaNumericDash');
+            }
         }
-        if (!Helper.empty(this._nodes_creditcard))
-        {
-            this._loopBind(this._nodes_creditcard, 'creditcard');
-        }
-        if (!Helper.empty(this._nodes_numeric))
-        {
-            this._loopBind(this._nodes_numeric, 'numeric');
-        }
-        if (!Helper.empty(this._nodes_numericDecimal))
-        {
-            this._loopBind(this._nodes_numericDecimal, 'numericDecimal');
-        }
-        if (!Helper.empty(this._nodes_alphaNumeric))
-        {
-            this._loopBind(this._nodes_alphaNumeric, 'alphaNumeric');
-        }
-        if (!Helper.empty(this._nodes_alphaSpace))
-        {
-            this._loopBind(this._nodes_alphaSpace, 'alphaSpace');
-        }
-        if (!Helper.empty(this._nodes_alphaDash))
-        {
-            this._loopBind(this._nodes_alphaDash, 'alphaDash');
-        }
-        if (!Helper.empty(this._nodes_AlphaNumericDash))
-        {
-            this._loopBind(this._nodes_AlphaNumericDash, 'alphaNumericDash');
-        }
-    }
 
-    /**
-     * Loop and bind masks to DOM LIST
-     *
-     * @access private
-     */
-    InputMasks.prototype._loopBind = function(nodes, mask)
-    {
-        for (var i = 0; i < nodes.length; i++)
+        /**
+         * Loop and bind masks to DOM LIST
+         *
+         * @access private
+         */
+        _loopBind(nodes, mask)
         {
-            Container.get('InputMasker', nodes[i])[mask]();
+            for (var i = 0; i < nodes.length; i++)
+            {
+                Container.get('InputMasker', nodes[i])[mask]();
+            }
         }
-    }
 
-    /**
-     * Loop and unbind masks to DOM LIST
-     *
-     * @access private
-     */
-    InputMasks.prototype._loopUnBind = function(nodes)
-    {
-        for (var i = 0; i < nodes.length; i++)
+        /**
+         * Loop and unbind masks to DOM LIST
+         *
+         * @access private
+         */
+        _loopUnBind(nodes)
         {
-            Container.get('InputMasker', nodes[i]).remove();
+            for (var i = 0; i < nodes.length; i++)
+            {
+                Container.get('InputMasker', nodes[i]).remove();
+            }
         }
     }
 
@@ -16689,13 +16769,6 @@ function complete(response)
 
 }());
 
-/**
- * Message closers
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -16706,82 +16779,92 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Message closers
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var MessageClosers = function()
+    class MessageClosers
     {
-        this._triggers = Helper.$All('.js-close-msg');
-
-        if (!Helper.empty(this._triggers))
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+        constructor()
         {
-            this._bind();
+            this._triggers = Helper.$All('.js-close-msg');
+
+            if (!Helper.empty(this._triggers))
+            {
+                this._bind();
+            }
+
+            return this;
         }
 
-        return this;
-    };
-
-    /**
-     * Module destructor - removes event listeners
-     *
-     * @constructor
-     * @access public
-     */
-    MessageClosers.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._triggers = [];
-    }
-
-    /**
-     * Event binder - Binds all events on button click
-     *
-     * @access private
-     */
-    MessageClosers.prototype._bind = function()
-    {
-        Helper.addEventListener(this._triggers, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event ubinder - Binds all event handlers on button click
-     *
-     * @access private
-     */
-    MessageClosers.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._triggers, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event handler - handles removing the message
-     *
-     * @param  event   e JavaScript click event
-     * @access private
-     */
-    MessageClosers.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-
-        e.preventDefault();
-
-        var toRemove = Helper.closest(this, '.msg');
-
-        if (Helper.hasClass(this, 'js-rmv-parent'))
+        /**
+         * Module destructor - removes event listeners
+         *
+         * @constructor
+         * @access public
+         */
+        destruct()
         {
-            toRemove = toRemove.parentNode;
+            this._unbind();
+
+            this._triggers = [];
         }
 
-        Helper.animate(toRemove, 'opacity', '1', '0', 300, 'ease');
-
-        setTimeout(function()
+        /**
+         * Event binder - Binds all events on button click
+         *
+         * @access private
+         */
+        _bind()
         {
-            Helper.removeFromDOM(toRemove);
+            Helper.addEventListener(this._triggers, 'click', this._eventHandler);
+        }
 
-        }, 300);
+        /**
+         * Event ubinder - Binds all event handlers on button click
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._triggers, 'click', this._eventHandler);
+        }
+
+        /**
+         * Event handler - handles removing the message
+         *
+         * @param  event   e JavaScript click event
+         * @access private
+         */
+        _eventHandler(e)
+        {
+            e = e || window.event;
+
+            e.preventDefault();
+
+            var toRemove = Helper.closest(this, '.msg');
+
+            if (Helper.hasClass(this, 'js-rmv-parent'))
+            {
+                toRemove = toRemove.parentNode;
+            }
+
+            Helper.animate(toRemove, 'opacity', '1', '0', 300, 'ease');
+
+            setTimeout(function()
+            {
+                Helper.removeFromDOM(toRemove);
+
+            }, 300);
+        }
     }
 
     // Load into Hubble DOM core
@@ -16789,13 +16872,6 @@ function complete(response)
 
 })();
 
-/**
- * Waypoints
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -16813,130 +16889,139 @@ function complete(response)
     var pageLoaded = false;
 
     /**
-     * Module constructor
+     * Waypoints
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var WayPoints = function()
+    class WayPoints
     {
-        // Load nodes
-        this._nodes = Helper.$All('.js-waypoint-trigger');
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
+        {    // Load nodes
+            this._nodes = Helper.$All('.js-waypoint-trigger');
 
-        // bind listeners
-        if (!Helper.empty(this._nodes))
+            // bind listeners
+            if (!Helper.empty(this._nodes))
+            {
+                for (var i = 0; i < this._nodes.length; i++)
+                {
+                    this._bind(this._nodes[i]);
+                }
+            }
+
+            // Invoke pageload
+            if (!pageLoaded)
+            {
+                this._invokePageLoad();
+            }
+
+            return this;
+        }
+
+        /**
+         * Module destructor
+         *
+         * @access public
+         */
+        destruct()
         {
+            // Unbind listeners
             for (var i = 0; i < this._nodes.length; i++)
             {
-                this._bind(this._nodes[i]);
+                this._unbind(this._nodes[i]);
             }
+
+            // Clear Nodes
+            this._nodes = [];
         }
 
-        // Invoke pageload
-        if (!pageLoaded)
+        /**
+         * Event binder
+         *
+         * @params trigger node
+         * @access private
+         */
+        _bind(trigger)
         {
-            this._invokePageLoad();
+            Helper.addEventListener(trigger, 'click', this._eventHandler);
         }
 
-        return this;
-    };
-
-    /**
-     * Module destructor
-     *
-     * @access public
-     */
-    WayPoints.prototype.destruct = function()
-    {
-        // Unbind listeners
-        for (var i = 0; i < this._nodes.length; i++)
+        /**
+         * Event unbinder
+         *
+         * @params trigger node
+         * @access private
+         */
+        _unbind(trigger)
         {
-            this._unbind(this._nodes[i]);
+            Helper.removeEventListener(trigger, 'click', this._eventHandler);
         }
 
-        // Clear Nodes
-        this._nodes = [];
-    }
-
-    /**
-     * Event binder
-     *
-     * @params trigger node
-     * @access private
-     */
-    WayPoints.prototype._bind = function(trigger)
-    {
-        Helper.addEventListener(trigger, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event unbinder
-     *
-     * @params trigger node
-     * @access private
-     */
-    WayPoints.prototype._unbind = function(trigger)
-    {
-        Helper.removeEventListener(trigger, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event handler
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    WayPoints.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-        e.preventDefault();
-        var trigger = this;
-        var waypoint = trigger.dataset.waypointTarget;
-        var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
-
-        if (Helper.nodeExists(targetEl))
+        /**
+         * Event handler
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _eventHandler(e)
         {
-            var id = waypoint;
-            var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
-            var easing = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
-            targetEl.id = id;
-
-            var options = {
-                easing: easing,
-                speed: speed,
-            };
-
-            Container.get('SmoothScroll').animateScroll('#' + id, trigger, options);
-        }
-    }
-
-    /**
-     * Scroll to a element with id when the page loads
-     *
-     * @access private
-     */
-    WayPoints.prototype._invokePageLoad = function()
-    {
-        var url = Helper.parse_url(window.location.href);
-
-        if (Helper.isset(url['fragment']) && url['fragment'] !== '')
-        {
-            var waypoint = Helper.trim(url['fragment'], '/');
-            var options = {
-                speed: 100,
-                easing: 'Linear'
-            };
+            e = e || window.event;
+            e.preventDefault();
+            var trigger = this;
+            var waypoint = trigger.dataset.waypointTarget;
             var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
             if (Helper.nodeExists(targetEl))
             {
                 var id = waypoint;
+                var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
+                var easing = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
                 targetEl.id = id;
-                Container.get('SmoothScroll').animateScroll('#' + id, null, options);
+
+                var options = {
+                    easing: easing,
+                    speed: speed,
+                };
+
+                Container.get('SmoothScroll').animateScroll('#' + id, trigger, options);
             }
         }
 
-        pageLoaded = true;
+        /**
+         * Scroll to a element with id when the page loads
+         *
+         * @access private
+         */
+        _invokePageLoad()
+        {
+            var url = Helper.parse_url(window.location.href);
+
+            if (Helper.isset(url['fragment']) && url['fragment'] !== '')
+            {
+                var waypoint = Helper.trim(url['fragment'], '/');
+                var options = {
+                    speed: 100,
+                    easing: 'Linear'
+                };
+                var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
+
+                if (Helper.nodeExists(targetEl))
+                {
+                    var id = waypoint;
+                    targetEl.id = id;
+                    Container.get('SmoothScroll').animateScroll('#' + id, null, options);
+                }
+            }
+
+            pageLoaded = true;
+        }
     }
 
 
@@ -16945,13 +17030,6 @@ function complete(response)
 
 }());
 
-/**
- * Adds classes to inputs
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -16962,142 +17040,152 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Adds classes to inputs
      *
-     * @access public
-     * @constructor
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var Inputs = function()
+    class Inputs
     {
-        this._inputs = Helper.$All('.form-field input, .form-field select, .form-field textarea');
-        this._labels = Helper.$All('.form-field label');
-
-        if (!Helper.empty(this._inputs))
+        /**
+         * Module constructor
+         *
+         * @access public
+         * @constructor
+         */
+    	constructor()
         {
-            this._bind();
-        }
+            this._inputs = Helper.$All('.form-field input, .form-field select, .form-field textarea');
+            this._labels = Helper.$All('.form-field label');
 
-        return this;
-    };
-
-    /**
-     * Module destructor - removes event listeners
-     *
-     * @access public
-     */
-    Inputs.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._inputs = [];
-    }
-
-    /**
-     * Event binder
-     *
-     * @access private
-     */
-    Inputs.prototype._bind = function()
-    {
-        Helper.addEventListener(this._labels, 'click', this._onLabelClick);
-        Helper.addEventListener(this._inputs, 'click', this._eventHandler);
-        Helper.addEventListener(this._inputs, 'focus', this._eventHandler);
-        Helper.addEventListener(this._inputs, 'blur', this._eventHandler);
-        Helper.addEventListener(this._inputs, 'change', this._eventHandler);
-        Helper.addEventListener(this._inputs, 'input', this._eventHandler);
-        Helper.addEventListener(this._inputs, 'hover', this._eventHandler);
-    }
-
-    /**
-     * Event ubinder
-     *
-     * @access private
-     */
-    Inputs.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._labels, 'click', this._onLabelClick);
-        Helper.removeEventListener(this._inputs, 'click', this._eventHandler);
-        Helper.removeEventListener(this._inputs, 'focus', this._eventHandler);
-        Helper.removeEventListener(this._inputs, 'blur', this._eventHandler);
-        Helper.removeEventListener(this._inputs, 'change', this._eventHandler);
-        Helper.removeEventListener(this._inputs, 'input', this._eventHandler);
-        Helper.removeEventListener(this._inputs, 'hover', this._eventHandler);
-    }
-
-    /**
-     * Event handler
-     *
-     * @access private
-     * @params event|null e Browser click event
-     */
-    Inputs.prototype._onLabelClick = function(e)
-    {
-        e = e || window.event;
-
-        var input = Helper.$('input', this.parentNode);
-
-        if (Helper.nodeExists(input))
-        {
-            input.focus();
-
-            return;
-        }
-
-        var input = Helper.$('select', this.parentNode);
-
-        if (Helper.nodeExists(input))
-        {
-            input.focus();
-
-            return;
-        }
-
-        var input = Helper.$('textarea', this.parentNode);
-
-        if (Helper.nodeExists(input))
-        {
-            input.focus();
-
-            return;
-        }
-    }
-
-    /**
-     * Event handler
-     *
-     * @access private
-     * @params event|null e Browser click event
-     */
-    Inputs.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-
-        if (e.type === 'click')
-        {
-            this.focus();
-        }
-        else if (e.type === 'focus')
-        {
-            Helper.addClass(this.parentNode, 'focus');
-        }
-        else if (e.type === 'blur')
-        {
-            Helper.removeClass(this.parentNode, 'focus');
-        }
-
-        if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
-        {
-            var _value = Helper.getInputValue(this);
-
-            if (_value === '')
+            if (!Helper.empty(this._inputs))
             {
-                Helper.removeClass(this.parentNode, 'not-empty');
-                Helper.addClass(this.parentNode, 'empty');
+                this._bind();
             }
-            else
+
+            return this;
+        }
+
+        /**
+         * Module destructor - removes event listeners
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
+
+            this._inputs = [];
+        }
+
+        /**
+         * Event binder
+         *
+         * @access private
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._labels, 'click', this._onLabelClick);
+            Helper.addEventListener(this._inputs, 'click', this._eventHandler);
+            Helper.addEventListener(this._inputs, 'focus', this._eventHandler);
+            Helper.addEventListener(this._inputs, 'blur', this._eventHandler);
+            Helper.addEventListener(this._inputs, 'change', this._eventHandler);
+            Helper.addEventListener(this._inputs, 'input', this._eventHandler);
+            Helper.addEventListener(this._inputs, 'hover', this._eventHandler);
+        }
+
+        /**
+         * Event ubinder
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._labels, 'click', this._onLabelClick);
+            Helper.removeEventListener(this._inputs, 'click', this._eventHandler);
+            Helper.removeEventListener(this._inputs, 'focus', this._eventHandler);
+            Helper.removeEventListener(this._inputs, 'blur', this._eventHandler);
+            Helper.removeEventListener(this._inputs, 'change', this._eventHandler);
+            Helper.removeEventListener(this._inputs, 'input', this._eventHandler);
+            Helper.removeEventListener(this._inputs, 'hover', this._eventHandler);
+        }
+
+        /**
+         * Event handler
+         *
+         * @access private
+         * @params event|null e Browser click event
+         */
+        _onLabelClick(e)
+        {
+            e = e || window.event;
+
+            var input = Helper.$('input', this.parentNode);
+
+            if (Helper.nodeExists(input))
             {
-                Helper.removeClass(this.parentNode, 'empty');
-                Helper.addClass(this.parentNode, 'not-empty');
+                input.focus();
+
+                return;
+            }
+
+            var input = Helper.$('select', this.parentNode);
+
+            if (Helper.nodeExists(input))
+            {
+                input.focus();
+
+                return;
+            }
+
+            var input = Helper.$('textarea', this.parentNode);
+
+            if (Helper.nodeExists(input))
+            {
+                input.focus();
+
+                return;
+            }
+        }
+
+        /**
+         * Event handler
+         *
+         * @access private
+         * @params event|null e Browser click event
+         */
+        _eventHandler(e)
+        {
+            e = e || window.event;
+
+            if (e.type === 'click')
+            {
+                this.focus();
+            }
+            else if (e.type === 'focus')
+            {
+                Helper.addClass(this.parentNode, 'focus');
+            }
+            else if (e.type === 'blur')
+            {
+                Helper.removeClass(this.parentNode, 'focus');
+            }
+
+            if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
+            {
+                var _value = Helper.getInputValue(this);
+
+                if (_value === '')
+                {
+                    Helper.removeClass(this.parentNode, 'not-empty');
+                    Helper.addClass(this.parentNode, 'empty');
+                }
+                else
+                {
+                    Helper.removeClass(this.parentNode, 'empty');
+                    Helper.addClass(this.parentNode, 'not-empty');
+                }
             }
         }
     }
@@ -17107,13 +17195,6 @@ function complete(response)
 
 })();
 
-/**
- * File inputs
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -17124,72 +17205,82 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * File inputs
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var FileInput = function()
+    class FileInput
     {
-        this._nodes = Helper.$All('.js-file-input');
-
-        this._bind();
-
-        return this;
-    }
-
-    /**
-     * Module destructor remove event handlers
-     *
-     * @access public
-     */
-    FileInput.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._nodes = [];
-    }
-
-    /**
-     * Bind DOM listeners
-     *
-     * @access public
-     */
-    FileInput.prototype._bind = function()
-    {
-        Helper.addEventListener(this._nodes, 'change', this._eventHandler);
-    }
-
-    /**
-     * Unbind DOM listeners
-     *
-     * @access public
-     */
-    FileInput.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._nodes, 'change', this._eventHandler);
-    }
-
-    /**
-     * Handle the change event
-     *
-     * @access private
-     */
-    FileInput.prototype._eventHandler = function()
-    {
-        var fileInput = this;
-        var wrap = Helper.closest(fileInput, '.js-file-field');
-        var showInput = Helper.$('.js-file-text', wrap);
-        var fullPath = fileInput.value;
-        if (fullPath)
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
         {
-            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            var filename = fullPath.substring(startIndex);
-            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
+            this._nodes = Helper.$All('.js-file-input');
+
+            this._bind();
+
+            return this;
+        }
+
+        /**
+         * Module destructor remove event handlers
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
+
+            this._nodes = [];
+        }
+
+        /**
+         * Bind DOM listeners
+         *
+         * @access public
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._nodes, 'change', this._eventHandler);
+        }
+
+        /**
+         * Unbind DOM listeners
+         *
+         * @access public
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._nodes, 'change', this._eventHandler);
+        }
+
+        /**
+         * Handle the change event
+         *
+         * @access private
+         */
+        _eventHandler()
+        {
+            var fileInput = this;
+            var wrap = Helper.closest(fileInput, '.js-file-field');
+            var showInput = Helper.$('.js-file-text', wrap);
+            var fullPath = fileInput.value;
+            if (fullPath)
             {
-                filename = filename.substring(1);
+                var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+                var filename = fullPath.substring(startIndex);
+                if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
+                {
+                    filename = filename.substring(1);
+                }
+                showInput.value = filename;
             }
-            showInput.value = filename;
         }
     }
 
@@ -17198,13 +17289,6 @@ function complete(response)
 
 }());
 
-/**
- * Chip inputs
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -17215,243 +17299,253 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Chip inputs
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var ChipInputs = function()
+    class ChipInputs
     {
-        this._wrappers = Helper.$All('.js-chips-input');
-
-        this._bind();
-
-        return this;
-    }
-
-    /**
-     * Module destructor remove event handlers
-     *
-     * @access public
-     */
-    ChipInputs.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._wrappers = [];
-    }
-
-    /**
-     * Bind DOM listeners
-     *
-     * @access private
-     */
-    ChipInputs.prototype._bind = function()
-    {
-        for (var i = 0; i < this._wrappers.length; i++)
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
         {
-            this._initInput(this._wrappers[i]);
+            this._wrappers = Helper.$All('.js-chips-input');
+
+            this._bind();
+
+            return this;
         }
-    }
 
-    /**
-     * Unbind DOM listeners
-     *
-     * @access private
-     */
-    ChipInputs.prototype._unbind = function()
-    {
-        for (var i = 0; i < this._wrappers.length; i++)
+        /**
+         * Module destructor remove event handlers
+         *
+         * @access public
+         */
+        destruct()
         {
-            this._destroy(this._wrappers[i]);
+            this._unbind();
+
+            this._wrappers = [];
         }
-    }
 
-    /**
-     * Init a chips input
-     *
-     * @access private
-     * @param  node    _wrapper
-     */
-    ChipInputs.prototype._initInput = function(_wrapper)
-    {
-        var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
-        var _input = Helper.$('.js-chip-input', _wrapper);
-
-        Helper.addEventListener(_removeBtns, 'click', this._removeChip);
-
-        Helper.addEventListener(_input, 'keyup', this._onKeyUp);
-
-        if (Helper.closest(_input, 'form'))
+        /**
+         * Bind DOM listeners
+         *
+         * @access private
+         */
+        _bind()
         {
-            Helper.addEventListener(_input, 'keydown', this._preventSubmit);
-        }
-    }
-
-    /**
-     * Destroy chip listeners
-     *
-     * @access private
-     * @param  node    _wrapper
-     */
-    ChipInputs.prototype._destroy = function(_wrapper)
-    {
-        var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
-        var _input = Helper.$('.js-chip-input', _wrapper);
-
-        Helper.removeEventListener(_removeBtns, 'click', this._removeChip);
-
-        Helper.removeEventListener(_input, 'keyup', this._onKeyUp);
-
-        if (Helper.closest(_input, 'form'))
-        {
-            Helper.removeEventListener(_input, 'keydown', this._preventSubmit);
-        }
-    }
-
-    /**
-     * Prevent the form from submitting if it's part of a form
-     *
-     * @access private
-     * @param  event|null e
-     */
-    ChipInputs.prototype._preventSubmit = function(e)
-    {
-        e = e || window.event;
-
-        var _key = e.code || e.key || e.keyCode || e.charCode;
-
-        if (_key == 'Enter' || _key === 13)
-        {
-            e.preventDefault();
-
-            return false;
-        }
-        // Backspace
-        else if (_key == 'Delete' || _key == 'Backspace' || _key == 8 || _key == 46)
-        {
-            if (this.value === '')
+            for (var i = 0; i < this._wrappers.length; i++)
             {
+                this._initInput(this._wrappers[i]);
+            }
+        }
+
+        /**
+         * Unbind DOM listeners
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            for (var i = 0; i < this._wrappers.length; i++)
+            {
+                this._destroy(this._wrappers[i]);
+            }
+        }
+
+        /**
+         * Init a chips input
+         *
+         * @access private
+         * @param  node    _wrapper
+         */
+        _initInput(_wrapper)
+        {
+            var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
+            var _input = Helper.$('.js-chip-input', _wrapper);
+
+            Helper.addEventListener(_removeBtns, 'click', this._removeChip);
+
+            Helper.addEventListener(_input, 'keyup', this._onKeyUp);
+
+            if (Helper.closest(_input, 'form'))
+            {
+                Helper.addEventListener(_input, 'keydown', this._preventSubmit);
+            }
+        }
+
+        /**
+         * Destroy chip listeners
+         *
+         * @access private
+         * @param  node    _wrapper
+         */
+        _destroy(_wrapper)
+        {
+            var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
+            var _input = Helper.$('.js-chip-input', _wrapper);
+
+            Helper.removeEventListener(_removeBtns, 'click', this._removeChip);
+
+            Helper.removeEventListener(_input, 'keyup', this._onKeyUp);
+
+            if (Helper.closest(_input, 'form'))
+            {
+                Helper.removeEventListener(_input, 'keydown', this._preventSubmit);
+            }
+        }
+
+        /**
+         * Prevent the form from submitting if it's part of a form
+         *
+         * @access private
+         * @param  event|null e
+         */
+        _preventSubmit(e)
+        {
+            e = e || window.event;
+
+            var _key = e.code || e.key || e.keyCode || e.charCode;
+
+            if (_key == 'Enter' || _key === 13)
+            {
+                e.preventDefault();
+
+                return false;
+            }
+            // Backspace
+            else if (_key == 'Delete' || _key == 'Backspace' || _key == 8 || _key == 46)
+            {
+                if (this.value === '')
+                {
+                    var _wrapper = Helper.closest(this, '.js-chips-input');
+
+                    Container.ChipInputs()._removeLastChip(_wrapper);
+                }
+            }
+        }
+
+        /**
+         * Handle pressing enter to insert the chip
+         *
+         * @access private
+         * @param  event|null e
+         */
+        _onKeyUp(e)
+        {
+            e = e || window.event;
+
+            var _key = e.code || e.key || e.keyCode || e.charCode;
+
+            // Enter
+            if (_key == 'Enter' || _key === 13)
+            {
+                var _this = Container.ChipInputs();
+
                 var _wrapper = Helper.closest(this, '.js-chips-input');
 
-                Container.ChipInputs()._removeLastChip(_wrapper);
+                var _value = Helper.getInputValue(this).trim();
+
+                if (!Helper.in_array(_value, _this._getChipsValues(_wrapper)) && _value !== '')
+                {
+                    _this.addChip(_value, _wrapper);
+
+                    this.value = '';
+                }
             }
         }
-    }
 
-    /**
-     * Handle pressing enter to insert the chip
-     *
-     * @access private
-     * @param  event|null e
-     */
-    ChipInputs.prototype._onKeyUp = function(e)
-    {
-        e = e || window.event;
-
-        var _key = e.code || e.key || e.keyCode || e.charCode;
-
-        // Enter
-        if (_key == 'Enter' || _key === 13)
+        /**
+         * Remove last chip
+         *
+         * @access private
+         * @param  node    _wrapper
+         */
+        _removeLastChip(_wrapper)
         {
-            var _this = Container.ChipInputs();
+            var _chips = Helper.$All('.chip', _wrapper);
 
-            var _wrapper = Helper.closest(this, '.js-chips-input');
-
-            var _value = Helper.getInputValue(this).trim();
-
-            if (!Helper.in_array(_value, _this._getChipsValues(_wrapper)) && _value !== '')
+            if (!Helper.empty(_chips))
             {
-                _this.addChip(_value, _wrapper);
-
-                this.value = '';
+                Helper.removeFromDOM(_chips.pop());
             }
         }
-    }
 
-    /**
-     * Remove last chip
-     *
-     * @access private
-     * @param  node    _wrapper
-     */
-    ChipInputs.prototype._removeLastChip = function(_wrapper)
-    {
-        var _chips = Helper.$All('.chip', _wrapper);
-
-        if (!Helper.empty(_chips))
+        /**
+         * Insert new chip
+         *
+         * @access public
+         * @param  string      _value
+         * @param  node        _wrapper
+         * @param  string|bool _icon
+         */
+        addChip(_value, _wrapper, _icon)
         {
-            Helper.removeFromDOM(_chips.pop());
-        }
-    }
+            _icon = typeof _icon === 'undefined' ? false : _icon;
+            var _name = _wrapper.dataset.inputName;
+            var _chip = document.createElement('span');
+            var _children = Helper.firstChildren(_wrapper);
+            var _classes = _wrapper.dataset.chipClass;
+            var _iconStr = '';
 
-    /**
-     * Insert new chip
-     *
-     * @access public
-     * @param  string      _value
-     * @param  node        _wrapper
-     * @param  string|bool _icon
-     */
-    ChipInputs.prototype.addChip = function(_value, _wrapper, _icon)
-    {
-        _icon = typeof _icon === 'undefined' ? false : _icon;
-        var _name = _wrapper.dataset.inputName;
-        var _chip = document.createElement('span');
-        var _children = Helper.firstChildren(_wrapper);
-        var _classes = _wrapper.dataset.chipClass;
-        var _iconStr = '';
+            if (_classes)
+            {
+                _chip.className += ' ' + _classes;
+            }
 
-        if (_classes)
-        {
-            _chip.className += ' ' + _classes;
+            if (_icon)
+            {
+                _iconStr = '<span class="chip-icon"><span class="glyph-icon glyph-icon-' + _iconclass + '"></span></span>';
+            }
+
+            _chip.className = 'chip';
+            _chip.innerHTML = _iconStr + '<span class="chip-text">' + _value + '</span><span class="remove-icon"></span><input type="hidden" value="' + _value + '" name="' + _name + '">';
+
+            _wrapper.insertBefore(_chip, _children.pop());
+
+            Helper.addEventListener(_chip.querySelector('.remove-icon'), 'click', this._removeChip);
         }
 
-        if (_icon)
+        /**
+         * Remove an existing chip
+         *
+         * @access private
+         * @param  event|null e
+         */
+        _removeChip(e)
         {
-            _iconStr = '<span class="chip-icon"><span class="glyph-icon glyph-icon-' + _iconclass + '"></span></span>';
+            e = e || window.event;
+
+            Helper.removeFromDOM(Helper.closest(this, '.chip'));
         }
 
-        _chip.className = 'chip';
-        _chip.innerHTML = _iconStr + '<span class="chip-text">' + _value + '</span><span class="remove-icon"></span><input type="hidden" value="' + _value + '" name="' + _name + '">';
-
-        _wrapper.insertBefore(_chip, _children.pop());
-
-        Helper.addEventListener(_chip.querySelector('.remove-icon'), 'click', this._removeChip);
-    }
-
-    /**
-     * Remove an existing chip
-     *
-     * @access private
-     * @param  event|null e
-     */
-    ChipInputs.prototype._removeChip = function(e)
-    {
-        e = e || window.event;
-
-        Helper.removeFromDOM(Helper.closest(this, '.chip'));
-    }
-
-    /**
-     * Get all values from chip input
-     *
-     * @access private
-     * @param  node    _wrapper
-     * @return array
-     */
-    ChipInputs.prototype._getChipsValues = function(_wrapper)
-    {
-        var _result = [];
-
-        var _chips = Helper.$All('.chip input', _wrapper);
-
-        for (var i = 0; i < _chips.length; i++)
+        /**
+         * Get all values from chip input
+         *
+         * @access private
+         * @param  node    _wrapper
+         * @return array
+         */
+        _getChipsValues(_wrapper)
         {
-            _result.push(Helper.getInputValue(_chips[i]));
-        }
+            var _result = [];
 
-        return _result;
+            var _chips = Helper.$All('.chip input', _wrapper);
+
+            for (var i = 0; i < _chips.length; i++)
+            {
+                _result.push(Helper.getInputValue(_chips[i]));
+            }
+
+            return _result;
+        }
     }
 
     // Load into Hubble DOM core
@@ -17459,13 +17553,6 @@ function complete(response)
 
 }());
 
-/**
- * Chip suggestions.
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -17476,118 +17563,120 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Chip suggestions.
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var ChipSuggestions = function()
+    class ChipSuggestions
     {
-        this._chips = Helper.$All('.js-chip-suggestions .chip');
-
-        this._bind();
-
-        return this;
-    }
-
-    /**
-     * Module destructor remove event handlers
-     *
-     * @access public
-     */
-    ChipSuggestions.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._chips = [];
-    }
-
-    /**
-     * Bind DOM listeners
-     *
-     * @access private
-     */
-    ChipSuggestions.prototype._bind = function()
-    {
-        Helper.addEventListener(this._chips, 'click', this._clickHandler);
-    }
-
-    /**
-     * Unbind DOM listeners
-     *
-     * @access private
-     */
-    ChipSuggestions.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._chips, 'click', this._clickHandler);
-    }
-
-    /**
-     * Chip click handler
-     *
-     * @access private
-     * @param  event|null e
-     */
-    ChipSuggestions.prototype._clickHandler = function(e)
-    {
-        e = e || window.event;
-
-        var _wrapper = Helper.closest(this, '.js-chip-suggestions');
-        var _id = _wrapper.dataset.inputTarget;
-        var _input = Helper.$('#' + _id);
-        var _text = this.innerText.trim();
-
-        if (!_input || !Helper.nodeExists(_input))
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
         {
-            throw new Error('Target node does not exist.');
+            this._chips = Helper.$All('.js-chip-suggestions .chip');
 
-            return false;
+            this._bind();
+
+            return this;
         }
 
-        // Chips input
-        if (Helper.hasClass(_input, 'js-chips-input'))
+        /**
+         * Module destructor remove event handlers
+         *
+         * @access public
+         */
+        destruct()
         {
-            Container.ChipInputs().addChip(_text, _input);
+            this._unbind();
+
+            this._chips = [];
+        }
+
+        /**
+         * Bind DOM listeners
+         *
+         * @access private
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._chips, 'click', this._clickHandler);
+        }
+
+        /**
+         * Unbind DOM listeners
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._chips, 'click', this._clickHandler);
+        }
+
+        /**
+         * Chip click handler
+         *
+         * @access private
+         * @param  event|null e
+         */
+        _clickHandler(e)
+        {
+            e = e || window.event;
+
+            var _wrapper = Helper.closest(this, '.js-chip-suggestions');
+            var _id = _wrapper.dataset.inputTarget;
+            var _input = Helper.$('#' + _id);
+            var _text = this.innerText.trim();
+
+            if (!_input || !Helper.nodeExists(_input))
+            {
+                throw new Error('Target node does not exist.');
+
+                return false;
+            }
+
+            // Chips input
+            if (Helper.hasClass(_input, 'js-chips-input'))
+            {
+                Container.ChipInputs().addChip(_text, _input);
+
+                Helper.removeFromDOM(this);
+
+                return;
+            }
+
+
+            var _chip = document.createElement('span');
+            var _classes = _wrapper.dataset.chipClass;
+            var _space = '';
+            _chip.className = 'chip';
+
+            if (_classes)
+            {
+                _chip.className += _classes;
+            }
+
+            if (_input.value !== '')
+            {
+                _space = ' ';
+            }
+
+            _input.value += _space + _text;
 
             Helper.removeFromDOM(this);
-
-            return;
         }
-
-
-        var _chip = document.createElement('span');
-        var _classes = _wrapper.dataset.chipClass;
-        var _space = '';
-        _chip.className = 'chip';
-
-        if (_classes)
-        {
-            _chip.className += _classes;
-        }
-
-        if (_input.value !== '')
-        {
-            _space = ' ';
-        }
-
-        _input.value += _space + _text;
-
-        Helper.removeFromDOM(this);
     }
 
     // Load into Hubble DOM core
     Container.get('Hubble').dom().register('ChipSuggestions', ChipSuggestions);
 
-
 }());
 
-/**
- * Choice chips
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -17598,76 +17687,88 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Choice chips
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var ChoiceChips = function()
+    class ChoiceChips
     {
-        this._chips = Helper.$All('.js-choice-chips .chip');
 
-        this._bind();
 
-        return this;
-    }
-
-    /**
-     * Module destructor remove event handlers
-     *
-     * @access public
-     */
-    ChoiceChips.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._chips = [];
-    }
-
-    /**
-     * Bind DOM listeners
-     *
-     * @access private
-     */
-    ChoiceChips.prototype._bind = function()
-    {
-        Helper.addEventListener(this._chips, 'click', this._clickHandler);
-    }
-
-    /**
-     * Unbind DOM listeners
-     *
-     * @access private
-     */
-    ChoiceChips.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._chips, 'click', this._clickHandler);
-    }
-
-    /**
-     * Handle click event on chip
-     *
-     * @access private
-     * @param  event|null e
-     */
-    ChoiceChips.prototype._clickHandler = function(e)
-    {
-        e = e || window.event;
-
-        var _wrapper = Helper.closest(this, '.js-choice-chips');
-        var _input = Helper.$('.js-choice-input', _wrapper);
-
-        if (!Helper.hasClass(this, 'selected'))
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
         {
-            Helper.removeClass(Helper.$('.chip.selected', _wrapper), 'selected');
+            this._chips = Helper.$All('.js-choice-chips .chip');
 
-            Helper.addClass(this, 'selected');
+            this._bind();
 
-            if (_input)
+            return this;
+        }
+
+        /**
+         * Module destructor remove event handlers
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
+
+            this._chips = [];
+        }
+
+        /**
+         * Bind DOM listeners
+         *
+         * @access private
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._chips, 'click', this._clickHandler);
+        }
+
+        /**
+         * Unbind DOM listeners
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._chips, 'click', this._clickHandler);
+        }
+
+        /**
+         * Handle click event on chip
+         *
+         * @access private
+         * @param  event|null e
+         */
+        _clickHandler(e)
+        {
+            e = e || window.event;
+
+            var _wrapper = Helper.closest(this, '.js-choice-chips');
+            var _input = Helper.$('.js-choice-input', _wrapper);
+
+            if (!Helper.hasClass(this, 'selected'))
             {
-                _input.value = this.dataset.value;
+                Helper.removeClass(Helper.$('.chip.selected', _wrapper), 'selected');
 
-                Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.hasClass(this, 'selected')]);
+                Helper.addClass(this, 'selected');
+
+                if (_input)
+                {
+                    _input.value = this.dataset.value;
+
+                    Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.hasClass(this, 'selected')]);
+                }
             }
         }
     }
@@ -17677,13 +17778,6 @@ function complete(response)
 
 }());
 
-/**
- * Filter chips
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -17694,65 +17788,75 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Filter chips
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var FilterChips = function()
+    class FilterChips
     {
-        this._chips = Helper.$All('.js-filter-chips .chip');
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
+        {
+            this._chips = Helper.$All('.js-filter-chips .chip');
 
-        this._bind();
+            this._bind();
 
-        return this;
-    }
+            return this;
+        }
 
-    /**
-     * Module destructor remove event handlers
-     *
-     * @access public
-     */
-    FilterChips.prototype.destruct = function()
-    {
-        this._unbind();
+        /**
+         * Module destructor remove event handlers
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
 
-        this._chips = [];
-    }
+            this._chips = [];
+        }
 
-    /**
-     * Bind DOM listeners
-     *
-     * @access private
-     */
-    FilterChips.prototype._bind = function()
-    {
-        Helper.addEventListener(this._chips, 'click', this._clickHandler);
-    }
+        /**
+         * Bind DOM listeners
+         *
+         * @access private
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._chips, 'click', this._clickHandler);
+        }
 
-    /**
-     * Unbind DOM listeners
-     *
-     * @access private
-     */
-    FilterChips.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._chips, 'click', this._clickHandler);
-    }
+        /**
+         * Unbind DOM listeners
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._chips, 'click', this._clickHandler);
+        }
 
-    /**
-     * Handle click event on chip
-     *
-     * @access private
-     * @param  event|null e
-     */
-    FilterChips.prototype._clickHandler = function(e)
-    {
-        e = e || window.event;
+        /**
+         * Handle click event on chip
+         *
+         * @access private
+         * @param  event|null e
+         */
+        _clickHandler(e)
+        {
+            e = e || window.event;
 
-        Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.hasClass(this, 'checked')]);
+            Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.hasClass(this, 'checked')]);
 
-        Helper.toggleClass(this, 'checked');
+            Helper.toggleClass(this, 'checked');
+        }
     }
 
     // Load into Hubble DOM core
@@ -17760,13 +17864,6 @@ function complete(response)
 
 }());
 
-/**
- * Clicking one element triggers a lick on another
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -17777,81 +17874,91 @@ function complete(response)
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Clicking one element triggers a lick on another
      *
-     * @access public
-     * @constructor
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var ClickTriggers = function()
+    class ClickTriggers
     {
         /**
-         * List of click-triggers
-         * 
-         * @var array
+         * Module constructor
+         *
+         * @access public
+         * @constructor
          */
-        this._containers = Helper.$All('.js-click-trigger');
-
-        if (!Helper.empty(this._containers))
+    	constructor()
         {
-            this._bind();
+            /**
+             * List of click-triggers
+             * 
+             * @var array
+             */
+            this._containers = Helper.$All('.js-click-trigger');
+
+            if (!Helper.empty(this._containers))
+            {
+                this._bind();
+            }
+
+            return this;
         }
 
-        return this;
-    };
-
-    /**
-     * Module destructor - removes event listeners
-     *
-     * @access public
-     */
-    ClickTriggers.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._containers = [];
-    }
-
-    /**
-     * Event binder - Binds all events on button click
-     *
-     * @access private
-     */
-    ClickTriggers.prototype._bind = function()
-    {
-        Helper.addEventListener(this._containers, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event ubinder - Binds all event handlers on button click
-     *
-     * @access private
-     */
-    ClickTriggers.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._containers, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event handler
-     *
-     * @access private
-     * @params event|null e Browser click event
-     */
-    ClickTriggers.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-
-        if (Helper.isNodeType(this, 'a'))
+        /**
+         * Module destructor - removes event listeners
+         *
+         * @access public
+         */
+        destruct()
         {
-            e.preventDefault();
+            this._unbind();
+
+            this._containers = [];
         }
 
-        var clicked = this;
-        var targetEl = Helper.$(clicked.dataset.clickTarget);
-
-        if (Helper.nodeExists(targetEl))
+        /**
+         * Event binder - Binds all events on button click
+         *
+         * @access private
+         */
+        _bind()
         {
-            Helper.triggerEvent(targetEl, 'click');
+            Helper.addEventListener(this._containers, 'click', this._eventHandler);
+        }
+
+        /**
+         * Event ubinder - Binds all event handlers on button click
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._containers, 'click', this._eventHandler);
+        }
+
+        /**
+         * Event handler
+         *
+         * @access private
+         * @params event|null e Browser click event
+         */
+        _eventHandler(e)
+        {
+            e = e || window.event;
+
+            if (Helper.isNodeType(this, 'a'))
+            {
+                e.preventDefault();
+            }
+
+            var clicked = this;
+            var targetEl = Helper.$(clicked.dataset.clickTarget);
+
+            if (Helper.nodeExists(targetEl))
+            {
+                Helper.triggerEvent(targetEl, 'click');
+            }
         }
     }
 
@@ -17860,10 +17967,6 @@ function complete(response)
 
 })();
 
-/**
- * Image zoom hover
- * 
- */
 (function()
 {
     /**
@@ -17873,119 +17976,127 @@ function complete(response)
      */
     var Helper = Hubble.helper();
 
+    
     /**
-     * Module constructor
-     *
-     * @constructor
-     * @access public
+     * Image zoom hover
+     * 
      */
-    var ImageZoom = function()
+    class ImageZoom
     {
-        this._nodes = Helper.$All('.js-img-hover-zoom');
-
-        this._bind();
-
-        return this;
-    }
-
-    /**
-     * Module destructor remove event handlers
-     *
-     * @access public
-     */
-    ImageZoom.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._nodes = [];
-    }
-
-    /**
-     * Bind DOM listeners
-     *
-     * @access public
-     */
-    ImageZoom.prototype._bind = function()
-    {
-        for (var i = 0; i < this._nodes.length; i++)
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
         {
-            Helper.css(this._nodes[i], 'background-image', 'url(' + this._nodes[i].dataset.zoomSrc + ')');
+            this._nodes = Helper.$All('.js-img-hover-zoom');
 
-            Helper.addEventListener(this._nodes[i], 'mousemove', this._onHover);
+            this._bind();
 
-            Helper.$('img', this._nodes[i]).alt = '';
-
-            Helper.$('img', this._nodes[i]).title = '';
-        }
-    }
-
-    /**
-     * Unbind DOM listeners
-     *
-     * @access public
-     */
-    ImageZoom.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._nodes, 'mousemove', this._onHover);
-    }
-
-    /**
-     * On hover event
-     *
-     * @param  e event|null "mousemove" event
-     * @access private
-     */
-    ImageZoom.prototype._onHover = function(e)
-    {
-        e = e || window.event;
-
-        if (!e || !e.currentTarget)
-        {
-            return false;
+            return this;
         }
 
-        var _wrapper = e.currentTarget;
-        var _zoomSrc = Helper.parse_url(Helper.getStyle(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
-        var _dataZoomSrc = Helper.parse_url(_wrapper.dataset.zoomSrc);
+        /**
+         * Module destructor remove event handlers
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
 
-        if (_zoomSrc.path !== _dataZoomSrc.path)
-        {
-            Helper.css(_wrapper, 'background-image', 'url(' + _wrapper.dataset.zoomSrc + ')');
-        }
-
-        var offsetX = 0;
-        var offsetY = 0;
-        if (e.offsetX)
-        {
-            offsetX = e.offsetX;
-        }
-        else if (e.touches && e.touches[0] && e.touches[0].pageX)
-        {
-            offsetX = e.touches[0].pageX;
-        }
-        else
-        {
-            return false;
+            this._nodes = [];
         }
 
-        if (e.offsetY)
+        /**
+         * Bind DOM listeners
+         *
+         * @access public
+         */
+        _bind()
         {
-            offsetY = e.offsetY;
-        }
-        else if (e.touches && e.touches[0] && e.touches[0].pageY)
-        {
-            offsetY = e.touches[0].pageY;
-        }
-        else
-        {
-            return false;
+            for (var i = 0; i < this._nodes.length; i++)
+            {
+                Helper.css(this._nodes[i], 'background-image', 'url(' + this._nodes[i].dataset.zoomSrc + ')');
+
+                Helper.addEventListener(this._nodes[i], 'mousemove', this._onHover);
+
+                Helper.$('img', this._nodes[i]).alt = '';
+
+                Helper.$('img', this._nodes[i]).title = '';
+            }
         }
 
-        x = offsetX / _wrapper.offsetWidth * 100;
-        y = offsetY / _wrapper.offsetHeight * 100;
+        /**
+         * Unbind DOM listeners
+         *
+         * @access public
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._nodes, 'mousemove', this._onHover);
+        }
+
+        /**
+         * On hover event
+         *
+         * @param  e event|null "mousemove" event
+         * @access private
+         */
+        _onHover(e)
+        {
+            e = e || window.event;
+
+            if (!e || !e.currentTarget)
+            {
+                return false;
+            }
+
+            var _wrapper = e.currentTarget;
+            var _zoomSrc = Helper.parse_url(Helper.getStyle(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
+            var _dataZoomSrc = Helper.parse_url(_wrapper.dataset.zoomSrc);
+
+            if (_zoomSrc.path !== _dataZoomSrc.path)
+            {
+                Helper.css(_wrapper, 'background-image', 'url(' + _wrapper.dataset.zoomSrc + ')');
+            }
+
+            var offsetX = 0;
+            var offsetY = 0;
+            if (e.offsetX)
+            {
+                offsetX = e.offsetX;
+            }
+            else if (e.touches && e.touches[0] && e.touches[0].pageX)
+            {
+                offsetX = e.touches[0].pageX;
+            }
+            else
+            {
+                return false;
+            }
+
+            if (e.offsetY)
+            {
+                offsetY = e.offsetY;
+            }
+            else if (e.touches && e.touches[0] && e.touches[0].pageY)
+            {
+                offsetY = e.touches[0].pageY;
+            }
+            else
+            {
+                return false;
+            }
+
+            x = offsetX / _wrapper.offsetWidth * 100;
+            y = offsetY / _wrapper.offsetHeight * 100;
 
 
-        Helper.css(_wrapper, 'background-position', x + '% ' + y + '%');
+            Helper.css(_wrapper, 'background-position', x + '% ' + y + '%');
+        }
     }
 
     // Register as DOM Module and invoke

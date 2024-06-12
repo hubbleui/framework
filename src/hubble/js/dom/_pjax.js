@@ -70,64 +70,90 @@
      * @var obj
      * @source https://github.com/krasimir/chain
      */
-    var Chain = function()
-    {
-        var n = {},
-            t = null,
-            r = this,
-            e = {},
-            o = [],
-            i = [],
-            u = function(f, t)
-            {
-                return n[f] || (n[f] = []), n[f].push(t), e
-            },
-            p = function(t, r)
-            {
-                if (n[t])
-                    for (var o = 0; f = n[t][o]; o++) f(r, e)
-            },
-            l = function()
-            {
-                if (arguments.length > 0)
-                {
-                    o = [];
-                    for (var n = 0; r = arguments[n]; n++) o.push(r);
-                    var f = o.shift();
-                    if ("function" == typeof f) f(t, e);
-                    else if ("object" == typeof f && f.length > 0)
-                    {
-                        var r = f.shift();
-                        r.apply(r, f.concat([e.next]))
+    var Chain = function() {
+
+        var _listeners = {},
+            _resultOfPreviousFunc = null,
+            _self = this,
+            _api = {},
+            _funcs = [],
+            _errors = [];
+
+        var on = function(type, listener) {
+            if(!_listeners[type]) _listeners[type] = [];
+            _listeners[type].push(listener);
+            return _api;
+        }
+        var off = function(type, listener) {
+            if(_listeners[type]) {
+                var arr = [];
+                for(var i=0; f=_listeners[type][i]; i++) {
+                    if(f !== listener) {
+                        arr.push(f);
                     }
                 }
-                else p("done", t);
-                return e
-            },
-            a = function()
-            {
-                return arguments.length > 0 && (2 === arguments.length && "string" == typeof arguments[0] && "function" == typeof arguments[1] ? u.apply(self, arguments) : l.apply(self, arguments)), a
-            };
-        return e = {
-            on: u,
-            off: function(t, r)
-            {
-                if (n[t])
-                {
-                    for (var o = [], i = 0; f = n[t][i]; i++) f !== r && o.push(f);
-                    n[t] = o
-                }
-                return e
-            },
-            next: function(n)
-            {
-                t = n, l.apply(r, o)
-            },
-            error: function(n)
-            {
-                return void 0 !== n ? (i.push(n), e) : i
+                _listeners[type] = arr;
             }
-        }, a
+            return _api;
+        }
+        var dispatch = function(type, param) {
+            if(_listeners[type]) {
+                for(var i=0; f=_listeners[type][i]; i++) {
+                    f(param, _api);
+                }
+            }
+        }
+        var run = function() {
+            if(arguments.length > 0) {
+                _funcs = [];
+                for(var i=0; f=arguments[i]; i++) _funcs.push(f);
+                var element = _funcs.shift();
+                if(typeof element === 'function') {
+                    element(_resultOfPreviousFunc, _api);
+                } else if(typeof element === 'object' && element.length > 0) {
+                    var f = element.shift();
+                    f.apply(f, element.concat([_api.next]));
+                }
+                
+            } else {
+                dispatch("done", _resultOfPreviousFunc);
+            }
+            return _api;
+        }
+        var next = function(res) {
+            _resultOfPreviousFunc = res;
+            run.apply(_self, _funcs);
+        }
+        var error = function(err) {
+            if(typeof err != 'undefined') {
+                _errors.push(err);
+                return _api;
+            } else {
+                return _errors;
+            }       
+        }
+        var process = function() {
+            if(arguments.length > 0) {
+                // on method
+                if(arguments.length === 2 && typeof arguments[0] === 'string' && typeof arguments[1] === 'function') {
+                    on.apply(self, arguments);
+                // run method
+                } else {
+                    run.apply(self, arguments);
+                }
+            }
+            return process;
+        }
+
+        _api = {
+            on: on,
+            off: off,
+            next: next,
+            error: error
+        }
+        
+        return process;
+
     };
 
     /**

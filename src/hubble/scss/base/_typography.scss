@@ -152,16 +152,9 @@ dfn
 mark,
 .mark
 {
-    background: #ff0;
-    color: $black;
+    background: yellow;
+    color: var(--hb-black);
 }
-.darkmode mark,
-.darkmode .mark
-{
-    background: _lighter($body-bg-darkmode, 10);
-    color: _darker($body-color-darkmode, 10);
-}
-
 // Sub and Sup
 sub,
 .sub,
@@ -193,11 +186,6 @@ address,
     font-size:   $base-font-size;
     margin: 0 0 1rem 0;
 }
-.darkmode address,
-.darkmode .address
-{
-    color: $body-color-darkmode;
-}
 
 // Very basic code/pre
 code, pre
@@ -216,17 +204,17 @@ code, pre
 code
 {
     padding: .2rem .4rem;
-    color: #c7254e;
+    color: crimson;
 }
 pre
 {
     padding: 1.5rem 2rem;
     overflow: auto;
-    color: $black;
+    color: var(--hb-black);
 }
 pre > code
 {
-    color: $black;
+    color: var(--hb-black);
     border: none;
     background-color: transparent;
 }

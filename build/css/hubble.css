@@ -14,10 +14,10 @@
   --hb-brand-info: #33a6ff;
   --hb-brand-warning: #ffd800;
   --hb-brand-danger: #ff0042;
-  --hb-on-primary: #c942ff;
+  --hb-on-primary: #7c25a3;
   --hb-body-bg: #fafafa;
   --hb-body-color: #1d1d1d;
-  --hb-link-color: #c942ff;
+  --hb-link-color: var(--hb-brand-primary);
   /* Context Colors */
   /* gray */
   --hb-gray-100: #f4f5f6;
@@ -97,16 +97,25 @@
   --hb-brand-danger-800: #b3002e;
   --hb-brand-danger-900: #990028;
   /* on-primary */
-  --hb-on-primary-100: #faecff;
-  --hb-on-primary-200: #f4d9ff;
-  --hb-on-primary-300: #e4a1ff;
-  --hb-on-primary-400: #dc84ff;
-  --hb-on-primary-D00: #c942ff;
-  --hb-on-primary-500: #bf3ff2;
-  --hb-on-primary-600: #a135cc;
-  --hb-on-primary-700: #9732bf;
-  --hb-on-primary-800: #8d2eb3;
-  --hb-on-primary-900: #792899;
+  --hb-on-primary-100: #f2e9f6;
+  --hb-on-primary-200: #e5d3ed;
+  --hb-on-primary-300: #be92d1;
+  --hb-on-primary-400: #aa71c3;
+  --hb-on-primary-D00: #7c25a3;
+  --hb-on-primary-500: #76239b;
+  --hb-on-primary-600: #631e82;
+  --hb-on-primary-700: #5d1c7a;
+  --hb-on-primary-800: #571a72;
+  --hb-on-primary-900: #4a1662;
+  /* Contexts RGBA */
+  --hb-gray-rgb: 149, 151, 160;
+  --hb-brand-primary-rgb: 201, 66, 255;
+  --hb-brand-secondary-rgb: 1, 174, 240;
+  --hb-brand-success-rgb: 64, 220, 122;
+  --hb-brand-info-rgb: 51, 166, 255;
+  --hb-brand-warning-rgb: 255, 216, 0;
+  --hb-brand-danger-rgb: 255, 0, 66;
+  --hb-on-primary-rgb: 124, 37, 163;
   /* Typeography */
   --hb-font-sans-serif: -apple-system, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
   --hb-font-serif: Georgia, Times New Roman, Times, serif;
@@ -135,11 +144,11 @@
   --hb-headings-font-weight: 500;
   --hb-headings-line-height: 1.1;
   /* Raised Levels */
-  --hb-raised-level-one: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-  --hb-raised-level-one-hover: 0px 2px 4px -1px rgb(0 0 0 / 10%), 0px 4px 5px 0px rgb(0 0 0 / 12%), 0px 1px 10px 0px rgb(0 0 0 / 6%);
+  --hb-raised-level-one: 0px 2px 1px -1px rgba(0, 0, 0, 0.20), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+  --hb-raised-level-one-hover: 0px 2px 4px -1px rgba(0, 0, 0, 0.10), 0px 4px 5px 0px rgba(0, 0, 0, 0.12), 0px 1px 10px 0px rgba(0, 0, 0,0. 6);
   --hb-raised-level-two: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  --hb-raised-level-two-hover: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
-  --hb-raised-level-three: rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px;
+  --hb-raised-level-two-hover: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --hb-raised-level-three: rgba(0, 0, 0, 0.20) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
   --hb-raised-level-three-hover: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
   --hb-box-shadow-in: inset 0 5px 8px -2px rgba(0,0,0,.13);
   /* Misc */
@@ -219,12 +228,6 @@ html, body {
   color: #1d1d1d;
 }
 
-html.darkmode,
-.darkmode body {
-  background-color: #2a2a2a;
-  color: #FFFFFF;
-}
-
 body {
   font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 400;
@@ -247,13 +250,13 @@ input, select, label, button, textarea {
 }
 
 a {
-  color: #c942ff;
+  color: var(--hb-brand-primary);
   text-decoration: none;
   background: transparent;
 }
 a:active, a:hover {
   outline: 0;
-  color: #ba0fff;
+  color: var(--hb-brand-primary-500);
   text-decoration: underline;
 }
 a.no-link:hover {
@@ -412,14 +415,8 @@ dfn {
 
 mark,
 .mark {
-  background: #ff0;
-  color: #323232;
-}
-
-.darkmode mark,
-.darkmode .mark {
-  background: #3f3f3f;
-  color: #e6e6e6;
+  background: yellow;
+  color: var(--hb-black);
 }
 
 sub,
@@ -454,11 +451,6 @@ address,
   margin: 0 0 1rem 0;
 }
 
-.darkmode address,
-.darkmode .address {
-  color: #FFFFFF;
-}
-
 code, pre {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   line-height: 1.8;
@@ -475,17 +467,17 @@ code, pre {
 
 code {
   padding: 0.2rem 0.4rem;
-  color: #c7254e;
+  color: crimson;
 }
 
 pre {
   padding: 1.5rem 2rem;
   overflow: auto;
-  color: #323232;
+  color: var(--hb-black);
 }
 
 pre > code {
-  color: #323232;
+  color: var(--hb-black);
   border: none;
   background-color: transparent;
 }
@@ -3642,67 +3634,67 @@ dl dd:last-child {
 .table .primary td,
 .table th.primary,
 .table td.primary {
-  --hb-table-head-color: #FFFFFF;
-  --hb-table-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
+  --hb-table-color: var(--hb-white);
   --hb-table-bg: var(--hb-brand-primary);
   --hb-table-border-color: var(--hb-brand-primary);
   --hb-table-head-bg: var(--hb-brand-primary);
-  --hb-table-head-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
 }
 .table .secondary th,
 .table .secondary td,
 .table th.secondary,
 .table td.secondary {
-  --hb-table-head-color: #FFFFFF;
-  --hb-table-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
+  --hb-table-color: var(--hb-white);
   --hb-table-bg: var(--hb-brand-secondary);
   --hb-table-border-color: var(--hb-brand-secondary);
   --hb-table-head-bg: var(--hb-brand-secondary);
-  --hb-table-head-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
 }
 .table .info th,
 .table .info td,
 .table th.info,
 .table td.info {
-  --hb-table-head-color: #FFFFFF;
-  --hb-table-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
+  --hb-table-color: var(--hb-white);
   --hb-table-bg: var(--hb-brand-info);
   --hb-table-border-color: var(--hb-brand-info);
   --hb-table-head-bg: var(--hb-brand-info);
-  --hb-table-head-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
 }
 .table .success th,
 .table .success td,
 .table th.success,
 .table td.success {
-  --hb-table-head-color: #FFFFFF;
-  --hb-table-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
+  --hb-table-color: var(--hb-white);
   --hb-table-bg: var(--hb-brand-success);
   --hb-table-border-color: var(--hb-brand-success);
   --hb-table-head-bg: var(--hb-brand-success);
-  --hb-table-head-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
 }
 .table .warning th,
 .table .warning td,
 .table th.warning,
 .table td.warning {
-  --hb-table-head-color: #FFFFFF;
-  --hb-table-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
+  --hb-table-color: var(--hb-white);
   --hb-table-bg: var(--hb-brand-warning);
   --hb-table-border-color: var(--hb-brand-warning);
   --hb-table-head-bg: var(--hb-brand-warning);
-  --hb-table-head-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
 }
 .table .danger th,
 .table .danger td,
 .table th.danger,
 .table td.danger {
-  --hb-table-head-color: #FFFFFF;
-  --hb-table-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
+  --hb-table-color: var(--hb-white);
   --hb-table-bg: var(--hb-brand-danger);
   --hb-table-border-color: var(--hb-brand-danger);
   --hb-table-head-bg: var(--hb-brand-danger);
-  --hb-table-head-color: #FFFFFF;
+  --hb-table-head-color: var(--hb-white);
 }
 
 @media (max-width: 768px) {
@@ -3783,14 +3775,6 @@ blockquote > footer {
 }
 blockquote.bq-danger > footer, blockquote.bq-success > footer, blockquote.bq-info > footer, blockquote.bq-warning > footer, blockquote.bq-primary > footer, blockquote.bq-secondary > footer {
   color: rgba(0, 0, 0, 0.8);
-}
-
-.darkmode blockquote:not(.bq-danger):not(.bq-success):not(.bq-info):not(.bq-warning):not(.bq-primary):not(.bq-secondary) {
-  background-color: #3f3f3f;
-  color: #e6e6e6;
-}
-.darkmode blockquote:not(.bq-danger):not(.bq-success):not(.bq-info):not(.bq-warning):not(.bq-primary):not(.bq-secondary) > footer {
-  color: #b3b3b3;
 }
 
 /* --------------------------------- BUTTONS --------------------------------------- */
@@ -4076,10 +4060,10 @@ input[type=button].btn-block {
 
 .btn.btn-on-primary {
   --hb-btn-color: var(--hb-white);
-  --hb-btn-bg-color: var(--hb-on-primary-800);
-  --hb-btn-bg-color-hover: var(--hb-on-primary-600);
+  --hb-btn-bg-color: var(--hb-on-primary);
+  --hb-btn-bg-color-hover: var(--hb-on-primary-500);
   --hb-btn-color-active: var(--hb-white);
-  --hb-btn-bg-color-active: var(--hb-on-primary-900);
+  --hb-btn-bg-color-active: var(--hb-on-primary-600);
   --hb-btn-box-shadow-active: none;
   --hb-btn-loader-color: var(--hb-white);
   --hb-btn-color-hover: var(--hb-white);
@@ -4091,9 +4075,9 @@ input[type=button].btn-block {
   --hb-btn-border: 1px solid var(--hb-gray);
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-gray);
-  --hb-btn-bg-color-hover: var(--hb-gray-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-gray-rgb), 0.04);
   --hb-btn-color-active: var(--hb-gray);
-  --hb-btn-bg-color-active: var(--hb-gray-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-gray-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-gray);
 }
 
@@ -4103,9 +4087,9 @@ input[type=button].btn-block {
   --hb-btn-border: 1px solid var(--hb-brand-primary);
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-primary);
-  --hb-btn-bg-color-hover: var(--hb-brand-primary-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-primary-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-primary);
-  --hb-btn-bg-color-active: var(--hb-brand-primary-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-primary-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-primary);
 }
 
@@ -4115,9 +4099,9 @@ input[type=button].btn-block {
   --hb-btn-border: 1px solid var(--hb-brand-secondary);
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-secondary);
-  --hb-btn-bg-color-hover: var(--hb-brand-secondary-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-secondary-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-secondary);
-  --hb-btn-bg-color-active: var(--hb-brand-secondary-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-secondary-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-secondary);
 }
 
@@ -4127,9 +4111,9 @@ input[type=button].btn-block {
   --hb-btn-border: 1px solid var(--hb-brand-info);
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-info);
-  --hb-btn-bg-color-hover: var(--hb-brand-info-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-info-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-info);
-  --hb-btn-bg-color-active: var(--hb-brand-info-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-info-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-info);
 }
 
@@ -4139,9 +4123,9 @@ input[type=button].btn-block {
   --hb-btn-border: 1px solid var(--hb-brand-success);
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-success);
-  --hb-btn-bg-color-hover: var(--hb-brand-success-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-success-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-success);
-  --hb-btn-bg-color-active: var(--hb-brand-success-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-success-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-success);
 }
 
@@ -4151,9 +4135,9 @@ input[type=button].btn-block {
   --hb-btn-border: 1px solid var(--hb-brand-warning);
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-warning);
-  --hb-btn-bg-color-hover: var(--hb-brand-warning-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-warning-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-warning);
-  --hb-btn-bg-color-active: var(--hb-brand-warning-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-warning-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-warning);
 }
 
@@ -4163,9 +4147,9 @@ input[type=button].btn-block {
   --hb-btn-border: 1px solid var(--hb-brand-danger);
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-danger);
-  --hb-btn-bg-color-hover: var(--hb-brand-danger-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-danger-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-danger);
-  --hb-btn-bg-color-active: var(--hb-brand-danger-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-danger-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-danger);
 }
 
@@ -4175,9 +4159,9 @@ input[type=button].btn-block {
   --hb-btn-border: 1px solid var(--hb-white);
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-white);
-  --hb-btn-bg-color-hover: var(--hb-white-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-white-rgb), 0.04);
   --hb-btn-color-active: var(--hb-white);
-  --hb-btn-bg-color-active: var(--hb-white-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-white-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-white);
 }
 
@@ -4187,22 +4171,22 @@ input[type=button].btn-block {
   --hb-btn-border: 1px solid var(--hb-black);
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-black);
-  --hb-btn-bg-color-hover: var(--hb-black-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-black-rgb), 0.04);
   --hb-btn-color-active: var(--hb-black);
-  --hb-btn-bg-color-active: var(--hb-black-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-black-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-black);
 }
 
 .btn.btn-on-primary.btn-outline {
-  --hb-btn-color: var(--hb-white);
+  --hb-btn-color: var(--hb-on-primary);
   --hb-btn-bg-color: transparent;
-  --hb-btn-border: 1px solid var(--hb-white);
+  --hb-btn-border: 1px solid var(--hb-on-primary);
   --hb-btn-box-shadow: none;
-  --hb-btn-color-hover: var(--hb-white);
-  --hb-btn-bg-color-hover: var(--hb-white-100);
-  --hb-btn-color-active: var(--hb-white);
-  --hb-btn-bg-color-active: var(--hb-white-200);
-  --hb-btn-loader-color: var(--hb-white);
+  --hb-btn-color-hover: var(--hb-on-primary);
+  --hb-btn-bg-color-hover: rgba(var(--hb-on-primary-rgb), 0.04);
+  --hb-btn-color-active: var(--hb-on-primary);
+  --hb-btn-bg-color-active: rgba(var(--hb-on-primary-rgb), 0.15);
+  --hb-btn-loader-color: var(--hb-on-primary);
 }
 
 .btn.btn-pure {
@@ -4210,9 +4194,9 @@ input[type=button].btn-block {
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-gray);
-  --hb-btn-bg-color-hover: var(--hb-gray-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-gray-rgb), 0.04);
   --hb-btn-color-active: var(--hb-gray);
-  --hb-btn-bg-color-active:var(--hb-gray-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-gray-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-gray);
 }
 
@@ -4221,9 +4205,9 @@ input[type=button].btn-block {
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-primary);
-  --hb-btn-bg-color-hover: var(--hb-brand-primary-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-primary-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-primary);
-  --hb-btn-bg-color-active:var(--hb-brand-primary-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-primary-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-primary);
 }
 
@@ -4232,9 +4216,9 @@ input[type=button].btn-block {
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-secondary);
-  --hb-btn-bg-color-hover: var(--hb-brand-secondary-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-secondary-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-secondary);
-  --hb-btn-bg-color-active:var(--hb-brand-secondary-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-secondary-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-secondary);
 }
 
@@ -4243,9 +4227,9 @@ input[type=button].btn-block {
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-info);
-  --hb-btn-bg-color-hover: var(--hb-brand-info-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-info-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-info);
-  --hb-btn-bg-color-active:var(--hb-brand-info-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-info-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-info);
 }
 
@@ -4254,9 +4238,9 @@ input[type=button].btn-block {
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-success);
-  --hb-btn-bg-color-hover: var(--hb-brand-success-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-success-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-success);
-  --hb-btn-bg-color-active:var(--hb-brand-success-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-success-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-success);
 }
 
@@ -4265,9 +4249,9 @@ input[type=button].btn-block {
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-warning);
-  --hb-btn-bg-color-hover: var(--hb-brand-warning-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-warning-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-warning);
-  --hb-btn-bg-color-active:var(--hb-brand-warning-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-warning-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-warning);
 }
 
@@ -4276,9 +4260,9 @@ input[type=button].btn-block {
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-brand-danger);
-  --hb-btn-bg-color-hover: var(--hb-brand-danger-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-brand-danger-rgb), 0.04);
   --hb-btn-color-active: var(--hb-brand-danger);
-  --hb-btn-bg-color-active:var(--hb-brand-danger-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-brand-danger-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-brand-danger);
 }
 
@@ -4287,9 +4271,9 @@ input[type=button].btn-block {
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-white);
-  --hb-btn-bg-color-hover: var(--hb-white-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-white-rgb), 0.04);
   --hb-btn-color-active: var(--hb-white);
-  --hb-btn-bg-color-active:var(--hb-white-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-white-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-white);
 }
 
@@ -4298,21 +4282,21 @@ input[type=button].btn-block {
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
   --hb-btn-color-hover: var(--hb-black);
-  --hb-btn-bg-color-hover: var(--hb-black-100);
+  --hb-btn-bg-color-hover: rgba(var(--hb-black-rgb), 0.04);
   --hb-btn-color-active: var(--hb-black);
-  --hb-btn-bg-color-active:var(--hb-black-200);
+  --hb-btn-bg-color-active: rgba(var(--hb-black-rgb), 0.15);
   --hb-btn-loader-color: var(--hb-black);
 }
 
 .btn.btn-on-primary.btn-pure {
-  --hb-btn-color: var(--hb-white);
+  --hb-btn-color: var(--hb-on-primary);
   --hb-btn-bg-color:transparent;
   --hb-btn-box-shadow: none;
-  --hb-btn-color-hover: var(--hb-white);
-  --hb-btn-bg-color-hover: var(--hb-white-100);
-  --hb-btn-color-active: var(--hb-white);
-  --hb-btn-bg-color-active:var(--hb-white-200);
-  --hb-btn-loader-color: var(--hb-white);
+  --hb-btn-color-hover: var(--hb-on-primary);
+  --hb-btn-bg-color-hover: rgba(var(--hb-on-primary-rgb), 0.04);
+  --hb-btn-color-active: var(--hb-on-primary);
+  --hb-btn-bg-color-active: rgba(var(--hb-on-primary-rgb), 0.15);
+  --hb-btn-loader-color: var(--hb-on-primary);
 }
 
 /* styles/buttons/groups'; */
@@ -4374,10 +4358,10 @@ input[type=button].btn-block {
   display: none;
   position: absolute;
   top: 50%;
-  height: 3.1rem;
-  width: 3.1rem;
+  height: 1.9rem;
+  width: 1.9rem;
   left: 0.8rem;
-  margin-top: -1.55rem;
+  margin-top: -0.95rem;
 }
 
 .btn.with-spinner.active {
@@ -4959,194 +4943,6 @@ input[type=hidden] {
           transition: max-height 0.2s cubic-bezier(0.4, 0, 1, 1);
 }
 
-.darkmode .form-field {
-  position: relative;
-  display: inline-block;
-}
-.darkmode .form-field input:not([type=radio]):not([type=checkbox]) + label,
-.darkmode .form-field textarea + label,
-.darkmode .form-field select + label {
-  color: #555555;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox]) + label,
-.darkmode .form-field.focus textarea + label,
-.darkmode .form-field.focus select + label, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox]) + label,
-.darkmode .form-field:focus-within textarea + label,
-.darkmode .form-field:focus-within select + label {
-  color: #33a6ff;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field.focus textarea::-webkit-input-placeholder,
-.darkmode .form-field.focus select::-webkit-input-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field:focus-within textarea::-webkit-input-placeholder,
-.darkmode .form-field:focus-within select::-webkit-input-placeholder {
-  color: #33a6ff;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field.focus textarea::-moz-placeholder,
-.darkmode .form-field.focus select::-moz-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field:focus-within textarea::-moz-placeholder,
-.darkmode .form-field:focus-within select::-moz-placeholder {
-  color: #33a6ff;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field.focus textarea:-ms-input-placeholder,
-.darkmode .form-field.focus select:-ms-input-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field:focus-within textarea:-ms-input-placeholder,
-.darkmode .form-field:focus-within select:-ms-input-placeholder {
-  color: #33a6ff;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::placeholder,
-.darkmode .form-field.focus textarea::placeholder,
-.darkmode .form-field.focus select::placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::placeholder,
-.darkmode .form-field:focus-within textarea::placeholder,
-.darkmode .form-field:focus-within select::placeholder {
-  color: #33a6ff;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field.focus textarea::-webkit-input-placeholder,
-.darkmode .form-field.focus select::-webkit-input-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field:focus-within textarea::-webkit-input-placeholder,
-.darkmode .form-field:focus-within select::-webkit-input-placeholder {
-  color: #33a6ff;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox]):-moz-placeholder,
-.darkmode .form-field.focus textarea:-moz-placeholder,
-.darkmode .form-field.focus select:-moz-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox]):-moz-placeholder,
-.darkmode .form-field:focus-within textarea:-moz-placeholder,
-.darkmode .form-field:focus-within select:-moz-placeholder {
-  color: #33a6ff;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field.focus textarea::-moz-placeholder,
-.darkmode .form-field.focus select::-moz-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field:focus-within textarea::-moz-placeholder,
-.darkmode .form-field:focus-within select::-moz-placeholder {
-  color: #33a6ff;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field.focus textarea:-ms-input-placeholder,
-.darkmode .form-field.focus select:-ms-input-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field:focus-within textarea:-ms-input-placeholder,
-.darkmode .form-field:focus-within select:-ms-input-placeholder {
-  color: #33a6ff;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field.focus textarea::-webkit-input-placeholder,
-.darkmode .form-field.focus select::-webkit-input-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field:focus-within textarea::-webkit-input-placeholder,
-.darkmode .form-field:focus-within select::-webkit-input-placeholder, .darkmode .form-field.not-empty input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field.not-empty textarea::-webkit-input-placeholder,
-.darkmode .form-field.not-empty select::-webkit-input-placeholder {
-  color: #555555;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field.focus textarea::-moz-placeholder,
-.darkmode .form-field.focus select::-moz-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field:focus-within textarea::-moz-placeholder,
-.darkmode .form-field:focus-within select::-moz-placeholder, .darkmode .form-field.not-empty input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field.not-empty textarea::-moz-placeholder,
-.darkmode .form-field.not-empty select::-moz-placeholder {
-  color: #555555;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field.focus textarea:-ms-input-placeholder,
-.darkmode .form-field.focus select:-ms-input-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field:focus-within textarea:-ms-input-placeholder,
-.darkmode .form-field:focus-within select:-ms-input-placeholder, .darkmode .form-field.not-empty input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field.not-empty textarea:-ms-input-placeholder,
-.darkmode .form-field.not-empty select:-ms-input-placeholder {
-  color: #555555;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::placeholder,
-.darkmode .form-field.focus textarea::placeholder,
-.darkmode .form-field.focus select::placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::placeholder,
-.darkmode .form-field:focus-within textarea::placeholder,
-.darkmode .form-field:focus-within select::placeholder, .darkmode .form-field.not-empty input:not([type=radio]):not([type=checkbox])::placeholder,
-.darkmode .form-field.not-empty textarea::placeholder,
-.darkmode .form-field.not-empty select::placeholder {
-  color: #555555;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field.focus textarea::-webkit-input-placeholder,
-.darkmode .form-field.focus select::-webkit-input-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field:focus-within textarea::-webkit-input-placeholder,
-.darkmode .form-field:focus-within select::-webkit-input-placeholder, .darkmode .form-field.not-empty input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
-.darkmode .form-field.not-empty textarea::-webkit-input-placeholder,
-.darkmode .form-field.not-empty select::-webkit-input-placeholder {
-  color: #555555;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox]):-moz-placeholder,
-.darkmode .form-field.focus textarea:-moz-placeholder,
-.darkmode .form-field.focus select:-moz-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox]):-moz-placeholder,
-.darkmode .form-field:focus-within textarea:-moz-placeholder,
-.darkmode .form-field:focus-within select:-moz-placeholder, .darkmode .form-field.not-empty input:not([type=radio]):not([type=checkbox]):-moz-placeholder,
-.darkmode .form-field.not-empty textarea:-moz-placeholder,
-.darkmode .form-field.not-empty select:-moz-placeholder {
-  color: #555555;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field.focus textarea::-moz-placeholder,
-.darkmode .form-field.focus select::-moz-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field:focus-within textarea::-moz-placeholder,
-.darkmode .form-field:focus-within select::-moz-placeholder, .darkmode .form-field.not-empty input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
-.darkmode .form-field.not-empty textarea::-moz-placeholder,
-.darkmode .form-field.not-empty select::-moz-placeholder {
-  color: #555555;
-}
-.darkmode .form-field.focus input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field.focus textarea:-ms-input-placeholder,
-.darkmode .form-field.focus select:-ms-input-placeholder, .darkmode .form-field:focus-within input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field:focus-within textarea:-ms-input-placeholder,
-.darkmode .form-field:focus-within select:-ms-input-placeholder, .darkmode .form-field.not-empty input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
-.darkmode .form-field.not-empty textarea:-ms-input-placeholder,
-.darkmode .form-field.not-empty select:-ms-input-placeholder {
-  color: #555555;
-}
-.darkmode .form-field input:not([type=radio]):not([type=checkbox]),
-.darkmode .form-field textarea,
-.darkmode .form-field select {
-  color: #FFFFFF;
-}
-.darkmode .form-field input:not([type=radio]):not([type=checkbox]).disabled, .darkmode .form-field input:not([type=radio]):not([type=checkbox]):disabled,
-.darkmode .form-field textarea.disabled,
-.darkmode .form-field textarea:disabled,
-.darkmode .form-field select.disabled,
-.darkmode .form-field select:disabled {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-.darkmode .form-field input[type=time]:before,
-.darkmode .form-field input[type=week]:before,
-.darkmode .form-field input[type=month]:before,
-.darkmode .form-field input[type=date]:before,
-.darkmode .form-field input[type=datetime-local]:before {
-  color: #555555;
-}
-.darkmode .form-field.danger input {
-  border-color: #ff0042;
-  -webkit-box-shadow: inset 0 0 0 1px #ff0042;
-          box-shadow: inset 0 0 0 1px #ff0042;
-}
-.darkmode .form-field.warning input {
-  border-color: #ffd800;
-  -webkit-box-shadow: inset 0 0 0 1px #ffd800;
-          box-shadow: inset 0 0 0 1px #ffd800;
-}
-.darkmode .form-field.danger.focus input:not([type=radio]):not([type=checkbox]) + label,
-.darkmode .form-field.danger.focus textarea + label,
-.darkmode .form-field.danger.focus select + label, .darkmode .form-field.danger:focus-within input:not([type=radio]):not([type=checkbox]) + label,
-.darkmode .form-field.danger:focus-within textarea + label,
-.darkmode .form-field.danger:focus-within select + label {
-  color: #ff0042;
-}
-.darkmode .form-field.warning.focus input:not([type=radio]):not([type=checkbox]) + label,
-.darkmode .form-field.warning.focus textarea + label,
-.darkmode .form-field.warning.focus select + label, .darkmode .form-field.warning:focus-within input:not([type=radio]):not([type=checkbox]) + label,
-.darkmode .form-field.warning:focus-within textarea + label,
-.darkmode .form-field.warning:focus-within select + label {
-  color: #ffd800;
-}
-
 /* styles/forms/unstyled'; */
 .input-unstyled {
   border: none;
@@ -5519,13 +5315,6 @@ input[type=radio]:focus {
   background-color: #f3f7f9;
   border-color: var(--hb-gray-700);
   cursor: not-allowed;
-}
-
-.darkmode .radio input[type=radio]:checked + label:before {
-  border-color: #FFFFFF;
-}
-.darkmode .radio input[type=radio]:checked + label:after {
-  background-color: #FFFFFF;
 }
 
 .radio.radio-primary input[type=radio]:checked + label:before {
@@ -5917,7 +5706,7 @@ form.success .msg-success {
 
 /* ---------------------------- components/arrow.scss ------------------------------- */
 .arrow {
-  --hb-arrow-color: #FFFFFF;
+  --hb-arrow-color: var(--hb-white);
 }
 
 .arrow:before,
@@ -6144,8 +5933,8 @@ form.success .msg-success {
 
 /* ---------------------------- components/card.scss -------------------------------- */
 .card {
-  --hb-card-bg: #ffffff;
-  --hb-card-bg-focus: #ffffff;
+  --hb-card-bg: var(--hb-white);
+  --hb-card-bg-focus: var(--hb-white);
   --hb-card-color: var(--hb-gray-500);
   --hb-card-title-color: var(--hb-body-color);
   --hb-card-line-height: 1.8;
@@ -6164,6 +5953,8 @@ form.success .msg-success {
   --hb-card-actions-spacer-x: 0.5rem;
   --hb-card-icon-color: var(--hb-gray-500);
   --hb-card-icon-bg: var(--hb-gray-200);
+  --hb-card-img-padding: 0;
+  --hb-card-img-bg: var(--hb-gray-100);
   position: relative;
   display: block;
   width: 100%;
@@ -6743,28 +6534,20 @@ form.success .msg-success {
   top: 43px;
   min-width: var(--hb-dropdown-width);
   width: auto;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
-          box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-}
-.drop-container .drop-menu:hover {
-  -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-}
-.drop-container .drop-menu:active {
-  -webkit-box-shadow: none;
-          box-shadow: none;
 }
 .drop-container .drop-menu .drop {
   -webkit-border-radius: var(--hb-dropdown-border-radius);
           border-radius: var(--hb-dropdown-border-radius);
   background-color: var(--hb-dropdown-bg);
   padding: var(--hb-dropdown-link-spacer-y) 0px;
-}
-.drop-container .darkmode .drop-menu .drop {
-  background-color: #3f3f3f;
+  -webkit-box-shadow: var(--hb-dropdown-shadow);
+          box-shadow: var(--hb-dropdown-shadow);
+  --hb-dropdown-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --hb-dropdown-shadow-hover: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --hb-dropdown-shadow-active: none;
+  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
 }
 .drop-container .drop ul {
   list-style: none;
@@ -7325,51 +7108,6 @@ form.success .msg-success {
   cursor: default;
   background-color: #c942ff;
   border-color: #c942ff;
-}
-
-.darkmode .pagination > li > a,
-.darkmode .pagination > li > span {
-  color: #6a6a6a;
-  border: 1px solid #6a6a6a;
-}
-
-.darkmode .pagination > .active > a,
-.darkmode .pagination > .active > a:focus,
-.darkmode .pagination > .active > a:hover,
-.darkmode .pagination > .active > span,
-.darkmode .pagination > .active > span:focus,
-.darkmode .pagination > .active > span:hover {
-  color: #ffffff;
-  background-color: #c942ff;
-  border-color: #c942ff;
-}
-
-.pagination > li > a:focus,
-.pagination > li > a:hover,
-.pagination > li > span:focus,
-.pagination > li > span:hover {
-  color: #c942ff;
-  background-color: var(--hb-gray-300);
-}
-
-.pagination > li.elips > span:focus,
-.pagination > li.elips > span:hover {
-  color: #76838f;
-  background-color: #fff;
-}
-
-.darkmode .pagination > li > a:focus,
-.darkmode .pagination > li > a:hover,
-.darkmode .pagination > li > span:focus,
-.darkmode .pagination > li > span:hover {
-  color: #c942ff;
-  background-color: #6a6a6a;
-}
-
-.darkmode .pagination > li.elips > span:focus,
-.darkmode .pagination > li.elips > span:hover {
-  color: #6a6a6a;
-  background-color: transparent;
 }
 
 .pagination > .disabled > a,
@@ -8235,19 +7973,6 @@ form.success .msg-success {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
-.darkmode .drawer {
-  background-color: #444444;
-  color: #FFFFFF;
-}
-
-.darkmode .drawer-overlay.dark {
-  background-color: rgba(0, 0, 0, 0.86);
-}
-
-.darkmode .drawer-overlay.light {
-  background-color: rgba(68, 68, 68, 0.77);
-}
-
 /* ---------------------------- components/frontdrop.scss --------------------------- */
 .frontdrop-overlay {
   position: fixed;
@@ -8443,7 +8168,6 @@ form.success .msg-success {
   outline: none;
   cursor: pointer;
   margin: 0;
-  color: #FFFFFF;
   overflow: hidden;
   background-color: transparent;
   display: inline-block;

@@ -1,10 +1,3 @@
-/**
- * File inputs
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -15,72 +8,82 @@
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * File inputs
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var FileInput = function()
+    class FileInput
     {
-        this._nodes = Helper.$All('.js-file-input');
-
-        this._bind();
-
-        return this;
-    }
-
-    /**
-     * Module destructor remove event handlers
-     *
-     * @access public
-     */
-    FileInput.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._nodes = [];
-    }
-
-    /**
-     * Bind DOM listeners
-     *
-     * @access public
-     */
-    FileInput.prototype._bind = function()
-    {
-        Helper.addEventListener(this._nodes, 'change', this._eventHandler);
-    }
-
-    /**
-     * Unbind DOM listeners
-     *
-     * @access public
-     */
-    FileInput.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._nodes, 'change', this._eventHandler);
-    }
-
-    /**
-     * Handle the change event
-     *
-     * @access private
-     */
-    FileInput.prototype._eventHandler = function()
-    {
-        var fileInput = this;
-        var wrap = Helper.closest(fileInput, '.js-file-field');
-        var showInput = Helper.$('.js-file-text', wrap);
-        var fullPath = fileInput.value;
-        if (fullPath)
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
         {
-            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            var filename = fullPath.substring(startIndex);
-            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
+            this._nodes = Helper.$All('.js-file-input');
+
+            this._bind();
+
+            return this;
+        }
+
+        /**
+         * Module destructor remove event handlers
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
+
+            this._nodes = [];
+        }
+
+        /**
+         * Bind DOM listeners
+         *
+         * @access public
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._nodes, 'change', this._eventHandler);
+        }
+
+        /**
+         * Unbind DOM listeners
+         *
+         * @access public
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._nodes, 'change', this._eventHandler);
+        }
+
+        /**
+         * Handle the change event
+         *
+         * @access private
+         */
+        _eventHandler()
+        {
+            var fileInput = this;
+            var wrap = Helper.closest(fileInput, '.js-file-field');
+            var showInput = Helper.$('.js-file-text', wrap);
+            var fullPath = fileInput.value;
+            if (fullPath)
             {
-                filename = filename.substring(1);
+                var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+                var filename = fullPath.substring(startIndex);
+                if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
+                {
+                    filename = filename.substring(1);
+                }
+                showInput.value = filename;
             }
-            showInput.value = filename;
         }
     }
 

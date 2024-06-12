@@ -1,3 +1,4 @@
+@use "sass:math";
 $select-pos-y : _minusPercent($input-pad-y, 10);
 
 @mixin placeholder
@@ -32,7 +33,7 @@ input[type="hidden"]
         left: $input-pad-y;
         height: $input-line-height;
         transition: transform 0.15s $base-easing;
-        transform: translateY(-$input-line-height / 2);
+        transform: translateY(math.div(-$input-line-height, 2));
         transform-origin: left top;
         cursor: text;
     }
@@ -349,125 +350,3 @@ input[type="hidden"]
     max-height: 50px;
     transition: max-height $base-easing-time $base-easing;
 }
-
-.darkmode .form-field
-{
-    position: relative;
-    display: inline-block;
-
-    // Label Setup
-    input:not([type="radio"]):not([type="checkbox"]) + label,
-    textarea + label,
-    select + label
-    {
-        color: _lighter($body-bg-darkmode, 20%);
-    }
-
-    // Focus label
-    &.focus,
-    &:focus-within
-    {
-        input:not([type="radio"]):not([type="checkbox"]) + label,
-        textarea + label,
-        select + label
-        {
-            color: $brand-info;
-        }
-    }
-
-    // Focus placeholder
-    &.focus,
-    &:focus-within
-    {
-        input:not([type="radio"]):not([type="checkbox"]),
-        textarea,
-        select
-        {
-            @include placeholder
-            {
-                color: $brand-info;
-            }
-        }
-    }
-
-    // Not empty placeholder
-    &.focus,
-    &:focus-within,
-    &.not-empty
-    {
-        input:not([type="radio"]):not([type="checkbox"]),
-        textarea,
-        select
-        {
-            @include placeholder
-            {
-                color: _lighter($body-bg-darkmode, 20%);
-            }
-        }
-    }
-
-    // Basic input styling
-    input:not([type="radio"]):not([type="checkbox"]),
-    textarea,
-    select,
-    {
-        color: $body-color-darkmode;
-        &.disabled,
-        &:disabled
-        {
-            background-color: rgba(0,0,0,0.5);
-        }
-        &:focus
-        {
-
-        }
-    }
-
-    input[type="time"]:before,
-    input[type="week"]:before,
-    input[type="month"]:before,
-    input[type="date"]:before,
-    input[type="datetime-local"]:before
-    {
-        color: _lighter($body-bg-darkmode, 20%);
-    }
-
-    // Context
-    &.danger input
-    {
-        border-color: $brand-danger;
-        box-shadow: inset 0 0 0 1px $brand-danger;
-    }
-    &.warning input
-    {
-        border-color: $brand-warning;
-        box-shadow: inset 0 0 0 1px $brand-warning;
-    }
-    &.danger
-    {
-        &.focus,
-        &:focus-within
-        {
-            input:not([type="radio"]):not([type="checkbox"]) + label,
-            textarea + label,
-            select + label
-            {
-                color: $brand-danger;
-            }
-        }
-    }
-    &.warning
-    {
-        &.focus,
-        &:focus-within
-        {
-            input:not([type="radio"]):not([type="checkbox"]) + label,
-            textarea + label,
-            select + label
-            {
-                color: $brand-warning;
-            }
-        }
-    }
-}
-

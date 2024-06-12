@@ -20,12 +20,6 @@ html, body
     background-color: $body-bg;
     color:            $body-color;
 }
-html.darkmode,
-.darkmode body
-{
-    background-color: $body-bg-darkmode;
-    color:            $body-color-darkmode;
-}
 body
 {
     font-family:      $base-font-family;
@@ -51,7 +45,7 @@ a
     &:hover
     {
         outline: 0;
-        color: darken($link-color, 10%);
+        color: $link-color-hover;
         text-decoration: underline;
     }
     &.no-link:hover

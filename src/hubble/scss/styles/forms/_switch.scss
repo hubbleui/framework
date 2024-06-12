@@ -74,7 +74,7 @@ input[type=checkbox].switch
     {
         &:before
         {
-            background-color: _lighter($color, 20);
+            background-color: _lighter($color, 20%);
         }
         &:after
         {

@@ -1,6 +1,6 @@
 .arrow
 {
-    --hb-arrow-color: #{$white};
+    --hb-arrow-color: var(--hb-white);
 }
 .arrow:before,
 .arrow:after

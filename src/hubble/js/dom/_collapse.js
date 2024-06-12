@@ -1,10 +1,3 @@
-/**
- * Toggle height on click
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -15,81 +8,91 @@
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Toggle height on click
      *
-     * @access public
-     * @constructor
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var Collapse = function()
+    class Collapse
     {
         /**
-         * Array of click-triggers
-         * 
-         * @var array
+         * Module constructor
+         *
+         * @access public
+         * @constructor
          */
-        this._nodes = Helper.$All('.js-collapse');
-
-        this._bind();
-
-        return this;
-    }
-
-    /**
-     * Module destructor
-     *
-     * @access public
-     */
-    Collapse.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._nodes = [];
-    }
-
-    /**
-     * Event binder - Binds all events on button click
-     *
-     * @access private
-     */
-    Collapse.prototype._bind = function()
-    {
-        Helper.addEventListener(this._nodes, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event unbinder - Removes all events on button click
-     *
-     * @access private
-     */
-    Collapse.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
-    }
-
-    /**
-     * Handle the click event
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    Collapse.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-
-        if (Helper.isNodeType(this, 'a'))
+    	constructor()
         {
-            e.preventDefault();
+            /**
+             * Array of click-triggers
+             * 
+             * @var array
+             */
+            this._nodes = Helper.$All('.js-collapse');
+
+            this._bind();
+
+            return this;
         }
 
-        var clicked = this;
-        var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
-        var speed = parseInt(clicked.dataset.collapseSpeed) || 350;
-        var easing = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
-        var opacity = clicked.dataset.withOpacity;
+        /**
+         * Module destructor
+         *
+         * @access public
+         */
+        destruct()
+        {
+            this._unbind();
 
-        Container.get('ToggleHeight', targetEl, 0, speed, easing, opacity);
+            this._nodes = [];
+        }
 
-        Helper.toggleClass(clicked, 'active');
+        /**
+         * Event binder - Binds all events on button click
+         *
+         * @access private
+         */
+        _bind()
+        {
+            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
+        }
+
+        /**
+         * Event unbinder - Removes all events on button click
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
+        }
+
+        /**
+         * Handle the click event
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _eventHandler(e)
+        {
+            e = e || window.event;
+
+            if (Helper.isNodeType(this, 'a'))
+            {
+                e.preventDefault();
+            }
+
+            var clicked = this;
+            var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
+            var speed = parseInt(clicked.dataset.collapseSpeed) || 350;
+            var easing = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
+            var opacity = clicked.dataset.withOpacity;
+
+            Container.get('ToggleHeight', targetEl, 0, speed, easing, opacity);
+
+            Helper.toggleClass(clicked, 'active');
+        }
     }
 
     // Load into Hubble DOM core

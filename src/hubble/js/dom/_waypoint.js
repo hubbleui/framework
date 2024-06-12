@@ -1,10 +1,3 @@
-/**
- * Waypoints
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -22,130 +15,139 @@
     var pageLoaded = false;
 
     /**
-     * Module constructor
+     * Waypoints
      *
-     * @constructor
-     * @access public
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var WayPoints = function()
+    class WayPoints
     {
-        // Load nodes
-        this._nodes = Helper.$All('.js-waypoint-trigger');
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @access public
+         */
+    	constructor()
+        {    // Load nodes
+            this._nodes = Helper.$All('.js-waypoint-trigger');
 
-        // bind listeners
-        if (!Helper.empty(this._nodes))
+            // bind listeners
+            if (!Helper.empty(this._nodes))
+            {
+                for (var i = 0; i < this._nodes.length; i++)
+                {
+                    this._bind(this._nodes[i]);
+                }
+            }
+
+            // Invoke pageload
+            if (!pageLoaded)
+            {
+                this._invokePageLoad();
+            }
+
+            return this;
+        }
+
+        /**
+         * Module destructor
+         *
+         * @access public
+         */
+        destruct()
         {
+            // Unbind listeners
             for (var i = 0; i < this._nodes.length; i++)
             {
-                this._bind(this._nodes[i]);
+                this._unbind(this._nodes[i]);
             }
+
+            // Clear Nodes
+            this._nodes = [];
         }
 
-        // Invoke pageload
-        if (!pageLoaded)
+        /**
+         * Event binder
+         *
+         * @params trigger node
+         * @access private
+         */
+        _bind(trigger)
         {
-            this._invokePageLoad();
+            Helper.addEventListener(trigger, 'click', this._eventHandler);
         }
 
-        return this;
-    };
-
-    /**
-     * Module destructor
-     *
-     * @access public
-     */
-    WayPoints.prototype.destruct = function()
-    {
-        // Unbind listeners
-        for (var i = 0; i < this._nodes.length; i++)
+        /**
+         * Event unbinder
+         *
+         * @params trigger node
+         * @access private
+         */
+        _unbind(trigger)
         {
-            this._unbind(this._nodes[i]);
+            Helper.removeEventListener(trigger, 'click', this._eventHandler);
         }
 
-        // Clear Nodes
-        this._nodes = [];
-    }
-
-    /**
-     * Event binder
-     *
-     * @params trigger node
-     * @access private
-     */
-    WayPoints.prototype._bind = function(trigger)
-    {
-        Helper.addEventListener(trigger, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event unbinder
-     *
-     * @params trigger node
-     * @access private
-     */
-    WayPoints.prototype._unbind = function(trigger)
-    {
-        Helper.removeEventListener(trigger, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event handler
-     *
-     * @param event|null e JavaScript click event
-     * @access private
-     */
-    WayPoints.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-        e.preventDefault();
-        var trigger = this;
-        var waypoint = trigger.dataset.waypointTarget;
-        var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
-
-        if (Helper.nodeExists(targetEl))
+        /**
+         * Event handler
+         *
+         * @param event|null e JavaScript click event
+         * @access private
+         */
+        _eventHandler(e)
         {
-            var id = waypoint;
-            var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
-            var easing = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
-            targetEl.id = id;
-
-            var options = {
-                easing: easing,
-                speed: speed,
-            };
-
-            Container.get('SmoothScroll').animateScroll('#' + id, trigger, options);
-        }
-    }
-
-    /**
-     * Scroll to a element with id when the page loads
-     *
-     * @access private
-     */
-    WayPoints.prototype._invokePageLoad = function()
-    {
-        var url = Helper.parse_url(window.location.href);
-
-        if (Helper.isset(url['fragment']) && url['fragment'] !== '')
-        {
-            var waypoint = Helper.trim(url['fragment'], '/');
-            var options = {
-                speed: 100,
-                easing: 'Linear'
-            };
+            e = e || window.event;
+            e.preventDefault();
+            var trigger = this;
+            var waypoint = trigger.dataset.waypointTarget;
             var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
             if (Helper.nodeExists(targetEl))
             {
                 var id = waypoint;
+                var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
+                var easing = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
                 targetEl.id = id;
-                Container.get('SmoothScroll').animateScroll('#' + id, null, options);
+
+                var options = {
+                    easing: easing,
+                    speed: speed,
+                };
+
+                Container.get('SmoothScroll').animateScroll('#' + id, trigger, options);
             }
         }
 
-        pageLoaded = true;
+        /**
+         * Scroll to a element with id when the page loads
+         *
+         * @access private
+         */
+        _invokePageLoad()
+        {
+            var url = Helper.parse_url(window.location.href);
+
+            if (Helper.isset(url['fragment']) && url['fragment'] !== '')
+            {
+                var waypoint = Helper.trim(url['fragment'], '/');
+                var options = {
+                    speed: 100,
+                    easing: 'Linear'
+                };
+                var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
+
+                if (Helper.nodeExists(targetEl))
+                {
+                    var id = waypoint;
+                    targetEl.id = id;
+                    Container.get('SmoothScroll').animateScroll('#' + id, null, options);
+                }
+            }
+
+            pageLoaded = true;
+        }
     }
 
 

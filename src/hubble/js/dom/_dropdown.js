@@ -1,10 +1,3 @@
-/**
- * Dropdown Buttons
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -14,8 +7,20 @@
      */
     var Helper = Hubble.helper();
 
+    /**
+     * Dropdown Buttons
+     *
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     */
     class DropDowns
     {
+        /**
+         * Module constructor
+         *
+         * @access public
+         */
         constructor()
         {
             this._triggers = Helper.$All('.js-drop-trigger');

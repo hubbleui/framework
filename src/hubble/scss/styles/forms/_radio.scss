@@ -1,3 +1,4 @@
+@use "sass:math";
 // resets 
 input[type=radio]
 {
@@ -29,7 +30,7 @@ input[type=radio]:focus
         position: relative;
         cursor: pointer;
         vertical-align: middle;
-        padding-left: $radio-size / 4;
+        padding-left: math.div($radio-size, 4);
         min-height: $radio-size + 2;
         margin-bottom: 0;
         line-height: $radio-size;
@@ -55,9 +56,9 @@ input[type=radio]:focus
             border-radius: 50%;
             background-color: var(--hb-gray-700);
             left: - ($radio-size * 0.733);
-            top: ($radio-size / 4);
-            width: $radio-size / 2;
-            height: $radio-size / 2;
+            top: math.div($radio-size, 4);
+            width: math.div($radio-size, 2);
+            height: math.div($radio-size, 2);
             transition: transform .15s ease-in-out 0s;
             transform: scale(0);
         }
@@ -114,17 +115,6 @@ input[type=radio]:focus
                 }
             }
         }
-    }
-}
-.darkmode .radio
-{
-    input[type=radio]:checked + label:before
-    {
-        border-color: $body-color-darkmode;
-    }
-    input[type=radio]:checked + label:after
-    {
-        background-color: $body-color-darkmode;
     }
 }
 .radio

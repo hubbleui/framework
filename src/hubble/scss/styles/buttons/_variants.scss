@@ -1,37 +1,18 @@
-@function str-replace($string, $search, $replace: '')
-{
-    $index: str-index($string, $search);
-  
-    @if $index
-    {
-        @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
-    }
-  
-    @return $string;
-}
-@function color-name-from-var($colorVar)
-{
-    @return str-replace(str-replace($colorVar, ')', ''),  'var(--', '');
-}
-
 // Standard buttons
 @mixin button($color, $background)
 {
     $colorName : color-name-from-var($background);
-    $levelBase: if($colorName == 'hb-on-primary', var(--#{$colorName}-800), $background);
-    $levelHvr:  if($colorName == 'hb-on-primary', 600, 500);
-    $levelActv: if($colorName == 'hb-on-primary', 900, 600);
-
+    
     // Base
     --hb-btn-color: #{$color};
-    --hb-btn-bg-color: #{$levelBase};
+    --hb-btn-bg-color: #{$background};
 
     // Hover
-    --hb-btn-bg-color-hover: var(--#{$colorName}-#{$levelHvr});
+    --hb-btn-bg-color-hover: var(--hb-#{$colorName}-500);
 
     // Active
     --hb-btn-color-active: #{$color};
-    --hb-btn-bg-color-active: var(--#{$colorName}-#{$levelActv});
+    --hb-btn-bg-color-active: var(--hb-#{$colorName}-600);
     --hb-btn-box-shadow-active: none;
 
     // Loader / Icon
@@ -42,13 +23,43 @@
 // Outline buttons
 @mixin button-outline($color)
 {
-    $colorName: color-name-from-var($color);
+    color: $color;
+    background-color: transparent;
+    border: 1px solid $color;
+    box-shadow: none;
 
-    @if $colorName == 'hb-on-primary'
+    .glyph-icon
     {
-        $colorName: 'hb-white';
-        $color:  var(--hb-white);
+        color: $color;
     }
+    .loading-spinner .path
+    {
+        stroke: $white;
+    }
+
+    &:hover,
+    &.hover
+    {
+        background-color: rgba($color, 0.04);
+        border: 1px solid $color;
+    }
+    &:focus,
+    &.focus
+    {
+        background-color: rgba($color, 0.07);
+    }
+    &:active,
+    &.active
+    {
+        background-color: rgba($color, 0.15);
+        border: 1px solid $color;
+    }
+}
+
+// Outline buttons
+@mixin button-outline($color)
+{
+    $rgb: color-name-from-var($color) + '-rgb';
 
     // Base
     --hb-btn-color: #{$color};
@@ -58,11 +69,11 @@
 
     // Hover
     --hb-btn-color-hover: #{$color};
-    --hb-btn-bg-color-hover: var(--#{$colorName}-100);
+    --hb-btn-bg-color-hover: rgba(var(--hb-#{$rgb}), 0.04);
 
     // Active
     --hb-btn-color-active: #{$color};
-    --hb-btn-bg-color-active: var(--#{$colorName}-200);
+    --hb-btn-bg-color-active: rgba(var(--hb-#{$rgb}), 0.15);
 
     // Icon / Loader
     --hb-btn-loader-color: #{$color};
@@ -71,13 +82,7 @@
 // Pure buttons
 @mixin button-pure($color)
 {
-    $colorName: color-name-from-var($color);
-
-    @if $colorName == 'hb-on-primary'
-    {
-        $colorName: 'hb-white';
-        $color:  var(--hb-white);
-    }
+    $rgb: color-name-from-var($color) + '-rgb';
 
     // Base
     --hb-btn-color: #{$color};
@@ -86,11 +91,11 @@
 
     // Hover
     --hb-btn-color-hover: #{$color};
-    --hb-btn-bg-color-hover: var(--#{$colorName}-100); 
+    --hb-btn-bg-color-hover: rgba(var(--hb-#{$rgb}), 0.04);
     
     // Active
     --hb-btn-color-active: #{$color};
-    --hb-btn-bg-color-active :var(--#{$colorName}-200);
+    --hb-btn-bg-color-active: rgba(var(--hb-#{$rgb}), 0.15);
 
     // Icon / Loader
     --hb-btn-loader-color: #{$color};

@@ -1,3 +1,4 @@
+@use "sass:math";
 // resets
 input[type=checkbox]
 {
@@ -109,7 +110,7 @@ input[type="checkbox"]:focus
             + label:before
             {
                 border-color: var(--hb-gray-700);
-                border-width: $checkbox-size / 2;
+                border-width: math.div($checkbox-size, 2);
             }
             + label:after
             {
@@ -128,9 +129,9 @@ input[type="checkbox"]:focus
             + label:before
             {
                 border-color: var(--hb-gray-700);
-                border-width: $checkbox-size / 2;
+                border-width: math.div($checkbox-size, 2);
                 outline: thin dotted;
-                outline: $checkbox-size / 4;
+                outline: math.div($checkbox-size, 4);
                 outline-offset: -2px;
             }
         }

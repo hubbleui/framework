@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 // Breakpoints
 @mixin media-breakpoint-up($name)
 {
@@ -95,41 +97,46 @@
 {
     @if $level == 1
     {
-        #{$varname} : 0px 2px 1px -1px toRGBA(_darker($color, 30), 0.2), 0px 1px 1px 0px toRGBA(_darker($color, 30), 0.14), 0px 1px 3px 0px toRGBA(_darker($color, 30), 0.12);
-        #{$varname}-hover : 0 1px 1px toRGBA(_darker($color, 30), 0.16), 0 1px 3px toRGBA(_darker($color, 30), 0.23);
+        #{$varname} : 0px 2px 1px -1px rgba(_darker($color, 30%), 0.2), 0px 1px 1px 0px rgba(_darker($color, 30%), 0.14), 0px 1px 3px 0px rgba(_darker($color, 30%), 0.12);
+        #{$varname}-hover : 0 1px 1px rgba(_darker($color, 30%), 0.16), 0 1px 3px rgba(_darker($color, 30%), 0.23);
         #{$varname}-active : none;
         transition: box-shadow $base-easing-time $base-easing;
     }
     @else if $level == 2
     {
-        #{$varname} :  0 1px 3px toRGBA(_darker($color, 30), 0.12), 0 1px 2px toRGBA(_darker($color, 30), 0.24);
-        #{$varname}-hover : 0 3px 6px toRGBA(_darker($color, 30), 0.16), 0 3px 6px toRGBA(_darker($color, 30), 0.23);
+        #{$varname} :  0 1px 3px rgba(_darker($color, 30%), 0.12), 0 1px 2px rgba(_darker($color, 30%), 0.24);
+        #{$varname}-hover : 0 3px 6px rgba(_darker($color, 30%), 0.16), 0 3px 6px rgba(_darker($color, 30%), 0.23);
         #{$varname}-active : none;
         transition: box-shadow $base-easing-time $base-easing;
     }
     @else if $level == 3
     {
-        #{$varname}: toRGBA(_darker($color, 30), 0.20) 0px 5px 5px -3px, toRGBA(_darker($color, 30), 0.14) 0px 8px 10px 1px, toRGBA(_darker($color, 30), 0.12) 0px 3px 14px 2px ;
-        #{$varname}-hover: 0 10px 20px toRGBA(_darker($color, 30), 0.19), 0 6px 6px toRGBA(_darker($color, 30), 0.23);
+        #{$varname}: rgba(_darker($color, 30%), 0.20) 0px 5px 5px -3px, rgba(_darker($color, 30%), 0.14) 0px 8px 10px 1px, rgba(_darker($color, 30%), 0.12) 0px 3px 14px 2px ;
+        #{$varname}-hover: 0 10px 20px rgba(_darker($color, 30%), 0.19), 0 6px 6px rgba(_darker($color, 30%), 0.23);
         #{$varname}-active : none;
         transition: box-shadow $base-easing-time $base-easing;
     }
 }
 
-@function toRGB($color)
+@function _toRGBVals($color)
 {
-    @return rgb(red($color), green($color), blue($color));
+    @return red($color) + ", " + green($color) + ", " + blue($color);
 }
 
-@function toRGBA($color, $alpha: 1)
+@function str-replace($string, $search, $replace: '')
 {
-    @return rgba(toRGB($color), $alpha);
+    $index: str-index($string, $search);
+  
+    @if $index
+    {
+        @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+    }
+  
+    @return $string;
 }
-
-
-// RGBA to RGB
-@function RGBAtoRGB($rgba, $background: #fff) {
-    @return mix(rgb(red($rgba), green($rgba), blue($rgba)), $background, alpha($rgba) * 100%)
+@function color-name-from-var($colorVar)
+{
+    @return str-replace(str-replace(str-replace($colorVar, ')', ''),  'var(--', ''), 'hb-', '');
 }
 
 // ICONS
@@ -156,12 +163,12 @@
 // Utility
 @function _minusPercent($value, $percentage)
 {
-	$diff: $value * ($percentage / 100);
+	$diff: $value * math.div($percentage, 100);
 	@return $value - $diff;
 }
 @function _addPercent($value, $percentage)
 {
-	$diff: $value * ($percentage / 100);
+	$diff: $value * math.div($percentage, 100);
 	@return $value + $diff;
 }
 

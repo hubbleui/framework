@@ -1,3 +1,4 @@
+@use "sass:math";
 
 // Rows
 @if $curr-grid != null
@@ -20,16 +21,16 @@
     {
         .flex-col-#{$i}
         {
-            flex-basis: unquote('#{100 / 12 * $i}%');
-            max-width: unquote('#{100 / 12 * $i}%');
+            flex-basis: unquote('#{math.div(100, 12) * $i}%');
+            max-width: unquote('#{math.div(100, 12) * $i}%');
         }
     }
     @else
     {
         .flex-col-#{$curr-grid}-#{$i}
         {
-            flex-basis: unquote('#{100 / 12 * $i}%');
-            max-width: unquote('#{100 / 12 * $i}%');
+            flex-basis: unquote('#{math.div(100, 12) * $i}%');
+            max-width: unquote('#{math.div(100, 12) * $i}%');
         }
     }
 }
@@ -41,14 +42,14 @@
     {
         .col-#{$i}-push-r
         {
-            margin-left: unquote('#{100 / 12 * (12-$i)}%');
+            margin-left: unquote('#{math.div(100, 12) * (12-$i)}%');
         }
     }
     @else
     {
         .col-#{$curr-grid}-#{$i}-push-r
         {
-            margin-left: unquote('#{100 / 12 * (12-$i)}%');
+            margin-left: unquote('#{math.div(100, 12) * (12-$i)}%');
         }
     }
 }
@@ -58,14 +59,14 @@
     {
         .col-#{$i}-push-l
         {
-            margin-right: unquote('#{100 / 12 * (12-$i)}%');
+            margin-right: unquote('#{math.div(100, 12) * (12-$i)}%');
         }
     }
     @else
     {
         .col-#{$curr-grid}-#{$i}-push-l
         {
-            margin-right: unquote('#{100 / 12 * (12-$i)}%');
+            margin-right: unquote('#{math.div(100, 12) * (12-$i)}%');
         }
     }
 }

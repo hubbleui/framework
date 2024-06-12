@@ -1,13 +1,14 @@
+@use "sass:math";
 .btn .loading-spinner
 {
-	$spinner-size: $btn-pad-y + $btn-pad-y + $btn-font-size / 2;
-	$spinner-top:  $spinner-size / 2;
+	$spinner-size: math.div($btn-pad-y + $btn-pad-y + $btn-font-size, 2);
+	$spinner-top:  math.div($spinner-size, 2);
     display: none;
     position: absolute;
     top: 50%;
     height: $spinner-size;
     width: $spinner-size;
-    left: $btn-pad-x / 2;
+    left: math.div($btn-pad-x, 2);
     margin-top:  -$spinner-top;
 }
 .btn.with-spinner.active

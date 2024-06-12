@@ -1,10 +1,3 @@
-/**
- * Clicking one element triggers a lick on another
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
@@ -15,81 +8,91 @@
     var Helper = Hubble.helper();
 
     /**
-     * Module constructor
+     * Clicking one element triggers a lick on another
      *
-     * @access public
-     * @constructor
+     * @author    Joe J. Howard
+     * @copyright Joe J. Howard
+     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
      */
-    var ClickTriggers = function()
+    class ClickTriggers
     {
         /**
-         * List of click-triggers
-         * 
-         * @var array
+         * Module constructor
+         *
+         * @access public
+         * @constructor
          */
-        this._containers = Helper.$All('.js-click-trigger');
-
-        if (!Helper.empty(this._containers))
+    	constructor()
         {
-            this._bind();
+            /**
+             * List of click-triggers
+             * 
+             * @var array
+             */
+            this._containers = Helper.$All('.js-click-trigger');
+
+            if (!Helper.empty(this._containers))
+            {
+                this._bind();
+            }
+
+            return this;
         }
 
-        return this;
-    };
-
-    /**
-     * Module destructor - removes event listeners
-     *
-     * @access public
-     */
-    ClickTriggers.prototype.destruct = function()
-    {
-        this._unbind();
-
-        this._containers = [];
-    }
-
-    /**
-     * Event binder - Binds all events on button click
-     *
-     * @access private
-     */
-    ClickTriggers.prototype._bind = function()
-    {
-        Helper.addEventListener(this._containers, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event ubinder - Binds all event handlers on button click
-     *
-     * @access private
-     */
-    ClickTriggers.prototype._unbind = function()
-    {
-        Helper.removeEventListener(this._containers, 'click', this._eventHandler);
-    }
-
-    /**
-     * Event handler
-     *
-     * @access private
-     * @params event|null e Browser click event
-     */
-    ClickTriggers.prototype._eventHandler = function(e)
-    {
-        e = e || window.event;
-
-        if (Helper.isNodeType(this, 'a'))
+        /**
+         * Module destructor - removes event listeners
+         *
+         * @access public
+         */
+        destruct()
         {
-            e.preventDefault();
+            this._unbind();
+
+            this._containers = [];
         }
 
-        var clicked = this;
-        var targetEl = Helper.$(clicked.dataset.clickTarget);
-
-        if (Helper.nodeExists(targetEl))
+        /**
+         * Event binder - Binds all events on button click
+         *
+         * @access private
+         */
+        _bind()
         {
-            Helper.triggerEvent(targetEl, 'click');
+            Helper.addEventListener(this._containers, 'click', this._eventHandler);
+        }
+
+        /**
+         * Event ubinder - Binds all event handlers on button click
+         *
+         * @access private
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._containers, 'click', this._eventHandler);
+        }
+
+        /**
+         * Event handler
+         *
+         * @access private
+         * @params event|null e Browser click event
+         */
+        _eventHandler(e)
+        {
+            e = e || window.event;
+
+            if (Helper.isNodeType(this, 'a'))
+            {
+                e.preventDefault();
+            }
+
+            var clicked = this;
+            var targetEl = Helper.$(clicked.dataset.clickTarget);
+
+            if (Helper.nodeExists(targetEl))
+            {
+                Helper.triggerEvent(targetEl, 'click');
+            }
         }
     }
 

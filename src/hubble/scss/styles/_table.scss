@@ -119,72 +119,72 @@
 	th.primary,
 	td.primary
 	{
-		--hb-table-head-color: #{$white};
-		--hb-table-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
+		--hb-table-color: var(--hb-white);
 		--hb-table-bg: var(--hb-brand-primary);
 		--hb-table-border-color: var(--hb-brand-primary);
 		--hb-table-head-bg: var(--hb-brand-primary);
-		--hb-table-head-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
 	}
 	.secondary th,
 	.secondary td,
 	th.secondary,
 	td.secondary
 	{
-		--hb-table-head-color: #{$white};
-		--hb-table-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
+		--hb-table-color: var(--hb-white);
 		--hb-table-bg: var(--hb-brand-secondary);
 		--hb-table-border-color: var(--hb-brand-secondary);
 		--hb-table-head-bg: var(--hb-brand-secondary);
-		--hb-table-head-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
 	}
 	.info th,
 	.info td,
 	th.info,
 	td.info
 	{
-		--hb-table-head-color: #{$white};
-		--hb-table-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
+		--hb-table-color: var(--hb-white);
 		--hb-table-bg: var(--hb-brand-info);
 		--hb-table-border-color: var(--hb-brand-info);
 		--hb-table-head-bg: var(--hb-brand-info);
-		--hb-table-head-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
 	}
 	.success th,
 	.success td,
 	th.success,
 	td.success
 	{
-		--hb-table-head-color: #{$white};
-		--hb-table-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
+		--hb-table-color: var(--hb-white);
 		--hb-table-bg: var(--hb-brand-success);
 		--hb-table-border-color: var(--hb-brand-success);
 		--hb-table-head-bg: var(--hb-brand-success);
-		--hb-table-head-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
 	}
 	.warning th,
 	.warning td,
 	th.warning,
 	td.warning
 	{
-		--hb-table-head-color: #{$white};
-		--hb-table-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
+		--hb-table-color: var(--hb-white);
 		--hb-table-bg: var(--hb-brand-warning);
 		--hb-table-border-color: var(--hb-brand-warning);
 		--hb-table-head-bg: var(--hb-brand-warning);
-		--hb-table-head-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
 	}
 	.danger th,
 	.danger td,
 	th.danger,
 	td.danger
 	{
-		--hb-table-head-color: #{$white};
-		--hb-table-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
+		--hb-table-color: var(--hb-white);
 		--hb-table-bg: var(--hb-brand-danger);
 		--hb-table-border-color: var(--hb-brand-danger);
 		--hb-table-head-bg: var(--hb-brand-danger);
-		--hb-table-head-color: #{$white};
+		--hb-table-head-color: var(--hb-white);
 	}
 }
 

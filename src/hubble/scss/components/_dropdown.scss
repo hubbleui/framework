@@ -38,17 +38,14 @@
         top: $btn-height + 5;
         min-width: var(--hb-dropdown-width);
         width: auto;
-        @include raised(3);
         .drop
         {
             border-radius: var(--hb-dropdown-border-radius);
             background-color: var(--hb-dropdown-bg);
             padding: var(--hb-dropdown-link-spacer-y) 0px;
+            box-shadow: var(--hb-dropdown-shadow);
+            @include raise(--hb-dropdown-shadow, $dropdown-shadow-level);
         }
-    }
-    .darkmode .drop-menu .drop
-    {
-        background-color: _lighter($body-bg-darkmode, 10%);
     }
 
     // Dropdown list

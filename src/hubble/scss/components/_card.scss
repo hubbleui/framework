@@ -1,25 +1,27 @@
 .card
 {
-	--hb-card-bg:               #ffffff;
-	--hb-card-bg-focus:         #ffffff;
-	--hb-card-color:            var(--hb-gray-500);
-	--hb-card-title-color:      var(--hb-body-color);
-	--hb-card-line-height:      1.8;
-	--hb-card-border-radius:    var(--hb-border-radius);
-	--hb-card-border-width:     0;
-	--hb-card-border-color:     var(--hb-gray-300);
-	--hb-card-box-shadow:       var(--hb-raised-level-two);
-	--hb-card-box-shadow-hover: var(--hb-raised-level-two-hover);
-	--hb-card-spacer-y:         2rem;
-	--hb-card-spacer-x:         1.6rem;
-	--hb-card-title-spacer-y:   1.7rem;
-	--hb-card-divider-color:    var(--hb-gray-300);
-	--hb-card-divider-size:     1px;
-	--hb-card-divier-space:     1rem;
-	--hb-card-actions-spacer-y: 2rem;
-	--hb-card-actions-spacer-x: 0.5rem;
-	--hb-card-icon-color: var(--hb-gray-500);
-	--hb-card-icon-bg: var(--hb-gray-200);
+	--hb-card-bg: #{$card-bg};
+	--hb-card-bg-focus: #{$card-bg-focus};
+	--hb-card-color: #{$card-color};
+	--hb-card-title-color: #{$card-title-color};
+	--hb-card-line-height: #{$card-line-height};
+	--hb-card-border-radius: #{$card-border-radius};
+	--hb-card-border-width: #{$card-border-width};
+	--hb-card-border-color: #{$card-border-color};
+	--hb-card-box-shadow: #{$card-box-shadow};
+	--hb-card-box-shadow-hover: #{$card-box-shadow-hover};
+	--hb-card-spacer-y: #{$card-spacer-y};
+	--hb-card-spacer-x: #{$card-spacer-x};
+	--hb-card-title-spacer-y: #{$card-title-spacer-y};
+	--hb-card-divider-color: #{$card-divider-color};
+	--hb-card-divider-size: #{$card-divider-size};
+	--hb-card-divier-space: #{$card-divier-space};
+	--hb-card-actions-spacer-y: #{$card-actions-spacer-y};
+	--hb-card-actions-spacer-x: #{$card-actions-spacer-x};
+	--hb-card-icon-color: #{$card-icon-color};
+	--hb-card-icon-bg: #{$card-icon-bg};
+	--hb-card-img-padding: #{$card-img-padding};
+	--hb-card-img-bg: #{$card-img-bg};
 
 	position: relative;
 	display: block;
