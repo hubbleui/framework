@@ -1,0 +1,55 @@
+@mixin _make-gutters($curr-grid, $prev-grid: null)
+{
+    @each $name, $size in $grid-gutters
+    {
+        @if $curr-grid == null
+        {
+            .gutter-#{$name}
+            {
+                --hb-gutter-l: var(--hb-grid-gutter-#{$name});
+                --hb-gutter-r: var(--hb-grid-gutter-#{$name});
+                
+            }
+        }
+        @else
+        {
+            .gutter-#{$curr-grid}-#{$name}
+            {
+                --hb-gutter-l: var(--hb-grid-gutter-#{$name});
+                --hb-gutter-r: var(--hb-grid-gutter-#{$name});
+            }
+        }
+    }
+    @if $curr-grid == null
+    {
+        .gutter-r
+        {
+            --hb-gutter-l: 0;
+        }
+        .gutter-l
+        {
+            --hb-gutter-r: 0;
+        }
+        .no-gutter
+        {
+            --hb-gutter-l: 0;
+            --hb-gutter-r: 0;
+        }
+    }
+    @else
+    {
+        .gutter-#{$curr-grid}-r
+        {
+            --hb-gutter-l: 0;
+        }
+        .gutter-#{$curr-grid}-l
+        {
+            --hb-gutter-r: 0;
+        }
+        .no-gutter-#{$curr-grid}
+        {
+            --hb-gutter-l: 0;
+            --hb-gutter-r: 0;
+        }
+    }
+}

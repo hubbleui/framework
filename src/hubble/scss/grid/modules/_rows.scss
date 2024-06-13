@@ -1,0 +1,32 @@
+@mixin _make-rows($curr-grid, $prev-grid: null)
+{
+    // Hide previous breakpoint
+    @if $prev-grid
+    {
+        .#{$prev-grid}
+        {
+            display: none;
+        }   
+    }
+
+    // Show current breakpoint
+    @if $curr-grid
+    {
+        .#{$curr-grid}
+        {
+            display: block;
+        }   
+    }
+
+    // Rows
+    @if $curr-grid != null
+    {
+        .row-#{$curr-grid}
+        {
+            // This doesn't use a variable as it can be used on
+            // any element
+            width: 100%;
+            @include _clearfix;
+        }
+    }
+}

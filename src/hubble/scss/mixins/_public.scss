@@ -22,13 +22,15 @@
     $width: map-get($breakpoints, $name);
     @if $width
     {
-        @media (max-width: $width){
+        @media (max-width: $width)
+        {
             @content;
         }
     }
     @else
     {
-        @media (max-width: $name){
+        @media (max-width: $name)
+        {
             @content;
         }
     }

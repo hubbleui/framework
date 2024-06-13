@@ -445,53 +445,53 @@ $z-index-modal:                 600 !default;
 // Responsive breakpoints
 $breakpoints:
 (
-    xs:                         $breakpoint-xs,
-    sm:                         $breakpoint-sm,
-    md:                         $breakpoint-md,
-    lg:                         $breakpoint-lg,
-    xl:                         $breakpoint-xl,
+    "xs":                       $breakpoint-xs,
+    "sm":                       $breakpoint-sm,
+    "md":                       $breakpoint-md,
+    "lg":                       $breakpoint-lg,
+    "xl":                       $breakpoint-xl,
 ) !default;
 
 // Grid gutters
 $grid-gutters:
 (
-    xxs:                        0.5rem,
-    xs:                         1.5rem,
-    sm:                         2.0rem,
-    md:                         2.5rem,
-    lg:                         3.0rem,
-    xl:                         3.5rem,
+    "xxs":                      0.5rem,
+    "xs":                       1.5rem,
+    "sm":                       2.0rem,
+    "md":                       2.5rem,
+    "lg":                       3.0rem,
+    "xl":                       3.5rem,
 ) !default;
 
 // Grid roof and floors
 $grid-v-gutters:
 (
-    xxs:                        0.5rem,
-    xs:                         1.5rem,
-    sm:                         3.0rem,
-    md:                         6.0rem,
-    lg:                         8.0rem,
-    xl:                         10.0rem,
+    "xxs":                      0.5rem,
+    "xs":                       1.5rem,
+    "sm":                       3.0rem,
+    "md":                       6.0rem,
+    "lg":                       8.0rem,
+    "xl":                       10.0rem,
 ) !default;
 
 // Container gutters
 $container-gutters:
 (
-    xxs:                        0.5rem,
-    xs:                         1.5rem,
-    sm:                         3.0rem,
-    md:                         3.0rem,
-    lg:                         3.0rem,
-    xl:                         3.0rem,
+    "xxs":                      0.5rem,
+    "xs":                       1.5rem,
+    "sm":                       3.0rem,
+    "md":                       3.0rem,
+    "lg":                       3.0rem,
+    "xl":                       3.0rem,
 ) !default;
 
 // Margin sizes
 $margin-sizes:
 (
-    xxs:                        0.5rem,
-    xs:                         1.5rem,
-    sm:                         3.0rem,
-    md:                         4.5rem,
-    lg:                         6.0rem,
-    xl:                         8.0rem,
+    "xxs":                      0.5rem,
+    "xs":                       1.5rem,
+    "sm":                       3.0rem,
+    "md":                       4.5rem,
+    "lg":                       6.0rem,
+    "xl":                       8.0rem,
 ) !default;

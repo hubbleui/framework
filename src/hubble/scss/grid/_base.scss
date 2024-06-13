@@ -1,0 +1,62 @@
+/* Container base */
+.container,
+.container-fluid
+{
+    @include _clearfix;
+    --hb-container-width: 100%;
+    --hb-container-max-width: 100%;
+    --hb-container-pad-l: 0;
+    --hb-container-pad-r: 0;
+    max-width: var(--hb-container-max-width);
+    width: var(--hb-container-width);
+    padding-left: var(--hb-container-pad-l);
+    padding-right: var(--hb-container-pad-r);
+    margin-left: auto;
+    margin-right: auto;
+
+}
+/* Row base */
+.row
+{
+    @include _clearfix;
+    --hb-row-width: 100%;
+    width: var(--hb-row-width);
+}
+/* Column base */
+.col
+{
+    float: left;
+    @include _clearfix;
+    --hb-col-width: 0;
+    --hb-col-margin-l: 0;
+    --hb-col-margin-r: 0;
+    width: var(--hb-col-width);
+    margin-left: var(--hb-col-margin-l);
+    margin-right: var(--hb-col-margin-r);
+}
+
+/* Gutters base */
+[class*="gutter-"],
+.no-gutter
+{
+    --hb-gutter-l: initial;
+    --hb-gutter-r: initial;
+    padding-left: var(--hb-gutter-l);
+    padding-right: var(--hb-gutter-r);
+}
+
+/* Floors base */
+[class*="floor-"],
+.no-floor
+{
+    --hb-floor: initial; 
+    padding-bottom: var(--hb-floor);
+}
+
+/* Roof base */
+[class*="roof-"],
+.no-roof
+{
+    --hb-roof: initial; 
+    padding-top: var(--hb-roof);
+}

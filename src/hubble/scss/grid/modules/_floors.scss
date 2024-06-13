@@ -1,0 +1,34 @@
+@mixin _make-floors($curr-grid, $prev-grid: null)
+{
+    @each $name, $size in $grid-v-gutters
+    {
+        @if $curr-grid == null
+        {
+            .floor-#{$name}
+            {
+                --hb-floor: var(--hb-grid-vgutter-#{$name});
+            }
+        }
+        @else
+        {
+            .floor-#{$curr-grid}-#{$name}
+            {
+                --hb-floor: var(--hb-grid-vgutter-#{$name});
+            }
+        }
+    }
+    @if $curr-grid == null
+    {
+        .no-floor
+        {
+            --hb-floor: 0;
+        }
+    }
+    @else
+    {
+        .no-floor-#{$curr-grid}
+        {
+            --hb-floor: 0;
+        }
+    }
+}

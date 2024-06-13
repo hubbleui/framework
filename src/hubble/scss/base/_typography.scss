@@ -6,6 +6,19 @@ h1, h2, h3, h4, h5, h6,
     font-weight: $headings-font-weight;
     margin-bottom: 1rem;
     font-style: normal;
+
+    // Overflow on tiny screens
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+@include media-breakpoint-up(sm)
+{
+    h1, h2, h3, h4, h5, h6,
+    .h1, .h2, .h3, .h4, .h5, .h6
+    {
+        word-wrap: initial;
+        overflow-wrap: initial;
+    }
 }
 
 h1

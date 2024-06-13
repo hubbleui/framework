@@ -1,0 +1,34 @@
+@mixin _make-roofs($curr-grid, $prev-grid: null)
+{
+    @each $name, $size in $grid-v-gutters
+    {
+        @if $curr-grid == null
+        {
+            .roof-#{$name}
+            {
+                --hb-roof: var(--hb-grid-vgutter-#{$name});
+            }
+        }
+        @else
+        {
+            .roof-#{$curr-grid}-#{$name}
+            {
+                --hb-roof: var(--hb-grid-vgutter-#{$name});
+            }
+        }
+    }
+    @if $curr-grid == null
+    {
+        .no-roof
+        {
+            --hb-roof: 0;
+        }
+    }
+    @else
+    {
+        .no-roof-#{$curr-grid}
+        {
+            --hb-roof: 0;
+        }
+    }
+}

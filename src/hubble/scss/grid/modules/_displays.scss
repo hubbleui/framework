@@ -1,0 +1,56 @@
+@mixin _make-displays($curr-grid, $prev-grid: null)
+{
+    // No variables are used here to so these can be applied to any element
+    @if $curr-grid != null
+    {
+        .#{$prev-grid}-no-display
+        {
+            display: none;
+        }
+        .#{$prev-grid}-inline-block,
+        .#{$prev-grid}-inline
+        {
+            display: none;
+        }
+        .#{$curr-grid}-inline-block
+        {
+            display: inline-block;
+        }
+        .#{$curr-grid}-inline
+        {
+            display: inline;
+        }
+    }
+    @else
+    {
+        // breakpoint size elements
+        .xl
+        {
+            display: none;
+        }
+        .lg
+        {
+            display: none;
+        }
+        .md
+        {
+            display: none;
+        }
+        .sm
+        {
+            display: none;
+        }
+        .xs
+        {
+            display: block;
+        }
+        .xs-inline-block
+        {
+            display: inline-block;
+        }
+        .xs-inline
+        {
+            display: inline;
+        }
+    }
+}
