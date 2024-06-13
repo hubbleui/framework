@@ -3,6 +3,7 @@
 @import 'grid/modules/containers';
 @import 'grid/modules/rows';
 @import 'grid/modules/cols';
+@import 'grid/modules/flexcols';
 @import 'grid/modules/gutters';
 @import 'grid/modules/roofs';
 @import 'grid/modules/floors';
@@ -37,4 +38,3 @@
 { 
     @include _make-grid('xl', 'lg');
 }
-

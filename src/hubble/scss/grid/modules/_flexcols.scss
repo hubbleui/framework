@@ -1,0 +1,35 @@
+@use "sass:math";
+@mixin _make-flex-cols($curr-grid, $prev-grid: null)
+{
+    // Rows
+    @if $curr-grid != null
+    {
+        .flex-row-#{$curr-grid}
+        {
+            box-sizing: border-box;
+            display: flex;
+            flex: 0 1 auto;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+    }
+
+    // colums
+    @for $i from 1 through 12
+    {
+        @if $curr-grid == null
+        {
+            .flex-col-#{$i}
+            {
+                --hb-col-width: #{unquote('#{math.div(100, 12) * $i}%')};
+            }
+        }
+        @else
+        {
+            .flex-col-#{$curr-grid}-#{$i}
+            {
+                --hb-col-width: #{unquote('#{math.div(100, 12) * $i}%')};
+            }
+        }
+    }
+}

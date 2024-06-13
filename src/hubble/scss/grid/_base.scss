@@ -22,17 +22,37 @@
     --hb-row-width: 100%;
     width: var(--hb-row-width);
 }
+.flex-row
+{
+    box-sizing: border-box;
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
 /* Column base */
+.col,
+.flex-col
+{
+    --hb-col-width: 0;
+    --hb-col-margin-l: 0;
+    --hb-col-margin-r: 0;
+}
 .col
 {
     float: left;
     @include _clearfix;
-    --hb-col-width: 0;
-    --hb-col-margin-l: 0;
-    --hb-col-margin-r: 0;
     width: var(--hb-col-width);
     margin-left: var(--hb-col-margin-l);
     margin-right: var(--hb-col-margin-r);
+}
+.flex-col
+{
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    flex-basis: var(--hb-col-width);
+    max-width: var(--hb-col-width);
 }
 
 /* Gutters base */

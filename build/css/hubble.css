@@ -555,12 +555,37 @@ pre > code {
   clear: both;
 }
 
+.flex-row {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 1 auto;
+      -ms-flex: 0 1 auto;
+          flex: 0 1 auto;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+}
+
 /* Column base */
-.col {
-  float: left;
+.col,
+.flex-col {
   --hb-col-width: 0;
   --hb-col-margin-l: 0;
   --hb-col-margin-r: 0;
+}
+
+.col {
+  float: left;
   width: var(--hb-col-width);
   margin-left: var(--hb-col-margin-l);
   margin-right: var(--hb-col-margin-r);
@@ -569,6 +594,19 @@ pre > code {
   content: "";
   display: table;
   clear: both;
+}
+
+.flex-col {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  -webkit-flex-basis: var(--hb-col-width);
+      -ms-flex-preferred-size: var(--hb-col-width);
+          flex-basis: var(--hb-col-width);
+  max-width: var(--hb-col-width);
 }
 
 /* Gutters base */
@@ -776,6 +814,55 @@ pre > code {
 
 .col-12-push-l {
   --hb-col-margin-r: 0%;
+}
+
+/* mobile first Flex Columns */
+.flex-col-1 {
+  --hb-col-width: 8.3333333333%;
+}
+
+.flex-col-2 {
+  --hb-col-width: 16.6666666667%;
+}
+
+.flex-col-3 {
+  --hb-col-width: 25%;
+}
+
+.flex-col-4 {
+  --hb-col-width: 33.3333333333%;
+}
+
+.flex-col-5 {
+  --hb-col-width: 41.6666666667%;
+}
+
+.flex-col-6 {
+  --hb-col-width: 50%;
+}
+
+.flex-col-7 {
+  --hb-col-width: 58.3333333333%;
+}
+
+.flex-col-8 {
+  --hb-col-width: 66.6666666667%;
+}
+
+.flex-col-9 {
+  --hb-col-width: 75%;
+}
+
+.flex-col-10 {
+  --hb-col-width: 83.3333333333%;
+}
+
+.flex-col-11 {
+  --hb-col-width: 91.6666666667%;
+}
+
+.flex-col-12 {
+  --hb-col-width: 100%;
 }
 
 /* mobile first Gutters */
@@ -1029,6 +1116,63 @@ pre > code {
   .col-sm-12-push-l {
     --hb-col-margin-r: 0%;
   }
+  /* sm Flex Columns */
+  .flex-row-sm {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 1 auto;
+        -ms-flex: 0 1 auto;
+            flex: 0 1 auto;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+  }
+  .flex-col-sm-1 {
+    --hb-col-width: 8.3333333333%;
+  }
+  .flex-col-sm-2 {
+    --hb-col-width: 16.6666666667%;
+  }
+  .flex-col-sm-3 {
+    --hb-col-width: 25%;
+  }
+  .flex-col-sm-4 {
+    --hb-col-width: 33.3333333333%;
+  }
+  .flex-col-sm-5 {
+    --hb-col-width: 41.6666666667%;
+  }
+  .flex-col-sm-6 {
+    --hb-col-width: 50%;
+  }
+  .flex-col-sm-7 {
+    --hb-col-width: 58.3333333333%;
+  }
+  .flex-col-sm-8 {
+    --hb-col-width: 66.6666666667%;
+  }
+  .flex-col-sm-9 {
+    --hb-col-width: 75%;
+  }
+  .flex-col-sm-10 {
+    --hb-col-width: 83.3333333333%;
+  }
+  .flex-col-sm-11 {
+    --hb-col-width: 91.6666666667%;
+  }
+  .flex-col-sm-12 {
+    --hb-col-width: 100%;
+  }
   /* sm Gutters */
   .gutter-sm-xxs {
     --hb-gutter-l: var(--hb-grid-gutter-xxs);
@@ -1257,6 +1401,63 @@ pre > code {
   }
   .col-md-12-push-l {
     --hb-col-margin-r: 0%;
+  }
+  /* md Flex Columns */
+  .flex-row-md {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 1 auto;
+        -ms-flex: 0 1 auto;
+            flex: 0 1 auto;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+  }
+  .flex-col-md-1 {
+    --hb-col-width: 8.3333333333%;
+  }
+  .flex-col-md-2 {
+    --hb-col-width: 16.6666666667%;
+  }
+  .flex-col-md-3 {
+    --hb-col-width: 25%;
+  }
+  .flex-col-md-4 {
+    --hb-col-width: 33.3333333333%;
+  }
+  .flex-col-md-5 {
+    --hb-col-width: 41.6666666667%;
+  }
+  .flex-col-md-6 {
+    --hb-col-width: 50%;
+  }
+  .flex-col-md-7 {
+    --hb-col-width: 58.3333333333%;
+  }
+  .flex-col-md-8 {
+    --hb-col-width: 66.6666666667%;
+  }
+  .flex-col-md-9 {
+    --hb-col-width: 75%;
+  }
+  .flex-col-md-10 {
+    --hb-col-width: 83.3333333333%;
+  }
+  .flex-col-md-11 {
+    --hb-col-width: 91.6666666667%;
+  }
+  .flex-col-md-12 {
+    --hb-col-width: 100%;
   }
   /* md Gutters */
   .gutter-md-xxs {
@@ -1487,6 +1688,63 @@ pre > code {
   .col-lg-12-push-l {
     --hb-col-margin-r: 0%;
   }
+  /* lg Flex Columns */
+  .flex-row-lg {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 1 auto;
+        -ms-flex: 0 1 auto;
+            flex: 0 1 auto;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+  }
+  .flex-col-lg-1 {
+    --hb-col-width: 8.3333333333%;
+  }
+  .flex-col-lg-2 {
+    --hb-col-width: 16.6666666667%;
+  }
+  .flex-col-lg-3 {
+    --hb-col-width: 25%;
+  }
+  .flex-col-lg-4 {
+    --hb-col-width: 33.3333333333%;
+  }
+  .flex-col-lg-5 {
+    --hb-col-width: 41.6666666667%;
+  }
+  .flex-col-lg-6 {
+    --hb-col-width: 50%;
+  }
+  .flex-col-lg-7 {
+    --hb-col-width: 58.3333333333%;
+  }
+  .flex-col-lg-8 {
+    --hb-col-width: 66.6666666667%;
+  }
+  .flex-col-lg-9 {
+    --hb-col-width: 75%;
+  }
+  .flex-col-lg-10 {
+    --hb-col-width: 83.3333333333%;
+  }
+  .flex-col-lg-11 {
+    --hb-col-width: 91.6666666667%;
+  }
+  .flex-col-lg-12 {
+    --hb-col-width: 100%;
+  }
   /* lg Gutters */
   .gutter-lg-xxs {
     --hb-gutter-l: var(--hb-grid-gutter-xxs);
@@ -1715,6 +1973,63 @@ pre > code {
   }
   .col-xl-12-push-l {
     --hb-col-margin-r: 0%;
+  }
+  /* xl Flex Columns */
+  .flex-row-xl {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 1 auto;
+        -ms-flex: 0 1 auto;
+            flex: 0 1 auto;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+  }
+  .flex-col-xl-1 {
+    --hb-col-width: 8.3333333333%;
+  }
+  .flex-col-xl-2 {
+    --hb-col-width: 16.6666666667%;
+  }
+  .flex-col-xl-3 {
+    --hb-col-width: 25%;
+  }
+  .flex-col-xl-4 {
+    --hb-col-width: 33.3333333333%;
+  }
+  .flex-col-xl-5 {
+    --hb-col-width: 41.6666666667%;
+  }
+  .flex-col-xl-6 {
+    --hb-col-width: 50%;
+  }
+  .flex-col-xl-7 {
+    --hb-col-width: 58.3333333333%;
+  }
+  .flex-col-xl-8 {
+    --hb-col-width: 66.6666666667%;
+  }
+  .flex-col-xl-9 {
+    --hb-col-width: 75%;
+  }
+  .flex-col-xl-10 {
+    --hb-col-width: 83.3333333333%;
+  }
+  .flex-col-xl-11 {
+    --hb-col-width: 91.6666666667%;
+  }
+  .flex-col-xl-12 {
+    --hb-col-width: 100%;
   }
   /* xl Gutters */
   .gutter-xl-xxs {

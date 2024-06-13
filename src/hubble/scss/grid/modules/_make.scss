@@ -10,6 +10,8 @@
     @include _make-rows($curr-grid, $prev-grid);
     /* #{$commentName} Columns */
     @include _make-cols($curr-grid, $prev-grid);
+    /* #{$commentName} Flex Columns */
+    @include _make-flex-cols($curr-grid, $prev-grid);
     /* #{$commentName} Gutters */
     @include _make-gutters($curr-grid, $prev-grid);
     /* #{$commentName} Roofs */
