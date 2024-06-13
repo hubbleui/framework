@@ -11,7 +11,16 @@
 .visibility-hide { visibility: hidden }
 .opacity-hide 	 { opacity: 0 }
 .opacity-show 	 { opacity: 1 }
-.sr-only		 { 
+.hidden          { display: none }
+.no-select       { user-select: none; }
+.img-responsive
+{
+	display: block;
+	width: 100%;
+    height: auto;
+}
+.sr-only
+{ 
 	position: absolute;
   	width: 1px;
   	height: 1px;
@@ -20,16 +29,4 @@
   	overflow: hidden;
   	clip: rect(0,0,0,0);
   	border: 0;
-}
-.hidden    { display: none }
-.no-select {
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-.img-responsive {
-	display: block;
-	width: 100%;
-    height: auto;
 }

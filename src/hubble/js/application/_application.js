@@ -70,7 +70,7 @@
      * @param  string key The name of the key
      * @return mixed
      */
-    Application.prototype.require = function(key)
+    Application.prototype.require = function()
     {
         return Container.get.apply(Container, arguments);
     }

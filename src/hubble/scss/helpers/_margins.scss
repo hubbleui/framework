@@ -2,26 +2,11 @@
 .margin-center 		  { margin: 0 auto }
 .no-margin 	   		  { margin: 0 }
 
-// sm
-.margin-sm-n          { margin-top: map-get($margin-sizes, sm) }
-.margin-sm-e          { margin-right: map-get($margin-sizes, sm) }
-.margin-sm-s          { margin-bottom: map-get($margin-sizes, sm) }
-.margin-sm-w          { margin-left: map-get($margin-sizes, sm) }
-
-// md
-.margin-md-n          { margin-top: map-get($margin-sizes, md) }
-.margin-md-e          { margin-right: map-get($margin-sizes, md) }
-.margin-md-s          { margin-bottom: map-get($margin-sizes, md) }
-.margin-md-w          { margin-left: map-get($margin-sizes, md) }
-
-// lg
-.margin-lg-n          { margin-top: map-get($margin-sizes, lg) }
-.margin-lg-e          { margin-right: map-get($margin-sizes, lg) }
-.margin-lg-s          { margin-bottom: map-get($margin-sizes, lg) }
-.margin-lg-w          { margin-left: map-get($margin-sizes, lg) }
-
-// xl
-.margin-xl-n          { margin-top: map-get($margin-sizes, xl) }
-.margin-xl-e          { margin-right: map-get($margin-sizes, xl) }
-.margin-xl-s          { margin-bottom: map-get($margin-sizes, xl) }
-.margin-xl-w          { margin-left: map-get($margin-sizes, xl) }
+// Margin sizes
+@each $name, $margin in $margin-sizes
+{
+	.margin-#{$name}-n          { margin-top:    var(--hb-margin-#{$name}) }
+	.margin-#{$name}-e          { margin-right:  var(--hb-margin-#{$name}) }
+	.margin-#{$name}-s          { margin-bottom: var(--hb-margin-#{$name}) }
+	.margin-#{$name}-w          { margin-left:   var(--hb-margin-#{$name}) }
+}

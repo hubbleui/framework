@@ -124,6 +124,7 @@ $text-size-p6:                  $base-font-size !default;
 // Heading styles
 $headings-font-weight:          $text-bold !default;
 $headings-line-height:          1.1 !default;
+$headings-spacer:               1em !default;
 
 // Base aesthetics
 $border-radius:                 3px !default;
@@ -147,9 +148,6 @@ $raised-level-two-hover:        0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 
 $raised-level-three:            rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px !default;
 $raised-level-three-hover:      0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23) !default;
 $box-shadow-in:                 inset 0 5px 8px -2px rgba(0,0,0,.13) !default;
-
-// Drawer
-$drawer-width:                  540px !default;
 
 // Button
 $btn-height:                    38px !default;
@@ -433,6 +431,15 @@ $scrollbar-track-active:        rgba(0, 0, 0, 0.07) !default;
 $scrollbar-handle-color:        rgba(0, 0, 0, 0.2) !default;
 $scrollbar-handle-hover:        rgba(0, 0, 0, 0.3) !default;
 $scrollbar-handle-active:       rgba(0, 0, 0, 0.35) !default;
+
+// Frontdrop
+
+// Backdrop
+
+// Drawer
+$drawer-width:                  540px !default;
+
+// Smart search
 
 // Zindexs
 $z-index-tooltip:               100 !default;

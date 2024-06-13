@@ -15,6 +15,7 @@
     --hb-body-bg:                          #{$body-bg};
     --hb-body-color:                       #{$body-color};
     --hb-link-color:                       #{$link-color};
+    --hb-link-color-hover:                 #{$link-color-hover};
 
     /* Context Colors */
     @each $name, $color in $colors
@@ -24,7 +25,7 @@
         --hb-#{$name}-200:                 #{_lighter($color, 80%)};
         --hb-#{$name}-300:                 #{_lighter($color, 50%)};
         --hb-#{$name}-400:                 #{_lighter($color, 35%)};
-        --hb-#{$name}-D00:                 #{$color};
+        // Default is between 400 and 500 (i.e 450)
         --hb-#{$name}-500:                 #{_darker($color, 5%)};
         --hb-#{$name}-600:                 #{_darker($color, 20%)};
         --hb-#{$name}-700:                 #{_darker($color, 25%)};
@@ -39,6 +40,7 @@
     }   
 
     /* Typeography */
+    /* Font stacks */
     --hb-font-sans-serif:                  #{$font-family-sans-serif};
     --hb-font-serif:                       #{$font-family-serif};
     --hb-font-monospace:                   #{$font-family-monospace};
@@ -46,8 +48,12 @@
     --hb-base-font-size:                   #{$base-font-size};
     --hb-base-line-height:                 #{$base-line-height};
     --hb-base-font-weight:                 #{$base-font-weight};
-    --hb-font-headings:                    #{$font-family-headings};
     --hb-font-smoothing:                   #{$font-smoothing};
+    /* Heading styles */
+    --hb-font-headings:                    #{$font-family-headings};
+    --hb-headings-font-weight:             #{$headings-font-weight};
+    --hb-headings-line-height:             #{$headings-line-height};
+    --hb-headings-spacer:                  #{$headings-spacer};
     /* Headings sizes */
     --hb-text-size-h1:                     #{$text-size-h1};
     --hb-text-size-h2:                     #{$text-size-h2};
@@ -62,18 +68,15 @@
     --hb-text-size-p4:                     #{$text-size-p4};
     --hb-text-size-p5:                     #{$text-size-p5};
     --hb-text-size-p6:                     #{$text-size-p6};
-    /* Heading styles */
-    --hb-headings-font-weight:             #{$headings-font-weight};
-    --hb-headings-line-height:             #{$headings-line-height};
 
     /* Raised Levels */
-    --hb-raised-level-one:                 0px 2px 1px -1px rgba(0, 0, 0, 0.20), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
-    --hb-raised-level-one-hover:           0px 2px 4px -1px rgba(0, 0, 0, 0.10), 0px 4px 5px 0px rgba(0, 0, 0, 0.12), 0px 1px 10px 0px rgba(0, 0, 0,0. 6);
-    --hb-raised-level-two:                 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    --hb-raised-level-two-hover:           0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    --hb-raised-level-three:               rgba(0, 0, 0, 0.20) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
-    --hb-raised-level-three-hover:         0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-    --hb-box-shadow-in:                    inset 0 5px 8px -2px rgba(0,0,0,.13);
+    --hb-raised-level-one:                 #{$raised-level-one};
+    --hb-raised-level-one-hover:           #{$raised-level-one-hover};
+    --hb-raised-level-two:                 #{$raised-level-two};
+    --hb-raised-level-two-hover:           #{$raised-level-two-hover};
+    --hb-raised-level-three:               #{$raised-level-three};
+    --hb-raised-level-three-hover:         #{$raised-level-three-hover};
+    --hb-box-shadow-in:                    #{$box-shadow-in};
 
     /* Misc */
     --hb-border-radius:                    3px;
@@ -109,44 +112,6 @@
     /* Base transitions */
     --hb-base-easing:                      cubic-bezier(.4,0,1,1);
     --hb-base-easing-time:                 .2s;
-    /* Defaults */
-    --hb-ease:                             ease;
-    --hb-linear:                           linear;
-    --hb-ease-in:                          ease-in;
-    --hb-ease-out:                         ease-out;
-    --hb-ease-in-out:                      ease-in-out;
-    /* Sine */
-    --hb-ease-in-sine:                     cubic-bezier(0.47, 0, 0.745, 0.715);
-    --hb-ease-out-sine:                    cubic-bezier(0.39, 0.575, 0.565, 1);
-    --hb-ease-in-out-sine:                 cubic-bezier(0.445, 0.05, 0.55, 0.95);
-    /* Quad */
-    --hb-ease-in-quad:                     cubic-bezier(0.55, 0.085, 0.68, 0.53);
-    --hb-ease-out-quad:                    cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    --hb-ease-in-out-quad:                 cubic-bezier(0.455, 0.03, 0.515, 0.955);
-    /* Cubic */
-    --hb-ease-in-cubic:                    cubic-bezier(0.55, 0.055, 0.675, 0.19);
-    --hb-ease-out-cubic:                   cubic-bezier(0.215, 0.61, 0.355, 1);
-    --hb-ease-in-out-cubic:                cubic-bezier(0.645, 0.045, 0.355, 1);
-    /* Queart */
-    --hb-ease-in-quart:                    cubic-bezier(0.895, 0.03, 0.685, 0.22);
-    --hb-ease-out-quart:                   cubic-bezier(0.165, 0.84, 0.44, 1);
-    --hb-ease-in-out-quart:                cubic-bezier(0.77, 0, 0.175, 1);
-    /* Quint */
-    --hb-ease-in-quint:                    cubic-bezier(0.755, 0.05, 0.855, 0.06);
-    --hb-ease-out-quint:                   cubic-bezier(0.23, 1, 0.32, 1);
-    --hb-ease-in-out-quint:                cubic-bezier(0.86, 0, 0.07, 1);
-    /* Expo */
-    --hb-ease-in-expo:                     cubic-bezier(0.95, 0.05, 0.795, 0.035);
-    --hb-ease-out-expo:                    cubic-bezier(0.19, 1, 0.22, 1);
-    --hb-ease-in-out-expo:                 cubic-bezier(1, 0, 0, 1);
-    /* Circ */
-    --hb-ease-in-circ:                     cubic-bezier(0.6, 0.04, 0.98, 0.335);
-    --hb-ease-out-circ:                    cubic-bezier(0.075, 0.82, 0.165, 1);
-    --hb-ease-in-out-circ:                 cubic-bezier(0.785, 0.135, 0.15, 0.86);
-    /* Back */
-    --hb-ease-in-back:                     cubic-bezier(0.6, -0.28, 0.735, 0.045);
-    --hb-ease-out-back:                    cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --hb-ease-in-back:                     cubic-bezier(0.68, -0.55, 0.265, 1.55);
     /* Timing */
     --hb-ease-time-xs:                     0.1s;
     --hb-ease-time-s:                      0.3s;

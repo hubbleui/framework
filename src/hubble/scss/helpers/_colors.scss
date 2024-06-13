@@ -14,9 +14,8 @@
 .color-info          { color: var(--hb-brand-info)}
 .color-danger        { color: var(--hb-brand-danger)}
 .color-warning       { color: var(--hb-brand-warning)}
-.color-gold			 { color: #d5b245;}
 
 // Defaults
 .color-transparent   { color: transparent }
-.color-white         { color: #fff }
+.color-white         { color: var(--hb-white)}
 .color-black         { color: var(--hb-black)}

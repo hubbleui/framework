@@ -17,35 +17,35 @@ html
 }
 html, body
 {
-    background-color: $body-bg;
-    color:            $body-color;
+    background-color: var(--hb-body-bg);
+    color:            var(--hb-body-color);
 }
 body
 {
-    font-family:      $base-font-family;
-    font-weight:      $base-font-weight;
-    line-height:      $base-line-height;
-    font-size:        1.45rem;
+    font-family:      var(--hb-base-font-family);
+    font-weight:      var(--hb-base-font-weight);
+    line-height:      var(--hb-base-line-height);
+    font-size:        var(--hb-base-font-size);
     @include _font-smooth;
 }
 input, select, label, button, textarea
 {
-    font-family: $base-font-family;
-    font-size:   $base-font-size;
-    color: $body-color;
+    font-family: var(--hb-base-font-family);
+    font-size:   var(--hb-base-font-size);
+    color:       var(--hb-body-bg);
     @include _font-smooth;
 }
 // Links
 a
 {
-    color: $link-color;
+    color: var(--hb-link-color);
     text-decoration: none;
     background: transparent;
     &:active,
     &:hover
     {
         outline: 0;
-        color: $link-color-hover;
+        color: var(--hb-link-color-hover);
         text-decoration: underline;
     }
     &.no-link:hover

@@ -64,10 +64,7 @@
         {
             var links  = Helper.$All('li > *', navWrap);
             
-            for (var i = 0; i < links.length; i++)
-            {
-                Helper.addEventListener(links[i], 'click', this._eventHandler);
-            }
+            Helper.addEventListener(links, 'click', this._eventHandler);
         }
 
         /**
@@ -80,10 +77,7 @@
         {
             var links = Helper.$All('li > *', navWrap);
             
-            for (var i = 0; i < links.length; i++)
-            {
-                Helper.removeEventListener(links[i], 'click', this._eventHandler);
-            }
+            Helper.removeEventListener(links, 'click', this._eventHandler);
         }
 
         /**

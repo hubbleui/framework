@@ -1,6 +1,8 @@
+.bg-transparent   { background-color: transparent}
+
 // Brand
-.bg-primary      { background-color: var(--hb-brand-primary)}
-.bg-secondary    { background-color: var(--hb-brand-secondary)}
+.bg-primary       { background-color: var(--hb-brand-primary)}
+.bg-secondary     { background-color: var(--hb-brand-secondary)}
 
 // Greys
 .bg-gray-dark 	  { background-color: var(--hb-gray-500)}
@@ -16,6 +18,6 @@
 .bg-warning      { background-color: var(--hb-brand-warning)}
 
 // Defaults
-.bg-transparent  { background-color: transparent}
+
 .bg-white        { background-color: var(--hb-white)}
 .bg-black        { background-color: var(--hb-black);}

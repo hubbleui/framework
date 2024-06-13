@@ -1,31 +1,18 @@
+// Reset
+.no-border              { border: 0; }
+
 // Box shadows 
 .shadow-out  		    { box-shadow: $raised-level-one }
 .shadow-in   		    { box-shadow: $box-shadow-in }
 
-// South borders
-.border-s-gray-dark     { border-bottom: 1px solid var(--hb-gray-500) }
-.border-s-gray          { border-bottom: 1px solid $gray }
-.border-s-gray-light    { border-bottom: 1px solid var(--hb-gray-400) }
-.border-s-gray-lighter  { border-bottom: 1px solid var(--hb-gray-300) }
-.border-s-gray-lightest { border-bottom: 1px solid var(--hb-gray-100) }
+// Color inheritance
+.border-s               {border-bottom: 1px solid;}
+.border-n               {border-top:    1px solid;}
+.border-e               {border-left:   1px solid;}
+.border-w               {border-right:  1px solid;}
 
-// North borders
-.border-n-gray-dark     { border-top: 1px solid var(--hb-gray-500) }
-.border-n-gray          { border-top: 1px solid $gray }
-.border-n-gray-light    { border-top: 1px solid var(--hb-gray-400) }
-.border-n-gray-lighter  { border-top: 1px solid var(--hb-gray-300) }
-.border-n-gray-lightest { border-top: 1px solid var(--hb-gray-100) }
-
-// East borders
-.border-e-gray-dark     { border-right: 1px solid var(--hb-gray-500) }
-.border-e-gray          { border-right: 1px solid $gray }
-.border-e-gray-light    { border-right: 1px solid var(--hb-gray-400) }
-.border-e-gray-lighter  { border-right: 1px solid var(--hb-gray-300) }
-.border-e-gray-lightest { border-right: 1px solid var(--hb-gray-100) }
-
-// West borders
-.border-w-gray-dark     { border-left: 1px solid var(--hb-gray-500) }
-.border-w-gray          { border-left: 1px solid $gray }
-.border-w-gray-light    { border-left: 1px solid var(--hb-gray-400) }
-.border-w-gray-lighter  { border-left: 1px solid var(--hb-gray-300) }
-.border-w-gray-lightest { border-left: 1px solid var(--hb-gray-100) }
+// Color specific
+@each $context, $colors in $contexts
+{    
+    .border-#{$context} { border-color: map-get($colors, "color") }
+}

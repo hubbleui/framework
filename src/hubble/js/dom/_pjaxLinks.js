@@ -6,16 +6,6 @@
      * @var object
      */
     var Helper = Hubble.helper();
-
-    /**
-     * Bool val 
-     * 
-     * @var function
-     */
-    function boolval(l)
-    {
-        return !1 !== l && ("false" !== l && (0 !== l && 0 !== l && ("" !== l && "0" !== l && ((!Array.isArray(l) || 0 !== l.length) && (null !== l && void 0 !== l)))))
-    }
     
     /**
      * Pjax Links Module
@@ -90,8 +80,8 @@
             var href = trigger.dataset.pjaxHref;
             var target = trigger.dataset.pjaxTarget;
             var title = trigger.dataset.pjaxTitle || false;
-            var stateChange = boolval(trigger.dataset.pjaxStateChange);
-            var singleRequest = boolval(trigger.dataset.pjaxSingleRequest);
+            var stateChange = Helper.bool(trigger.dataset.pjaxStateChange);
+            var singleRequest = Helper.bool(trigger.dataset.pjaxSingleRequest);
 
             Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
         }

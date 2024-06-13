@@ -153,49 +153,7 @@
         }
         
         return process;
-
     };
-
-    /**
-     * DOM parser pollyfill (legacy support)
-     * 
-     * @var obj
-     * @source https://gist.github.com/1129031
-     */
-    (function(DOMParser)
-    {
-        var DOMParser_proto = DOMParser.prototype,
-            real_parseFromString = DOMParser_proto.parseFromString;
-        try
-        {
-            if ((new DOMParser).parseFromString("", "text/html"))
-            {
-                return;
-            }
-        }
-        catch (ex)
-        {}
-        DOMParser_proto.parseFromString = function(markup, type)
-        {
-            if (/^\s*text\/html\s*(?:;|$)/i.test(type))
-            {
-                var doc = document.implementation.createHTMLDocument(""),
-                    doc_elt = doc.documentElement,
-                    first_elt;
-                doc_elt.innerHTML = markup;
-                first_elt = doc_elt.firstElementChild;
-                if (doc_elt.childElementCount === 1 && first_elt.localName.toLowerCase() === "html")
-                {
-                    doc.replaceChild(first_elt, doc_elt);
-                }
-                return doc;
-            }
-            else
-            {
-                return real_parseFromString.apply(this, arguments);
-            }
-        };
-    }(DOMParser));
 
     /**
      * Module constructor
@@ -238,8 +196,6 @@
     Pjax.prototype._bind = function()
     {
         _invoked = true;
-
-        this._cachePage();
 
         _requestedUrls.push(this._normaliseUrl(window.location.href));
 
@@ -339,14 +295,14 @@
      */
     Pjax.prototype.invoke = function(url, target, title, stateChange, singleRequest)
     {
-        // Save the document's current state
-        this._cachePage();
-
-        // If we are already loading a pjax request don't proceed
+        // If we are already loading a pjax, cancel it and
         if (_loading)
         {
-            return;
+            this._ajax.abort();
         }
+
+        // Save the document's current state
+        this._cachePage();
 
         // We are now loading
         _loading = true;
@@ -377,7 +333,8 @@
         }
 
         // Create a new location object
-        var newLocation = {
+        var newLocation =
+        {
             location: url,
             target: target,
             title: title,
@@ -398,13 +355,7 @@
                     document.title = title;
                 }
 
-                window.history.pushState(
-                    {
-                        id: url
-                    },
-                    title,
-                    url
-                );
+                window.history.pushState({id: url}, title, url);
             }
 
             _loading = false;
@@ -436,28 +387,28 @@
         Hubble.require('Events').fire('pjax:start', locationObj);
 
         // Send GET request
-        Ajax.get(locationObj['location'], null, function(HTML)
-            {
-                // Fire the success event
-                Hubble.require('Events').fire('pjax:success', locationObj);
+        this._ajax = Ajax.get(locationObj['location'], null, function(HTML)
+        {
+            // Fire the success event
+            Hubble.require('Events').fire('pjax:success', locationObj);
 
-                // Handle the response
-                _this._handleSuccess(locationObj, HTML, stateChange);
+            // Handle the response
+            _this._handleSuccess(locationObj, HTML, stateChange);
 
-            },
+        },
+        // Handle the error
+        function(error)
+        {
+            // Fire the error event
+            Hubble.require('Events').fire('pjax:error', locationObj);
+
             // Handle the error
-            function(error)
-            {
-                // Fire the error event
-                Hubble.require('Events').fire('pjax:error', locationObj);
+            _this._handleError(locationObj, error);
 
-                // Handle the error
-                _this._handleError(locationObj, error);
-
-            }, [
-            {
-                'X-PJAX': true
-            }]);
+        }, [
+        {
+            'X-PJAX': true
+        }]);
     }
 
     /**
@@ -518,7 +469,7 @@
         }
         else
         {
-            var targetEl = document.getElementById(locationObj['target']);
+            var targetEl  = document.getElementById(locationObj['target']);
             var domTarget = domCotent.getElementById(locationObj['target']);
         }
 
@@ -974,7 +925,8 @@
     {
         var content = document.body.innerHTML;
 
-        var _location = {
+        var _location =
+        {
             location: window.location.href,
             target: 'document-body',
             title: document.title,
