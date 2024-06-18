@@ -30,7 +30,7 @@ module.exports =
     {
         options : _options,
         files   : 'src/**/*.js',
-        tasks   : ['import', 'uglify'],
+        tasks   : ['js'],
     },
 
     // Watch image files and run grunt tasks

@@ -11,9 +11,9 @@
      * Module constructor
      *
      * @class
-     * @constructor
-     * @access public
-     * @return this
+     {*} @constructor
+     * @access {public}
+     * @return {this}
      */
     var Filters = function()
     {
@@ -25,7 +25,7 @@
     /**
      * Module destructor - clears event cache
      *
-     * @access public
+     * @access {public}
      */
     Filters.prototype.destruct = function()
     {
@@ -35,9 +35,9 @@
     /**
      * Fire a custom event
      *
-     * @param eventName string The event name to fire
-     * @param subject   mixed  What should be given as "this" to the event callbacks
-     * @access public
+     * @param {eventName} string The event name to fire
+     * @param {subject}   mixed  What should be given as "this" to the event callbacks
+     * @access {public}
      */
     Filters.prototype.filter = function(eventName, subject)
     {
@@ -66,9 +66,9 @@
     /**
      * Bind a callback to an event
      *
-     * @param eventName string The event name
-     * @param callback  func   The callback function
-     * @access public
+     * @param {eventName} string The event name
+     * @param {callback}  func   The callback function
+     * @access {public}
      */
     Filters.prototype.on = function(eventName, callback)
     {
@@ -92,9 +92,9 @@
     /**
      * UnBind a callback to an event
      *
-     * @param eventName string The event name
-     * @param callback  func   The callback function
-     * @access public
+     * @param {eventName} string The event name
+     * @param {callback}  func   The callback function
+     * @access {public}
      */
     Filters.prototype.off = function(eventName, callback)
     {
@@ -117,9 +117,9 @@
     /**
      * Get a callback function by key
      *
-     * @param fn string The function key
-     * @access private
-     * @return string
+     * @param {fn} string The function key
+     * @access {private}
+     * @return {string}
      */
     Filters.prototype._getFnName = function(fn)
     {

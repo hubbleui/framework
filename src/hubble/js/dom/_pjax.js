@@ -1,9 +1,9 @@
 /**
  * Pjax module
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
  */
 
 (function()
@@ -11,64 +11,64 @@
     /**
      * JS Helper
      * 
-     * @var obj
+     * @var {obj}
      */
     var Helper = Hubble.helper();
 
     /**
      * AJAX Module
      * 
-     * @var obj
+     * @var {obj}
      */
     var Ajax = Hubble.require('Ajax');
 
     /**
      * AJAX URL to list paginated reviews
      * 
-     * @var string
+     * @var {string}
      */
     var _urlBase = window.location.origin;
 
     /**
      * Has pjax been invoked
      * 
-     * @var bool
+     * @var {bool}
      */
     var _invoked = false;
 
     /**
      * Array of page caches
      * 
-     * @var array
+     * @var {array}
      */
     var _cache = [];
 
     /**
      * Array of requested urls
      * 
-     * @var array
+     * @var {array}
      */
     var _requestedUrls = [];
 
     /**
      * Are we listening for state changes ?
      * 
-     * @var bool
+     * @var {bool}
      */
     var _listening = false;
 
     /**
      * Are we currently loading a pjax request ?
      * 
-     * @var bool
+     * @var {bool}
      */
     var _loading = false;
 
     /**
      * Very simple chain library
      * 
-     * @var obj
-     * @source https://github.com/krasimir/chain
+     * @var {obj}
+     * @source {https://github.com/krasimir/chain}
      */
     var Chain = function() {
 
@@ -159,7 +159,7 @@
      * Module constructor
      *
      * @constructor
-     * @access public
+     {*} @access public
      */
     var Pjax = function()
     {
@@ -174,7 +174,7 @@
     /**
      * Module destructor - unbinds events
      *
-     * @access public
+     * @access {public}
      */
     Pjax.prototype.destruct = function()
     {
@@ -191,7 +191,7 @@
     /**
      * Bind events
      *
-     * @access public
+     * @access {public}
      */
     Pjax.prototype._bind = function()
     {
@@ -206,9 +206,9 @@
     /**
      * Check if the module has loaded a url
      *
-     * @access public
-     * @param  string url URL to check
-     * @return bool
+     * @access {public}
+     * @param  {string} url URL to check
+     * @return {bool}
      */
     Pjax.prototype.requestedUrl = function(url)
     {
@@ -218,8 +218,8 @@
     /**
      * Remove a requested url
      *
-     * @access public
-     * @param  string url URL to check
+     * @access {public}
+     * @param  {string} url URL to check
      */
     Pjax.prototype.removeUrl = function(url)
     {
@@ -240,8 +240,8 @@
     /**
      * Set a state based on a url
      *
-     * @access public
-     * @param  string url URL to check
+     * @access {public}
+     * @param  {string} url URL to check
      */
     Pjax.prototype.setState = function(url)
     {
@@ -265,7 +265,7 @@
     /**
      * On pjax start event
      *
-     * @access private
+     * @access {private}
      */
     Pjax.prototype._onStart = function()
     {
@@ -275,7 +275,7 @@
     /**
      * On pjax complete event
      *
-     * @access private
+     * @access {private}
      */
     Pjax.prototype._onComplete = function()
     {
@@ -286,12 +286,12 @@
     /**
      * Start a pjax request
      *
-     * @access public
-     * @param  string url           The url to send the request to
-     * @param  string target        The id to put the response into
-     * @param  string title         The new page title (optional)
-     * @param  bool   stateChange   Change the window history state (optional default false) 
-     * @param  bool   singleRequest Is this a single request ? (optional default false
+     * @access {public}
+     * @param  {string} url           The url to send the request to
+     * @param  {string} target        The id to put the response into
+     * @param  {string} title         The new page title (optional)
+     * @param  {bool}   stateChange   Change the window history state (optional default false) 
+     * @param  {bool}   singleRequest Is this a single request ? (optional default false
      */
     Pjax.prototype.invoke = function(url, target, title, stateChange, singleRequest)
     {
@@ -370,10 +370,10 @@
     /**
      * Send and handle the pjax request
      *
-     * @access private
-     * @param  object locationObj Location object from the cache
-     * @param  bool   stateChange Change the window history state
-     * @param  bool   singleRequest Is this a single request (first time only) ?
+     * @access {private}
+     * @param  {object} locationObj Location object from the cache
+     * @param  {bool}   stateChange Change the window history state
+     * @param  {bool}   singleRequest Is this a single request (first time only) ?
      */
     Pjax.prototype._load = function(locationObj, stateChange, singleRequest)
     {
@@ -414,8 +414,8 @@
     /**
      * Handle Pjax Error
      *
-     * @access private
-     * @param  object locationObj Location object from the cache
+     * @access {private}
+     * @param  {object} locationObj Location object from the cache
      */
     Pjax.prototype._handleError = function(locationObj)
     {
@@ -431,10 +431,10 @@
     /**
      * Pjax success handler
      *
-     * @access private
-     * @param  object locationObj Location object from the cache
-     * @param  string HTML        HTML string response from server
-     * @param  bool   stateChange Change the window history state
+     * @access {private}
+     * @param  {object} locationObj Location object from the cache
+     * @param  {string} HTML        HTML string response from server
+     * @param  {bool}   stateChange Change the window history state
      */
     Pjax.prototype._handleSuccess = function(locationObj, HTML, stateChange)
     {
@@ -550,7 +550,7 @@
      * Add the state change listener to use internal page cache
      * to prevent back/forward events if that state is cached here
      *
-     * @access private
+     * @access {private}
      */
     Pjax.prototype._stateListener = function()
     {
@@ -562,8 +562,8 @@
     /**
      * State change event handler (back/forward clicks)
      *
-     * @access private
-     * @param  e       event JavaScript 'popstate' event
+     * @access {private}
+     * @param  {e}       event JavaScript 'popstate' event
      */
     Pjax.prototype._onStateChange = function(e)
     {
@@ -602,9 +602,9 @@
     /**
      * Restore a previous state
      *
-     * @access private
-     * @param  object locationObj Location object from the cache
-     * @param  string HTML        document.body.innerHTML
+     * @access {private}
+     * @param  {object} locationObj Location object from the cache
+     * @param  {string} HTML        document.body.innerHTML
      */
     Pjax.prototype._restoreState = function(locationObj, HTML)
     {
@@ -661,9 +661,9 @@
      * on the current page with any scripts that are in the new DOM tree 
      * and load any that don't already exist
      *
-     * @access private
-     * @param  array   currScripts Currently loaded scripts array
-     * @param  object  newScripts  Newly loaded scripts
+     * @access {private}
+     * @param  {array}   currScripts Currently loaded scripts array
+     * @param  {object}  newScripts  Newly loaded scripts
      */
     Pjax.prototype._appendScripts = function(currScripts, newScripts, chain)
     {
@@ -730,10 +730,10 @@
     /**
      * Checks if the current iteration is the last script with a src attribute to load
      *
-     * @access private
-     * @param  int     i       Current loop iteration
-     * @param  array   scripts Array of script objects
-     * @return bool
+     * @access {private}
+     * @param  {int}     i       Current loop iteration
+     * @param  {array}   scripts Array of script objects
+     * @return {bool}
      */
     Pjax.prototype._havMoreScriptSources = function(i, scripts)
     {
@@ -757,9 +757,9 @@
     /**
      * Filter scripts with unique key/values into an array
      *
-     * @access private
-     * @param  string html HTML as a string (with or without full doctype)
-     * @return array
+     * @access {private}
+     * @param  {string} html HTML as a string (with or without full doctype)
+     * @return {array}
      */
     Pjax.prototype._filterScripts = function(nodes)
     {
@@ -784,7 +784,7 @@
             else
             {
                 // Don't append JSON inline scripts
-                if (Helper.isJSON(nodes[i].innerHTML.trim()))
+                if (Helper.is_json(nodes[i].innerHTML.trim()))
                 {
                     continue;
                 }
@@ -804,10 +804,10 @@
     /**
      * Check if a script with a source or an inline script is in the current scripts
      *
-     * @access private
-     * @param  object   script
-     * @param  array    currScripts
-     * @return bool
+     * @access {private}
+     * @param  {object}   script
+     * @param  {array}    currScripts
+     * @return {bool}
      */
     Pjax.prototype._hasScript = function(script, currScripts)
     {
@@ -825,9 +825,9 @@
     /**
      * Try to find the page title in a DOM tree
      *
-     * @access private
-     * @param  string html HTML as a string (with or without full doctype)
-     * @return string|false
+     * @access {private}
+     * @param  {string} html HTML as a string (with or without full doctype)
+     * @return {string|false}
      */
     Pjax.prototype._findDomTitle = function(DOM)
     {
@@ -844,9 +844,9 @@
     /**
      * Parse HTML from string into a document
      *
-     * @access private
-     * @param  string html HTML as a string (with or without full doctype)
-     * @return DOM tree
+     * @access {private}
+     * @param  {string} html HTML as a string (with or without full doctype)
+     * @return {DOM} tree
      */
     Pjax.prototype._parseHTML = function(html)
     {
@@ -857,8 +857,8 @@
     /**
      * Get the current document scroll position
      *
-     * @access private
-     * @return obj
+     * @access {private}
+     * @return {obj}
      */
     Pjax.prototype._getScrollPos = function()
     {
@@ -874,9 +874,9 @@
     /**
      * Save a key/value to the cache
      *
-     * @access private
-     * @param  string key   The key to save the value under
-     * @param  mixed  value The value to save
+     * @access {private}
+     * @param  {string} key   The key to save the value under
+     * @param  {mixed}  value The value to save
      */
     Pjax.prototype._cachePut = function(key, value)
     {
@@ -899,9 +899,9 @@
     /**
      * Get a value from the cache by key
      *
-     * @access private
-     * @param  string key   The key to save the value under
-     * @return mixed|false
+     * @access {private}
+     * @param  {string} key   The key to save the value under
+     * @return {mixed|false}
      */
     Pjax.prototype._cacheGet = function(key)
     {
@@ -919,7 +919,7 @@
     /**
      * Cache the current page DOM
      *
-     * @access private
+     * @access {private}
      */
     Pjax.prototype._cachePage = function()
     {
@@ -939,8 +939,8 @@
     /**
      * Cache the current page DOM
      *
-     * @access private
-     * @param  string  url The url to normalise
+     * @access {private}
+     * @param  {string}  url The url to normalise
      */
     Pjax.prototype._normaliseUrl = function(url)
     {
@@ -981,6 +981,6 @@
     }
     
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Pjax', Pjax);
+    Hubble.dom().register('Pjax', Pjax);
 
 })();

@@ -3,16 +3,16 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Filter chips
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class FilterChips
     {
@@ -20,7 +20,7 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -34,7 +34,7 @@
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -46,7 +46,7 @@
         /**
          * Bind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -56,7 +56,7 @@
         /**
          * Unbind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -66,20 +66,20 @@
         /**
          * Handle click event on chip
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _clickHandler(e)
         {
             e = e || window.event;
 
-            Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.hasClass(this, 'checked')]);
+            Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.has_class(this, 'checked')]);
 
-            Helper.toggleClass(this, 'checked');
+            Helper.toggle_class(this, 'checked');
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('FilterChips', FilterChips);
+    Hubble.dom().register('FilterChips', FilterChips);
 
 }());

@@ -3,7 +3,7 @@
  *
  * @example 
 
-var headers = {'foo' : 'bar'};
+{var} headers = {'foo' : 'bar'};
 var data    = {'foo' : 'bar'};
 
 var ajax = new _Ajax;
@@ -121,7 +121,7 @@ function abort()
     /**
      * JS Queue
      *
-     * @see https://medium.com/@griffinmichl/asynchronous-javascript-queue-920828f6327
+     * @see {https://medium.com/@griffinmichl/asynchronous-javascript-queue-920828f6327}
      */
     class Queue
     {
@@ -181,9 +181,9 @@ function abort()
     /**
      * Module constructor
      *
-     * @access public
+     * @access {public}
      * @constructor
-     * @return this
+     {*} @return this
      */
     class _Ajax
     {
@@ -214,14 +214,14 @@ function abort()
         /**
          * Ajax Methods 
          *
-         * @access public
-         * @param  string        url     Destination URL
-         * @param  string|object data    Data (optional)
-         * @param  function      success Success callback (optional)
-         * @param  function      error   Error callback (optional)
-         * @param  function      abort   Abort callback (optional)
-         * @param  object        headers Request headers (optional)
-         * @return this
+         * @access {public}
+         * @param  {string}        url     Destination URL
+         * @param  {string|object} data    Data (optional)
+         * @param  {function}      success Success callback (optional)
+         * @param  {function}      error   Error callback (optional)
+         * @param  {function}      abort   Abort callback (optional)
+         * @param  {object}        headers Request headers (optional)
+         * @return {this}
          */
         post(url, data, success, error, complete, abort, headers)
         {
@@ -257,8 +257,8 @@ function abort()
         /**
          * Success function
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         success(callback)
         {
@@ -275,8 +275,8 @@ function abort()
         /**
          * Error function
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         error(callback)
         {
@@ -293,8 +293,8 @@ function abort()
         /**
          * Alias for complete
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         then(callback)
         {
@@ -304,8 +304,8 @@ function abort()
         /**
          * Complete function
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         complete(callback)
         {
@@ -322,8 +322,8 @@ function abort()
         /**
          * Abort an ajax call
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         abort(callback)
         {
@@ -371,15 +371,15 @@ function abort()
         /**
          * Special Upload Function
          *
-         * @access public
-         * @param  string        url      Destination URL
-         * @param  object        data     Form data
-         * @param  function      success  Success callback
-         * @param  function      error    Error callback
-         * @param  function      start    Start callback (optional)
-         * @param  function      progress Progress callback (optional)
-         * @param  function      complete Complete callback (optional)
-         * @return this
+         * @access {public}
+         * @param  {string}        url      Destination URL
+         * @param  {object}        data     Form data
+         * @param  {function}      success  Success callback
+         * @param  {function}      error    Error callback
+         * @param  {function}      start    Start callback (optional)
+         * @param  {function}      progress Progress callback (optional)
+         * @param  {function}      complete Complete callback (optional)
+         * @return {this}
          */
         upload(url, data, success, error, start, progress, complete)
         {
@@ -472,16 +472,16 @@ function abort()
         /**
          * Ajax call 
          *
-         * @access private
-         * @param  string        method   Request method
-         * @param  string        url      Destination URL
-         * @param  string|object data     Data (optional)
-         * @param  function      success  Success callback (optional)
-         * @param  function      error    Error callback (optional)
-         * @param  function      complete Complete callback (optional)
-         * @param  function      abort    Abort callback (optional)
-         * @param  object        headers  Request headers (optional)
-         * @return this
+         * @access {private}
+         * @param  {string}        method   Request method
+         * @param  {string}        url      Destination URL
+         * @param  {string|object} data     Data (optional)
+         * @param  {function}      success  Success callback (optional)
+         * @param  {function}      error    Error callback (optional)
+         * @param  {function}      complete Complete callback (optional)
+         * @param  {function}      abort    Abort callback (optional)
+         * @param  {object}        headers  Request headers (optional)
+         * @return {this}
          */
         _call(method, url, data, success, error, complete, abort, headers)
         {
@@ -523,9 +523,9 @@ function abort()
         /**
          * Send XHR headers
          *
-         * @access private
-         * @param  object    xhr     XHR object
-         * @param  object    headers Request headers (optional)
+         * @access {private}
+         * @param  {object}    xhr     XHR object
+         * @param  {object}    headers Request headers (optional)
          * @return {This}
          */
         _sendHeaders(xhr, headers)
@@ -553,14 +553,14 @@ function abort()
         /**
          * Normalise arguments from original call function
          *
-         * @param  string        method   Request method
-         * @param  string        url      Destination URL
-         * @param  string|object data     Data (optional)
-         * @param  function      success  Success callback (optional)
-         * @param  function      error    Error callback (optional)
-         * @param  function      complete Complete callback (optional)
-         * @param  function      error    Abort callback (optional)
-         * @param  object        headers  Request headers (optional)
+         * @param  {string}        method   Request method
+         * @param  {string}        url      Destination URL
+         * @param  {string|object} data     Data (optional)
+         * @param  {function}      success  Success callback (optional)
+         * @param  {function}      error    Error callback (optional)
+         * @param  {function}      complete Complete callback (optional)
+         * @param  {function}      error    Abort callback (optional)
+         * @param  {object}        headers  Request headers (optional)
          * @return {This}
          */
         _normaliseArgs(method, url, data, success, error, complete, abort, headers)
@@ -655,11 +655,11 @@ function abort()
         /**
          * Ready callback
          *
-         * @param  XMLHttpRequest xhr     XHR Object
-         * @param  function      success  Success callback (optional)
-         * @param  function      error    Error callback (optional)
-         * @param  function      complete Complete callback (optional)
-         * @param  function      abort    Abort callback (optional)
+         * @param  {XMLHttpRequest} xhr     XHR Object
+         * @param  {function}      success  Success callback (optional)
+         * @param  {function}      error    Error callback (optional)
+         * @param  {function}      complete Complete callback (optional)
+         * @param  {function}      abort    Abort callback (optional)
          */
         _ready(xhr, success, error, complete, abort)
         {

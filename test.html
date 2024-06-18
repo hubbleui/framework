@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Documentation | Hubble UI</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="build/css/hubble.css">
+        <link rel="stylesheet" href="build/css/docs.css">
+        <style>
+            html {
+                font-size: 62.5%;
+                -webkit-text-size-adjust: 100%;
+            }
+            body, html {
+                height: 100%;
+            }
+            div
+            {
+                background: #5e2765;
+                width: 300px;
+                margin: 0 auto;
+                color: white;
+                text-align: center;
+                box-sizing: border-box;
+                font-size: 30px;
+                overflow: hidden;
+                height: 300px;
+                opacity: 1;
+                left: -400px;
+            }
+        </style>
+    <body>
+        <div style="transition: width 10s ;">Hello World</div>
+        <pre><code></code></pre>
+        <script src="build/js/hubble.js"></script>
+        <script type="text/javascript">
+            
+            var H = Hubble.helper();
+            var div = H.$('div');
+
+            //console.log(H.computed_style(div, 'height'));
+            
+            //H.animate(div, { height : '500px', width : '500px'});
+
+            //H.animate(div, { property : 'background-color', to : '#000000'});
+
+            //H.animate(div, { property : 'height', to : 'auto', duration: 500 });
+            
+            setTimeout(function()
+            {
+                /*H.animate(div, { width : '500px', height : '500px', easing: 'ease', duration: 500} );
+                H.animate(div, { width: { to : '350px'}, height: {to: '450px'}, } );
+                H.animate(div, { property : 'opacity', to : 0});
+                H.animate(div, { property : 'margin-left', to : '50px'});
+                H.animate(div, { property : 'width', to : '500px'});
+                H.animate(div, { property : 'background-color', to : '#3fbd44', duration: 500 });*/
+                //console.log(H.inline_style(div, 'height'));
+               
+            }, 1000);
+
+            //H.animate_css(div, { width : '500px', height : '500px', easing: 'easeInOutCirc', duration: 500} );
+            H.animate_css(div, { width: { to : '350px', duration: 500 }, height: {to: '450px', duration: 200}, "font-size": { to: '20px', duration: 200} });
+
+
+            //H.animate('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
+            //H.animate('foo', { height : '500px', width : '200px', easing: 'easeInOutElastic', duration: 3000} );
+            //H.animate('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+            
+        </script>
+    </body>
+</html>

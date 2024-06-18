@@ -3,23 +3,23 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Popovers
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class Popovers
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor()
@@ -31,7 +31,7 @@
             this._nodes = Helper.$All('.js-popover');
 
             // Bind events
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -47,12 +47,12 @@
         /**
          * Module destructor
          *
-         * @access public
-         * @return this
+         * @access {public}
+         * @return {this}
          */
         destruct()
         {
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -70,8 +70,8 @@
         /**
          * Unbind event listeners on a trigger
          *
-         * @param trigger node
-         * @access private
+         * @param {trigger} node
+         * @access {private}
          */
         _unbind(trigger)
         {
@@ -92,8 +92,8 @@
         /**
          * Initialize the handlers on a trigger
          *
-         * @access private
-         * @param  node trigger Click/hover trigger
+         * @access {private}
+         * @param  {node} trigger Click/hover trigger
          */
         _bind(trigger)
         {
@@ -146,7 +146,7 @@
         /**
          * Timeout handler for hoverleave
          *
-         * @access private
+         * @access {private}
          */
         _hoverLeavTimeout(e)
         {
@@ -160,22 +160,22 @@
         /**
          * Hover over event handler
          *
-         * @access private
+         * @access {private}
          */
         _hoverOver()
         {
             var trigger = this;
             var _this = Container.get('Popovers');
             var popHandler = _this._getHandler(trigger);
-            if (Helper.hasClass(trigger, 'popped')) return;
+            if (Helper.has_class(trigger, 'popped')) return;
             popHandler.render();
-            Helper.addClass(trigger, 'popped');
+            Helper.add_class(trigger, 'popped');
         }
 
         /**
          * Hover leave event handler
          *
-         * @access private
+         * @access {private}
          */
         _hoverLeave(e)
         {
@@ -183,7 +183,7 @@
             var hovers = Helper.$All(':hover');
             for (var i = 0; i < hovers.length; i++)
             {
-                if (Helper.hasClass(hovers[i], 'popover'))
+                if (Helper.has_class(hovers[i], 'popover'))
                 {
                     hovers[i].addEventListener('mouseleave', function(_e)
                     {
@@ -200,7 +200,7 @@
         /**
          * Window resize event handler
          *
-         * @access private
+         * @access {private}
          */
         _windowResize()
         {
@@ -208,7 +208,7 @@
 
             for (var i = 0; i < _this._nodes.length; i++)
             {
-                if (Helper.hasClass(_this._nodes[i], 'popped'))
+                if (Helper.has_class(_this._nodes[i], 'popped'))
                 {
                     var popHandler = _this._getHandler(_this._nodes[i]);
                     popHandler.stylePop();
@@ -219,8 +219,8 @@
         /**
          * Click event handler
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _clickHandler(e)
         {
@@ -230,24 +230,24 @@
             var _this = Container.get('Popovers');
             var popHandler = _this._getHandler(trigger);
 
-            if (Helper.hasClass(trigger, 'popped'))
+            if (Helper.has_class(trigger, 'popped'))
             {
                 _this._removeAll();
                 popHandler.remove();
-                Helper.removeClass(trigger, 'popped');
+                Helper.remove_class(trigger, 'popped');
             }
             else
             {
                 _this._removeAll();
                 popHandler.render();
-                Helper.addClass(trigger, 'popped');
+                Helper.add_class(trigger, 'popped');
             }
         }
 
         /**
          * Remove all popovers when anything is clicked
          *
-         * @access private
+         * @access {private}
          */
         _addWindowClickEvent()
         {
@@ -259,7 +259,7 @@
                 var clicked = e.target;
 
                 // Clicked the close button
-                if (Helper.hasClass(clicked, 'js-remove-pop') || Helper.closest(clicked, '.js-remove-pop'))
+                if (Helper.has_class(clicked, 'js-remove-pop') || Helper.closest(clicked, '.js-remove-pop'))
                 {
                     _this._removeAll();
 
@@ -267,13 +267,13 @@
                 }
 
                 // Clicked inside the popover
-                if (Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover'))
+                if (Helper.has_class(clicked, 'popover') || Helper.closest(clicked, '.popover'))
                 {
                     return;
                 }
 
                 // Clicked a popover trigger
-                if (Helper.hasClass(clicked, 'js-popover') || Helper.closest(clicked, '.js-popover'))
+                if (Helper.has_class(clicked, 'js-popover') || Helper.closest(clicked, '.js-popover'))
                 {
                     return;
                 }
@@ -285,9 +285,9 @@
         /**
          * Get the handler for the trigger
          * 
-         * @access private
-         * @param  node    trigger DOM node that triggered event
-         * @return object|false
+         * @access {private}
+         * @param  {node}    trigger DOM node that triggered event
+         * @return {object|false}
          */
         _getHandler(trigger)
         {
@@ -302,7 +302,7 @@
         /**
          * Remove all the popovers currently being displayed
          *
-         * @access private
+         * @access {private}
          */
         _removeAll()
         {
@@ -310,12 +310,12 @@
             {
                 this._pops[i].remove();
 
-                Helper.removeClass(this._pops[i].options.target, 'popped');
+                Helper.remove_class(this._pops[i].options.target, 'popped');
             }
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Popovers', Popovers);
+    Hubble.dom().register('Popovers', Popovers);
 
 }());

@@ -3,23 +3,23 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Toggle height on click
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class Collapse
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor()
@@ -27,7 +27,7 @@
             /**
              * Array of click-triggers
              * 
-             * @var array
+             * @var {array}
              */
             this._nodes = Helper.$All('.js-collapse');
 
@@ -39,7 +39,7 @@
         /**
          * Module destructor
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -51,7 +51,7 @@
         /**
          * Event binder - Binds all events on button click
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -61,7 +61,7 @@
         /**
          * Event unbinder - Removes all events on button click
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -71,31 +71,41 @@
         /**
          * Handle the click event
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
             e = e || window.event;
 
-            if (Helper.isNodeType(this, 'a'))
+            if (Helper.is_node_type(this, 'a'))
             {
                 e.preventDefault();
             }
 
-            var clicked = this;
+            var clicked  = this;
             var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
-            var speed = parseInt(clicked.dataset.collapseSpeed) || 350;
-            var easing = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
-            var opacity = clicked.dataset.withOpacity;
+            var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
+            var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
+            var opacity  = Helper.bool(clicked.dataset.withOpacity);
+            var options  = 
+            {
+                height: Helper.has_class(clicked, 'active') ? '0px' : 'auto',
+                duration: duration, 
+                easing: easing
+            };
 
-            Container.get('ToggleHeight', targetEl, 0, speed, easing, opacity);
+            if (opacity)
+            {
+                options.opacity = Helper.has_class(clicked, 'active') ? '0' : '1';
+            }
 
-            Helper.toggleClass(clicked, 'active');
+            Helper.animate(targetEl, options);
+            Helper.toggle_class(clicked, 'active');
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Collapse', Collapse);
+    Hubble.dom().register('Collapse', Collapse);
 
 }());

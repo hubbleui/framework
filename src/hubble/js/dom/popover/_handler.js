@@ -3,23 +3,23 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Popover Handler
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class _popHandler
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor(options)
@@ -51,7 +51,7 @@
         /**
          * Build the popover
          *
-         * @access private
+         * @access {private}
          */
         buildPopEl()
         {
@@ -72,45 +72,45 @@
         /**
          * Remove the popover
          *
-         * @access public
+         * @access {public}
          */
         remove()
         {
-            if (Helper.nodeExists(this.el)) this.el.parentNode.removeChild(this.el);
+            if (Helper.in_dom(this.el)) this.el.parentNode.removeChild(this.el);
         }
 
         /**
          * Position the popover
          *
-         * @access public
+         * @access {public}
          */
         stylePop()
         {
 
-            var targetCoords = Helper.getCoords(this.options.target);
+            var tarcoordinates = Helper.coordinates(this.options.target);
 
             if (this.options.direction === 'top')
             {
-                this.el.style.top = targetCoords.top - this.el.scrollHeight + 'px';
-                this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
+                this.el.style.top = tarcoordinates.top - this.el.scrollHeight + 'px';
+                this.el.style.left = tarcoordinates.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
                 return;
             }
             else if (this.options.direction === 'bottom')
             {
-                this.el.style.top = targetCoords.top + this.options.target.offsetHeight + 10 + 'px';
-                this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
+                this.el.style.top = tarcoordinates.top + this.options.target.offsetHeight + 10 + 'px';
+                this.el.style.left = tarcoordinates.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
                 return;
             }
             else if (this.options.direction === 'left')
             {
-                this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
-                this.el.style.left = targetCoords.left - this.el.offsetWidth - 10 + 'px';
+                this.el.style.top = tarcoordinates.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
+                this.el.style.left = tarcoordinates.left - this.el.offsetWidth - 10 + 'px';
                 return;
             }
             else if (this.options.direction === 'right')
             {
-                this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
-                this.el.style.left = targetCoords.left + this.options.target.offsetWidth + 10 + 'px';
+                this.el.style.top = tarcoordinates.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
+                this.el.style.left = tarcoordinates.left + this.options.target.offsetWidth + 10 + 'px';
                 return;
             }
         }

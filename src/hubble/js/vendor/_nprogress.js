@@ -1,7 +1,7 @@
 (function()
 {
     /* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
-     * @license MIT */
+     * @license {MIT} */
     ! function(n, e)
     {
         "function" == typeof define && define.amd ? define(e) : "object" == typeof exports ? module.exports = e() : n.NProgress = e()

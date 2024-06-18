@@ -3,7 +3,7 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
@@ -18,7 +18,7 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -32,7 +32,7 @@
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -44,7 +44,7 @@
         /**
          * Bind DOM listeners
          *
-         * @access public
+         * @access {public}
          */
         _bind()
         {
@@ -63,7 +63,7 @@
         /**
          * Unbind DOM listeners
          *
-         * @access public
+         * @access {public}
          */
         _unbind()
         {
@@ -73,8 +73,8 @@
         /**
          * On hover event
          *
-         * @param  e event|null "mousemove" event
-         * @access private
+         * @param  {e} event|null "mousemove" event
+         * @access {private}
          */
         _onHover(e)
         {
@@ -86,7 +86,7 @@
             }
 
             var _wrapper = e.currentTarget;
-            var _zoomSrc = Helper.parse_url(Helper.getStyle(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
+            var _zoomSrc = Helper.parse_url(Helper.rendered_style(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
             var _dataZoomSrc = Helper.parse_url(_wrapper.dataset.zoomSrc);
 
             if (_zoomSrc.path !== _dataZoomSrc.path)
@@ -131,6 +131,6 @@
     }
 
     // Register as DOM Module and invoke
-    Container.get('Hubble').dom().register('ImageZoom', ImageZoom);
+    Hubble.dom().register('ImageZoom', ImageZoom);
 
 }());

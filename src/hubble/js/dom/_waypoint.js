@@ -3,23 +3,23 @@
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Has the page loaded?
      * 
-     * @var object
+     * @var {object}
      */
     var pageLoaded = false;
 
     /**
      * Waypoints
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class WayPoints
     {
@@ -27,14 +27,14 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {    // Load nodes
             this._nodes = Helper.$All('.js-waypoint-trigger');
 
             // bind listeners
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -54,7 +54,7 @@
         /**
          * Module destructor
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -71,8 +71,8 @@
         /**
          * Event binder
          *
-         * @params trigger node
-         * @access private
+         * @params {trigger} node
+         * @access {private}
          */
         _bind(trigger)
         {
@@ -82,8 +82,8 @@
         /**
          * Event unbinder
          *
-         * @params trigger node
-         * @access private
+         * @params {trigger} node
+         * @access {private}
          */
         _unbind(trigger)
         {
@@ -93,8 +93,8 @@
         /**
          * Event handler
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
@@ -104,7 +104,7 @@
             var waypoint = trigger.dataset.waypointTarget;
             var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
-            if (Helper.nodeExists(targetEl))
+            if (Helper.in_dom(targetEl))
             {
                 var id = waypoint;
                 var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
@@ -123,22 +123,22 @@
         /**
          * Scroll to a element with id when the page loads
          *
-         * @access private
+         * @access {private}
          */
         _invokePageLoad()
         {
             var url = Helper.parse_url(window.location.href);
 
-            if (Helper.isset(url['fragment']) && url['fragment'] !== '')
+            if (url.hash && url.hash !== '')
             {
-                var waypoint = Helper.trim(url['fragment'], '/');
+                var waypoint = Helper.trim(url.hash, '/');
                 var options = {
                     speed: 100,
                     easing: 'Linear'
                 };
                 var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
-                if (Helper.nodeExists(targetEl))
+                if (Helper.in_dom(targetEl))
                 {
                     var id = waypoint;
                     targetEl.id = id;
@@ -152,6 +152,6 @@
 
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('WayPoints', WayPoints);
+    Hubble.dom().register('WayPoints', WayPoints);
 
 }());

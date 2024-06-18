@@ -8,12 +8,12 @@
 (function()
 {
     /**
-     * @var obj
+     * @var {obj}
      */
     var Helper = Container.Helper();
 
     /**
-     * @var obj
+     * @var {obj}
      */
     var defaults =
     {
@@ -46,10 +46,10 @@
      * Module constructor
      *
      * @class
-     * @constructor
-     * @params options obj
-     * @access public
-     * @return this
+     {*} @constructor
+     * @params {options} obj
+     * @access {public}
+     * @return {this}
      */
     var Backdrop = function(options)
     {
@@ -70,7 +70,7 @@
     /**
      * After options have parsed invoke the modal
      *
-     * @access private
+     * @access {private}
      */
     Backdrop.prototype._invoke = function()
     {
@@ -89,7 +89,7 @@
     /**
      * Build the actual modal
      *
-     * @access private
+     * @access {private}
      */
     Backdrop.prototype._buildModal = function()
     {
@@ -115,7 +115,7 @@
             }
         }
 
-        Helper.innerHTML(modal, [
+        Helper.inner_HTML(modal, [
             '<div class="Backdrop-dialog js-Backdrop-dialog">',
                 '<div class="Backdrop-header">',
                     close,
@@ -137,14 +137,14 @@
     /**
      * Get modal content from an existing DOM node
      *
-     * @access private
-     * @return string
+     * @access {private}
+     * @return {string}
      */
     Backdrop.prototype._getTargetContent = function()
     {
         var content = Helper.$(this._options.targetContent);
 
-        if (!Helper.nodeExists(content))
+        if (!Helper.in_dom(content))
         {
             throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
         }
@@ -155,7 +155,7 @@
     /**
      * Render the modal
      *
-     * @access private
+     * @access {private}
      */
     Backdrop.prototype._render = function()
     {
@@ -167,19 +167,19 @@
 
         setTimeout(function()
         {
-            Helper.addClass(overlay, 'active');
+            Helper.add_class(overlay, 'active');
 
         }, 50);
 
         this._fireRender();
 
-        Helper.addClass(document.body, 'no-scroll');
+        Helper.add_class(document.body, 'no-scroll');
     }
 
     /**
      * Bind event listeners inside the built modal
      *
-     * @access private
+     * @access {private}
      */
     Backdrop.prototype._bindListeners = function()
     {
@@ -206,7 +206,7 @@
 
             clearTimeout(_this._timer);
 
-            if (Helper.hasClass(this, 'js-Backdrop-confirm'))
+            if (Helper.has_class(this, 'js-Backdrop-confirm'))
             {
                 var canClose = _this._fireConfirmValidator();
 
@@ -216,20 +216,20 @@
                 }
             }
 
-            Helper.addClass(_this._overlay, 'transition-off');
+            Helper.add_class(_this._overlay, 'transition-off');
 
             _this._fireClosed();
 
-            if (Helper.hasClass(this, 'js-Backdrop-confirm'))
+            if (Helper.has_class(this, 'js-Backdrop-confirm'))
             {
                 _this._fireConfirm();
             }
 
             _this._timer = setTimeout(function()
             {
-                Helper.removeFromDOM(_this._overlay);
-                Helper.removeFromDOM(_this._modal);
-                Helper.removeClass(document.body, 'no-scroll');
+                Helper.remove_from_dom(_this._overlay);
+                Helper.remove_from_dom(_this._modal);
+                Helper.remove_class(document.body, 'no-scroll');
             }, 500);
         }
 
@@ -239,7 +239,7 @@
         }
 
         var modalCloses = Helper.$All('.js-Backdrop-close', this._modal);
-        if (!Helper.empty(modalCloses))
+        if (!Helper.is_empty(modalCloses))
         {
             Helper.addEventListener(modalCloses, 'click', closeModal, false);
         }
@@ -248,11 +248,11 @@
     /**
      * Fire render event
      *
-     * @access private
+     * @access {private}
      */
     Backdrop.prototype._fireRender = function()
     {
-        if (this._options.onRender !== null && Helper.isCallable(this._options.onRender))
+        if (this._options.onRender !== null && Helper.is_callable(this._options.onRender))
         {
             var callback = this._options.onRender;
             var args = this._options.onRenderArgs;
@@ -264,27 +264,27 @@
     /**
      * Fire the closed event
      *
-     * @access private
+     * @access {private}
      */
     Backdrop.prototype._fireClosed = function()
     {
-        if (this._options.onClose !== null && Helper.isCallable(this._options.onClose))
+        if (this._options.onClose !== null && Helper.is_callable(this._options.onClose))
         {
             var callback = this._options.onClose;
             var args = this._options.onCloseArgs;
             callback.apply(this._modal, args);
-            Helper.removeClass(document.body, 'no-scroll');
+            Helper.remove_class(document.body, 'no-scroll');
         }
     }
 
     /**
      * Fire the confirm event
      *
-     * @access private
+     * @access {private}
      */
     Backdrop.prototype._fireConfirm = function()
     {
-        if (this._options.onConfirm !== null && Helper.isCallable(this._options.onConfirm))
+        if (this._options.onConfirm !== null && Helper.is_callable(this._options.onConfirm))
         {
             var callback = this._options.onConfirm;
             var args = this._options.onConfirmArgs;
@@ -295,11 +295,11 @@
     /**
      * Fire the confirm validation
      *
-     * @access private
+     * @access {private}
      */
     Backdrop.prototype._fireConfirmValidator = function()
     {
-        if (this._options.validateConfirm !== null && Helper.isCallable(this._options.validateConfirm))
+        if (this._options.validateConfirm !== null && Helper.is_callable(this._options.validateConfirm))
         {
             var callback = this._options.validateConfirm;
             var args = this._options.validateConfirmArgs;
@@ -312,11 +312,11 @@
     /**
      * Fire the built event
      *
-     * @access private
+     * @access {private}
      */
     Backdrop.prototype._fireBuilt = function()
     {
-        if (this._options.onBuilt !== null && Helper.isCallable(this._options.onBuilt))
+        if (this._options.onBuilt !== null && Helper.is_callable(this._options.onBuilt))
         {
             var callback = this._options.onBuilt;
             var args = this._options.onBuiltArgs;

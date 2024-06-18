@@ -3,16 +3,16 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Input masker
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class InputMasks
     {
@@ -20,7 +20,7 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -43,7 +43,7 @@
         /**
          * Public destructor remove all masks
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -68,7 +68,7 @@
         /**
          * Find all the nodes and apply any masks
          *
-         * @access private
+         * @access {private}
          */
         _invoke()
         {
@@ -82,35 +82,35 @@
             this._nodes_alphaDash = Helper.$All('.js-mask-alpha-dash');
             this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
 
-            if (!Helper.empty(this._nodes_money))
+            if (!Helper.is_empty(this._nodes_money))
             {
                 this._loopBind(this._nodes_money, 'money');
             }
-            if (!Helper.empty(this._nodes_creditcard))
+            if (!Helper.is_empty(this._nodes_creditcard))
             {
                 this._loopBind(this._nodes_creditcard, 'creditcard');
             }
-            if (!Helper.empty(this._nodes_numeric))
+            if (!Helper.is_empty(this._nodes_numeric))
             {
                 this._loopBind(this._nodes_numeric, 'numeric');
             }
-            if (!Helper.empty(this._nodes_numericDecimal))
+            if (!Helper.is_empty(this._nodes_numericDecimal))
             {
                 this._loopBind(this._nodes_numericDecimal, 'numericDecimal');
             }
-            if (!Helper.empty(this._nodes_alphaNumeric))
+            if (!Helper.is_empty(this._nodes_alphaNumeric))
             {
                 this._loopBind(this._nodes_alphaNumeric, 'alphaNumeric');
             }
-            if (!Helper.empty(this._nodes_alphaSpace))
+            if (!Helper.is_empty(this._nodes_alphaSpace))
             {
                 this._loopBind(this._nodes_alphaSpace, 'alphaSpace');
             }
-            if (!Helper.empty(this._nodes_alphaDash))
+            if (!Helper.is_empty(this._nodes_alphaDash))
             {
                 this._loopBind(this._nodes_alphaDash, 'alphaDash');
             }
-            if (!Helper.empty(this._nodes_AlphaNumericDash))
+            if (!Helper.is_empty(this._nodes_AlphaNumericDash))
             {
                 this._loopBind(this._nodes_AlphaNumericDash, 'alphaNumericDash');
             }
@@ -119,7 +119,7 @@
         /**
          * Loop and bind masks to DOM LIST
          *
-         * @access private
+         * @access {private}
          */
         _loopBind(nodes, mask)
         {
@@ -132,7 +132,7 @@
         /**
          * Loop and unbind masks to DOM LIST
          *
-         * @access private
+         * @access {private}
          */
         _loopUnBind(nodes)
         {
@@ -144,6 +144,6 @@
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('InputMasks', InputMasks);
+    Hubble.dom().register('InputMasks', InputMasks);
 
 }());

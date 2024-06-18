@@ -3,16 +3,16 @@
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Custom Scrollbars
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class ScrollBars
     {
@@ -21,7 +21,7 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -32,7 +32,7 @@
             this._nodes = Helper.$All('.js-custom-scroll');
 
             // Bind DOM listeners
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -46,7 +46,7 @@
         /**
          * Module destructor - removes handler
          *
-         * @access public
+         * @access {public}
          */
         desctruct()
         {
@@ -63,12 +63,12 @@
          * Create the necessary nodes for the scroller to work.
          * Also check if the element has overflow
          *
-         * @params el node
-         * @access private
+         * @params {el} node
+         * @access {private}
          */
         _invoke(el)
         {
-            if (Helper.hasClass(el, 'js-auto-scroll-invoked'))
+            if (Helper.has_class(el, 'js-auto-scroll-invoked'))
             {
                 var handler = Container.get('_ScrollbarHandler', el);
                 this._handlers.push(handler);
@@ -80,7 +80,7 @@
 
             var insertAfter = false;
             var parent = el.parentNode;
-            var children = Helper.firstChildren(el);
+            var children = Helper.first_children(el);
             if (el.nextSibling) insertAfter = el.nextSibling;
 
             var scrollArea = document.createElement('DIV');
@@ -103,15 +103,15 @@
             el.appendChild(scrollArea);
             var handler = Container.get('_ScrollbarHandler', el);
             this._handlers.push(handler);
-            Helper.addClass(el, 'js-auto-scroll-invoked');
+            Helper.add_class(el, 'js-auto-scroll-invoked');
         }
 
         /**
          * Check if an element needs to be scrolled or not.
          *
-         * @params el node
-         * @access private
-         * @return boolean
+         * @params {el} node
+         * @access {private}
+         * @return {boolean}
          */
         _needsScroller(el)
         {
@@ -182,9 +182,9 @@
          * This can be usefull if you have custom scrollbars
          * on an element but change it's height (e.g responsive or add/remove children)
          *
-         * @params elem node
-         * @access public
-         * @example Container.get('ScrollBars').refresh(node) // Node = $.('.js-custom-scroll');
+         * @params {elem} node
+         * @access {public}
+         * @example {Container.get('ScrollBars').refresh(node)} // Node = $.('.js-custom-scroll');
          */
         refresh(elem)
         {
@@ -199,8 +199,8 @@
         /**
          * Destroy a handler by dom node .js-custom-scroll
          *
-         * @params elem node
-         * @access public
+         * @params {elem} node
+         * @access {public}
          */
         destroy(elem)
         {
@@ -217,9 +217,9 @@
         /**
          * Get a handler by dom node .js-custom-scroll
          *
-         * @params elem node
-         * @access public
-         * @return mixed
+         * @params {elem} node
+         * @access {public}
+         * @return {mixed}
          */
         getHandler(elem)
         {
@@ -233,6 +233,6 @@
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Scrollbars', ScrollBars);
+    Hubble.dom().register('Scrollbars', ScrollBars);
 
 })();

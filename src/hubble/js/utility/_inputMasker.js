@@ -1,14 +1,14 @@
 /**
  * InputMasker
  *
- * @see https://github.com/text-mask/text-mask/tree/master/vanilla
+ * @see {https://github.com/text-mask/text-mask/tree/master/vanilla}
  */
 (function()
 {
     /**
      * JS Helper reference
      * 
-     * @see https://github.com/text-mask/text-mask/tree/master/vanilla
+     * @see {https://github.com/text-mask/text-mask/tree/master/vanilla}
      */
     ! function(e, r)
     {
@@ -511,14 +511,14 @@
     /**
      * Reference to all applied masks
      * 
-     * @var array
+     * @var {array}
      */
     var _masks = [];
 
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Container.Helper();
 
@@ -526,7 +526,7 @@
      * Module constructor
      *
      * @constructor
-     * @access public
+     {*} @access public
      */
     var InputMasker = function(element)
     {
@@ -541,7 +541,7 @@
     /**
      * Mask Credit Card
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.creditcard = function()
     {
@@ -560,7 +560,7 @@
     /**
      * Mask money
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.money = function()
     {
@@ -596,7 +596,7 @@
     /**
      * Mask money
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.numeric = function()
     {
@@ -632,7 +632,7 @@
     /**
      * Mask numeric with decimals
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.numericDecimal = function()
     {
@@ -668,7 +668,7 @@
     /**
      * Mask alpha numeric
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.alphaNumeric = function()
     {
@@ -706,7 +706,7 @@
     /**
      * Mask alpha space
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.alphaSpace = function()
     {
@@ -744,7 +744,7 @@
     /**
      * Mask alpha dash
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.alphaDash = function()
     {
@@ -782,7 +782,7 @@
     /**
      * Mask alphanumeric dash
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.alphaNumericDash = function()
     {
@@ -820,8 +820,8 @@
     /**
      * Mask custom regex
      *
-     * @access public
-     * @param  regex  pattern The pattern regex to mask
+     * @access {public}
+     * @param  {regex}  pattern The pattern regex to mask
      */
     InputMasker.prototype.regex = function(pattern)
     {
@@ -857,7 +857,7 @@
     /**
      * Disable the mask
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.remove = function()
     {

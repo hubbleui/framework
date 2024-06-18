@@ -1,34 +1,34 @@
 /**
  * Helper DOM helpers
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
  */
 
 /**
  * Select and return all nodes by selector
  *
- * @access public
- * @param  string selector CSS selector
- * @param  node   context (optional) (default document)
- * @return node
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {node}   context (optional) (default document)
+ * @return {node}
  */
-Helper.prototype.$All = function(selector, context)
+$All(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
-    return Array.prototype.slice.call(context.querySelectorAll(selector));
+    return TO_ARR.call(context.querySelectorAll(selector));
 }
 
 /**
  * Select single node by selector
  *
- * @access public
- * @param  string selector CSS selector
- * @param  node   context (optional) (default document)
- * @return node
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {node}   context (optional) (default document)
+ * @return {node}
  */
-Helper.prototype.$ = function(selector, context)
+$(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
     return context.querySelector(selector)
@@ -37,12 +37,12 @@ Helper.prototype.$ = function(selector, context)
 /**
  * Closest parent node by type/class or array of either
  *
- * @access public
- * @param  node   el   Target element
- * @param  string type Node type to find
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Node type to find
+ * @return {node\null}
  */
-Helper.prototype.closest = function(el, type)
+closest(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -62,7 +62,7 @@ Helper.prototype.closest = function(el, type)
 
     if (type[0] === '.')
     {
-        return this.closestClass(el, type);
+        return this.closest_class(el, type);
     }
 
     type = type.toLowerCase();
@@ -101,19 +101,19 @@ Helper.prototype.closest = function(el, type)
 /**
  * Closest parent node by class
  *
- * @access public
- * @param  node   el   Target element
- * @param  string clas Node class to find
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} clas Node class to find
+ * @return {node\null}
  */
-Helper.prototype.closestClass = function(el, clas)
+closest_class(el, clas)
 {    
     // Type is class
     if (this.is_array(clas))
     {
         for (var i = 0; i < clas.length; i++)
         {
-            var response = this.closestClass(el, clas[i]);
+            var response = this.closest_class(el, clas[i]);
 
             if (response)
             {
@@ -124,12 +124,12 @@ Helper.prototype.closestClass = function(el, clas)
         return null;
     }
 
-    if (this.hasClass(el, clas))
+    if (this.has_class(el, clas))
     {
         return el;
     }
 
-    if (this.hasClass(el.parentNode, clas))
+    if (this.has_class(el.parentNode, clas))
     {
         return el.parentNode;
     }
@@ -143,7 +143,7 @@ Helper.prototype.closestClass = function(el, clas)
 
     while (parent !== document.body)
     {
-        if (this.hasClass(parent, clas))
+        if (this.has_class(parent, clas))
         {
             return parent;
         }
@@ -162,11 +162,11 @@ Helper.prototype.closestClass = function(el, clas)
 /**
  * Get all first level children
  *
- * @access public
- * @param  node   el   Target element
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @return {node\null}
  */
-Helper.prototype.firstChildren = function(el)
+first_children(el)
 {
     var children = [];
 
@@ -186,12 +186,12 @@ Helper.prototype.firstChildren = function(el)
 /**
  * Traverse nextSibling untill type or class or array of either
  *
- * @access public
- * @param  node   el   Target element
- * @param  string type Target node type
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Target node type
+ * @return {node\null}
  */
-Helper.prototype.next = function(el, type)
+next(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -211,7 +211,7 @@ Helper.prototype.next = function(el, type)
 
     if (type[0] === '.')
     {
-        return this.nextUntillClass(el, type);
+        return this.next_untill_class(el, type);
     }
 
     type = type.toLowerCase();
@@ -238,19 +238,19 @@ Helper.prototype.next = function(el, type)
 /**
  * Traverse nextSibling untill class type or class or array of either
  *
- * @access public
- * @param  node   el        Target element
- * @param  string className Target node classname
- * @return node\null
+ * @access {public}
+ * @param  {node}   el        Target element
+ * @param  {string} className Target node classname
+ * @return {node\null}
  */
-Helper.prototype.nextUntillClass = function(el, className)
+next_untill_class(el, className)
 {
     if (className[0] === '.')
     {
         className = className.substring(1);
     }
 
-    if (el.nextSibling && this.hasClass(el.nextSibling, className))
+    if (el.nextSibling && this.has_class(el.nextSibling, className))
     {
         return el.nextSibling;
     }
@@ -259,7 +259,7 @@ Helper.prototype.nextUntillClass = function(el, className)
 
     while (next !== document.body && typeof next !== "undefined" && next !== null)
     {
-        if (next && this.hasClass(next, className))
+        if (next && this.has_class(next, className))
         {
             return next;
         }
@@ -274,12 +274,12 @@ Helper.prototype.nextUntillClass = function(el, className)
 /**
  * Traverse previousSibling untill type
  *
- * @access public
- * @param  node   el   Target element
- * @param  string type Target node type
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Target node type
+ * @return {node\null}
  */
-Helper.prototype.previous = function(el, type)
+previous(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -320,19 +320,19 @@ Helper.prototype.previous = function(el, type)
 /**
  * Traverse previousSibling untill class
  *
- * @access public
- * @param  node   el        Target element
- * @param  string className Target node classname
- * @return node\null
+ * @access {public}
+ * @param  {node}   el        Target element
+ * @param  {string} className Target node classname
+ * @return {node\null}
  */
-Helper.prototype._previousUntillClass = function(el, className)
+_previousUntillClass(el, className)
 {
     if (className[0] === '.')
     {
         className = className.substring(1);
     }
 
-    if (el.previousSibling && this.hasClass(el.previousSibling, className))
+    if (el.previousSibling && this.has_class(el.previousSibling, className))
     {
         return el.previousSibling;
     }
@@ -343,7 +343,7 @@ Helper.prototype._previousUntillClass = function(el, className)
     {
         prev = prev.previousSibling;
 
-        if (prev && this.hasClass(prev, className))
+        if (prev && this.has_class(prev, className))
         {
             return prev;
         }
@@ -355,15 +355,15 @@ Helper.prototype._previousUntillClass = function(el, className)
 /**
  * Create and insert a new node
  *
- * @access public
- * @param  string type    New node type
- * @param  string classes New node class names (optional) (default '')
- * @param  string classes New node ID (optional) (default '')
- * @param  string content New node innerHTML (optional) (default '')
- * @param  node   target  Parent to append new node into
- * @return node
+ * @access {public}
+ * @param  {string} type    New node type
+ * @param  {string} classes New node class names (optional) (default '')
+ * @param  {string} classes New node ID (optional) (default '')
+ * @param  {string} content New node innerHTML (optional) (default '')
+ * @param  {node}   target  Parent to append new node into
+ * @return {node}
  */
-Helper.prototype.newNode = function(type, classes, ID, content, target)
+new_node(type, classes, ID, content, target)
 {
     var node = document.createElement(type);
     classes = (typeof classes === "undefined" ? null : classes);
@@ -391,12 +391,12 @@ Helper.prototype.newNode = function(type, classes, ID, content, target)
 /**
  * Inserts node as first child
  *
- * @access public
- * @param  node node     New node to insert
- * @param  node wrapper  Parent to preappend new node into
- * @return node
+ * @access {public}
+ * @param  {node} node     New node to insert
+ * @param  {node} wrapper  Parent to preappend new node into
+ * @return {node}
  */
-Helper.prototype.preapend = function(node, wrapper)
+preapend(node, wrapper)
 {
     wrapper.insertBefore(node, wrapper.firstChild);
 
@@ -404,41 +404,16 @@ Helper.prototype.preapend = function(node, wrapper)
 }
 
 /**
- * Check if a node exists in the DOM
- *
- * @access public
- * @param  node   element Target element
- * @return bool
- */
-Helper.prototype.nodeExists = function(element)
-{
-    if (element === document.body)
-    {
-        return true;
-    }
-
-    if (typeof(element) !== "undefined" && element !== null)
-    {
-        if (typeof(element.parentNode) !== "undefined" && element.parentNode !== null)
-        {
-            return (element === document.body) ? false : document.body.contains(element);
-        }
-    }
-
-    return false;
-}
-
-/**
  * Remove an element from the DOM
  *
  * This function also removes all attached event listeners
  * 
- * @access public
- * @param  node   el Target element
+ * @access {public}
+ * @param  {node}   el Target element
  */
-Helper.prototype.removeFromDOM = function(el)
+remove_from_dom(el)
 {
-    if (this.nodeExists(el))
+    if (this.in_dom(el))
     {
         el.parentNode.removeChild(el);
 
@@ -454,69 +429,20 @@ Helper.prototype.removeFromDOM = function(el)
 }
 
 /**
- * Remove inline css property
- * 
- * @access public
- * @param  node   el   Target element
- * @param  string prop CSS property to removes
- */
-Helper.prototype.removeStyle = function(el, prop)
-{
-    if (typeof prop === 'undefined')
-    {
-        prop = 'style';
-    }
-    else
-    {
-        if (Object.prototype.toString.call(prop) === '[object Array]')
-        {
-            for (var i = 0; i < prop.length; i++)
-            {
-                this.removeStyle(el, prop[i]);
-            }
-
-            return;
-        }
-        else
-        {
-            prop = this.toCamelCase(prop);
-        }
-    }
-
-    if (prop === 'style')
-    {
-        el.removeAttribute("style");
-    }
-    else
-    {
-        if (el.style.removeProperty)
-        {
-            el.style.removeProperty(prop);
-        }
-        else
-        {
-            el.style.removeAttribute(prop);
-        }
-    }
-
-
-}
-
-/**
  * Add a css class or list of classes
  *
- * @access public
- * @param  node         el         Target element
- * @param  array|string className  Class name(s) to add
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {array|string} className  Class name(s) to add
  */
-Helper.prototype.addClass = function(el, className)
+add_class(el, className)
 {
-    if (!this.nodeExists(el))
+    if (!this.in_dom(el))
     {
         return;
     }
 
-    if (Object.prototype.toString.call(className) === '[object Array]')
+    if (TO_STR.call(className) === '[object Array]')
     {
         for (var i = 0; i < className.length; i++)
         {
@@ -532,18 +458,18 @@ Helper.prototype.addClass = function(el, className)
 /**
  * Remove a css class or list of classes
  *
- * @access public
- * @param  node         el         Target element
- * @param  array|string className  Class name(s) to remove
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {array|string} className  Class name(s) to remove
  */
-Helper.prototype.removeClass = function(el, className)
+remove_class(el, className)
 {
-    if (!this.nodeExists(el))
+    if (!this.in_dom(el))
     {
         return;
     }
 
-    if (Object.prototype.toString.call(className) === '[object Array]')
+    if (TO_STR.call(className) === '[object Array]')
     {
         for (var i = 0; i < className.length; i++)
         {
@@ -559,43 +485,43 @@ Helper.prototype.removeClass = function(el, className)
 /**
  * Toogle a classname
  *
- * @access public
- * @param  node         el         Target element
- * @param  string       className  Class name to toggle
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {string}       className  Class name to toggle
  */
-Helper.prototype.toggleClass = function(el, className)
+toggle_class(el, className)
 {
-    if (!this.nodeExists(el))
+    if (!this.in_dom(el))
     {
         return;
     }
 
-    if (this.hasClass(el, className))
+    if (this.has_class(el, className))
     {
-        this.removeClass(el, className);
+        this.remove_class(el, className);
     }
     else
     {
-        this.addClass(el, className);
+        this.add_class(el, className);
     }
 }
 
 /**
  * Check if a node has a class
  *
- * @access public
- * @param  node         el         Target element
- * @param  string|array className  Class name(s) to check for
- * @return bool
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {string|array} className  Class name(s) to check for
+ * @return {bool}
  */
-Helper.prototype.hasClass = function(el, className)
+has_class(el, className)
 {
-    if (!this.nodeExists(el))
+    if (!this.in_dom(el))
     {
         return false;
     }
 
-    if (Object.prototype.toString.call(className) === '[object Array]')
+    if (TO_STR.call(className) === '[object Array]')
     {
         for (var i = 0; i < className.length; i++)
         {
@@ -637,12 +563,12 @@ Helper.prototype.hasClass = function(el, className)
 /**
  * Check if a node is a certain type
  *
- * @access public
- * @param  node   el         Target element
- * @param  string NodeType   Node type to validate
- * @return bool
+ * @access {public}
+ * @param  {node}   el         Target element
+ * @param  {string} NodeType   Node type to validate
+ * @return {bool}
  */
-Helper.prototype.isNodeType = function(el, NodeType)
+is_node_type(el, NodeType)
 {
     return el.tagName.toUpperCase() === NodeType.toUpperCase();
 }
@@ -650,11 +576,11 @@ Helper.prototype.isNodeType = function(el, NodeType)
 /**
  * Get an element's absolute coordinates
  *
- * @access public
- * @param  node   el Target element
- * @return object
+ * @access {public}
+ * @param  {node}   el Target element
+ * @return {object}
  */
-Helper.prototype.getCoords = function(el)
+coordinates(el)
 {
     var box = el.getBoundingClientRect();
     var body = document.body;
@@ -663,14 +589,14 @@ Helper.prototype.getCoords = function(el)
     var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
     var clientTop = docEl.clientTop || body.clientTop || 0;
     var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var borderL = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderR = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderT = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderB = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderL = parseInt(this.rendered_style(el, 'border-top-width'));
+    var borderR = parseInt(this.rendered_style(el, 'border-top-width'));
+    var borderT = parseInt(this.rendered_style(el, 'border-top-width'));
+    var borderB = parseInt(this.rendered_style(el, 'border-top-width'));
     var top = box.top + scrollTop - clientTop - borderT - borderB;
     var left = box.left + scrollLeft - clientLeft + borderL - borderR;
-    var width = parseFloat(this.getStyle(el, "width"));
-    var height = parseFloat(this.getStyle(el, "height"));
+    var width = parseFloat(this.rendered_style(el, "width"));
+    var height = parseFloat(this.rendered_style(el, "height"));
 
     return {
         top: top,
@@ -683,15 +609,33 @@ Helper.prototype.getCoords = function(el)
 }
 
 /**
+ * Get the current document scroll position
+ *
+ * @access {private}
+ * @return {obj}
+ */
+scroll_pos()
+{
+    var doc  = document.documentElement;
+    var top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+    var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+    
+    return {
+        top: top,
+        left: left
+    };
+}
+
+/**
  * Triggers a native event on an element
  *
- * @access public
- * @param  node   el   Target element
- * @param  string type Valid event name
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Valid event name
  */
-Helper.prototype.triggerEvent = function(el, type)
+trigger_event(el, type)
 {
-    if ("createEvent" in document)
+    if ('createEvent' in document)
     {
         var evt = document.createEvent("HTMLEvents");
 
@@ -706,28 +650,13 @@ Helper.prototype.triggerEvent = function(el, type)
 }
 
 /**
- * Replaces element's innerText without destroying childnodes
- *
- * @access public
- * @param  node   el   Target element
- * @param  string text Text to replace
- */
-Helper.prototype.innerText = function(el, text)
-{
-    if (this.isset(el.childNodes[0]))
-    {
-        el.childNodes[0].nodeValue = text;
-    }
-}
-
-/**
  * Get all input elements from a form
  *
- * @access public
- * @param  node   form Target element
- * @return array
+ * @access {public}
+ * @param  {node}   form Target element
+ * @return {array}
  */
-Helper.prototype.getFormInputs = function(form)
+form_inputs(form)
 {
     var allInputs = this.$All('input, textarea, select', form);
 
@@ -749,11 +678,11 @@ Helper.prototype.getFormInputs = function(form)
 /**
  * Gets an input element's value
  *
- * @access public
- * @param  node   input Target element
- * @return mixed
+ * @access {public}
+ * @param  {node}   input Target element
+ * @return {mixed}
  */
-Helper.prototype.getInputValue = function(input)
+input_value(input)
 {
     if (input.type == "checkbox")
     {
@@ -798,57 +727,91 @@ Helper.prototype.getInputValue = function(input)
 /**
  * Get an array of name/value objects for all inputs in a form
  *
- * @access public
- * @param  node   form Target element
- * @return array
+ * @access {public}
+ * @param  {node}   form Target element
+ * @return {array}
  */
-Helper.prototype.formArray = function(form)
+form_values(form)
 {
-    var inputs = this.getFormInputs(form);
-    var response = [];
+    let inputs = this.form_inputs(form);
+    let ret    = {};
 
-    for (var i = 0; i < inputs.length; i++)
+    this.each(inputs, function(i, input)
     {
-        response.push(
-        {
-            'name': inputs[i].name,
-            'value': this.getInputValue(this.getInputValue(inputs[i]))
-        });
-    }
+        let name = input.name;
 
-    return response;
+        if (input.type === 'radio' && input.checked == false)
+        {
+
+        }
+        else if (input.type === 'checkbox')
+        {
+            ret[name] = (input.checked == true);
+        }
+        if (name.indexOf('[]') > -1)
+        {
+            if (!ret[name])
+            {
+                ret[name] = [];
+            }
+
+            ret[name].push(this.input_value(input));
+        }
+        else
+        {
+            ret[name] = this.input_value(input);
+        }
+
+    }, this);
+   
+    return ret;
 }
 
 /**
  * Replace or append a node's innerHTML
  *
- * @access public
- * @param  node   target  Target element
- * @param  string content Target content
- * @param  bool   append  Append innerHTML or replace (optional) (default false)
+ * @access {public}
+ * @param  {node}   DOMElement  Target element
+ * @param  {string} content     Target content
+ * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
  */
-Helper.prototype.innerHTML = function(target, content, append)
+inner_HTML(DOMElement, content, append)
 {
     content = this.is_array(content) ? content.join("\n") : content;
 
     if (append)
     {
-        target.innerHTML += content;
+        DOMElement.innerHTML += content;
     }
     else
     {
-        target.innerHTML = content;
+        DOMElement.innerHTML = content;
+    }
+}
+
+/**
+ * Replaces element's innerText without destroying childnodes
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} text Text to replace
+ */
+inner_Text(el, text)
+{
+    if (el.childNodes[0])
+    {
+        el.childNodes[0].nodeValue = text;
     }
 }
 
 /**
  * Check if an element is in current viewport
  *
- * @access public
- * @param  node   el Target DOM node
- * @return bool
+ * @access {public}
+ * @param  {node}   el Target DOM node
+ * @return {bool}
  */
-Helper.prototype.inViewport = function(el)
+in_viewport(el)
 {
 
     var rect = el.getBoundingClientRect();
@@ -864,10 +827,10 @@ Helper.prototype.inViewport = function(el)
 /**
  * Aria hide an element
  *
- * @access public
- * @param  node   el Target DOM node
+ * @access {public}
+ * @param  {node}   el Target DOM node
  */
-Helper.prototype.hideAria = function(el)
+hide_aria(el)
 {
     el.setAttribute("aria-hidden", 'true');
 }
@@ -875,10 +838,10 @@ Helper.prototype.hideAria = function(el)
 /**
  * Aria show an element
  *
- * @access public
- * @param  node   el Target DOM node
+ * @access {public}
+ * @param  {node}   el Target DOM node
  */
-Helper.prototype.showAria = function(el)
+show_aria(el)
 {
     el.setAttribute("aria-hidden", 'false');
 }

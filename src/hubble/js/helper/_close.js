@@ -1,3 +1,10 @@
-	Container.singleton('Helper', Helper).Helper().getBrowser();
+	 // Destructor
+    destruct()
+    {
+        this.clearEventListeners();
+    }
+}
 
-	})();
+Container.singleton('Helper', HelperJS);
+
+console.log(Container.get('Helper'));

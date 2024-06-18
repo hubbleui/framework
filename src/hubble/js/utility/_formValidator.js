@@ -9,7 +9,7 @@
 {
 
     /**
-     * @var Helper obj
+     * @var {Helper} obj
      */
     var Helper = Container.Helper();
 
@@ -17,17 +17,17 @@
      * Module constructor
      *
      * @class
-     * @constructor
-     * @param form node
-     * @access public
-     * @return this
+     {*} @constructor
+     * @param {form} node
+     * @access {public}
+     * @return {this}
      */
     var FormValidator = function(form)
     {
 
         // Save inputs
         this._form = form;
-        this._inputs = Helper.getFormInputs(form);
+        this._inputs = Helper.form_inputs(form);
 
         // Defaults
         this._rulesIndex = [];
@@ -48,8 +48,8 @@
     /**
      *  Is the form valid?
      *
-     * @access public
-     * @return boolean
+     * @access {public}
+     * @return {boolean}
      */
     FormValidator.prototype.isValid = function()
     {
@@ -59,25 +59,24 @@
     /**
      * Show invalid inputs
      *
-     * @access public
+     * @access {public}
      */
     FormValidator.prototype.showInvalid = function()
     {
-
         this._clearForm();
 
         // Show the invalid inputs
         for (var j = 0; j < this._invalids.length; j++)
         {
             var __wrap = Helper.closest(this._invalids[j], '.form-field');
-            if (Helper.nodeExists(__wrap)) Helper.addClass(__wrap, 'danger');
+            if (Helper.in_dom(__wrap)) Helper.add_class(__wrap, 'danger');
         }
     }
 
     /**
      * Remove errored inputs
      *
-     * @access public
+     * @access {public}
      */
     FormValidator.prototype.clearInvalid = function()
     {
@@ -87,19 +86,19 @@
     /**
      * Show form result
      *
-     * @access public
+     * @access {public}
      */
     FormValidator.prototype.showResult = function(result)
     {
         this._clearForm();
-        Helper.addClass(this._form, result);
+        Helper.add_class(this._form, result);
     }
 
     /**
      * Append a key/pair and return form obj
      *
-     * @access public
-     * @return obj
+     * @access {public}
+     * @return {obj}
      */
     FormValidator.prototype.append = function(key, value)
     {
@@ -110,8 +109,8 @@
     /**
      * Get the form object
      *
-     * @access public
-     * @return obj
+     * @access {public}
+     * @return {obj}
      */
     FormValidator.prototype.form = function()
     {
@@ -124,7 +123,7 @@
     /**
      * Index form inputs by name and rules
      *
-     * @access public
+     * @access {public}
      */
     FormValidator.prototype._indexInputs = function()
     {
@@ -148,8 +147,8 @@
     /**
      * Validate the form inputs
      *
-     * @access private
-     * @return boolean
+     * @access {private}
+     * @return {boolean}
      */
     FormValidator.prototype._validateForm = function()
     {
@@ -162,7 +161,7 @@
             this._rulesIndex[i].isValid = true;
 
             var pos = this._rulesIndex[i];
-            var value = Helper.getInputValue(pos.node);
+            var value = Helper.input_value(pos.node);
 
             if (!pos.isRequired && value === '')
             {
@@ -201,15 +200,15 @@
     /**
      * Generate the form object
      *
-     * @access private
-     * @return obj
+     * @access {private}
+     * @return {obj}
      */
     FormValidator.prototype._generateForm = function()
     {
         for (var i = 0; i < this._inputs.length; i++)
         {
             var name = this._inputs[i].name;
-            var value = Helper.getInputValue(this._inputs[i]);
+            var value = Helper.input_value(this._inputs[i]);
             if (this._inputs[i].type === 'radio' && this._inputs[i].checked == false)
             {
                 continue;
@@ -221,7 +220,7 @@
             }
             if (name.indexOf('[]') > -1)
             {
-                if (!Helper.isset(this._formObj[name])) this._formObj[name] = [];
+                if (!this._formObj[name]) this._formObj[name] = [];
                 this._formObj[name].push(value);
             }
             else
@@ -235,8 +234,8 @@
     /**
      * Mark an input as not valid (internally)
      *
-     * @access private
-     * @return obj
+     * @access {private}
+     * @return {obj}
      */
     FormValidator.prototype._devalidate = function(i)
     {
@@ -248,27 +247,27 @@
     /**
      * Clear form result and input errors
      *
-     * @access private
-     * @return obj
+     * @access {private}
+     * @return {obj}
      */
     FormValidator.prototype._clearForm = function(i)
     {
         // Remove the form result
-        Helper.removeClass(this._form, ['info', 'success', 'warning', 'danger']);
+        Helper.remove_class(this._form, ['info', 'success', 'warning', 'danger']);
 
         // Make all input elements 'valid' - i.e hide the error msg and styles.
         for (var i = 0; i < this._inputs.length; i++)
         {
             var _wrap = Helper.closest(this._inputs[i], '.form-field');
-            if (Helper.nodeExists(_wrap)) Helper.removeClass(_wrap, ['info', 'success', 'warning', 'danger'])
+            if (Helper.in_dom(_wrap)) Helper.remove_class(_wrap, ['info', 'success', 'warning', 'danger'])
         }
     };
 
     /**
      * Private validator methods
      *
-     * @access private
-     * @return boolean
+     * @access {private}
+     * @return {boolean}
      */
     FormValidator.prototype._validateEmail = function(value)
     {

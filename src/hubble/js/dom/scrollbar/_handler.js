@@ -4,7 +4,7 @@
  * This is a utility class used internally to add custom vertical scrollbars to an element.
  * This class handles the events of the scrollbars.
  * This should not be used at all outside of the framework.
- * @see https://github.com/noraesae/perfect-scrollbar
+ * @see {https://github.com/noraesae/perfect-scrollbar}
  */
 (function()
 {
@@ -80,10 +80,10 @@
             this.wrapper.style.marginRight = '';
             this.track.style.display = '';
 
-            removeClass(document.body, stateClasses.dragging);
-            removeClass(this.area, stateClasses.dragging);
-            removeClass(this.area, stateClasses.hover);
-            removeClass(this.track, stateClasses.hover);
+            remove_class(document.body, stateClasses.dragging);
+            remove_class(this.area, stateClasses.dragging);
+            remove_class(this.area, stateClasses.hover);
+            remove_class(this.track, stateClasses.hover);
 
             delete this.el;
         }
@@ -159,11 +159,11 @@
 
             this._addListener(element, 'mouseenter', function()
             {
-                addClass(element, cls);
+                add_class(element, cls);
             });
             this._addListener(element, 'mouseleave', function()
             {
-                removeClass(element, cls);
+                remove_class(element, cls);
             });
         }
 
@@ -220,8 +220,8 @@
                     this.wrapper.scrollTop = newPosition;
                     this._positionHandle();
 
-                    addClass(document.body, cls);
-                    addClass(this.area, cls);
+                    add_class(document.body, cls);
+                    add_class(this.area, cls);
                 }
             }, this);
 
@@ -230,8 +230,8 @@
                 initialTop = null;
                 initialPosition = null;
 
-                removeClass(document.body, cls);
-                removeClass(this.area, cls);
+                remove_class(document.body, cls);
+                remove_class(this.area, cls);
 
                 this._removeListener(document, 'mousemove', startDragging);
                 this._removeListener(document, 'mouseup', stopDragging);
@@ -425,7 +425,7 @@
         }
     }
 
-    function addClass(el, className)
+    function add_class(el, className)
     {
         if (el.classList)
         {
@@ -437,7 +437,7 @@
         }
     }
 
-    function removeClass(el, className)
+    function remove_class(el, className)
     {
         if (el.classList)
         {

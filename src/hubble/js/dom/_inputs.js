@@ -3,23 +3,23 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Adds classes to inputs
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class Inputs
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor()
@@ -27,7 +27,7 @@
             this._inputs = Helper.$All('.form-field input, .form-field select, .form-field textarea');
             this._labels = Helper.$All('.form-field label');
 
-            if (!Helper.empty(this._inputs))
+            if (!Helper.is_empty(this._inputs))
             {
                 this._bind();
             }
@@ -38,7 +38,7 @@
         /**
          * Module destructor - removes event listeners
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -50,7 +50,7 @@
         /**
          * Event binder
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -66,7 +66,7 @@
         /**
          * Event ubinder
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -82,8 +82,8 @@
         /**
          * Event handler
          *
-         * @access private
-         * @params event|null e Browser click event
+         * @access {private}
+         * @params {event|null} e Browser click event
          */
         _onLabelClick(e)
         {
@@ -91,7 +91,7 @@
 
             var input = Helper.$('input', this.parentNode);
 
-            if (Helper.nodeExists(input))
+            if (Helper.in_dom(input))
             {
                 input.focus();
 
@@ -100,7 +100,7 @@
 
             var input = Helper.$('select', this.parentNode);
 
-            if (Helper.nodeExists(input))
+            if (Helper.in_dom(input))
             {
                 input.focus();
 
@@ -109,7 +109,7 @@
 
             var input = Helper.$('textarea', this.parentNode);
 
-            if (Helper.nodeExists(input))
+            if (Helper.in_dom(input))
             {
                 input.focus();
 
@@ -120,8 +120,8 @@
         /**
          * Event handler
          *
-         * @access private
-         * @params event|null e Browser click event
+         * @access {private}
+         * @params {event|null} e Browser click event
          */
         _eventHandler(e)
         {
@@ -133,32 +133,32 @@
             }
             else if (e.type === 'focus')
             {
-                Helper.addClass(this.parentNode, 'focus');
+                Helper.add_class(this.parentNode, 'focus');
             }
             else if (e.type === 'blur')
             {
-                Helper.removeClass(this.parentNode, 'focus');
+                Helper.remove_class(this.parentNode, 'focus');
             }
 
             if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
             {
-                var _value = Helper.getInputValue(this);
+                var _value = Helper.input_value(this);
 
                 if (_value === '')
                 {
-                    Helper.removeClass(this.parentNode, 'not-empty');
-                    Helper.addClass(this.parentNode, 'empty');
+                    Helper.remove_class(this.parentNode, 'not-empty');
+                    Helper.add_class(this.parentNode, 'empty');
                 }
                 else
                 {
-                    Helper.removeClass(this.parentNode, 'empty');
-                    Helper.addClass(this.parentNode, 'not-empty');
+                    Helper.remove_class(this.parentNode, 'empty');
+                    Helper.add_class(this.parentNode, 'not-empty');
                 }
             }
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Inputs', Inputs);
+    Hubble.dom().register('Inputs', Inputs);
 
 })();

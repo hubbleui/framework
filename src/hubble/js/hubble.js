@@ -1,3 +1,5 @@
+//'use strict';   
+
 // Polyfills
 @import 'polyfills/_polyfills.js';
 
@@ -7,15 +9,27 @@
 @import 'application/_dom.js';
 
 // Helper
-@import 'helper/_open.js';
-@import 'helper/_dom.js';
-@import 'helper/_string.js';
-@import 'helper/_array.js';
-@import 'helper/_misc.js';
-@import 'helper/_events.js';
-@import 'helper/_animate.js';
-@import 'helper/_browser.js';
-@import 'helper/_close.js';
+(function()
+{
+	@import 'helper/_constants.js';
+	@import 'helper/animate/constants.js';
+	@import 'helper/_open.js';
+	@import 'helper/_dom.js';
+	@import 'helper/_attributes.js';
+	@import 'helper/_css.js';
+	@import 'helper/_validation.js';
+	@import 'helper/_string.js';
+	@import 'helper/_array.js';
+	@import 'helper/_object.js';
+	@import 'helper/_misc.js';
+	@import 'helper/_events.js';
+	@import 'helper/_browser.js';
+	@import 'helper/animate/animation_factory.js';
+	@import 'helper/animate/animate.js';
+	@import 'helper/animate/animate_css.js';
+	@import 'helper/_private.js';
+	@import 'helper/_close.js';
+})();
 
 // Vendors
 @import 'vendor/_promise.js';
@@ -25,7 +39,6 @@
 
 // Utility
 @import 'utility/_cookie.js';
-@import 'utility/_toggleHeight.js';
 @import 'utility/_events.js';
 @import 'utility/_filters.js';
 @import 'utility/_inputMasker.js';
@@ -34,13 +47,10 @@
 @import 'utility/_notification.js';
 @import 'utility/_ajax.js';
 @import 'utility/_formValidator.js';
-@import 'utility/_money.js';
-@import 'utility/dynamicUI/_handler.js';
-@import 'utility/dynamicUI/_dynamicUi.js';
 
 // DOM Module
-@import "dom/_pjax.js";
-@import "dom/_pjaxLinks.js";
+@import "dom/pjax/_pjax.js";
+@import "dom/pjax/_links.js";
 @import 'dom/scrollbar/_handler.js';
 @import 'dom/scrollbar/_scrollbars.js';
 @import 'dom/_collapse.js';

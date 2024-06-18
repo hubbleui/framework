@@ -1,21 +1,21 @@
 /**
  * Ripple click animation
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
  */
 (function()
 {
     /**
      * Ripple handler
      * 
-     * @var object
+     * @var {object}
      */
     /**
      * Ripple handler
      * 
-     * @see https://github.com/samthor/js-ripple
+     * @see {https://github.com/samthor/js-ripple}
      */
     var rippleTypeAttr = 'data-event';
 
@@ -106,7 +106,7 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
@@ -116,7 +116,7 @@
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
         constructor()
@@ -143,7 +143,7 @@
         /**
          * Module destructor - removes event listeners
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -155,7 +155,7 @@
         /**
          * Insert ripples
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -168,7 +168,7 @@
         /**
          * Remove ripples
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -184,7 +184,7 @@
 
                 for (var j = 0; j < ripples.length; j++)
                 {
-                    Helper.removeFromDOM(ripples[j]);
+                    Helper.remove_from_dom(ripples[j]);
                 }
             }
         }
@@ -192,8 +192,8 @@
         /**
          * Insert ripple
          *
-         * @access private
-         * @param  node    wrapper
+         * @access {private}
+         * @param  {node}    wrapper
          */
         _insertRipple(wrapper)
         {
@@ -202,7 +202,7 @@
                 
             rip.className = 'ripple-container js-ripple-container';
 
-            if (Helper.hasClass(wrapper, 'chip'))
+            if (Helper.has_class(wrapper, 'chip'))
             { 
                 rip.className = 'ripple-container fill js-ripple-container';
             }
@@ -218,8 +218,8 @@
         /**
          * On mousedown
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _mouseDown(e)
         {
@@ -235,8 +235,8 @@
         /**
          * On touchstart
          *
-         * @access private
-         * @param  event|null   e
+         * @access {private}
+         * @param  {event|null}   e
          */
         _touchStart(e, foo, bar)
         {
@@ -250,6 +250,6 @@
     }
     
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Ripple', Ripple);
+    Hubble.dom().register('Ripple', Ripple);
 
 })();

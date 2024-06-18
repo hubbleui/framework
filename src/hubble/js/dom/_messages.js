@@ -3,16 +3,16 @@
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Message closers
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class MessageClosers
     {
@@ -20,13 +20,13 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
         constructor()
         {
             this._triggers = Helper.$All('.js-close-msg');
 
-            if (!Helper.empty(this._triggers))
+            if (!Helper.is_empty(this._triggers))
             {
                 this._bind();
             }
@@ -38,7 +38,7 @@
          * Module destructor - removes event listeners
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
         destruct()
         {
@@ -50,7 +50,7 @@
         /**
          * Event binder - Binds all events on button click
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -60,7 +60,7 @@
         /**
          * Event ubinder - Binds all event handlers on button click
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -70,8 +70,8 @@
         /**
          * Event handler - handles removing the message
          *
-         * @param  event   e JavaScript click event
-         * @access private
+         * @param  {event}   e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
@@ -81,22 +81,19 @@
 
             var toRemove = Helper.closest(this, '.msg');
 
-            if (Helper.hasClass(this, 'js-rmv-parent'))
+            if (Helper.has_class(this, 'js-rmv-parent'))
             {
                 toRemove = toRemove.parentNode;
             }
 
-            Helper.animate(toRemove, 'opacity', '1', '0', 300, 'ease');
-
-            setTimeout(function()
-            {
-                Helper.removeFromDOM(toRemove);
-
-            }, 300);
+            Helper.animate_css(toRemove, { opacity: 0, duration: 500, easing: 'easeInOutCubic', callback: function()
+            {                
+                Helper.remove_from_dom(toRemove);
+            }});
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('MessageClosers', MessageClosers);
+    Hubble.dom().register('MessageClosers', MessageClosers);
 
 })();

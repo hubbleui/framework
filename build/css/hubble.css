@@ -7354,9 +7354,9 @@ div.pswp__img--placeholder, .pswp__img--with-bg {
   background: hsla(0, 0%, 100%, 0.75);
   cursor: pointer;
   -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-   -o-transform: translateY(-50%);
-      transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+       -o-transform: translateY(-50%);
+          transform: translateY(-50%);
 }
 
 .flickity-prev-next-button:hover {
@@ -7365,8 +7365,6 @@ div.pswp__img--placeholder, .pswp__img--with-bg {
 
 .flickity-prev-next-button:focus {
   outline: none;
-  -webkit-box-shadow: 0 0 0 5px #09F;
-          box-shadow: 0 0 0 5px #09F;
 }
 
 .flickity-prev-next-button:active {

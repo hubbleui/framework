@@ -1,7 +1,7 @@
 /**
  * Cookie manager
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+ * @see {https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie}
  * 
  */
 (function()
@@ -51,16 +51,16 @@
     /**
      * Cookie prefix
      * 
-     * @var string
+     * @var {string}
      */
     var _prefix = '_hb';
 
     /**
      * Module constructor
      *
-     * @access public
+     * @access {public}
      * @constructor
-     * @return this
+     {*} @return this
      */
     var Cookies = function()
     {
@@ -70,14 +70,14 @@
     /**
      * Set a cookie
      *
-     * @access public
-     * @param  string    key      Cookie key
-     * @param  string    value    Cookie value
-     * @param  int    days     Cookie expiry in days (optional) (default when browser closes)
-     * @param  string    path     Cookie path (optional) (default "/")
-     * @param  bool   secure   Secure policy (optional) (default) (true)
-     * @param  stringing samesite Samesite policy (optional) (default) (true)
-     * @return sting
+     * @access {public}
+     * @param  {string}    key      Cookie key
+     * @param  {string}    value    Cookie value
+     * @param  {int}    days     Cookie expiry in days (optional) (default when browser closes)
+     * @param  {string}    path     Cookie path (optional) (default "/")
+     * @param  {bool}   secure   Secure policy (optional) (default) (true)
+     * @param  {stringing} samesite Samesite policy (optional) (default) (true)
+     * @return {sting}
      */
     Cookies.prototype.set = function(key, value, days, path, secure, samesite)
     {
@@ -96,9 +96,9 @@
     /**
      * Get a cookie
      *
-     * @access public
-     * @param  string key Cookie key
-     * @return mixed
+     * @access {public}
+     * @param  {string} key Cookie key
+     * @return {mixed}
      */
     Cookies.prototype.get = function(key)
     {
@@ -127,8 +127,8 @@
     /**
      * Remove a cookie
      *
-     * @access public
-     * @param  string key Cookie to remove
+     * @access {public}
+     * @param  {string} key Cookie to remove
      */
     Cookies.prototype.remove = function(key)
     {
@@ -140,9 +140,9 @@
     /**
      * Normalise cookie expiry date
      *
-     * @access private
-     * @param  int    days Days when cookie expires
-     * @return sting
+     * @access {private}
+     * @param  {int}    days Days when cookie expires
+     * @return {sting}
      */
     Cookies.prototype._normaliseExpiry = function(days)
     {
@@ -156,9 +156,9 @@
     /**
      * Normalise cookie key
      *
-     * @access private
-     * @param  string key Cookie key
-     * @return sting
+     * @access {private}
+     * @param  {string} key Cookie key
+     * @return {sting}
      */
     Cookies.prototype._normaliseKey = function(key)
     {
@@ -170,9 +170,9 @@
     /**
      * Encode cookie value
      *
-     * @access private
-     * @param  mixed  value Value to encode
-     * @return sting
+     * @access {private}
+     * @param  {mixed}  value Value to encode
+     * @return {sting}
      */
     Cookies.prototype._encodeCookieValue = function(value)
     {
@@ -191,9 +191,9 @@
     /**
      * Decode cookie value
      *
-     * @access private
-     * @param  string  str Value to decode
-     * @return mixed
+     * @access {private}
+     * @param  {string}  str Value to decode
+     * @return {mixed}
      */
     Cookies.prototype._decodeCookieValue = function(str)
     {
@@ -214,9 +214,9 @@
     /**
      * Base64 encode
      *
-     * @access private
-     * @param  string str String to encode
-     * @return sting
+     * @access {private}
+     * @param  {string} str String to encode
+     * @return {sting}
      */
     Cookies.prototype._base64_encode = function(str)
     {
@@ -226,9 +226,9 @@
     /**
      * Base64 decode
      *
-     * @access pubic
-     * @param  string str String to decode
-     * @return sting
+     * @access {pubic}
+     * @param  {string} str String to decode
+     * @return {sting}
      */
     Cookies.prototype._base64_decode = function(str)
     {
@@ -238,9 +238,9 @@
     /**
      * From binary
      *
-     * @access prvate
-     * @param  string binary String to decode
-     * @return string
+     * @access {prvate}
+     * @param  {string} binary String to decode
+     * @return {string}
      */
     Cookies.prototype._fromBinary = function(binary)
     {
@@ -257,9 +257,9 @@
     /**
      * To binary
      *
-     * @access pubic
-     * @param  string string String to encode
-     * @return sting
+     * @access {pubic}
+     * @param  {string} string String to encode
+     * @return {sting}
      */
     Cookies.prototype._toBinary = function(string)
     {

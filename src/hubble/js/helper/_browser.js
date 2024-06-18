@@ -1,18 +1,18 @@
 /**
  * Browser utility functions
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
  */
 
 /**
  * Get the browser with version
  *
- * @access public
- * @return object
+ * @access {public}
+ * @return {object}
  */
-Helper.prototype.getBrowser = function()
+get_browser()
 {
     if (this.browser)
     {
@@ -24,10 +24,10 @@ Helper.prototype.getBrowser = function()
      * https://github.com/darcyclarke/Detect.js
      * Dual licensed under the MIT and GPL licenses.
      *
-     * @version 2.2.2
-     * @author Darcy Clarke
-     * @url http://darcyclarke.me
-     * @createdat Mon Oct 26 2015 08:21:54 GMT-0200 (Horário brasileiro de verão)
+     * @version {2.2.2}
+     * @author {Darcy} Clarke}
+     * @url {http://darcyclarke.me}
+     * @createdat {Mon} Oct 26 2015 08:21:54 GMT-0200 (Horário brasileiro de verão)
      *
      * Based on UA-Parser (https://github.com/tobie/ua-parser) by Tobie Langel
      *
@@ -1331,19 +1331,19 @@ Helper.prototype.getBrowser = function()
 /**
  * Is this a mobile user agent?
  *
- * @return bool
+ * @return {bool}
  */
-Helper.prototype.isMobile = function()
+is_mobile()
 {
-    return this.getBrowser()['device'] === 'Mobile';
+    return this.get_browser()['device'] === 'Mobile';
 }
 
 /**
  * Is this a mobile user agent?
  *
- * @return bool
+ * @return {bool}
  */
-Helper.prototype.isRetina = function()
+is_retina()
 {
     var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
                       (min--moz-device-pixel-ratio: 1.5),\

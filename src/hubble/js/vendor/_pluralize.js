@@ -1,8 +1,8 @@
 /**
  * Pluralize
- * @see https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations
+ * @see {https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations}
  * 
- * @example Container.Helper().pluralize('tomato', 5);
+ * @example {Container.Helper().pluralize('tomato',} 5);
  * 
  */
 (function()
@@ -10,65 +10,65 @@
     /**
      * Pluralize a word.
      *
-     * @param  string word  The input word
-     * @param  int    count The amount of items (optional) (default 2)
-     * @return string
+     * @param  {string} word  The input word
+     * @param  {int}    count The amount of items (optional) (default 2)
+     * @return {string}
      */
     var Pluralize = function(word, count)
     {
         /**
          * The word to convert.
          *
-         * @var string
+         * @var {string}
          */
         this.word = '';
 
         /**
          * Lowercase version of word.
          *
-         * @var string
+         * @var {string}
          */
         this.lowercase = '';
 
         /**
          * Uppercase version of word.
          *
-         * @var string
+         * @var {string}
          */
         this.upperCase = '';
 
         /**
          * Sentence-case version of word.
          *
-         * @var string
+         * @var {string}
          */
         this.sentenceCase = '';
 
         /**
          * Casing pattern of the provided word.
          *
-         * @var string
+         * @var {string}
          */
         this.casing = '';
 
         /**
          * Sibilants.
          *
-         * @var array
+         * @var {array}
          */
         this.sibilants = ['x', 's', 'z', 's'];
 
         /**
          * Vowels.
          *
-         * @var array
+         * @var {array}
          */
         this.vowels = ['a', 'e', 'i', 'o', 'u'];
 
         /**
          * Consonants.
          *
-         * @var array
+         * @var {array}
          */
         this.consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
 
@@ -80,9 +80,9 @@
     /**
      * Pluralize a word.
      *
-     * @param  string word  The input word
-     * @param  int    count The amount of items (optional) (default 2)
-     * @return string
+     * @param  {string} word  The input word
+     * @param  {int}    count The amount of items (optional) (default 2)
+     * @return {string}
      */
     Pluralize.prototype.convert = function(word, count)
     {
@@ -96,7 +96,7 @@
         this.word = word;
         this.lowercase = strtolower(word);
         this.upperCase = strtoupper(word);
-        this.sentenceCase = ucfirst(word);
+        this.sentenceCase = uc_first(word);
         this.casing = this.getCasing();
 
         // save some time in the case that singular and plural are the same
@@ -162,7 +162,7 @@
     /**
      * Is the word irregular and uncountable (e.g fish).
      *
-     * @return bool
+     * @return {bool}
      */
     Pluralize.prototype.isUncountable = function()
     {
@@ -209,7 +209,7 @@
     /**
      * Returns plural version of iregular words or FALSE if it is not irregular.
      *
-     * @return string|bool
+     * @return {string|bool}
      */
     Pluralize.prototype.isIrregular = function()
     {
@@ -344,7 +344,7 @@
     /**
      * Return an array with an index of where to cut off the ending and a suffix or FALSE.
      *
-     * @return array|false
+     * @return {array|false}
      */
     Pluralize.prototype.autoSuffix = function()
     {
@@ -385,7 +385,7 @@
     /**
      * Get provided casing of word.
      *
-     * @return string
+     * @return {string}
      */
     Pluralize.prototype.getCasing = function()
     {
@@ -400,9 +400,9 @@
     /**
      * Convert word to a casing.
      *
-     * @param  string word   The word to convert
-     * @param  string casing The casing format to convert to
-     * @return string
+     * @param  {string} word   The word to convert
+     * @param  {string} casing The casing format to convert to
+     * @return {string}
      */
     Pluralize.prototype.toCasing = function(word, casing)
     {
@@ -425,9 +425,9 @@
     /**
      * Strip end off a word at a given char index and return the end part.
      *
-     * @param  string word  The word to convert
-     * @param  int    count The index to split at
-     * @return string
+     * @param  {string} word  The word to convert
+     * @param  {int}    count The index to split at
+     * @return {string}
      */
     Pluralize.prototype.suffix = function(word, count)
     {
@@ -437,9 +437,9 @@
     /**
      * Strip end off a word at a given char index and return the start part.
      *
-     * @param  string word  The word to convert
-     * @param  int    count The index to split at
-     * @return string
+     * @param  {string} word  The word to convert
+     * @param  {int}    count The index to split at
+     * @return {string}
      */
     Pluralize.prototype.sliceFromEnd = function(word, count)
     {
@@ -449,9 +449,9 @@
     /**
      * Get the nth last character of a string.
      *
-     * @param  string word  The word to convert
-     * @param  int    count The index to get
-     * @return string
+     * @param  {string} word  The word to convert
+     * @param  {int}    count The index to get
+     * @return {string}
      */
     Pluralize.prototype.nthLast = function(word, count)
     {

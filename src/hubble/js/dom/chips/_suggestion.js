@@ -3,16 +3,16 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Chip suggestions.
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class ChipSuggestions
     {
@@ -20,7 +20,7 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -34,7 +34,7 @@
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -46,7 +46,7 @@
         /**
          * Bind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -56,7 +56,7 @@
         /**
          * Unbind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -66,8 +66,8 @@
         /**
          * Chip click handler
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _clickHandler(e)
         {
@@ -78,7 +78,7 @@
             var _input = Helper.$('#' + _id);
             var _text = this.innerText.trim();
 
-            if (!_input || !Helper.nodeExists(_input))
+            if (!_input || !Helper.in_dom(_input))
             {
                 throw new Error('Target node does not exist.');
 
@@ -86,11 +86,11 @@
             }
 
             // Chips input
-            if (Helper.hasClass(_input, 'js-chips-input'))
+            if (Helper.has_class(_input, 'js-chips-input'))
             {
                 Container.ChipInputs().addChip(_text, _input);
 
-                Helper.removeFromDOM(this);
+                Helper.remove_from_dom(this);
 
                 return;
             }
@@ -113,11 +113,11 @@
 
             _input.value += _space + _text;
 
-            Helper.removeFromDOM(this);
+            Helper.remove_from_dom(this);
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('ChipSuggestions', ChipSuggestions);
+    Hubble.dom().register('ChipSuggestions', ChipSuggestions);
 
 }());

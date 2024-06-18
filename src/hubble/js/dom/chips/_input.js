@@ -3,16 +3,16 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Chip inputs
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class ChipInputs
     {
@@ -20,7 +20,7 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -34,7 +34,7 @@
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -46,7 +46,7 @@
         /**
          * Bind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -59,7 +59,7 @@
         /**
          * Unbind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -72,8 +72,8 @@
         /**
          * Init a chips input
          *
-         * @access private
-         * @param  node    _wrapper
+         * @access {private}
+         * @param  {node}    _wrapper
          */
         _initInput(_wrapper)
         {
@@ -93,8 +93,8 @@
         /**
          * Destroy chip listeners
          *
-         * @access private
-         * @param  node    _wrapper
+         * @access {private}
+         * @param  {node}    _wrapper
          */
         _destroy(_wrapper)
         {
@@ -114,8 +114,8 @@
         /**
          * Prevent the form from submitting if it's part of a form
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _preventSubmit(e)
         {
@@ -144,8 +144,8 @@
         /**
          * Handle pressing enter to insert the chip
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _onKeyUp(e)
         {
@@ -160,7 +160,7 @@
 
                 var _wrapper = Helper.closest(this, '.js-chips-input');
 
-                var _value = Helper.getInputValue(this).trim();
+                var _value = Helper.input_value(this).trim();
 
                 if (!Helper.in_array(_value, _this._getChipsValues(_wrapper)) && _value !== '')
                 {
@@ -174,33 +174,33 @@
         /**
          * Remove last chip
          *
-         * @access private
-         * @param  node    _wrapper
+         * @access {private}
+         * @param  {node}    _wrapper
          */
         _removeLastChip(_wrapper)
         {
             var _chips = Helper.$All('.chip', _wrapper);
 
-            if (!Helper.empty(_chips))
+            if (!Helper.is_empty(_chips))
             {
-                Helper.removeFromDOM(_chips.pop());
+                Helper.remove_from_dom(_chips.pop());
             }
         }
 
         /**
          * Insert new chip
          *
-         * @access public
-         * @param  string      _value
-         * @param  node        _wrapper
-         * @param  string|bool _icon
+         * @access {public}
+         * @param  {string}      _value
+         * @param  {node}        _wrapper
+         * @param  {string|bool} _icon
          */
         addChip(_value, _wrapper, _icon)
         {
             _icon = typeof _icon === 'undefined' ? false : _icon;
             var _name = _wrapper.dataset.inputName;
             var _chip = document.createElement('span');
-            var _children = Helper.firstChildren(_wrapper);
+            var _children = Helper.first_children(_wrapper);
             var _classes = _wrapper.dataset.chipClass;
             var _iconStr = '';
 
@@ -225,22 +225,22 @@
         /**
          * Remove an existing chip
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _removeChip(e)
         {
             e = e || window.event;
 
-            Helper.removeFromDOM(Helper.closest(this, '.chip'));
+            Helper.remove_from_dom(Helper.closest(this, '.chip'));
         }
 
         /**
          * Get all values from chip input
          *
-         * @access private
-         * @param  node    _wrapper
-         * @return array
+         * @access {private}
+         * @param  {node}    _wrapper
+         * @return {array}
          */
         _getChipsValues(_wrapper)
         {
@@ -250,7 +250,7 @@
 
             for (var i = 0; i < _chips.length; i++)
             {
-                _result.push(Helper.getInputValue(_chips[i]));
+                _result.push(Helper.input_value(_chips[i]));
             }
 
             return _result;
@@ -258,6 +258,6 @@
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('ChipInputs', ChipInputs);
+    Hubble.dom().register('ChipInputs', ChipInputs);
 
 }());

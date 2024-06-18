@@ -9,7 +9,7 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
@@ -17,9 +17,9 @@
      * Module constructor
      *
      * @class
-     * @constructor
-     * @access public
-     * @return this
+     {*} @constructor
+     * @access {public}
+     * @return {this}
      */
     var Events = function()
     {
@@ -32,7 +32,7 @@
     /**
      * Module destructor - clears event cache
      *
-     * @access public
+     * @access {public}
      */
     Events.prototype.destruct = function()
     {
@@ -42,10 +42,10 @@
     /**
      * Fire a custom event
      *
-     * @param string eventName The event name to fire
-     * @param mixed  subject   What should be given as "this" to the event callbacks
-     * @param mixed  args      List of additional args to push (optional)
-     * @access public
+     * @param {string} eventName The event name to fire
+     * @param {mixed}  subject   What should be given as "this" to the event callbacks
+     * @param {mixed}  args      List of additional args to push (optional)
+     * @access {public}
      */
     Events.prototype.fire = function()
     {
@@ -82,9 +82,9 @@
     /**
      * Bind a callback to an event
      *
-     * @param eventName string The event name
-     * @param callback  func   The callback function
-     * @access public
+     * @param {eventName} string The event name
+     * @param {callback}  func   The callback function
+     * @access {public}
      */
     Events.prototype.on = function(eventName, callback)
     {
@@ -109,9 +109,9 @@
     /**
      * UnBind a callback to an event
      *
-     * @param eventName string The event name
-     * @param callback  func   The callback function
-     * @access public
+     * @param {eventName} string The event name
+     * @param {callback}  func   The callback function
+     * @access {public}
      */
     Events.prototype.off = function(eventName, callback)
     {
@@ -134,9 +134,9 @@
     /**
      * Get a callback function by key
      *
-     * @param fn string The function key
-     * @access private
-     * @return string
+     * @param {fn} string The function key
+     * @access {private}
+     * @return {string}
      */
     Events.prototype._getFnName = function(fn)
     {

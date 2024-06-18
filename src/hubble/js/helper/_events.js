@@ -1,21 +1,21 @@
 /**
  * DOM Event Listener Manager
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
  */
 
 /**
  * Add an event listener
  *
- * @access public
- * @param  node    element    The target DOM node
- * @param  string  eventName  Event type
- * @param  closure handler    Callback event
- * @param  bool    useCapture Use capture (optional) (defaul false)
+ * @access {public}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
  */
-Helper.prototype.addEventListener = function(element, eventName, handler, useCapture)
+addEventListener(element, eventName, handler, useCapture)
 {
     // Boolean use capture defaults to false
     useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
@@ -53,7 +53,7 @@ Helper.prototype.addEventListener = function(element, eventName, handler, useCap
             useCapture: useCapture,
         });
 
-        this._addListener(element, eventName, handler, useCapture);
+        this.__addListener(element, eventName, handler, useCapture);
     }
 }
 
@@ -64,13 +64,13 @@ Helper.prototype.addEventListener = function(element, eventName, handler, useCap
  * If no callback is given, all callbacks for the event type will be removed.
  * This function can still remove "annonymous" functions that are given a name as they are declared.
  * 
- * @access public
- * @param  node    element    The target DOM node
- * @param  string  eventName  Event type
- * @param  closure handler    Callback event
- * @param  bool    useCapture Use capture (optional) (defaul false)
+ * @access {public}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
  */
-Helper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
+removeEventListener(element, eventName, handler, useCapture)
 {
     if (this.is_array(element))
     {
@@ -84,13 +84,13 @@ Helper.prototype.removeEventListener = function(element, eventName, handler, use
         // If the eventName name was not provided - remove all event handlers on element
         if (!eventName)
         {
-            return this._removeElementListeners(element);
+            return this.__removeElementListeners(element);
         }
 
         // If the callback was not provided - remove all events of the type on the element
         if (!handler)
         {
-            return this._removeElementTypeListeners(element, eventName);
+            return this.__removeElementTypeListeners(element, eventName);
         }
 
         // Default use capture
@@ -108,7 +108,7 @@ Helper.prototype.removeEventListener = function(element, eventName, handler, use
         {
             if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
             {
-                this._removeListener(element, eventName, handler, useCapture);
+                this.__removeListener(element, eventName, handler, useCapture);
                 this._events[eventName].splice(i, 1);
                 break;
             }
@@ -119,9 +119,9 @@ Helper.prototype.removeEventListener = function(element, eventName, handler, use
 /**
  * Removes all event listeners registered by the library
  *
- * @access public
+ * @access {public}
  */
-Helper.prototype.clearEventListeners = function()
+clearEventListeners()
 {
     var events = this._events;
 
@@ -131,7 +131,7 @@ Helper.prototype.clearEventListeners = function()
         var i = eventObj.length;
         while (i--)
         {
-            this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
+            this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
             this._events[eventName].splice(i, 1);
         }
     }
@@ -141,9 +141,9 @@ Helper.prototype.clearEventListeners = function()
  * Removes all event listeners registered by the library on nodes
  * that are no longer part of the DOM tree
  *
- * @access public
+ * @access {public}
  */
-Helper.prototype.collectGarbage = function()
+collectGarbage()
 {
     var events = this._events;
     for (var eventName in events)
@@ -154,98 +154,87 @@ Helper.prototype.collectGarbage = function()
         {
             var el = eventObj[i]['element'];
             if (el == window || el == document || el == document.body) continue;
-            if (!this.nodeExists(el))
+            if (!this.in_dom(el))
             {
-                this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
+                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
                 this._events[eventName].splice(i, 1);
             }
         }
     }
 }
 
+
 /**
- * Removes all registered event listners on an element
+ * Removes event listeners on a DOM node
  *
- * @access private
- * @param  node    element Target node element
+ * If no element given, all attached event listeners are returned.
+ * If no event name is given, all attached event listeners are returned on provided element.
+ * If single arguement is provided and arg is a string, e.g 'click', all events of that type are returned
+ * 
+ * @access {public}
+ * @param  {mixed}   element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @return {array}
  */
-Helper.prototype._removeElementListeners = function(element)
+eventListeners(DOMElement, eventName)
 {
+    var args = TO_ARR.call(arguments);
     var events = this._events;
-    for (var eventName in events)
+
+    // No args, return all events
+    if (args.length === 0)
     {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
+        return events;
+    }
+    // eventListeners(node) or
+    // eventListeners('click')
+    else if (args.length === 1)
+    {
+        // eventListeners('click')
+        if (this.is_string(DOMElement))
+        {   
+            return events[DOMElement] || [];
+        }
+        
+        var ret = [];
+
+        // eventListeners(node)
+        for (var evt in events)
         {
-            if (eventObj[i]['element'] === element)
+            var eventArr = events[evt];
+
+            for (var i = 0; i < eventArr.length; i++)
             {
-                this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-                this._events[eventName].splice(i, 1);
+                var eventObj = eventArr[i];
+
+                if (eventObj.element === DOMElement)
+                {
+                    ret.push(eventObj);
+                }
+            }
+        }
+
+        return ret;
+    }
+    // eventListeners(node, 'click')
+    var ret = [];
+
+    if (events[eventName])
+    {
+        var _evts = events[eventName];
+
+        for (var i = 0; i < _evts.length; i++)
+        {
+            var eventObj = _evts[i];
+
+            if (eventObj.element === DOMElement)
+            {
+                ret.push(eventObj);
             }
         }
     }
+
+    return ret;
 }
 
-/**
- * Removes all registered event listners of a specific type on an element
- *
- * @access private
- * @param  node    element Target node element
- * @param  string  type    Event listener type
- */
-Helper.prototype._removeElementTypeListeners = function(element, type)
-{
-    var eventObj = this._events[type];
-    var i = eventObj.length;
-    while (i--)
-    {
-        if (eventObj[i]['element'] === element)
-        {
-            this._removeListener(eventObj[i]['element'], type, eventObj[i]['handler'], eventObj[i]['useCapture']);
-            this._events[type].splice(i, 1);
-        }
-    }
-}
 
-/**
- * Adds a listener to the element
- *
- * @access private
- * @param  node    element    The target DOM node
- * @param  string  eventName  Event type
- * @param  closure handler    Callback event
- * @param  bool    useCapture Use capture (optional) (defaul false)
- */
-Helper.prototype._addListener = function(el, eventName, handler, useCapture)
-{
-    if (el.addEventListener)
-    {
-        el.addEventListener(eventName, handler, useCapture);
-    }
-    else
-    {
-        el.attachEvent('on' + eventName, handler, useCapture);
-    }
-}
-
-/**
- * Removes a listener from the element
- *
- * @access private
- * @param  node    element    The target DOM node
- * @param  string  eventName  Event type
- * @param  closure handler    Callback event
- * @param  bool    useCapture Use capture (optional) (defaul false)
- */
-Helper.prototype._removeListener = function(el, eventName, handler, useCapture)
-{
-    if (el.removeEventListener)
-    {
-        el.removeEventListener(eventName, handler, useCapture);
-    }
-    else
-    {
-        el.detachEvent('on' + eventName, handler, useCapture);
-    }
-}

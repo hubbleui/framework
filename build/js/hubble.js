@@ -1,8 +1,10 @@
+//'use strict';   
+
 // Polyfills
 /**
  * A fix to allow you to use window.location.origin consistently
  *
- * @see https://tosbourn.com/a-fix-for-window-location-origin-in-internet-explorer/
+ * @see {https://tosbourn.com/a-fix-for-window-location-origin-in-internet-explorer/}
  */
 if (!window.location.origin)
 {
@@ -48,7 +50,7 @@ if (!window.location.origin)
 /*
  * Custom events 
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
+ * @see {https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill}
  */
 (function()
 {
@@ -75,7 +77,7 @@ if (!window.location.origin)
 /**
  * debounce and throttle methods
  * 
- * @see Underscore.js 1.9.1
+ * @see {Underscore.js} 1.9.1
  */
 (function()
 {
@@ -237,7 +239,7 @@ if (!window.location.origin)
 /**
  * String includes
  * 
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+ * @see {https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes}
  */
 if (!String.prototype.includes)
 {
@@ -262,8 +264,8 @@ if (!String.prototype.includes)
 /**
  * String.prototype.replaceAll() polyfill
  * https://gomakethings.com/how-to-replace-a-section-of-a-string-with-another-one-with-vanilla-js/
- * @author Chris Ferdinandi
- * @license MIT
+ * @author {Chris} Ferdinandi}
+ * @license {MIT}
  */
 if (!String.prototype.replaceAll)
 {
@@ -283,8 +285,8 @@ if (!String.prototype.replaceAll)
 /**
  * DOM parser pollyfill (legacy support)
  * 
- * @var obj
- * @source https://gist.github.com/1129031
+ * @var {obj}
+ * @source {https://gist.github.com/1129031}
  */
 (function(DOMParser)
 {
@@ -411,273 +413,123 @@ if (!Array.prototype.map) {
   };
 }
 
-
-// Container
 /**
- * JS IoC Container
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ * Very simple chain library
+ * 
+ * @var {obj}
+ * @source {https://github.com/krasimir/chain}
  */
-(function(window)
+var Chain = function()
 {
-    /**
-     * Array Helper utility
-     * 
-     * Handles Object with built in "dot.notation" set,get,isset,delete methods.
-     *
-     * @class
-     */
-    class ArrayHelper
-    {
-        /**
-         * Module constructor
-         *
-         * @class
-         * @constructor
-         * @access public
-         */
-        constructor()
-        {
-            return this;
-        }
+    var _listeners = {},
+        _resultOfPreviousFunc = null,
+        _self = this,
+        _api = {},
+        _funcs = [],
+        _errors = [];
 
-        /**
-         * Set a key using dot/bracket notation on an object or array
-         *
-         * @access public
-         * @param  string       path   Path to set
-         * @param  mixed        value  Value to set
-         * @param  object|array object Object to set into
-         * @return object|array
-         */
-        set(path, value, object)
-        {
-            this._setRecursive(this._keySegment(path), value, object);
-
-            return object;
-        }
-
-        /**
-         * Gets an from an array/object using dot/bracket notation
-         *
-         * @access public
-         * @param  string       path   Path to get
-         * @param  object|array object Object to get from
-         * @return mixed
-         */
-        get(path, object)
-        {
-            return this._getRecursive(this._keySegment(path), object);
-        }
-
-        /**
-         * Checks if array/object contains path using dot/bracket notation
-         *
-         * @access public
-         * @param  string       path   Path to check
-         * @param  object|array object Object to check on
-         * @return bool
-         */
-        has(path, object)
-        {
-            return typeof this.get(path, object) !== 'undefined';
-        }
-
-        /**
-         * Deletes from an array/object using dot/bracket notation
-         *
-         * @access public
-         * @param  string       path   Path to delete
-         * @param  object|array object Object to delete from
-         * @return object|array
-         */
-        delete(path, object)
-        {
-            this._deleteRecursive(this._keySegment(path), object);
-
-            return object;
-        }
-
-        /**
-         * Recursively delete from array/object
-         *
-         * @access private
-         * @param  array        keys   Keys in search order
-         * @param  object|array object Object to get from
-         * @return mixed
-         */
-        _deleteRecursive(keys, object)
-        {
-            var key = keys.shift();
-            var islast = keys.length === 0;
-
-            if (islast)
-            {
-                if (Object.prototype.toString.call(object) === '[object Array]')
-                {
-                    object.splice(key, 1);
-                }
-                else
-                {
-                    delete object[key];
+    var on = function(type, listener) {
+        if(!_listeners[type]) _listeners[type] = [];
+        _listeners[type].push(listener);
+        return _api;
+    }
+    var off = function(type, listener) {
+        if(_listeners[type]) {
+            var arr = [];
+            for(var i=0; f=_listeners[type][i]; i++) {
+                if(f !== listener) {
+                    arr.push(f);
                 }
             }
-
-            if (!object[key])
-            {
-                return false;
-            }
-
-            return this._deleteRecursive(keys, object[key]);
-
+            _listeners[type] = arr;
         }
-
-        /**
-         * Recursively search array/object
-         *
-         * @access private
-         * @param  array        keys   Keys in search order
-         * @param  object|array object Object to get from
-         * @return mixed
-         */
-        _getRecursive(keys, object)
-        {
-            var key = keys.shift();
-            var islast = keys.length === 0;
-
-            if (islast)
-            {
-                return object[key];
+        return _api;
+    }
+    var dispatch = function(type, param) {
+        if(_listeners[type]) {
+            for(var i=0; f=_listeners[type][i]; i++) {
+                f(param, _api);
             }
-
-            if (!object[key])
-            {
-                return undefined;
-            }
-
-            return this._getRecursive(keys, object[key]);
-        }
-
-        /**
-         * Recursively set array/object
-         *
-         * @access private
-         * @param  array        keys   Keys in search order
-         * @param  mixed        value  Value to set
-         * @param  parent       object|array or null
-         * @param  object|array object Object to set on
-         */
-        _setRecursive(keys, value, object, nextKey)
-        {
-            var key = keys.shift();
-            var islast = keys.length === 0;
-            var lastObj = object;
-            object = !nextKey ? object : object[nextKey];
-
-            // Trying to set a value on nested array that doesn't exist
-            if (!['object', 'function'].includes(typeof object))
-            {
-                throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
-            }
-
-            if (!object[key])
-            {
-                // Trying to put object key into an array
-                if (Object.prototype.toString.call(object) === '[object Array]' && typeof key === 'string')
-                {
-                    var converted = Object.assign(
-                    {}, object);
-
-                    lastObj[nextKey] = converted;
-
-                    object = converted;
-                }
-
-                if (keys[0] && typeof keys[0] === 'string')
-                {
-                    object[key] = {};
-                }
-                else
-                {
-                    object[key] = [];
-                }
-            }
-
-            if (islast)
-            {
-                object[key] = value;
-
-                return;
-            }
-
-            this._setRecursive(keys, value, object, key);
-        }
-
-        /**
-         * Segments an array/object path using dot notation
-         *
-         * @access private
-         * @param  string  path Path to parse
-         * @return array
-         */
-        _keySegment(path)
-        {
-            var result = [];
-            var segments = path.split('.');
-
-            for (var i = 0; i < segments.length; i++)
-            {
-                var segment = segments[i];
-
-                if (!segment.includes('['))
-                {
-                    result.push(segment);
-
-                    continue;
-                }
-
-                var subSegments = segment.split('[');
-
-                for (var j = 0; j < subSegments.length; j++)
-                {
-                    if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
-                    {
-                        result.push(parseInt(subSegments[j].replace(']')));
-                    }
-                    else if (subSegments[j] !== '')
-                    {
-                        result.push(subSegments[j])
-                    }
-                }
-            }
-
-            return result;
         }
     }
+    var run = function() {
+        if(arguments.length > 0) {
+            _funcs = [];
+            for(var i=0; f=arguments[i]; i++) _funcs.push(f);
+            var element = _funcs.shift();
+            if(typeof element === 'function') {
+                element(_resultOfPreviousFunc, _api);
+            } else if(typeof element === 'object' && element.length > 0) {
+                var f = element.shift();
+                f.apply(f, element.concat([_api.next]));
+            }
+            
+        } else {
+            dispatch("done", _resultOfPreviousFunc);
+        }
+        return _api;
+    }
+    var next = function(res) {
+        _resultOfPreviousFunc = res;
+        run.apply(_self, _funcs);
+    }
+    var error = function(err) {
+        if(typeof err != 'undefined') {
+            _errors.push(err);
+            return _api;
+        } else {
+            return _errors;
+        }       
+    }
+    var process = function() {
+        if(arguments.length > 0) {
+            // on method
+            if(arguments.length === 2 && typeof arguments[0] === 'string' && typeof arguments[1] === 'function') {
+                on.apply(self, arguments);
+            // run method
+            } else {
+                run.apply(self, arguments);
+            }
+        }
+        return process;
+    }
+
+    _api = {
+        on: on,
+        off: off,
+        next: next,
+        error: error
+    }
+    
+    return process;
+};
+
+
+// Container
+
+(function(window)
+{
+    const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
 
     /**
-     * Array Helper instance
-     * 
-     * @var object
-     */
-    var Arr = new ArrayHelper;
-
-    /**
-     * Module constructor
+     * JS IoC Container
      *
-     * @class
-     * @constructor
-     * @access public
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Container
+    class Inverse
     {
+        /**
+         * Constructor
+         *
+         * @class
+         {*} @constructor
+         * @access {public}
+         */
         constructor()
         {
-            this.data = {};
-
-            this.singletons = {};
+            this._store = {};
 
             return this;
         }
@@ -685,264 +537,270 @@ if (!Array.prototype.map) {
         /**
          * Set data key to value
          *
-         * @access public
-         * @param string key   The data key
-         * @param mixed  value The data value
+         * @access {public}
+         * @param {string} key   The data key
+         * @param {mixed}  value The data value
          */
-        set(key, value)
+        set(key, value, singleton)
         {
-            if (key.includes('.') || key.includes('['))
-            {
-                Arr.set(key, value, this.data);
-            }
-            else
-            {
-                this.data[key] = value;
+            key = this._normalizeKey(key);
 
-                this._setProto(key, this._isInvokable(value) || this._isInvoked(value));
+            value = this._storeObj(value, singleton);
+
+            this._store[key] = value;
+
+            this._setProto(key);
+        }
+
+        /**
+         * Stores a globally unique singleton
+         *
+         * @access {public}
+         * @param  {string} key      The value or object name
+         * @param  {object} classObj The closure that defines the object
+         * @return {this}
+         */
+        singleton(key, classObj, invoke)
+        {
+            invoke = typeof invoke === 'undefined' ? false : invoke;
+
+            this.set(key, classObj, true);
+
+            if (invoke)
+            {
+                this.get(key);
+            }
+        }
+
+        /**
+         * Does this set contain a key?
+         *
+         * @access {public}
+         * @param  {string}  key The data key
+         * @return {boolean}
+         */
+        has(key)
+        {
+            key = this._normalizeKey(key);
+
+            for (var k in this._store)
+            {
+                if (k === key)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * Remove a key/value
+         *
+         * @access {public}
+         * @param {string} key   The data key
+         */
+        delete(key)
+        {
+            key = this._normalizeKey(key);
+
+            delete this._store[key];
+
+            var _proto = Object.getPrototypeOf(this);
+
+            if (typeof _proto[key] !== 'undefined')
+            {
+                _proto[key] = undefined;
+            }
+        }
+
+        /**
+         * Get data value with key
+         *
+         * @access {public}
+         * @param  {string} key The data key
+         * @param  {mixed}  ... Any additional parameters to pass to the constructor (optional) (default null)
+         * @return {mixed}      The data value
+         */
+        get(key)
+        {
+            key = this._normalizeKey(key);
+
+            let args = Array.prototype.slice.call(arguments).slice(1);
+
+            let valObj = this._store[key];
+
+            if (this.has(key))
+            {
+                // Singletons
+                if (valObj.singleton)
+                {
+                    if (!valObj.instance)
+                    {
+                        return valObj.singleton.apply(this, [key, ...args]);
+                    }
+
+                    return valObj.instance;
+                }
+                // Constructorables
+                if (valObj.invokable)
+                {
+                    return this._newInstance(valObj.value, args);
+                }
+                // Functions
+                if (valObj.funcn)
+                {
+                    return valObj.value.apply(this, args);
+                }
+                // Intances and all other var types
+                return valObj.value;
             }
         }
 
         /**
          * Sets the key as a prototype method
          *
-         * @access public
-         * @param  string key   The data key
-         * @return mixed
+         * @access {public}
+         * @param  {string} key   The data key
+         * @return {mixed}
          */
-        _setProto(key, invokable)
+        _setProto(key)
         {
             var _this = this;
 
-            var _key = this._normalizeKey(key);
-
             var _proto = Object.getPrototypeOf(this);
 
-            _proto[_key] = function()
+            _proto[key] = function()
             {
                 var args = Array.prototype.slice.call(arguments);
 
                 args.unshift(key);
 
-                if (invokable)
-                {
-                    return _this.get.apply(_this, args);
-                }
-
-                return _this.get(key);
+                return _this.get.apply(_this, args);
             };
-        }
-
-        /**
-         * Remove a key/value
-         *
-         * @access public
-         * @param string key   The data key
-         */
-        delete(key)
-        {
-            if (key.includes('.') || key.includes('['))
-            {
-                Arr.delete(key, this.data);
-
-                return;
-            }
-
-            delete this.data[key];
-
-            key = this._normalizeKey(key);
-
-            var _proto = Object.getPrototypeOf(this);
-
-            if (typeof _proto[key] !== 'undefined')
-            {
-                _proto[key] = null;
-            }
         }
 
         /**
          * Stores a globally unique singleton
          *
-         * @access public
-         * @param  string key      The value or object name
-         * @param  object classObj The closure that defines the object
-         * @return this
+         * @access {public}
+         * @param  {string} key      The value or object name
+         * @param  {object} classObj The closure that defines the object
+         * @return {this}
          */
-        singleton(key, classObj)
+        _singletonFunc(key)
         {
-            if (key.includes('.') || key.includes('['))
+            var valObj   = this._store[key];
+            var instance = valObj.invoked ? valObj.instance : null;
+            var args     = Array.prototype.slice.call(arguments).slice(1);
+
+            if (!instance)
             {
-                throw new Error('Cannot set singletons using dot notation.');
+                instance         = this._newInstance(valObj.value, args);
+                valObj.function  = false;
+                valObj.invokable = false;
+                valObj.invoked   = true;
+                valObj.value     = null;
+                valObj.instance  = instance;
+                valObj.singleton = true;
             }
 
-            var args = this._normalizeArgs(arguments);
-
-            var instance;
-
-            if (this._isInvoked(classObj))
-            {
-                instance = classObj;
-            }
-
-            this.singletons[key] = true;
-
-            this.set(key, function()
-            {
-                if (!instance)
-                {
-                    if (!this._isInvoked(instance))
-                    {
-                        instance = this._newInstance(classObj, args);
-                    }
-                }
-
-                return instance;
-            });
-
-            return this;
+            return instance;
         }
 
-        /**
-         * Get data value with key
-         *
-         * @access public
-         * @param  string key The data key
-         * @param  mixed  ... Any additional parameters to pass to the constructor (optional) (default null)
-         * @return mixed      The data value
-         */
-        get(key)
+        _isInvokable(mixed_var)
         {
-            if (key.includes('.') || key.includes('['))
+            // Not a function
+            if (typeof mixed_var !== 'function' || mixed_var === null)
             {
-                return Arr.get(key, this.data);
+                return false;
             }
 
-            if (this.has(key))
+            // Strict ES6 class
+            if (/^\s*class\s+\w+/.test(mixed_var.toString()))
             {
-                if (this._isSingleton(key))
-                {
-                    return this.data[key].apply(this);
-                }
-                else if (this._isInvokable(this.data[key]))
-                {
-                    return this._newInstance(this.data[key], arguments);
-                }
-
-                return this.data[key];
+                return true;
             }
 
-            return false;
-        }
-
-        /**
-         * Does this set contain a key?
-         *
-         * @access public
-         * @param  string  key The data key
-         * @return boolean
-         */
-        has(key)
-        {
-            if (key.includes('.') || key.includes('['))
+            // Native arrow functions
+            if (!mixed_var.prototype || !mixed_var.prototype.constructor)
             {
-                return Arr.has(key, this.data);
+                return false;
             }
 
-            for (var _key in this.data)
-            {
-                if (_key === key)
-                {
-                    return true;
-                }
-            }
+            // If prototype is empty 
+            let props = this._object_props(mixed_var.prototype);
 
-            return false;
-        }
-
-        /**
-         * Checks if key is a singleton
-         *
-         * @access private
-         * @
-         * @return bool
-         */
-        _isSingleton(key)
-        {
-            for (var _key in this.singletons)
-            {
-                if (_key === key)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /**
-         * Checks if a variable is invokable
-         *
-         * @access private
-         * @param  mixed mixedVar The object instance or reference
-         * @return bool
-         */
-        _isInvokable(mixedVar)
-        {
-            return Object.prototype.toString.call(mixedVar) === '[object Function]';
+            return props.length >= 1;
         }
 
         /**
          * Checks if a class object has been invoked
          *
-         * @access private
-         * @param  mixed classObj The object instance or reference
-         * @return bool
+         * @access {private}
+         * @param  {mixed} mixedVar The object instance or reference
+         * @return {bool}
          */
-        _isInvoked(classObj)
+        _isInvoked(mixedVar)
         {
-            return typeof classObj === 'object' && classObj.constructor && typeof classObj.constructor === 'function' && classObj.constructor.toString().includes('function (');
+            if (typeof mixedVar === 'object' && mixedVar.constructor && typeof mixedVar.constructor === 'function')
+            {
+                var constr = mixedVar.constructor.toString().trim();
+                
+                return constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class ') ;
+            }
+
+            return false;
         }
 
         /**
          * Invokes and returns a new class instance
          *
-         * @access private
-         * @param  mixed classObj The object instance or reference
-         * @param  array args     Arguements to pass to class constructor (optional) (default null)
-         * @return object
+         * @access {private}
+         * @param  {mixed} classObj The object instance or reference
+         * @param  {array} args     Arguements to pass to class constructor (optional) (default null)
+         * @return {object}
          */
         _newInstance(reference, args)
         {
-            return new(Function.prototype.bind.apply(reference, args));
+            return new reference(...args);
+            //return new(Function.prototype.bind.apply(reference, args));
         }
 
         /**
-         * Fixes args passed to constructors 
+         * Invokes and returns a new class instance
          *
-         * @access private
-         * @param  array args Array of args passed to origional function
-         * @return array
+         * @access {private}
+         * @param  {mixed} classObj The object instance or reference
+         * @param  {array} args     Arguements to pass to class constructor (optional) (default null)
+         * @return {object}
          */
-        _normalizeArgs(args)
+        _storeObj(mixedVar, isSingleton)
         {
-            if (Object.prototype.toString.call(args) === '[object Arguments]')
-            {
-                var _args = Array.prototype.slice.call(args);
+            isSingleton = typeof isSingleton === 'undefined' ? false : isSingleton;
 
-                _args.shift();
+            var invokable   = this._isInvokable(mixedVar);
+            var invoked     = this._isInvoked(mixedVar);
+            var instance    = invoked && isSingleton ? mixedVar : null;
+            var isFunc      = this._is_func(mixedVar) && !invokable && !invoked && !isSingleton;
+            var singleton   = isSingleton ? this._singletonFunc : false;
 
-                return _args;
-            }
-
-            return args;
+            return {
+                funcn     : isFunc,
+                invokable : invokable,
+                invoked   : invoked,
+                value     : mixedVar,
+                instance  : instance,
+                singleton : singleton,
+            };
         }
 
         /**
          * Normalizes key for prototypes
          *
-         * @access private
-         * @param  string key Key to normalize
-         * @return string
+         * @access {private}
+         * @param  {string} key Key to normalize
+         * @return {string}
          */
         _normalizeKey(key)
         {
@@ -957,6 +815,66 @@ if (!Array.prototype.map) {
 
             return key;
         }
+
+        /**
+         * Returns object properties and methods as array of keys.
+         * 
+         * @param   {mixed}    mixed_var    Variable to test
+         * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+         * @returns {array}
+         */
+        _object_props(mixed_var, withMethods)
+        {
+            var array_unique = function(arr)
+            {
+                let uniq = function(value, index, self)
+                {
+                    return self.indexOf(value) === index;
+                }
+
+                return arr.filter(uniq);
+            }
+
+            withMethods = typeof withMethods === 'undefined' ? true : false;
+
+            let keys = Object.keys(mixed_var);
+
+            if (withMethods)
+            {
+                let protos = [];
+                let funcs = Object.getOwnPropertyNames(mixed_var);
+                let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+
+                while (proto)
+                {
+                    // recursive stopper
+                    if (protos.includes.proto)
+                    {
+                        break;
+                    }
+
+                    protos.push(proto);
+
+                    let protoFuncs = Object.getOwnPropertyNames(proto);
+
+                    funcs = [...funcs, ...protoFuncs];
+
+                    proto = proto.prototype || Object.getPrototypeOf(proto);
+                }
+
+                keys = [...keys, ...funcs];
+            }
+
+            return array_unique(keys.filter(function(key)
+            {
+                return !PROTO_EXCLUDES.includes(key);
+            }));
+        }
+
+        _is_func(mixedVar)
+        {
+            return Object.prototype.toString.call(mixedVar) === '[object Function]';
+        }
     }
 
     /**
@@ -965,177 +883,222 @@ if (!Array.prototype.map) {
      */
     if (!window.Container)
     {
-        var ContainerInstance = new Container;
+        var container = new Inverse;
 
-        window.Container = ContainerInstance;
+        window.Container = container;
     }
 
 })(window);
-
-/**
- * Application core
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
-     * Module constructor
+     * Application core
      *
-     * @class
-     * @constructor
-     * @params null
-     * @access public
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    var Application = function()
+    class Application
     {
-        return this;
-    };
+        /**
+         * Called when the application is first initialized
+         *
+         * @access {public}
+         */
+        boot()
+        {        
+            this.dom().boot();
+        }
 
-    /**
-     * Called when the application is first initialized
-     *
-     * @access public
-     */
-    Application.prototype.boot = function()
-    {
-        this.dom().boot();
-    }
+        /**
+         * Get the Container component
+         *
+         * @access {public}
+         * @return {object}
+         */
+        container()
+        {
+            return Container;
+        }
 
-    /**
-     * Get the Container component
-     *
-     * @access public
-     * @return object
-     */
-    Application.prototype.container = function()
-    {
-        return Container;
-    }
+        /**
+         * Get the DOM component
+         *
+         * @access {public}
+         * @return {object}
+         */
+        dom()
+        {
+            return Container.get('HubbleDom');
+        }
 
-    /**
-     * Get the DOM component
-     *
-     * @access public
-     * @return object
-     */
-    Application.prototype.dom = function()
-    {
-        return Container.get('HubbleDom');
-    }
+        /**
+         * Get the Helper component
+         *
+         * @access {public}
+         * @return {object}
+         */
+        helper()
+        {
+            return Container.Helper();
+        }
 
-    /**
-     * Get the Helper component
-     *
-     * @access public
-     * @return object
-     */
-    Application.prototype.helper = function()
-    {
-        return Container.Helper();
-    }
-
-    /**
-     * Require a module and/or key/value
-     *
-     * @access public
-     * @param  string key The name of the key
-     * @return mixed
-     */
-    Application.prototype.require = function()
-    {
-        return Container.get.apply(Container, arguments);
+        /**
+         * Require a module and/or key/value
+         *
+         * @access {public}
+         * @param  {string} key The name of the key
+         * @return {mixed}
+         */
+        require()
+        {
+            return Container.get(...arguments);
+        }
     }
 
     // Loads into container
     Container.singleton('Hubble', Application);
 
-    if (!window.Hubble)
-    {
-        window.Hubble = Container.get('Hubble');
-    }
+    window.Hubble = Container.get('Hubble');
 
 })();
 
-/**
- * DOM Manager
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
-{
+{    
     /**
-     * Module constructor
+     * DOM Manager
      *
-     * @class
-     * @constructor
-     * @access public
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    var Dom = function()
+    class Dom
     {
-        this._modules = {};
+        _modules = {};
 
-        return this;
-    };
+        _ready = false;
 
-    /**
-     * Boot Dom
-     *
-     * @access public
-     * @param string name   Name of the module
-     * @param object module Uninvoked module object
-     */
-    Dom.prototype.boot = function()
-    {
-        this._bindModules();
-
-        var _this = this;
-
-        var hubbleDomReady = new CustomEvent('hubbleDomReady',
+        /**
+         * Module constructor
+         *
+         * @class
+         {*} @constructor
+         * @access {public}
+         */
+        constructor()
         {
-            detail: _this
-        });
+            window.hbDOMReady = false;
 
-        window.dispatchEvent(hubbleDomReady);
-
-        document.hubbleDomReady = true;
-    }
-
-    /**
-     * Register a DOM module (singleton)
-     *
-     * @access public
-     * @param string name   Name of the module
-     * @param object module Uninvoked module object
-     * @param bool   invoke Invoke the module immediately (optional) (default false)
-     */
-    Dom.prototype.register = function(name, module, invoke)
-    {
-        invoke = (typeof invoke === 'undefined' ? false : true);
-
-        this._modules[name] = module;
-
-        if (invoke)
-        {
-            this._bindModule(name);
+            return this;
         }
-    }
 
-    /**
-     * Refresh the DOM modiules or a string module
-     *
-     * @access public
-     * @param string name Name of the module (optional) (default false)
-     */
-    Dom.prototype.refresh = function(module)
-    {
-        module = (typeof module === 'undefined' ? false : module);
+        /**
+         * Boot Dom
+         *
+         * @access {public}
+         * @param {string} name   Name of the module
+         * @param {object} module Uninvoked module object
+         */
+        boot()
+        {
+            this._bindModules();
 
-        if (module)
+            this._dispatchReady();
+        }
+
+         /**
+         * Boot Dom
+         *
+         * @access {public}
+         * @param {string} name   Name of the module
+         * @param {object} module Uninvoked module object
+         */
+        _dispatchReady()
+        {
+            if (!this._ready)
+            {
+                const event = document.createEvent('Event');
+
+                event.initEvent('DOMReady', true, true);
+
+                this._ready = event;
+            }
+
+            window.dispatchEvent(this._ready);
+            
+            window.hbDOMReady = true;
+        }
+
+        /**
+         * Register a DOM module (singleton)
+         *
+         * @access {public}
+         * @param {string} name   Name of the module
+         * @param {object} module Uninvoked module object
+         * @param {bool}   invoke Invoke the module immediately (optional) (default false)
+         */
+        register(name, module, invoke)
+        {
+            invoke = (typeof invoke === 'undefined' ? false : true);
+
+            this._modules[name] = module;
+
+            if (invoke && window.hbDOMReady)
+            {
+                this._bindModule(name);
+            }
+        }
+
+        /**
+         * Refresh the DOM modiules or a string module
+         *
+         * @access {public}
+         * @param {string} name Name of the module (optional) (default false)
+         */
+        refresh(module)
+        {
+            module = (typeof module === 'undefined' ? false : module);
+
+            if (module)
+            {
+                for (var key in this._modules)
+                {
+                    if (!this._modules.hasOwnProperty(key))
+                    {
+                        continue;
+                    }
+
+                    if (module === key)
+                    {
+                        this._unbindModule(key);
+
+                        this._bindModule(key);
+
+                        Container.Helper().collectGarbage();
+                    }
+                }
+            }
+            else
+            {
+                window.hbDOMReady = false;
+
+                this._unbindModules();
+
+                Container.Helper().collectGarbage();
+
+                this._bindModules();
+
+                this._dispatchReady();
+            }
+        }
+
+        /**
+         * Unbind listener to containers
+         *
+         * @param {null}
+         * @access {private}
+         */
+        _unbindModules()
         {
             for (var key in this._modules)
             {
@@ -1144,104 +1107,69 @@ if (!Array.prototype.map) {
                     continue;
                 }
 
-                if (module === key)
+                this._unbindModule(key);
+            }
+        }
+
+        /**
+         * Unbind a single module
+         *
+         * @param  {string}  key Name of module to unbind
+         * @access {private}
+         */
+        _unbindModule(key)
+        {
+            var module = Container.get(key);
+
+            if (this._hasMethod(module, 'destruct'))
+            {
+                module.destruct();
+            }
+
+            Container.delete(key);
+        }
+
+        /**
+         * Unbind listener to containers
+         *
+         * @access {private}
+         */
+        _bindModules()
+        {            
+            for (var key in this._modules)
+            {
+                if (!this._modules.hasOwnProperty(key))
                 {
-                    this._unbindModule(key);
-
-                    this._bindModule(key);
-
-                    Container.Helper().collectGarbage();
+                    continue;
                 }
+
+                this._bindModule(key);
             }
         }
-        else
+
+        /**
+         * Bind a single module
+         *
+         * @param {string} key Name of module to bind
+         * @access {private}
+         */
+        _bindModule(key)
         {
-            this._unbindModules();
-
-            Container.Helper().collectGarbage();
-
-            this._bindModules();
+            Container.singleton(key, this._modules[key], true);
         }
 
-    }
-
-    /**
-     * Unbind listener to containers
-     *
-     * @param null
-     * @access private
-     */
-    Dom.prototype._unbindModules = function()
-    {
-        for (var key in this._modules)
+        /**
+         * Checks if a class object has a method by name
+         *
+         * @access {private}
+         * @param  {mixed}  classObj The object instance or reference
+         * @param  {string} method   The name of the method to check for
+         * @return {bool}
+         */
+        _hasMethod(classObj, method)
         {
-            if (!this._modules.hasOwnProperty(key))
-            {
-                continue;
-            }
-
-            this._unbindModule(key);
+            return typeof classObj === 'object' && typeof classObj[method] === 'function';
         }
-    }
-
-    /**
-     * Unbind a single module
-     *
-     * @param  string  key Name of module to unbind
-     * @access private
-     */
-    Dom.prototype._unbindModule = function(key)
-    {
-        var module = Container.get(key);
-
-        if (this._hasMethod(module, 'destruct'))
-        {
-            module.destruct();
-        }
-
-        Container.delete(key);
-    }
-
-    /**
-     * Unbind listener to containers
-     *
-     * @access private
-     */
-    Dom.prototype._bindModules = function()
-    {
-        for (var key in this._modules)
-        {
-            if (!this._modules.hasOwnProperty(key))
-            {
-                continue;
-            }
-
-            this._bindModule(key);
-        }
-    }
-
-    /**
-     * Bind a single module
-     *
-     * @param string key Name of module to bind
-     * @access private
-     */
-    Dom.prototype._bindModule = function(key)
-    {
-        Container.singleton(key, this._modules[key]).get(key);
-    }
-
-    /**
-     * Checks if a class object has a method by name
-     *
-     * @access private
-     * @param  mixed  classObj The object instance or reference
-     * @param  string method   The name of the method to check for
-     * @return bool
-     */
-    Dom.prototype._hasMethod = function(classObj, method)
-    {
-        return typeof classObj === 'object' && typeof classObj[method] === 'function';
     }
 
     // Load into container and invoke
@@ -1251,224 +1179,493 @@ if (!Array.prototype.map) {
 
 
 // Helper
-/**
- * JavaScript helper library
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
- */
 (function()
 {
-        
-        /**
-         * Module constructor
-         *
-         * @access public
-         * @constructor
-         */
-        var Helper = function()
-        {
+	// Standard
+const NULL_TAG = '[object Null]';
+const UNDEF_TAG = '[object Undefined]';
+const BOOL_TAG = '[object Boolean]';
+const STRING_TAG = '[object String]';
+const NUMBER_TAG = '[object Number]';
+const FUNC_TAG = '[object Function]';
+const ARRAY_TAG = '[object Array]';
+const ARGS_TAG = '[object Arguments]';
+const NODELST_TAG = '[object NodeList]';
+const OBJECT_TAG = '[object Object]';
+const DATE_TAG = '[object Date]';
 
-            this.version = "1.0.0";
+// Unusual
+const SET_TAG = '[object Set]';
+const MAP_TAG = '[object Map]';
+const REGEXP_TAG = '[object RegExp]';
+const SYMBOL_TAG = '[object Symbol]';
 
-            this.author = "Joe Howard";
+// Array buffer
+const ARRAY_BUFFER_TAG = '[object ArrayBuffer]';
+const DATAVIEW_TAG = '[object DataView]';
+const FLOAT32_TAG = '[object Float32Array]';
+const FLOAT64_TAG = '[object Float64Array]';
+const INT8_TAG = '[object Int8Array]';
+const INT16_TAG = '[object Int16Array]';
+const INT32_TAG = '[object Int32Array]';
+const UINT8_TAG = '[object Uint8Array]';
+const UINT8CLAMPED_TAG = '[object Uint8ClampedArray]';
+const UINT16_TAG = '[object Uint16Array]';
+const UINT32_TAG = '[object Uint32Array]';
 
-            this.browser = false;
+// Non-cloneable
+const ERROR_TAG = '[object Error]';
+const WEAKMAP_TAG = '[object WeakMap]';
 
-            this.cssPrefixable = [
+// Arrayish _tags
+const ARRAYISH_TAGS = [ARRAY_TAG, ARGS_TAG, NODELST_TAG];
 
-                // transitions
-                'transition',
-                'transition-delay',
-                'transition-duration',
-                'transition-property',
-                'transition-timing-function',
+// Object.prototype.toString
+const TO_STR = Object.prototype.toString;
 
-                // trnasforms
-                'transform',
-                'transform-origin',
-                'transform-style',
-                'perspective',
-                'perspective-origin',
-                'backface-visibility',
+const TO_ARR = Array.prototype.slice;
 
-                // misc
-                'box-sizing',
-                'calc',
-                'flex',
-            ];
+// Regex for HTMLElement types
+const HTML_REGXP = /^\[object HTML\w*Element\]$/;
 
-            this.cssPrefixes = [
-                'webkit',
-                'Moz',
-                'ms',
-                'O',
-            ];
+// Excludes
+const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
 
-            this.cssEasings = {
+// Current clone map (stops recursive cloning between array/objects)
+let CURR_CLONES = new WeakMap();
 
-                // Defaults
-                ease: 'ease',
-                linear: 'linear',
-                easeIn: 'ease-in',
-                easeOut: 'ease-out',
-                easeInOut: 'ease-in-out',
+const CSS_EASINGS = 
+{
+    // Defaults
+    ease: 'ease',
+    linear: 'linear',
+    easeIn: 'ease-in',
+    easeOut: 'ease-out',
+    easeInOut: 'ease-in-out',
 
-                // sine
-                easeInSine: 'cubic-bezier(0.47, 0, 0.745, 0.715)',
-                easeOutSine: 'cubic-bezier(0.39, 0.575, 0.565, 1)',
-                easeInOutSine: 'cubic-bezier(0.445, 0.05, 0.55, 0.95)',
+    // sine
+    easeInSine: 'cubic-bezier(0.47, 0, 0.745, 0.715)',
+    easeOutSine: 'cubic-bezier(0.39, 0.575, 0.565, 1)',
+    easeInOutSine: 'cubic-bezier(0.445, 0.05, 0.55, 0.95)',
 
-                // Quad
-                easeInQuad: 'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
-                easeOutQuad: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                easeInOutQuad: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+    // Quad
+    easeInQuad: 'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
+    easeOutQuad: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    easeInOutQuad: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
 
-                // Cubic
-                easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
-                easeOutCubic: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
-                easeInOutCubic: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+    // Cubic
+    easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
+    easeOutCubic: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+    easeInOutCubic: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
 
-                // Queart
-                easeInQuart: 'cubic-bezier(0.895, 0.03, 0.685, 0.22)',
-                easeOutQuart: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
-                easeInOutQuart: 'cubic-bezier(0.77, 0, 0.175, 1)',
+    // Queart
+    easeInQuart: 'cubic-bezier(0.895, 0.03, 0.685, 0.22)',
+    easeOutQuart: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+    easeInOutQuart: 'cubic-bezier(0.77, 0, 0.175, 1)',
 
-                // Quint
-                easeInQuint: 'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
-                easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1)',
-                easeInOutQuint: 'cubic-bezier(0.86, 0, 0.07, 1)',
+    // Quint
+    easeInQuint: 'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
+    easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1)',
+    easeInOutQuint: 'cubic-bezier(0.86, 0, 0.07, 1)',
 
-                // Expo
-                easeInExpo: 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
-                easeOutExpo: 'cubic-bezier(0.19, 1, 0.22, 1)',
-                easeInOutExpo: 'cubic-bezier(1, 0, 0, 1)',
+    // Expo
+    easeInExpo: 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
+    easeOutExpo: 'cubic-bezier(0.19, 1, 0.22, 1)',
+    easeInOutExpo: 'cubic-bezier(1, 0, 0, 1)',
 
-                // Circ
-                easeInCirc: 'cubic-bezier(0.6, 0.04, 0.98, 0.335)',
-                easeOutCirc: 'cubic-bezier(0.075, 0.82, 0.165, 1)',
-                easeInOutCirc: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
+    // Circ
+    easeInCirc: 'cubic-bezier(0.6, 0.04, 0.98, 0.335)',
+    easeOutCirc: 'cubic-bezier(0.075, 0.82, 0.165, 1)',
+    easeInOutCirc: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
 
-                // Back
-                easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
-                easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                easeInOutBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-
-            };
-
-            /**
-             * List of shorthand properties and their longhand equivalents
-             *
-             * @var object
-             */
-            this.shortHandProps = {
-                // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
-                'list-style': ['-type', '-position', '-image'],
-                'margin': ['-top', '-right', '-bottom', '-left'],
-                'outline': ['-width', '-style', '-color'],
-                'padding': ['-top', '-right', '-bottom', '-left'],
-
-                // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
-                'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
-                'border': ['-width', '-style', '-color'],
-                'borderColor': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
-                'borderStyle': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
-                'borderWidth': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
-                'borderTop': ['-width', '-style', '-color'],
-                'borderTight': ['-width', '-style', '-color'],
-                'borderBottom': ['-width', '-style', '-color'],
-                'borderLeft': ['-width', '-style', '-color'],
-                'borderRadius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
-                'borderImage': ['-source', '-slice', '-width', '-outset', '-repeat'],
-
-                // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
-                'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
-                'fontVariant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
-
-                // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
-                'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
-                'maskBorder': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
-
-                // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
-                'columns': ['column-width', 'column-count'],
-                'columnRule': ['-width', '-style', '-color'],
-
-                // CSS Speech Module: http://www.w3.org/TR/css3-speech/
-                'cue': ['-before', '-after'],
-                'pause': ['-before', '-after'],
-                'rest': ['-before', '-after'],
-
-                // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
-                'textDecoration': ['-line', '-style', '-color'],
-                'textEmphasis': ['-style', '-color'],
-
-                // CSS Animations (WD): http://www.w3.org/TR/css3-animations
-                'webkitAnimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-                'MozAnimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-                'msAnimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-                'Oanimation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-                'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-
-                // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
-                'webkitTransition': ['-property', '-duration', '-timing-function', '-delay'],
-                'MozTransition': ['-property', '-duration', '-timing-function', '-delay'],
-                'msTransition': ['-property', '-duration', '-timing-function', '-delay'],
-                'OTransition': ['-property', '-duration', '-timing-function', '-delay'],
-                'transition': ['-property', '-duration', '-timing-function', '-delay'],
-
-                // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
-                'webkitFlex': ['-grow', '-shrink', '-basis'],
-                'msFlex': ['-grow', '-shrink', '-basis'],
-                'flex': ['-grow', '-shrink', '-basis'],
-            };
-
-            this._events = {};
-
-            return this;
-
-        };
-
-        // reset the prototype
-        Helper.prototype = {};
-
-        // Destructor
-        Helper.prototype.destruct = function()
-        {
-            this.clearEventListeners();
-        }
+    // Back
+    easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
+    easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+    easeInOutBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+};
 
 /**
+ * List of shorthand properties and their longhand equivalents
+ *
+ * @var {object}
+ */
+const SHORTHAND_PROPS =
+{
+    // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
+    'list-style': ['-type', '-position', '-image'],
+    'margin': ['-top', '-right', '-bottom', '-left'],
+    'outline': ['-width', '-style', '-color'],
+    'padding': ['-top', '-right', '-bottom', '-left'],
+
+    // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
+    'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
+    'border': ['-width', '-style', '-color'],
+    'border-color': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
+    'border-style': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
+    'border-width': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
+    'border-top': ['-width', '-style', '-color'],
+    'border-right': ['-width', '-style', '-color'],
+    'border-bottom': ['-width', '-style', '-color'],
+    'border-left': ['-width', '-style', '-color'],
+    'border-radius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
+    'border-image': ['-source', '-slice', '-width', '-outset', '-repeat'],
+
+    // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
+    'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
+    'font-variant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
+
+    // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
+    'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
+    'mask-border': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
+
+    // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
+    'columns': ['column-width', 'column-count'],
+    'column-rule': ['-width', '-style', '-color'],
+
+    // CSS Speech Module: http://www.w3.org/TR/css3-speech/
+    'cue': ['-before', '-after'],
+    'pause': ['-before', '-after'],
+    'rest': ['-before', '-after'],
+
+    // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
+    'text-decoration': ['-line', '-style', '-color'],
+    'text-emphasis': ['-style', '-color'],
+
+    // CSS Animations (WD): http://www.w3.org/TR/css3-animations
+    '-webkit-animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+    '-moz-animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+    '-ms-animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+    '-o-animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+    'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+
+    // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
+    'webkit-transition': ['-property', '-duration', '-timing-function', '-delay'],
+    '-moz-transition': ['-property', '-duration', '-timing-function', '-delay'],
+    '-ms-transition': ['-property', '-duration', '-timing-function', '-delay'],
+    '-o-transition': ['-property', '-duration', '-timing-function', '-delay'],
+    'transition': ['-property', '-duration', '-timing-function', '-delay'],
+
+    // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
+    '-webkit-flex': ['-grow', '-shrink', '-basis'],
+    '-ms-flex': ['-grow', '-shrink', '-basis'],
+    'flex': ['-grow', '-shrink', '-basis'],
+};
+
+/**
+ * Cached CSS propery cases.
+ *
+ * @var {object}
+ */
+const CSS_PROP_TO_HYPHEN_CASES = {};
+const CSS_PROP_TO_CAMEL_CASES  = {};
+
+	/**
+ * Math Contstansts.
+ * 
+ * @var {mixed}
+ */
+const POW  = Math.pow;
+const SQRT = Math.sqrt;
+const SIN  = Math.sin;
+const COS  = Math.cos;
+const PI   = Math.PI;
+const C1   = 1.70158;
+const C2   = C1 * 1.525;
+const c3   = C1 + 1;
+const C4   = (2 * PI) / 3;
+const C5   = (2 * PI) / 4.5;
+
+/**
+ * bounceOut function.
+ * 
+ * @var {function}
+ */
+const bounceOut = function (x)
+{
+    const n1 = 7.5625;
+    const d1 = 2.75;
+
+    if (x < 1 / d1)
+    {
+        return n1 * x * x;
+    }
+    else if (x < 2 / d1)
+    {
+        return n1 * (x -= 1.5 / d1) * x + 0.75;
+    }
+    else if (x < 2.5 / d1)
+    {
+        return n1 * (x -= 2.25 / d1) * x + 0.9375;
+    }
+    else
+    {
+        return n1 * (x -= 2.625 / d1) * x + 0.984375;
+    }
+};
+
+/**
+ * Easing functions.
+ * 
+ * @var {object}
+ */
+const ANIMATION_EASING_FUNCTIONS = 
+{
+    linear: (x) => x,
+    ease: function (x)
+    {
+        return x < 0.5 ? 4 * x * x * x : 1 - POW(-2 * x + 2, 3) / 2;
+    },
+    easeIn: function (x)
+    {
+        return 1 - COS((x * PI) / 2);
+    },
+    easeOut: function (x)
+    {
+        return SIN((x * PI) / 2);
+    },
+    easeInOut: function (x)
+    {
+        return -(COS(PI * x) - 1) / 2;
+    },
+    easeInQuad: function (x)
+    {
+        return x * x;
+    },
+    easeOutQuad: function (x)
+    {
+        return 1 - (1 - x) * (1 - x);
+    },
+    easeInOutQuad: function (x)
+    {
+        return x < 0.5 ? 2 * x * x : 1 - POW(-2 * x + 2, 2) / 2;
+    },
+    easeInCubic: function (x)
+    {
+        return x * x * x;
+    },
+    easeOutCubic: function (x)
+    {
+        return 1 - POW(1 - x, 3);
+    },
+    easeInOutCubic: function (x)
+    {
+        return x < 0.5 ? 4 * x * x * x : 1 - POW(-2 * x + 2, 3) / 2;
+    },
+    easeInQuart: function (x)
+    {
+        return x * x * x * x;
+    },
+    easeOutQuart: function (x)
+    {
+        return 1 - POW(1 - x, 4);
+    },
+    easeInOutQuart: function (x)
+    {
+        return x < 0.5 ? 8 * x * x * x * x : 1 - POW(-2 * x + 2, 4) / 2;
+    },
+    easeInQuint: function (x)
+    {
+        return x * x * x * x * x;
+    },
+    easeOutQuint: function (x)
+    {
+        return 1 - POW(1 - x, 5);
+    },
+    easeInOutQuint: function (x)
+    {
+        return x < 0.5 ? 16 * x * x * x * x * x : 1 - POW(-2 * x + 2, 5) / 2;
+    },
+    easeInSine: function (x)
+    {
+        return 1 - COS((x * PI) / 2);
+    },
+    easeOutSine: function (x)
+    {
+        return SIN((x * PI) / 2);
+    },
+    easeInOutSine: function (x)
+    {
+        return -(COS(PI * x) - 1) / 2;
+    },
+    easeInExpo: function (x)
+    {
+        return x === 0 ? 0 : POW(2, 10 * x - 10);
+    },
+    easeOutExpo: function (x)
+    {
+        return x === 1 ? 1 : 1 - POW(2, -10 * x);
+    },
+    easeInOutExpo: function (x)
+    {
+        return x === 0
+            ? 0
+            : x === 1
+            ? 1
+            : x < 0.5
+            ? POW(2, 20 * x - 10) / 2
+            : (2 - POW(2, -20 * x + 10)) / 2;
+    },
+    easeInCirc: function (x)
+    {
+        return 1 - SQRT(1 - POW(x, 2));
+    },
+    easeOutCirc: function (x)
+    {
+        return SQRT(1 - POW(x - 1, 2));
+    },
+    easeInOutCirc: function (x)
+    {
+        return x < 0.5
+            ? (1 - SQRT(1 - POW(2 * x, 2))) / 2
+            : (SQRT(1 - POW(-2 * x + 2, 2)) + 1) / 2;
+    },
+    easeInBack: function (x)
+    {
+        return c3 * x * x * x - C1 * x * x;
+    },
+    easeOutBack: function (x)
+    {
+        return 1 + c3 * POW(x - 1, 3) + C1 * POW(x - 1, 2);
+    },
+    easeInOutBack: function (x)
+    {
+        return x < 0.5
+            ? (POW(2 * x, 2) * ((C2 + 1) * 2 * x - C2)) / 2
+            : (POW(2 * x - 2, 2) * ((C2 + 1) * (x * 2 - 2) + C2) + 2) / 2;
+    },
+    easeInElastic: function (x)
+    {
+        return x === 0
+            ? 0
+            : x === 1
+            ? 1
+            : -POW(2, 10 * x - 10) * SIN((x * 10 - 10.75) * C4);
+    },
+    easeOutElastic: function (x)
+    {
+        return x === 0
+            ? 0
+            : x === 1
+            ? 1
+            : POW(2, -10 * x) * SIN((x * 10 - 0.75) * C4) + 1;
+    },
+    easeInOutElastic: function (x)
+    {
+        return x === 0
+            ? 0
+            : x === 1
+            ? 1
+            : x < 0.5
+            ? -(POW(2, 20 * x - 10) * SIN((20 * x - 11.125) * C5)) / 2
+            : (POW(2, -20 * x + 10) * SIN((20 * x - 11.125) * C5)) / 2 + 1;
+    },
+    easeInBounce: function (x)
+    {
+        return 1 - bounceOut(1 - x);
+    },
+    easeOutBounce: bounceOut,
+    easeInOutBounce: function (x)
+    {
+        return x < 0.5
+            ? (1 - bounceOut(1 - 2 * x)) / 2
+            : (1 + bounceOut(2 * x - 1)) / 2;
+    },
+};
+
+/**
+ * Default options.
+ * 
+ * @var {object}
+ */
+const ANIMATION_DEFAULT_OPTIONS =
+{
+    // Options
+    //'property', 'from', 'to'
+    easing:               'ease',
+    callback:              function() { console.log('complete'); },
+
+    // Mutable options
+    startValue:           null,
+    endValue:             null,
+    duration:             500,
+
+    // Internal trackers
+    currentValue:          null,
+    totalDistance:         null,
+    timeLapsed:            0,
+    percentage:            0,
+    eventTimeout:          null,
+    animationInterval:     null,
+    CSSPropertyUnits:      '',
+    backwardsAnimation:    false,
+    animationStepDuration: 16,
+
+    // Color specific
+    isColorAnimation:      false,
+    colorAnimationStep:    0,
+    colorAnimationCount:   50,
+    colorGradientMap:      []
+};
+ /**
+ * Allowed Options.
+ * 
+ * @var {array}
+ */
+const ANIMATION_ALLOWED_OPTIONS = ['property', 'from', 'to', 'duration', 'easing', 'callback'];
+
+/**
+ * Allowed Options.
+ * 
+ * @var {array}
+ */
+const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ...ANIMATION_ALLOWED_OPTIONS];
+	/**
+ * JavaScript helper library
+ *
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
+ */      
+class HelperJS
+{
+    version = "1.0.0";
+
+    author = "Joe Howard";
+
+    browser = false;
+
+    _events = {};
+	/**
  * Helper DOM helpers
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
  */
 
 /**
  * Select and return all nodes by selector
  *
- * @access public
- * @param  string selector CSS selector
- * @param  node   context (optional) (default document)
- * @return node
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {node}   context (optional) (default document)
+ * @return {node}
  */
-Helper.prototype.$All = function(selector, context)
+$All(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
-    return Array.prototype.slice.call(context.querySelectorAll(selector));
+    return TO_ARR.call(context.querySelectorAll(selector));
 }
 
 /**
  * Select single node by selector
  *
- * @access public
- * @param  string selector CSS selector
- * @param  node   context (optional) (default document)
- * @return node
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {node}   context (optional) (default document)
+ * @return {node}
  */
-Helper.prototype.$ = function(selector, context)
+$(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
     return context.querySelector(selector)
@@ -1477,12 +1674,12 @@ Helper.prototype.$ = function(selector, context)
 /**
  * Closest parent node by type/class or array of either
  *
- * @access public
- * @param  node   el   Target element
- * @param  string type Node type to find
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Node type to find
+ * @return {node\null}
  */
-Helper.prototype.closest = function(el, type)
+closest(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -1502,7 +1699,7 @@ Helper.prototype.closest = function(el, type)
 
     if (type[0] === '.')
     {
-        return this.closestClass(el, type);
+        return this.closest_class(el, type);
     }
 
     type = type.toLowerCase();
@@ -1541,19 +1738,19 @@ Helper.prototype.closest = function(el, type)
 /**
  * Closest parent node by class
  *
- * @access public
- * @param  node   el   Target element
- * @param  string clas Node class to find
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} clas Node class to find
+ * @return {node\null}
  */
-Helper.prototype.closestClass = function(el, clas)
+closest_class(el, clas)
 {    
     // Type is class
     if (this.is_array(clas))
     {
         for (var i = 0; i < clas.length; i++)
         {
-            var response = this.closestClass(el, clas[i]);
+            var response = this.closest_class(el, clas[i]);
 
             if (response)
             {
@@ -1564,12 +1761,12 @@ Helper.prototype.closestClass = function(el, clas)
         return null;
     }
 
-    if (this.hasClass(el, clas))
+    if (this.has_class(el, clas))
     {
         return el;
     }
 
-    if (this.hasClass(el.parentNode, clas))
+    if (this.has_class(el.parentNode, clas))
     {
         return el.parentNode;
     }
@@ -1583,7 +1780,7 @@ Helper.prototype.closestClass = function(el, clas)
 
     while (parent !== document.body)
     {
-        if (this.hasClass(parent, clas))
+        if (this.has_class(parent, clas))
         {
             return parent;
         }
@@ -1602,11 +1799,11 @@ Helper.prototype.closestClass = function(el, clas)
 /**
  * Get all first level children
  *
- * @access public
- * @param  node   el   Target element
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @return {node\null}
  */
-Helper.prototype.firstChildren = function(el)
+first_children(el)
 {
     var children = [];
 
@@ -1626,12 +1823,12 @@ Helper.prototype.firstChildren = function(el)
 /**
  * Traverse nextSibling untill type or class or array of either
  *
- * @access public
- * @param  node   el   Target element
- * @param  string type Target node type
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Target node type
+ * @return {node\null}
  */
-Helper.prototype.next = function(el, type)
+next(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -1651,7 +1848,7 @@ Helper.prototype.next = function(el, type)
 
     if (type[0] === '.')
     {
-        return this.nextUntillClass(el, type);
+        return this.next_untill_class(el, type);
     }
 
     type = type.toLowerCase();
@@ -1678,19 +1875,19 @@ Helper.prototype.next = function(el, type)
 /**
  * Traverse nextSibling untill class type or class or array of either
  *
- * @access public
- * @param  node   el        Target element
- * @param  string className Target node classname
- * @return node\null
+ * @access {public}
+ * @param  {node}   el        Target element
+ * @param  {string} className Target node classname
+ * @return {node\null}
  */
-Helper.prototype.nextUntillClass = function(el, className)
+next_untill_class(el, className)
 {
     if (className[0] === '.')
     {
         className = className.substring(1);
     }
 
-    if (el.nextSibling && this.hasClass(el.nextSibling, className))
+    if (el.nextSibling && this.has_class(el.nextSibling, className))
     {
         return el.nextSibling;
     }
@@ -1699,7 +1896,7 @@ Helper.prototype.nextUntillClass = function(el, className)
 
     while (next !== document.body && typeof next !== "undefined" && next !== null)
     {
-        if (next && this.hasClass(next, className))
+        if (next && this.has_class(next, className))
         {
             return next;
         }
@@ -1714,12 +1911,12 @@ Helper.prototype.nextUntillClass = function(el, className)
 /**
  * Traverse previousSibling untill type
  *
- * @access public
- * @param  node   el   Target element
- * @param  string type Target node type
- * @return node\null
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Target node type
+ * @return {node\null}
  */
-Helper.prototype.previous = function(el, type)
+previous(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -1760,19 +1957,19 @@ Helper.prototype.previous = function(el, type)
 /**
  * Traverse previousSibling untill class
  *
- * @access public
- * @param  node   el        Target element
- * @param  string className Target node classname
- * @return node\null
+ * @access {public}
+ * @param  {node}   el        Target element
+ * @param  {string} className Target node classname
+ * @return {node\null}
  */
-Helper.prototype._previousUntillClass = function(el, className)
+_previousUntillClass(el, className)
 {
     if (className[0] === '.')
     {
         className = className.substring(1);
     }
 
-    if (el.previousSibling && this.hasClass(el.previousSibling, className))
+    if (el.previousSibling && this.has_class(el.previousSibling, className))
     {
         return el.previousSibling;
     }
@@ -1783,7 +1980,7 @@ Helper.prototype._previousUntillClass = function(el, className)
     {
         prev = prev.previousSibling;
 
-        if (prev && this.hasClass(prev, className))
+        if (prev && this.has_class(prev, className))
         {
             return prev;
         }
@@ -1795,15 +1992,15 @@ Helper.prototype._previousUntillClass = function(el, className)
 /**
  * Create and insert a new node
  *
- * @access public
- * @param  string type    New node type
- * @param  string classes New node class names (optional) (default '')
- * @param  string classes New node ID (optional) (default '')
- * @param  string content New node innerHTML (optional) (default '')
- * @param  node   target  Parent to append new node into
- * @return node
+ * @access {public}
+ * @param  {string} type    New node type
+ * @param  {string} classes New node class names (optional) (default '')
+ * @param  {string} classes New node ID (optional) (default '')
+ * @param  {string} content New node innerHTML (optional) (default '')
+ * @param  {node}   target  Parent to append new node into
+ * @return {node}
  */
-Helper.prototype.newNode = function(type, classes, ID, content, target)
+new_node(type, classes, ID, content, target)
 {
     var node = document.createElement(type);
     classes = (typeof classes === "undefined" ? null : classes);
@@ -1831,12 +2028,12 @@ Helper.prototype.newNode = function(type, classes, ID, content, target)
 /**
  * Inserts node as first child
  *
- * @access public
- * @param  node node     New node to insert
- * @param  node wrapper  Parent to preappend new node into
- * @return node
+ * @access {public}
+ * @param  {node} node     New node to insert
+ * @param  {node} wrapper  Parent to preappend new node into
+ * @return {node}
  */
-Helper.prototype.preapend = function(node, wrapper)
+preapend(node, wrapper)
 {
     wrapper.insertBefore(node, wrapper.firstChild);
 
@@ -1844,41 +2041,16 @@ Helper.prototype.preapend = function(node, wrapper)
 }
 
 /**
- * Check if a node exists in the DOM
- *
- * @access public
- * @param  node   element Target element
- * @return bool
- */
-Helper.prototype.nodeExists = function(element)
-{
-    if (element === document.body)
-    {
-        return true;
-    }
-
-    if (typeof(element) !== "undefined" && element !== null)
-    {
-        if (typeof(element.parentNode) !== "undefined" && element.parentNode !== null)
-        {
-            return (element === document.body) ? false : document.body.contains(element);
-        }
-    }
-
-    return false;
-}
-
-/**
  * Remove an element from the DOM
  *
  * This function also removes all attached event listeners
  * 
- * @access public
- * @param  node   el Target element
+ * @access {public}
+ * @param  {node}   el Target element
  */
-Helper.prototype.removeFromDOM = function(el)
+remove_from_dom(el)
 {
-    if (this.nodeExists(el))
+    if (this.in_dom(el))
     {
         el.parentNode.removeChild(el);
 
@@ -1894,69 +2066,20 @@ Helper.prototype.removeFromDOM = function(el)
 }
 
 /**
- * Remove inline css property
- * 
- * @access public
- * @param  node   el   Target element
- * @param  string prop CSS property to removes
- */
-Helper.prototype.removeStyle = function(el, prop)
-{
-    if (typeof prop === 'undefined')
-    {
-        prop = 'style';
-    }
-    else
-    {
-        if (Object.prototype.toString.call(prop) === '[object Array]')
-        {
-            for (var i = 0; i < prop.length; i++)
-            {
-                this.removeStyle(el, prop[i]);
-            }
-
-            return;
-        }
-        else
-        {
-            prop = this.toCamelCase(prop);
-        }
-    }
-
-    if (prop === 'style')
-    {
-        el.removeAttribute("style");
-    }
-    else
-    {
-        if (el.style.removeProperty)
-        {
-            el.style.removeProperty(prop);
-        }
-        else
-        {
-            el.style.removeAttribute(prop);
-        }
-    }
-
-
-}
-
-/**
  * Add a css class or list of classes
  *
- * @access public
- * @param  node         el         Target element
- * @param  array|string className  Class name(s) to add
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {array|string} className  Class name(s) to add
  */
-Helper.prototype.addClass = function(el, className)
+add_class(el, className)
 {
-    if (!this.nodeExists(el))
+    if (!this.in_dom(el))
     {
         return;
     }
 
-    if (Object.prototype.toString.call(className) === '[object Array]')
+    if (TO_STR.call(className) === '[object Array]')
     {
         for (var i = 0; i < className.length; i++)
         {
@@ -1972,18 +2095,18 @@ Helper.prototype.addClass = function(el, className)
 /**
  * Remove a css class or list of classes
  *
- * @access public
- * @param  node         el         Target element
- * @param  array|string className  Class name(s) to remove
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {array|string} className  Class name(s) to remove
  */
-Helper.prototype.removeClass = function(el, className)
+remove_class(el, className)
 {
-    if (!this.nodeExists(el))
+    if (!this.in_dom(el))
     {
         return;
     }
 
-    if (Object.prototype.toString.call(className) === '[object Array]')
+    if (TO_STR.call(className) === '[object Array]')
     {
         for (var i = 0; i < className.length; i++)
         {
@@ -1999,43 +2122,43 @@ Helper.prototype.removeClass = function(el, className)
 /**
  * Toogle a classname
  *
- * @access public
- * @param  node         el         Target element
- * @param  string       className  Class name to toggle
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {string}       className  Class name to toggle
  */
-Helper.prototype.toggleClass = function(el, className)
+toggle_class(el, className)
 {
-    if (!this.nodeExists(el))
+    if (!this.in_dom(el))
     {
         return;
     }
 
-    if (this.hasClass(el, className))
+    if (this.has_class(el, className))
     {
-        this.removeClass(el, className);
+        this.remove_class(el, className);
     }
     else
     {
-        this.addClass(el, className);
+        this.add_class(el, className);
     }
 }
 
 /**
  * Check if a node has a class
  *
- * @access public
- * @param  node         el         Target element
- * @param  string|array className  Class name(s) to check for
- * @return bool
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {string|array} className  Class name(s) to check for
+ * @return {bool}
  */
-Helper.prototype.hasClass = function(el, className)
+has_class(el, className)
 {
-    if (!this.nodeExists(el))
+    if (!this.in_dom(el))
     {
         return false;
     }
 
-    if (Object.prototype.toString.call(className) === '[object Array]')
+    if (TO_STR.call(className) === '[object Array]')
     {
         for (var i = 0; i < className.length; i++)
         {
@@ -2077,12 +2200,12 @@ Helper.prototype.hasClass = function(el, className)
 /**
  * Check if a node is a certain type
  *
- * @access public
- * @param  node   el         Target element
- * @param  string NodeType   Node type to validate
- * @return bool
+ * @access {public}
+ * @param  {node}   el         Target element
+ * @param  {string} NodeType   Node type to validate
+ * @return {bool}
  */
-Helper.prototype.isNodeType = function(el, NodeType)
+is_node_type(el, NodeType)
 {
     return el.tagName.toUpperCase() === NodeType.toUpperCase();
 }
@@ -2090,11 +2213,11 @@ Helper.prototype.isNodeType = function(el, NodeType)
 /**
  * Get an element's absolute coordinates
  *
- * @access public
- * @param  node   el Target element
- * @return object
+ * @access {public}
+ * @param  {node}   el Target element
+ * @return {object}
  */
-Helper.prototype.getCoords = function(el)
+coordinates(el)
 {
     var box = el.getBoundingClientRect();
     var body = document.body;
@@ -2103,14 +2226,14 @@ Helper.prototype.getCoords = function(el)
     var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
     var clientTop = docEl.clientTop || body.clientTop || 0;
     var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var borderL = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderR = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderT = parseInt(this.getStyle(el, 'border-top-width'));
-    var borderB = parseInt(this.getStyle(el, 'border-top-width'));
+    var borderL = parseInt(this.rendered_style(el, 'border-top-width'));
+    var borderR = parseInt(this.rendered_style(el, 'border-top-width'));
+    var borderT = parseInt(this.rendered_style(el, 'border-top-width'));
+    var borderB = parseInt(this.rendered_style(el, 'border-top-width'));
     var top = box.top + scrollTop - clientTop - borderT - borderB;
     var left = box.left + scrollLeft - clientLeft + borderL - borderR;
-    var width = parseFloat(this.getStyle(el, "width"));
-    var height = parseFloat(this.getStyle(el, "height"));
+    var width = parseFloat(this.rendered_style(el, "width"));
+    var height = parseFloat(this.rendered_style(el, "height"));
 
     return {
         top: top,
@@ -2123,15 +2246,33 @@ Helper.prototype.getCoords = function(el)
 }
 
 /**
+ * Get the current document scroll position
+ *
+ * @access {private}
+ * @return {obj}
+ */
+scroll_pos()
+{
+    var doc  = document.documentElement;
+    var top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+    var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+    
+    return {
+        top: top,
+        left: left
+    };
+}
+
+/**
  * Triggers a native event on an element
  *
- * @access public
- * @param  node   el   Target element
- * @param  string type Valid event name
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Valid event name
  */
-Helper.prototype.triggerEvent = function(el, type)
+trigger_event(el, type)
 {
-    if ("createEvent" in document)
+    if ('createEvent' in document)
     {
         var evt = document.createEvent("HTMLEvents");
 
@@ -2146,28 +2287,13 @@ Helper.prototype.triggerEvent = function(el, type)
 }
 
 /**
- * Replaces element's innerText without destroying childnodes
- *
- * @access public
- * @param  node   el   Target element
- * @param  string text Text to replace
- */
-Helper.prototype.innerText = function(el, text)
-{
-    if (this.isset(el.childNodes[0]))
-    {
-        el.childNodes[0].nodeValue = text;
-    }
-}
-
-/**
  * Get all input elements from a form
  *
- * @access public
- * @param  node   form Target element
- * @return array
+ * @access {public}
+ * @param  {node}   form Target element
+ * @return {array}
  */
-Helper.prototype.getFormInputs = function(form)
+form_inputs(form)
 {
     var allInputs = this.$All('input, textarea, select', form);
 
@@ -2189,11 +2315,11 @@ Helper.prototype.getFormInputs = function(form)
 /**
  * Gets an input element's value
  *
- * @access public
- * @param  node   input Target element
- * @return mixed
+ * @access {public}
+ * @param  {node}   input Target element
+ * @return {mixed}
  */
-Helper.prototype.getInputValue = function(input)
+input_value(input)
 {
     if (input.type == "checkbox")
     {
@@ -2238,57 +2364,91 @@ Helper.prototype.getInputValue = function(input)
 /**
  * Get an array of name/value objects for all inputs in a form
  *
- * @access public
- * @param  node   form Target element
- * @return array
+ * @access {public}
+ * @param  {node}   form Target element
+ * @return {array}
  */
-Helper.prototype.formArray = function(form)
+form_values(form)
 {
-    var inputs = this.getFormInputs(form);
-    var response = [];
+    let inputs = this.form_inputs(form);
+    let ret    = {};
 
-    for (var i = 0; i < inputs.length; i++)
+    this.each(inputs, function(i, input)
     {
-        response.push(
-        {
-            'name': inputs[i].name,
-            'value': this.getInputValue(this.getInputValue(inputs[i]))
-        });
-    }
+        let name = input.name;
 
-    return response;
+        if (input.type === 'radio' && input.checked == false)
+        {
+
+        }
+        else if (input.type === 'checkbox')
+        {
+            ret[name] = (input.checked == true);
+        }
+        if (name.indexOf('[]') > -1)
+        {
+            if (!ret[name])
+            {
+                ret[name] = [];
+            }
+
+            ret[name].push(this.input_value(input));
+        }
+        else
+        {
+            ret[name] = this.input_value(input);
+        }
+
+    }, this);
+   
+    return ret;
 }
 
 /**
  * Replace or append a node's innerHTML
  *
- * @access public
- * @param  node   target  Target element
- * @param  string content Target content
- * @param  bool   append  Append innerHTML or replace (optional) (default false)
+ * @access {public}
+ * @param  {node}   DOMElement  Target element
+ * @param  {string} content     Target content
+ * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
  */
-Helper.prototype.innerHTML = function(target, content, append)
+inner_HTML(DOMElement, content, append)
 {
     content = this.is_array(content) ? content.join("\n") : content;
 
     if (append)
     {
-        target.innerHTML += content;
+        DOMElement.innerHTML += content;
     }
     else
     {
-        target.innerHTML = content;
+        DOMElement.innerHTML = content;
+    }
+}
+
+/**
+ * Replaces element's innerText without destroying childnodes
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} text Text to replace
+ */
+inner_Text(el, text)
+{
+    if (el.childNodes[0])
+    {
+        el.childNodes[0].nodeValue = text;
     }
 }
 
 /**
  * Check if an element is in current viewport
  *
- * @access public
- * @param  node   el Target DOM node
- * @return bool
+ * @access {public}
+ * @param  {node}   el Target DOM node
+ * @return {bool}
  */
-Helper.prototype.inViewport = function(el)
+in_viewport(el)
 {
 
     var rect = el.getBoundingClientRect();
@@ -2304,10 +2464,10 @@ Helper.prototype.inViewport = function(el)
 /**
  * Aria hide an element
  *
- * @access public
- * @param  node   el Target DOM node
+ * @access {public}
+ * @param  {node}   el Target DOM node
  */
-Helper.prototype.hideAria = function(el)
+hide_aria(el)
 {
     el.setAttribute("aria-hidden", 'true');
 }
@@ -2315,29 +2475,929 @@ Helper.prototype.hideAria = function(el)
 /**
  * Aria show an element
  *
- * @access public
- * @param  node   el Target DOM node
+ * @access {public}
+ * @param  {node}   el Target DOM node
  */
-Helper.prototype.showAria = function(el)
+show_aria(el)
 {
     el.setAttribute("aria-hidden", 'false');
 }
 
-/**
- * String Helper Functions
+	/**
+ * Set DOM attribute.
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ * @param {HTMLElement}  DOMElement  Dom node
+ * @param {string}       name        Property name
+ * @apram {mixed}        value       Property value
  */
+attr(DOMElement, name, value)
+{
+    // Get attribute
+    // e.g attr(node, style)
+    if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
+    {
+        return this.__getAttribute(DOMElement, name);
+    }
+
+    // attr(node, {foo : 'bar', baz: 'bar'})
+    if (this.is_object(name))
+    {
+        this.each(name, function(prop, value)
+        {
+            this.attr(DOMElement, prop, value);
+        }, this);
+
+        return;
+    }
+
+    switch (name)
+    {
+        // innerHTML
+        case 'innerHTML':
+            DOMElement.innerHTML = value;
+            break;
+
+        // Children
+        case 'children':
+            this.each(value, function(node)
+            {
+                DOMElement.appendChild(node);
+            });
+            break;
+
+        // Class
+        case 'class':
+        case 'className':
+            DOMElement.className = value;
+            break;
+
+        // Style
+        case 'style':
+
+            // remove all styles completely
+            if (this.is_empty(value))
+            {
+                DOMElement.removeAttribute('style');
+            }
+            // Clear style and overwrite
+            else if (this.is_string(value))
+            {
+                DOMElement.style = '';
+                
+                // attr(node, 'css', 'foo : bar; baz: bar;})
+                this.each(value.split(';'), function(i, rule)
+                {
+                    var style = rule.split(':');
+
+                    if (style.length >= 2)
+                    {
+                        this.css(DOMElement, style.shift().trim(), style.join(':').trim());
+                    }
+                }, this);
+            }
+            // attr(node, 'css', {foo : 'bar', baz: 'bar'})
+            else if (this.is_object(value))
+            {
+                DOMElement.style = '';
+
+                this.each(value, function(prop, value)
+                {
+                    this.css(DOMElement, prop, value);
+                    
+                }, this);
+            }
+            break;
+
+        // Events / attributes
+        default:
+
+            // Events
+            if (name[0] === 'o' && name[1] === 'n')
+            {
+                var evt = name.slice(2).toLowerCase();
+
+                // Remove old listeners
+                this.removeEventListener(DOMElement, evt);
+
+                // Add new listener if one provided
+                if (value)
+                {
+                    this.addEventListener(DOMElement, evt, value);
+                }
+            }
+            // All other node attributes
+            else
+            {
+                if (
+                    name !== 'href' &&
+                    name !== 'list' &&
+                    name !== 'form' &&
+                    // Default value in browsers is `-1` and an empty string is
+                    // cast to `0` instead
+                    name !== 'tabIndex' &&
+                    name !== 'download' &&
+                    name in DOMElement
+                )
+                {
+                    try
+                    {
+                        DOMElement[name] = value == null ? '' : value;
+                        // labelled break is 1b smaller here than a return statement (sorry)
+                        break;
+                    } catch (e) {}
+                }
+
+                // ARIA-attributes have a different notion of boolean values.
+                // The value `false` is different from the attribute not
+                // existing on the DOM, so we can't remove it. For non-boolean
+                // ARIA-attributes we could treat false as a removal, but the
+                // amount of exceptions would cost us too many bytes. On top of
+                // that other VDOM frameworks also always stringify `false`.
+
+                if (typeof value === 'function')
+                {
+                    // never serialize functions as attribute values
+                }
+                else if (value != null && (value !== false || name.indexOf('-') != -1))
+                {
+                    DOMElement.setAttribute(name, value);
+                }
+                else
+                {
+                    DOMElement.removeAttribute(name);
+                }
+            }
+
+            break;
+    }
+}
+	/**
+ * IMPORTANT ALL CSS PROPS ARE HANDLED BY THE LIBRARY IN 'hyphen-case'
+ * 
+ * However, you can provide a camelCase property to a css func and it will convert it
+ * automatically
+ * 
+ *
+ * use css_prop_to_camel_case() or css_prop_to_camel_case
+ * to interchange between them
+ */
+
+/**
+ * Expand shorthand property to longhand properties 
+ *
+ * @access {private}
+ * @param  {string} property  The CSS base property
+ * @return {array}
+ */
+css_to_longhand(property)
+{
+    property = this.css_prop_to_hyphen_case(property);
+
+    // Doesn't exist
+    if (!SHORTHAND_PROPS.hasOwnProperty(property))
+    {
+        return [property];
+    }
+
+    return this.map(SHORTHAND_PROPS[property], function(i, longhand)
+    {
+        // Object is setup so that if it starts with a '-'
+        // then it gets concatenated to the oridional prop
+        // e.g 'background' -> '-image'
+        if (longhand.startsWith('-'))
+        {
+            longhand = property + longhand;
+        }
+
+        // otherwise it gets replaced
+        // e.g 'border-color' -> 'border-top-color', 'border-right-color'... etc
+        return longhand;
+
+    }, this);
+}
+
+/**
+ * Concatenate longhand to shorthand
+ *
+ * @access {private}
+ * @param  {node}   el      Target element
+ * @param  {string|array}  longHandProps Array of longhanded CSS properties in order (camelCased)
+ * @return {string}
+ */
+css_to_shorthand(el, longHandProps)
+{
+    var shorthand = '';
+    var multiValArr = [];
+
+    this.each(longHandProps, function()
+    {
+
+    }, this);
+
+    for (var j = 0, len = longHandProps.length; j < len; j++)
+    {
+        var longHandStyle = this.rendered_style(el, longHandProps[j]);
+
+        if (longHandStyle)
+        {
+            if (longHandStyle.indexOf(',') >= 0)
+            {
+                multiValArr.push(longHandStyle.split(',').map(Function.prototype.call, String.prototype.trim));
+            }
+            else
+            {
+                shorthand += ' ' + longHandStyle;
+            }
+        }
+    }
+
+    if (!this.is_empty(multiValArr))
+    {
+        var _this = this;
+        var multiValArrStrs = [];
+        for (var k = 0, len = multiValArr.length; k < len; k++)
+        {
+            multiValArr[k].map(function(val, n)
+            {
+                if (! multiValArrStrs[n])
+                {
+                    multiValArrStrs[n] = val;
+                }
+                else
+                {
+                    multiValArrStrs[n] += ' ' + val;
+                }
+            });
+        }
+
+        return multiValArrStrs.join(', ');
+    }
+
+    return shorthand.trim();
+}
+
+/**
+ * Get an element's inline style if it exists
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} prop CSS property to check
+ * @return {string}
+ */
+inline_style(element, prop)
+{
+    // @todo expand shorthand    
+    const elementStyle = element.style;
+
+    prop = this.css_prop_to_hyphen_case(prop);
+
+    if (Object.hasOwn(elementStyle, prop))
+    {
+        const val = elementStyle.getPropertyValue(elementStyle[prop]) || elementStyle[prop];
+        
+        return val === '' ? undefined : val;
+    }
+}
+
+/**
+ * Get the element's computed style on a property
+ *
+ * @access {private}
+ * @param  {node}   el   Target element
+ * @param  {string} prop CSS property to check (in camelCase) (optional)
+ * @return {mixed}
+ */
+rendered_style(el, property)
+{
+    if (window.getComputedStyle)
+    {
+        if (property)
+        {
+            return window.getComputedStyle(el, null)[property];
+        }
+
+        return window.getComputedStyle(el, null);
+
+    }
+    if (el.currentStyle)
+    {
+        if (property)
+        {
+            return el.currentStyle[property];
+        }
+        
+        return el.currentStyle;
+    }
+
+    return '';
+}
+
+/**
+ * Set CSS value(s) on element
+ *
+ * @access {public}
+ * @param  {node}   el     Target DOM node
+ * @param  {string|object} Assoc array of property->value or string property
+ * @example {Helper.css(node,} { display : 'none' });
+ * @example {Helper.css(node,} 'display', 'none');
+ */
+css(el, property, value)
+{
+    // If their is no value and property is an object
+    if (this.is_object(property))
+    {
+        this.each(property, function(prop, val)
+        {
+            this.css(el, prop, val);
+
+        }, this);
+    }
+    else
+    {
+        // Getting not settings
+        if (this.is_undefined(value))
+        {
+            return this.inline_style(el, property);
+        }
+        // Value is either null or false we remove
+        else if (this.is_null(value) || value === false)
+        {
+            if (el.style.removeProperty)
+            {
+                el.style.removeProperty(property);
+            }
+            else
+            {
+                el.style.removeAttribute(property);
+            }
+        }
+        else
+        {
+            el.style[property] = value;
+        }
+    }
+}
+
+/**
+ * Remove inline css style
+ * 
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} prop CSS property to removes
+ */
+remove_style(el, prop)
+{
+    if (typeof prop === 'undefined')
+    {
+        DOMElement.removeAttribute('style');
+
+        return;
+    }
+
+    this.css(el, prop);
+}
+
+/**
+ * Converts CSS property to camel case.
+ *
+ * @access {public}
+ * @param  {string} prop Property to convert
+ * @retirm {string}
+ */
+css_prop_to_camel_case(prop)
+{
+    if (!prop.includes('-')) return prop;
+
+    let camelProp = this.to_camel_case(prop);
+
+    if (this.in_array(prop, Object.keys(CSS_PROP_TO_CAMEL_CASES)))
+    {
+        return CSS_PROP_TO_CAMEL_CASES[prop];
+    }
+
+    // First char is always lowercase
+    let ret = camelProp.charAt(0).toLowerCase() + camelProp.slice(1);
+
+    CSS_PROP_TO_CAMEL_CASES[prop] = ret;
+
+    console.log(CSS_PROP_TO_CAMEL_CASES);
+
+    return ret;
+}
+
+/**
+ * Converts CSS property to hyphen case.
+ *
+ * @access {public}
+ * @param  {string} prop Property to convert
+ * @retirm {string}
+ */
+css_prop_to_hyphen_case(prop)
+{
+    if (!/[A-Z]/.test(prop)) return prop;
+    
+    if (this.in_array(prop, Object.keys(CSS_PROP_TO_HYPHEN_CASES)))
+    {
+        return CSS_PROP_TO_HYPHEN_CASES[prop];
+    }
+
+    var hyphenProp = this.camel_case_to_hyphen(prop);
+
+    if (hyphenProp.startsWith('webkit-') || hyphenProp.startsWith('moz-') || hyphenProp.startsWith('ms-') || hyphenProp.startsWith('o-'))
+    {
+        hyphenProp = '-' + hyphenProp;
+    }
+
+    CSS_PROP_TO_CAMEL_CASES[prop] = hyphenProp;
+
+    return hyphenProp;
+}
+	/**
+ * Gets the `toStringTag` of `value`.
+ *
+ * @public
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+var_type(value)
+{
+    if (value == null)
+    {
+        return value === undefined ? '[object Undefined]' : '[object Null]'
+    }
+
+    return TO_STR.call(value);
+}
+
+/**
+ * Checks if variable is HTMLElement.
+ *
+ * @param   {mixed}  mixed_var  Variable to evaluate
+ * @returns {boolean}
+ */
+is_htmlElement(mixed_var)
+{
+    if (mixed_var && mixed_var.nodeType)
+    {
+        let type = this.var_type(mixed_var);
+
+        return HTML_REGXP.test(type) || type === '[object HTMLDocument]' || type === '[object Text]';
+    }
+
+    return false;
+}
+
+/**
+ * Is undefined.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_undefined(mixed_var)
+{
+    return this.var_type(mixed_var) === UNDEF_TAG;
+}
+
+/**
+ * Is null.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_null(mixed_var)
+{
+    return this.var_type(mixed_var) === NULL_TAG;
+}
+
+/**
+ * Is bool.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_bool(mixed_var)
+{
+    return this.var_type(mixed_var) === BOOL_TAG;
+}
+
+/**
+ * Is function.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_function(mixed_var)
+{
+    return this.var_type(mixed_var) === FUNC_TAG;
+}
+
+/**
+ * Checks if variable is an object.
+ *
+ * @param   {mixed}  mixed_var Variable to evaluate
+ * @returns {boolean}
+ */
+is_object(mixed_var)
+{
+    return mixed_var !== null && this.var_type(mixed_var) === OBJECT_TAG;
+}
+
+/**
+ * Is array.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_array(mixed_var, strict)
+{
+    strict = typeof strict === 'undefined' ? false : strict;
+
+    let type = this.var_type(mixed_var);
+
+    return !strict ? ARRAYISH_TAGS.includes(type) : type === ARRAY_TAG;
+}
+
+/**
+ * Is nodelist.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_nodelist(mixed_var)
+{
+    return this.var_type(mixed_var) === NODELST_TAG;
+}
+
+/**
+ * Is node type.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @param   {string} tag        Tag to compare
+ * @returns {boolean}
+ */
+is_node_type(mixed_var, tag)
+{
+    return mixed_var.tagName.toUpperCase() === tag.toUpperCase();
+}
+
+/**
+ * Is args array.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_args(mixed_var)
+{
+    return this.var_type(mixed_var) === ARGS_TAG;
+}
+
+/**
+ * Is string.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_string(mixed_var)
+{
+    return this.var_type(mixed_var) === STRING_TAG;
+}
+
+/**
+ * Is number.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_number(mixed_var)
+{
+    return !isNaN(mixed_var) && this.var_type(mixed_var) === NUMBER_TAG;
+}
+
+/**
+ * Is string.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_numeric(mixed_var)
+{
+    if (this.is_number(mixed_var))
+    {
+        return true;
+    }
+    else if (this.is_string(mixed_var))
+    {
+        return /^-?\d+$/.test(mixed_var.trim());
+    }
+
+    return false;
+}
+
+/**
+ * Is date object.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_date(mixed_var)
+{
+    return this.var_type(mixed_var) === DATE_TAG;
+}
+
+/**
+ * Is regexp.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_regexp(mixed_var)
+{
+    return this.var_type(mixed_var) === REGEXP_TAG;
+}
+
+/**
+ * Is Set.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_set(mixed_var)
+{
+    return this.var_type(mixed_var) === SET_TAG;
+}
+
+/**
+ * Is Map.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_map(mixed_var)
+{
+    return this.var_type(mixed_var) === MAP_TAG;
+}
+
+/**
+ * Is Symbol.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_symbol(mixed_var)
+{
+    return this.var_type(mixed_var) === SYMBOL_TAG;
+}
+
+/**
+ * Is Array buffer.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_buffer(mixed_var)
+{
+    return this.var_type(mixed_var) === ARRAY_BUFFER_TAG;
+}
+
+/**
+ * Is dataView obj.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_dataview(mixed_var)
+{
+    return this.var_type(mixed_var) === DATAVIEW_TAG;
+}
+
+/**
+ * Is variable a function / constructor.
+ *
+ * @param   {mixed}  mixed_var  Variable to check
+ * @returns {boolean}
+ */
+is_callable(mixed_var)
+{
+    return this.is_function(mixed_var);
+}
+
+/**
+ * Checks if variable is construable.
+ *
+ * @param   {mixed}  mixed_var  Variable to evaluate
+ * @returns {boolean}
+ */
+is_constructable(mixed_var)
+{
+    // Not a function
+    if (typeof mixed_var !== 'function' || mixed_var === null)
+    {
+        return false;
+    }
+
+    // Strict ES6 class
+    if (/^\s*class\s+\w+/.test(mixed_var.toString()))
+    {
+        return true;
+    }
+
+    // Native arrow functions
+    if (!mixed_var.prototype || !mixed_var.prototype.constructor)
+    {
+        return false;
+    }
+
+    // If prototype is empty 
+    let props = this.object_props(mixed_var.prototype);
+
+    return props.length >= 1;
+}
+
+/**
+ * Checks if variable is a class declaration or extends a class and/or constructable function.
+ *
+ * @param   {mixed}                        mixed_var  Variable to evaluate
+ * @oaram   {string} | undefined | boolean} classname  Classname or strict if boolean provided
+ * @param   {boolean}                      strict     If "true" only returns true on ES6 classes (default "false")
+ * @returns {boolean}
+ */
+is_class(mixed_var, classname, strict)
+{
+    // this.is_class(foo, true)
+    if (classname === true || classname === false)
+    {
+        strict = classname;
+        classname = null;
+    }
+    // this.is_class(foo, 'Bar') || this.is_class(foo, 'Bar', false)
+    else
+    {
+        strict = typeof strict === 'undefined' ? false : strict;
+    }
+
+    if (typeof mixed_var !== 'function' || !this.is_constructable(mixed_var))
+    {
+        return false;
+    }
+
+    let isES6 = /^\s*class\s+\w+/.test(mixed_var.toString());
+
+    if (classname)
+    {
+        if (!isES6 && strict)
+        {
+            return false;
+        }
+
+        if (mixed_var.name === classname || mixed_var.prototype.constructor.name === classname)
+        {
+            return true;
+        }
+
+        let protos = [];
+        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+        let ret = false;
+
+        while (proto && proto.constructor)
+        {
+            // recursive stopper
+            if (protos.includes.proto)
+            {
+                break;
+            }
+
+            protos.push(proto);
+
+            if (proto.constructor.name === classname)
+            {
+                ret = true;
+
+                break;
+            }
+
+            proto = proto.prototype || Object.getPrototypeOf(proto);
+        }
+
+        return ret;
+    }
+
+    // ES6 class declaration depending on strict
+
+    return strict ? isES6 : this.is_constructable(mixed_var);
+}
+
+/**
+ * Is empty
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_empty(mixed_var)
+{
+    if (mixed_var === false || mixed_var === null || (typeof mixed_var === 'undefined'))
+    {
+        return true;
+    }
+    else if (this.is_array(mixed_var))
+    {
+        return mixed_var.length === null || mixed_var.length <= 0;
+    }
+    else if (this.is_object(mixed_var))
+    {
+        return Object.keys(mixed_var).length === 0;
+    }
+    else if (this.is_string(mixed_var))
+    {
+        return mixed_var.trim() === '';
+    }
+    else if (this.is_number(mixed_var))
+    {
+        return isNaN(mixed_var);
+    }
+    else if (this.is_function(mixed_var))
+    {
+        return false;
+    }
+
+    return false;
+}
+
+/**
+ * Deep check for equal
+ * 
+ * @param   {mixed}  a
+ * @param   {mixed}  b
+ * @returns {boolean}
+ */
+is_equal(a, b)
+{
+    if ((typeof a) !== (typeof b))
+    {
+        return false;
+    }
+    else if (this.is_string(a) || this.is_number(a) || this.is_bool(a) || this.is_null(a))
+    {
+        return a === b;
+    }
+    else if (this.is_function(a))
+    {
+        return this.___equalFunction(a, b);
+    }
+    else if (this.is_array(a) || this.is_object(b))
+    {
+        if (a === b)
+        {
+            return true;
+        }
+        else if (this.is_array(a) && !this.is_array(b))
+        {
+            return false;
+        }
+
+        return this.__equalTraverseable(a, b);
+    }
+
+    return true;
+}
+
+/**
+ * Checks if HtmlElement is in current DOM
+ *
+ * @param   {HTMLElement}  element  Element to check
+ * @returns {boolean}
+ */
+in_dom(element)
+{
+    if (!this.is_htmlElement(element))
+    {
+        return false;
+    }
+
+    if (element === document.body || element === document.documentElement)
+    {
+        return true;
+    }
+
+    while (element)
+    {
+        if (element === document.documentElement)
+        {
+            return true;
+        }
+
+        element = element.parentNode;
+    }
+
+    return false;
+}
 
 /**
  * Is valid JSON
  * 
- * @param  mixed str String JSON
- * @return object|false
+ * @param  {mixed} str String JSON
+ * @return {object|false}
  */
-Helper.prototype.isJSON = function(str)
+is_json(str)
 {
     var obj;
     try
@@ -2351,13 +3411,147 @@ Helper.prototype.isJSON = function(str)
     return obj;
 }
 
+
+/**
+ * Returns array/object/string/number size.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {number}
+ */
+size(mixed_var)
+{
+    if (this.is_string(mixed_var) || this.is_array(mixed_var))
+    {
+        return mixed_var.length;
+    }
+    else if (this.is_number(mixed_var))
+    {
+        return mixed_var;
+    }
+    else if (this.is_bool(mixed_var))
+    {
+        return mixed_var === true ? 1 : -1;
+    }
+    else(this.is_object(mixed_var))
+    {
+        return Object.keys(mixed_var).length;
+    }
+
+    return 1;
+}
+
+/**
+ * Count
+ *
+ * @access {public}
+ * @param  {mixed}  mixed_var Variable to count
+ * @return {int}
+ */
+count(mixed_var)
+{
+    return this.size(mixed_var);
+}
+
+/**
+ * Returns function / class name
+ *
+ * @param   {mixed}  mixed_var Variable to evaluate
+ * @returns {string}
+ */
+callable_name(mixed_var)
+{
+    if (this.is_callable(mixed_var))
+    {
+        return mixed_var.name;
+    }
+    else if (this.is_object(mixed_var))
+    {
+        return mixed_var.constructor.name;
+    }
+}
+
+/**
+ * Checks if variable should be considered "true" or "false" using "common sense".
+ * 
+ * @param   {mixed} mixed_var  Variable to test
+ * @returns {boolean}
+ */
+bool(mixed_var)
+{
+    mixed_var = (typeof mixed_var === 'undefined' ? false : mixed_var);
+
+    if (this.is_bool(mixed_var))
+    {
+        return mixed_var;
+    }
+
+    if (this.is_number(mixed_var))
+    {
+        return mixed_var > 0;
+    }
+
+    if (this.is_array(mixed_var))
+    {
+        return mixed_var.length > 0;
+    }
+
+    if (this.is_object(mixed_var))
+    {
+        return Object.keys(mixed_var).length > 0;
+    }
+
+    if (this.is_string(mixed_var))
+    {
+        mixed_var = mixed_var.toLowerCase().trim();
+
+        if (mixed_var === 'false')
+        {
+            return false;
+        }
+        if (mixed_var === 'true')
+        {
+            return true;
+        }
+        if (mixed_var === 'on')
+        {
+            return true;
+        }
+        if (mixed_var === 'off')
+        {
+            return false;
+        }
+        if (mixed_var === 'undefined')
+        {
+            return false;
+        }
+        if (this.is_numeric(mixed_var))
+        {
+            return Number(mixed_var) > 0;
+        }
+        if (mixed_var === '')
+        {
+            return false;
+        }
+    }
+
+    return false;
+}
+
+	/**
+ * String Helper Functions
+ *
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+ */
+
 /**
  * Json encode
  * 
- * @param  mixed str String JSON
- * @return object|false
+ * @param  {mixed} str String JSON
+ * @return {object|false}
  */
-Helper.prototype.json_encode = function(str)
+json_encode(str)
 {
     var obj;
     try
@@ -2374,10 +3568,10 @@ Helper.prototype.json_encode = function(str)
 /**
  * Json encode
  * 
- * @param  mixed str String JSON
- * @return object|false
+ * @param  {mixed} str String JSON
+ * @return {object|false}
  */
-Helper.prototype.json_decode = function(str)
+json_decode(str)
 {
     var obj;
     try
@@ -2395,10 +3589,10 @@ Helper.prototype.json_decode = function(str)
 /**
  * Make a random string
  *
- * @param  int    length String length
- * @return string
+ * @param  {int}    length String length
+ * @return {string}
  */
-Helper.prototype.makeid = function(length)
+makeid(length)
 {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -2414,10 +3608,10 @@ Helper.prototype.makeid = function(length)
 /**
  * Is variable numeric?
  *
- * @param  mixed mixed_var Variable to validate
- * @return bool
+ * @param  {mixed} mixed_var Variable to validate
+ * @return {bool}
  */
-Helper.prototype.is_numeric = function(mixed_var)
+is_numeric(mixed_var)
 {
     var whitespace =
         " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
@@ -2428,93 +3622,51 @@ Helper.prototype.is_numeric = function(mixed_var)
 /**
  * Parse url
  *
- * @param  string    str       The URL to parse. Invalid characters are replaced by _.
- * @param  string    component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT, PHP_URL_USER, PHP_URL_PASS, PHP_URL_PATH, PHP_URL_QUERY or PHP_URL_FRAGMENT to retrieve just a specific URL component as a string (except when PHP_URL_PORT is given, in which case the return value will be an integer).
- * @return object
+ * @param  {string}    str       The URL to parse. Invalid characters are replaced by _.
+ * @return {object}
  */
-Helper.prototype.parse_url = function(str, component)
+parse_url(str)
 {
-    //       discuss at: http://phpjs.org/functions/parse_url/
-    //      original by: Steven Levithan (http://blog.stevenlevithan.com)
-    // reimplemented by: Brett Zamir (http://brett-zamir.me)
-    //         input by: Lorenzo Pisani
-    //         input by: Tony
-    //      improved by: Brett Zamir (http://brett-zamir.me)
-    //             note: original by http://stevenlevithan.com/demo/parseuri/js/assets/parseuri.js
-    //             note: blog post at http://blog.stevenlevithan.com/archives/parseuri
-    //             note: demo at http://stevenlevithan.com/demo/parseuri/js/assets/parseuri.js
-    //             note: Does not replace invalid characters with '_' as in PHP, nor does it return false with
-    //             note: a seriously malformed URL.
-    //             note: Besides function name, is essentially the same as parseUri as well as our allowing
-    //             note: an extra slash after the scheme/protocol (to allow file:/// as in PHP)
-    //        example 1: parse_url('http://username:password@hostname/path?arg=value#anchor');
-    //        returns 1: {scheme: 'http', host: 'hostname', user: 'username', pass: 'password', path: '/path', query: 'arg=value', fragment: 'anchor'}
+    var ret = {};
+    var url = new URL(str);
 
-    var query, key = ['source', 'scheme', 'authority', 'userInfo', 'user', 'pass', 'host', 'port',
-            'relative', 'path', 'directory', 'file', 'query', 'fragment'
-        ],
-        ini = (this.php_js && this.php_js.ini) ||
-        {},
-        mode = (ini['phpjs.parse_url.mode'] &&
-            ini['phpjs.parse_url.mode'].local_value) || 'php',
-        parser = {
-            php: /^(?:([^:\/?#]+):)?(?:\/\/()(?:(?:()(?:([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?()(?:(()(?:(?:[^?#\/]*\/)*)()(?:[^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
-            strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
-            loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/\/?)?((?:(([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/ // Added one optional slash to post-scheme to catch file:/// (should restrict this)
-        };
-
-    var m = parser[mode].exec(str),
-        uri = {},
-        i = 14;
-    while (i--)
+    if (url.search)
     {
-        if (m[i])
+        var queries = url.search.substring(1).split('&');
+        var qret    = {};
+        this.foreach(queries, function(i, query)
         {
-            uri[key[i]] = m[i];
-        }
-    }
-
-    if (component)
-    {
-        return uri[component.replace('PHP_URL_', '')
-            .toLowerCase()];
-    }
-    if (mode !== 'php')
-    {
-        var name = (ini['phpjs.parse_url.queryKey'] &&
-            ini['phpjs.parse_url.queryKey'].local_value) || 'queryKey';
-        parser = /(?:^|&)([^&=]*)=?([^&]*)/g;
-        uri[name] = {};
-        query = uri[key[12]] || '';
-        query.replace(parser, function($0, $1, $2)
-        {
-            if ($1)
+            if (query.includes('='))
             {
-                uri[name][$1] = $2;
+                var set   = query.split('=');
+                var key   = decodeURI(set[0].trim());
+                var val   = true;
+
+                if (set.length === 2)
+                {
+                    val = set[1].trim();
+                }
+
+                if (key !== '' && val !== '')
+                {
+                    qret[key] = val;
+                }
+            }
+            else
+            {
+                qret[query] = true;
             }
         });
+
+        url.query = qret;
     }
 
-    if (!'scheme' in uri || !uri.scheme || uri.scheme === '')
-    {
-        uri['scheme'] = window.location.protocol.replace(':', '').replaceAll('/', '');
-    }
-
-    delete uri.source;
-    return uri;
+    return url;
 }
 
 /* Left trim */
-Helper.prototype.ltrim = function(str, charlist)
+ltrim(str, charlist)
 {
-    //  discuss at: http://phpjs.org/functions/ltrim/
-    // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    //    input by: Erkekjetter
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // bugfixed by: Onno Marsman
-    //   example 1: ltrim('    Kevin van Zonneveld    ');
-    //   returns 1: 'Kevin van Zonneveld    '
-
     charlist = !charlist ? ' \\s\u00A0' : (charlist + '')
         .replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g, '$1');
     var re = new RegExp('^[' + charlist + ']+', 'g');
@@ -2523,18 +3675,8 @@ Helper.prototype.ltrim = function(str, charlist)
 }
 
 /* Left trim */
-Helper.prototype.rtrim = function(str, charlist)
+rtrim(str, charlist)
 {
-    //  discuss at: http://phpjs.org/functions/rtrim/
-    // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    //    input by: Erkekjetter
-    //    input by: rem
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // bugfixed by: Onno Marsman
-    // bugfixed by: Brett Zamir (http://brett-zamir.me)
-    //   example 1: rtrim('    Kevin van Zonneveld    ');
-    //   returns 1: '    Kevin van Zonneveld'
-
     charlist = !charlist ? ' \\s\u00A0' : (charlist + '')
         .replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g, '\\$1');
     var re = new RegExp('[' + charlist + ']+$', 'g');
@@ -2543,1522 +3685,207 @@ Helper.prototype.rtrim = function(str, charlist)
 }
 
 /* Trim */
-Helper.prototype.trim = function(str, charlist)
+trim(str, charlist)
 {
-    //  discuss at: http://phpjs.org/functions/trim/
-    // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: mdsjack (http://www.mdsjack.bo.it)
-    // improved by: Alexander Ermolaev (http://snippets.dzone.com/user/AlexanderErmolaev)
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: Steven Levithan (http://blog.stevenlevithan.com)
-    // improved by: Jack
-    //    input by: Erkekjetter
-    //    input by: DxGx
-    // bugfixed by: Onno Marsman
-    //   example 1: trim('    Kevin van Zonneveld    ');
-    //   returns 1: 'Kevin van Zonneveld'
-    //   example 2: trim('Hello World', 'Hdle');
-    //   returns 2: 'o Wor'
-    //   example 3: trim(16, 1);
-    //   returns 3: 6
-
-    var whitespace, l = 0,
-        i = 0;
-    str += '';
-
-    if (!charlist)
-    {
-        // default list
-        whitespace =
-            ' \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000';
-    }
-    else
-    {
-        // preg_quote custom list
-        charlist += '';
-        whitespace = charlist.replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g, '$1');
-    }
-
-    l = str.length;
-    for (var i = 0; i < l; i++)
-    {
-        if (whitespace.indexOf(str.charAt(i)) === -1)
-        {
-            str = str.substring(i);
-            break;
-        }
-    }
-
-    l = str.length;
-    for (i = l - 1; i >= 0; i--)
-    {
-        if (whitespace.indexOf(str.charAt(i)) === -1)
-        {
-            str = str.substring(0, i + 1);
-            break;
-        }
-    }
-
-    return whitespace.indexOf(str.charAt(0)) === -1 ? str : '';
+    return this.rtrim(this.ltrim(str, charlist), charlist);
 }
 
-/* regex escape */
-Helper.prototype.preg_quote = function(str, delimiter)
-{
-    //  discuss at: http://phpjs.org/functions/preg_quote/
-    // original by: booeyOH
-    // improved by: Ates Goral (http://magnetiq.com)
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: Brett Zamir (http://brett-zamir.me)
-    // bugfixed by: Onno Marsman
-    //   example 1: preg_quote("$40");
-    //   returns 1: '\\$40'
-    //   example 2: preg_quote("*RRRING* Hello?");
-    //   returns 2: '\\*RRRING\\* Hello\\?'
-    //   example 3: preg_quote("\\.+*?[^]$(){}=!<>|:");
-    //   returns 3: '\\\\\\.\\+\\*\\?\\[\\^\\]\\$\\(\\)\\{\\}\\=\\!\\<\\>\\|\\:'
-
-    return String(str)
-        .replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
-}
-
-/* Preg match all */
-Helper.prototype.preg_match_all = function(pattern, subject)
-{
-
-    // convert the pattern to regix
-    // if needed. return null on fail
-    if (typeof pattern === 'string')
-    {
-        try
-        {
-            pattern = new RegExp(pattern);
-        }
-        catch (err)
-        {
-            return null;
-        }
-    }
-    var _this = this;
-    var matches = [];
-    var matched = pattern.exec(subject);
-    if (matched !== null)
-    {
-        var i = 0;
-        while (matched = pattern.exec(subject))
-        {
-            subject = _this.str_split_index(subject, (matched.index + matched[0].length - 1))[1];
-            matched.index = i > 0 ? (matched.index + (matched[0].length - 1)) : matched.index - 1;
-            matches.push(matched);
-            i++;
-        }
-        return matches;
-    }
-    return null;
-}
 
 /* split string at index */
-Helper.prototype.str_split_index = function(value, index)
+strSplitIndex(value, index)
 {
     return [value.substring(0, index + 1), value.substring(index + 1)];
 }
 
 /* Capatalize first letter */
-Helper.prototype.ucfirst = function(string)
+uc_first(string)
 {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 /* Capatalize first letter of all words */
-Helper.prototype.ucwords = function(str)
+ucwords(str)
 {
-    //  discuss at: http://phpjs.org/functions/ucwords/
-    // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-    // improved by: Waldo Malqui Silva
-    // improved by: Robin
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // bugfixed by: Onno Marsman
-    //    input by: James (http://www.james-bell.co.uk/)
-    //   example 1: ucwords('kevin van  zonneveld');
-    //   returns 1: 'Kevin Van  Zonneveld'
-    //   example 2: ucwords('HELLO WORLD');
-    //   returns 2: 'HELLO WORLD'
-
-    return (str + '')
-        .replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1)
-        {
-            return $1.toUpperCase();
-        });
+    return (str + '').replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1)
+    {
+        return $1.toUpperCase();
+    });
 }
 
-/* Reduce a string to a x words/letters with (optional) suffix */
-Helper.prototype.strReduce = function(string, length, suffix, toChar)
+to_camel_case(str)
 {
+    str = str.trim();
 
-    toChar = (typeof toChar === 'undefined' ? true : false);
-    suffix = (typeof suffix === 'undefined' ? '' : suffix);
+    // Shouldn't be changed
+    if (!str.includes(' ') && !str.includes('-') && /[A-Z]/.test(str))
+    {
+        return str;
+    }
 
-    if (toChar) return (string.length > length) ? string.substring(0, length) + suffix : string;
-
-    var words = string.split(" ");
-
-    if (count(words) > length) return fruits.slice(0, length).join(' ').suffix;
-
-    return string;
-
+    return str.toLowerCase().replace(/['"]/g, '').replace(/\W+/g, ' ').replace(/ (.)/g, function($1)
+    {
+        return $1.toUpperCase();
+    })
+    .replace(/ /g, '');
 }
 
-/* Return human friendly time-ago */
-Helper.prototype.timeAgo = function(time, asArray)
+camel_case_to_hyphen(str)
 {
-    asArray = (typeof asArray === 'undefined' ? false : true);
-    time = isValidTimeStamp(time) ? parseInt(time) : strtotime(time);
-    var units = [
-    {
-        name: "second",
-        limit: 60,
-        in_seconds: 1
-    },
-    {
-        name: "minute",
-        limit: 3600,
-        in_seconds: 60
-    },
-    {
-        name: "hour",
-        limit: 86400,
-        in_seconds: 3600
-    },
-    {
-        name: "day",
-        limit: 604800,
-        in_seconds: 86400
-    },
-    {
-        name: "week",
-        limit: 2629743,
-        in_seconds: 604800
-    },
-    {
-        name: "month",
-        limit: 31556926,
-        in_seconds: 2629743
-    },
-    {
-        name: "year",
-        limit: null,
-        in_seconds: 31556926
-    }];
-    var diff = (new Date() - new Date(time * 1000)) / 1000;
-    if (diff < 5) return "now";
-
-    var i = 0,
-        unit;
-    while (unit = units[i++])
-    {
-        if (diff < unit.limit || !unit.limit)
-        {
-            var diff = Math.floor(diff / unit.in_seconds);
-            if (asArray)
-            {
-                return {
-                    unit: unit.name + (diff > 1 ? "s" : ""),
-                    time: diff
-                };
-            }
-            return diff + " " + unit.name + (diff > 1 ? "s" : "");
-        }
-    }
+    return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1-$2$3').toLowerCase();
 }
 
-/* Convert a string-date to a timestamp */
-Helper.prototype.strtotime = function(text)
-{
-    var timestamp = Math.round(new Date(text).getTime() / 1000);
-
-    if (isNaN(timestamp))
-    {
-        timestamp = Date.parse(text);
-
-        if (isNaN(timestamp))
-        {
-            var split = text.split('/');
-
-            if (Helper.count(split) !== 3)
-            {
-                return false;
-            }
-
-            // MM/DD/YY
-            timestamp = Date.parse(split[1] + '/' + split[0] + '/' + split[2]);
-
-            if (isNaN(timestamp))
-            {
-                return false;
-            }
-        }
-    }
-
-    return timestamp;
-}
-
-/* String replace */
-Helper.prototype.str_replace = function(search, replace, subject, count)
-{
-    //  discuss at: http://phpjs.org/functions/str_replace/
-    // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: Gabriel Paderni
-    // improved by: Philip Peterson
-    // improved by: Simon Willison (http://simonwillison.net)
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: Onno Marsman
-    // improved by: Brett Zamir (http://brett-zamir.me)
-    //  revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-    // bugfixed by: Anton Ongson
-    // bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // bugfixed by: Oleg Eremeev
-    // bugfixed by: Glen Arason (http://CanadianDomainRegistry.ca)
-    // bugfixed by: Glen Arason (http://CanadianDomainRegistry.ca) Corrected count
-    //    input by: Onno Marsman
-    //    input by: Brett Zamir (http://brett-zamir.me)
-    //    input by: Oleg Eremeev
-    //        note: The count parameter must be passed as a string in order
-    //        note: to find a global variable in which the result will be given
-    //   example 1: str_replace(' ', '.', 'Kevin van Zonneveld');
-    //   returns 1: 'Kevin.van.Zonneveld'
-    //   example 2: str_replace(['{name}', 'l'], ['hello', 'm'], '{name}, lars');
-    //   returns 2: 'hemmo, mars'
-    //   example 3: str_replace(Array('S','F'),'x','ASDFASDF');
-    //   returns 3: 'AxDxAxDx'
-    //   example 4: str_replace(['A','D'], ['x','y'] , 'ASDFASDF' , 'cnt');
-    //   returns 4: 'xSyFxSyF' // cnt = 0 (incorrect before fix)
-    //   returns 4: 'xSyFxSyF' // cnt = 4 (correct after fix)
-
-    var i = 0,
-        j = 0,
-        temp = '',
-        repl = '',
-        sl = 0,
-        fl = 0,
-        f = [].concat(search),
-        r = [].concat(replace),
-        s = subject,
-        ra = Object.prototype.toString.call(r) === '[object Array]',
-        sa = Object.prototype.toString.call(s) === '[object Array]';
-    s = [].concat(s);
-
-    if (typeof(search) === 'object' && typeof(replace) === 'string')
-    {
-        temp = replace;
-        replace = new Array();
-        for (var i = 0; i < search.length; i += 1)
-        {
-            replace[i] = temp;
-        }
-        temp = '';
-        r = [].concat(replace);
-        ra = Object.prototype.toString.call(r) === '[object Array]';
-    }
-
-    if (count)
-    {
-        this.window[count] = 0;
-    }
-
-    for (i = 0, sl = s.length; i < sl; i++)
-    {
-        if (s[i] === '')
-        {
-            continue;
-        }
-        for (j = 0, fl = f.length; j < fl; j++)
-        {
-            temp = s[i] + '';
-            repl = ra ? (r[j] !== undefined ? r[j] : '') : r[0];
-            s[i] = (temp)
-                .split(f[j])
-                .join(repl);
-            if (count)
-            {
-                this.window[count] += ((temp.split(f[j]))
-                    .length - 1);
-            }
-        }
-    }
-    return sa ? s : s[0];
-}
-
-Helper.prototype.str_split = function(string, split_length)
-{
-    //  discuss at: http://phpjs.org/functions/str_split/
-    // original by: Martijn Wieringa
-    // improved by: Brett Zamir (http://brett-zamir.me)
-    // bugfixed by: Onno Marsman
-    //  revised by: Theriault
-    //  revised by: Rafał Kukawski (http://blog.kukawski.pl/)
-    //    input by: Bjorn Roesbeke (http://www.bjornroesbeke.be/)
-    //   example 1: str_split('Hello Friend', 3);
-    //   returns 1: ['Hel', 'lo ', 'Fri', 'end']
-
-    if (split_length === null)
-    {
-        split_length = 1;
-    }
-    if (string === null || split_length < 1)
-    {
-        return false;
-    }
-    string += '';
-    var chunks = [],
-        pos = 0,
-        len = string.length;
-    while (pos < len)
-    {
-        chunks.push(string.slice(pos, pos += split_length));
-    }
-
-    return chunks;
-}
-
-Helper.prototype.toCamelCase = function(str)
-{
-    return str.toLowerCase()
-        .replace(/['"]/g, '')
-        .replace(/\W+/g, ' ')
-        .replace(/ (.)/g, function($1)
-        {
-            return $1.toUpperCase();
-        })
-        .replace(/ /g, '');
-}
-
-Helper.prototype.camelCaseToHyphen = function(str)
-{
-    return str
-        // insert a hyphen between lower & upper
-        .replace(/([a-z])([A-Z])/g, '$1-$2')
-        // hyphen before last upper in a sequence followed by lower
-        .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1-$2$3').toLowerCase();
-}
-
-
-Helper.prototype.explode = function(delimiter, string, limit)
-{
-    //  discuss at: http://phpjs.org/functions/explode/
-    // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    //   example 1: explode(' ', 'Kevin van Zonneveld');
-    //   returns 1: {0: 'Kevin', 1: 'van', 2: 'Zonneveld'}
-
-    if (arguments.length < 2 || typeof delimiter === 'undefined' || typeof string === 'undefined') return null;
-    if (delimiter === '' || delimiter === false || delimiter === null) return false;
-    if (typeof delimiter === 'function' || typeof delimiter === 'object' || typeof string === 'function' || typeof string ===
-        'object')
-    {
-        return {
-            0: ''
-        };
-    }
-    if (delimiter === true) delimiter = '1';
-
-    // Here we go...
-    delimiter += '';
-    string += '';
-
-    var s = string.split(delimiter);
-
-    if (typeof limit === 'undefined') return s;
-
-    // Support for limit
-    if (limit === 0) limit = 1;
-
-    // Positive limit
-    if (limit > 0)
-    {
-        if (limit >= s.length) return s;
-        return s.slice(0, limit - 1)
-            .concat([s.slice(limit - 1)
-                .join(delimiter)
-            ]);
-    }
-
-    // Negative limit
-    if (-limit >= s.length) return [];
-
-    s.splice(s.length + limit);
-    return s;
-}
-
-Helper.prototype.htmlspecialchars = function(string, quote_style, charset, double_encode)
-{
-    // http://kevin.vanzonneveld.net
-    // +   original by: Mirek Slugen
-    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +   bugfixed by: Nathan
-    // +   bugfixed by: Arno
-    // +    revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +    bugfixed by: Brett Zamir (http://brett-zamir.me)
-    // +      input by: Ratheous
-    // +      input by: Mailfaker (http://www.weedem.fr/)
-    // +      reimplemented by: Brett Zamir (http://brett-zamir.me)
-    // +      input by: felix
-    // +    bugfixed by: Brett Zamir (http://brett-zamir.me)
-    // %        note 1: charset argument not supported
-    // *     example 1: htmlspecialchars("<a href='test'>Test</a>", 'ENT_QUOTES');
-    // *     returns 1: '&lt;a href=&#039;test&#039;&gt;Test&lt;/a&gt;'
-    // *     example 2: htmlspecialchars("ab\"c'd", ['ENT_NOQUOTES', 'ENT_QUOTES']);
-    // *     returns 2: 'ab"c&#039;d'
-    // *     example 3: htmlspecialchars("my "&entity;" is still here", null, null, false);
-    // *     returns 3: 'my &quot;&entity;&quot; is still here'
-    var optTemp = 0,
-        i = 0,
-        noquotes = false;
-    if (typeof quote_style === 'undefined' || quote_style === null)
-    {
-        quote_style = 2;
-    }
-    string = string.toString();
-    if (double_encode !== false)
-    { // Put this first to avoid double-encoding
-        string = string.replace(/&/g, '&amp;');
-    }
-    string = string.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-    var OPTS = {
-        'ENT_NOQUOTES': 0,
-        'ENT_HTML_QUOTE_SINGLE': 1,
-        'ENT_HTML_QUOTE_DOUBLE': 2,
-        'ENT_COMPAT': 2,
-        'ENT_QUOTES': 3,
-        'ENT_IGNORE': 4
-    };
-    if (quote_style === 0)
-    {
-        noquotes = true;
-    }
-    if (typeof quote_style !== 'number')
-    { // Allow for a single string or an array of string flags
-        quote_style = [].concat(quote_style);
-        for (var i = 0; i < quote_style.length; i++)
-        {
-            // Resolve string input to bitwise e.g. 'ENT_IGNORE' becomes 4
-            if (OPTS[quote_style[i]] === 0)
-            {
-                noquotes = true;
-            }
-            else if (OPTS[quote_style[i]])
-            {
-                optTemp = optTemp | OPTS[quote_style[i]];
-            }
-        }
-        quote_style = optTemp;
-    }
-    if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE)
-    {
-        string = string.replace(/'/g, '&#039;');
-    }
-    if (!noquotes)
-    {
-        string = string.replace(/"/g, '&quot;');
-    }
-
-    return string;
-}
-
-
-Helper.prototype.htmlspecialchars_decode = function(string, quote_style)
-{
-    //       discuss at: http://phpjs.org/functions/htmlspecialchars_decode/
-    //      original by: Mirek Slugen
-    //      improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    //      bugfixed by: Mateusz "loonquawl" Zalega
-    //      bugfixed by: Onno Marsman
-    //      bugfixed by: Brett Zamir (http://brett-zamir.me)
-    //      bugfixed by: Brett Zamir (http://brett-zamir.me)
-    //         input by: ReverseSyntax
-    //         input by: Slawomir Kaniecki
-    //         input by: Scott Cariss
-    //         input by: Francois
-    //         input by: Ratheous
-    //         input by: Mailfaker (http://www.weedem.fr/)
-    //       revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // reimplemented by: Brett Zamir (http://brett-zamir.me)
-    //        example 1: htmlspecialchars_decode("<p>this -&gt; &quot;</p>", 'ENT_NOQUOTES');
-    //        returns 1: '<p>this -> &quot;</p>'
-    //        example 2: htmlspecialchars_decode("&amp;quot;");
-    //        returns 2: '&quot;'
-
-    var optTemp = 0,
-        i = 0,
-        noquotes = false;
-    if (typeof quote_style === 'undefined')
-    {
-        quote_style = 2;
-    }
-    string = string.toString()
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>');
-    var OPTS = {
-        'ENT_NOQUOTES': 0,
-        'ENT_HTML_QUOTE_SINGLE': 1,
-        'ENT_HTML_QUOTE_DOUBLE': 2,
-        'ENT_COMPAT': 2,
-        'ENT_QUOTES': 3,
-        'ENT_IGNORE': 4
-    };
-    if (quote_style === 0)
-    {
-        noquotes = true;
-    }
-    if (typeof quote_style !== 'number')
-    { // Allow for a single string or an array of string flags
-        quote_style = [].concat(quote_style);
-        for (var i = 0; i < quote_style.length; i++)
-        {
-            // Resolve string input to bitwise e.g. 'PATHINFO_EXTENSION' becomes 4
-            if (OPTS[quote_style[i]] === 0)
-            {
-                noquotes = true;
-            }
-            else if (OPTS[quote_style[i]])
-            {
-                optTemp = optTemp | OPTS[quote_style[i]];
-            }
-        }
-        quote_style = optTemp;
-    }
-    if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE)
-    {
-        string = string.replace(/&#0*39;/g, "'"); // PHP doesn't currently escape if more than one 0, but it should
-        // string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP
-    }
-    if (!noquotes)
-    {
-        string = string.replace(/&quot;/g, '"');
-    }
-    // Put this in last place to avoid escape being double-decoded
-    string = string.replace(/&amp;/g, '&');
-
-    return string;
-}
-
-Helper.prototype.get_html_translation_table = function(table, quoteStyle)
-{
-
-    // eslint-disable-line camelcase
-    //  discuss at: http://locutus.io/php/get_html_translation_table/
-    // original by: Philip Peterson
-    //  revised by: Kevin van Zonneveld (http://kvz.io)
-    // bugfixed by: noname
-    // bugfixed by: Alex
-    // bugfixed by: Marco
-    // bugfixed by: madipta
-    // bugfixed by: Brett Zamir (http://brett-zamir.me)
-    // bugfixed by: T.Wild
-    // improved by: KELAN
-    // improved by: Brett Zamir (http://brett-zamir.me)
-    //    input by: Frank Forte
-    //    input by: Ratheous
-    //      note 1: It has been decided that we're not going to add global
-    //      note 1: dependencies to Locutus, meaning the constants are not
-    //      note 1: real constants, but strings instead. Integers are also supported if someone
-    //      note 1: chooses to create the constants themselves.
-    //   example 1: get_html_translation_table('HTML_SPECIALCHARS')
-    //   returns 1: {'"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;'}
-
-    var entities = {}
-    var hashMap = {}
-    var decimal
-    var constMappingTable = {}
-    var constMappingQuoteStyle = {}
-    var useTable = {}
-    var useQuoteStyle = {}
-
-    // Translate arguments
-    constMappingTable[0] = 'HTML_SPECIALCHARS'
-    constMappingTable[1] = 'HTML_ENTITIES'
-    constMappingQuoteStyle[0] = 'ENT_NOQUOTES'
-    constMappingQuoteStyle[2] = 'ENT_COMPAT'
-    constMappingQuoteStyle[3] = 'ENT_QUOTES'
-
-    useTable = !isNaN(table) ?
-        constMappingTable[table] :
-        table ?
-        table.toUpperCase() :
-        'HTML_SPECIALCHARS'
-
-    useQuoteStyle = !isNaN(quoteStyle) ?
-        constMappingQuoteStyle[quoteStyle] :
-        quoteStyle ?
-        quoteStyle.toUpperCase() :
-        'ENT_COMPAT'
-
-    if (useTable !== 'HTML_SPECIALCHARS' && useTable !== 'HTML_ENTITIES')
-    {
-        throw new Error('Table: ' + useTable + ' not supported')
-    }
-
-    entities['38'] = '&amp;'
-    if (useTable === 'HTML_ENTITIES')
-    {
-        entities['160'] = '&nbsp;'
-        entities['161'] = '&iexcl;'
-        entities['162'] = '&cent;'
-        entities['163'] = '&pound;'
-        entities['164'] = '&curren;'
-        entities['165'] = '&yen;'
-        entities['166'] = '&brvbar;'
-        entities['167'] = '&sect;'
-        entities['168'] = '&uml;'
-        entities['169'] = '&copy;'
-        entities['170'] = '&ordf;'
-        entities['171'] = '&laquo;'
-        entities['172'] = '&not;'
-        entities['173'] = '&shy;'
-        entities['174'] = '&reg;'
-        entities['175'] = '&macr;'
-        entities['176'] = '&deg;'
-        entities['177'] = '&plusmn;'
-        entities['178'] = '&sup2;'
-        entities['179'] = '&sup3;'
-        entities['180'] = '&acute;'
-        entities['181'] = '&micro;'
-        entities['182'] = '&para;'
-        entities['183'] = '&middot;'
-        entities['184'] = '&cedil;'
-        entities['185'] = '&sup1;'
-        entities['186'] = '&ordm;'
-        entities['187'] = '&raquo;'
-        entities['188'] = '&frac14;'
-        entities['189'] = '&frac12;'
-        entities['190'] = '&frac34;'
-        entities['191'] = '&iquest;'
-        entities['192'] = '&Agrave;'
-        entities['193'] = '&Aacute;'
-        entities['194'] = '&Acirc;'
-        entities['195'] = '&Atilde;'
-        entities['196'] = '&Auml;'
-        entities['197'] = '&Aring;'
-        entities['198'] = '&AElig;'
-        entities['199'] = '&Ccedil;'
-        entities['200'] = '&Egrave;'
-        entities['201'] = '&Eacute;'
-        entities['202'] = '&Ecirc;'
-        entities['203'] = '&Euml;'
-        entities['204'] = '&Igrave;'
-        entities['205'] = '&Iacute;'
-        entities['206'] = '&Icirc;'
-        entities['207'] = '&Iuml;'
-        entities['208'] = '&ETH;'
-        entities['209'] = '&Ntilde;'
-        entities['210'] = '&Ograve;'
-        entities['211'] = '&Oacute;'
-        entities['212'] = '&Ocirc;'
-        entities['213'] = '&Otilde;'
-        entities['214'] = '&Ouml;'
-        entities['215'] = '&times;'
-        entities['216'] = '&Oslash;'
-        entities['217'] = '&Ugrave;'
-        entities['218'] = '&Uacute;'
-        entities['219'] = '&Ucirc;'
-        entities['220'] = '&Uuml;'
-        entities['221'] = '&Yacute;'
-        entities['222'] = '&THORN;'
-        entities['223'] = '&szlig;'
-        entities['224'] = '&agrave;'
-        entities['225'] = '&aacute;'
-        entities['226'] = '&acirc;'
-        entities['227'] = '&atilde;'
-        entities['228'] = '&auml;'
-        entities['229'] = '&aring;'
-        entities['230'] = '&aelig;'
-        entities['231'] = '&ccedil;'
-        entities['232'] = '&egrave;'
-        entities['233'] = '&eacute;'
-        entities['234'] = '&ecirc;'
-        entities['235'] = '&euml;'
-        entities['236'] = '&igrave;'
-        entities['237'] = '&iacute;'
-        entities['238'] = '&icirc;'
-        entities['239'] = '&iuml;'
-        entities['240'] = '&eth;'
-        entities['241'] = '&ntilde;'
-        entities['242'] = '&ograve;'
-        entities['243'] = '&oacute;'
-        entities['244'] = '&ocirc;'
-        entities['245'] = '&otilde;'
-        entities['246'] = '&ouml;'
-        entities['247'] = '&divide;'
-        entities['248'] = '&oslash;'
-        entities['249'] = '&ugrave;'
-        entities['250'] = '&uacute;'
-        entities['251'] = '&ucirc;'
-        entities['252'] = '&uuml;'
-        entities['253'] = '&yacute;'
-        entities['254'] = '&thorn;'
-        entities['255'] = '&yuml;'
-    }
-
-    if (useQuoteStyle !== 'ENT_NOQUOTES')
-    {
-        entities['34'] = '&quot;'
-    }
-    if (useQuoteStyle === 'ENT_QUOTES')
-    {
-        entities['39'] = '&#39;'
-    }
-    entities['60'] = '&lt;'
-    entities['62'] = '&gt;'
-
-    // ascii decimals to real symbols
-    for (decimal in entities)
-    {
-        if (entities.hasOwnProperty(decimal))
-        {
-            hashMap[String.fromCharCode(decimal)] = entities[decimal]
-        }
-    }
-
-    return hashMap
-}
-
-Helper.prototype.html_entity_decode = function(string, quote_style)
-{
-    //  discuss at: http://phpjs.org/functions/html_entity_decode/
-    // original by: john (http://www.jd-tech.net)
-    //    input by: ger
-    //    input by: Ratheous
-    //    input by: Nick Kolosov (http://sammy.ru)
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: marc andreu
-    //  revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    //  revised by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // bugfixed by: Onno Marsman
-    // bugfixed by: Brett Zamir (http://brett-zamir.me)
-    // bugfixed by: Fox
-    //  depends on: get_html_translation_table
-    //   example 1: html_entity_decode('Kevin &amp; van Zonneveld');
-    //   returns 1: 'Kevin & van Zonneveld'
-    //   example 2: html_entity_decode('&amp;lt;');
-    //   returns 2: '&lt;'
-
-    var hash_map = {},
-        symbol = '',
-        tmp_str = '',
-        entity = '';
-    tmp_str = string.toString();
-
-    if (false === (hash_map = this.get_html_translation_table('HTML_ENTITIES', quote_style)))
-    {
-        return false;
-    }
-
-    // fix &amp; problem
-    // http://phpjs.org/functions/get_html_translation_table:416#comment_97660
-    delete(hash_map['&']);
-    hash_map['&'] = '&amp;';
-
-    for (symbol in hash_map)
-    {
-        entity = hash_map[symbol];
-        tmp_str = tmp_str.split(entity)
-            .join(symbol);
-    }
-    tmp_str = tmp_str.split('&#039;')
-        .join("'");
-
-    return tmp_str;
-}
-
-Helper.prototype.strcmp = function(str1, str2)
-{
-    //  discuss at: http://phpjs.org/functions/strcmp/
-    // original by: Waldo Malqui Silva (http://waldo.malqui.info)
-    //    input by: Steve Hilder
-    // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    //  revised by: gorthaur
-    //   example 1: strcmp( 'waldo', 'owald' );
-    //   returns 1: 1
-    //   example 2: strcmp( 'owald', 'waldo' );
-    //   returns 2: -1
-
-    return ((str1 == str2) ? 0 : ((str1 > str2) ? 1 : -1))
-}
-
-Helper.prototype.strnatcmp = function(f_string1, f_string2, f_version)
-{
-    //  discuss at: http://phpjs.org/functions/strnatcmp/
-    // original by: Martijn Wieringa
-    // improved by: Michael White (http://getsprink.com)
-    // improved by: Jack
-    // bugfixed by: Onno Marsman
-    //  depends on: strcmp
-    //        note: Added f_version argument against code guidelines, because it's so neat
-    //   example 1: strnatcmp('Price 12.9', 'Price 12.15');
-    //   returns 1: 1
-    //   example 2: strnatcmp('Price 12.09', 'Price 12.15');
-    //   returns 2: -1
-    //   example 3: strnatcmp('Price 12.90', 'Price 12.15');
-    //   returns 3: 1
-    //   example 4: strnatcmp('Version 12.9', 'Version 12.15', true);
-    //   returns 4: -6
-    //   example 5: strnatcmp('Version 12.15', 'Version 12.9', true);
-    //   returns 5: 6
-
-    var i = 0
-
-    if (f_version == undefined)
-    {
-        f_version = false
-    }
-
-    var __strnatcmp_split = function(f_string)
-    {
-        var result = []
-        var buffer = ''
-        var chr = ''
-        var i = 0,
-            f_stringl = 0
-
-        var text = true
-
-        f_stringl = f_string.length
-        for (var i = 0; i < f_stringl; i++)
-        {
-            chr = f_string.substring(i, i + 1)
-            if (chr.match(/\d/))
-            {
-                if (text)
-                {
-                    if (buffer.length > 0)
-                    {
-                        result[result.length] = buffer
-                        buffer = ''
-                    }
-
-                    text = false
-                }
-                buffer += chr
-            }
-            else if ((text == false) && (chr === '.') && (i < (f_string.length - 1)) && (f_string.substring(i + 1, i +
-                        2)
-                    .match(/\d/)))
-            {
-                result[result.length] = buffer
-                buffer = ''
-            }
-            else
-            {
-                if (text == false)
-                {
-                    if (buffer.length > 0)
-                    {
-                        result[result.length] = parseInt(buffer, 10)
-                        buffer = ''
-                    }
-                    text = true
-                }
-                buffer += chr
-            }
-        }
-
-        if (buffer.length > 0)
-        {
-            if (text)
-            {
-                result[result.length] = buffer
-            }
-            else
-            {
-                result[result.length] = parseInt(buffer, 10)
-            }
-        }
-
-        return result
-    }
-
-    var array1 = __strnatcmp_split(f_string1 + '')
-    var array2 = __strnatcmp_split(f_string2 + '')
-
-    var len = array1.length
-    var text = true
-
-    var result = -1
-    var r = 0
-
-    if (len > array2.length)
-    {
-        len = array2.length
-        result = 1
-    }
-
-    for (var i = 0; i < len; i++)
-    {
-        if (isNaN(array1[i]))
-        {
-            if (isNaN(array2[i]))
-            {
-                text = true
-
-                if ((r = this.strcmp(array1[i], array2[i])) != 0)
-                {
-                    return r
-                }
-            }
-            else if (text)
-            {
-                return 1
-            }
-            else
-            {
-                return -1
-            }
-        }
-        else if (isNaN(array2[i]))
-        {
-            if (text)
-            {
-                return -1
-            }
-            else
-            {
-                return 1
-            }
-        }
-        else
-        {
-            if (text || f_version)
-            {
-                if ((r = (array1[i] - array2[i])) != 0)
-                {
-                    return r
-                }
-            }
-            else
-            {
-                if ((r = this.strcmp(array1[i].toString(), array2[i].toString())) != 0)
-                {
-                    return r
-                }
-            }
-
-            text = false
-        }
-    }
-
-    return result
-}
-
-Helper.prototype.number_format = function(number, decimals, decPoint, thousandsSep)
-{ // eslint-disable-line camelcase
-    //  discuss at: http://locutus.io/php/number_format/
-    // original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-    // improved by: Kevin van Zonneveld (http://kvz.io)
-    // improved by: davook
-    // improved by: Brett Zamir (http://brett-zamir.me)
-    // improved by: Brett Zamir (http://brett-zamir.me)
-    // improved by: Theriault (https://github.com/Theriault)
-    // improved by: Kevin van Zonneveld (http://kvz.io)
-    // bugfixed by: Michael White (http://getsprink.com)
-    // bugfixed by: Benjamin Lupton
-    // bugfixed by: Allan Jensen (http://www.winternet.no)
-    // bugfixed by: Howard Yeend
-    // bugfixed by: Diogo Resende
-    // bugfixed by: Rival
-    // bugfixed by: Brett Zamir (http://brett-zamir.me)
-    //  revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-    //  revised by: Luke Smith (http://lucassmith.name)
-    //    input by: Kheang Hok Chin (http://www.distantia.ca/)
-    //    input by: Jay Klehr
-    //    input by: Amir Habibi (http://www.residence-mixte.com/)
-    //    input by: Amirouche
-    //   example 1: number_format(1234.56)
-    //   returns 1: '1,235'
-    //   example 2: number_format(1234.56, 2, ',', ' ')
-    //   returns 2: '1 234,56'
-    //   example 3: number_format(1234.5678, 2, '.', '')
-    //   returns 3: '1234.57'
-    //   example 4: number_format(67, 2, ',', '.')
-    //   returns 4: '67,00'
-    //   example 5: number_format(1000)
-    //   returns 5: '1,000'
-    //   example 6: number_format(67.311, 2)
-    //   returns 6: '67.31'
-    //   example 7: number_format(1000.55, 1)
-    //   returns 7: '1,000.6'
-    //   example 8: number_format(67000, 5, ',', '.')
-    //   returns 8: '67.000,00000'
-    //   example 9: number_format(0.9, 0)
-    //   returns 9: '1'
-    //  example 10: number_format('1.20', 2)
-    //  returns 10: '1.20'
-    //  example 11: number_format('1.20', 4)
-    //  returns 11: '1.2000'
-    //  example 12: number_format('1.2000', 3)
-    //  returns 12: '1.200'
-    //  example 13: number_format('1 000,50', 2, '.', ' ')
-    //  returns 13: '100 050.00'
-    //  example 14: number_format(1e-8, 8, '.', '')
-    //  returns 14: '0.00000001'
-
-    number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
-    var n = !isFinite(+number) ? 0 : +number
-    var prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
-    var sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
-    var dec = (typeof decPoint === 'undefined') ? '.' : decPoint
-    var s = ''
-
-    var toFixedFix = function(n, prec)
-    {
-        if (('' + n).indexOf('e') === -1)
-        {
-            return +(Math.round(n + 'e+' + prec) + 'e-' + prec)
-        }
-        else
-        {
-            var arr = ('' + n).split('e')
-            var sig = ''
-            if (+arr[1] + prec > 0)
-            {
-                sig = '+'
-            }
-            return (+(Math.round(+arr[0] + 'e' + sig + (+arr[1] + prec)) + 'e-' + prec)).toFixed(prec)
-        }
-    }
-
-    // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
-    s = (prec ? toFixedFix(n, prec).toString() : '' + Math.round(n)).split('.')
-    if (s[0].length > 3)
-    {
-        s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
-    }
-    if ((s[1] || '').length < prec)
-    {
-        s[1] = s[1] || ''
-        s[1] += new Array(prec - s[1].length + 1).join('0')
-    }
-
-    return s.join(dec)
-}
-
-Helper.prototype.urlencode = function(str)
-{
-    //       discuss at: https://locutus.io/php/urlencode/
-    //      original by: Philip Peterson
-    //      improved by: Kevin van Zonneveld (https://kvz.io)
-    //      improved by: Kevin van Zonneveld (https://kvz.io)
-    //      improved by: Brett Zamir (https://brett-zamir.me)
-    //      improved by: Lars Fischer
-    //      improved by: Waldo Malqui Silva (https://fayr.us/waldo/)
-    //         input by: AJ
-    //         input by: travc
-    //         input by: Brett Zamir (https://brett-zamir.me)
-    //         input by: Ratheous
-    //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
-    //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
-    //      bugfixed by: Joris
-    // reimplemented by: Brett Zamir (https://brett-zamir.me)
-    // reimplemented by: Brett Zamir (https://brett-zamir.me)
-    //           note 1: This reflects PHP 5.3/6.0+ behavior
-    //           note 1: Please be aware that this function
-    //           note 1: expects to encode into UTF-8 encoded strings, as found on
-    //           note 1: pages served as UTF-8
-    //        example 1: urlencode('Kevin van Zonneveld!')
-    //        returns 1: 'Kevin+van+Zonneveld%21'
-    //        example 2: urlencode('https://kvz.io/')
-    //        returns 2: 'https%3A%2F%2Fkvz.io%2F'
-    //        example 3: urlencode('https://www.google.nl/search?q=Locutus&ie=utf-8')
-    //        returns 3: 'https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8'
-
-    str = (str + '')
-
-    return encodeURIComponent(str)
-        .replace(/!/g, '%21')
-        .replace(/'/g, '%27')
-        .replace(/\(/g, '%28')
-        .replace(/\)/g, '%29')
-        .replace(/\*/g, '%2A')
-        .replace(/~/g, '%7E')
-        .replace(/%20/g, '+')
-}
-
-Helper.prototype.urldecode = function(str)
-{
-    //       discuss at: https://locutus.io/php/urldecode/
-    //      original by: Philip Peterson
-    //      improved by: Kevin van Zonneveld (https://kvz.io)
-    //      improved by: Kevin van Zonneveld (https://kvz.io)
-    //      improved by: Brett Zamir (https://brett-zamir.me)
-    //      improved by: Lars Fischer
-    //      improved by: Orlando
-    //      improved by: Brett Zamir (https://brett-zamir.me)
-    //      improved by: Brett Zamir (https://brett-zamir.me)
-    //         input by: AJ
-    //         input by: travc
-    //         input by: Brett Zamir (https://brett-zamir.me)
-    //         input by: Ratheous
-    //         input by: e-mike
-    //         input by: lovio
-    //      bugfixed by: Kevin van Zonneveld (https://kvz.io)
-    //      bugfixed by: Rob
-    // reimplemented by: Brett Zamir (https://brett-zamir.me)
-    //           note 1: info on what encoding functions to use from:
-    //           note 1: https://xkr.us/articles/javascript/encode-compare/
-    //           note 1: Please be aware that this function expects to decode
-    //           note 1: from UTF-8 encoded strings, as found on
-    //           note 1: pages served as UTF-8
-    //        example 1: urldecode('Kevin+van+Zonneveld%21')
-    //        returns 1: 'Kevin van Zonneveld!'
-    //        example 2: urldecode('https%3A%2F%2Fkvz.io%2F')
-    //        returns 2: 'https://kvz.io/'
-    //        example 3: urldecode('https%3A%2F%2Fwww.google.nl%2Fsearch%3Fq%3DLocutus%26ie%3Dutf-8%26oe%3Dutf-8%26aq%3Dt%26rls%3Dcom.ubuntu%3Aen-US%3Aunofficial%26client%3Dfirefox-a')
-    //        returns 3: 'https://www.google.nl/search?q=Locutus&ie=utf-8&oe=utf-8&aq=t&rls=com.ubuntu:en-US:unofficial&client=firefox-a'
-    //        example 4: urldecode('%E5%A5%BD%3_4')
-    //        returns 4: '\u597d%3_4'
-
-    return decodeURIComponent((str + '')
-        .replace(/%(?![\da-f]{2})/gi, function()
-        {
-            // PHP tolerates poorly formed escape sequences
-            return '%25'
-        })
-        .replace(/\+/g, '%20'))
-}
-
-/**
+	/**
  * Array utility functions
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
  */
 
 /**
- * Copys an array
- *
- * @access public
- * @param  array  arr  The target array to copy
- * @return array
+ * Map.
+ *  
+ * return undefined to break loop, true to keep, false to reject
+ * 
+ * @param   {array|object}  obj
+ * @param   {function}      callback
+ * @param   {array|mixed}   args      If single arg provided gets apllied as this to callback, otherwise args apllied to callback
+ * @returns {array|object}
  */
-Helper.prototype.array_copy = function(arr)
+map(obj, callback)
 {
-    return Array.prototype.slice.call(arr);
-}
+    if (typeof obj !== 'object' || obj === null) return;
 
-/**
- * Checks if an array contains a value
- *
- * @access public
- * @param  string needle    The value to search for
- * @param  array  haystack  The target array to index
- * @param  bool   argStrict Compare strict
- * @return bool
- */
-Helper.prototype.in_array = function(needle, haystack, argStrict)
-{
+    let isArray = TO_STR.call(obj) === '[object Array]';
+    let i       = 0;
+    let keys    = isArray ? null : Object.keys(obj);
+    let len     = isArray ? obj.length : keys.length;
+    let args    = TO_ARR.call(arguments).slice(2);
+    let ret     = isArray ? [] : {};
+    let key;
+    let val;
+    let clbkVal;
 
-    var key = '',
-        strict = !!argStrict;
+    // Applies the value of "this" to the callback as the array or object provided
+    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
 
-    //we prevent the double check (strict && arr[key] === ndl) || (!strict && arr[key] == ndl)
-    //in just one for, in order to improve the performance 
-    //deciding wich type of comparation will do before walk array
-    if (strict)
+    // Applies this arg as first extra arg if provided
+    // otherwise falls back to the array or object provided
+    // Removes "this" from args to callback
+    var thisArg = this.is_empty(args) ? obj : args[0];
+    args        = !this.is_empty(args) ? args.slice(1) : null;
+    args        = this.is_empty(args) ? null : args;
+
+    if (TO_STR.call(args) === '[object Array]')
     {
-        for (key in haystack)
+        for (; i < len; i++)
         {
-            if (haystack[key] === needle)
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
+
+            if (clbkVal === false)
             {
-                return true;
+                continue;
             }
-        }
-    }
-    else
-    {
-        for (key in haystack)
-        {
-            if (haystack[key] == needle)
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-/**
- * Reduce an array to n values
- * 
- * @access public
- * @param  array  array The target array to change
- * @param  int    count The amount of items to reduce the array to
- * @return array
- */
-Helper.prototype.array_reduce = function(array, count)
-{
-    return this.array_slice(array, 0, count);
-}
-
-/**
- * Compare two arrays
- * 
- * @access public
- * @param  array  a
- * @param  array  b
- * @return array
- */
-Helper.prototype.array_compare = function(a, b)
-{
-    return JSON.stringify(a) === JSON.stringify(b);;
-}
-
-/**
- * Implode an array
- * 
- * @access public
- * @param  array  array  The target array to implode
- * @param  string prefix Imploding prefix
- * @param  string suffix Imploding sufix (optional) (default )
- * @return string
- */
-Helper.prototype.implode = function(array, prefix, suffix)
-{
-    if (this.is_obj(array))
-    {
-        if (this.empty(array))
-        {
-            return '';
-        }
-
-        glue = typeof prefix === 'undefined' ? '' : prefix;
-
-        separator = typeof suffix === 'undefined' ? '' : suffix;
-
-        return this.rtrim(Object.keys(array).map(function(key, value)
-        {
-            return [key, array[key]].join(glue);
-        }).join(separator), suffix);
-    }
-
-    var str = '';
-
-    prefix = typeof prefix === 'undefined' ? '' : prefix;
-
-    suffix = typeof suffix === 'undefined' ? '' : suffix;
-
-    for (var i = 0; i < array.length; i++)
-    {
-        if (i === array.length - 1)
-        {
-            str += prefix + array[i];
-        }
-        else
-        {
-            str += prefix + array[i] + suffix;
-        }
-    }
-    return str;
-}
-
-/**
- * PHP "array_slice" function
- * 
- * @access public
- * @param  array array         The target array to slice
- * @param  int   offst         At what offset to start the slice
- * @param  int   lgth          Target ending length
- * @param  bool  preserve_keys Preserve array keys (optional) (default false)
- * @return array
- */
-Helper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
-{
-    //  discuss at: http://phpjs.org/functions/array_slice/
-    // original by: Brett Zamir (http://brett-zamir.me)
-    //  depends on: is_int
-    //    input by: Brett Zamir (http://brett-zamir.me)
-    // bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    //        note: Relies on is_int because !isNaN accepts floats
-    //   example 1: array_slice(["a", "b", "c", "d", "e"], 2, -1);
-    //   returns 1: {0: 'c', 1: 'd'}
-    //   example 2: array_slice(["a", "b", "c", "d", "e"], 2, -1, true);
-    //   returns 2: {2: 'c', 3: 'd'}
-
-    /*
-    if ('callee' in arr && 'length' in arr) {
-      arr = Array.prototype.slice.call(arr);
-    }
-    */
-
-    var key = '';
-
-    if (Object.prototype.toString.call(arr) !== '[object Array]' ||
-        (preserve_keys && offst !== 0))
-    { // Assoc. array as input or if required as output
-        var lgt = 0,
-            newAssoc = {};
-        for (key in arr)
-        {
-            //if (key !== 'length') {
-            lgt += 1;
-            newAssoc[key] = arr[key];
-            //}
-        }
-        arr = newAssoc;
-
-        offst = (offst < 0) ? lgt + offst : offst;
-        lgth = lgth === undefined ? lgt : (lgth < 0) ? lgt + lgth - offst : lgth;
-
-        var assoc = {};
-        var start = false,
-            it = -1,
-            arrlgth = 0,
-            no_pk_idx = 0;
-        for (key in arr)
-        {
-            ++it;
-            if (arrlgth >= lgth)
+            else if (typeof clbkVal === 'undefined')
             {
                 break;
             }
-            if (it == offst)
-            {
-                start = true;
-            }
-            if (!start)
-            {
-                continue;
-            }++arrlgth;
-            if (this.is_int(key) && !preserve_keys)
-            {
-                assoc[no_pk_idx++] = arr[key];
-            }
             else
             {
-                assoc[key] = arr[key];
+                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
             }
         }
-        //assoc.length = arrlgth; // Make as array-like object (though length will not be dynamic)
-        return assoc;
-    }
 
-    if (lgth === undefined)
-    {
-        return arr.slice(offst);
-    }
-    else if (lgth >= 0)
-    {
-        return arr.slice(offst, offst + lgth);
+        // A special, fast, case for the most common use of each (no extra args provided)
     }
     else
     {
-        return arr.slice(offst, lgth);
-    }
-}
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.call(thisArg, key, val);
 
-/**
- * Paginates an array of data
- * 
- * @access public
- * @param  array array The target array to paginate
- * @param  int   page  The current page
- * @param  int   limit Data per page
- * @return array
- */
-Helper.prototype.paginate = function(array, page, limit)
-{
-    page = (page === false || page === 0 ? 1 : page);
-    limit = (limit ? limit : 10);
-    var total = count(array);
-    var pages = Math.ceil((total / limit));
-    var offset = (page - 1) * limit;
-    var start = offset + 1;
-    var end = Math.min((offset + limit), total);
-    var paged = [];
-
-    if (page > pages) return false;
-
-    for (var i = 0; i < pages; i++)
-    {
-        offset = i * limit;
-        paged.push(array.slice(offset, limit));
+            if (clbkVal === false)
+            {
+                continue;
+            }
+            else if (typeof clbkVal === 'undefined')
+            {
+                break;
+            }
+            else
+            {
+                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
+            }
+        }
     }
 
-    return paged;
+    return ret;
 }
+
 
 /**
  * Foreach loop
  * 
- * @access public
- * @param  object  obj       The target object to loop over
- * @param  closure callback  Callback to apply to each iteration
- * @param  array   args      Array of params to apply to callback (optional) (default null)
+ * @access {public}
+ * @param  {object}  obj       The target object to loop over
+ * @param  {closure} callback  Callback to apply to each iteration
+ * @param  {array}   args      Array of params to apply to callback (optional) (default null)
  */
-Helper.prototype.foreach = function(obj, callback, args)
+foreach(obj, callback)
 {
-    var value, i = 0,
-        length = obj.length,
-        isArray = Object.prototype.toString.call(obj) === '[object Array]';
+    if (typeof obj !== 'object' || obj === null) return;
 
-    if (Object.prototype.toString.call(args) === '[object Array]')
+    let isArray = TO_STR.call(obj) === '[object Array]';
+    let i       = 0;
+    let keys    = isArray ? null : Object.keys(obj);
+    let len     = isArray ? obj.length : keys.length;
+    let args    = TO_ARR.call(arguments).slice(2);
+    let ret     = isArray ? [] : {};
+    let key;
+    let val;
+    let clbkVal;
+
+    // Applies the value of "this" to the callback as the array or object provided
+    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
+
+    // Applies this arg as first extra arg if provided
+    // otherwise falls back to the array or object provided
+    // Removes "this" from args to callback
+    var thisArg = this.is_empty(args) ? obj : args[0];
+    args        = !this.is_empty(args) ? args.slice(1) : null;
+    args        = this.is_empty(args) ? null : args;
+
+    if (TO_STR.call(args) === '[object Array]')
     {
-        if (isArray)
+        for (; i < len; i++)
         {
-            for (; i < length; i++)
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
+
+            if (clbkVal === false)
             {
-
-                var _currArgs = [i, obj[i]];
-
-                value = callback.apply(obj, this.array_merge([i, obj[i]], args));
-
-                if (value === false)
-                {
-                    break;
-                }
-            }
-        }
-        else
-        {
-            for (i in obj)
-            {
-
-                var _currArgs = [i, obj[i]];
-
-                value = callback.apply(obj, this.array_merge([i, obj[i]], args));
-
-                if (value === false)
-                {
-                    break;
-                }
+                break;
             }
         }
 
-        // A special, fast, case for the most common use of each
+        // A special, fast, case for the most common use of each (no extra args provided)
     }
     else
     {
-        if (isArray)
+        for (; i < len; i++)
         {
-            for (; i < length; i++)
-            {
-                value = callback.call(obj, i, obj[i]);
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.call(thisArg, key, val);
 
-                if (value === false)
-                {
-                    break;
-                }
-            }
-        }
-        else
-        {
-            for (i in obj)
+            if (clbkVal === false)
             {
-                value = callback.call(obj, i, obj[i]);
-
-                if (value === false)
-                {
-                    break;
-                }
+                break;
             }
         }
     }
@@ -4066,472 +3893,502 @@ Helper.prototype.foreach = function(obj, callback, args)
     return obj;
 }
 
-/**
- * Clone an object
- * 
- * @access public
- * @param  object  src       The object to clone
- * @return object
- */
-Helper.prototype.cloneObj = function(src)
+each()
 {
-    var clone = {};
-    for (var prop in src)
-    {
-        if (src.hasOwnProperty(prop)) clone[prop] = src[prop];
-    }
-    return clone;
+    return this.foreach.apply(this, arguments);
 }
 
 /**
  * Merge multiple arrays together
  * 
- * @access public
- * @param  ...   List of arrays to merge
- * @return array
+ * @access {public}
+ * @param  {...}   List of arrays to merge
+ * @return {array}
  */
-Helper.prototype.array_merge = function()
+/**
+ * Merges multiple objects or arrays into the original.
+ *
+ * @param   {object|array} First array then any number of array or objects to merge into
+ * @returns {object|array}
+ */
+array_merge()
 {
-    //  discuss at: http://phpjs.org/functions/array_merge/
-    // original by: Brett Zamir (http://brett-zamir.me)
-    // bugfixed by: Nate
-    // bugfixed by: Brett Zamir (http://brett-zamir.me)
-    //    input by: josh
-    //   example 1: arr1 = {"color": "red", 0: 2, 1: 4}
-    //   example 1: arr2 = {0: "a", 1: "b", "color": "green", "shape": "trapezoid", 2: 4}
-    //   example 1: array_merge(arr1, arr2)
-    //   returns 1: {"color": "green", 0: 2, 1: 4, 2: "a", 3: "b", "shape": "trapezoid", 4: 4}
-    //   example 2: arr1 = []
-    //   example 2: arr2 = {1: "data"}
-    //   example 2: array_merge(arr1, arr2)
-    //   returns 2: {0: "data"}
+    let args = TO_ARR.call(arguments);
 
-    var args = Array.prototype.slice.call(arguments),
-        argl = args.length,
-        arg,
-        retObj = {},
-        k = '',
-        argil = 0,
-        j = 0,
-        i = 0,
-        ct = 0,
-        toStr = Object.prototype.toString,
-        retArr = true;
-
-    for (var i = 0; i < argl; i++)
+    if (args.length === 0)
     {
-        if (toStr.call(args[i]) !== '[object Array]')
+        throw new Error('Nothing to merge.');
+    }
+    else if (args.length === 1)
+    {
+        return args[1];
+    }
+
+    var clone = false;
+
+    // Clone deep
+    this.each(args, function(i, arg)
+    {
+        if (arg = 'CLONE_FLAG_TRUE')
         {
-            retArr = false;
-            break;
-        }
-    }
+            clone = true;
 
-    if (retArr)
-    {
-        retArr = [];
-        for (var i = 0; i < argl; i++)
-        {
-            retArr = retArr.concat(args[i]);
-        }
-        return retArr;
-    }
-
-    for (i = 0, ct = 0; i < argl; i++)
-    {
-        arg = args[i];
-        if (toStr.call(arg) === '[object Array]')
-        {
-            for (j = 0, argil = arg.length; j < argil; j++)
-            {
-                retObj[ct++] = arg[j];
-            }
-        }
-        else
-        {
-            for (k in arg)
-            {
-                if (arg.hasOwnProperty(k))
-                {
-                    if (parseInt(k, 10) + '' === k)
-                    {
-                        retObj[ct++] = arg[k];
-                    }
-                    else
-                    {
-                        retObj[k] = arg[k];
-                    }
-                }
-            }
-        }
-    }
-    return retObj;
-}
-
-/**
- * Array filter
- * 
- * @access public
- * @param  array array Target array to filter
- * @return array
- */
-Helper.prototype.array_filter = function(array)
-{
-    var result = [];
-    for (var i = 0; i < array.length; i++)
-    {
-        if (array[i] === '' || this.empty(array[i])) continue;
-        result.push(array[i]);
-    }
-    return result;
-}
-
-/**
- * Array filter
- * 
- * @access public
- * @param  array array Target array to filter
- * @return array
- */
-Helper.prototype.array_unique = function(array)
-{
-    var result = [];
-
-    if (this.is_array(array))
-    {
-        for (var i = 0; i < array.length; i++)
-        {
-            if (!this.in_array(array[i], result))
-            {
-                result.push(array[i])
-            }
-        }
-    }
-
-    return result;
-}
-
-/**
- * Is array
- * 
- * @access public
- * @param  mixed mixed_var Target object to to check
- * @return bool
- */
-Helper.prototype.is_obj = function(mixed_var)
-{
-    if ((typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null))
-    {
-        return true;
-    }
-
-    return false;
-}
-
-
-/**
- * Is array
- * 
- * @access public
- * @param  array array Target array to filter
- * @return bool
- */
-Helper.prototype.is_array = function(mixed_var)
-{
-    return Object.prototype.toString.call(mixed_var) === '[object Array]' || Object.prototype.toString.call(mixed_var) === '[object NodeList]';
-}
-
-/**
- * Miscellaneous helper functions
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
- */
-
-/**
- * Is numeric? 
- *
- * @access public
- * @param  mixed  mixed_var Variable to check
- * @return bool
- */
-Helper.prototype.is_numeric = function(mixed_var)
-{
-    var whitespace =
-        " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
-    return (typeof mixed_var === 'number' || (typeof mixed_var === 'string' && whitespace.indexOf(mixed_var.slice(-1)) === -
-        1)) && mixed_var !== '' && !isNaN(mixed_var);
-}
-
-/**
- * Is callable ?
- *
- * @access public
- * @param  mixed  mixed_var Variable to check
- * @return bool
- */
-Helper.prototype.isCallable = function(obj)
-{
-    return Object.prototype.toString.call(obj) === '[object Function]';
-}
-
-/**
- * Count
- *
- * @access public
- * @param  mixed  mixed_var Variable to count
- * @param  string mode      Variable count mode
- * @return int
- */
-Helper.prototype.count = function(mixed_var, mode)
-{
-    var key, cnt = 0;
-    if (mixed_var === null || typeof mixed_var === 'undefined')
-    {
-        return 0;
-    }
-    else if (mixed_var.constructor !== Array && mixed_var.constructor !== Object)
-    {
-        return 1;
-    }
-
-    if (mode === 'COUNT_RECURSIVE')
-    {
-        mode = 1;
-    }
-    if (mode != 1)
-    {
-        mode = 0;
-    }
-
-    for (key in mixed_var)
-    {
-        if (mixed_var.hasOwnProperty(key))
-        {
-            cnt++;
-            if (mode == 1 && mixed_var[key] && (mixed_var[key].constructor === Array || mixed_var[key].constructor ===
-                    Object))
-            {
-                cnt += this.count(mixed_var[key], 1);
-            }
-        }
-    }
-
-    return cnt;
-}
-
-/**
- * Convert to boolean
- *
- * @access public
- * @param  mixed  value Variable to evaluate
- * @return bool
- */
-Helper.prototype.bool = function(value)
-{
-
-    value = (typeof value === 'undefined' ? false : value);
-
-    if (typeof value === 'boolean') return value;
-
-    if (typeof value === 'number') return value > 0;
-
-    if (typeof value === 'string')
-    {
-        if (value.toLowerCase() === 'false') return false;
-        if (value.toLowerCase() === 'true') return true;
-        if (value.toLowerCase() === 'on') return true;
-        if (value.toLowerCase() === 'off') return false;
-        if (value.toLowerCase() === 'undefined') return false;
-        if (this.is_numeric(value)) return Number(value) > 0;
-        if (value === '') return false;
-    }
-
-    return false;
-}
-
-/**
- * Convert to integer
- *
- * @access public
- * @param  mixed  mixed_var Variable to evaluate
- * @return int
- */
-Helper.prototype.intval = function(mixed_var, base)
-{
-    //  discuss at: http://phpjs.org/functions/intval/
-    // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: stensi
-    // bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // bugfixed by: Brett Zamir (http://brett-zamir.me)
-    // bugfixed by: Rafał Kukawski (http://kukawski.pl)
-    //    input by: Matteo
-    //   example 1: intval('Kevin van Zonneveld');
-    //   returns 1: 0
-    //   example 2: intval(4.2);
-    //   returns 2: 4
-    //   example 3: intval(42, 8);
-    //   returns 3: 42
-    //   example 4: intval('09');
-    //   returns 4: 9
-    //   example 5: intval('1e', 16);
-    //   returns 5: 30
-
-    var tmp;
-
-    var type = typeof mixed_var;
-
-    if (type === 'boolean')
-    {
-        return +mixed_var;
-    }
-    else if (type === 'string')
-    {
-        tmp = parseInt(mixed_var, base || 10);
-        return (isNaN(tmp) || !isFinite(tmp)) ? 0 : tmp;
-    }
-    else if (type === 'number' && isFinite(mixed_var))
-    {
-        return mixed_var | 0;
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-/**
- * Convert to f,oat
- *
- * @access public
- * @param  mixed  mixed_var Variable to evaluate
- * @return float
- */
-Helper.prototype.floatval = function(mixedVar)
-{
-    return (parseFloat(mixedVar) || 0)
-}
-
-/**
- * Checks if variable is set
- *
- * @access public
- * @param  mixed  mixed_var Variable to evaluate
- * @return bool
- */
-Helper.prototype.isset = function()
-{
-    //  discuss at: http://phpjs.org/functions/isset/
-    // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: FremyCompany
-    // improved by: Onno Marsman
-    // improved by: Rafał Kukawski
-    //   example 1: isset( undefined, true);
-    //   returns 1: false
-    //   example 2: isset( 'Kevin van Zonneveld' );
-    //   returns 2: true
-
-    var a = arguments,
-        l = a.length,
-        i = 0,
-        undef;
-
-    if (l === 0)
-    {
-        throw new Error('Empty isset');
-    }
-
-    while (i !== l)
-    {
-        if (a[i] === undef || a[i] === null)
-        {
             return false;
         }
-        i++;
-    }
-    return true;
-}
+    });
 
-/**
- * Checks if variable is empty
- *
- * @access public
- * @param  mixed  value Variable to evaluate
- * @return bool
- */
-Helper.prototype.empty = function(value)
-{
+    let first = args.shift();
+    let fType = this.is_array(first) ? 'array' : 'obj';
 
-    value = (typeof value === 'undefined' ? false : value);
-
-    if (typeof value === 'boolean') return value !== true;
-
-    if (typeof value === 'number') return value < 1;
-
-    if (typeof value === 'string')
+    this.each(args, function(i, arg)
     {
-        if (value.toLowerCase() === 'undefined') return true;
-        if (this.is_numeric(value)) return Number(value) < 1;
-        if (value === '') return true;
-        if (value !== '') return false;
-    }
+        if (!this.is_array(arg) && !this.is_object(arg))
+        {
+            throw new Error('Arguments must be an array or object.');
+        }
 
-    if (Object.prototype.toString.call(value) === '[object Array]') return value.length < 1;
+        first = fType === 'array' ? [...first, ...arg] : {...first, ...arg};
 
-    if (Object.prototype.toString.call(value) === '[object Object]') return (Object.getOwnPropertyNames(value).length === 0);
+    }, this);
 
-    return false;
-
+    return first;
 }
 
 /**
- * Checks if variable is an object
+ * Filters empty array entries and returns new array
  *
- * @access public
- * @param  mixed  mixed_var Variable to evaluate
- * @return bool
+ * @param   {object|array}  object Object to delete from
+ * @returns {object|array}
  */
-Helper.prototype.is_object = function(mixed_var)
+array_filter(arr)
 {
-    //  discuss at: http://phpjs.org/functions/is_object/
-    // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // improved by: Legaev Andrey
-    // improved by: Michael White (http://getsprink.com)
-    //   example 1: is_object('23');
-    //   returns 1: false
-    //   example 2: is_object({foo: 'bar'});
-    //   returns 2: true
-    //   example 3: is_object(null);
-    //   returns 3: false
+    let isArr = this.is_array(arr);
 
-    if (Object.prototype.toString.call(mixed_var) === '[object Array]')
+    let ret = isArr ? [] : {};
+
+    this.foreach(arr, function(i, val)
     {
-        return false;
-    }
-    return mixed_var !== null && typeof mixed_var === 'object';
+        if (!this.is_empty(val))
+        {
+            isArr ? ret.push(val) : ret[i] = val;
+        }
+    });
+
+    return ret;
 }
 
 /**
- * Checks if variable is a nodelist-array
+ * Removes duplicates and returns new array.
  *
- * @access public
- * @param  mixed  nodes Variable to evaluate
- * @return bool
+ * @param   {array} arr Array to run
+ * @returns {array}
  */
-Helper.prototype.isNodeList = function(nodes)
+array_unique(arr)
 {
-    return nodes == '[object NodeList]';
+    let uniq = function(value, index, self)
+    {
+        return self.indexOf(value) === index;
+    }
+
+    return arr.filter(uniq);
 }
+
+/**
+ * Set a key using dot/bracket notation on an object or array.
+ *
+ * @param   {string}       path   Path to set
+ * @param   {mixed}        value  Value to set
+ * @param   {object|array} object Object to set into
+ * @returns {object|array}
+ */
+array_set(path, value, object)
+{
+    this.__arraySetRecursive(this.__arrayKeySegment(path), value, object);
+
+    return object;
+}
+
+/**
+ * Gets an from an array/object using dot/bracket notation.
+ *
+ * @param   {string}        path    Path to get
+ * @param   {object|array}  object  Object to get from
+ * @returns {mixed}
+ */
+array_get(path, object)
+{
+    return this.__arrayGetRecursive(this.__arrayKeySegment(path), object);
+}
+
+/**
+ * Checks if array/object contains path using dot/bracket notation.
+ *
+ * @param   {string}        path   Path to check
+ * @param   {object|array}  object Object to check on
+ * @returns {boolean}
+ */
+array_has(path, object)
+{
+    return !this.is_undefined(this.array_get(path, object));
+}
+
+/**
+ * Deletes from an array/object using dot/bracket notation.
+ *
+ * @param   {string}        path   Path to delete
+ * @param   {object|array}  object Object to delete from
+ * @returns {object|array}
+ */
+array_delete(path, object)
+{
+    this.__arrayDeleteRecursive(this.__arrayKeySegment(path), object);
+
+    return object;
+}
+
+/**
+ * Checks if an array contains a value
+ *
+ * @access {public}
+ * @param  {string} needle    The value to search for
+ * @param  {array}  haystack  The target array to index
+ * @return {bool}
+ */
+in_array(needle, haystack, strict)
+{
+    let ret = false;
+
+    this.each(haystack, function(k, v)
+    {
+        if (this.is_equal(needle, v))
+        {
+            ret = true;
+            return false;
+        }
+
+    }, this);
+
+    return ret;
+}
+
+	/**
+ * Extends a function with prototype inheritance.
+ *
+ * @param   {function}           baseFunc    Base function to extend
+ * @param   {function}           extendFunc  Function to get extended.
+ * @param   {undefined|boolean}  callSuper   If true "extendFunc" is treated as a constructor and the BaseFunc / any nested prototypes will get instantiated. (default true)
+ * @returns {function}
+ */
+extend(baseFunc, extendFunc, callSuper)
+{
+    callSuper = this.is_undefined(callSuper) ? true : callSuper;
+
+    const oldConstructor = extendFunc.prototype.constructor;
+    const constructors = [...this.__protoConstructors(baseFunc), oldConstructor];
+    const newProto = function() {};
+    const oldProto = extendFunc.prototype;
+    const fncName = extendFunc.name;
+
+    newProto.prototype = oldProto;
+
+    Object.setPrototypeOf(oldProto, baseFunc.prototype);
+
+    Object.setPrototypeOf(extendFunc, newProto);
+
+    if (callSuper)
+    {
+        extendFunc = function()
+        {
+            let args = TO_ARR.call(arguments);
+
+            let _this = this;
+
+            this.each(constructors, function(i, constr)
+            {
+                if (constr.name !== 'Object')
+                {
+                    this.__bind(constr, _this).apply(_this, args);
+                }
+            }, this);
+        };
+    }
+
+    extendFunc.prototype = oldProto;
+
+    this.__applyStatics(constructors, extendFunc);
+
+    extendFunc.prototype.constructor = extendFunc;
+
+    Object.defineProperty(extendFunc, 'name', { value: fncName, writable: false });
+
+    return extendFunc;
+}
+
+
+/**
+ * Returns object properties and methods as array of keys.
+ * 
+ * @param   {mixed}    mixed_var    Variable to test
+ * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+ * @returns {array}
+ */
+object_props(mixed_var, withMethods)
+{
+    withMethods = typeof withMethods === 'undefined' ? true : false;
+
+    let keys = Object.keys(mixed_var);
+
+    if (withMethods)
+    {
+        let protos = [];
+        let funcs = Object.getOwnPropertyNames(mixed_var);
+        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+
+        while (proto)
+        {
+            // recursive stopper
+            if (protos.includes.proto)
+            {
+                break;
+            }
+
+            protos.push(proto);
+
+            let protoFuncs = Object.getOwnPropertyNames(proto);
+
+            funcs = [...funcs, ...protoFuncs];
+
+            proto = proto.prototype || Object.getPrototypeOf(proto);
+        }
+
+        keys = [...keys, ...funcs];
+    }
+
+    return this.array_unique(keys.filter(function(key)
+    {
+        return !PROTO_EXCLUDES.includes(key);
+    }));
+}
+
+
+/**
+ * Clone an object
+ * 
+ * @access {public}
+ * @param  {object}  src       The object to clone
+ * @return {object}
+ */
+obj_clone(src)
+{
+    var clone = {};
+
+    for (var prop in src)
+    {
+        if (src.hasOwnProperty(prop))
+        {
+            clone[prop] = src[prop];
+        }
+    }
+    return clone;
+}
+
+/**
+ * Deep merge two objects.
+ * 
+ * @param   {object} target
+ * @param   {object} ...sources
+ * @returns {object}
+ */
+merge_deep()
+{
+    let args = TO_ARR.call(arguments);
+
+    // No args
+    if (args.length === 0)
+    {
+        throw new Error('Nothing to merge.');
+    }
+    // Single arg
+    else if (args.length === 1)
+    {
+        return args[1];
+    }
+
+    // Must be an object
+    if (!this.is_object(args[0]))
+    {
+        throw new Error('Arguments must be an object.');
+    }
+
+    // Remove first and cache
+    let first = args.shift();
+
+    this.each(args, function(i, arg)
+    {
+        if (!this.is_object(arg))
+        {
+            throw new Error('Arguments must be an object.');
+        }
+
+        let cloned = this.clone_deep(arg, first);
+
+        this.each(cloned, function(k, v)
+        {
+            first[k] = v;
+        });
+        
+    }, this);
+
+    return first;
+}
+
+/**
+ * Clones any variables
+ * 
+ * @param   {mixed}  mixed_var
+ * @param   {mixed}  context   Context to bind functions
+ * @returns {mixed}
+ */
+clone_deep(mixed_var, context)
+{
+    let ret = this.__cloneVar(mixed_var, context, false);
+
+    CURR_CLONES = new WeakMap();
+
+    return ret;
+}
+
+/**
+ * Creates a new object in 'dot.notation'
+ * 
+ * @param   {Object} obj Object
+ * @returns {Object} 
+ */
+dotify(obj)
+{
+    var res = {};
+
+    function recurse(obj, current)
+    {
+        for (var key in obj)
+        {
+            var value = obj[key];
+            var newKey = (current ? current + '.' + key : key); // joined key with dot
+
+            if (value && typeof value === 'object' && !(value instanceof Date))
+            {
+                recurse(value, newKey); // it's a nested object, so do it again
+            }
+            else
+            {
+                res[newKey] = value; // it's not an object, so set the property
+            }
+        }
+    }
+
+    recurse(obj);
+
+    return res;
+}
+
+/**
+ * Returns an immutable object with set,get,isset,delete methods that accept dot.notation.
+ *
+ * @returns {object}
+ */
+obj()
+{
+    return new __MAP;
+}
+
+/**
+ * Creates a new object in 'dot.notation'
+ * 
+ * @param   {Object} obj Object
+ * @returns {Object} 
+ */
+dotify(obj)
+{
+    var res = {};
+
+    function recurse(obj, current)
+    {
+        for (var key in obj)
+        {
+            var value = obj[key];
+            var newKey = (current ? current + '.' + key : key); // joined key with dot
+
+            if (value && typeof value === 'object' && !(value instanceof Date))
+            {
+                recurse(value, newKey); // it's a nested object, so do it again
+            }
+            else
+            {
+                res[newKey] = value; // it's not an object, so set the property
+            }
+        }
+    }
+
+    recurse(obj);
+
+    return res;
+}
+
+/**
+ * Joins an object into a string
+ * 
+ * @param   {Object} obj       Object
+ * @param   {string} seperator Seperator Between key & value
+ * @param   {string} glue      Glue between value and next key
+ * @returns {string} 
+ */
+join_obj(obj, seperator, glue, recursive)
+{
+    seperator = this.is_undefined(seperator) ? '' : seperator;
+    glue      = this.is_undefined(glue) ? '' : glue;
+    recursive = this.is_undefined(recursive) ? false : recursive;
+    
+    var ret = '';
+
+    this.each(obj, function(key, val)
+    {
+        if (this.is_object(val))
+        {
+            val = recursive ? '{' + this.join_obj(val, seperator, glue, recursive) + '}' : {};
+        }
+        else if (this.is_array(val))
+        {
+            val = recursive ? this.join_obj(val, seperator, glue, recursive) : val.join(', ').replaceAll('[object Object]', '{}');
+        }
+        else
+        {            
+            val = `${val}`;
+        }
+
+        ret += `${glue}${key}${seperator}${val}`;
+
+    }, this);
+
+    if (ret === `${glue}${seperator}`) return '';
+
+    return this.rtrim(this.ltrim(ret, glue), seperator);
+}
+	/**
+ * Miscellaneous helper functions
+ *
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
+ */
 
 /**
  * Gets url query
  *
- * @access public
- * @param  string  name String query to get (optional)
- * @return object|string
+ * @access {public}
+ * @param  {string}  name String query to get (optional)
+ * @return {object|string}
  */
-Helper.prototype.url_query = function(name)
+url_query(name)
 {
     var results = {};
 
@@ -4567,25 +4424,24 @@ Helper.prototype.url_query = function(name)
 
     return false;
 }
-
-/**
+	/**
  * DOM Event Listener Manager
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
  */
 
 /**
  * Add an event listener
  *
- * @access public
- * @param  node    element    The target DOM node
- * @param  string  eventName  Event type
- * @param  closure handler    Callback event
- * @param  bool    useCapture Use capture (optional) (defaul false)
+ * @access {public}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
  */
-Helper.prototype.addEventListener = function(element, eventName, handler, useCapture)
+addEventListener(element, eventName, handler, useCapture)
 {
     // Boolean use capture defaults to false
     useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
@@ -4623,7 +4479,7 @@ Helper.prototype.addEventListener = function(element, eventName, handler, useCap
             useCapture: useCapture,
         });
 
-        this._addListener(element, eventName, handler, useCapture);
+        this.__addListener(element, eventName, handler, useCapture);
     }
 }
 
@@ -4634,13 +4490,13 @@ Helper.prototype.addEventListener = function(element, eventName, handler, useCap
  * If no callback is given, all callbacks for the event type will be removed.
  * This function can still remove "annonymous" functions that are given a name as they are declared.
  * 
- * @access public
- * @param  node    element    The target DOM node
- * @param  string  eventName  Event type
- * @param  closure handler    Callback event
- * @param  bool    useCapture Use capture (optional) (defaul false)
+ * @access {public}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
  */
-Helper.prototype.removeEventListener = function(element, eventName, handler, useCapture)
+removeEventListener(element, eventName, handler, useCapture)
 {
     if (this.is_array(element))
     {
@@ -4654,13 +4510,13 @@ Helper.prototype.removeEventListener = function(element, eventName, handler, use
         // If the eventName name was not provided - remove all event handlers on element
         if (!eventName)
         {
-            return this._removeElementListeners(element);
+            return this.__removeElementListeners(element);
         }
 
         // If the callback was not provided - remove all events of the type on the element
         if (!handler)
         {
-            return this._removeElementTypeListeners(element, eventName);
+            return this.__removeElementTypeListeners(element, eventName);
         }
 
         // Default use capture
@@ -4678,7 +4534,7 @@ Helper.prototype.removeEventListener = function(element, eventName, handler, use
         {
             if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
             {
-                this._removeListener(element, eventName, handler, useCapture);
+                this.__removeListener(element, eventName, handler, useCapture);
                 this._events[eventName].splice(i, 1);
                 break;
             }
@@ -4689,9 +4545,9 @@ Helper.prototype.removeEventListener = function(element, eventName, handler, use
 /**
  * Removes all event listeners registered by the library
  *
- * @access public
+ * @access {public}
  */
-Helper.prototype.clearEventListeners = function()
+clearEventListeners()
 {
     var events = this._events;
 
@@ -4701,7 +4557,7 @@ Helper.prototype.clearEventListeners = function()
         var i = eventObj.length;
         while (i--)
         {
-            this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
+            this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
             this._events[eventName].splice(i, 1);
         }
     }
@@ -4711,9 +4567,9 @@ Helper.prototype.clearEventListeners = function()
  * Removes all event listeners registered by the library on nodes
  * that are no longer part of the DOM tree
  *
- * @access public
+ * @access {public}
  */
-Helper.prototype.collectGarbage = function()
+collectGarbage()
 {
     var events = this._events;
     for (var eventName in events)
@@ -4724,502 +4580,106 @@ Helper.prototype.collectGarbage = function()
         {
             var el = eventObj[i]['element'];
             if (el == window || el == document || el == document.body) continue;
-            if (!this.nodeExists(el))
+            if (!this.in_dom(el))
             {
-                this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
+                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
                 this._events[eventName].splice(i, 1);
             }
         }
     }
 }
 
+
 /**
- * Removes all registered event listners on an element
+ * Removes event listeners on a DOM node
  *
- * @access private
- * @param  node    element Target node element
+ * If no element given, all attached event listeners are returned.
+ * If no event name is given, all attached event listeners are returned on provided element.
+ * If single arguement is provided and arg is a string, e.g 'click', all events of that type are returned
+ * 
+ * @access {public}
+ * @param  {mixed}   element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @return {array}
  */
-Helper.prototype._removeElementListeners = function(element)
+eventListeners(DOMElement, eventName)
 {
+    var args = TO_ARR.call(arguments);
     var events = this._events;
-    for (var eventName in events)
+
+    // No args, return all events
+    if (args.length === 0)
     {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
+        return events;
+    }
+    // eventListeners(node) or
+    // eventListeners('click')
+    else if (args.length === 1)
+    {
+        // eventListeners('click')
+        if (this.is_string(DOMElement))
+        {   
+            return events[DOMElement] || [];
+        }
+        
+        var ret = [];
+
+        // eventListeners(node)
+        for (var evt in events)
         {
-            if (eventObj[i]['element'] === element)
+            var eventArr = events[evt];
+
+            for (var i = 0; i < eventArr.length; i++)
             {
-                this._removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-                this._events[eventName].splice(i, 1);
-            }
-        }
-    }
-}
+                var eventObj = eventArr[i];
 
-/**
- * Removes all registered event listners of a specific type on an element
- *
- * @access private
- * @param  node    element Target node element
- * @param  string  type    Event listener type
- */
-Helper.prototype._removeElementTypeListeners = function(element, type)
-{
-    var eventObj = this._events[type];
-    var i = eventObj.length;
-    while (i--)
-    {
-        if (eventObj[i]['element'] === element)
-        {
-            this._removeListener(eventObj[i]['element'], type, eventObj[i]['handler'], eventObj[i]['useCapture']);
-            this._events[type].splice(i, 1);
-        }
-    }
-}
-
-/**
- * Adds a listener to the element
- *
- * @access private
- * @param  node    element    The target DOM node
- * @param  string  eventName  Event type
- * @param  closure handler    Callback event
- * @param  bool    useCapture Use capture (optional) (defaul false)
- */
-Helper.prototype._addListener = function(el, eventName, handler, useCapture)
-{
-    if (el.addEventListener)
-    {
-        el.addEventListener(eventName, handler, useCapture);
-    }
-    else
-    {
-        el.attachEvent('on' + eventName, handler, useCapture);
-    }
-}
-
-/**
- * Removes a listener from the element
- *
- * @access private
- * @param  node    element    The target DOM node
- * @param  string  eventName  Event type
- * @param  closure handler    Callback event
- * @param  bool    useCapture Use capture (optional) (defaul false)
- */
-Helper.prototype._removeListener = function(el, eventName, handler, useCapture)
-{
-    if (el.removeEventListener)
-    {
-        el.removeEventListener(eventName, handler, useCapture);
-    }
-    else
-    {
-        el.detachEvent('on' + eventName, handler, useCapture);
-    }
-}
-
-/**
- * Helper Animation component
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
- */
-
-/**
- * Vendor prefix a css property and convert to camelCase
- *
- * @access private
- * @param  string property The CSS base property
- * @return array
- */
-Helper.prototype._vendorPrefix = function(property)
-{
-    // Properties to return
-    var props = [];
-
-    // Convert to regular hyphenated property 
-    property = this.camelCaseToHyphen(property);
-
-    // Is the property prefixable ?
-    if (this.in_array(property, this.cssPrefixable))
-    {
-        var prefixes = this.cssPrefixes;
-
-        // Loop vendor prefixes
-        for (var i = 0; i < prefixes.length; i++)
-        {
-            props.push(prefixes[i] + this.ucfirst(this.toCamelCase(property)));
-        }
-    }
-
-    // Add non-prefixed property
-    props.push(this.toCamelCase(property));
-
-    return props;
-}
-
-/**
- * Expand shorthand property to longhand properties 
- *
- * @access private
- * @param  string property The CSS base property (in camelCase)
- * @return array
- */
-Helper.prototype._shortHandExpand = function(property, recurse)
-{
-    var _this = this;
-    var props = this.shortHandProps;
-
-    // Doesn't exist
-    if (!props.hasOwnProperty(property))
-    {
-        return [property];
-    }
-
-    return props[property].map(function(p)
-    {
-        if (p.substr(0, 1) === '-')
-        {
-            var longhand = property + _this.toCamelCase(p);
-        }
-        else
-        {
-            var longhand = p;
-        }
-        //var longhand = p.substr(0, 1) === '-' ? property + p : p;
-        return recurse ? _this._shortHandExpand(longhand, recurse) : longhand;
-    });
-}
-
-/**
- * Get the element's computed style on a property
- *
- * @access private
- * @param  node   el   Target element
- * @param  string prop CSS property to check (in camelCase) (optional)
- * @return mixed
- */
-Helper.prototype._computeStyle = function(el, property)
-{
-    if (window.getComputedStyle)
-    {
-        if (property)
-        {
-            return window.getComputedStyle(el, null)[property];
-        }
-
-        return window.getComputedStyle(el, null);
-
-    }
-    if (el.currentStyle)
-    {
-        if (property)
-        {
-            return el.currentStyle[property];
-        }
-        return el.currentStyle;
-    }
-
-    return '';
-}
-
-/**
- * Concatenate longhand to shorthand
- *
- * @access private
- * @param  node   el      Target element
- * @param  array  longHandProps Array of longhanded CSS properties in order (camelCased)
- * @return string
- */
-Helper.prototype._concatShortHandProperties = function(el, longHandProps)
-{
-    var shorthand = '';
-    var multiValArr = [];
-
-    for (var j = 0, len = longHandProps.length; j < len; j++)
-    {
-        var longHandStyle = this._computeStyle(el, longHandProps[j]);
-
-        if (longHandStyle)
-        {
-            if (longHandStyle.indexOf(',') >= 0)
-            {
-                multiValArr.push(longHandStyle.split(',').map(Function.prototype.call, String.prototype.trim));
-            }
-            else
-            {
-                shorthand += ' ' + longHandStyle;
-            }
-        }
-    }
-
-    if (!this.empty(multiValArr))
-    {
-        var _this = this;
-        var multiValArrStrs = [];
-        for (var k = 0, len = multiValArr.length; k < len; k++)
-        {
-            multiValArr[k].map(function(val, n)
-            {
-                if (!_this.isset(multiValArrStrs[n]))
+                if (eventObj.element === DOMElement)
                 {
-                    multiValArrStrs[n] = val;
+                    ret.push(eventObj);
                 }
-                else
-                {
-                    multiValArrStrs[n] += ' ' + val;
-                }
-            });
-        }
-
-        return multiValArrStrs.join(', ');
-    }
-
-    return shorthand.trim();
-}
-
-/**
- * Normalizes and easing e.g 'ease-in-out' and 'easeInOut' will both return cubic bezier
- *
- * @access private
- * @param  string value easing value or string
- * @return array
- */
-Helper.prototype._normalizeEasing = function(value)
-{
-    for (var camelCased in this.cssEasings)
-    {
-        if (!this.cssEasings.hasOwnProperty(camelCased))
-        {
-            continue;
-        }
-        if (value === this.cssEasings[camelCased] || value === camelCased)
-        {
-            return this.cssEasings[camelCased];
-        }
-    }
-
-    return value;
-}
-
-/**
- * Get an element's currently displaying style
- * Works on shorthand and longhand
- *
- * @access public
- * @param  node   el   Target element
- * @param  string prop CSS property to check
- * @return string
- */
-Helper.prototype.getStyle = function(el, prop)
-{
-    // Firefox and otther browsers do not concatenate to the shorthand property even when
-    // it was defined as shorthand in the stylsheet
-    // console.log(window.getComputedStyle(document.body));
-    // console.log(window.getComputedStyle(document.body).padding);
-    // console.log(window.getComputedStyle(document.body).getPropertyValue('padding'));
-
-    // Additionally, some css values can be comma separated
-    // e.g
-    // transition height 300ms ease, width 300ms ease;
-
-    // Normalize the property to camelCase and check for vendor prefixes
-    var properties = this._vendorPrefix(prop);
-
-    for (var i = 0, len = properties.length; i < len; i++)
-    {
-        // current prop
-        var property = properties[i];
-
-        // Get longhand properties in order
-        var longHands = this._shortHandExpand(property);
-
-        // is this a shorthand property ?
-        var isShortHandProp = longHands.length === 1;
-
-        // Do we need to concatenate to shorthand ?
-        if (isShortHandProp)
-        {
-            return this._computeStyle(el, property);
-        }
-
-        var shorthand = this._concatShortHandProperties(el, longHands);
-
-        if (shorthand)
-        {
-            return shorthand;
-        }
-    }
-}
-
-/**
- * Set CSS value(s) on element
- *
- * @access public
- * @param  node   el     Target DOM node
- * @param  string|object Assoc array of property->value or string property
- * @example Helper.css(node, { display : 'none' });
- * @example Helper.css(node, 'display', 'none');
- */
-Helper.prototype.css = function(el, property, value)
-{
-    // If their is no value and property is an object
-    if (this.is_object(property))
-    {
-        for (var key in property)
-        {
-            if (!property.hasOwnProperty(key))
-            {
-                continue;
-            }
-
-            this.css(el, key, property[key]);
-        }
-    }
-    else
-    {
-        // Normalise if this is an easing value - e.g display, 'ease-in-out'
-        value = this._normalizeEasing(value);
-
-        // vendor prefix the property if need be and convert to camelCase
-        var properties = this._vendorPrefix(property);
-
-        // Loop vendored (if added) and unvendored properties and apply
-        for (var i = 0; i < properties.length; i++)
-        {
-            el.style[properties[i]] = value;
-        }
-    }
-}
-
-/**
- * Animate a css proprety
- *
- * @access public
- * @param  node     el          Target DOM node
- * @param  string   cssProperty CSS property
- * @param  mixed    from        Start value
- * @param  mixed    to          Ending value
- * @param  int      time        Animation time in ms
- * @param  string   easing      Easing function
- * @param  function callback    Callback to apply when animation ends (optional)
- */
-Helper.prototype.animate = function(el, cssProperty, from, to, time, easing, callback)
-{
-    // Set defaults if values were not provided;
-    time = (typeof time === 'undefined' ? 300 : time);
-    easing = (typeof easing === 'undefined' ? 'linear' : this._normalizeEasing(easing));
-    callback = (typeof callback === 'undefined' ? false : callback);
-
-    // Width and height need to use js to get the starting size
-    // if it was set to auto/initial/null
-    if ((cssProperty === 'height' || cssProperty === 'width') && (from === 'initial' || from === 'auto' || !from))
-    {
-        if (cssProperty === 'height')
-        {
-            from = (el.clientHeight || el.offsetHeight) + 'px';
-        }
-        else
-        {
-            from = (el.clientWidth || el.offsetWidth) + 'px';
-        }
-
-        // Float/integer of number fallback if not provided as string
-        if (Number.isInteger(from) || Number(from) === from && from % 1 !== 0)
-        {
-            from = from + 'px';
-        }
-
-        this.css(el, cssProperty, from);
-    }
-
-    // Ortherwise set the current style or the defined "from"
-    else
-    {
-        if (from === 'initial' || from === 'auto' || !from)
-        {
-            this.css(el, cssProperty, this.getStyle(el, cssProperty));
-        }
-        else
-        {
-            this.css(el, cssProperty, from);
-        }
-    }
-
-
-    // We need to merge transitions into a single allied value
-    var existingTransitions = this.getStyle(el, 'transition');
-
-    console.log(existingTransitions);
-
-    if (existingTransitions !== 'none' && existingTransitions !== 'all 0s ease 0s')
-    {
-        // Don't apply the same transition value twice 
-        // The animation transition on a property should override 
-        // an existing one
-        var transitions = existingTransitions.split(',').map(Function.prototype.call, String.prototype.trim);
-        transitions.push(cssProperty + ' ' + time + 'ms ' + easing);
-
-        var props = [];
-        for (var i = transitions.length - 1; i >= 0; --i)
-        {
-            var prop = transitions[i].split(' ')[0];
-            if (this.in_array(prop, props))
-            {
-                transitions.splice(i, 1);
-            }
-            props.push(prop);
-        }
-
-        this.css(el, 'transition', transitions.join(', '));
-    }
-    else
-    {
-        this.css(el, 'transition', cssProperty + ' ' + time + 'ms ' + easing);
-    }
-
-    this.css(el, cssProperty, to);
-
-    // Add an event listener to check when the transition has finished
-    var _this = this;
-
-    el.addEventListener('transitionend', function transitionEnd(e)
-    {
-        e = e || window.event;
-
-        if (e.propertyName == cssProperty)
-        {
-            _this.removeStyle(el, 'transition');
-
-            el.removeEventListener('transitionend', transitionEnd, false);
-
-            if (_this.isCallable(callback))
-            {
-                callback.call(null, el);
             }
         }
 
-    }, false);
+        return ret;
+    }
+    // eventListeners(node, 'click')
+    var ret = [];
+
+    if (events[eventName])
+    {
+        var _evts = events[eventName];
+
+        for (var i = 0; i < _evts.length; i++)
+        {
+            var eventObj = _evts[i];
+
+            if (eventObj.element === DOMElement)
+            {
+                ret.push(eventObj);
+            }
+        }
+    }
+
+    return ret;
 }
 
-/**
+
+
+	/**
  * Browser utility functions
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
  */
 
 /**
  * Get the browser with version
  *
- * @access public
- * @return object
+ * @access {public}
+ * @return {object}
  */
-Helper.prototype.getBrowser = function()
+get_browser()
 {
     if (this.browser)
     {
@@ -5231,10 +4691,10 @@ Helper.prototype.getBrowser = function()
      * https://github.com/darcyclarke/Detect.js
      * Dual licensed under the MIT and GPL licenses.
      *
-     * @version 2.2.2
-     * @author Darcy Clarke
-     * @url http://darcyclarke.me
-     * @createdat Mon Oct 26 2015 08:21:54 GMT-0200 (Horário brasileiro de verão)
+     * @version {2.2.2}
+     * @author {Darcy} Clarke}
+     * @url {http://darcyclarke.me}
+     * @createdat {Mon} Oct 26 2015 08:21:54 GMT-0200 (Horário brasileiro de verão)
      *
      * Based on UA-Parser (https://github.com/tobie/ua-parser) by Tobie Langel
      *
@@ -6538,19 +5998,19 @@ Helper.prototype.getBrowser = function()
 /**
  * Is this a mobile user agent?
  *
- * @return bool
+ * @return {bool}
  */
-Helper.prototype.isMobile = function()
+is_mobile()
 {
-    return this.getBrowser()['device'] === 'Mobile';
+    return this.get_browser()['device'] === 'Mobile';
 }
 
 /**
  * Is this a mobile user agent?
  *
- * @return bool
+ * @return {bool}
  */
-Helper.prototype.isRetina = function()
+is_retina()
 {
     var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
                       (min--moz-device-pixel-ratio: 1.5),\
@@ -6570,10 +6030,1243 @@ Helper.prototype.isRetina = function()
     return false;
 }
 
-	Container.singleton('Helper', Helper).Helper().getBrowser();
+	/**
+ * Animation factory.
+ *
+ * @access {private}
+ * @param  {node}     el                  Target DOM node
+ * @param  {object}   options             Options object
+ * @param  {string}   options.property    CSS property
+ * @param  {mixed}    options.from        Start value
+ * @param  {mixed}    options.to          Ending value
+ * @param  {int}      options.duration    Animation duration in MS
+ * @param  {string}   options.easing      Easing function in camelCase
+ * @param  {function} options.callback    Callback to apply when animation ends (optional)
+ * @return {array}
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+_animation_factory(DOMElement, opts)
+{
+    var optionSets = [];
 
-	})();
+    this.each(opts, function(key, val)
+    {
+        // animation_factory('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
+        if (key === 'property')
+        {
+            var options = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, opts);
 
+            options.FROM_FACTORY = true;
+            options.property = val;
+            options.el = DOMElement;
+            optionSets.push(options);
+
+            // break
+            return false;
+        }
+        else if (!this.in_array(key, ANIMATION_ALLOWED_OPTIONS))
+        {
+            // Only worth adding if the property is vavlid
+            var camelProp = this.css_prop_to_camel_case(key);
+            
+            if (!this.is_undefined(document.body.style[camelProp]))
+            {
+                var isObjSet = this.is_object(val);
+                var toMerge  = isObjSet ? val : opts;
+                var options  = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, toMerge);
+                
+                // animation_factory('foo', { height: '100px', opacity: 0 } );
+                if (!isObjSet)
+                {
+                    options.to = val;
+                }
+
+                // animation_factory('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+                options.FROM_FACTORY = true;
+                options.property = key;
+                options.el = DOMElement;
+                optionSets.push(options);
+            }
+        }
+    }, this);
+
+    this.each(optionSets, function(i, options)
+    {
+        // Not nessaray, but sanitize out redundant options
+        options = this.map(options, function(key, val)
+        {
+            return this.in_array(key, ANIMATION_FILTER_OPTIONS) ? val : false;
+
+        }, this);
+
+        options.FROM_FACTORY = true;
+
+        optionSets[i] = options;
+
+    }, this);
+
+    if (this.is_empty(optionSets))
+    {
+        console.error('Animation Error: Either no CSS property(s) was provided or the provided property(s) is unsupported.');
+    }
+
+    return optionSets;
+}
+	/**
+ * Animation handler
+ *
+ * @access {private}
+ * @param  {node}     el                  Target DOM node
+ * @param  {object}   options             Options object
+ * @param  {string}   options.property    CSS property
+ * @param  {mixed}    options.from        Start value
+ * @param  {mixed}    options.to          Ending value
+ * @param  {int}      options.duration    Animation duration in MS
+ * @param  {string}   options.easing      Easing function in camelCase
+ * @param  {function} options.callback    Callback to apply when animation ends (optional)
+ */
+animate(AN_DOMElement, options)
+{
+    // args have not been processed
+    if (!options.FROM_FACTORY)
+    {
+        const optionSets = this._animation_factory(AN_DOMElement, options);
+
+        this.each(optionSets, function(i, opts)
+        {
+            this.animate(AN_DOMElement, opts);
+
+        }, this);
+
+        return;
+    }
+
+    const _this = this;
+
+    // Cache variables locally for faster reading / writing
+    // Options
+    var AN_CSSProperty           =  options.property;
+    var AN_easing                =  options.easing;
+    var AN_callback              =  options.callback;
+
+    // Mutable options
+    var AN_startValue            =  options.startValue;
+    var AN_endValue              =  options.endValue;
+    var AN_duration              =  options.duration;
+
+    // Internal trackers
+    var AN_currentValue          =  options.currentValue;
+    var AN_totalDistance         =  options.totalDistance;
+    var AN_timeLapsed            =  options.timeLapsed;
+    var AN_percentage            =  options.percentage;
+    var AN_eventTimeout          =  options.eventTimeout;
+    var AN_animationInterval     =  options.animationInterval;
+    var AN_CSSPropertyUnits      =  options.CSSPropertyUnits;
+    var AN_backwardsAnimation    =  options.backwardsAnimation;
+    var AN_animationStepDuration =  options.animationStepDuration;
+
+    // Color specific
+    var AN_isColorAnimation      =  AN_CSSProperty.includes('color');
+    var AN_colorAnimationStep    =  options.colorAnimationStep;
+    var AN_colorAnimationCount   =  options.colorAnimationCount;
+    var AN_colorGradientMap      =  options.colorGradientMap;
+
+    /**
+     * Initialize
+     * 
+     * @private
+     */
+    var init = function()
+    {
+        if (AN_isColorAnimation)
+        {
+            AN_endValue   = options.to;
+            AN_startValue = options.from || _this.rendered_style(AN_DOMElement, AN_CSSProperty);
+            AN_animationStepDuration = 10;
+
+            AN_colorAnimationCount = Math.floor(AN_duration / AN_animationStepDuration);
+
+            AN_colorGradientMap = generateColorGradient(AN_easing);
+
+            startColorAnimation();
+
+            return;
+        }
+
+        if (AN_CSSProperty === 'transform')
+        {
+            
+
+        }
+
+        // We need to set the end value, then remove it and re-apply any inline styles if they
+        // existed
+        if (options.to === 'auto' || options.to === 'initial' || options.to === 'unset')
+        {
+            var prevStyle = _this.inline_style(AN_DOMElement, AN_CSSProperty);
+            _this.css(AN_DOMElement, AN_CSSProperty, options.to);
+            options.to = _this.rendered_style(AN_DOMElement, AN_CSSProperty);
+            _this.css(AN_DOMElement, AN_CSSProperty, prevStyle ? prevStyle : false);
+        }
+       
+        AN_endValue           = parseFloat(options.to);
+        AN_CSSPropertyUnits   = getValueUnits(options.to);
+        AN_startValue         = _this.is_undefined(options.from) ? parseFloat(_this.rendered_style(AN_DOMElement, AN_CSSProperty)) : options.from;
+        AN_totalDistance      = Math.abs(AN_endValue - AN_startValue);
+        AN_backwardsAnimation = AN_endValue < AN_startValue;
+        
+        if (AN_endValue === AN_startValue) return;
+
+        startAnimation();
+    }
+
+    /**
+     * Get value units e.g (px, rem, etc...)
+     * 
+     * @private
+     */
+    var getValueUnits = function(value)
+    {
+        if (_this.is_numeric(value) && AN_CSSProperty !== 'opacity')
+        {
+            return 'px';
+        }
+
+        value = value + '';
+
+        return value.split(/[0-9]/).pop().replaceAll(/[^a-z%]/g, '').trim();
+    }
+
+    /**
+     * Start animation
+     * 
+     * @private
+     */
+    var startAnimation = function()
+    {
+        clearInterval(AN_animationInterval);
+
+        var _this = this;
+
+        AN_animationInterval = setInterval(function()
+        {
+            loopAnimation();
+
+        }, AN_animationStepDuration);
+    }
+
+    /**
+     * Loop animation
+     * 
+     * @private
+     */
+    var loopAnimation = function()
+    {
+        AN_timeLapsed  += AN_animationStepDuration;
+        AN_percentage   = (AN_timeLapsed / parseFloat(AN_duration, 10));
+        AN_percentage   = (AN_percentage > 1) ? 1 : AN_percentage;
+        var change = (AN_totalDistance * easingPattern(AN_easing, AN_percentage));
+        AN_currentValue = AN_backwardsAnimation ? AN_startValue - change : AN_startValue + change;
+
+        _this.css(AN_DOMElement, AN_CSSProperty, AN_currentValue + AN_CSSPropertyUnits);
+        
+        stopAnimation();
+    }
+
+    /**
+     * Start color animation
+     * 
+     * @private
+     */
+    var startColorAnimation = function()
+    {
+        clearInterval(AN_animationInterval);
+
+        var _this = this;
+
+        AN_animationInterval = setInterval(function()
+        {
+            loopColorAnimation();
+
+        }, AN_animationStepDuration);
+    }
+
+    /**
+     * Loop the color animation.
+     * 
+     * @private
+     */
+    var loopColorAnimation = function()
+    {
+        AN_timeLapsed += AN_animationStepDuration;
+
+        const color = AN_colorGradientMap[AN_colorAnimationStep];
+
+        _this.css(AN_DOMElement, AN_CSSProperty, color);
+
+        AN_colorAnimationStep++;
+
+        stopAnimation();
+    }
+
+    /**
+     * Stop the animation if nessasary.
+     * @private
+     * 
+     */
+    var stopAnimation = function()
+    {
+        AN_currentValue = parseFloat(_this.rendered_style(AN_DOMElement, AN_CSSProperty));
+
+        if (AN_currentValue == AN_endValue || (!AN_backwardsAnimation && AN_currentValue > AN_endValue) || (AN_backwardsAnimation && AN_currentValue <= AN_endValue) || AN_colorAnimationStep > AN_colorAnimationCount || AN_timeLapsed > AN_duration)
+        {
+            clearInterval(AN_animationInterval);
+
+            if (_this.is_function(AN_callback))
+            {
+                AN_callback(AN_DOMElement);
+            }
+        }
+    }
+
+    /**
+     * Calculate the easing pattern.
+     * 
+     * @private
+     * @link    {https://gist.github.com/gre/1650294}
+     * @param   {String} type Easing pattern
+     * @param   {Number} time Time animation should take to complete
+     * @returns {Number}
+     */
+    var easingPattern = function(type, time)
+    {
+        return ANIMATION_EASING_FUNCTIONS[type].call(null, time) || time;
+    }
+
+    /**
+     * Sanitize the start and end colors to RGB arrays.
+     * 
+     * @param  {string} color  hex or rgb color as as string
+     * @return {array}
+     */
+    var sanitizeColor = function(color)
+    {
+        if (color.startsWith('rgb('))
+        {
+            return color.split(' ', 3).map((x) => parseInt(x.replaceAll(/[^\d+]/g, '')));
+        }
+        else if (color.length === 7 )
+        {
+            let rgb = [];
+
+            color.match(/#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i).forEach((item) =>
+            {
+                if (item.length === 2)
+                {
+                    const color = parseInt(item, 16);
+
+                    rgb.push(color);
+                }
+            });
+
+            return rgb;
+        }
+    }
+
+    /**
+     * Mix 2 colors.
+     * 
+     * @param  {array}  color1 RGB color array
+     * @param  {array}  color2 RGB color array
+     * @param  {number} blend % between 0 and 1
+     * @return {string} 
+     */
+    var mixColors = function(color1RGB, color2RGB, blend)
+    {
+        function linearInterpolation(y1, y2, x)
+        {
+            return Math.round(x * (y2 - y1) + y1);
+        }
+        
+        const colorRGB  = [];
+
+        color1RGB.forEach((c1, index) =>
+        {
+            const mixedColor = linearInterpolation(c1, color2RGB[index], blend);
+
+            colorRGB.push(mixedColor);
+        });
+
+        return 'rgb(' + colorRGB + ')';
+    }
+
+    /**
+     * Generate color gradient
+     * 
+     * @param  {string} funcName Easing function name
+     * @return {array}
+     */
+    var generateColorGradient = function(funcName)
+    {
+        const colors = [];
+
+        const rgbStart = sanitizeColor(AN_startValue);
+        const rgbEnd   = sanitizeColor(AN_endValue);
+
+        for (let i = 0; i <= AN_colorAnimationCount; i++)
+        {
+            const blend = ANIMATION_EASING_FUNCTIONS[funcName](i / AN_colorAnimationCount);
+            
+            const color = mixColors(rgbStart, rgbEnd, blend);
+
+            colors.push(color);
+        }
+
+        return colors;
+    }
+
+    init();
+}
+	/**
+ * Helper Animation component
+ *
+ * @author    Joe J. Howard
+ * @copyright Joe J. Howard
+ * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ */
+
+
+/**
+ * CSS Animation.
+ *
+ * @access {private}
+ * @param  {node}     DOMElement          Target DOM node
+ * @param  {object}   options             Options object
+ * @param  {string}   options.property    CSS property
+ * @param  {mixed}    options.from        Start value
+ * @param  {mixed}    options.to          Ending value
+ * @param  {int}      options.duration    Animation duration in MS
+ * @param  {string}   options.easing      Easing function in camelCase
+ * @param  {function} options.callback    Callback to apply when animation ends (optional)
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+animate_css(DOMElement, options)
+{    
+    // Call does not from factory need to sanitize
+    options = !options.FROM_FACTORY ? this._animation_factory(DOMElement, options) : options;
+
+    // Is this a mutli transition
+    var isMulti = this.size(options > 1);
+
+    // Cache inline transitions to revert back to on completion
+    var inlineTransitions = this.css_transition_props(this.inline_style(DOMElement, 'transition'));
+    inlineTransitions = this.is_empty(inlineTransitions) ? false : this.join_obj(inlineTransitions, ' ', ', ');;
+
+    // Cache rendered transitions to merge into for this animation
+    var renderedTransions = this.css_transition_props(DOMElement);
+
+    var callback;
+
+    // Props to animate / transition
+    var styles = {};
+    this.each(options, function(i, option)
+    {
+        // Setup and convert duration from MS to seconds
+        var property = option.property;
+        var duration = (option.duration / 1000);
+        var easing   = CSS_EASINGS[option.easing];
+
+        // Set the transition for the property
+        // in our merged obj
+        renderedTransions[property] = `${duration}s ${easing}`;
+
+        // Set the property style
+        styles[property] = option.to;
+
+        callback = option.callback;
+
+    }, this);
+
+    // Flatten transition ready for css
+    var transition = this.join_obj(renderedTransions, ' ', ', ');
+
+    this.css(DOMElement, 'transition', transition);
+
+    const _this = this;
+
+    var onTransitionEnd;
+
+    onTransitionEnd = function(e)
+    {
+        e = e || window.event;
+
+        var prop = _this.css_prop_to_hyphen_case(e.propertyName);
+
+        delete renderedTransions[prop];
+
+        var completed = _this.is_empty(renderedTransions);
+
+        var transition = completed ? inlineTransitions : _this.join_obj(renderedTransions, ' ', ', ');
+
+        _this.css(DOMElement, 'transition', transition);
+
+        if (_this.is_empty(renderedTransions))
+        {
+            DOMElement.removeEventListener('transitionend', onTransitionEnd, true);
+
+            if (callback)
+            {
+                callback(DOMElement);
+            }
+        }
+    }
+
+    DOMElement.addEventListener('transitionend', onTransitionEnd, true);
+
+    this.css(DOMElement, styles);
+}
+
+/**
+ * Returns an object of CSS transitions by transition property as keys.
+ *
+ * @param  {node|string} DOMElement  Target element or transition value string
+ * @return {object}
+ */
+css_transition_props(DOMElement)
+{
+    if (!DOMElement) return {};
+    var transitions   = {};
+    var transitionVal = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transition');
+
+    // No transition
+    if (!transitionVal || transitionVal.startsWith('all 0s ease 0s') || transitionVal === 'none' || transitionVal === 'unset' || transitionVal === 'auto')
+    {
+        return transitions;
+    }
+
+    this.each(transitionVal.trim().split(','), function(i, transition)
+    {
+        transition = transition.trim();
+
+        // Variants of all
+        if (transition[0] === '.' || transition.startsWith('all ') ||  this.is_numeric(transition[0]))
+        {
+            transitions.all = transition.replace('all ', '');
+
+            return false;
+        }
+
+        var prop = transition.split(' ', 4).shift();
+
+        transitions[prop] = transition.replace(prop, '').trim();
+
+    }, this);
+
+    return transitions;
+}
+
+
+	
+
+/**
+ * Apply static properties to extended function.
+ *
+ * @private
+ * @param  {array}     constructors  Array of prototype chain constructors
+ * @param  {function}  func          Function to apply props to
+ */
+__applyStatics(constructors, func)
+{
+    this.each(constructors, function(i, constructor)
+    {
+        let props = Object.keys(constructor).filter(key => !PROTO_EXCLUDES.includes(key));
+
+        if (props.length)
+        {
+            this.each(props, function(i, key)
+            {
+                let prop = constructor[key];
+
+                if (this.is_function(prop))
+                {
+                    prop = this.__bind(prop, func);
+                }
+
+                func[key] = prop;
+
+            }, this);
+        }
+    }, this);
+}
+
+/**
+ * Returns an array of prototype constructors nested inside a function.
+ *
+ * @private
+ * @param   {function}  func  Function to loop
+ * @returns {array}
+ */
+__protoConstructors(func)
+{
+    let protos = [];
+    let proto = func.prototype || Object.getPrototypeOf(func);
+
+    while (proto && proto.constructor)
+    {
+        // recursive stopper
+        if (protos.includes.proto)
+        {
+            break;
+        }
+
+        protos.push(proto.constructor);
+
+        proto = proto.prototype || Object.getPrototypeOf(proto);
+    }
+
+    return protos.reverse();
+}
+
+/**
+ * Recursively delete from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+__arrayDeleteRecursive(keys, object)
+{
+    var key = keys.shift();
+
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        if (TO_STR.call(object) === '[object Array]')
+        {
+            object.splice(key, 1);
+        }
+        else
+        {
+            delete object[key];
+        }
+    }
+
+    if (!object[key])
+    {
+        return false;
+    }
+
+    return this.__arrayDeleteRecursive(keys, object[key]);
+}
+
+/**
+ * Recursively search from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+__arrayGetRecursive(keys, object)
+{
+    var key = keys.shift();
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        return object[key];
+    }
+
+    if (!object[key])
+    {
+        return undefined;
+    }
+
+    return this.__arrayGetRecursive(keys, object[key]);
+}
+
+/**
+ * Recursively set array/object.
+ *
+ * @param {array}          keys     Keys in search order
+ * @param {mixed}          value    Value to set
+ * @param {object|array}   object   Object to get from
+ * @param {string|number}  nextKey  Next key to set
+ */
+__arraySetRecursive(keys, value, object, nextKey)
+{
+    var key = keys.shift();
+    var islast = keys.length === 0;
+    var lastObj = object;
+    object = !nextKey ? object : object[nextKey];
+
+    // Trying to set a value on nested array that doesn't exist
+    if (!['object', 'function'].includes(typeof object))
+    {
+        throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
+    }
+
+    if (!object[key])
+    {
+        // Trying to put object key into an array
+        if (TO_STR.call(object) === '[object Array]' && typeof key === 'string')
+        {
+            var converted = Object.assign({}, object);
+
+            lastObj[nextKey] = converted;
+
+            object = converted;
+        }
+
+        if (keys[0] && typeof keys[0] === 'string')
+        {
+            object[key] = {};
+        }
+        else
+        {
+            object[key] = [];
+        }
+    }
+
+    if (islast)
+    {
+        object[key] = value;
+
+        return;
+    }
+
+    this.__arraySetRecursive(keys, value, object, key);
+}
+
+/**
+ * Segments an array/object path using from "dot.notation" into an array of keys in order.
+ *
+ * @param   {string}  path Path to parse
+ * @returns {array}
+ */
+__arrayKeySegment(path)
+{
+    var result = [];
+    var segments = path.split('.');
+
+    for (var i = 0; i < segments.length; i++)
+    {
+        var segment = segments[i];
+
+        if (!segment.includes('['))
+        {
+            result.push(segment);
+
+            continue;
+        }
+
+        var subSegments = segment.split('[');
+
+        for (var j = 0; j < subSegments.length; j++)
+        {
+            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
+            {
+                result.push(parseInt(subSegments[j].replace(']')));
+            }
+            else if (subSegments[j] !== '')
+            {
+                result.push(subSegments[j])
+            }
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Checks if traversable's are equal
+ * 
+ * @param   {array} | object}  a
+ * @param   {array} | object}  b
+ * @returns {boolean}
+ */
+__equalTraverseable(a, b)
+{
+    if (size(a) !== size(b))
+    {
+        return false;
+    }
+
+    let ret = true;
+
+    this.each(a, function(i, val)
+    {
+        if (!this.is_equal(val, b[i]))
+        {
+            ret = false;
+
+            return false;
+        }
+    }, this);
+
+    return ret;
+}
+
+/**
+ * Binds a function so that it can be identified.
+ * 
+ * @param   {function}  b
+ * @returns {boolean}
+ */
+__bind(func, context)
+{
+    context = typeof context === 'undefined' ? window : context;
+
+    const bound = func.bind(context);
+
+    bound.__isBound = true;
+
+    bound.__boundContext = context;
+
+    bound.__origional = func;
+
+    return bound;
+}
+
+/**
+ * Checks if two functions are equal
+ * 
+ * @param   {function}  a
+ * @param   {function}  b
+ * @returns {boolean}
+ */
+___equalFunction(a, b)
+{
+    // They're not technically equal
+    if (a !== b)
+    {
+        // Functions have the same name
+        if (a.name === b.name)
+        {
+            // If the functions were bound or cloned by the library they can technically still be equal
+            if ( a.name.includes('bound '))
+            {
+                return a.this.__isBound === b.this.__isBound && a.this.__boundContext === b.this.__boundContext && a.this.__origional === b.this.__origional;
+            }
+
+            // Native arrow functions
+            if (!a.prototype || !a.prototype.constructor)
+            {
+                return false;
+            }
+
+            // Check the prototypes
+            let aProps = object_props(a.prototype);
+            let bProps = object_props(b.prototype);
+
+            if (aProps.length === 0 && bProps.length === 0) return true;
+
+            let ret = true;
+
+            this.each(aProps, function(i, key)
+            {                
+                if (!this.is_equal(a.prototype[key], b.prototype[key]))
+                {
+                    ret = false;
+
+                    return false;
+                }
+            }, this);
+
+            return ret;
+        }
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Clone's variable with context.
+ * 
+ * @param   {mixed}  mixed_var  Variable to clone
+ * @param   {mixed}  context    Context when cloning recursive objects and arrays.
+ * @returns {mixed}
+ */
+__cloneVar(mixed_var, context, isDeep)
+{
+    isDeep = is_undefined(isDeep) ? true : isDeep;
+
+    let tag = this.var_type(mixed_var);
+
+    switch (tag)
+    {
+        case OBJECT_TAG:
+            return this.__cloneObj(mixed_var, context, isDeep);
+
+        case ARRAY_TAG:
+        case NODELST_TAG:
+        case ARGS_TAG:
+            return this.__cloneArray(mixed_var, context, isDeep);
+
+        case FUNC_TAG:
+            return this.__cloneFunc(mixed_var, context);
+
+        case NULL_TAG:
+            return null;
+
+        case UNDEF_TAG:
+            return;
+
+        case BOOL_TAG:
+            return mixed_var === true ? true : false;
+
+        case STRING_TAG:
+            return mixed_var.slice();
+
+        case NUMBER_TAG:
+            let n = mixed_var;
+            return n;
+
+        case REGEXP_TAG:
+            return this.__cloneRegExp(mixed_var, context);
+
+        case SYMBOL_TAG:
+            return this.__cloneSymbol(mixed_var);
+
+        case DATE_TAG:
+            return this.__cloneDate(mixed_var);
+
+        case SET_TAG:
+            return this.__cloneSet(mixed_var, context);
+
+        case MAP_TAG:
+            return this.__cloneMap(mixed_var, context);
+
+        case ARRAY_BUFFER_TAG:
+            return this.__cloneArrayBuffer(mixed_var);
+
+        case DATAVIEW_TAG:
+            return this.__cloneDataView(mixed_var);
+
+        case ARRAY_BUFFER_TAG:
+            return this.__cloneBuffer(mixed_var);
+
+        case FLOAT32_TAG:
+        case FLOAT64_TAG:
+        case INT8_TAG:
+        case INT16_TAG:
+        case INT32_TAG:
+        case UINT8_TAG:
+        case UINT8CLAMPED_TAG:
+        case UINT16_TAG:
+        case UINT32_TAG:
+            return this.__cloneTypedArray(object);
+
+        case ERROR_TAG:
+        case WEAKMAP_TAG:
+            return {};
+    }
+
+    return mixed_var;
+}
+
+/**
+ * Clones an object
+ * 
+ * @param   {object}  obj
+ * @returns {object}
+ */
+__cloneObj(obj, context, isDeep)
+{
+    // Handle date objects
+    if (obj instanceof Date)
+    {
+        let r = new Date();
+
+        r.setTime(obj.getTime());
+
+        return r;
+    }
+
+    // Loop keys and functions
+    let keys = object_props(obj);
+    let ret = {};
+
+    if (keys.length === 0)
+    {
+        return ret;
+    }
+
+    if (CURR_CLONES.has(obj))
+    {
+        return CURR_CLONES.get(obj);
+    }
+
+    CURR_CLONES.set(obj, ret);
+
+    this.each(keys, function(i, key)
+    {
+        ret[key] = this.__cloneVar(obj[key], typeof context === 'undefined' ? ret : context);
+    }, this);
+
+    return ret;
+}
+
+/**
+ * Clones a function
+ * 
+ * @param   {function}  function
+ * @param   {mixed}     context   Context to bind function
+ * @returns {function}
+ */
+__cloneFunc(func, context)
+{
+    return this.__bind(func, context);
+}
+
+/**
+ * Clones an array
+ * 
+ * @param   {array}  arr
+ * @returns {array}
+ */
+__cloneArray(arr, context)
+{
+    let ret = [];
+
+    let cacheKey = { array: arr };
+
+    if (CURR_CLONES.has(cacheKey))
+    {
+        return CURR_CLONES.get(cacheKey);
+    }
+
+    CURR_CLONES.set(cacheKey, ret);
+
+    this.each(arr, function(i, val)
+    {
+        ret[i] = this.__cloneVar(val, context);
+    });
+
+    return ret;
+}
+
+__cloneDate(d)
+{
+    let r = new Date();
+
+    r.setTime(d.getTime());
+
+    return r;
+}
+
+__cloneSymbol(symbol)
+{
+    return Object(Symbol.prototype.valueOf.call(symbol));
+}
+
+__cloneRegExp(regexp)
+{
+    let reFlags = /\w*$/;
+
+    let result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
+
+    result.lastIndex = regexp.lastIndex;
+
+    return result;
+}
+
+__cloneMap(m, context)
+{
+    const ret = new Map();
+
+    m.this.each((v, k) =>
+    {
+        ret.set(k, this.__cloneVar(v, context));
+    });
+
+    return ret;
+}
+
+__cloneSet(s, context)
+{
+    const ret = new Set();
+
+    s.this.each((val, k) =>
+    {
+        ret.add(k, this.__cloneVar(v, context));
+    });
+
+    return ret;
+}
+
+__cloneArrayBuffer(arrayBuffer)
+{
+    const result = new arrayBuffer.constructor(arrayBuffer.byteLength)
+
+    new Uint8Array(result).set(new Uint8Array(arrayBuffer));
+
+    return result;
+}
+
+__cloneDataView(dataView)
+{
+    const buffer = this.__cloneArrayBuffer(dataView.buffer);
+
+    return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
+}
+
+/**
+ * Creates a clone of `buffer`.
+ *
+ * @param   {Buffer}   buffer   The buffer to clone.
+ * @param   {boolean} [isDeep]  Specify a deep clone.
+ * @returns {Buffer}   Returns  the cloned buffer.
+ */
+__cloneBuffer(buffer)
+{
+    const length = buffer.length;
+
+    const result = allocUnsafe ? allocUnsafe(length) : new buffer.constructor(length);
+
+    buffer.copy(result);
+
+    return result;
+}
+
+/**
+ * Creates a clone of `typedArray`.
+ *
+ * @private
+ * @param {Object} typedArray The typed array to clone.
+ * @param {boolean} [isDeep] Specify a deep clone.
+ * @returns {Object} Returns the cloned typed array.
+ */
+__cloneTypedArray(typedArray)
+{
+    const buffer = this.__cloneArrayBuffer(typedArray.buffer);
+
+    return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
+}
+
+/**
+ * Removes all registered event listners on an element
+ *
+ * @access {private}
+ * @param  {node}    element Target node element
+ */
+__removeElementListeners(element)
+{
+    var events = this._events;
+    for (var eventName in events)
+    {
+        var eventObj = events[eventName];
+        var i = eventObj.length;
+        while (i--)
+        {
+            if (eventObj[i]['element'] === element)
+            {
+                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
+                this._events[eventName].splice(i, 1);
+            }
+        }
+    }
+}
+
+/**
+ * Removes all registered event listners of a specific type on an element
+ *
+ * @access {private}
+ * @param  {node}    element Target node element
+ * @param  {string}  type    Event listener type
+ */
+__removeElementTypeListeners(element, type)
+{
+    var eventObj = this._events[type];
+    var i = eventObj.length;
+    while (i--)
+    {
+        if (eventObj[i]['element'] === element)
+        {
+            this.__removeListener(eventObj[i]['element'], type, eventObj[i]['handler'], eventObj[i]['useCapture']);
+
+            this._events[type].splice(i, 1);
+        }
+    }
+}
+
+/**
+ * Adds a listener to the element
+ *
+ * @access {private}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ */
+__addListener(el, eventName, handler, useCapture)
+{
+    if (el.addEventListener)
+    {
+        el.addEventListener(eventName, handler, useCapture);
+    }
+    else
+    {
+        el.attachEvent('on' + eventName, handler, useCapture);
+    }
+}
+
+/**
+ * Removes a listener from the element
+ *
+ * @access {private}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ */
+__removeListener(el, eventName, handler, useCapture)
+{
+    if (el.removeEventListener)
+    {
+        el.removeEventListener(eventName, handler, useCapture);
+    }
+    else
+    {
+        el.detachEvent('on' + eventName, handler, useCapture);
+    }
+}
+
+		 // Destructor
+    destruct()
+    {
+        this.clearEventListeners();
+    }
+}
+
+Container.singleton('Helper', HelperJS);
+
+console.log(Container.get('Helper'));
+})();
 
 // Vendors
 (function()
@@ -6776,9 +7469,9 @@ Helper.prototype.isRetina = function()
  *
  * This is a utility class used internally to scroll to elements on a page.
  * It can still be invoked directly via the IOC container if you want to use it.
- * @example Container.get('SmoothScroll').animateScroll('#' + id, null, options);
- * @see     https://github.com/cferdinandi/smooth-scroll
- * @see     waypoints.js
+ * @example {Container.get('SmoothScroll').animateScroll('#'} + id, null, options);
+ * @see     {https://github.com/cferdinandi/smooth-scroll}
+ * @see     {waypoints.js}
  */
 (function()
 {
@@ -6883,8 +7576,8 @@ Helper.prototype.isRetina = function()
         /**
          * Get the height of an element.
          * @private
-         * @param  {Node} elem The element to get the height of
-         * @return {Number}    The element's height in pixels
+         * @param  {Node}   elem The element to get the height of
+         * @return {Number}      The element's height in pixels
          */
         var getHeight = function(elem)
         {
@@ -6986,8 +7679,8 @@ Helper.prototype.isRetina = function()
          * Escape special characters for use with querySelector
          * @public
          * @param {String} id The anchor ID to escape
-         * @author Mathias Bynens
-         * @link https://github.com/mathiasbynens/CSS.escape
+         * @author {Mathias} Bynens}
+         * @link {https://github.com/mathiasbynens/CSS.escape}
          */
         smoothScroll.escapeCharacters = function(id)
         {
@@ -7071,7 +7764,7 @@ Helper.prototype.isRetina = function()
         /**
          * Calculate the easing pattern
          * @private
-         * @link https://gist.github.com/gre/1650294
+         {*} @link https://gist.github.com/gre/1650294
          * @param {String} type Easing pattern
          * @param {Number} time Time animation should take to complete
          * @returns {Number}
@@ -7119,7 +7812,7 @@ Helper.prototype.isRetina = function()
         /**
          * Determine the document's height
          * @private
-         * @returns {Number}
+         {*} @returns {Number}
          */
         var getDocumentHeight = function()
         {
@@ -7248,7 +7941,7 @@ Helper.prototype.isRetina = function()
 
             /**
              * Reset position to fix weird iOS bug
-             * @link https://github.com/cferdinandi/smooth-scroll/issues/45
+             * @link {https://github.com/cferdinandi/smooth-scroll/issues/45}
              */
             if (root.pageYOffset === 0)
             {
@@ -7372,7 +8065,7 @@ Helper.prototype.isRetina = function()
 (function()
 {
     /* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
-     * @license MIT */
+     * @license {MIT} */
     ! function(n, e)
     {
         "function" == typeof define && define.amd ? define(e) : "object" == typeof exports ? module.exports = e() : n.NProgress = e()
@@ -7606,9 +8299,9 @@ Helper.prototype.isRetina = function()
 
 /**
  * Pluralize
- * @see https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations
+ * @see {https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations}
  * 
- * @example Container.Helper().pluralize('tomato', 5);
+ * @example {Container.Helper().pluralize('tomato',} 5);
  * 
  */
 (function()
@@ -7616,65 +8309,65 @@ Helper.prototype.isRetina = function()
     /**
      * Pluralize a word.
      *
-     * @param  string word  The input word
-     * @param  int    count The amount of items (optional) (default 2)
-     * @return string
+     * @param  {string} word  The input word
+     * @param  {int}    count The amount of items (optional) (default 2)
+     * @return {string}
      */
     var Pluralize = function(word, count)
     {
         /**
          * The word to convert.
          *
-         * @var string
+         * @var {string}
          */
         this.word = '';
 
         /**
          * Lowercase version of word.
          *
-         * @var string
+         * @var {string}
          */
         this.lowercase = '';
 
         /**
          * Uppercase version of word.
          *
-         * @var string
+         * @var {string}
          */
         this.upperCase = '';
 
         /**
          * Sentence-case version of word.
          *
-         * @var string
+         * @var {string}
          */
         this.sentenceCase = '';
 
         /**
          * Casing pattern of the provided word.
          *
-         * @var string
+         * @var {string}
          */
         this.casing = '';
 
         /**
          * Sibilants.
          *
-         * @var array
+         * @var {array}
          */
         this.sibilants = ['x', 's', 'z', 's'];
 
         /**
          * Vowels.
          *
-         * @var array
+         * @var {array}
          */
         this.vowels = ['a', 'e', 'i', 'o', 'u'];
 
         /**
          * Consonants.
          *
-         * @var array
+         * @var {array}
          */
         this.consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
 
@@ -7686,9 +8379,9 @@ Helper.prototype.isRetina = function()
     /**
      * Pluralize a word.
      *
-     * @param  string word  The input word
-     * @param  int    count The amount of items (optional) (default 2)
-     * @return string
+     * @param  {string} word  The input word
+     * @param  {int}    count The amount of items (optional) (default 2)
+     * @return {string}
      */
     Pluralize.prototype.convert = function(word, count)
     {
@@ -7702,7 +8395,7 @@ Helper.prototype.isRetina = function()
         this.word = word;
         this.lowercase = strtolower(word);
         this.upperCase = strtoupper(word);
-        this.sentenceCase = ucfirst(word);
+        this.sentenceCase = uc_first(word);
         this.casing = this.getCasing();
 
         // save some time in the case that singular and plural are the same
@@ -7768,7 +8461,7 @@ Helper.prototype.isRetina = function()
     /**
      * Is the word irregular and uncountable (e.g fish).
      *
-     * @return bool
+     * @return {bool}
      */
     Pluralize.prototype.isUncountable = function()
     {
@@ -7815,7 +8508,7 @@ Helper.prototype.isRetina = function()
     /**
      * Returns plural version of iregular words or FALSE if it is not irregular.
      *
-     * @return string|bool
+     * @return {string|bool}
      */
     Pluralize.prototype.isIrregular = function()
     {
@@ -7950,7 +8643,7 @@ Helper.prototype.isRetina = function()
     /**
      * Return an array with an index of where to cut off the ending and a suffix or FALSE.
      *
-     * @return array|false
+     * @return {array|false}
      */
     Pluralize.prototype.autoSuffix = function()
     {
@@ -7991,7 +8684,7 @@ Helper.prototype.isRetina = function()
     /**
      * Get provided casing of word.
      *
-     * @return string
+     * @return {string}
      */
     Pluralize.prototype.getCasing = function()
     {
@@ -8006,9 +8699,9 @@ Helper.prototype.isRetina = function()
     /**
      * Convert word to a casing.
      *
-     * @param  string word   The word to convert
-     * @param  string casing The casing format to convert to
-     * @return string
+     * @param  {string} word   The word to convert
+     * @param  {string} casing The casing format to convert to
+     * @return {string}
      */
     Pluralize.prototype.toCasing = function(word, casing)
     {
@@ -8031,9 +8724,9 @@ Helper.prototype.isRetina = function()
     /**
      * Strip end off a word at a given char index and return the end part.
      *
-     * @param  string word  The word to convert
-     * @param  int    count The index to split at
-     * @return string
+     * @param  {string} word  The word to convert
+     * @param  {int}    count The index to split at
+     * @return {string}
      */
     Pluralize.prototype.suffix = function(word, count)
     {
@@ -8043,9 +8736,9 @@ Helper.prototype.isRetina = function()
     /**
      * Strip end off a word at a given char index and return the start part.
      *
-     * @param  string word  The word to convert
-     * @param  int    count The index to split at
-     * @return string
+     * @param  {string} word  The word to convert
+     * @param  {int}    count The index to split at
+     * @return {string}
      */
     Pluralize.prototype.sliceFromEnd = function(word, count)
     {
@@ -8055,9 +8748,9 @@ Helper.prototype.isRetina = function()
     /**
      * Get the nth last character of a string.
      *
-     * @param  string word  The word to convert
-     * @param  int    count The index to get
-     * @return string
+     * @param  {string} word  The word to convert
+     * @param  {int}    count The index to get
+     * @return {string}
      */
     Pluralize.prototype.nthLast = function(word, count)
     {
@@ -8073,7 +8766,7 @@ Helper.prototype.isRetina = function()
 /**
  * Cookie manager
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+ * @see {https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie}
  * 
  */
 (function()
@@ -8123,16 +8816,16 @@ Helper.prototype.isRetina = function()
     /**
      * Cookie prefix
      * 
-     * @var string
+     * @var {string}
      */
     var _prefix = '_hb';
 
     /**
      * Module constructor
      *
-     * @access public
+     * @access {public}
      * @constructor
-     * @return this
+     {*} @return this
      */
     var Cookies = function()
     {
@@ -8142,14 +8835,14 @@ Helper.prototype.isRetina = function()
     /**
      * Set a cookie
      *
-     * @access public
-     * @param  string    key      Cookie key
-     * @param  string    value    Cookie value
-     * @param  int    days     Cookie expiry in days (optional) (default when browser closes)
-     * @param  string    path     Cookie path (optional) (default "/")
-     * @param  bool   secure   Secure policy (optional) (default) (true)
-     * @param  stringing samesite Samesite policy (optional) (default) (true)
-     * @return sting
+     * @access {public}
+     * @param  {string}    key      Cookie key
+     * @param  {string}    value    Cookie value
+     * @param  {int}    days     Cookie expiry in days (optional) (default when browser closes)
+     * @param  {string}    path     Cookie path (optional) (default "/")
+     * @param  {bool}   secure   Secure policy (optional) (default) (true)
+     * @param  {stringing} samesite Samesite policy (optional) (default) (true)
+     * @return {sting}
      */
     Cookies.prototype.set = function(key, value, days, path, secure, samesite)
     {
@@ -8168,9 +8861,9 @@ Helper.prototype.isRetina = function()
     /**
      * Get a cookie
      *
-     * @access public
-     * @param  string key Cookie key
-     * @return mixed
+     * @access {public}
+     * @param  {string} key Cookie key
+     * @return {mixed}
      */
     Cookies.prototype.get = function(key)
     {
@@ -8199,8 +8892,8 @@ Helper.prototype.isRetina = function()
     /**
      * Remove a cookie
      *
-     * @access public
-     * @param  string key Cookie to remove
+     * @access {public}
+     * @param  {string} key Cookie to remove
      */
     Cookies.prototype.remove = function(key)
     {
@@ -8212,9 +8905,9 @@ Helper.prototype.isRetina = function()
     /**
      * Normalise cookie expiry date
      *
-     * @access private
-     * @param  int    days Days when cookie expires
-     * @return sting
+     * @access {private}
+     * @param  {int}    days Days when cookie expires
+     * @return {sting}
      */
     Cookies.prototype._normaliseExpiry = function(days)
     {
@@ -8228,9 +8921,9 @@ Helper.prototype.isRetina = function()
     /**
      * Normalise cookie key
      *
-     * @access private
-     * @param  string key Cookie key
-     * @return sting
+     * @access {private}
+     * @param  {string} key Cookie key
+     * @return {sting}
      */
     Cookies.prototype._normaliseKey = function(key)
     {
@@ -8242,9 +8935,9 @@ Helper.prototype.isRetina = function()
     /**
      * Encode cookie value
      *
-     * @access private
-     * @param  mixed  value Value to encode
-     * @return sting
+     * @access {private}
+     * @param  {mixed}  value Value to encode
+     * @return {sting}
      */
     Cookies.prototype._encodeCookieValue = function(value)
     {
@@ -8263,9 +8956,9 @@ Helper.prototype.isRetina = function()
     /**
      * Decode cookie value
      *
-     * @access private
-     * @param  string  str Value to decode
-     * @return mixed
+     * @access {private}
+     * @param  {string}  str Value to decode
+     * @return {mixed}
      */
     Cookies.prototype._decodeCookieValue = function(str)
     {
@@ -8286,9 +8979,9 @@ Helper.prototype.isRetina = function()
     /**
      * Base64 encode
      *
-     * @access private
-     * @param  string str String to encode
-     * @return sting
+     * @access {private}
+     * @param  {string} str String to encode
+     * @return {sting}
      */
     Cookies.prototype._base64_encode = function(str)
     {
@@ -8298,9 +8991,9 @@ Helper.prototype.isRetina = function()
     /**
      * Base64 decode
      *
-     * @access pubic
-     * @param  string str String to decode
-     * @return sting
+     * @access {pubic}
+     * @param  {string} str String to decode
+     * @return {sting}
      */
     Cookies.prototype._base64_decode = function(str)
     {
@@ -8310,9 +9003,9 @@ Helper.prototype.isRetina = function()
     /**
      * From binary
      *
-     * @access prvate
-     * @param  string binary String to decode
-     * @return string
+     * @access {prvate}
+     * @param  {string} binary String to decode
+     * @return {string}
      */
     Cookies.prototype._fromBinary = function(binary)
     {
@@ -8329,9 +9022,9 @@ Helper.prototype.isRetina = function()
     /**
      * To binary
      *
-     * @access pubic
-     * @param  string string String to encode
-     * @return sting
+     * @access {pubic}
+     * @param  {string} string String to encode
+     * @return {sting}
      */
     Cookies.prototype._toBinary = function(string)
     {
@@ -8351,145 +9044,6 @@ Helper.prototype.isRetina = function()
 })();
 
 /**
- * ToggleHeight
- *
- * The ToggleHeight module allows to transition an element's height 
- * from 0 -> auto or from auto -> 0
- *
- */
-(function()
-{
-
-    /**
-     * @var Helper obj
-     */
-    var Helper = Container.Helper();
-
-    /**
-     * Module constructor
-     *
-     * @class
-     * @constructor
-     * @access public
-     * @params el          node     The target node
-     * @params initial     int      The height in px to start the transition
-     * @params time        int      The time in ms of the transition
-     * @params easing      string   Transition easing - valid css easing function
-     * @params withOpacity boolean Should the transition include and opacity fade ?
-     */
-    var ToggleHeight = function(el, initial, time, easing, withOpacity)
-    {
-        // Set defaults if values were not provided;
-        initial = (typeof initial === 'undefined' ? 0 : initial);
-        time = (typeof time === 'undefined' ? 300 : time);
-        easing = (typeof easing === 'undefined' ? 'ease-in' : easing);
-        withOpacity = (typeof withOpacity === 'undefined' ? false : withOpacity);
-
-        // Get the element's current height
-        var actualHeight = parseInt(el.clientHeight || el.offsetHeight);
-
-        // Get the element's projected height
-        var computedStyle = Helper._computeStyle(el);
-        var endHeight = parseInt(el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTopWidth) + parseInt(computedStyle.borderBottomWidth));
-
-        // Dispatch appropriate function
-        if (endHeight === actualHeight || actualHeight > endHeight)
-        {
-            this._fromAuto(el, initial, time, easing, actualHeight, withOpacity);
-        }
-        else
-        {
-            this._toAuto(el, time, easing, actualHeight, endHeight, withOpacity);
-        }
-    }
-
-    /**
-     * Transition element's height from some height to auto.
-     *
-     * @access private
-     * @params el                   node     The target node
-     * @params initial              int      The height in px to start the transition
-     * @params time                 int      The time in ms of the transition
-     * @params easing               string   Transition easing - valid css easing function
-     * @params actualHeight         int      Height in px that the transition will start at
-     * @params endHeight            int      Height in px that the transition will end at
-     * @params withOpacity          boolean  Should the transition include and opacity fade ?
-     */
-    ToggleHeight.prototype._toAuto = function(el, time, easing, actualHeight, endHeight, withOpacity)
-    {
-        // Bugfix if the height is set to auto transition from auto
-        if (el.style.height === 'auto')
-        {
-            this._fromAuto(el, 0, time, easing, actualHeight, withOpacity);
-
-            return;
-        }
-
-        // Bugfix if both heights are the same just set the height to auto
-        if (actualHeight === endHeight)
-        {
-            el.style.height = 'auto';
-
-            return;
-        }
-
-        // Opacity timer
-        var opacityTime = (75 * time) / 100 + time;
-
-        // Set the height to the actual height (which could be zero)
-        // and force the browser to repaint
-        Helper.css(el, 'height', actualHeight + 'px');
-        el.offsetHeight;
-
-        // Run animations
-        var remove = function()
-        {
-            Helper.css(el, 'height', 'auto');
-        };
-
-        Helper.animate(el, 'height', actualHeight + 'px', endHeight + 'px', time, easing, remove);
-
-        if (withOpacity)
-        {
-            Helper.animate(el, 'opacity', '0', '1', opacityTime, easing);
-        }
-    }
-
-    /**
-     * Transition element's height from "auto" to 0.
-     *
-     * @access private
-     * @params el                   node     The target node
-     * @params initial              int      The height in px to start the transition
-     * @params time                 int      The time in ms of the transition
-     * @params easing               string   Transition easing - valid css easing function
-     * @params actualHeight         int      Height in px that the transition will start at
-     * @params withOpacity          boolean  Should the transition include and opacity fade ?
-     */
-    ToggleHeight.prototype._fromAuto = function(el, initial, time, easing, actualHeight, withOpacity)
-    {
-        var opacityTime = (15 * time) / 100 + time;
-
-        // Set the height to the actual height (which could be zero)
-        // and force the browser to repaint
-        Helper.css(el, 'height', actualHeight + 'px');
-        el.offsetHeight;
-
-        // Run animations
-        Helper.animate(el, 'height', actualHeight + 'px', '0px', time, easing);
-
-        if (withOpacity)
-        {
-            Helper.animate(el, 'opacity', '1', '0', opacityTime, easing);
-        }
-    }
-
-    // Load into container
-    Container.set('ToggleHeight', ToggleHeight);
-
-})();
-
-/**
  * Events
  *
  * This class handles custom event firing and callback assigning.
@@ -8500,7 +9054,7 @@ Helper.prototype.isRetina = function()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
@@ -8508,9 +9062,9 @@ Helper.prototype.isRetina = function()
      * Module constructor
      *
      * @class
-     * @constructor
-     * @access public
-     * @return this
+     {*} @constructor
+     * @access {public}
+     * @return {this}
      */
     var Events = function()
     {
@@ -8523,7 +9077,7 @@ Helper.prototype.isRetina = function()
     /**
      * Module destructor - clears event cache
      *
-     * @access public
+     * @access {public}
      */
     Events.prototype.destruct = function()
     {
@@ -8533,10 +9087,10 @@ Helper.prototype.isRetina = function()
     /**
      * Fire a custom event
      *
-     * @param string eventName The event name to fire
-     * @param mixed  subject   What should be given as "this" to the event callbacks
-     * @param mixed  args      List of additional args to push (optional)
-     * @access public
+     * @param {string} eventName The event name to fire
+     * @param {mixed}  subject   What should be given as "this" to the event callbacks
+     * @param {mixed}  args      List of additional args to push (optional)
+     * @access {public}
      */
     Events.prototype.fire = function()
     {
@@ -8573,9 +9127,9 @@ Helper.prototype.isRetina = function()
     /**
      * Bind a callback to an event
      *
-     * @param eventName string The event name
-     * @param callback  func   The callback function
-     * @access public
+     * @param {eventName} string The event name
+     * @param {callback}  func   The callback function
+     * @access {public}
      */
     Events.prototype.on = function(eventName, callback)
     {
@@ -8600,9 +9154,9 @@ Helper.prototype.isRetina = function()
     /**
      * UnBind a callback to an event
      *
-     * @param eventName string The event name
-     * @param callback  func   The callback function
-     * @access public
+     * @param {eventName} string The event name
+     * @param {callback}  func   The callback function
+     * @access {public}
      */
     Events.prototype.off = function(eventName, callback)
     {
@@ -8625,9 +9179,9 @@ Helper.prototype.isRetina = function()
     /**
      * Get a callback function by key
      *
-     * @param fn string The function key
-     * @access private
-     * @return string
+     * @param {fn} string The function key
+     * @access {private}
+     * @return {string}
      */
     Events.prototype._getFnName = function(fn)
     {
@@ -8656,9 +9210,9 @@ Helper.prototype.isRetina = function()
      * Module constructor
      *
      * @class
-     * @constructor
-     * @access public
-     * @return this
+     {*} @constructor
+     * @access {public}
+     * @return {this}
      */
     var Filters = function()
     {
@@ -8670,7 +9224,7 @@ Helper.prototype.isRetina = function()
     /**
      * Module destructor - clears event cache
      *
-     * @access public
+     * @access {public}
      */
     Filters.prototype.destruct = function()
     {
@@ -8680,9 +9234,9 @@ Helper.prototype.isRetina = function()
     /**
      * Fire a custom event
      *
-     * @param eventName string The event name to fire
-     * @param subject   mixed  What should be given as "this" to the event callbacks
-     * @access public
+     * @param {eventName} string The event name to fire
+     * @param {subject}   mixed  What should be given as "this" to the event callbacks
+     * @access {public}
      */
     Filters.prototype.filter = function(eventName, subject)
     {
@@ -8711,9 +9265,9 @@ Helper.prototype.isRetina = function()
     /**
      * Bind a callback to an event
      *
-     * @param eventName string The event name
-     * @param callback  func   The callback function
-     * @access public
+     * @param {eventName} string The event name
+     * @param {callback}  func   The callback function
+     * @access {public}
      */
     Filters.prototype.on = function(eventName, callback)
     {
@@ -8737,9 +9291,9 @@ Helper.prototype.isRetina = function()
     /**
      * UnBind a callback to an event
      *
-     * @param eventName string The event name
-     * @param callback  func   The callback function
-     * @access public
+     * @param {eventName} string The event name
+     * @param {callback}  func   The callback function
+     * @access {public}
      */
     Filters.prototype.off = function(eventName, callback)
     {
@@ -8762,9 +9316,9 @@ Helper.prototype.isRetina = function()
     /**
      * Get a callback function by key
      *
-     * @param fn string The function key
-     * @access private
-     * @return string
+     * @param {fn} string The function key
+     * @access {private}
+     * @return {string}
      */
     Filters.prototype._getFnName = function(fn)
     {
@@ -8783,14 +9337,14 @@ Helper.prototype.isRetina = function()
 /**
  * InputMasker
  *
- * @see https://github.com/text-mask/text-mask/tree/master/vanilla
+ * @see {https://github.com/text-mask/text-mask/tree/master/vanilla}
  */
 (function()
 {
     /**
      * JS Helper reference
      * 
-     * @see https://github.com/text-mask/text-mask/tree/master/vanilla
+     * @see {https://github.com/text-mask/text-mask/tree/master/vanilla}
      */
     ! function(e, r)
     {
@@ -9293,14 +9847,14 @@ Helper.prototype.isRetina = function()
     /**
      * Reference to all applied masks
      * 
-     * @var array
+     * @var {array}
      */
     var _masks = [];
 
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Container.Helper();
 
@@ -9308,7 +9862,7 @@ Helper.prototype.isRetina = function()
      * Module constructor
      *
      * @constructor
-     * @access public
+     {*} @access public
      */
     var InputMasker = function(element)
     {
@@ -9323,7 +9877,7 @@ Helper.prototype.isRetina = function()
     /**
      * Mask Credit Card
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.creditcard = function()
     {
@@ -9342,7 +9896,7 @@ Helper.prototype.isRetina = function()
     /**
      * Mask money
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.money = function()
     {
@@ -9378,7 +9932,7 @@ Helper.prototype.isRetina = function()
     /**
      * Mask money
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.numeric = function()
     {
@@ -9414,7 +9968,7 @@ Helper.prototype.isRetina = function()
     /**
      * Mask numeric with decimals
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.numericDecimal = function()
     {
@@ -9450,7 +10004,7 @@ Helper.prototype.isRetina = function()
     /**
      * Mask alpha numeric
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.alphaNumeric = function()
     {
@@ -9488,7 +10042,7 @@ Helper.prototype.isRetina = function()
     /**
      * Mask alpha space
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.alphaSpace = function()
     {
@@ -9526,7 +10080,7 @@ Helper.prototype.isRetina = function()
     /**
      * Mask alpha dash
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.alphaDash = function()
     {
@@ -9564,7 +10118,7 @@ Helper.prototype.isRetina = function()
     /**
      * Mask alphanumeric dash
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.alphaNumericDash = function()
     {
@@ -9602,8 +10156,8 @@ Helper.prototype.isRetina = function()
     /**
      * Mask custom regex
      *
-     * @access public
-     * @param  regex  pattern The pattern regex to mask
+     * @access {public}
+     * @param  {regex}  pattern The pattern regex to mask
      */
     InputMasker.prototype.regex = function(pattern)
     {
@@ -9639,7 +10193,7 @@ Helper.prototype.isRetina = function()
     /**
      * Disable the mask
      *
-     * @access public
+     * @access {public}
      */
     InputMasker.prototype.remove = function()
     {
@@ -9670,12 +10224,12 @@ Helper.prototype.isRetina = function()
 (function()
 {
     /**
-     * @var obj
+     * @var {obj}
      */
     var Helper = Container.Helper();
 
     /**
-     * @var obj
+     * @var {obj}
      */
     var defaults = {
         title: '',
@@ -9708,10 +10262,10 @@ Helper.prototype.isRetina = function()
      * Module constructor
      *
      * @class
-     * @constructor
-     * @params options obj
-     * @access public
-     * @return this
+     {*} @constructor
+     * @params {options} obj
+     * @access {public}
+     * @return {this}
      */
     var Modal = function(options)
     {
@@ -9729,7 +10283,7 @@ Helper.prototype.isRetina = function()
     /**
      * After options have parsed invoke the modal
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._invoke = function()
     {
@@ -9748,7 +10302,7 @@ Helper.prototype.isRetina = function()
     /**
      * Build the actual modal
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._buildModal = function()
     {
@@ -9769,7 +10323,7 @@ Helper.prototype.isRetina = function()
             var closeButton = this._options.cancelBtn === true ? '<button type="button" class="btn ' + this._options.cancelClass + ' js-modal-close js-modal-cancel">' + this._options.cancelText + '</button>' : '';
             var confirmButton = this._options.confirmBtn === true ? '<button type="button" class="btn ' + this._options.confirmClass + ' js-modal-close js-modal-confirm">' + this._options.confirmText + '</button>' : '';
 
-            Helper.innerHTML(modal, [
+            Helper.inner_HTML(modal, [
                 '<div class="modal-dialog js-modal-dialog">',
                 '<div class="card js-modal-panel">',
                 '<div class="card-header">',
@@ -9797,14 +10351,14 @@ Helper.prototype.isRetina = function()
     /**
      * Get modal content from an existing DOM node
      *
-     * @access private
-     * @return string
+     * @access {private}
+     * @return {string}
      */
     Modal.prototype._buildTargetModal = function()
     {
         var content = Helper.$(this._options.targetContent);
 
-        if (!Helper.nodeExists(content))
+        if (!Helper.in_dom(content))
         {
             throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
         }
@@ -9815,7 +10369,7 @@ Helper.prototype.isRetina = function()
     /**
      * Render the modal
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._render = function()
     {
@@ -9825,7 +10379,7 @@ Helper.prototype.isRetina = function()
 
         this._centerModal();
 
-        Helper.addClass(this._overlay, 'active');
+        Helper.add_class(this._overlay, 'active');
 
         this._fireRender();
 
@@ -9834,13 +10388,13 @@ Helper.prototype.isRetina = function()
             _this._centerModal();
         });
 
-        Helper.addClass(document.body, 'no-scroll');
+        Helper.add_class(document.body, 'no-scroll');
     }
 
     /**
      * Bind event listeners inside the built modal
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._bindListeners = function()
     {
@@ -9867,7 +10421,7 @@ Helper.prototype.isRetina = function()
 
             clearTimeout(_this._timer);
 
-            if (Helper.hasClass(this, 'js-modal-confirm'))
+            if (Helper.has_class(this, 'js-modal-confirm'))
             {
                 var canClose = _this._fireConfirmValidator();
 
@@ -9877,20 +10431,20 @@ Helper.prototype.isRetina = function()
                 }
             }
 
-            Helper.addClass(_this._overlay, 'transition-off');
+            Helper.add_class(_this._overlay, 'transition-off');
 
             _this._fireClosed();
 
-            if (Helper.hasClass(this, 'js-modal-confirm'))
+            if (Helper.has_class(this, 'js-modal-confirm'))
             {
                 _this._fireConfirm();
             }
 
             _this._timer = setTimeout(function()
             {
-                Helper.removeFromDOM(_this._overlay);
-                Helper.removeFromDOM(_this._modal);
-                Helper.removeClass(document.body, 'no-scroll');
+                Helper.remove_from_dom(_this._overlay);
+                Helper.remove_from_dom(_this._modal);
+                Helper.remove_class(document.body, 'no-scroll');
             }, 600);
         }
 
@@ -9900,13 +10454,13 @@ Helper.prototype.isRetina = function()
         }
 
         var modalCloses = Helper.$All('.js-modal-close', this._modal);
-        if (!Helper.empty(modalCloses))
+        if (!Helper.is_empty(modalCloses))
         {
             Helper.addEventListener(modalCloses, 'click', closeModal, false);
         }
 
         var modalCancel = Helper.$('.js-modal-cancel', this._modal);
-        if (Helper.nodeExists(modalCancel))
+        if (Helper.in_dom(modalCancel))
         {
             Helper.addEventListener(modalCancel, 'click', closeModal, false);
         }
@@ -9915,11 +10469,11 @@ Helper.prototype.isRetina = function()
     /**
      * Fire render event
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._fireRender = function()
     {
-        if (this._options.onRender !== null && Helper.isCallable(this._options.onRender))
+        if (this._options.onRender !== null && Helper.is_callable(this._options.onRender))
         {
             var callback = this._options.onRender;
             var args = this._options.onRenderArgs;
@@ -9931,27 +10485,27 @@ Helper.prototype.isRetina = function()
     /**
      * Fire the closed event
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._fireClosed = function()
     {
-        if (this._options.onClose !== null && Helper.isCallable(this._options.onClose))
+        if (this._options.onClose !== null && Helper.is_callable(this._options.onClose))
         {
             var callback = this._options.onClose;
             var args = this._options.onCloseArgs;
             callback.apply(this._modal, args);
-            Helper.removeClass(document.body, 'no-scroll');
+            Helper.remove_class(document.body, 'no-scroll');
         }
     }
 
     /**
      * Fire the confirm event
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._fireConfirm = function()
     {
-        if (this._options.onConfirm !== null && Helper.isCallable(this._options.onConfirm))
+        if (this._options.onConfirm !== null && Helper.is_callable(this._options.onConfirm))
         {
             var callback = this._options.onConfirm;
             var args = this._options.onConfirmArgs;
@@ -9962,11 +10516,11 @@ Helper.prototype.isRetina = function()
     /**
      * Fire the confirm validation
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._fireConfirmValidator = function()
     {
-        if (this._options.validateConfirm !== null && Helper.isCallable(this._options.validateConfirm))
+        if (this._options.validateConfirm !== null && Helper.is_callable(this._options.validateConfirm))
         {
             var callback = this._options.validateConfirm;
             var args = this._options.validateConfirmArgs;
@@ -9979,11 +10533,11 @@ Helper.prototype.isRetina = function()
     /**
      * Fire the built event
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._fireBuilt = function()
     {
-        if (this._options.onBuilt !== null && Helper.isCallable(this._options.onBuilt))
+        if (this._options.onBuilt !== null && Helper.is_callable(this._options.onBuilt))
         {
             var callback = this._options.onBuilt;
             var args = this._options.onBuiltArgs;
@@ -9994,7 +10548,7 @@ Helper.prototype.isRetina = function()
     /**
      * Center the modal vertically
      *
-     * @access private
+     * @access {private}
      */
     Modal.prototype._centerModal = function()
     {
@@ -10032,12 +10586,12 @@ Helper.prototype.isRetina = function()
 (function()
 {
     /**
-     * @var obj
+     * @var {obj}
      */
     var Helper = Container.Helper();
 
     /**
-     * @var obj
+     * @var {obj}
      */
     var defaults =
     {
@@ -10070,10 +10624,10 @@ Helper.prototype.isRetina = function()
      * Module constructor
      *
      * @class
-     * @constructor
-     * @params options obj
-     * @access public
-     * @return this
+     {*} @constructor
+     * @params {options} obj
+     * @access {public}
+     * @return {this}
      */
     var Frontdrop = function(options)
     {
@@ -10094,7 +10648,7 @@ Helper.prototype.isRetina = function()
     /**
      * After options have parsed invoke the modal
      *
-     * @access private
+     * @access {private}
      */
     Frontdrop.prototype._invoke = function()
     {
@@ -10113,7 +10667,7 @@ Helper.prototype.isRetina = function()
     /**
      * Build the actual modal
      *
-     * @access private
+     * @access {private}
      */
     Frontdrop.prototype._buildModal = function()
     {
@@ -10139,7 +10693,7 @@ Helper.prototype.isRetina = function()
             }
         }
 
-        Helper.innerHTML(modal, [
+        Helper.inner_HTML(modal, [
             '<div class="frontdrop-dialog js-frontdrop-dialog">',
                 '<div class="frontdrop-header">',
                     close,
@@ -10161,14 +10715,14 @@ Helper.prototype.isRetina = function()
     /**
      * Get modal content from an existing DOM node
      *
-     * @access private
-     * @return string
+     * @access {private}
+     * @return {string}
      */
     Frontdrop.prototype._getTargetContent = function()
     {
         var content = Helper.$(this._options.targetContent);
 
-        if (!Helper.nodeExists(content))
+        if (!Helper.in_dom(content))
         {
             throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
         }
@@ -10179,7 +10733,7 @@ Helper.prototype.isRetina = function()
     /**
      * Render the modal
      *
-     * @access private
+     * @access {private}
      */
     Frontdrop.prototype._render = function()
     {
@@ -10191,19 +10745,19 @@ Helper.prototype.isRetina = function()
 
         setTimeout(function()
         {
-            Helper.addClass(overlay, 'active');
+            Helper.add_class(overlay, 'active');
 
         }, 50);
 
         this._fireRender();
 
-        Helper.addClass(document.body, 'no-scroll');
+        Helper.add_class(document.body, 'no-scroll');
     }
 
     /**
      * Bind event listeners inside the built modal
      *
-     * @access private
+     * @access {private}
      */
     Frontdrop.prototype._bindListeners = function()
     {
@@ -10230,7 +10784,7 @@ Helper.prototype.isRetina = function()
 
             clearTimeout(_this._timer);
 
-            if (Helper.hasClass(this, 'js-frontdrop-confirm'))
+            if (Helper.has_class(this, 'js-frontdrop-confirm'))
             {
                 var canClose = _this._fireConfirmValidator();
 
@@ -10240,20 +10794,20 @@ Helper.prototype.isRetina = function()
                 }
             }
 
-            Helper.addClass(_this._overlay, 'transition-off');
+            Helper.add_class(_this._overlay, 'transition-off');
 
             _this._fireClosed();
 
-            if (Helper.hasClass(this, 'js-frontdrop-confirm'))
+            if (Helper.has_class(this, 'js-frontdrop-confirm'))
             {
                 _this._fireConfirm();
             }
 
             _this._timer = setTimeout(function()
             {
-                Helper.removeFromDOM(_this._overlay);
-                Helper.removeFromDOM(_this._modal);
-                Helper.removeClass(document.body, 'no-scroll');
+                Helper.remove_from_dom(_this._overlay);
+                Helper.remove_from_dom(_this._modal);
+                Helper.remove_class(document.body, 'no-scroll');
             }, 500);
         }
 
@@ -10263,7 +10817,7 @@ Helper.prototype.isRetina = function()
         }
 
         var modalCloses = Helper.$All('.js-frontdrop-close', this._modal);
-        if (!Helper.empty(modalCloses))
+        if (!Helper.is_empty(modalCloses))
         {
             Helper.addEventListener(modalCloses, 'click', closeModal, false);
         }
@@ -10272,11 +10826,11 @@ Helper.prototype.isRetina = function()
     /**
      * Fire render event
      *
-     * @access private
+     * @access {private}
      */
     Frontdrop.prototype._fireRender = function()
     {
-        if (this._options.onRender !== null && Helper.isCallable(this._options.onRender))
+        if (this._options.onRender !== null && Helper.is_callable(this._options.onRender))
         {
             var callback = this._options.onRender;
             var args = this._options.onRenderArgs;
@@ -10288,27 +10842,27 @@ Helper.prototype.isRetina = function()
     /**
      * Fire the closed event
      *
-     * @access private
+     * @access {private}
      */
     Frontdrop.prototype._fireClosed = function()
     {
-        if (this._options.onClose !== null && Helper.isCallable(this._options.onClose))
+        if (this._options.onClose !== null && Helper.is_callable(this._options.onClose))
         {
             var callback = this._options.onClose;
             var args = this._options.onCloseArgs;
             callback.apply(this._modal, args);
-            Helper.removeClass(document.body, 'no-scroll');
+            Helper.remove_class(document.body, 'no-scroll');
         }
     }
 
     /**
      * Fire the confirm event
      *
-     * @access private
+     * @access {private}
      */
     Frontdrop.prototype._fireConfirm = function()
     {
-        if (this._options.onConfirm !== null && Helper.isCallable(this._options.onConfirm))
+        if (this._options.onConfirm !== null && Helper.is_callable(this._options.onConfirm))
         {
             var callback = this._options.onConfirm;
             var args = this._options.onConfirmArgs;
@@ -10319,11 +10873,11 @@ Helper.prototype.isRetina = function()
     /**
      * Fire the confirm validation
      *
-     * @access private
+     * @access {private}
      */
     Frontdrop.prototype._fireConfirmValidator = function()
     {
-        if (this._options.validateConfirm !== null && Helper.isCallable(this._options.validateConfirm))
+        if (this._options.validateConfirm !== null && Helper.is_callable(this._options.validateConfirm))
         {
             var callback = this._options.validateConfirm;
             var args = this._options.validateConfirmArgs;
@@ -10336,11 +10890,11 @@ Helper.prototype.isRetina = function()
     /**
      * Fire the built event
      *
-     * @access private
+     * @access {private}
      */
     Frontdrop.prototype._fireBuilt = function()
     {
-        if (this._options.onBuilt !== null && Helper.isCallable(this._options.onBuilt))
+        if (this._options.onBuilt !== null && Helper.is_callable(this._options.onBuilt))
         {
             var callback = this._options.onBuilt;
             var args = this._options.onBuiltArgs;
@@ -10364,12 +10918,12 @@ Helper.prototype.isRetina = function()
 {
 
     /**
-     * @var Helper obj
+     * @var {Helper} obj
      */
     var Helper = Container.Helper();
 
     /**
-     * @var _activeNotifs array
+     * @var {_activeNotifs} array
      */
     var _activeNotifs = [];
 
@@ -10377,16 +10931,16 @@ Helper.prototype.isRetina = function()
      * Module constructor
      *
      * @class
-     * @constructor
-     * @params options obj
-     * @access public
-     * @return this
+     {*} @constructor
+     * @params {options} obj
+     * @access {public}
+     * @return {this}
      */
     var Notification = function(options)
     {
         this._notifWrap = Helper.$('.js-nofification-wrap');
 
-        if (!Helper.nodeExists(this._notifWrap))
+        if (!Helper.in_dom(this._notifWrap))
         {
             this._buildNotificationContainer();
         }
@@ -10399,7 +10953,7 @@ Helper.prototype.isRetina = function()
     /**
      * Build the notification container
      *
-     * @access private
+     * @access {private}
      */
     Notification.prototype._buildNotificationContainer = function()
     {
@@ -10413,8 +10967,8 @@ Helper.prototype.isRetina = function()
     /**
      * Display the notification
      *
-     * @params options obj
-     * @access private
+     * @params {options} obj
+     * @access {private}
      */
     Notification.prototype._invoke = function(options)
     {
@@ -10427,10 +10981,10 @@ Helper.prototype.isRetina = function()
 
         var _this = this;
         var content = '<div class="msg-body"><p>' + options.msg + '</p></div>';
-        var notif = Helper.newNode('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
+        var notif = Helper.new_node('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
         var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
-        Helper.addClass(this._notifWrap, 'active');
+        Helper.add_class(this._notifWrap, 'active');
 
         // Timout remove automatically
         _activeNotifs.push(
@@ -10452,8 +11006,8 @@ Helper.prototype.isRetina = function()
     /**
      * Create a notification that has callback buttons 
      *
-     * @params options obj
-     * @access private
+     * @params {options} obj
+     * @access {private}
      */
     Notification.prototype._invokeCallbackable = function(options)
     {
@@ -10464,11 +11018,11 @@ Helper.prototype.isRetina = function()
 
         var content = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX + '</div>';
 
-        var notif = Helper.newNode('div', 'msg animate-notif', null, content, this._notifWrap);
+        var notif = Helper.new_node('div', 'msg animate-notif', null, content, this._notifWrap);
         var confirm = Helper.$('.js-confirm', notif);
         var dismiss = Helper.$('.js-dismiss', notif);
 
-        Helper.addClass(this._notifWrap, 'active');
+        Helper.add_class(this._notifWrap, 'active');
 
         _activeNotifs.push(
         {
@@ -10482,7 +11036,7 @@ Helper.prototype.isRetina = function()
         // Click to remove
         notif.addEventListener('click', function()
         {
-            if (Helper.isCallable(options.onDismiss))
+            if (Helper.is_callable(options.onDismiss))
             {
                 options.onDismiss(options.onDismissArgs);
             }
@@ -10493,7 +11047,7 @@ Helper.prototype.isRetina = function()
         // Click confirm to remove
         confirm.addEventListener('click', function()
         {
-            if (Helper.isCallable(options.onConfirm))
+            if (Helper.is_callable(options.onConfirm))
             {
                 options.onConfirm(options.onConfirmArgs);
             }
@@ -10505,7 +11059,7 @@ Helper.prototype.isRetina = function()
         {
             dismiss.addEventListener('click', function()
             {
-                if (Helper.isCallable(options.onDismiss))
+                if (Helper.is_callable(options.onDismiss))
                 {
                     options.onDismiss(options.onDismissArgs);
                 }
@@ -10518,8 +11072,8 @@ Helper.prototype.isRetina = function()
     /**
      * Remove a notification
      *
-     * @params _node node
-     * @access private
+     * @params {_node} node
+     * @access {private}
      */
     Notification.prototype._removeNotification = function(_node)
     {
@@ -10530,17 +11084,17 @@ Helper.prototype.isRetina = function()
             if (_node === _activeNotifs[i].node)
             {
                 clearTimeout(_activeNotifs[i].timeout);
-                Helper.removeClass(_node, 'animate-notif');
+                Helper.remove_class(_node, 'animate-notif');
                 Helper.animate(_node, 'opacity', '1', '0', 350, 'ease');
                 Helper.animate(_node, 'max-height', '100px', '0', 450, 'ease');
                 _activeNotifs.splice(i, 1);
                 setTimeout(function()
                 {
-                    Helper.removeFromDOM(_node);
+                    Helper.remove_from_dom(_node);
 
                     if (_activeNotifs.length === 0)
                     {
-                        Helper.removeClass(_this._notifWrap, 'active');
+                        Helper.remove_class(_this._notifWrap, 'active');
                     }
                 }, 450);
                 return;
@@ -10558,7 +11112,7 @@ Helper.prototype.isRetina = function()
  *
  * @example 
 
-var headers = {'foo' : 'bar'};
+{var} headers = {'foo' : 'bar'};
 var data    = {'foo' : 'bar'};
 
 var ajax = new _Ajax;
@@ -10676,7 +11230,7 @@ function abort()
     /**
      * JS Queue
      *
-     * @see https://medium.com/@griffinmichl/asynchronous-javascript-queue-920828f6327
+     * @see {https://medium.com/@griffinmichl/asynchronous-javascript-queue-920828f6327}
      */
     class Queue
     {
@@ -10736,9 +11290,9 @@ function abort()
     /**
      * Module constructor
      *
-     * @access public
+     * @access {public}
      * @constructor
-     * @return this
+     {*} @return this
      */
     class _Ajax
     {
@@ -10769,14 +11323,14 @@ function abort()
         /**
          * Ajax Methods 
          *
-         * @access public
-         * @param  string        url     Destination URL
-         * @param  string|object data    Data (optional)
-         * @param  function      success Success callback (optional)
-         * @param  function      error   Error callback (optional)
-         * @param  function      abort   Abort callback (optional)
-         * @param  object        headers Request headers (optional)
-         * @return this
+         * @access {public}
+         * @param  {string}        url     Destination URL
+         * @param  {string|object} data    Data (optional)
+         * @param  {function}      success Success callback (optional)
+         * @param  {function}      error   Error callback (optional)
+         * @param  {function}      abort   Abort callback (optional)
+         * @param  {object}        headers Request headers (optional)
+         * @return {this}
          */
         post(url, data, success, error, complete, abort, headers)
         {
@@ -10812,8 +11366,8 @@ function abort()
         /**
          * Success function
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         success(callback)
         {
@@ -10830,8 +11384,8 @@ function abort()
         /**
          * Error function
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         error(callback)
         {
@@ -10848,8 +11402,8 @@ function abort()
         /**
          * Alias for complete
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         then(callback)
         {
@@ -10859,8 +11413,8 @@ function abort()
         /**
          * Complete function
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         complete(callback)
         {
@@ -10877,8 +11431,8 @@ function abort()
         /**
          * Abort an ajax call
          *
-         * @param  function  callback Callback function
-         * @return this
+         * @param  {function}  callback Callback function
+         * @return {this}
          */
         abort(callback)
         {
@@ -10926,15 +11480,15 @@ function abort()
         /**
          * Special Upload Function
          *
-         * @access public
-         * @param  string        url      Destination URL
-         * @param  object        data     Form data
-         * @param  function      success  Success callback
-         * @param  function      error    Error callback
-         * @param  function      start    Start callback (optional)
-         * @param  function      progress Progress callback (optional)
-         * @param  function      complete Complete callback (optional)
-         * @return this
+         * @access {public}
+         * @param  {string}        url      Destination URL
+         * @param  {object}        data     Form data
+         * @param  {function}      success  Success callback
+         * @param  {function}      error    Error callback
+         * @param  {function}      start    Start callback (optional)
+         * @param  {function}      progress Progress callback (optional)
+         * @param  {function}      complete Complete callback (optional)
+         * @return {this}
          */
         upload(url, data, success, error, start, progress, complete)
         {
@@ -11027,16 +11581,16 @@ function abort()
         /**
          * Ajax call 
          *
-         * @access private
-         * @param  string        method   Request method
-         * @param  string        url      Destination URL
-         * @param  string|object data     Data (optional)
-         * @param  function      success  Success callback (optional)
-         * @param  function      error    Error callback (optional)
-         * @param  function      complete Complete callback (optional)
-         * @param  function      abort    Abort callback (optional)
-         * @param  object        headers  Request headers (optional)
-         * @return this
+         * @access {private}
+         * @param  {string}        method   Request method
+         * @param  {string}        url      Destination URL
+         * @param  {string|object} data     Data (optional)
+         * @param  {function}      success  Success callback (optional)
+         * @param  {function}      error    Error callback (optional)
+         * @param  {function}      complete Complete callback (optional)
+         * @param  {function}      abort    Abort callback (optional)
+         * @param  {object}        headers  Request headers (optional)
+         * @return {this}
          */
         _call(method, url, data, success, error, complete, abort, headers)
         {
@@ -11078,9 +11632,9 @@ function abort()
         /**
          * Send XHR headers
          *
-         * @access private
-         * @param  object    xhr     XHR object
-         * @param  object    headers Request headers (optional)
+         * @access {private}
+         * @param  {object}    xhr     XHR object
+         * @param  {object}    headers Request headers (optional)
          * @return {This}
          */
         _sendHeaders(xhr, headers)
@@ -11108,14 +11662,14 @@ function abort()
         /**
          * Normalise arguments from original call function
          *
-         * @param  string        method   Request method
-         * @param  string        url      Destination URL
-         * @param  string|object data     Data (optional)
-         * @param  function      success  Success callback (optional)
-         * @param  function      error    Error callback (optional)
-         * @param  function      complete Complete callback (optional)
-         * @param  function      error    Abort callback (optional)
-         * @param  object        headers  Request headers (optional)
+         * @param  {string}        method   Request method
+         * @param  {string}        url      Destination URL
+         * @param  {string|object} data     Data (optional)
+         * @param  {function}      success  Success callback (optional)
+         * @param  {function}      error    Error callback (optional)
+         * @param  {function}      complete Complete callback (optional)
+         * @param  {function}      error    Abort callback (optional)
+         * @param  {object}        headers  Request headers (optional)
          * @return {This}
          */
         _normaliseArgs(method, url, data, success, error, complete, abort, headers)
@@ -11210,11 +11764,11 @@ function abort()
         /**
          * Ready callback
          *
-         * @param  XMLHttpRequest xhr     XHR Object
-         * @param  function      success  Success callback (optional)
-         * @param  function      error    Error callback (optional)
-         * @param  function      complete Complete callback (optional)
-         * @param  function      abort    Abort callback (optional)
+         * @param  {XMLHttpRequest} xhr     XHR Object
+         * @param  {function}      success  Success callback (optional)
+         * @param  {function}      error    Error callback (optional)
+         * @param  {function}      complete Complete callback (optional)
+         * @param  {function}      abort    Abort callback (optional)
          */
         _ready(xhr, success, error, complete, abort)
         {
@@ -11326,7 +11880,7 @@ function abort()
 {
 
     /**
-     * @var Helper obj
+     * @var {Helper} obj
      */
     var Helper = Container.Helper();
 
@@ -11334,17 +11888,17 @@ function abort()
      * Module constructor
      *
      * @class
-     * @constructor
-     * @param form node
-     * @access public
-     * @return this
+     {*} @constructor
+     * @param {form} node
+     * @access {public}
+     * @return {this}
      */
     var FormValidator = function(form)
     {
 
         // Save inputs
         this._form = form;
-        this._inputs = Helper.getFormInputs(form);
+        this._inputs = Helper.form_inputs(form);
 
         // Defaults
         this._rulesIndex = [];
@@ -11365,8 +11919,8 @@ function abort()
     /**
      *  Is the form valid?
      *
-     * @access public
-     * @return boolean
+     * @access {public}
+     * @return {boolean}
      */
     FormValidator.prototype.isValid = function()
     {
@@ -11376,25 +11930,24 @@ function abort()
     /**
      * Show invalid inputs
      *
-     * @access public
+     * @access {public}
      */
     FormValidator.prototype.showInvalid = function()
     {
-
         this._clearForm();
 
         // Show the invalid inputs
         for (var j = 0; j < this._invalids.length; j++)
         {
             var __wrap = Helper.closest(this._invalids[j], '.form-field');
-            if (Helper.nodeExists(__wrap)) Helper.addClass(__wrap, 'danger');
+            if (Helper.in_dom(__wrap)) Helper.add_class(__wrap, 'danger');
         }
     }
 
     /**
      * Remove errored inputs
      *
-     * @access public
+     * @access {public}
      */
     FormValidator.prototype.clearInvalid = function()
     {
@@ -11404,19 +11957,19 @@ function abort()
     /**
      * Show form result
      *
-     * @access public
+     * @access {public}
      */
     FormValidator.prototype.showResult = function(result)
     {
         this._clearForm();
-        Helper.addClass(this._form, result);
+        Helper.add_class(this._form, result);
     }
 
     /**
      * Append a key/pair and return form obj
      *
-     * @access public
-     * @return obj
+     * @access {public}
+     * @return {obj}
      */
     FormValidator.prototype.append = function(key, value)
     {
@@ -11427,8 +11980,8 @@ function abort()
     /**
      * Get the form object
      *
-     * @access public
-     * @return obj
+     * @access {public}
+     * @return {obj}
      */
     FormValidator.prototype.form = function()
     {
@@ -11441,7 +11994,7 @@ function abort()
     /**
      * Index form inputs by name and rules
      *
-     * @access public
+     * @access {public}
      */
     FormValidator.prototype._indexInputs = function()
     {
@@ -11465,8 +12018,8 @@ function abort()
     /**
      * Validate the form inputs
      *
-     * @access private
-     * @return boolean
+     * @access {private}
+     * @return {boolean}
      */
     FormValidator.prototype._validateForm = function()
     {
@@ -11479,7 +12032,7 @@ function abort()
             this._rulesIndex[i].isValid = true;
 
             var pos = this._rulesIndex[i];
-            var value = Helper.getInputValue(pos.node);
+            var value = Helper.input_value(pos.node);
 
             if (!pos.isRequired && value === '')
             {
@@ -11518,15 +12071,15 @@ function abort()
     /**
      * Generate the form object
      *
-     * @access private
-     * @return obj
+     * @access {private}
+     * @return {obj}
      */
     FormValidator.prototype._generateForm = function()
     {
         for (var i = 0; i < this._inputs.length; i++)
         {
             var name = this._inputs[i].name;
-            var value = Helper.getInputValue(this._inputs[i]);
+            var value = Helper.input_value(this._inputs[i]);
             if (this._inputs[i].type === 'radio' && this._inputs[i].checked == false)
             {
                 continue;
@@ -11538,7 +12091,7 @@ function abort()
             }
             if (name.indexOf('[]') > -1)
             {
-                if (!Helper.isset(this._formObj[name])) this._formObj[name] = [];
+                if (!this._formObj[name]) this._formObj[name] = [];
                 this._formObj[name].push(value);
             }
             else
@@ -11552,8 +12105,8 @@ function abort()
     /**
      * Mark an input as not valid (internally)
      *
-     * @access private
-     * @return obj
+     * @access {private}
+     * @return {obj}
      */
     FormValidator.prototype._devalidate = function(i)
     {
@@ -11565,27 +12118,27 @@ function abort()
     /**
      * Clear form result and input errors
      *
-     * @access private
-     * @return obj
+     * @access {private}
+     * @return {obj}
      */
     FormValidator.prototype._clearForm = function(i)
     {
         // Remove the form result
-        Helper.removeClass(this._form, ['info', 'success', 'warning', 'danger']);
+        Helper.remove_class(this._form, ['info', 'success', 'warning', 'danger']);
 
         // Make all input elements 'valid' - i.e hide the error msg and styles.
         for (var i = 0; i < this._inputs.length; i++)
         {
             var _wrap = Helper.closest(this._inputs[i], '.form-field');
-            if (Helper.nodeExists(_wrap)) Helper.removeClass(_wrap, ['info', 'success', 'warning', 'danger'])
+            if (Helper.in_dom(_wrap)) Helper.remove_class(_wrap, ['info', 'success', 'warning', 'danger'])
         }
     };
 
     /**
      * Private validator methods
      *
-     * @access private
-     * @return boolean
+     * @access {private}
+     * @return {boolean}
      */
     FormValidator.prototype._validateEmail = function(value)
     {
@@ -11660,2836 +12213,520 @@ function abort()
 
 })();
 
-/**
- * Money Formatter
- *
- * @see https://github.com/gerardojbaez/money
- * @example Money.format(12.99, 'USD'); // RESULT: $12.99
- * 
- */
-(function()
-{
-    /**
-     * number_format
-     *
-     * @see https://github.com/locutusjs/locutus/blob/e0a68222d482d43164e96ab96023b712d25680a6/src/php/strings/number_format.js
-     */
-    function number_format(number, decimals, decPoint, thousandsSep)
-    { // eslint-disable-line camelcase
-        //  discuss at: https://locutus.io/php/number_format/
-        // original by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
-        // improved by: Kevin van Zonneveld (https://kvz.io)
-        // improved by: davook
-        // improved by: Brett Zamir (https://brett-zamir.me)
-        // improved by: Brett Zamir (https://brett-zamir.me)
-        // improved by: Theriault (https://github.com/Theriault)
-        // improved by: Kevin van Zonneveld (https://kvz.io)
-        // bugfixed by: Michael White (https://getsprink.com)
-        // bugfixed by: Benjamin Lupton
-        // bugfixed by: Allan Jensen (https://www.winternet.no)
-        // bugfixed by: Howard Yeend
-        // bugfixed by: Diogo Resende
-        // bugfixed by: Rival
-        // bugfixed by: Brett Zamir (https://brett-zamir.me)
-        //  revised by: Jonas Raoni Soares Silva (https://www.jsfromhell.com)
-        //  revised by: Luke Smith (https://lucassmith.name)
-        //    input by: Kheang Hok Chin (https://www.distantia.ca/)
-        //    input by: Jay Klehr
-        //    input by: Amir Habibi (https://www.residence-mixte.com/)
-        //    input by: Amirouche
-        //   example 1: number_format(1234.56)
-        //   returns 1: '1,235'
-        //   example 2: number_format(1234.56, 2, ',', ' ')
-        //   returns 2: '1 234,56'
-        //   example 3: number_format(1234.5678, 2, '.', '')
-        //   returns 3: '1234.57'
-        //   example 4: number_format(67, 2, ',', '.')
-        //   returns 4: '67,00'
-        //   example 5: number_format(1000)
-        //   returns 5: '1,000'
-        //   example 6: number_format(67.311, 2)
-        //   returns 6: '67.31'
-        //   example 7: number_format(1000.55, 1)
-        //   returns 7: '1,000.6'
-        //   example 8: number_format(67000, 5, ',', '.')
-        //   returns 8: '67.000,00000'
-        //   example 9: number_format(0.9, 0)
-        //   returns 9: '1'
-        //  example 10: number_format('1.20', 2)
-        //  returns 10: '1.20'
-        //  example 11: number_format('1.20', 4)
-        //  returns 11: '1.2000'
-        //  example 12: number_format('1.2000', 3)
-        //  returns 12: '1.200'
-        //  example 13: number_format('1 000,50', 2, '.', ' ')
-        //  returns 13: '100 050.00'
-        //  example 14: number_format(1e-8, 8, '.', '')
-        //  returns 14: '0.00000001'
-
-        number = (number + '').replace(/[^0-9+\-Ee.]/g, '')
-        const n = !isFinite(+number) ? 0 : +number
-        const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
-        const sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
-        const dec = (typeof decPoint === 'undefined') ? '.' : decPoint
-        let s = '';
-
-        const toFixedFix = function(n, prec)
-        {
-            if (('' + n).indexOf('e') === -1)
-            {
-                return +(Math.round(n + 'e+' + prec) + 'e-' + prec)
-            }
-            else
-            {
-                const arr = ('' + n).split('e')
-                let sig = ''
-                if (+arr[1] + prec > 0)
-                {
-                    sig = '+'
-                }
-                return (+(Math.round(+arr[0] + 'e' + sig + (+arr[1] + prec)) + 'e-' + prec)).toFixed(prec)
-            }
-        }
-
-        // @todo: for IE parseFloat(0.55).toFixed(0) = 0;
-        s = (prec ? toFixedFix(n, prec).toString() : '' + Math.round(n)).split('.')
-        if (s[0].length > 3)
-        {
-            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep)
-        }
-        if ((s[1] || '').length < prec)
-        {
-            s[1] = s[1] || ''
-            s[1] += new Array(prec - s[1].length + 1).join('0')
-        }
-
-        return s.join(dec)
-    }
-
-
-    /**
-     * Currency Formats.
-     *
-     * Formats initially collected from
-     * http://www.joelpeterson.com/blog/2011/03/formatting-over-100-currencies-in-php/
-     *
-     * All currencies were validated against some trusted
-     * sources like Wikipedia, thefinancials.com and
-     * cldr.unicode.org.
-     *
-     * Please note that each format used on each currency is
-     * the format for that particular country/language.
-     * When the country is unknown, the English format is used.
-     *
-     * @todo REFACTOR! This should be located on a separated file. Working on that!
-     *
-     * @var array
-     */
-    var currencies = {
-        'NGN':
-        {
-            'code': 'NGN',
-            'title': 'Nigerian Naira',
-            'symbol': '₦',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'ARS':
-        {
-            'code': 'ARS',
-            'title': 'Argentine Peso',
-            'symbol': 'AR$',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'AMD':
-        {
-            'code': 'AMD',
-            'title': 'Armenian Dram',
-            'symbol': 'Դ',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'AWG':
-        {
-            'code': 'AWG',
-            'title': 'Aruban Guilder',
-            'symbol': 'Afl. ',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'AUD':
-        {
-            'code': 'AUD',
-            'title': 'Australian Dollar',
-            'symbol': '$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'BSD':
-        {
-            'code': 'BSD',
-            'title': 'Bahamian Dollar',
-            'symbol': 'B$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'BHD':
-        {
-            'code': 'BHD',
-            'title': 'Bahraini Dinar',
-            'symbol': null,
-            'precision': 3,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'BDT':
-        {
-            'code': 'BDT',
-            'title': 'Bangladesh, Taka',
-            'symbol': null,
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'BZD':
-        {
-            'code': 'BZD',
-            'title': 'Belize Dollar',
-            'symbol': 'BZ$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'BMD':
-        {
-            'code': 'BMD',
-            'title': 'Bermudian Dollar',
-            'symbol': 'BD$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'BOB':
-        {
-            'code': 'BOB',
-            'title': 'Bolivia, Boliviano',
-            'symbol': 'Bs',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'BAM':
-        {
-            'code': 'BAM',
-            'title': 'Bosnia and Herzegovina convertible mark',
-            'symbol': 'KM ',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'BWP':
-        {
-            'code': 'BWP',
-            'title': 'Botswana, Pula',
-            'symbol': 'p',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'BRL':
-        {
-            'code': 'BRL',
-            'title': 'Brazilian Real',
-            'symbol': 'R$',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'BND':
-        {
-            'code': 'BND',
-            'title': 'Brunei Dollar',
-            'symbol': 'B$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'CAD':
-        {
-            'code': 'CAD',
-            'title': 'Canadian Dollar',
-            'symbol': 'CA$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'KYD':
-        {
-            'code': 'KYD',
-            'title': 'Cayman Islands Dollar',
-            'symbol': 'CI$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'CLP':
-        {
-            'code': 'CLP',
-            'title': 'Chilean Peso',
-            'symbol': 'CLP$',
-            'precision': 0,
-            'thousandSeparator': '.',
-            'decimalSeparator': '',
-            'symbolPlacement': 'before'
-        },
-        'CNY':
-        {
-            'code': 'CNY',
-            'title': 'China Yuan Renminbi',
-            'symbol': 'CN¥',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'COP':
-        {
-            'code': 'COP',
-            'title': 'Colombian Peso',
-            'symbol': 'COL$',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'CRC':
-        {
-            'code': 'CRC',
-            'title': 'Costa Rican Colon',
-            'symbol': '₡',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'HRK':
-        {
-            'code': 'HRK',
-            'title': 'Croatian Kuna',
-            'symbol': ' kn',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'after'
-        },
-        'CUC':
-        {
-            'code': 'CUC',
-            'title': 'Cuban Convertible Peso',
-            'symbol': 'CUC$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'CUP':
-        {
-            'code': 'CUP',
-            'title': 'Cuban Peso',
-            'symbol': 'CUP$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'CYP':
-        {
-            'code': 'CYP',
-            'title': 'Cyprus Pound',
-            'symbol': '£',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'CZK':
-        {
-            'code': 'CZK',
-            'title': 'Czech Koruna',
-            'symbol': ' Kč',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'after'
-        },
-        'DKK':
-        {
-            'code': 'DKK',
-            'title': 'Danish Krone',
-            'symbol': ' kr.',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'after'
-        },
-        'DOP':
-        {
-            'code': 'DOP',
-            'title': 'Dominican Peso',
-            'symbol': 'RD$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'XCD':
-        {
-            'code': 'XCD',
-            'title': 'East Caribbean Dollar',
-            'symbol': 'EC$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'EGP':
-        {
-            'code': 'EGP',
-            'title': 'Egyptian Pound',
-            'symbol': 'EGP',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'SVC':
-        {
-            'code': 'SVC',
-            'title': 'El Salvador Colon',
-            'symbol': '₡',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'EUR':
-        {
-            'code': 'EUR',
-            'title': 'Euro',
-            'symbol': '€',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'GHC':
-        {
-            'code': 'GHC',
-            'title': 'Ghana, Cedi',
-            'symbol': 'GH₵',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'GIP':
-        {
-            'code': 'GIP',
-            'title': 'Gibraltar Pound',
-            'symbol': '£',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'GTQ':
-        {
-            'code': 'GTQ',
-            'title': 'Guatemala, Quetzal',
-            'symbol': 'Q',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'HNL':
-        {
-            'code': 'HNL',
-            'title': 'Honduras, Lempira',
-            'symbol': 'L',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'HKD':
-        {
-            'code': 'HKD',
-            'title': 'Hong Kong Dollar',
-            'symbol': 'HK$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'HUF':
-        {
-            'code': 'HUF',
-            'title': 'Hungary, Forint',
-            'symbol': ' Ft',
-            'precision': 0,
-            'thousandSeparator': ' ',
-            'decimalSeparator': '',
-            'symbolPlacement': 'after'
-        },
-        'ISK':
-        {
-            'code': 'ISK',
-            'title': 'Iceland Krona',
-            'symbol': ' kr',
-            'precision': 0,
-            'thousandSeparator': '.',
-            'decimalSeparator': '',
-            'symbolPlacement': 'after'
-        },
-        'INR':
-        {
-            'code': 'INR',
-            'title': 'Indian Rupee ₹',
-            'symbol': '₹',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'IDR':
-        {
-            'code': 'IDR',
-            'title': 'Indonesia, Rupiah',
-            'symbol': 'Rp',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'IRR':
-        {
-            'code': 'IRR',
-            'title': 'Iranian Rial',
-            'symbol': null,
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'JMD':
-        {
-            'code': 'JMD',
-            'title': 'Jamaican Dollar',
-            'symbol': 'J$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'JPY':
-        {
-            'code': 'JPY',
-            'title': 'Japan, Yen',
-            'symbol': '¥',
-            'precision': 0,
-            'thousandSeparator': ',',
-            'decimalSeparator': '',
-            'symbolPlacement': 'before'
-        },
-        'JOD':
-        {
-            'code': 'JOD',
-            'title': 'Jordanian Dinar',
-            'symbol': null,
-            'precision': 3,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'KES':
-        {
-            'code': 'KES',
-            'title': 'Kenyan Shilling',
-            'symbol': 'KSh',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'KWD':
-        {
-            'code': 'KWD',
-            'title': 'Kuwaiti Dinar',
-            'symbol': 'K.D.',
-            'precision': 3,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'KZT':
-        {
-            'code': 'KZT',
-            'title': 'Kazakh tenge',
-            'symbol': '₸',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'LVL':
-        {
-            'code': 'LVL',
-            'title': 'Latvian Lats',
-            'symbol': 'Ls',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'LBP':
-        {
-            'code': 'LBP',
-            'title': 'Lebanese Pound',
-            'symbol': 'LBP',
-            'precision': 0,
-            'thousandSeparator': ',',
-            'decimalSeparator': '',
-            'symbolPlacement': 'before'
-        },
-        'LTL':
-        {
-            'code': 'LTL',
-            'title': 'Lithuanian Litas',
-            'symbol': ' Lt',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'after'
-        },
-        'MKD':
-        {
-            'code': 'MKD',
-            'title': 'Macedonia, Denar',
-            'symbol': 'ден ',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'MYR':
-        {
-            'code': 'MYR',
-            'title': 'Malaysian Ringgit',
-            'symbol': 'RM',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'MTL':
-        {
-            'code': 'MTL',
-            'title': 'Maltese Lira',
-            'symbol': 'Lm',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'MUR':
-        {
-            'code': 'MUR',
-            'title': 'Mauritius Rupee',
-            'symbol': 'Rs',
-            'precision': 0,
-            'thousandSeparator': ',',
-            'decimalSeparator': '',
-            'symbolPlacement': 'before'
-        },
-        'MXN':
-        {
-            'code': 'MXN',
-            'title': 'Mexican Peso',
-            'symbol': 'MX$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'MZM':
-        {
-            'code': 'MZM',
-            'title': 'Mozambique Metical',
-            'symbol': 'MT',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'NPR':
-        {
-            'code': 'NPR',
-            'title': 'Nepalese Rupee',
-            'symbol': null,
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'ANG':
-        {
-            'code': 'ANG',
-            'title': 'Netherlands Antillian Guilder',
-            'symbol': 'NAƒ ',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'ILS':
-        {
-            'code': 'ILS',
-            'title': 'New Israeli Shekel ₪',
-            'symbol': ' ₪',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'after'
-        },
-        'TRY':
-        {
-            'code': 'TRY',
-            'title': 'New Turkish Lira',
-            'symbol': '₺',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'NZD':
-        {
-            'code': 'NZD',
-            'title': 'New Zealand Dollar',
-            'symbol': 'NZ$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'NOK':
-        {
-            'code': 'NOK',
-            'title': 'Norwegian Krone',
-            'symbol': 'kr ',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'PKR':
-        {
-            'code': 'PKR',
-            'title': 'Pakistan Rupee',
-            'symbol': null,
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'PEN':
-        {
-            'code': 'PEN',
-            'title': 'Peru, Nuevo Sol',
-            'symbol': 'S/.',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'UYU':
-        {
-            'code': 'UYU',
-            'title': 'Peso Uruguayo',
-            'symbol': '$U ',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'PHP':
-        {
-            'code': 'PHP',
-            'title': 'Philippine Peso',
-            'symbol': '₱',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'PLN':
-        {
-            'code': 'PLN',
-            'title': 'Poland, Zloty',
-            'symbol': ' zł',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'after'
-        },
-        'GBP':
-        {
-            'code': 'GBP',
-            'title': 'Pound Sterling',
-            'symbol': '£',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'OMR':
-        {
-            'code': 'OMR',
-            'title': 'Rial Omani',
-            'symbol': 'OMR',
-            'precision': 3,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'RON':
-        {
-            'code': 'RON',
-            'title': 'Romania, New Leu',
-            'symbol': null,
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'ROL':
-        {
-            'code': 'ROL',
-            'title': 'Romania, Old Leu',
-            'symbol': null,
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'RUB':
-        {
-            'code': 'RUB',
-            'title': 'Russian Ruble',
-            'symbol': ' ₽',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'after'
-        },
-        'SAR':
-        {
-            'code': 'SAR',
-            'title': 'Saudi Riyal',
-            'symbol': 'SAR',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'SGD':
-        {
-            'code': 'SGD',
-            'title': 'Singapore Dollar',
-            'symbol': 'S$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'SKK':
-        {
-            'code': 'SKK',
-            'title': 'Slovak Koruna',
-            'symbol': ' SKK',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'after'
-        },
-        'SIT':
-        {
-            'code': 'SIT',
-            'title': 'Slovenia, Tolar',
-            'symbol': null,
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'ZAR':
-        {
-            'code': 'ZAR',
-            'title': 'South Africa, Rand',
-            'symbol': 'R',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'KRW':
-        {
-            'code': 'KRW',
-            'title': 'South Korea, Won ₩',
-            'symbol': '₩',
-            'precision': 0,
-            'thousandSeparator': ',',
-            'decimalSeparator': '',
-            'symbolPlacement': 'before'
-        },
-        'SZL':
-        {
-            'code': 'SZL',
-            'title': 'Swaziland, Lilangeni',
-            'symbol': 'E',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'SEK':
-        {
-            'code': 'SEK',
-            'title': 'Swedish Krona',
-            'symbol': ' kr',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'after'
-        },
-        'CHF':
-        {
-            'code': 'CHF',
-            'title': 'Swiss Franc',
-            'symbol': 'SFr ',
-            'precision': 2,
-            'thousandSeparator': '\'',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'TZS':
-        {
-            'code': 'TZS',
-            'title': 'Tanzanian Shilling',
-            'symbol': 'TSh',
-            'precision': 0,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'THB':
-        {
-            'code': 'THB',
-            'title': 'Thailand, Baht ฿',
-            'symbol': '฿',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'TOP':
-        {
-            'code': 'TOP',
-            'title': 'Tonga, Paanga',
-            'symbol': 'T$ ',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'AED':
-        {
-            'code': 'AED',
-            'title': 'UAE Dirham',
-            'symbol': 'AED',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'UAH':
-        {
-            'code': 'UAH',
-            'title': 'Ukraine, Hryvnia',
-            'symbol': ' ₴',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'after'
-        },
-        'USD':
-        {
-            'code': 'USD',
-            'title': 'US Dollar',
-            'symbol': '$',
-            'precision': 2,
-            'thousandSeparator': ',',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-        'VUV':
-        {
-            'code': 'VUV',
-            'title': 'Vanuatu, Vatu',
-            'symbol': 'VT',
-            'precision': 0,
-            'thousandSeparator': ',',
-            'decimalSeparator': '',
-            'symbolPlacement': 'before'
-        },
-        'VEF':
-        {
-            'code': 'VEF',
-            'title': 'Venezuela Bolivares Fuertes',
-            'symbol': 'Bs.',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'VEB':
-        {
-            'code': 'VEB',
-            'title': 'Venezuela, Bolivar',
-            'symbol': 'Bs.',
-            'precision': 2,
-            'thousandSeparator': '.',
-            'decimalSeparator': ',',
-            'symbolPlacement': 'before'
-        },
-        'VND':
-        {
-            'code': 'VND',
-            'title': 'Viet Nam, Dong ₫',
-            'symbol': ' ₫',
-            'precision': 0,
-            'thousandSeparator': '.',
-            'decimalSeparator': '',
-            'symbolPlacement': 'after'
-        },
-        'ZWD':
-        {
-            'code': 'ZWD',
-            'title': 'Zimbabwe Dollar',
-            'symbol': 'Z$',
-            'precision': 2,
-            'thousandSeparator': ' ',
-            'decimalSeparator': '.',
-            'symbolPlacement': 'before'
-        },
-    };
-
-    /**
-     * Create new Currency instance.
-     *
-     * @param  string Currency ISO-4217 code
-     * @return void
-     */
-    var Currency = function(code)
-    {
-        /**
-         * ISO-4217 Currency Code.
-         *
-         * @var string
-         */
-        this.code = null;
-
-        /**
-         * Currency symbol.
-         *
-         * @var string
-         */
-        this.symbol = null;
-
-        /**
-         * Currency precision (number of decimals).
-         *
-         * @var int
-         */
-        this.precision = null;
-
-        /**
-         * Currency title.
-         *
-         * @var string
-         */
-        this.title = null;
-
-        /**
-         * Currency thousand separator.
-         *
-         * @var string
-         */
-        this.thousandSeparator = null;
-
-        /**
-         * Currency decimal separator.
-         *
-         * @var string
-         */
-        this.decimalSeparator = null;
-
-        /**
-         * Currency symbol placement.
-         *
-         * @var string (front|after) currency
-         */
-        this.symbolPlacement = null;
-
-        if (!this.hasCurrency(code))
-        {
-            throw new Error('Currency not found: "' + code + '"');
-        }
-
-        var currency = this.getCurrency(code);
-
-        for (var key in currency)
-        {
-            if (!currency.hasOwnProperty(key))
-            {
-                continue;
-            }
-
-            this[key] = currency[key];
-        }
-
-        return this;
-    }
-
-    /**
-     * Get currency ISO-4217 code.
-     *
-     * @return string
-     */
-    Currency.prototype.getCode = function()
-    {
-        return this.code;
-    }
-
-    /**
-     * Get currency symbol.
-     *
-     * @return string
-     */
-    Currency.prototype.getSymbol = function()
-    {
-        return this.symbol;
-    }
-
-    /**
-     * Get currency precision.
-     *
-     * @return int
-     */
-    Currency.prototype.getPrecision = function()
-    {
-        return this.precision;
-    }
-
-    /**
-     * @param integer precision
-     * @return this
-     */
-    Currency.prototype.setPrecision = function(precision)
-    {
-        this.precision = precision;
-
-        return this;
-    }
-
-    /**
-     * Get currency title.
-     *
-     * @return string
-     */
-    Currency.prototype.getTitle = function()
-    {
-        return this.title;
-    }
-
-    /**
-     * Get currency thousand separator.
-     *
-     * @return string
-     */
-    Currency.prototype.getThousandSeparator = function()
-    {
-        return this.thousandSeparator;
-    }
-
-    /**
-     * @param string separator
-     * @return this
-     */
-    Currency.prototype.setThousandSeparator = function(separator)
-    {
-        this.thousandSeparator = separator;
-
-        return this;
-    }
-
-    /**
-     * Get currency decimal separator.
-     *
-     * @return string
-     */
-    Currency.prototype.getDecimalSeparator = function()
-    {
-        return this.decimalSeparator;
-    }
-
-    /**
-     * @param string separator
-     * @return this
-     */
-    Currency.prototype.setDecimalSeparator = function(separator)
-    {
-        this.decimalSeparator = separator;
-
-        return this;
-    }
-
-    /**
-     * Get currency symbol placement.
-     *
-     * @return string
-     */
-    Currency.prototype.getSymbolPlacement = function()
-    {
-        return this.symbolPlacement;
-    }
-
-    /**
-     * @param string placement [before|after]
-     * @return this
-     */
-    Currency.prototype.setSymbolPlacement = function(placement)
-    {
-        this.symbolPlacement = placement;
-
-        return this;
-    }
-
-    /**
-     * Get all currencies.
-     *
-     * @return object
-     */
-    Currency.prototype.getAllCurrencies = function()
-    {
-        return currencies;
-    }
-
-    /**
-     * Set currency
-     * 
-     * @return void
-     */
-    Currency.prototype.setCurrency = function(code, currency)
-    {
-        currencies[code] = currency;
-    }
-
-    /**
-     * Get currency.
-     *
-     * @access protected
-     * @return object
-     */
-    Currency.prototype.getCurrency = function(code)
-    {
-        return currencies[code];
-    }
-
-    /**
-     * Check currency existence (within the class)
-     *
-     * @access protected
-     * @return bool
-     */
-    Currency.prototype.hasCurrency = function(code)
-    {
-        return code in currencies
-    }
-
-    /**
-     * Create new Money Instance
-     *
-     * @param float|int
-     * @param mixed $currency
-     * @return void
-     */
-    var Money = function(amount, currency)
-    {
-        this._amount = parseFloat(amount);
-
-        currency = (typeof currency === 'undefined' ? 'AUD' : currency);
-
-        if (typeof currency === 'string')
-        {
-            this._currency = new Currency(currency);
-        }
-        else if (currency instanceof Currency)
-        {
-            this._currency = currency;
-        }
-
-        return this;
-    }
-
-    /**
-     * Converts from cents to dollars
-     *
-     * @return string
-     */
-    Money.prototype.fromCents = function()
-    {
-        this._amount = this._amount / 100;
-
-        return this;
-    }
-
-    /**
-     * Format amount to currency equivalent string.
-     *
-     * @return string
-     */
-    Money.prototype.format = function()
-    {
-        var format = this.amount();
-
-        if (this._currency.getSymbol() === null)
-        {
-            format += ' ' + this._currency.getCode();
-        }
-        else if (this._currency.getSymbolPlacement() == 'before')
-        {
-            format = this._currency.getSymbol() + format;
-        }
-        else
-        {
-            format += this._currency.getSymbol();
-        }
-
-        return format;
-    }
-
-    /**
-     * Get amount formatted to currency.
-     *
-     * @return mixed
-     */
-    Money.prototype.amount = function()
-    {
-        // Indian Rupee use special format
-        if (this._currency.getCode() == 'INR')
-        {
-            return this._amount.toString().split('.')[0].length > 3 ? this._amount.toString().substring(0, this._amount.toString().split('.')[0].length - 3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + this._amount.toString().substring(this._amount.toString().split('.')[0].length - 3) : this._amount.toString();
-        }
-
-        // Return western format
-        return number_format(
-            this._amount,
-            this._currency.getPrecision(),
-            this._currency.getDecimalSeparator(),
-            this._currency.getThousandSeparator()
-        );
-    }
-
-    /**
-     * Get amount formatted decimal.
-     *
-     * @return string decimal
-     */
-    Money.prototype.toDecimal = function()
-    {
-        return this._amount.toString();
-    }
-
-    /**
-     * parses locale formatted money string
-     * to object of class Money
-     *
-     * @param  string          $str      Locale Formatted Money String
-     * @param  Currency|string $currency default 'AUD'
-     * @return Money           $money    Decimal String
-     */
-    Money.prototype.parse = function(str, currency)
-    {
-        currency = typeof currency === 'undefined' ? 'AUD' : currency;
-
-        // get currency object
-        currency = typeof currency === 'string' ? new Currency(currency) : currency;
-
-        // remove HTML encoded characters: http://stackoverflow.com/a/657670
-        // special characters that arrive like &0234;
-        // remove all leading non numbers
-        str = str.replace(/&#?[a-z0-9]{2,8};/ig, '').replace(/^[^0-9]*/g, '');
-
-        // remove all thousands separators
-        if (currency.getThousandSeparator().length > 0)
-        {
-            str = str.replaceAll(currency.getThousandSeparator(), '');
-        }
-
-        if (currency.getDecimalSeparator().length > 0)
-        {
-            // make decimal separator regex safe
-            var char = currency.getDecimalSeparator();
-
-            // remove all other characters
-            // convert all decimal seperators to PHP/bcmath safe decimal '.'
-
-            str = str.replace(new RegExp('[^\\' + char + '\\d]+', 'g'), '').replaceAll(char, '.');
-        }
-        else
-        {
-            // for currencies that do not have decimal points
-            // remove all other characters
-            str = str.replace(/[^\d]/, '');
-        }
-
-        return new Money(str, currency);
-    }
-
-    // Load into container 
-    Container.set('Money', Money);
-
-    Container.set('Currency', Currency);
-
-}());
-
-/**
- * Component Dynamic Hanlder 
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var object
-     */
-    var Helper = Hubble.helper();
-
-    /**
-     * AJAX Module
-     * 
-     * @var obj
-     */
-    var Ajax = Hubble.require('Ajax');
-
-    /**
-     * Module constructor
-     *
-     * @access      public
-     * @constructor
-     * @param       object options Object of handler options
-     */
-    var DynamicUiHandler = function(options)
-    {
-        this._options = options;
-
-        this._options.onRenderArgs = typeof options.onRenderArgs === 'undefined' ? [] : options.onRenderArgs;
-        this._options.onErrorArgs = typeof options.onErrorArgs === 'undefined' ? [] : options.onErrorArgs;
-
-        if (Helper.nodeExists(Helper.$(this._options.trigger)))
-        {
-            this._bind();
-        }
-
-        _this = this;
-
-        return this;
-    };
-
-    /**
-     * Destroy the handler and remove event listener
-     *
-     * @access public
-     */
-    DynamicUiHandler.prototype.destroy = function()
-    {
-        this._unbind();
-    }
-
-    /**
-     * Bind the event listener
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._bind = function()
-    {
-        var _this = this;
-
-        this._callback = function _uiEventHandler(e)
-        {
-            _this._eventHandler();
-        };
-
-        Helper.addEventListener(Helper.$(this._options.trigger), this._options.event, this._callback);
-    }
-
-    /**
-     * Unbind the event listener
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._unbind = function()
-    {
-        Helper.removeEventListener(Helper.$(this._options.trigger), this._options.event, this._callback);
-    }
-
-    /**
-     * Event handler
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._eventHandler = function()
-    {
-        var trigger = Helper.$(this._options.trigger);
-        var target = Helper.$(this._options.target);
-        var ajaxUrl = this._options.url;
-        var form = this._options.form ||
-        {};
-        var trigger = this._options.trigger;
-        var _this = this;
-
-        // Return on loading or disabled
-        if (Helper.hasClass(trigger, 'active') || trigger.disabled === true)
-        {
-            return;
-        }
-
-        // Add active class
-        Helper.addClass(trigger, 'active');
-        Helper.addClass(target, 'active');
-
-        // Request the Ajax
-        Ajax.post(ajaxUrl, form, function(success)
-            {
-                var responseObj = Helper.isJSON(success);
-
-                if (responseObj && responseObj.response === 'valid')
-                {
-                    _this._render(responseObj);
-                    _this._fireRendered(responseObj);
-                    Hubble.require('Events').fire('domChange', target);
-                    Hubble.dom().refresh();
-                }
-                else
-                {
-                    _this._fireErrored(success);
-                }
-
-                Helper.removeClass(trigger, 'active');
-                Helper.removeClass(target, 'active');
-            },
-            function(error)
-            {
-                Helper.removeClass(trigger, 'active');
-                Helper.removeClass(target, 'active');
-                _this._fireErrored(error);
-            });
-    }
-
-    /**
-     * Render the DOM changes
-     *
-     * @access private
-     * @param  object  response Response object from the server
-     */
-    DynamicUiHandler.prototype._render = function(response)
-    {
-        var details = response.details;
-        var classes = this._options.classes;
-        var target = Helper.$(this._options.target);
-
-        for (var i = 0; i < classes.length; i++)
-        {
-            var content = details[classes[i]['key']] || null;
-            var node = Helper.$(classes[i]['class'], target);
-
-            if (!content || !Helper.nodeExists(node))
-            {
-                continue;
-            }
-
-            node.innerHTML = content;
-        }
-    }
-
-    /**
-     * Fire rendered event
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._fireRendered = function(response)
-    {
-        if (typeof this._options.onRender !== 'undefined')
-        {
-            var callback = this._options.onRender;
-            var args = this._options.onRenderArgs;
-            args.unshift(response);
-
-            callback.apply(this._options.target, args);
-        }
-    }
-
-    /**
-     * Fire errored event
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._fireErrored = function(error)
-    {
-        if (typeof this._options.onError !== 'undefined')
-        {
-            var callback = this._options.onError;
-            var args = this._options.onErrorArgs;
-            args.unshift(error);
-
-            callback.apply(this._options.target, args);
-        }
-    }
-
-    // Load into container
-    Container.set('_DynamicUiHandler', DynamicUiHandler);
-
-})();
-
-/**
- * Component Dynamic Hanlder 
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var object
-     */
-    var Helper = Hubble.helper();
-
-    /**
-     * AJAX Module
-     * 
-     * @var obj
-     */
-    var Ajax = Hubble.require('Ajax');
-
-    /**
-     * Module constructor
-     *
-     * @access      public
-     * @constructor
-     * @param       object options Object of handler options
-     */
-    var DynamicUiHandler = function(options)
-    {
-        this._options = options;
-
-        this._options.onRenderArgs = typeof options.onRenderArgs === 'undefined' ? [] : options.onRenderArgs;
-        this._options.onErrorArgs = typeof options.onErrorArgs === 'undefined' ? [] : options.onErrorArgs;
-
-        if (Helper.nodeExists(Helper.$(this._options.trigger)))
-        {
-            this._bind();
-        }
-
-        _this = this;
-
-        return this;
-    };
-
-    /**
-     * Destroy the handler and remove event listener
-     *
-     * @access public
-     */
-    DynamicUiHandler.prototype.destroy = function()
-    {
-        this._unbind();
-    }
-
-    /**
-     * Bind the event listener
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._bind = function()
-    {
-        var _this = this;
-
-        this._callback = function _uiEventHandler(e)
-        {
-            _this._eventHandler();
-        };
-
-        Helper.addEventListener(Helper.$(this._options.trigger), this._options.event, this._callback);
-    }
-
-    /**
-     * Unbind the event listener
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._unbind = function()
-    {
-        Helper.removeEventListener(Helper.$(this._options.trigger), this._options.event, this._callback);
-    }
-
-    /**
-     * Event handler
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._eventHandler = function()
-    {
-        var trigger = Helper.$(this._options.trigger);
-        var target = Helper.$(this._options.target);
-        var ajaxUrl = this._options.url;
-        var form = this._options.form ||
-        {};
-        var trigger = this._options.trigger;
-        var _this = this;
-
-        // Return on loading or disabled
-        if (Helper.hasClass(trigger, 'active') || trigger.disabled === true)
-        {
-            return;
-        }
-
-        // Add active class
-        Helper.addClass(trigger, 'active');
-        Helper.addClass(target, 'active');
-
-        // Request the Ajax
-        Ajax.post(ajaxUrl, form, function(success)
-            {
-                var responseObj = Helper.isJSON(success);
-
-                if (responseObj && responseObj.response === 'valid')
-                {
-                    _this._render(responseObj);
-                    _this._fireRendered(responseObj);
-                    Hubble.require('Events').fire('domChange', target);
-                    Hubble.dom().refresh();
-                }
-                else
-                {
-                    _this._fireErrored(success);
-                }
-
-                Helper.removeClass(trigger, 'active');
-                Helper.removeClass(target, 'active');
-            },
-            function(error)
-            {
-                Helper.removeClass(trigger, 'active');
-                Helper.removeClass(target, 'active');
-                _this._fireErrored(error);
-            });
-    }
-
-    /**
-     * Render the DOM changes
-     *
-     * @access private
-     * @param  object  response Response object from the server
-     */
-    DynamicUiHandler.prototype._render = function(response)
-    {
-        var details = response.details;
-        var classes = this._options.classes;
-        var target = Helper.$(this._options.target);
-
-        for (var i = 0; i < classes.length; i++)
-        {
-            var content = details[classes[i]['key']] || null;
-            var node = Helper.$(classes[i]['class'], target);
-
-            if (!content || !Helper.nodeExists(node))
-            {
-                continue;
-            }
-
-            node.innerHTML = content;
-        }
-    }
-
-    /**
-     * Fire rendered event
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._fireRendered = function(response)
-    {
-        if (typeof this._options.onRender !== 'undefined')
-        {
-            var callback = this._options.onRender;
-            var args = this._options.onRenderArgs;
-            args.unshift(response);
-
-            callback.apply(this._options.target, args);
-        }
-    }
-
-    /**
-     * Fire errored event
-     *
-     * @access private
-     */
-    DynamicUiHandler.prototype._fireErrored = function(error)
-    {
-        if (typeof this._options.onError !== 'undefined')
-        {
-            var callback = this._options.onError;
-            var args = this._options.onErrorArgs;
-            args.unshift(error);
-
-            callback.apply(this._options.target, args);
-        }
-    }
-
-    // Load into container
-    Container.set('_DynamicUiHandler', DynamicUiHandler);
-
-})();
-
 
 // DOM Module
-/**
- * Pjax module
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
-
 (function()
 {
     /**
      * JS Helper
      * 
-     * @var obj
+     * @var {obj}
      */
     var Helper = Hubble.helper();
 
     /**
      * AJAX Module
      * 
-     * @var obj
+     * @var {obj}
      */
     var Ajax = Hubble.require('Ajax');
 
     /**
      * AJAX URL to list paginated reviews
      * 
-     * @var string
+     * @var {string}
      */
     var _urlBase = window.location.origin;
 
     /**
      * Has pjax been invoked
      * 
-     * @var bool
+     * @var {bool}
      */
     var _invoked = false;
 
     /**
-     * Array of page caches
-     * 
-     * @var array
-     */
-    var _cache = [];
-
-    /**
-     * Array of requested urls
-     * 
-     * @var array
-     */
-    var _requestedUrls = [];
-
-    /**
      * Are we listening for state changes ?
      * 
-     * @var bool
+     * @var {bool}
      */
     var _listening = false;
 
     /**
      * Are we currently loading a pjax request ?
      * 
-     * @var bool
+     * @var {bool}
      */
-    var _loading = false;
+    var _requesting = false;
 
     /**
-     * Very simple chain library
+     * Default options
      * 
-     * @var obj
-     * @source https://github.com/krasimir/chain
+     * @var {object}
      */
-    var Chain = function() {
-
-        var _listeners = {},
-            _resultOfPreviousFunc = null,
-            _self = this,
-            _api = {},
-            _funcs = [],
-            _errors = [];
-
-        var on = function(type, listener) {
-            if(!_listeners[type]) _listeners[type] = [];
-            _listeners[type].push(listener);
-            return _api;
-        }
-        var off = function(type, listener) {
-            if(_listeners[type]) {
-                var arr = [];
-                for(var i=0; f=_listeners[type][i]; i++) {
-                    if(f !== listener) {
-                        arr.push(f);
-                    }
-                }
-                _listeners[type] = arr;
-            }
-            return _api;
-        }
-        var dispatch = function(type, param) {
-            if(_listeners[type]) {
-                for(var i=0; f=_listeners[type][i]; i++) {
-                    f(param, _api);
-                }
-            }
-        }
-        var run = function() {
-            if(arguments.length > 0) {
-                _funcs = [];
-                for(var i=0; f=arguments[i]; i++) _funcs.push(f);
-                var element = _funcs.shift();
-                if(typeof element === 'function') {
-                    element(_resultOfPreviousFunc, _api);
-                } else if(typeof element === 'object' && element.length > 0) {
-                    var f = element.shift();
-                    f.apply(f, element.concat([_api.next]));
-                }
-                
-            } else {
-                dispatch("done", _resultOfPreviousFunc);
-            }
-            return _api;
-        }
-        var next = function(res) {
-            _resultOfPreviousFunc = res;
-            run.apply(_self, _funcs);
-        }
-        var error = function(err) {
-            if(typeof err != 'undefined') {
-                _errors.push(err);
-                return _api;
-            } else {
-                return _errors;
-            }       
-        }
-        var process = function() {
-            if(arguments.length > 0) {
-                // on method
-                if(arguments.length === 2 && typeof arguments[0] === 'string' && typeof arguments[1] === 'function') {
-                    on.apply(self, arguments);
-                // run method
-                } else {
-                    run.apply(self, arguments);
-                }
-            }
-            return process;
-        }
-
-        _api = {
-            on: on,
-            off: off,
-            next: next,
-            error: error
-        }
-        
-        return process;
+    var _defaults = 
+    {
+        element:   'body',
+        timeout :   10000,
+        cacheBust:  true,
+        keepScroll: false,
+        animation:  'fade',
+        progress:   true,
     };
 
     /**
-     * Module constructor
+     * Pjax module
      *
-     * @constructor
-     * @access public
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    var Pjax = function()
+    class Pjax
     {
-        if (!_invoked)
+        /**
+         * Module constructor
+         *
+         * @constructor
+         {*} @access public
+         */
+        constructor()
         {
-            this._bind();
-        }
-
-        return this;
-    };
-
-    /**
-     * Module destructor - unbinds events
-     *
-     * @access public
-     */
-    Pjax.prototype.destruct = function()
-    {
-        // Keep the CAHCE so that state changes are retained
-        _invoked = false;
-        _listening = false;
-
-        window.removeEventListener('popstate', this._stateChange, false);
-
-        Hubble.require('Events').off('pjax:start', this._onStart);
-        Hubble.require('Events').off('pjax:complete', this._onComplete);
-    }
-
-    /**
-     * Bind events
-     *
-     * @access public
-     */
-    Pjax.prototype._bind = function()
-    {
-        _invoked = true;
-
-        _requestedUrls.push(this._normaliseUrl(window.location.href));
-
-        Hubble.require('Events').on('pjax:start', this._onStart);
-        Hubble.require('Events').on('pjax:complete', this._onComplete);
-    }
-
-    /**
-     * Check if the module has loaded a url
-     *
-     * @access public
-     * @param  string url URL to check
-     * @return bool
-     */
-    Pjax.prototype.requestedUrl = function(url)
-    {
-        return Helper.in_array(this._normaliseUrl(url), _requestedUrls);
-    }
-
-    /**
-     * Remove a requested url
-     *
-     * @access public
-     * @param  string url URL to check
-     */
-    Pjax.prototype.removeUrl = function(url)
-    {
-        if (this.requestedUrl(url))
-        {
-            url = this._normaliseUrl(url);
-            var i = _requestedUrls.length;
-            while (i--)
+            if (!_invoked)
             {
-                if (_requestedUrls[i] === url)
-                {
-                    _requestedUrls.splice(i, 1);
-                }
-            }
-        }
-    }
-
-    /**
-     * Set a state based on a url
-     *
-     * @access public
-     * @param  string url URL to check
-     */
-    Pjax.prototype.setState = function(url)
-    {
-        url = this._normaliseUrl(url)
-
-        if (this.requestedUrl(url))
-        {
-            var _content = this._cacheGet(url + '____content');
-            var _location = this._cacheGet(url + '____location');
-
-            if (!_content || !_location)
-            {
-                window.location.href = url;
+                this._bind();
             }
 
-            // Load entire body from cache
-            this._restoreState(_location, _content);
-        }
-    }
-
-    /**
-     * On pjax start event
-     *
-     * @access private
-     */
-    Pjax.prototype._onStart = function()
-    {
-        Hubble.require('NProgress').start();
-    }
-
-    /**
-     * On pjax complete event
-     *
-     * @access private
-     */
-    Pjax.prototype._onComplete = function()
-    {
-        Hubble.require('NProgress').done();
-        Hubble.dom().refresh();
-    }
-
-    /**
-     * Start a pjax request
-     *
-     * @access public
-     * @param  string url           The url to send the request to
-     * @param  string target        The id to put the response into
-     * @param  string title         The new page title (optional)
-     * @param  bool   stateChange   Change the window history state (optional default false) 
-     * @param  bool   singleRequest Is this a single request ? (optional default false
-     */
-    Pjax.prototype.invoke = function(url, target, title, stateChange, singleRequest)
-    {
-        // If we are already loading a pjax, cancel it and
-        if (_loading)
-        {
-            this._ajax.abort();
-             
-            return;
+            return this;
         }
 
-        // Save the document's current state
-        this._cachePage();
-
-        // We are now loading
-        _loading = true;
-
-        // Fallback title
-        title = (typeof title === 'undefined' ? false : title);
-
-        // State change defaults to false
-        stateChange = (typeof stateChange === 'undefined' ? false : stateChange);
-
-        // State change defaults to false
-        singleRequest = (typeof singleRequest === 'undefined' ? false : singleRequest);
-
-        // Normalize the url
-        url = this._normaliseUrl(url.trim());
-
-        // Are we changing the window state	
-        if (stateChange)
+        /**
+         * Module destructor - unbinds events
+         *
+         * @access {public}
+         */
+        destruct()
         {
+            _invoked = false;
+            _listening = false;
+
+            window.removeEventListener('popstate', this._popStateHandler, false);
+        }
+
+        /**
+         * Bind events
+         *
+         * @access {public}
+         */
+        _bind()
+        {
+            _invoked   = true;
+            _listening = true;
+
+            window.addEventListener('popstate', this._popStateHandler, false);
+        }
+
+        /**
+         * Start a pjax request
+         *
+         * @access {public}
+         * @param  {string}            url                The url to send the request to
+         * @param  {object|null}       options            Options (optional)
+         * @param  {string|DOMElement} options.element    Can be a selector or an existing dom element to replace content into (optional) (default 'body')
+         * @param  {bool}              options.keepScroll Weather to retain existing scroll position (optional) (default false) 
+         * @param  {bool}              options.scroll_pos  If provided will scroll to position  
+         * @param  {string}            options.animation  fade|undefined|null
+         * @param  {bool}              options.progress   Use Nprogress on load
+         * @param  {int}               options.timeout    Timeout in MS (optional) (default 10,000)
+         * @param  {bool}              options.cacheBust  When set to true, Pjax appends a timestamp query string segment to the requested URL in order to skip the browser cache (optional) (default true)
+         * @param  {function}          options.onError    Callback when error occurs (optional)
+         * @param  {function}          options.onSuccess  Callback when success occurs (optional)
+         * @param  {function}          options.onComplete Callback when complete occurs (optional)
+         */
+        invoke(url, options)
+        {
+            // If we are already loading a pjax, cancel it and
+            if (_requesting)
+            {
+                this._ajax.abort();
+            }
+
+            // We are now loading
+            _requesting = true;
+
+            // Merge options with defaults
+            options = (typeof options === 'undefined' ? _defaults : Helper.array_merge(_defaults, options));
+
+            // Normalize the url
+            url = this._normaliseUrl(url.trim());
+
+            // Normalize current url
+            var currUrl = this._normaliseUrl(window.location.href); 
+
+            this._load(url, options);
+        }
+
+        /**
+         * Send a pjax request
+         *
+         * @access {private}
+         * @param  {string}            url                The url to send the request to
+         * @param  {object|null}       options            Options (optional)
+         * @param  {string|DOMElement} options.element    Can be a selector or an existing dom element to replace content into (optional) (default 'body')
+         * @param  {string}            options.animation  fade|undefined|null
+         * @param  {int}               options.timeout    Timeout in MS (optional) (default 10,000)
+         * @param  {bool}              options.cacheBust  When set to true, Pjax appends a timestamp query string segment to the requested URL in order to skip the browser cache (optional) (default true)
+         * @param  {function}          options.onError    Callback when error occurs (optional)
+         * @param  {function}          options.onSuccess  Callback when success occurs (optional)
+         * @param  {function}          options.onComplete Callback when complete occurs (optional)
+         */
+        _load(url, options)
+        {
+            // Store this
+            var _this = this;
+
+            // Cachebust
+            if (options.cacheBust)
+            {
+                //@todo
+                // url = this._cacheBustURL(url);
+            }
+
+            // Store URL in options for callbacks
+            options.url = url;
+            
             // Push the current state
-            window.history.pushState(
-                {
-                    id: window.location.href
-                },
-                document.title,
-                window.location.href
-            );
-        }
+            window.history.pushState( { id: currUrl, scroll: Helper.scroll_pos() }, '', currUrl);
 
-        // Create a new location object
-        var newLocation =
-        {
-            location: url,
-            target: target,
-            title: title,
-            scroll:
+            // Fire the start event
+            Hubble.require('Events').fire('pjax:start', options);
+
+            // Send GET request
+            this._ajax = Ajax.get(url,
+            function success(HTML)
             {
-                left: 0,
-                top: 0
+                // Handle the response
+                _this._handleSuccess(HTML, options);
             },
-        };
-
-        // Do we need to request fresh ?
-        if (singleRequest === true && Helper.in_array(url, _requestedUrls))
-        {
-            if (stateChange === true)
-            {
-                if (title)
-                {
-                    document.title = title;
-                }
-
-                window.history.pushState({id: url}, title, url);
-            }
-
-            _loading = false;
-
-            return;
-        }
-
-        // pjax GET the new content
-        this._load(newLocation, stateChange, singleRequest);
-    }
-
-    /**
-     * Send and handle the pjax request
-     *
-     * @access private
-     * @param  object locationObj Location object from the cache
-     * @param  bool   stateChange Change the window history state
-     * @param  bool   singleRequest Is this a single request (first time only) ?
-     */
-    Pjax.prototype._load = function(locationObj, stateChange, singleRequest)
-    {
-        // Store this
-        var _this = this;
-
-        // We have now requested this url  
-        _requestedUrls.push(locationObj['location']);
-
-        // Fire the start event
-        Hubble.require('Events').fire('pjax:start', locationObj);
-
-        // Send GET request
-        this._ajax = Ajax.get(locationObj['location'], null, function(HTML)
-        {
-            // Fire the success event
-            Hubble.require('Events').fire('pjax:success', locationObj);
-
-            // Handle the response
-            _this._handleSuccess(locationObj, HTML, stateChange);
-
-        },
-        // Handle the error
-        function(error)
-        {
-            // Fire the error event
-            Hubble.require('Events').fire('pjax:error', locationObj);
-
+            
             // Handle the error
-            _this._handleError(locationObj, error);
-
-        }, [
-        {
-            'X-PJAX': true
-        }]);
-    }
-
-    /**
-     * Handle Pjax Error
-     *
-     * @access private
-     * @param  object locationObj Location object from the cache
-     */
-    Pjax.prototype._handleError = function(locationObj)
-    {
-        // Fire the complete
-        Hubble.require('Events').fire('pjax:complete', locationObj);
-
-        _loading = false;
-
-        // Load the page normally
-        window.location.href = locationObj.location;
-    }
-
-    /**
-     * Pjax success handler
-     *
-     * @access private
-     * @param  object locationObj Location object from the cache
-     * @param  string HTML        HTML string response from server
-     * @param  bool   stateChange Change the window history state
-     */
-    Pjax.prototype._handleSuccess = function(locationObj, HTML, stateChange)
-    {
-        // Parse the HTML
-        var domCotent = this._parseHTML(HTML);
-
-        // Try to get the title
-        var _title = this._findDomTitle(domCotent);
-
-        if (_title)
-        {
-            locationObj['title'] = _title;
-        }
-        else
-        {
-            if (!locationObj['title'])
+            function error(error)
             {
-                locationObj['title'] = document.title;
+                // Handle the error
+                _this._handleError(HTML, options);
+
+            }, [{'X-PJAX': true}]);
+        }
+
+        /**
+         * Pjax success handler
+         *
+         * @access {private}
+         * @param  {object} locationObj Location object from the cache
+         * @param  {string} HTML        HTML string response from server
+         * @param  {bool}   stateChange Change the window history state
+         */
+        _handleSuccess(HTML, options)
+        {
+            // Parse the HTML
+            var responseDoc = this._parseHTML(HTML);
+
+            // Try to get the title
+            var _title = this._findDomTitle(responseDoc);
+
+            // Cache scripts
+            var responseScripts = this._getScripts(responseDoc);
+            var currScripts     = this._getScripts(document);
+            responseDoc         = this._removeScripts(responseDoc);
+
+            // Default to document bodys
+            var targetEl        = document.body;
+            var responseEl      = responseDoc.body;
+
+            // Was pjax supported?
+            var pjaxSuported    = HTML.startsWith('<!DOCTYPE html>')
+
+            // Selector
+            if (Helper.is_string(options.element))
+            {
+                targetEl   = document.querySelector(options.element);
+                responseEl = responseDoc.querySelector(options.element);
+            }
+            // DOM Node
+            else if (Helper.in_dom(options.element))
+            {
+                // Target is options.element
+                targetEl = options.element;
+            }
+
+            // Insert content
+            targetEl.innerHTML = responseEl.innerHTML;
+
+            _this._appendScripts(currScripts, newScripts, function then()
+            {
+                Hubble.require('Events').fire('pjax:success', options);
+                Hubble.require('Events').fire('pjax:complete', options);
+
+                _requesting = false;
+            });
+        }
+
+        /**
+         * Handle Pjax Error
+         *
+         * @access {private}
+         * @param  {object} locationObj Location object from the cache
+         */
+        _handleError(HTML, options)
+        {
+            
+            _requesting = false;
+        }
+
+        /**
+         * Add the state change listener to use internal page cache
+         * to prevent back/forward events if that state is cached here
+         *
+         * @access {private}
+         */
+        _stateListener()
+        {
+            if (!_listening)
+            {
+                window.addEventListener('popstate', this._popStateHandler);
+
+                _listening = true;
             }
         }
 
-        // Set the title
-        document.title = locationObj['title'];
-
-        // Find the target element in the new HTML and the current DOM
-        // If the target is set to 'document-body' get the body
-        // Otherwise get by id
-        if (locationObj['target'] === 'document-body')
+        /**
+         * State change event handler (back/forward clicks)
+         *
+         * Popstate is treated as another pjax request essentially
+         * 
+         * @access {private}
+         * @param  {e}       event JavaScript 'popstate' event
+         */
+        _popStateHandler(e)
         {
-            var targetEl = document.body;
-            var domTarget = domCotent.body;
-        }
-        else
-        {
-            var targetEl = document.getElementById(locationObj['target']);
-            var domTarget = domCotent.getElementById(locationObj['target']);
-        }
+            e = e || window.event;
 
-        // Cache the current document scripts to compare
-        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
-        var newScripts = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
+            var _this = Hubble.require('Pjax');
 
-        // Replace the target el's innerHTML
-        if (typeof domTarget === 'undefined' || domTarget === null)
-        {
-            targetEl.innerHTML = HTML;
-        }
-        // Or the entire element itself
-        else
-        {
-            HTML = domTarget.innerHTML;
-            targetEl.innerHTML = HTML;
-        }
-
-        // If we don't need to change the state we can stop here
-        if (!stateChange)
-        {
-            Hubble.require('Events').fire('pjax:complete', locationObj);
-
-            _loading = false;
-
-            return;
-        }
-
-        // Push the state change and append any new scripts
-        // from the response
-        var _this = this;
-        Chain()
-            (
-                function(res, chain)
-                {
-                    // Append scripts, wait for load/execution and call next chain
-                    _this._appendScripts(currScripts, newScripts, chain);
-                },
-                function(res, chain)
-                {
-                    // Push the history state
-                    window.history.pushState(
-                        {
-                            id: locationObj.location
-                        },
-                        locationObj.title,
-                        locationObj.location
-                    );
-                    chain.next();
-                },
-                function(res, chain)
-                {
-                    // If we are not listening for any state changes
-                    // Add the listener
-                    if (!_listening)
-                    {
-                        _this._stateListener();
-                    }
-
-                    // Finished loading
-                    _loading = false;
-
-                    // Pjax complete event
-                    Hubble.require('Events').fire('pjax:complete', locationObj);
-
-                    // Wait for spinner to finish
-                    setTimeout(function()
-                    {
-                        _this._cachePage();
-
-                    }, 500);
-                }
-            );
-    }
-
-    /**
-     * Add the state change listener to use internal page cache
-     * to prevent back/forward events if that state is cached here
-     *
-     * @access private
-     */
-    Pjax.prototype._stateListener = function()
-    {
-        window.addEventListener('popstate', this._onStateChange);
-
-        _listening = true;
-    }
-
-    /**
-     * State change event handler (back/forward clicks)
-     *
-     * @access private
-     * @param  e       event JavaScript 'popstate' event
-     */
-    Pjax.prototype._onStateChange = function(e)
-    {
-        e = e || window.event;
-
-        var _this = Hubble.require('Pjax');
-
-        // If this is a cached state
-        if (e.state && typeof e.state.id !== 'undefined')
-        {
-            var _content = _this._cacheGet(e.state.id + '____content');
-            var _location = _this._cacheGet(e.state.id + '____location');
-
-            // If the history state was 'broken' 
-            // ie page1 -> pjax -> page2 -> leave -> page3 back <- page2 back <- page1
-            // then the location object won't be available - refresh normally
-            if (!_content || !_location)
+            // State obj exists 
+            if (e.state && typeof e.state.id !== 'undefined')
             {
+                // Prevent default
                 e.preventDefault();
-                window.location.href = window.location.href;
-                return;
+
+                var stateObj = e.state;
+
+                opts = array_merge(_defaults, { scroll_pos: stateObj.scroll, keepScroll: false });
+
+                // Load entire body from cache
+                _this._load(stateObj.id, _defaults);
             }
-
-            // Prevent default
-            e.preventDefault();
-
-            // Load entire body from cache
-            _this._restoreState(_location, _content);
-        }
-        else
-        {
-            history.back();
-        }
-    }
-
-    /**
-     * Restore a previous state
-     *
-     * @access private
-     * @param  object locationObj Location object from the cache
-     * @param  string HTML        document.body.innerHTML
-     */
-    Pjax.prototype._restoreState = function(locationObj, HTML)
-    {
-        // Parse the HTML
-        var domCotent = this._parseHTML(HTML);
-
-        // Try to get the title
-        var _title = this._findDomTitle(domCotent);
-
-        if (_title)
-        {
-            locationObj['title'] = _title;
-        }
-        else
-        {
-            if (!locationObj['title'])
+            else
             {
-                locationObj['title'] = document.title;
+                history.back();
             }
         }
 
-        // Set the title
-        document.title = locationObj['title'];
-
-        document.body.innerHTML = HTML;
-
-        // Cache the current document scripts to compare
-        var currScripts = this._filterScripts(Array.prototype.slice.call(document.getElementsByTagName('script')));
-        var newScripts = this._filterScripts(Array.prototype.slice.call(domCotent.getElementsByTagName('script')));
-
-        // Push the state change and append any new scripts
-        // from the response
-        var _this = this;
-        Chain()
-            (
-                function(res, chain)
-                {
-                    // Append scripts, wait for load/execution and call next chain
-                    _this._appendScripts(currScripts, newScripts, chain);
-                },
-                function(res, chain)
-                {
-                    _loading = false;
-                    Hubble.require('Events').fire('pjax:complete', locationObj);
-                }
-            );
-    }
-
-    /**
-     * If there are any new scripts load them
-     * 
-     * Note that appending or replacing content via 'innerHTML'
-     * will not load any inline scripts so we need to compare what scripts have loaded
-     * on the current page with any scripts that are in the new DOM tree 
-     * and load any that don't already exist
-     *
-     * @access private
-     * @param  array   currScripts Currently loaded scripts array
-     * @param  object  newScripts  Newly loaded scripts
-     */
-    Pjax.prototype._appendScripts = function(currScripts, newScripts, chain)
-    {
-        var listeningForChain = false;
-
-        for (var i = 0; i < newScripts.length; i++)
+        /**
+         * If there are any new scripts load them
+         * 
+         * Note that appending or replacing content via 'innerHTML' or even
+         * native Nodes with scripts inside their 'innerHTML'
+         * will not load scripts so we need to compare what scripts have loaded
+         * on the current page with any scripts that are in the new DOM tree 
+         * and load any that don't already exist
+         *
+         * @access {private}
+         * @param  {array}   currScripts Currently loaded scripts array
+         * @param  {object}  newScripts  Newly loaded scripts
+         */
+        _appendScripts(currScripts, newScripts, callback)
         {
-            // Script is not in the current DOM tree
-            if (!this._hasScript(newScripts[i], currScripts))
-            {
-                // Create a new script
-                var script = document.createElement('script');
-                script.type = 'text/javascript';
-                script.async = false;
+            var newScripts = newScripts.filter(x => !Helper.in_array(x, currScripts));
+            var complete  = !Helper.is_empty(newScripts);
 
-                // Is this an inline script or a src ?
-                if (newScripts[i]['src'] === true)
+            if (!complete)
+            {
+                Helper.foreach(newScripts, function(i, script)
                 {
-                    // Listen for the script to load to chain next
-                    if (!this._havMoreScriptSources(i, newScripts))
+                    this._appendScript(script);
+                });
+            }
+            else
+            {
+                callback();
+            }
+        }
+
+        _appendScript(scriptObj)
+        {
+            // Create a new script
+            var script   = document.createElement('script');
+            script.type  = 'text/javascript';
+            script.async = false;
+
+            // Is this an inline script or a src ?
+            if (scriptObj.inline === true)
+            {
+                script.innerHTML = scriptObj.content;
+            }
+            else
+            {
+                script.src = scriptObj.content;
+                script.addEventListener('load', function()
+                {
+                    chain.next();
+                });
+            }
+
+            // Append the new script
+            document.body.appendChild(script);
+        }
+
+
+        /**
+         * Filter scripts with unique key/values into an array
+         *
+         * @access {private}
+         * @param  {string} html HTML as a string (with or without full doctype)
+         * @return {array}
+         */
+        _getScripts(doc)
+        {
+            var ret     = [];
+            var scripts = Array.prototype.slice.call(doc.getElementsByTagName('script'));
+
+            Helper.foreach(scripts, function(i, script)
+            {
+                var src = script.getAttribute('src');
+
+                if (src)
+                {
+                    // Remove the query string
+                    src = src.split('?')[0];
+
+                    ret.push(
                     {
-                        script.addEventListener('load', function()
-                        {
-                            chain.next();
-                        });
-                        listeningForChain = true;
-                    }
-
-                    script.src = newScripts[i]['content'];
+                        'inline' : false,
+                        'content': src
+                    });
                 }
                 else
                 {
-                    script.innerHTML = newScripts[i]['content'];
-
-                    // If there are either no more scripts to load
-                    // Or no more src scripts to load:
-                    // and we haven't added a listener to call the next chain
-                    // Add a function so once this script executes the next chain will be called
-                    if (!listeningForChain && !this._havMoreScriptSources(i, newScripts))
+                    ret.push(
                     {
-                        listeningForChain = true;
-                        window.nextChain = function()
-                        {
-                            chain.next();
-                            delete window.nextChain;
-                        };
-
-                        script.innerHTML += ';(function(){ nextChain(); })();';
-                    }
+                        'inline' : true,
+                        'content': script.innerHTML.trim()
+                    });
                 }
+            });
 
-                // Append the new script
-                document.body.appendChild(script);
+            return ret;
+        }
+
+        /**
+         * Remove all scripts from a document
+         *
+         * @access {private}
+         * @param  {Document} Document Document element
+         * @return {Document}
+         */
+        _removeScripts(doc)
+        {
+            var scripts = Array.prototype.slice.call(doc.getElementsByTagName('script'));
+
+            Helper.foreach(scripts, function(i, script)
+            {
+                script.parentNode.removeChild(script);
+            });
+
+            return doc;
+        }
+
+        /**
+         * Try to find the page title in a DOM tree
+         *
+         * @access {private}
+         * @param  {string} html HTML as a string (with or without full doctype)
+         * @return {string|false}
+         */
+        _findDomTitle(DOM)
+        {
+            var title = DOM.getElementsByTagName('title');
+
+            if (title.length)
+            {
+                return title[0].innerHTML.trim();
             }
-        }
 
-        // If no listeners call next
-        if (!listeningForChain)
-        {
-            chain.next();
-        }
-    }
-
-    /**
-     * Checks if the current iteration is the last script with a src attribute to load
-     *
-     * @access private
-     * @param  int     i       Current loop iteration
-     * @param  array   scripts Array of script objects
-     * @return bool
-     */
-    Pjax.prototype._havMoreScriptSources = function(i, scripts)
-    {
-        // Are we at the last iteration ?
-        if (i < scripts.length - 1)
-        {
             return false;
         }
 
-        for (var k = 0; k < scripts.length; k++)
+        /**
+         * Parse HTML from string into a document
+         *
+         * @access {private}
+         * @param  {string} html HTML as a string (with or without full doctype)
+         * @return {DOM} tree
+         */
+        _parseHTML(html)
         {
-            if (k > i && scripts[k]['src'] === true)
-            {
-                return true;
-            }
+            var parser = new DOMParser();
+            return parser.parseFromString(html, 'text/html');
         }
 
-        return false;
-    }
-
-    /**
-     * Filter scripts with unique key/values into an array
-     *
-     * @access private
-     * @param  string html HTML as a string (with or without full doctype)
-     * @return array
-     */
-    Pjax.prototype._filterScripts = function(nodes)
-    {
-        var result = [];
-
-        for (var i = 0; i < nodes.length; i++)
+        /**
+         * Normalises a url
+         *
+         * @access {private}
+         * @param  {string}  url The url to normalise
+         * @return {string}
+         */
+        _normaliseUrl(url)
         {
-            var src = nodes[i].getAttribute('src');
-
-            if (src)
-            {
-                // Remove the query string
-                src = src.split('?')[0];
-
-                result.push(
-                {
-                    'src': true,
-                    'inline': false,
-                    'content': src
-                });
-            }
-            else
-            {
-                // Don't append JSON inline scripts
-                if (Helper.isJSON(nodes[i].innerHTML.trim()))
-                {
-                    continue;
-                }
-
-                result.push(
-                {
-                    'src': false,
-                    'inline': true,
-                    'content': nodes[i].innerHTML.trim()
-                });
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Check if a script with a source or an inline script is in the current scripts
-     *
-     * @access private
-     * @param  object   script
-     * @param  array    currScripts
-     * @return bool
-     */
-    Pjax.prototype._hasScript = function(script, currScripts)
-    {
-        for (var i = 0; i < currScripts.length; i++)
-        {
-            if (script['content'] === currScripts[i]['content'])
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Try to find the page title in a DOM tree
-     *
-     * @access private
-     * @param  string html HTML as a string (with or without full doctype)
-     * @return string|false
-     */
-    Pjax.prototype._findDomTitle = function(DOM)
-    {
-        var title = DOM.getElementsByTagName('title');
-
-        if (title.length)
-        {
-            return title[0].innerHTML.trim();
-        }
-
-        return false;
-    }
-
-    /**
-     * Parse HTML from string into a document
-     *
-     * @access private
-     * @param  string html HTML as a string (with or without full doctype)
-     * @return DOM tree
-     */
-    Pjax.prototype._parseHTML = function(html)
-    {
-        var parser = new DOMParser();
-        return parser.parseFromString(html, 'text/html');
-    }
-
-    /**
-     * Get the current document scroll position
-     *
-     * @access private
-     * @return obj
-     */
-    Pjax.prototype._getScrollPos = function()
-    {
-        var doc = document.documentElement;
-        var top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-        var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-        return {
-            top: top,
-            left: left
-        };
-    }
-
-    /**
-     * Save a key/value to the cache
-     *
-     * @access private
-     * @param  string key   The key to save the value under
-     * @param  mixed  value The value to save
-     */
-    Pjax.prototype._cachePut = function(key, value)
-    {
-        for (var i = 0; i < _cache.length; i++)
-        {
-            if (_cache[i]['key'] === key)
-            {
-                _cache[i]['value'] = value;
-                return;
-            }
-        }
-
-        _cache.push(
-        {
-            key: key,
-            value: value
-        });
-    }
-
-    /**
-     * Get a value from the cache by key
-     *
-     * @access private
-     * @param  string key   The key to save the value under
-     * @return mixed|false
-     */
-    Pjax.prototype._cacheGet = function(key)
-    {
-        for (var i = 0; i < _cache.length; i++)
-        {
-            if (_cache[i]['key'] === key)
-            {
-                return _cache[i]['value'];
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Cache the current page DOM
-     *
-     * @access private
-     */
-    Pjax.prototype._cachePage = function()
-    {
-        var content = document.body.innerHTML;
-
-        var _location =
-        {
-            location: window.location.href,
-            target: 'document-body',
-            title: document.title,
-            scroll: this._getScrollPos(),
-        };
-        this._cachePut(window.location.href + '____location', _location);
-        this._cachePut(window.location.href + '____content', content);
-    }
-
-    /**
-     * Cache the current page DOM
-     *
-     * @access private
-     * @param  string  url The url to normalise
-     */
-    Pjax.prototype._normaliseUrl = function(url)
-    {
-        // If the url was set as local
-
-        // e.g www.foobar.com/foobar
-        // foobar.com/foobar
-        if (url.indexOf('http') < 0)
-        {
-            // Get the path
-            var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;
+            // If the url was set as local
 
             // e.g www.foobar.com/foobar
-            if (url[0] === 'w')
+            // foobar.com/foobar
+            if (url.indexOf('http') < 0)
             {
-                var host = url.split('.com');
+                // Get the path
+                var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;
 
-                url = window.location.protocol + '//' + host[0] + '.com/' + path;
-            }
-            else
-            {
-                // foobar.com/foobar
-                if (url.indexOf('.com') !== -1)
+                // e.g www.foobar.com/foobar
+                if (url[0] === 'w')
                 {
                     var host = url.split('.com');
-                    url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
+
+                    url = window.location.protocol + '//' + host[0] + '.com/' + path;
                 }
-                // /foobar/bar/
                 else
                 {
-                    url = window.location.origin + '/' + path;
+                    // foobar.com/foobar
+                    if (url.indexOf('.com') !== -1)
+                    {
+                        var host = url.split('.com');
+                        url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
+                    }
+                    // /foobar/bar/
+                    else
+                    {
+                        url = window.location.origin + '/' + path;
+                    }
+
                 }
-
             }
-        }
 
-        return url;
+            return url;
+        }
     }
-    
+        
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Pjax', Pjax);
+    Container.singleton('Pjax', Pjax);
 
 })();
 
@@ -14498,30 +12735,30 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
     
     /**
      * Pjax Links Module
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class PjaxLinks
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor()
         {
             this._nodes = Helper.$All('.js-pjax-link');
 
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 this._bind();
             }
@@ -14532,7 +12769,7 @@ function abort()
         /**
          * Module destructor
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -14542,7 +12779,7 @@ function abort()
         /**
          * Event binder - Binds all events on node click
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -14552,7 +12789,7 @@ function abort()
         /**
          * Event unbinder - Removes all events on node click
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -14562,8 +12799,8 @@ function abort()
         /**
          * Handle the click event
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
@@ -14583,7 +12820,7 @@ function abort()
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('PjaxLinks', PjaxLinks);
+    Hubble.dom().register('PjaxLinks', PjaxLinks);
 
 }());
 
@@ -14593,7 +12830,7 @@ function abort()
  * This is a utility class used internally to add custom vertical scrollbars to an element.
  * This class handles the events of the scrollbars.
  * This should not be used at all outside of the framework.
- * @see https://github.com/noraesae/perfect-scrollbar
+ * @see {https://github.com/noraesae/perfect-scrollbar}
  */
 (function()
 {
@@ -14669,10 +12906,10 @@ function abort()
             this.wrapper.style.marginRight = '';
             this.track.style.display = '';
 
-            removeClass(document.body, stateClasses.dragging);
-            removeClass(this.area, stateClasses.dragging);
-            removeClass(this.area, stateClasses.hover);
-            removeClass(this.track, stateClasses.hover);
+            remove_class(document.body, stateClasses.dragging);
+            remove_class(this.area, stateClasses.dragging);
+            remove_class(this.area, stateClasses.hover);
+            remove_class(this.track, stateClasses.hover);
 
             delete this.el;
         }
@@ -14748,11 +12985,11 @@ function abort()
 
             this._addListener(element, 'mouseenter', function()
             {
-                addClass(element, cls);
+                add_class(element, cls);
             });
             this._addListener(element, 'mouseleave', function()
             {
-                removeClass(element, cls);
+                remove_class(element, cls);
             });
         }
 
@@ -14809,8 +13046,8 @@ function abort()
                     this.wrapper.scrollTop = newPosition;
                     this._positionHandle();
 
-                    addClass(document.body, cls);
-                    addClass(this.area, cls);
+                    add_class(document.body, cls);
+                    add_class(this.area, cls);
                 }
             }, this);
 
@@ -14819,8 +13056,8 @@ function abort()
                 initialTop = null;
                 initialPosition = null;
 
-                removeClass(document.body, cls);
-                removeClass(this.area, cls);
+                remove_class(document.body, cls);
+                remove_class(this.area, cls);
 
                 this._removeListener(document, 'mousemove', startDragging);
                 this._removeListener(document, 'mouseup', stopDragging);
@@ -15014,7 +13251,7 @@ function abort()
         }
     }
 
-    function addClass(el, className)
+    function add_class(el, className)
     {
         if (el.classList)
         {
@@ -15026,7 +13263,7 @@ function abort()
         }
     }
 
-    function removeClass(el, className)
+    function remove_class(el, className)
     {
         if (el.classList)
         {
@@ -15063,16 +13300,16 @@ function abort()
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Custom Scrollbars
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class ScrollBars
     {
@@ -15081,7 +13318,7 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -15092,7 +13329,7 @@ function abort()
             this._nodes = Helper.$All('.js-custom-scroll');
 
             // Bind DOM listeners
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -15106,7 +13343,7 @@ function abort()
         /**
          * Module destructor - removes handler
          *
-         * @access public
+         * @access {public}
          */
         desctruct()
         {
@@ -15123,12 +13360,12 @@ function abort()
          * Create the necessary nodes for the scroller to work.
          * Also check if the element has overflow
          *
-         * @params el node
-         * @access private
+         * @params {el} node
+         * @access {private}
          */
         _invoke(el)
         {
-            if (Helper.hasClass(el, 'js-auto-scroll-invoked'))
+            if (Helper.has_class(el, 'js-auto-scroll-invoked'))
             {
                 var handler = Container.get('_ScrollbarHandler', el);
                 this._handlers.push(handler);
@@ -15140,7 +13377,7 @@ function abort()
 
             var insertAfter = false;
             var parent = el.parentNode;
-            var children = Helper.firstChildren(el);
+            var children = Helper.first_children(el);
             if (el.nextSibling) insertAfter = el.nextSibling;
 
             var scrollArea = document.createElement('DIV');
@@ -15163,15 +13400,15 @@ function abort()
             el.appendChild(scrollArea);
             var handler = Container.get('_ScrollbarHandler', el);
             this._handlers.push(handler);
-            Helper.addClass(el, 'js-auto-scroll-invoked');
+            Helper.add_class(el, 'js-auto-scroll-invoked');
         }
 
         /**
          * Check if an element needs to be scrolled or not.
          *
-         * @params el node
-         * @access private
-         * @return boolean
+         * @params {el} node
+         * @access {private}
+         * @return {boolean}
          */
         _needsScroller(el)
         {
@@ -15242,9 +13479,9 @@ function abort()
          * This can be usefull if you have custom scrollbars
          * on an element but change it's height (e.g responsive or add/remove children)
          *
-         * @params elem node
-         * @access public
-         * @example Container.get('ScrollBars').refresh(node) // Node = $.('.js-custom-scroll');
+         * @params {elem} node
+         * @access {public}
+         * @example {Container.get('ScrollBars').refresh(node)} // Node = $.('.js-custom-scroll');
          */
         refresh(elem)
         {
@@ -15259,8 +13496,8 @@ function abort()
         /**
          * Destroy a handler by dom node .js-custom-scroll
          *
-         * @params elem node
-         * @access public
+         * @params {elem} node
+         * @access {public}
          */
         destroy(elem)
         {
@@ -15277,9 +13514,9 @@ function abort()
         /**
          * Get a handler by dom node .js-custom-scroll
          *
-         * @params elem node
-         * @access public
-         * @return mixed
+         * @params {elem} node
+         * @access {public}
+         * @return {mixed}
          */
         getHandler(elem)
         {
@@ -15293,7 +13530,7 @@ function abort()
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Scrollbars', ScrollBars);
+    Hubble.dom().register('Scrollbars', ScrollBars);
 
 })();
 
@@ -15302,23 +13539,23 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Toggle height on click
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class Collapse
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor()
@@ -15326,7 +13563,7 @@ function abort()
             /**
              * Array of click-triggers
              * 
-             * @var array
+             * @var {array}
              */
             this._nodes = Helper.$All('.js-collapse');
 
@@ -15338,7 +13575,7 @@ function abort()
         /**
          * Module destructor
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -15350,7 +13587,7 @@ function abort()
         /**
          * Event binder - Binds all events on button click
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -15360,7 +13597,7 @@ function abort()
         /**
          * Event unbinder - Removes all events on button click
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -15370,32 +13607,42 @@ function abort()
         /**
          * Handle the click event
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
             e = e || window.event;
 
-            if (Helper.isNodeType(this, 'a'))
+            if (Helper.is_node_type(this, 'a'))
             {
                 e.preventDefault();
             }
 
-            var clicked = this;
+            var clicked  = this;
             var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
-            var speed = parseInt(clicked.dataset.collapseSpeed) || 350;
-            var easing = clicked.dataset.collapseEasing || 'cubic-bezier(0.19, 1, 0.22, 1)';
-            var opacity = clicked.dataset.withOpacity;
+            var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
+            var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
+            var opacity  = Helper.bool(clicked.dataset.withOpacity);
+            var options  = 
+            {
+                height: Helper.has_class(clicked, 'active') ? '0px' : 'auto',
+                duration: duration, 
+                easing: easing
+            };
 
-            Container.get('ToggleHeight', targetEl, 0, speed, easing, opacity);
+            if (opacity)
+            {
+                options.opacity = Helper.has_class(clicked, 'active') ? '0' : '1';
+            }
 
-            Helper.toggleClass(clicked, 'active');
+            Helper.animate(targetEl, options);
+            Helper.toggle_class(clicked, 'active');
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Collapse', Collapse);
+    Hubble.dom().register('Collapse', Collapse);
 
 }());
 
@@ -15404,29 +13651,29 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Dropdown Buttons
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class DropDowns
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          */
         constructor()
-        {
+        {            
             this._triggers = Helper.$All('.js-drop-trigger');
 
-            if (!Helper.empty(this._triggers))
+            if (!Helper.is_empty(this._triggers))
             {
                 this._bind();
             }
@@ -15435,7 +13682,7 @@ function abort()
         /**
          * Module destructor
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -15447,7 +13694,7 @@ function abort()
         /**
          * Bind click listener to containers
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -15459,7 +13706,7 @@ function abort()
         /**
          * Unbind listener to containers
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -15471,8 +13718,8 @@ function abort()
         /**
          * Click event handler
          *
-         * @param  event|null e JavaScript Click event
-         * @access private
+         * @param  {event|null} e JavaScript Click event
+         * @access {private}
          */
         _clickHandler(e)
         {
@@ -15486,7 +13733,7 @@ function abort()
             _this._hideDropDowns(button);
 
             // Remove active and return
-            if (Helper.hasClass(button, 'active'))
+            if (Helper.has_class(button, 'active'))
             {
                 _this._hideDrop(button);
             }
@@ -15499,38 +13746,38 @@ function abort()
         /**
          * Click event handler
          *
-         * @param  event|null e JavaScript Click event
-         * @access private
+         * @param  {event|null} e JavaScript Click event
+         * @access {private}
          */
         _hideDrop(button)
         {
             var drop = Helper.$('.drop-menu', button.parentNode);
-            Helper.removeClass(button, 'active');
+            Helper.remove_class(button, 'active');
             button.setAttribute('aria-pressed', 'false');
-            Helper.hideAria(drop);
+            Helper.hide_aria(drop);
             drop.blur();
         }
 
         /**
          * Click event handler
          *
-         * @param  event|null e JavaScript Click event
-         * @access private
+         * @param  {event|null} e JavaScript Click event
+         * @access {private}
          */
         _showDrop(button)
         {
             var drop = Helper.$('.drop-menu', button.parentNode);
-            Helper.addClass(button, 'active');
+            Helper.add_class(button, 'active');
             button.setAttribute('aria-pressed', 'true');
-            Helper.showAria(drop);
+            Helper.show_aria(drop);
             drop.focus();
         }
 
         /**
          * Window click event
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _windowClick(e)
         {
@@ -15539,7 +13786,7 @@ function abort()
             {
                 return;
             }
-            if (!Helper.hasClass(e.target, 'js-drop-trigger'))
+            if (!Helper.has_class(e.target, 'js-drop-trigger'))
             {
                 var _this = Container.get('DropDowns');
 
@@ -15550,8 +13797,8 @@ function abort()
         /**
          * Hide all dropdowns
          *
-         * @param exception (optional) Button to skip
-         * @access private
+         * @param {exception} (optional) Button to skip
+         * @access {private}
          */
         _hideDropDowns(exception)
         {
@@ -15573,7 +13820,7 @@ function abort()
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('DropDowns', DropDowns);
+    Hubble.dom().register('DropDowns', DropDowns);
 
 })();
 
@@ -15582,16 +13829,16 @@ function abort()
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Tab Nav
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class TabNav
     {
@@ -15599,7 +13846,7 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -15607,7 +13854,7 @@ function abort()
             this._nodes = Helper.$All('.js-tab-nav');
 
             // If nothing to do destruct straight away
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -15621,7 +13868,7 @@ function abort()
         /**
          * Module destructor - unbinds click events
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -15636,8 +13883,8 @@ function abort()
         /**
          * Bind click events on all <a> tags in a .js-tab-nav
          *
-         * @params navWrap node
-         * @access private
+         * @params {navWrap} node
+         * @access {private}
          */
         _bindDOMListeners(navWrap)
         {
@@ -15649,8 +13896,8 @@ function abort()
         /**
          * Unbind click events on all <a> tags in a .js-tab-nav
          *
-         * @params navWrap node
-         * @access private
+         * @params {navWrap} node
+         * @access {private}
          */
         _unbindDOMListeners(navWrap)
         {
@@ -15662,8 +13909,8 @@ function abort()
         /**
          * Click event handler
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
@@ -15674,36 +13921,36 @@ function abort()
             
             var node = this;
 
-            if (Helper.hasClass(node, 'active')) return;
+            if (Helper.has_class(node, 'active')) return;
             
             var tab           = node.dataset.tab;
             var tabNav        = Helper.closest(node, 'ul');
 
             var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-            var tabPanel      = Helper.closestClass(tabPane, 'js-tab-panels-wrap');
+            var tabPanel      = Helper.closest_class(tabPane, 'js-tab-panels-wrap');
             var activePanel   = Helper.$('.tab-panel.active', tabPanel);
 
-            var navWrap       = Helper.closestClass(node, 'js-tab-nav');
+            var navWrap       = Helper.closest_class(node, 'js-tab-nav');
             var activeNav     = Helper.$('.active', navWrap);
             var activeClass   = navWrap.dataset.activeClass;
             var activeClasses = ['active'];
 
-            if (!Helper.empty(activeClass))
+            if (!Helper.is_empty(activeClass))
             {
                 activeClasses.push(activeClass);
             }
 
-            Helper.removeClass(activeNav, activeClasses);
-            Helper.removeClass(activePanel, activeClasses);
+            Helper.remove_class(activeNav, activeClasses);
+            Helper.remove_class(activePanel, activeClasses);
 
-            Helper.addClass(node, activeClasses);
-            Helper.addClass(tabPane, activeClasses);
+            Helper.add_class(node, activeClasses);
+            Helper.add_class(tabPane, activeClasses);
             
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('TabNav', TabNav);
+    Hubble.dom().register('TabNav', TabNav);
 
 })();
 (function()
@@ -15711,16 +13958,16 @@ function abort()
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Bottom nav
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class BottomNav
     {
@@ -15728,14 +13975,14 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
         constructor()
         {
             // Find nodes
             this._nav = Helper.$('.js-bottom-nav');
 
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
                 this._bind();
             }
@@ -15746,39 +13993,39 @@ function abort()
         /**
          * Show nav
          *
-         * @access public
+         * @access {public}
          */
         show()
         {
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
-                Helper.addClass(this._nav, 'active');
+                Helper.add_class(this._nav, 'active');
             }
         }
 
         /**
          * Hide nav
          *
-         * @access public
+         * @access {public}
          */
         hide()
         {
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
-                Helper.removeClass(this._nav, 'active');
+                Helper.remove_class(this._nav, 'active');
             }
         }
 
         /**
          * Show nav
          *
-         * @access public
+         * @access {public}
          */
         state()
         {
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
-                if (Helper.hasClass(this._nav, 'active'))
+                if (Helper.has_class(this._nav, 'active'))
                 {
                     return 'show';
                 }
@@ -15790,11 +14037,11 @@ function abort()
         /**
          * Module destructor - unbinds click events
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
                 var links = Helper.$All('.btn', this._nav);
 
@@ -15807,7 +14054,7 @@ function abort()
         /**
          * Bind click events on all button
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -15819,8 +14066,8 @@ function abort()
         /**
          * Click event handler
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
@@ -15828,19 +14075,19 @@ function abort()
 
             e.preventDefault();
 
-            if (Helper.hasClass(this, 'active'))
+            if (Helper.has_class(this, 'active'))
             {
                 return;
             }
 
-            Helper.removeClass(Helper.$('.js-bottom-nav .btn.active'), 'active');
+            Helper.remove_class(Helper.$('.js-bottom-nav .btn.active'), 'active');
 
-            Helper.addClass(this, 'active');
+            Helper.add_class(this, 'active');
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('BottomNav', BottomNav);
+    Hubble.dom().register('BottomNav', BottomNav);
 
 })();
 
@@ -15849,28 +14096,28 @@ function abort()
     /**
      * JS Helper
      * 
-     * @var obj
+     * @var {obj}
      */
     var Helper = Hubble.helper();
 
     /**
      * Show/hide sidebar overlay timer
      * 
-     * @var setTimeout
+     * @var {setTimeout}
      */
     var overleyTimer;
 
     /**
      * Show/hide sidebar el timer
      * 
-     * @var setTimeout
+     * @var {setTimeout}
      */
     var toggleTimer;
 
     /**
      * Last scroll y on page
      * 
-     * @var int
+     * @var {int}
      */
     var lastScrollY;
 
@@ -15883,9 +14130,9 @@ function abort()
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
-         * @return this
+         {*} @return this
          */
     	constructor()
         {
@@ -15894,7 +14141,7 @@ function abort()
             this._drawerEl = Helper.$('.js-drawer');
             this._overlayEl = Helper.$('.js-drawer-overlay');
 
-            if (Helper.nodeExists(this._drawerEl))
+            if (Helper.in_dom(this._drawerEl))
             {
                 this._bind();
             }
@@ -15905,7 +14152,7 @@ function abort()
         /**
          * Module destructor
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -15915,11 +14162,11 @@ function abort()
         /**
          * Bind event listeners
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
-            this._drawerWidth = Helper.getStyle(this._drawerEl, 'max-width');
+            this._drawerWidth = Helper.rendered_style(this._drawerEl, 'max-width');
 
             Helper.addEventListener(this._openTriggers, 'click', this.open);
 
@@ -15931,7 +14178,7 @@ function abort()
         /**
          * Unbind event listeners
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -15945,14 +14192,14 @@ function abort()
         /**
          * Handle show sidebar
          *
-         * @access private
-         * @param  event|null e Button click even
+         * @access {private}
+         * @param  {event|null} e Button click even
          */
         open(e)
         {
             e = e || window.event;
 
-            if (e && e.target && Helper.isNodeType(e.target, 'a'))
+            if (e && e.target && Helper.is_node_type(e.target, 'a'))
             {
                 e.preventDefault();
             }
@@ -15967,11 +14214,11 @@ function abort()
             // Overlay
             Helper.css(_this._overlayEl, 'visibility', 'visible');
             Helper.animate(_this._overlayEl, 'opacity', 0, 1, 200, 'easeOutCubic');
-            Helper.showAria(_this._overlayEl);
+            Helper.show_aria(_this._overlayEl);
 
             // Sidebar
             Helper.css(_this._drawerEl, 'visibility', 'visible');
-            if (Helper.hasClass(_this._drawerEl, 'drawer-right'))
+            if (Helper.has_class(_this._drawerEl, 'drawer-right'))
             {
                 Helper.animate(_this._drawerEl, 'transform', 'translateX('+ _this._drawerWidth + ')', 'translateX(0)', 200, 'easeOutCubic');
             }
@@ -15980,23 +14227,23 @@ function abort()
                 Helper.animate(_this._drawerEl, 'transform', 'translateX(-' + _this._drawerWidth +')', 'translateX(0)', 200, 'easeOutCubic');
             }
 
-            Helper.addClass(document.body, 'no-scroll');
-            Helper.showAria(_this._drawerEl);
-            Helper.addClass(_this._drawerEl, 'active');
+            Helper.add_class(document.body, 'no-scroll');
+            Helper.show_aria(_this._drawerEl);
+            Helper.add_class(_this._drawerEl, 'active');
             _this._drawerEl.focus();
         }
 
         /**
          * Handle hide sidebar
          *
-         * @access public
-         * @param  event|null e Button click even
+         * @access {public}
+         * @param  {event|null} e Button click even
          */
         close(e)
         {
             e = e || window.event;
 
-            if (e && e.target && Helper.isNodeType(e.target, 'a'))
+            if (e && e.target && Helper.is_node_type(e.target, 'a'))
             {
                 e.preventDefault();
             }
@@ -16013,10 +14260,10 @@ function abort()
                 Helper.css(_this._overlayEl, 'visibility', 'hidden');
 
             }, 250);
-            Helper.hideAria(_this._overlayEl);
+            Helper.hide_aria(_this._overlayEl);
 
             // Sidebar
-            if (Helper.hasClass(_this._drawerEl, 'drawer-right'))
+            if (Helper.has_class(_this._drawerEl, 'drawer-right'))
             {
                 Helper.animate(_this._drawerEl, 'transform', 'translateX(0)', 'translateX(' + _this._drawerWidth + ')', 200, 'easeOutCubic');
             }
@@ -16031,8 +14278,8 @@ function abort()
                 
             }, 250);
 
-            Helper.removeClass(document.body, 'no-scroll');
-            Helper.hideAria(_this._drawerEl);
+            Helper.remove_class(document.body, 'no-scroll');
+            Helper.hide_aria(_this._drawerEl);
             _this._drawerEl.blur();
 
             if (lastScrollY)
@@ -16051,23 +14298,23 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Popover Handler
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class _popHandler
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor(options)
@@ -16099,7 +14346,7 @@ function abort()
         /**
          * Build the popover
          *
-         * @access private
+         * @access {private}
          */
         buildPopEl()
         {
@@ -16120,45 +14367,45 @@ function abort()
         /**
          * Remove the popover
          *
-         * @access public
+         * @access {public}
          */
         remove()
         {
-            if (Helper.nodeExists(this.el)) this.el.parentNode.removeChild(this.el);
+            if (Helper.in_dom(this.el)) this.el.parentNode.removeChild(this.el);
         }
 
         /**
          * Position the popover
          *
-         * @access public
+         * @access {public}
          */
         stylePop()
         {
 
-            var targetCoords = Helper.getCoords(this.options.target);
+            var tarcoordinates = Helper.coordinates(this.options.target);
 
             if (this.options.direction === 'top')
             {
-                this.el.style.top = targetCoords.top - this.el.scrollHeight + 'px';
-                this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
+                this.el.style.top = tarcoordinates.top - this.el.scrollHeight + 'px';
+                this.el.style.left = tarcoordinates.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
                 return;
             }
             else if (this.options.direction === 'bottom')
             {
-                this.el.style.top = targetCoords.top + this.options.target.offsetHeight + 10 + 'px';
-                this.el.style.left = targetCoords.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
+                this.el.style.top = tarcoordinates.top + this.options.target.offsetHeight + 10 + 'px';
+                this.el.style.left = tarcoordinates.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
                 return;
             }
             else if (this.options.direction === 'left')
             {
-                this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
-                this.el.style.left = targetCoords.left - this.el.offsetWidth - 10 + 'px';
+                this.el.style.top = tarcoordinates.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
+                this.el.style.left = tarcoordinates.left - this.el.offsetWidth - 10 + 'px';
                 return;
             }
             else if (this.options.direction === 'right')
             {
-                this.el.style.top = targetCoords.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
-                this.el.style.left = targetCoords.left + this.options.target.offsetWidth + 10 + 'px';
+                this.el.style.top = tarcoordinates.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
+                this.el.style.left = tarcoordinates.left + this.options.target.offsetWidth + 10 + 'px';
                 return;
             }
         }
@@ -16174,23 +14421,23 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Popovers
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class Popovers
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor()
@@ -16202,7 +14449,7 @@ function abort()
             this._nodes = Helper.$All('.js-popover');
 
             // Bind events
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -16218,12 +14465,12 @@ function abort()
         /**
          * Module destructor
          *
-         * @access public
-         * @return this
+         * @access {public}
+         * @return {this}
          */
         destruct()
         {
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -16241,8 +14488,8 @@ function abort()
         /**
          * Unbind event listeners on a trigger
          *
-         * @param trigger node
-         * @access private
+         * @param {trigger} node
+         * @access {private}
          */
         _unbind(trigger)
         {
@@ -16263,8 +14510,8 @@ function abort()
         /**
          * Initialize the handlers on a trigger
          *
-         * @access private
-         * @param  node trigger Click/hover trigger
+         * @access {private}
+         * @param  {node} trigger Click/hover trigger
          */
         _bind(trigger)
         {
@@ -16317,7 +14564,7 @@ function abort()
         /**
          * Timeout handler for hoverleave
          *
-         * @access private
+         * @access {private}
          */
         _hoverLeavTimeout(e)
         {
@@ -16331,22 +14578,22 @@ function abort()
         /**
          * Hover over event handler
          *
-         * @access private
+         * @access {private}
          */
         _hoverOver()
         {
             var trigger = this;
             var _this = Container.get('Popovers');
             var popHandler = _this._getHandler(trigger);
-            if (Helper.hasClass(trigger, 'popped')) return;
+            if (Helper.has_class(trigger, 'popped')) return;
             popHandler.render();
-            Helper.addClass(trigger, 'popped');
+            Helper.add_class(trigger, 'popped');
         }
 
         /**
          * Hover leave event handler
          *
-         * @access private
+         * @access {private}
          */
         _hoverLeave(e)
         {
@@ -16354,7 +14601,7 @@ function abort()
             var hovers = Helper.$All(':hover');
             for (var i = 0; i < hovers.length; i++)
             {
-                if (Helper.hasClass(hovers[i], 'popover'))
+                if (Helper.has_class(hovers[i], 'popover'))
                 {
                     hovers[i].addEventListener('mouseleave', function(_e)
                     {
@@ -16371,7 +14618,7 @@ function abort()
         /**
          * Window resize event handler
          *
-         * @access private
+         * @access {private}
          */
         _windowResize()
         {
@@ -16379,7 +14626,7 @@ function abort()
 
             for (var i = 0; i < _this._nodes.length; i++)
             {
-                if (Helper.hasClass(_this._nodes[i], 'popped'))
+                if (Helper.has_class(_this._nodes[i], 'popped'))
                 {
                     var popHandler = _this._getHandler(_this._nodes[i]);
                     popHandler.stylePop();
@@ -16390,8 +14637,8 @@ function abort()
         /**
          * Click event handler
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _clickHandler(e)
         {
@@ -16401,24 +14648,24 @@ function abort()
             var _this = Container.get('Popovers');
             var popHandler = _this._getHandler(trigger);
 
-            if (Helper.hasClass(trigger, 'popped'))
+            if (Helper.has_class(trigger, 'popped'))
             {
                 _this._removeAll();
                 popHandler.remove();
-                Helper.removeClass(trigger, 'popped');
+                Helper.remove_class(trigger, 'popped');
             }
             else
             {
                 _this._removeAll();
                 popHandler.render();
-                Helper.addClass(trigger, 'popped');
+                Helper.add_class(trigger, 'popped');
             }
         }
 
         /**
          * Remove all popovers when anything is clicked
          *
-         * @access private
+         * @access {private}
          */
         _addWindowClickEvent()
         {
@@ -16430,7 +14677,7 @@ function abort()
                 var clicked = e.target;
 
                 // Clicked the close button
-                if (Helper.hasClass(clicked, 'js-remove-pop') || Helper.closest(clicked, '.js-remove-pop'))
+                if (Helper.has_class(clicked, 'js-remove-pop') || Helper.closest(clicked, '.js-remove-pop'))
                 {
                     _this._removeAll();
 
@@ -16438,13 +14685,13 @@ function abort()
                 }
 
                 // Clicked inside the popover
-                if (Helper.hasClass(clicked, 'popover') || Helper.closest(clicked, '.popover'))
+                if (Helper.has_class(clicked, 'popover') || Helper.closest(clicked, '.popover'))
                 {
                     return;
                 }
 
                 // Clicked a popover trigger
-                if (Helper.hasClass(clicked, 'js-popover') || Helper.closest(clicked, '.js-popover'))
+                if (Helper.has_class(clicked, 'js-popover') || Helper.closest(clicked, '.js-popover'))
                 {
                     return;
                 }
@@ -16456,9 +14703,9 @@ function abort()
         /**
          * Get the handler for the trigger
          * 
-         * @access private
-         * @param  node    trigger DOM node that triggered event
-         * @return object|false
+         * @access {private}
+         * @param  {node}    trigger DOM node that triggered event
+         * @return {object|false}
          */
         _getHandler(trigger)
         {
@@ -16473,7 +14720,7 @@ function abort()
         /**
          * Remove all the popovers currently being displayed
          *
-         * @access private
+         * @access {private}
          */
         _removeAll()
         {
@@ -16481,34 +14728,34 @@ function abort()
             {
                 this._pops[i].remove();
 
-                Helper.removeClass(this._pops[i].options.target, 'popped');
+                Helper.remove_class(this._pops[i].options.target, 'popped');
             }
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Popovers', Popovers);
+    Hubble.dom().register('Popovers', Popovers);
 
 }());
 
 /**
  * Ripple click animation
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
  */
 (function()
 {
     /**
      * Ripple handler
      * 
-     * @var object
+     * @var {object}
      */
     /**
      * Ripple handler
      * 
-     * @see https://github.com/samthor/js-ripple
+     * @see {https://github.com/samthor/js-ripple}
      */
     var rippleTypeAttr = 'data-event';
 
@@ -16599,7 +14846,7 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
@@ -16609,7 +14856,7 @@ function abort()
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
         constructor()
@@ -16636,7 +14883,7 @@ function abort()
         /**
          * Module destructor - removes event listeners
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -16648,7 +14895,7 @@ function abort()
         /**
          * Insert ripples
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -16661,7 +14908,7 @@ function abort()
         /**
          * Remove ripples
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -16677,7 +14924,7 @@ function abort()
 
                 for (var j = 0; j < ripples.length; j++)
                 {
-                    Helper.removeFromDOM(ripples[j]);
+                    Helper.remove_from_dom(ripples[j]);
                 }
             }
         }
@@ -16685,8 +14932,8 @@ function abort()
         /**
          * Insert ripple
          *
-         * @access private
-         * @param  node    wrapper
+         * @access {private}
+         * @param  {node}    wrapper
          */
         _insertRipple(wrapper)
         {
@@ -16695,7 +14942,7 @@ function abort()
                 
             rip.className = 'ripple-container js-ripple-container';
 
-            if (Helper.hasClass(wrapper, 'chip'))
+            if (Helper.has_class(wrapper, 'chip'))
             { 
                 rip.className = 'ripple-container fill js-ripple-container';
             }
@@ -16711,8 +14958,8 @@ function abort()
         /**
          * On mousedown
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _mouseDown(e)
         {
@@ -16728,8 +14975,8 @@ function abort()
         /**
          * On touchstart
          *
-         * @access private
-         * @param  event|null   e
+         * @access {private}
+         * @param  {event|null}   e
          */
         _touchStart(e, foo, bar)
         {
@@ -16743,7 +14990,7 @@ function abort()
     }
     
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Ripple', Ripple);
+    Hubble.dom().register('Ripple', Ripple);
 
 })();
 
@@ -16752,16 +14999,16 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Input masker
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class InputMasks
     {
@@ -16769,7 +15016,7 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -16792,7 +15039,7 @@ function abort()
         /**
          * Public destructor remove all masks
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -16817,7 +15064,7 @@ function abort()
         /**
          * Find all the nodes and apply any masks
          *
-         * @access private
+         * @access {private}
          */
         _invoke()
         {
@@ -16831,35 +15078,35 @@ function abort()
             this._nodes_alphaDash = Helper.$All('.js-mask-alpha-dash');
             this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
 
-            if (!Helper.empty(this._nodes_money))
+            if (!Helper.is_empty(this._nodes_money))
             {
                 this._loopBind(this._nodes_money, 'money');
             }
-            if (!Helper.empty(this._nodes_creditcard))
+            if (!Helper.is_empty(this._nodes_creditcard))
             {
                 this._loopBind(this._nodes_creditcard, 'creditcard');
             }
-            if (!Helper.empty(this._nodes_numeric))
+            if (!Helper.is_empty(this._nodes_numeric))
             {
                 this._loopBind(this._nodes_numeric, 'numeric');
             }
-            if (!Helper.empty(this._nodes_numericDecimal))
+            if (!Helper.is_empty(this._nodes_numericDecimal))
             {
                 this._loopBind(this._nodes_numericDecimal, 'numericDecimal');
             }
-            if (!Helper.empty(this._nodes_alphaNumeric))
+            if (!Helper.is_empty(this._nodes_alphaNumeric))
             {
                 this._loopBind(this._nodes_alphaNumeric, 'alphaNumeric');
             }
-            if (!Helper.empty(this._nodes_alphaSpace))
+            if (!Helper.is_empty(this._nodes_alphaSpace))
             {
                 this._loopBind(this._nodes_alphaSpace, 'alphaSpace');
             }
-            if (!Helper.empty(this._nodes_alphaDash))
+            if (!Helper.is_empty(this._nodes_alphaDash))
             {
                 this._loopBind(this._nodes_alphaDash, 'alphaDash');
             }
-            if (!Helper.empty(this._nodes_AlphaNumericDash))
+            if (!Helper.is_empty(this._nodes_AlphaNumericDash))
             {
                 this._loopBind(this._nodes_AlphaNumericDash, 'alphaNumericDash');
             }
@@ -16868,7 +15115,7 @@ function abort()
         /**
          * Loop and bind masks to DOM LIST
          *
-         * @access private
+         * @access {private}
          */
         _loopBind(nodes, mask)
         {
@@ -16881,7 +15128,7 @@ function abort()
         /**
          * Loop and unbind masks to DOM LIST
          *
-         * @access private
+         * @access {private}
          */
         _loopUnBind(nodes)
         {
@@ -16893,7 +15140,7 @@ function abort()
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('InputMasks', InputMasks);
+    Hubble.dom().register('InputMasks', InputMasks);
 
 }());
 
@@ -16902,16 +15149,16 @@ function abort()
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Message closers
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class MessageClosers
     {
@@ -16919,13 +15166,13 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
         constructor()
         {
             this._triggers = Helper.$All('.js-close-msg');
 
-            if (!Helper.empty(this._triggers))
+            if (!Helper.is_empty(this._triggers))
             {
                 this._bind();
             }
@@ -16937,7 +15184,7 @@ function abort()
          * Module destructor - removes event listeners
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
         destruct()
         {
@@ -16949,7 +15196,7 @@ function abort()
         /**
          * Event binder - Binds all events on button click
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -16959,7 +15206,7 @@ function abort()
         /**
          * Event ubinder - Binds all event handlers on button click
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -16969,8 +15216,8 @@ function abort()
         /**
          * Event handler - handles removing the message
          *
-         * @param  event   e JavaScript click event
-         * @access private
+         * @param  {event}   e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
@@ -16980,23 +15227,20 @@ function abort()
 
             var toRemove = Helper.closest(this, '.msg');
 
-            if (Helper.hasClass(this, 'js-rmv-parent'))
+            if (Helper.has_class(this, 'js-rmv-parent'))
             {
                 toRemove = toRemove.parentNode;
             }
 
-            Helper.animate(toRemove, 'opacity', '1', '0', 300, 'ease');
-
-            setTimeout(function()
-            {
-                Helper.removeFromDOM(toRemove);
-
-            }, 300);
+            Helper.animate_css(toRemove, { opacity: 0, duration: 500, easing: 'easeInOutCubic', callback: function()
+            {                
+                Helper.remove_from_dom(toRemove);
+            }});
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('MessageClosers', MessageClosers);
+    Hubble.dom().register('MessageClosers', MessageClosers);
 
 })();
 
@@ -17005,23 +15249,23 @@ function abort()
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Has the page loaded?
      * 
-     * @var object
+     * @var {object}
      */
     var pageLoaded = false;
 
     /**
      * Waypoints
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class WayPoints
     {
@@ -17029,14 +15273,14 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {    // Load nodes
             this._nodes = Helper.$All('.js-waypoint-trigger');
 
             // bind listeners
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -17056,7 +15300,7 @@ function abort()
         /**
          * Module destructor
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -17073,8 +15317,8 @@ function abort()
         /**
          * Event binder
          *
-         * @params trigger node
-         * @access private
+         * @params {trigger} node
+         * @access {private}
          */
         _bind(trigger)
         {
@@ -17084,8 +15328,8 @@ function abort()
         /**
          * Event unbinder
          *
-         * @params trigger node
-         * @access private
+         * @params {trigger} node
+         * @access {private}
          */
         _unbind(trigger)
         {
@@ -17095,8 +15339,8 @@ function abort()
         /**
          * Event handler
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
@@ -17106,7 +15350,7 @@ function abort()
             var waypoint = trigger.dataset.waypointTarget;
             var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
-            if (Helper.nodeExists(targetEl))
+            if (Helper.in_dom(targetEl))
             {
                 var id = waypoint;
                 var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
@@ -17125,22 +15369,22 @@ function abort()
         /**
          * Scroll to a element with id when the page loads
          *
-         * @access private
+         * @access {private}
          */
         _invokePageLoad()
         {
             var url = Helper.parse_url(window.location.href);
 
-            if (Helper.isset(url['fragment']) && url['fragment'] !== '')
+            if (url.hash && url.hash !== '')
             {
-                var waypoint = Helper.trim(url['fragment'], '/');
+                var waypoint = Helper.trim(url.hash, '/');
                 var options = {
                     speed: 100,
                     easing: 'Linear'
                 };
                 var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
-                if (Helper.nodeExists(targetEl))
+                if (Helper.in_dom(targetEl))
                 {
                     var id = waypoint;
                     targetEl.id = id;
@@ -17154,7 +15398,7 @@ function abort()
 
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('WayPoints', WayPoints);
+    Hubble.dom().register('WayPoints', WayPoints);
 
 }());
 
@@ -17163,23 +15407,23 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Adds classes to inputs
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class Inputs
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor()
@@ -17187,7 +15431,7 @@ function abort()
             this._inputs = Helper.$All('.form-field input, .form-field select, .form-field textarea');
             this._labels = Helper.$All('.form-field label');
 
-            if (!Helper.empty(this._inputs))
+            if (!Helper.is_empty(this._inputs))
             {
                 this._bind();
             }
@@ -17198,7 +15442,7 @@ function abort()
         /**
          * Module destructor - removes event listeners
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -17210,7 +15454,7 @@ function abort()
         /**
          * Event binder
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -17226,7 +15470,7 @@ function abort()
         /**
          * Event ubinder
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -17242,8 +15486,8 @@ function abort()
         /**
          * Event handler
          *
-         * @access private
-         * @params event|null e Browser click event
+         * @access {private}
+         * @params {event|null} e Browser click event
          */
         _onLabelClick(e)
         {
@@ -17251,7 +15495,7 @@ function abort()
 
             var input = Helper.$('input', this.parentNode);
 
-            if (Helper.nodeExists(input))
+            if (Helper.in_dom(input))
             {
                 input.focus();
 
@@ -17260,7 +15504,7 @@ function abort()
 
             var input = Helper.$('select', this.parentNode);
 
-            if (Helper.nodeExists(input))
+            if (Helper.in_dom(input))
             {
                 input.focus();
 
@@ -17269,7 +15513,7 @@ function abort()
 
             var input = Helper.$('textarea', this.parentNode);
 
-            if (Helper.nodeExists(input))
+            if (Helper.in_dom(input))
             {
                 input.focus();
 
@@ -17280,8 +15524,8 @@ function abort()
         /**
          * Event handler
          *
-         * @access private
-         * @params event|null e Browser click event
+         * @access {private}
+         * @params {event|null} e Browser click event
          */
         _eventHandler(e)
         {
@@ -17293,33 +15537,33 @@ function abort()
             }
             else if (e.type === 'focus')
             {
-                Helper.addClass(this.parentNode, 'focus');
+                Helper.add_class(this.parentNode, 'focus');
             }
             else if (e.type === 'blur')
             {
-                Helper.removeClass(this.parentNode, 'focus');
+                Helper.remove_class(this.parentNode, 'focus');
             }
 
             if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
             {
-                var _value = Helper.getInputValue(this);
+                var _value = Helper.input_value(this);
 
                 if (_value === '')
                 {
-                    Helper.removeClass(this.parentNode, 'not-empty');
-                    Helper.addClass(this.parentNode, 'empty');
+                    Helper.remove_class(this.parentNode, 'not-empty');
+                    Helper.add_class(this.parentNode, 'empty');
                 }
                 else
                 {
-                    Helper.removeClass(this.parentNode, 'empty');
-                    Helper.addClass(this.parentNode, 'not-empty');
+                    Helper.remove_class(this.parentNode, 'empty');
+                    Helper.add_class(this.parentNode, 'not-empty');
                 }
             }
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('Inputs', Inputs);
+    Hubble.dom().register('Inputs', Inputs);
 
 })();
 
@@ -17328,16 +15572,16 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * File inputs
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class FileInput
     {
@@ -17345,7 +15589,7 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -17359,7 +15603,7 @@ function abort()
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -17371,7 +15615,7 @@ function abort()
         /**
          * Bind DOM listeners
          *
-         * @access public
+         * @access {public}
          */
         _bind()
         {
@@ -17381,7 +15625,7 @@ function abort()
         /**
          * Unbind DOM listeners
          *
-         * @access public
+         * @access {public}
          */
         _unbind()
         {
@@ -17391,7 +15635,7 @@ function abort()
         /**
          * Handle the change event
          *
-         * @access private
+         * @access {private}
          */
         _eventHandler()
         {
@@ -17413,7 +15657,7 @@ function abort()
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('FileInput', FileInput);
+    Hubble.dom().register('FileInput', FileInput);
 
 }());
 
@@ -17422,16 +15666,16 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Chip inputs
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class ChipInputs
     {
@@ -17439,7 +15683,7 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -17453,7 +15697,7 @@ function abort()
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -17465,7 +15709,7 @@ function abort()
         /**
          * Bind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -17478,7 +15722,7 @@ function abort()
         /**
          * Unbind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -17491,8 +15735,8 @@ function abort()
         /**
          * Init a chips input
          *
-         * @access private
-         * @param  node    _wrapper
+         * @access {private}
+         * @param  {node}    _wrapper
          */
         _initInput(_wrapper)
         {
@@ -17512,8 +15756,8 @@ function abort()
         /**
          * Destroy chip listeners
          *
-         * @access private
-         * @param  node    _wrapper
+         * @access {private}
+         * @param  {node}    _wrapper
          */
         _destroy(_wrapper)
         {
@@ -17533,8 +15777,8 @@ function abort()
         /**
          * Prevent the form from submitting if it's part of a form
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _preventSubmit(e)
         {
@@ -17563,8 +15807,8 @@ function abort()
         /**
          * Handle pressing enter to insert the chip
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _onKeyUp(e)
         {
@@ -17579,7 +15823,7 @@ function abort()
 
                 var _wrapper = Helper.closest(this, '.js-chips-input');
 
-                var _value = Helper.getInputValue(this).trim();
+                var _value = Helper.input_value(this).trim();
 
                 if (!Helper.in_array(_value, _this._getChipsValues(_wrapper)) && _value !== '')
                 {
@@ -17593,33 +15837,33 @@ function abort()
         /**
          * Remove last chip
          *
-         * @access private
-         * @param  node    _wrapper
+         * @access {private}
+         * @param  {node}    _wrapper
          */
         _removeLastChip(_wrapper)
         {
             var _chips = Helper.$All('.chip', _wrapper);
 
-            if (!Helper.empty(_chips))
+            if (!Helper.is_empty(_chips))
             {
-                Helper.removeFromDOM(_chips.pop());
+                Helper.remove_from_dom(_chips.pop());
             }
         }
 
         /**
          * Insert new chip
          *
-         * @access public
-         * @param  string      _value
-         * @param  node        _wrapper
-         * @param  string|bool _icon
+         * @access {public}
+         * @param  {string}      _value
+         * @param  {node}        _wrapper
+         * @param  {string|bool} _icon
          */
         addChip(_value, _wrapper, _icon)
         {
             _icon = typeof _icon === 'undefined' ? false : _icon;
             var _name = _wrapper.dataset.inputName;
             var _chip = document.createElement('span');
-            var _children = Helper.firstChildren(_wrapper);
+            var _children = Helper.first_children(_wrapper);
             var _classes = _wrapper.dataset.chipClass;
             var _iconStr = '';
 
@@ -17644,22 +15888,22 @@ function abort()
         /**
          * Remove an existing chip
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _removeChip(e)
         {
             e = e || window.event;
 
-            Helper.removeFromDOM(Helper.closest(this, '.chip'));
+            Helper.remove_from_dom(Helper.closest(this, '.chip'));
         }
 
         /**
          * Get all values from chip input
          *
-         * @access private
-         * @param  node    _wrapper
-         * @return array
+         * @access {private}
+         * @param  {node}    _wrapper
+         * @return {array}
          */
         _getChipsValues(_wrapper)
         {
@@ -17669,7 +15913,7 @@ function abort()
 
             for (var i = 0; i < _chips.length; i++)
             {
-                _result.push(Helper.getInputValue(_chips[i]));
+                _result.push(Helper.input_value(_chips[i]));
             }
 
             return _result;
@@ -17677,7 +15921,7 @@ function abort()
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('ChipInputs', ChipInputs);
+    Hubble.dom().register('ChipInputs', ChipInputs);
 
 }());
 
@@ -17686,16 +15930,16 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Chip suggestions.
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class ChipSuggestions
     {
@@ -17703,7 +15947,7 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -17717,7 +15961,7 @@ function abort()
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -17729,7 +15973,7 @@ function abort()
         /**
          * Bind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -17739,7 +15983,7 @@ function abort()
         /**
          * Unbind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -17749,8 +15993,8 @@ function abort()
         /**
          * Chip click handler
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _clickHandler(e)
         {
@@ -17761,7 +16005,7 @@ function abort()
             var _input = Helper.$('#' + _id);
             var _text = this.innerText.trim();
 
-            if (!_input || !Helper.nodeExists(_input))
+            if (!_input || !Helper.in_dom(_input))
             {
                 throw new Error('Target node does not exist.');
 
@@ -17769,11 +16013,11 @@ function abort()
             }
 
             // Chips input
-            if (Helper.hasClass(_input, 'js-chips-input'))
+            if (Helper.has_class(_input, 'js-chips-input'))
             {
                 Container.ChipInputs().addChip(_text, _input);
 
-                Helper.removeFromDOM(this);
+                Helper.remove_from_dom(this);
 
                 return;
             }
@@ -17796,12 +16040,12 @@ function abort()
 
             _input.value += _space + _text;
 
-            Helper.removeFromDOM(this);
+            Helper.remove_from_dom(this);
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('ChipSuggestions', ChipSuggestions);
+    Hubble.dom().register('ChipSuggestions', ChipSuggestions);
 
 }());
 
@@ -17810,26 +16054,24 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Choice chips
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class ChoiceChips
     {
-
-
         /**
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -17843,7 +16085,7 @@ function abort()
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -17855,7 +16097,7 @@ function abort()
         /**
          * Bind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -17865,7 +16107,7 @@ function abort()
         /**
          * Unbind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -17875,8 +16117,8 @@ function abort()
         /**
          * Handle click event on chip
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _clickHandler(e)
         {
@@ -17885,24 +16127,24 @@ function abort()
             var _wrapper = Helper.closest(this, '.js-choice-chips');
             var _input = Helper.$('.js-choice-input', _wrapper);
 
-            if (!Helper.hasClass(this, 'selected'))
+            if (!Helper.has_class(this, 'selected'))
             {
-                Helper.removeClass(Helper.$('.chip.selected', _wrapper), 'selected');
+                Helper.remove_class(Helper.$('.chip.selected', _wrapper), 'selected');
 
-                Helper.addClass(this, 'selected');
+                Helper.add_class(this, 'selected');
 
                 if (_input)
                 {
                     _input.value = this.dataset.value;
 
-                    Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.hasClass(this, 'selected')]);
+                    Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.has_class(this, 'selected')]);
                 }
             }
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('ChoiceChips', ChoiceChips);
+    Hubble.dom().register('ChoiceChips', ChoiceChips);
 
 }());
 
@@ -17911,16 +16153,16 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Filter chips
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class FilterChips
     {
@@ -17928,7 +16170,7 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -17942,7 +16184,7 @@ function abort()
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -17954,7 +16196,7 @@ function abort()
         /**
          * Bind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -17964,7 +16206,7 @@ function abort()
         /**
          * Unbind DOM listeners
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -17974,21 +16216,21 @@ function abort()
         /**
          * Handle click event on chip
          *
-         * @access private
-         * @param  event|null e
+         * @access {private}
+         * @param  {event|null} e
          */
         _clickHandler(e)
         {
             e = e || window.event;
 
-            Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.hasClass(this, 'checked')]);
+            Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.has_class(this, 'checked')]);
 
-            Helper.toggleClass(this, 'checked');
+            Helper.toggle_class(this, 'checked');
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('FilterChips', FilterChips);
+    Hubble.dom().register('FilterChips', FilterChips);
 
 }());
 
@@ -17997,23 +16239,23 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Clicking one element triggers a lick on another
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class ClickTriggers
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor()
@@ -18021,11 +16263,11 @@ function abort()
             /**
              * List of click-triggers
              * 
-             * @var array
+             * @var {array}
              */
             this._containers = Helper.$All('.js-click-trigger');
 
-            if (!Helper.empty(this._containers))
+            if (!Helper.is_empty(this._containers))
             {
                 this._bind();
             }
@@ -18036,7 +16278,7 @@ function abort()
         /**
          * Module destructor - removes event listeners
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -18048,7 +16290,7 @@ function abort()
         /**
          * Event binder - Binds all events on button click
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -18058,7 +16300,7 @@ function abort()
         /**
          * Event ubinder - Binds all event handlers on button click
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -18068,14 +16310,14 @@ function abort()
         /**
          * Event handler
          *
-         * @access private
-         * @params event|null e Browser click event
+         * @access {private}
+         * @params {event|null} e Browser click event
          */
         _eventHandler(e)
         {
             e = e || window.event;
 
-            if (Helper.isNodeType(this, 'a'))
+            if (Helper.is_node_type(this, 'a'))
             {
                 e.preventDefault();
             }
@@ -18083,15 +16325,15 @@ function abort()
             var clicked = this;
             var targetEl = Helper.$(clicked.dataset.clickTarget);
 
-            if (Helper.nodeExists(targetEl))
+            if (Helper.in_dom(targetEl))
             {
-                Helper.triggerEvent(targetEl, 'click');
+                Helper.trigger_event(targetEl, 'click');
             }
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('ClickTriggers', ClickTriggers);
+    Hubble.dom().register('ClickTriggers', ClickTriggers);
 
 })();
 
@@ -18100,7 +16342,7 @@ function abort()
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
@@ -18115,7 +16357,7 @@ function abort()
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -18129,7 +16371,7 @@ function abort()
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -18141,7 +16383,7 @@ function abort()
         /**
          * Bind DOM listeners
          *
-         * @access public
+         * @access {public}
          */
         _bind()
         {
@@ -18160,7 +16402,7 @@ function abort()
         /**
          * Unbind DOM listeners
          *
-         * @access public
+         * @access {public}
          */
         _unbind()
         {
@@ -18170,8 +16412,8 @@ function abort()
         /**
          * On hover event
          *
-         * @param  e event|null "mousemove" event
-         * @access private
+         * @param  {e} event|null "mousemove" event
+         * @access {private}
          */
         _onHover(e)
         {
@@ -18183,7 +16425,7 @@ function abort()
             }
 
             var _wrapper = e.currentTarget;
-            var _zoomSrc = Helper.parse_url(Helper.getStyle(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
+            var _zoomSrc = Helper.parse_url(Helper.rendered_style(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
             var _dataZoomSrc = Helper.parse_url(_wrapper.dataset.zoomSrc);
 
             if (_zoomSrc.path !== _dataZoomSrc.path)
@@ -18228,7 +16470,7 @@ function abort()
     }
 
     // Register as DOM Module and invoke
-    Container.get('Hubble').dom().register('ImageZoom', ImageZoom);
+    Hubble.dom().register('ImageZoom', ImageZoom);
 
 }());
 
@@ -18237,9 +16479,9 @@ function abort()
 /**
  * Boot and initialize Hubble core
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
  */
 (function()
 {

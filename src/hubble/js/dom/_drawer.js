@@ -3,28 +3,28 @@
     /**
      * JS Helper
      * 
-     * @var obj
+     * @var {obj}
      */
     var Helper = Hubble.helper();
 
     /**
      * Show/hide sidebar overlay timer
      * 
-     * @var setTimeout
+     * @var {setTimeout}
      */
     var overleyTimer;
 
     /**
      * Show/hide sidebar el timer
      * 
-     * @var setTimeout
+     * @var {setTimeout}
      */
     var toggleTimer;
 
     /**
      * Last scroll y on page
      * 
-     * @var int
+     * @var {int}
      */
     var lastScrollY;
 
@@ -37,9 +37,9 @@
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
-         * @return this
+         {*} @return this
          */
     	constructor()
         {
@@ -48,7 +48,7 @@
             this._drawerEl = Helper.$('.js-drawer');
             this._overlayEl = Helper.$('.js-drawer-overlay');
 
-            if (Helper.nodeExists(this._drawerEl))
+            if (Helper.in_dom(this._drawerEl))
             {
                 this._bind();
             }
@@ -59,7 +59,7 @@
         /**
          * Module destructor
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -69,11 +69,11 @@
         /**
          * Bind event listeners
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
-            this._drawerWidth = Helper.getStyle(this._drawerEl, 'max-width');
+            this._drawerWidth = Helper.rendered_style(this._drawerEl, 'max-width');
 
             Helper.addEventListener(this._openTriggers, 'click', this.open);
 
@@ -85,7 +85,7 @@
         /**
          * Unbind event listeners
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -99,14 +99,14 @@
         /**
          * Handle show sidebar
          *
-         * @access private
-         * @param  event|null e Button click even
+         * @access {private}
+         * @param  {event|null} e Button click even
          */
         open(e)
         {
             e = e || window.event;
 
-            if (e && e.target && Helper.isNodeType(e.target, 'a'))
+            if (e && e.target && Helper.is_node_type(e.target, 'a'))
             {
                 e.preventDefault();
             }
@@ -121,11 +121,11 @@
             // Overlay
             Helper.css(_this._overlayEl, 'visibility', 'visible');
             Helper.animate(_this._overlayEl, 'opacity', 0, 1, 200, 'easeOutCubic');
-            Helper.showAria(_this._overlayEl);
+            Helper.show_aria(_this._overlayEl);
 
             // Sidebar
             Helper.css(_this._drawerEl, 'visibility', 'visible');
-            if (Helper.hasClass(_this._drawerEl, 'drawer-right'))
+            if (Helper.has_class(_this._drawerEl, 'drawer-right'))
             {
                 Helper.animate(_this._drawerEl, 'transform', 'translateX('+ _this._drawerWidth + ')', 'translateX(0)', 200, 'easeOutCubic');
             }
@@ -134,23 +134,23 @@
                 Helper.animate(_this._drawerEl, 'transform', 'translateX(-' + _this._drawerWidth +')', 'translateX(0)', 200, 'easeOutCubic');
             }
 
-            Helper.addClass(document.body, 'no-scroll');
-            Helper.showAria(_this._drawerEl);
-            Helper.addClass(_this._drawerEl, 'active');
+            Helper.add_class(document.body, 'no-scroll');
+            Helper.show_aria(_this._drawerEl);
+            Helper.add_class(_this._drawerEl, 'active');
             _this._drawerEl.focus();
         }
 
         /**
          * Handle hide sidebar
          *
-         * @access public
-         * @param  event|null e Button click even
+         * @access {public}
+         * @param  {event|null} e Button click even
          */
         close(e)
         {
             e = e || window.event;
 
-            if (e && e.target && Helper.isNodeType(e.target, 'a'))
+            if (e && e.target && Helper.is_node_type(e.target, 'a'))
             {
                 e.preventDefault();
             }
@@ -167,10 +167,10 @@
                 Helper.css(_this._overlayEl, 'visibility', 'hidden');
 
             }, 250);
-            Helper.hideAria(_this._overlayEl);
+            Helper.hide_aria(_this._overlayEl);
 
             // Sidebar
-            if (Helper.hasClass(_this._drawerEl, 'drawer-right'))
+            if (Helper.has_class(_this._drawerEl, 'drawer-right'))
             {
                 Helper.animate(_this._drawerEl, 'transform', 'translateX(0)', 'translateX(' + _this._drawerWidth + ')', 200, 'easeOutCubic');
             }
@@ -185,8 +185,8 @@
                 
             }, 250);
 
-            Helper.removeClass(document.body, 'no-scroll');
-            Helper.hideAria(_this._drawerEl);
+            Helper.remove_class(document.body, 'no-scroll');
+            Helper.hide_aria(_this._drawerEl);
             _this._drawerEl.blur();
 
             if (lastScrollY)

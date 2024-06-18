@@ -1,338 +1,155 @@
 /**
  * Array utility functions
  *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
+ * @author    {Joe J. Howard}
+ * @copyright {Joe J. Howard}
+ * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
  */
 
 /**
- * Copys an array
- *
- * @access public
- * @param  array  arr  The target array to copy
- * @return array
+ * Map.
+ *  
+ * return undefined to break loop, true to keep, false to reject
+ * 
+ * @param   {array|object}  obj
+ * @param   {function}      callback
+ * @param   {array|mixed}   args      If single arg provided gets apllied as this to callback, otherwise args apllied to callback
+ * @returns {array|object}
  */
-Helper.prototype.array_copy = function(arr)
+map(obj, callback)
 {
-    return Array.prototype.slice.call(arr);
-}
+    if (typeof obj !== 'object' || obj === null) return;
 
-/**
- * Checks if an array contains a value
- *
- * @access public
- * @param  string needle    The value to search for
- * @param  array  haystack  The target array to index
- * @param  bool   argStrict Compare strict
- * @return bool
- */
-Helper.prototype.in_array = function(needle, haystack, argStrict)
-{
+    let isArray = TO_STR.call(obj) === '[object Array]';
+    let i       = 0;
+    let keys    = isArray ? null : Object.keys(obj);
+    let len     = isArray ? obj.length : keys.length;
+    let args    = TO_ARR.call(arguments).slice(2);
+    let ret     = isArray ? [] : {};
+    let key;
+    let val;
+    let clbkVal;
 
-    var key = '',
-        strict = !!argStrict;
+    // Applies the value of "this" to the callback as the array or object provided
+    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
 
-    //we prevent the double check (strict && arr[key] === ndl) || (!strict && arr[key] == ndl)
-    //in just one for, in order to improve the performance 
-    //deciding wich type of comparation will do before walk array
-    if (strict)
+    // Applies this arg as first extra arg if provided
+    // otherwise falls back to the array or object provided
+    // Removes "this" from args to callback
+    var thisArg = this.is_empty(args) ? obj : args[0];
+    args        = !this.is_empty(args) ? args.slice(1) : null;
+    args        = this.is_empty(args) ? null : args;
+
+    if (TO_STR.call(args) === '[object Array]')
     {
-        for (key in haystack)
+        for (; i < len; i++)
         {
-            if (haystack[key] === needle)
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
+
+            if (clbkVal === false)
             {
-                return true;
+                continue;
             }
-        }
-    }
-    else
-    {
-        for (key in haystack)
-        {
-            if (haystack[key] == needle)
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-/**
- * Reduce an array to n values
- * 
- * @access public
- * @param  array  array The target array to change
- * @param  int    count The amount of items to reduce the array to
- * @return array
- */
-Helper.prototype.array_reduce = function(array, count)
-{
-    return this.array_slice(array, 0, count);
-}
-
-/**
- * Compare two arrays
- * 
- * @access public
- * @param  array  a
- * @param  array  b
- * @return array
- */
-Helper.prototype.array_compare = function(a, b)
-{
-    return JSON.stringify(a) === JSON.stringify(b);;
-}
-
-/**
- * Implode an array
- * 
- * @access public
- * @param  array  array  The target array to implode
- * @param  string prefix Imploding prefix
- * @param  string suffix Imploding sufix (optional) (default )
- * @return string
- */
-Helper.prototype.implode = function(array, prefix, suffix)
-{
-    if (this.is_obj(array))
-    {
-        if (this.empty(array))
-        {
-            return '';
-        }
-
-        glue = typeof prefix === 'undefined' ? '' : prefix;
-
-        separator = typeof suffix === 'undefined' ? '' : suffix;
-
-        return this.rtrim(Object.keys(array).map(function(key, value)
-        {
-            return [key, array[key]].join(glue);
-        }).join(separator), suffix);
-    }
-
-    var str = '';
-
-    prefix = typeof prefix === 'undefined' ? '' : prefix;
-
-    suffix = typeof suffix === 'undefined' ? '' : suffix;
-
-    for (var i = 0; i < array.length; i++)
-    {
-        if (i === array.length - 1)
-        {
-            str += prefix + array[i];
-        }
-        else
-        {
-            str += prefix + array[i] + suffix;
-        }
-    }
-    return str;
-}
-
-/**
- * PHP "array_slice" function
- * 
- * @access public
- * @param  array array         The target array to slice
- * @param  int   offst         At what offset to start the slice
- * @param  int   lgth          Target ending length
- * @param  bool  preserve_keys Preserve array keys (optional) (default false)
- * @return array
- */
-Helper.prototype.array_slice = function(arr, offst, lgth, preserve_keys)
-{
-    //  discuss at: http://phpjs.org/functions/array_slice/
-    // original by: Brett Zamir (http://brett-zamir.me)
-    //  depends on: is_int
-    //    input by: Brett Zamir (http://brett-zamir.me)
-    // bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    //        note: Relies on is_int because !isNaN accepts floats
-    //   example 1: array_slice(["a", "b", "c", "d", "e"], 2, -1);
-    //   returns 1: {0: 'c', 1: 'd'}
-    //   example 2: array_slice(["a", "b", "c", "d", "e"], 2, -1, true);
-    //   returns 2: {2: 'c', 3: 'd'}
-
-    /*
-    if ('callee' in arr && 'length' in arr) {
-      arr = Array.prototype.slice.call(arr);
-    }
-    */
-
-    var key = '';
-
-    if (Object.prototype.toString.call(arr) !== '[object Array]' ||
-        (preserve_keys && offst !== 0))
-    { // Assoc. array as input or if required as output
-        var lgt = 0,
-            newAssoc = {};
-        for (key in arr)
-        {
-            //if (key !== 'length') {
-            lgt += 1;
-            newAssoc[key] = arr[key];
-            //}
-        }
-        arr = newAssoc;
-
-        offst = (offst < 0) ? lgt + offst : offst;
-        lgth = lgth === undefined ? lgt : (lgth < 0) ? lgt + lgth - offst : lgth;
-
-        var assoc = {};
-        var start = false,
-            it = -1,
-            arrlgth = 0,
-            no_pk_idx = 0;
-        for (key in arr)
-        {
-            ++it;
-            if (arrlgth >= lgth)
+            else if (typeof clbkVal === 'undefined')
             {
                 break;
             }
-            if (it == offst)
-            {
-                start = true;
-            }
-            if (!start)
-            {
-                continue;
-            }++arrlgth;
-            if (this.is_int(key) && !preserve_keys)
-            {
-                assoc[no_pk_idx++] = arr[key];
-            }
             else
             {
-                assoc[key] = arr[key];
+                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
             }
         }
-        //assoc.length = arrlgth; // Make as array-like object (though length will not be dynamic)
-        return assoc;
-    }
 
-    if (lgth === undefined)
-    {
-        return arr.slice(offst);
-    }
-    else if (lgth >= 0)
-    {
-        return arr.slice(offst, offst + lgth);
+        // A special, fast, case for the most common use of each (no extra args provided)
     }
     else
     {
-        return arr.slice(offst, lgth);
-    }
-}
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.call(thisArg, key, val);
 
-/**
- * Paginates an array of data
- * 
- * @access public
- * @param  array array The target array to paginate
- * @param  int   page  The current page
- * @param  int   limit Data per page
- * @return array
- */
-Helper.prototype.paginate = function(array, page, limit)
-{
-    page = (page === false || page === 0 ? 1 : page);
-    limit = (limit ? limit : 10);
-    var total = count(array);
-    var pages = Math.ceil((total / limit));
-    var offset = (page - 1) * limit;
-    var start = offset + 1;
-    var end = Math.min((offset + limit), total);
-    var paged = [];
-
-    if (page > pages) return false;
-
-    for (var i = 0; i < pages; i++)
-    {
-        offset = i * limit;
-        paged.push(array.slice(offset, limit));
+            if (clbkVal === false)
+            {
+                continue;
+            }
+            else if (typeof clbkVal === 'undefined')
+            {
+                break;
+            }
+            else
+            {
+                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
+            }
+        }
     }
 
-    return paged;
+    return ret;
 }
+
 
 /**
  * Foreach loop
  * 
- * @access public
- * @param  object  obj       The target object to loop over
- * @param  closure callback  Callback to apply to each iteration
- * @param  array   args      Array of params to apply to callback (optional) (default null)
+ * @access {public}
+ * @param  {object}  obj       The target object to loop over
+ * @param  {closure} callback  Callback to apply to each iteration
+ * @param  {array}   args      Array of params to apply to callback (optional) (default null)
  */
-Helper.prototype.foreach = function(obj, callback, args)
+foreach(obj, callback)
 {
-    var value, i = 0,
-        length = obj.length,
-        isArray = Object.prototype.toString.call(obj) === '[object Array]';
+    if (typeof obj !== 'object' || obj === null) return;
 
-    if (Object.prototype.toString.call(args) === '[object Array]')
+    let isArray = TO_STR.call(obj) === '[object Array]';
+    let i       = 0;
+    let keys    = isArray ? null : Object.keys(obj);
+    let len     = isArray ? obj.length : keys.length;
+    let args    = TO_ARR.call(arguments).slice(2);
+    let ret     = isArray ? [] : {};
+    let key;
+    let val;
+    let clbkVal;
+
+    // Applies the value of "this" to the callback as the array or object provided
+    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
+
+    // Applies this arg as first extra arg if provided
+    // otherwise falls back to the array or object provided
+    // Removes "this" from args to callback
+    var thisArg = this.is_empty(args) ? obj : args[0];
+    args        = !this.is_empty(args) ? args.slice(1) : null;
+    args        = this.is_empty(args) ? null : args;
+
+    if (TO_STR.call(args) === '[object Array]')
     {
-        if (isArray)
+        for (; i < len; i++)
         {
-            for (; i < length; i++)
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
+
+            if (clbkVal === false)
             {
-
-                var _currArgs = [i, obj[i]];
-
-                value = callback.apply(obj, this.array_merge([i, obj[i]], args));
-
-                if (value === false)
-                {
-                    break;
-                }
-            }
-        }
-        else
-        {
-            for (i in obj)
-            {
-
-                var _currArgs = [i, obj[i]];
-
-                value = callback.apply(obj, this.array_merge([i, obj[i]], args));
-
-                if (value === false)
-                {
-                    break;
-                }
+                break;
             }
         }
 
-        // A special, fast, case for the most common use of each
+        // A special, fast, case for the most common use of each (no extra args provided)
     }
     else
     {
-        if (isArray)
+        for (; i < len; i++)
         {
-            for (; i < length; i++)
-            {
-                value = callback.call(obj, i, obj[i]);
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.call(thisArg, key, val);
 
-                if (value === false)
-                {
-                    break;
-                }
-            }
-        }
-        else
-        {
-            for (i in obj)
+            if (clbkVal === false)
             {
-                value = callback.call(obj, i, obj[i]);
-
-                if (value === false)
-                {
-                    break;
-                }
+                break;
             }
         }
     }
@@ -340,177 +157,180 @@ Helper.prototype.foreach = function(obj, callback, args)
     return obj;
 }
 
-/**
- * Clone an object
- * 
- * @access public
- * @param  object  src       The object to clone
- * @return object
- */
-Helper.prototype.cloneObj = function(src)
+each()
 {
-    var clone = {};
-    for (var prop in src)
-    {
-        if (src.hasOwnProperty(prop)) clone[prop] = src[prop];
-    }
-    return clone;
+    return this.foreach.apply(this, arguments);
 }
 
 /**
  * Merge multiple arrays together
  * 
- * @access public
- * @param  ...   List of arrays to merge
- * @return array
+ * @access {public}
+ * @param  {...}   List of arrays to merge
+ * @return {array}
  */
-Helper.prototype.array_merge = function()
+/**
+ * Merges multiple objects or arrays into the original.
+ *
+ * @param   {object|array} First array then any number of array or objects to merge into
+ * @returns {object|array}
+ */
+array_merge()
 {
-    //  discuss at: http://phpjs.org/functions/array_merge/
-    // original by: Brett Zamir (http://brett-zamir.me)
-    // bugfixed by: Nate
-    // bugfixed by: Brett Zamir (http://brett-zamir.me)
-    //    input by: josh
-    //   example 1: arr1 = {"color": "red", 0: 2, 1: 4}
-    //   example 1: arr2 = {0: "a", 1: "b", "color": "green", "shape": "trapezoid", 2: 4}
-    //   example 1: array_merge(arr1, arr2)
-    //   returns 1: {"color": "green", 0: 2, 1: 4, 2: "a", 3: "b", "shape": "trapezoid", 4: 4}
-    //   example 2: arr1 = []
-    //   example 2: arr2 = {1: "data"}
-    //   example 2: array_merge(arr1, arr2)
-    //   returns 2: {0: "data"}
+    let args = TO_ARR.call(arguments);
 
-    var args = Array.prototype.slice.call(arguments),
-        argl = args.length,
-        arg,
-        retObj = {},
-        k = '',
-        argil = 0,
-        j = 0,
-        i = 0,
-        ct = 0,
-        toStr = Object.prototype.toString,
-        retArr = true;
-
-    for (var i = 0; i < argl; i++)
+    if (args.length === 0)
     {
-        if (toStr.call(args[i]) !== '[object Array]')
-        {
-            retArr = false;
-            break;
-        }
+        throw new Error('Nothing to merge.');
+    }
+    else if (args.length === 1)
+    {
+        return args[1];
     }
 
-    if (retArr)
-    {
-        retArr = [];
-        for (var i = 0; i < argl; i++)
-        {
-            retArr = retArr.concat(args[i]);
-        }
-        return retArr;
-    }
+    var clone = false;
 
-    for (i = 0, ct = 0; i < argl; i++)
+    // Clone deep
+    this.each(args, function(i, arg)
     {
-        arg = args[i];
-        if (toStr.call(arg) === '[object Array]')
+        if (arg = 'CLONE_FLAG_TRUE')
         {
-            for (j = 0, argil = arg.length; j < argil; j++)
-            {
-                retObj[ct++] = arg[j];
-            }
+            clone = true;
+
+            return false;
         }
-        else
+    });
+
+    let first = args.shift();
+    let fType = this.is_array(first) ? 'array' : 'obj';
+
+    this.each(args, function(i, arg)
+    {
+        if (!this.is_array(arg) && !this.is_object(arg))
         {
-            for (k in arg)
-            {
-                if (arg.hasOwnProperty(k))
-                {
-                    if (parseInt(k, 10) + '' === k)
-                    {
-                        retObj[ct++] = arg[k];
-                    }
-                    else
-                    {
-                        retObj[k] = arg[k];
-                    }
-                }
-            }
+            throw new Error('Arguments must be an array or object.');
         }
-    }
-    return retObj;
+
+        first = fType === 'array' ? [...first, ...arg] : {...first, ...arg};
+
+    }, this);
+
+    return first;
 }
 
 /**
- * Array filter
- * 
- * @access public
- * @param  array array Target array to filter
- * @return array
+ * Filters empty array entries and returns new array
+ *
+ * @param   {object|array}  object Object to delete from
+ * @returns {object|array}
  */
-Helper.prototype.array_filter = function(array)
+array_filter(arr)
 {
-    var result = [];
-    for (var i = 0; i < array.length; i++)
-    {
-        if (array[i] === '' || this.empty(array[i])) continue;
-        result.push(array[i]);
-    }
-    return result;
-}
+    let isArr = this.is_array(arr);
 
-/**
- * Array filter
- * 
- * @access public
- * @param  array array Target array to filter
- * @return array
- */
-Helper.prototype.array_unique = function(array)
-{
-    var result = [];
+    let ret = isArr ? [] : {};
 
-    if (this.is_array(array))
+    this.foreach(arr, function(i, val)
     {
-        for (var i = 0; i < array.length; i++)
+        if (!this.is_empty(val))
         {
-            if (!this.in_array(array[i], result))
-            {
-                result.push(array[i])
-            }
+            isArr ? ret.push(val) : ret[i] = val;
         }
-    }
+    });
 
-    return result;
+    return ret;
 }
 
 /**
- * Is array
- * 
- * @access public
- * @param  mixed mixed_var Target object to to check
- * @return bool
+ * Removes duplicates and returns new array.
+ *
+ * @param   {array} arr Array to run
+ * @returns {array}
  */
-Helper.prototype.is_obj = function(mixed_var)
+array_unique(arr)
 {
-    if ((typeof mixed_var === "object" || typeof mixed_var === 'function') && (mixed_var !== null))
+    let uniq = function(value, index, self)
     {
-        return true;
+        return self.indexOf(value) === index;
     }
 
-    return false;
+    return arr.filter(uniq);
 }
 
+/**
+ * Set a key using dot/bracket notation on an object or array.
+ *
+ * @param   {string}       path   Path to set
+ * @param   {mixed}        value  Value to set
+ * @param   {object|array} object Object to set into
+ * @returns {object|array}
+ */
+array_set(path, value, object)
+{
+    this.__arraySetRecursive(this.__arrayKeySegment(path), value, object);
+
+    return object;
+}
 
 /**
- * Is array
- * 
- * @access public
- * @param  array array Target array to filter
- * @return bool
+ * Gets an from an array/object using dot/bracket notation.
+ *
+ * @param   {string}        path    Path to get
+ * @param   {object|array}  object  Object to get from
+ * @returns {mixed}
  */
-Helper.prototype.is_array = function(mixed_var)
+array_get(path, object)
 {
-    return Object.prototype.toString.call(mixed_var) === '[object Array]' || Object.prototype.toString.call(mixed_var) === '[object NodeList]';
+    return this.__arrayGetRecursive(this.__arrayKeySegment(path), object);
+}
+
+/**
+ * Checks if array/object contains path using dot/bracket notation.
+ *
+ * @param   {string}        path   Path to check
+ * @param   {object|array}  object Object to check on
+ * @returns {boolean}
+ */
+array_has(path, object)
+{
+    return !this.is_undefined(this.array_get(path, object));
+}
+
+/**
+ * Deletes from an array/object using dot/bracket notation.
+ *
+ * @param   {string}        path   Path to delete
+ * @param   {object|array}  object Object to delete from
+ * @returns {object|array}
+ */
+array_delete(path, object)
+{
+    this.__arrayDeleteRecursive(this.__arrayKeySegment(path), object);
+
+    return object;
+}
+
+/**
+ * Checks if an array contains a value
+ *
+ * @access {public}
+ * @param  {string} needle    The value to search for
+ * @param  {array}  haystack  The target array to index
+ * @return {bool}
+ */
+in_array(needle, haystack, strict)
+{
+    let ret = false;
+
+    this.each(haystack, function(k, v)
+    {
+        if (this.is_equal(needle, v))
+        {
+            ret = true;
+            return false;
+        }
+
+    }, this);
+
+    return ret;
 }

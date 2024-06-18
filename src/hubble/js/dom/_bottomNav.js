@@ -3,16 +3,16 @@
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Bottom nav
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class BottomNav
     {
@@ -20,14 +20,14 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
         constructor()
         {
             // Find nodes
             this._nav = Helper.$('.js-bottom-nav');
 
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
                 this._bind();
             }
@@ -38,39 +38,39 @@
         /**
          * Show nav
          *
-         * @access public
+         * @access {public}
          */
         show()
         {
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
-                Helper.addClass(this._nav, 'active');
+                Helper.add_class(this._nav, 'active');
             }
         }
 
         /**
          * Hide nav
          *
-         * @access public
+         * @access {public}
          */
         hide()
         {
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
-                Helper.removeClass(this._nav, 'active');
+                Helper.remove_class(this._nav, 'active');
             }
         }
 
         /**
          * Show nav
          *
-         * @access public
+         * @access {public}
          */
         state()
         {
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
-                if (Helper.hasClass(this._nav, 'active'))
+                if (Helper.has_class(this._nav, 'active'))
                 {
                     return 'show';
                 }
@@ -82,11 +82,11 @@
         /**
          * Module destructor - unbinds click events
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
-            if (Helper.nodeExists(this._nav))
+            if (Helper.in_dom(this._nav))
             {
                 var links = Helper.$All('.btn', this._nav);
 
@@ -99,7 +99,7 @@
         /**
          * Bind click events on all button
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -111,8 +111,8 @@
         /**
          * Click event handler
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
@@ -120,18 +120,18 @@
 
             e.preventDefault();
 
-            if (Helper.hasClass(this, 'active'))
+            if (Helper.has_class(this, 'active'))
             {
                 return;
             }
 
-            Helper.removeClass(Helper.$('.js-bottom-nav .btn.active'), 'active');
+            Helper.remove_class(Helper.$('.js-bottom-nav .btn.active'), 'active');
 
-            Helper.addClass(this, 'active');
+            Helper.add_class(this, 'active');
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('BottomNav', BottomNav);
+    Hubble.dom().register('BottomNav', BottomNav);
 
 })();

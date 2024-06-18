@@ -3,16 +3,16 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * File inputs
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class FileInput
     {
@@ -20,7 +20,7 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -34,7 +34,7 @@
         /**
          * Module destructor remove event handlers
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -46,7 +46,7 @@
         /**
          * Bind DOM listeners
          *
-         * @access public
+         * @access {public}
          */
         _bind()
         {
@@ -56,7 +56,7 @@
         /**
          * Unbind DOM listeners
          *
-         * @access public
+         * @access {public}
          */
         _unbind()
         {
@@ -66,7 +66,7 @@
         /**
          * Handle the change event
          *
-         * @access private
+         * @access {private}
          */
         _eventHandler()
         {
@@ -88,6 +88,6 @@
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('FileInput', FileInput);
+    Hubble.dom().register('FileInput', FileInput);
 
 }());

@@ -9,12 +9,12 @@
 {
 
     /**
-     * @var Helper obj
+     * @var {Helper} obj
      */
     var Helper = Container.Helper();
 
     /**
-     * @var _activeNotifs array
+     * @var {_activeNotifs} array
      */
     var _activeNotifs = [];
 
@@ -22,16 +22,16 @@
      * Module constructor
      *
      * @class
-     * @constructor
-     * @params options obj
-     * @access public
-     * @return this
+     {*} @constructor
+     * @params {options} obj
+     * @access {public}
+     * @return {this}
      */
     var Notification = function(options)
     {
         this._notifWrap = Helper.$('.js-nofification-wrap');
 
-        if (!Helper.nodeExists(this._notifWrap))
+        if (!Helper.in_dom(this._notifWrap))
         {
             this._buildNotificationContainer();
         }
@@ -44,7 +44,7 @@
     /**
      * Build the notification container
      *
-     * @access private
+     * @access {private}
      */
     Notification.prototype._buildNotificationContainer = function()
     {
@@ -58,8 +58,8 @@
     /**
      * Display the notification
      *
-     * @params options obj
-     * @access private
+     * @params {options} obj
+     * @access {private}
      */
     Notification.prototype._invoke = function(options)
     {
@@ -72,10 +72,10 @@
 
         var _this = this;
         var content = '<div class="msg-body"><p>' + options.msg + '</p></div>';
-        var notif = Helper.newNode('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
+        var notif = Helper.new_node('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
         var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
-        Helper.addClass(this._notifWrap, 'active');
+        Helper.add_class(this._notifWrap, 'active');
 
         // Timout remove automatically
         _activeNotifs.push(
@@ -97,8 +97,8 @@
     /**
      * Create a notification that has callback buttons 
      *
-     * @params options obj
-     * @access private
+     * @params {options} obj
+     * @access {private}
      */
     Notification.prototype._invokeCallbackable = function(options)
     {
@@ -109,11 +109,11 @@
 
         var content = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX + '</div>';
 
-        var notif = Helper.newNode('div', 'msg animate-notif', null, content, this._notifWrap);
+        var notif = Helper.new_node('div', 'msg animate-notif', null, content, this._notifWrap);
         var confirm = Helper.$('.js-confirm', notif);
         var dismiss = Helper.$('.js-dismiss', notif);
 
-        Helper.addClass(this._notifWrap, 'active');
+        Helper.add_class(this._notifWrap, 'active');
 
         _activeNotifs.push(
         {
@@ -127,7 +127,7 @@
         // Click to remove
         notif.addEventListener('click', function()
         {
-            if (Helper.isCallable(options.onDismiss))
+            if (Helper.is_callable(options.onDismiss))
             {
                 options.onDismiss(options.onDismissArgs);
             }
@@ -138,7 +138,7 @@
         // Click confirm to remove
         confirm.addEventListener('click', function()
         {
-            if (Helper.isCallable(options.onConfirm))
+            if (Helper.is_callable(options.onConfirm))
             {
                 options.onConfirm(options.onConfirmArgs);
             }
@@ -150,7 +150,7 @@
         {
             dismiss.addEventListener('click', function()
             {
-                if (Helper.isCallable(options.onDismiss))
+                if (Helper.is_callable(options.onDismiss))
                 {
                     options.onDismiss(options.onDismissArgs);
                 }
@@ -163,8 +163,8 @@
     /**
      * Remove a notification
      *
-     * @params _node node
-     * @access private
+     * @params {_node} node
+     * @access {private}
      */
     Notification.prototype._removeNotification = function(_node)
     {
@@ -175,17 +175,17 @@
             if (_node === _activeNotifs[i].node)
             {
                 clearTimeout(_activeNotifs[i].timeout);
-                Helper.removeClass(_node, 'animate-notif');
+                Helper.remove_class(_node, 'animate-notif');
                 Helper.animate(_node, 'opacity', '1', '0', 350, 'ease');
                 Helper.animate(_node, 'max-height', '100px', '0', 450, 'ease');
                 _activeNotifs.splice(i, 1);
                 setTimeout(function()
                 {
-                    Helper.removeFromDOM(_node);
+                    Helper.remove_from_dom(_node);
 
                     if (_activeNotifs.length === 0)
                     {
-                        Helper.removeClass(_this._notifWrap, 'active');
+                        Helper.remove_class(_this._notifWrap, 'active');
                     }
                 }, 450);
                 return;

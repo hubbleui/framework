@@ -3,9 +3,9 @@
  *
  * This is a utility class used internally to scroll to elements on a page.
  * It can still be invoked directly via the IOC container if you want to use it.
- * @example Container.get('SmoothScroll').animateScroll('#' + id, null, options);
- * @see     https://github.com/cferdinandi/smooth-scroll
- * @see     waypoints.js
+ * @example {Container.get('SmoothScroll').animateScroll('#'} + id, null, options);
+ * @see     {https://github.com/cferdinandi/smooth-scroll}
+ * @see     {waypoints.js}
  */
 (function()
 {
@@ -110,8 +110,8 @@
         /**
          * Get the height of an element.
          * @private
-         * @param  {Node} elem The element to get the height of
-         * @return {Number}    The element's height in pixels
+         * @param  {Node}   elem The element to get the height of
+         * @return {Number}      The element's height in pixels
          */
         var getHeight = function(elem)
         {
@@ -213,8 +213,8 @@
          * Escape special characters for use with querySelector
          * @public
          * @param {String} id The anchor ID to escape
-         * @author Mathias Bynens
-         * @link https://github.com/mathiasbynens/CSS.escape
+         * @author {Mathias} Bynens}
+         * @link {https://github.com/mathiasbynens/CSS.escape}
          */
         smoothScroll.escapeCharacters = function(id)
         {
@@ -298,7 +298,7 @@
         /**
          * Calculate the easing pattern
          * @private
-         * @link https://gist.github.com/gre/1650294
+         {*} @link https://gist.github.com/gre/1650294
          * @param {String} type Easing pattern
          * @param {Number} time Time animation should take to complete
          * @returns {Number}
@@ -346,7 +346,7 @@
         /**
          * Determine the document's height
          * @private
-         * @returns {Number}
+         {*} @returns {Number}
          */
         var getDocumentHeight = function()
         {
@@ -475,7 +475,7 @@
 
             /**
              * Reset position to fix weird iOS bug
-             * @link https://github.com/cferdinandi/smooth-scroll/issues/45
+             * @link {https://github.com/cferdinandi/smooth-scroll/issues/45}
              */
             if (root.pageYOffset === 0)
             {

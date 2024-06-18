@@ -3,23 +3,23 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Clicking one element triggers a lick on another
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class ClickTriggers
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          * @constructor
          */
     	constructor()
@@ -27,11 +27,11 @@
             /**
              * List of click-triggers
              * 
-             * @var array
+             * @var {array}
              */
             this._containers = Helper.$All('.js-click-trigger');
 
-            if (!Helper.empty(this._containers))
+            if (!Helper.is_empty(this._containers))
             {
                 this._bind();
             }
@@ -42,7 +42,7 @@
         /**
          * Module destructor - removes event listeners
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -54,7 +54,7 @@
         /**
          * Event binder - Binds all events on button click
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -64,7 +64,7 @@
         /**
          * Event ubinder - Binds all event handlers on button click
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -74,14 +74,14 @@
         /**
          * Event handler
          *
-         * @access private
-         * @params event|null e Browser click event
+         * @access {private}
+         * @params {event|null} e Browser click event
          */
         _eventHandler(e)
         {
             e = e || window.event;
 
-            if (Helper.isNodeType(this, 'a'))
+            if (Helper.is_node_type(this, 'a'))
             {
                 e.preventDefault();
             }
@@ -89,14 +89,14 @@
             var clicked = this;
             var targetEl = Helper.$(clicked.dataset.clickTarget);
 
-            if (Helper.nodeExists(targetEl))
+            if (Helper.in_dom(targetEl))
             {
-                Helper.triggerEvent(targetEl, 'click');
+                Helper.trigger_event(targetEl, 'click');
             }
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('ClickTriggers', ClickTriggers);
+    Hubble.dom().register('ClickTriggers', ClickTriggers);
 
 })();

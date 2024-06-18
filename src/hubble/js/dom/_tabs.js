@@ -3,16 +3,16 @@
     /**
      * Helper instance
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Tab Nav
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class TabNav
     {
@@ -20,7 +20,7 @@
          * Module constructor
          *
          * @constructor
-         * @access public
+         {*} @access public
          */
     	constructor()
         {
@@ -28,7 +28,7 @@
             this._nodes = Helper.$All('.js-tab-nav');
 
             // If nothing to do destruct straight away
-            if (!Helper.empty(this._nodes))
+            if (!Helper.is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -42,7 +42,7 @@
         /**
          * Module destructor - unbinds click events
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -57,8 +57,8 @@
         /**
          * Bind click events on all <a> tags in a .js-tab-nav
          *
-         * @params navWrap node
-         * @access private
+         * @params {navWrap} node
+         * @access {private}
          */
         _bindDOMListeners(navWrap)
         {
@@ -70,8 +70,8 @@
         /**
          * Unbind click events on all <a> tags in a .js-tab-nav
          *
-         * @params navWrap node
-         * @access private
+         * @params {navWrap} node
+         * @access {private}
          */
         _unbindDOMListeners(navWrap)
         {
@@ -83,8 +83,8 @@
         /**
          * Click event handler
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _eventHandler(e)
         {
@@ -95,35 +95,35 @@
             
             var node = this;
 
-            if (Helper.hasClass(node, 'active')) return;
+            if (Helper.has_class(node, 'active')) return;
             
             var tab           = node.dataset.tab;
             var tabNav        = Helper.closest(node, 'ul');
 
             var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-            var tabPanel      = Helper.closestClass(tabPane, 'js-tab-panels-wrap');
+            var tabPanel      = Helper.closest_class(tabPane, 'js-tab-panels-wrap');
             var activePanel   = Helper.$('.tab-panel.active', tabPanel);
 
-            var navWrap       = Helper.closestClass(node, 'js-tab-nav');
+            var navWrap       = Helper.closest_class(node, 'js-tab-nav');
             var activeNav     = Helper.$('.active', navWrap);
             var activeClass   = navWrap.dataset.activeClass;
             var activeClasses = ['active'];
 
-            if (!Helper.empty(activeClass))
+            if (!Helper.is_empty(activeClass))
             {
                 activeClasses.push(activeClass);
             }
 
-            Helper.removeClass(activeNav, activeClasses);
-            Helper.removeClass(activePanel, activeClasses);
+            Helper.remove_class(activeNav, activeClasses);
+            Helper.remove_class(activePanel, activeClasses);
 
-            Helper.addClass(node, activeClasses);
-            Helper.addClass(tabPane, activeClasses);
+            Helper.add_class(node, activeClasses);
+            Helper.add_class(tabPane, activeClasses);
             
         }
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('TabNav', TabNav);
+    Hubble.dom().register('TabNav', TabNav);
 
 })();

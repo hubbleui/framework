@@ -1,268 +1,27 @@
-/**
- * JS IoC Container
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
+
 (function(window)
 {
+    const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
+
     /**
-     * Array Helper utility
-     * 
-     * Handles Object with built in "dot.notation" set,get,isset,delete methods.
+     * JS IoC Container
      *
-     * @class
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class ArrayHelper
+    class Inverse
     {
         /**
-         * Module constructor
+         * Constructor
          *
          * @class
-         * @constructor
-         * @access public
+         {*} @constructor
+         * @access {public}
          */
         constructor()
         {
-            return this;
-        }
-
-        /**
-         * Set a key using dot/bracket notation on an object or array
-         *
-         * @access public
-         * @param  string       path   Path to set
-         * @param  mixed        value  Value to set
-         * @param  object|array object Object to set into
-         * @return object|array
-         */
-        set(path, value, object)
-        {
-            this._setRecursive(this._keySegment(path), value, object);
-
-            return object;
-        }
-
-        /**
-         * Gets an from an array/object using dot/bracket notation
-         *
-         * @access public
-         * @param  string       path   Path to get
-         * @param  object|array object Object to get from
-         * @return mixed
-         */
-        get(path, object)
-        {
-            return this._getRecursive(this._keySegment(path), object);
-        }
-
-        /**
-         * Checks if array/object contains path using dot/bracket notation
-         *
-         * @access public
-         * @param  string       path   Path to check
-         * @param  object|array object Object to check on
-         * @return bool
-         */
-        has(path, object)
-        {
-            return typeof this.get(path, object) !== 'undefined';
-        }
-
-        /**
-         * Deletes from an array/object using dot/bracket notation
-         *
-         * @access public
-         * @param  string       path   Path to delete
-         * @param  object|array object Object to delete from
-         * @return object|array
-         */
-        delete(path, object)
-        {
-            this._deleteRecursive(this._keySegment(path), object);
-
-            return object;
-        }
-
-        /**
-         * Recursively delete from array/object
-         *
-         * @access private
-         * @param  array        keys   Keys in search order
-         * @param  object|array object Object to get from
-         * @return mixed
-         */
-        _deleteRecursive(keys, object)
-        {
-            var key = keys.shift();
-            var islast = keys.length === 0;
-
-            if (islast)
-            {
-                if (Object.prototype.toString.call(object) === '[object Array]')
-                {
-                    object.splice(key, 1);
-                }
-                else
-                {
-                    delete object[key];
-                }
-            }
-
-            if (!object[key])
-            {
-                return false;
-            }
-
-            return this._deleteRecursive(keys, object[key]);
-
-        }
-
-        /**
-         * Recursively search array/object
-         *
-         * @access private
-         * @param  array        keys   Keys in search order
-         * @param  object|array object Object to get from
-         * @return mixed
-         */
-        _getRecursive(keys, object)
-        {
-            var key = keys.shift();
-            var islast = keys.length === 0;
-
-            if (islast)
-            {
-                return object[key];
-            }
-
-            if (!object[key])
-            {
-                return undefined;
-            }
-
-            return this._getRecursive(keys, object[key]);
-        }
-
-        /**
-         * Recursively set array/object
-         *
-         * @access private
-         * @param  array        keys   Keys in search order
-         * @param  mixed        value  Value to set
-         * @param  parent       object|array or null
-         * @param  object|array object Object to set on
-         */
-        _setRecursive(keys, value, object, nextKey)
-        {
-            var key = keys.shift();
-            var islast = keys.length === 0;
-            var lastObj = object;
-            object = !nextKey ? object : object[nextKey];
-
-            // Trying to set a value on nested array that doesn't exist
-            if (!['object', 'function'].includes(typeof object))
-            {
-                throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
-            }
-
-            if (!object[key])
-            {
-                // Trying to put object key into an array
-                if (Object.prototype.toString.call(object) === '[object Array]' && typeof key === 'string')
-                {
-                    var converted = Object.assign(
-                    {}, object);
-
-                    lastObj[nextKey] = converted;
-
-                    object = converted;
-                }
-
-                if (keys[0] && typeof keys[0] === 'string')
-                {
-                    object[key] = {};
-                }
-                else
-                {
-                    object[key] = [];
-                }
-            }
-
-            if (islast)
-            {
-                object[key] = value;
-
-                return;
-            }
-
-            this._setRecursive(keys, value, object, key);
-        }
-
-        /**
-         * Segments an array/object path using dot notation
-         *
-         * @access private
-         * @param  string  path Path to parse
-         * @return array
-         */
-        _keySegment(path)
-        {
-            var result = [];
-            var segments = path.split('.');
-
-            for (var i = 0; i < segments.length; i++)
-            {
-                var segment = segments[i];
-
-                if (!segment.includes('['))
-                {
-                    result.push(segment);
-
-                    continue;
-                }
-
-                var subSegments = segment.split('[');
-
-                for (var j = 0; j < subSegments.length; j++)
-                {
-                    if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
-                    {
-                        result.push(parseInt(subSegments[j].replace(']')));
-                    }
-                    else if (subSegments[j] !== '')
-                    {
-                        result.push(subSegments[j])
-                    }
-                }
-            }
-
-            return result;
-        }
-    }
-
-    /**
-     * Array Helper instance
-     * 
-     * @var object
-     */
-    var Arr = new ArrayHelper;
-
-    /**
-     * Module constructor
-     *
-     * @class
-     * @constructor
-     * @access public
-     */
-    class Container
-    {
-        constructor()
-        {
-            this.data = {};
-
-            this.singletons = {};
+            this._store = {};
 
             return this;
         }
@@ -270,264 +29,270 @@
         /**
          * Set data key to value
          *
-         * @access public
-         * @param string key   The data key
-         * @param mixed  value The data value
+         * @access {public}
+         * @param {string} key   The data key
+         * @param {mixed}  value The data value
          */
-        set(key, value)
+        set(key, value, singleton)
         {
-            if (key.includes('.') || key.includes('['))
-            {
-                Arr.set(key, value, this.data);
-            }
-            else
-            {
-                this.data[key] = value;
+            key = this._normalizeKey(key);
 
-                this._setProto(key, this._isInvokable(value) || this._isInvoked(value));
+            value = this._storeObj(value, singleton);
+
+            this._store[key] = value;
+
+            this._setProto(key);
+        }
+
+        /**
+         * Stores a globally unique singleton
+         *
+         * @access {public}
+         * @param  {string} key      The value or object name
+         * @param  {object} classObj The closure that defines the object
+         * @return {this}
+         */
+        singleton(key, classObj, invoke)
+        {
+            invoke = typeof invoke === 'undefined' ? false : invoke;
+
+            this.set(key, classObj, true);
+
+            if (invoke)
+            {
+                this.get(key);
+            }
+        }
+
+        /**
+         * Does this set contain a key?
+         *
+         * @access {public}
+         * @param  {string}  key The data key
+         * @return {boolean}
+         */
+        has(key)
+        {
+            key = this._normalizeKey(key);
+
+            for (var k in this._store)
+            {
+                if (k === key)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * Remove a key/value
+         *
+         * @access {public}
+         * @param {string} key   The data key
+         */
+        delete(key)
+        {
+            key = this._normalizeKey(key);
+
+            delete this._store[key];
+
+            var _proto = Object.getPrototypeOf(this);
+
+            if (typeof _proto[key] !== 'undefined')
+            {
+                _proto[key] = undefined;
+            }
+        }
+
+        /**
+         * Get data value with key
+         *
+         * @access {public}
+         * @param  {string} key The data key
+         * @param  {mixed}  ... Any additional parameters to pass to the constructor (optional) (default null)
+         * @return {mixed}      The data value
+         */
+        get(key)
+        {
+            key = this._normalizeKey(key);
+
+            let args = Array.prototype.slice.call(arguments).slice(1);
+
+            let valObj = this._store[key];
+
+            if (this.has(key))
+            {
+                // Singletons
+                if (valObj.singleton)
+                {
+                    if (!valObj.instance)
+                    {
+                        return valObj.singleton.apply(this, [key, ...args]);
+                    }
+
+                    return valObj.instance;
+                }
+                // Constructorables
+                if (valObj.invokable)
+                {
+                    return this._newInstance(valObj.value, args);
+                }
+                // Functions
+                if (valObj.funcn)
+                {
+                    return valObj.value.apply(this, args);
+                }
+                // Intances and all other var types
+                return valObj.value;
             }
         }
 
         /**
          * Sets the key as a prototype method
          *
-         * @access public
-         * @param  string key   The data key
-         * @return mixed
+         * @access {public}
+         * @param  {string} key   The data key
+         * @return {mixed}
          */
-        _setProto(key, invokable)
+        _setProto(key)
         {
             var _this = this;
 
-            var _key = this._normalizeKey(key);
-
             var _proto = Object.getPrototypeOf(this);
 
-            _proto[_key] = function()
+            _proto[key] = function()
             {
                 var args = Array.prototype.slice.call(arguments);
 
                 args.unshift(key);
 
-                if (invokable)
-                {
-                    return _this.get.apply(_this, args);
-                }
-
-                return _this.get(key);
+                return _this.get.apply(_this, args);
             };
-        }
-
-        /**
-         * Remove a key/value
-         *
-         * @access public
-         * @param string key   The data key
-         */
-        delete(key)
-        {
-            if (key.includes('.') || key.includes('['))
-            {
-                Arr.delete(key, this.data);
-
-                return;
-            }
-
-            delete this.data[key];
-
-            key = this._normalizeKey(key);
-
-            var _proto = Object.getPrototypeOf(this);
-
-            if (typeof _proto[key] !== 'undefined')
-            {
-                _proto[key] = null;
-            }
         }
 
         /**
          * Stores a globally unique singleton
          *
-         * @access public
-         * @param  string key      The value or object name
-         * @param  object classObj The closure that defines the object
-         * @return this
+         * @access {public}
+         * @param  {string} key      The value or object name
+         * @param  {object} classObj The closure that defines the object
+         * @return {this}
          */
-        singleton(key, classObj)
+        _singletonFunc(key)
         {
-            if (key.includes('.') || key.includes('['))
+            var valObj   = this._store[key];
+            var instance = valObj.invoked ? valObj.instance : null;
+            var args     = Array.prototype.slice.call(arguments).slice(1);
+
+            if (!instance)
             {
-                throw new Error('Cannot set singletons using dot notation.');
+                instance         = this._newInstance(valObj.value, args);
+                valObj.function  = false;
+                valObj.invokable = false;
+                valObj.invoked   = true;
+                valObj.value     = null;
+                valObj.instance  = instance;
+                valObj.singleton = true;
             }
 
-            var args = this._normalizeArgs(arguments);
-
-            var instance;
-
-            if (this._isInvoked(classObj))
-            {
-                instance = classObj;
-            }
-
-            this.singletons[key] = true;
-
-            this.set(key, function()
-            {
-                if (!instance)
-                {
-                    if (!this._isInvoked(instance))
-                    {
-                        instance = this._newInstance(classObj, args);
-                    }
-                }
-
-                return instance;
-            });
-
-            return this;
+            return instance;
         }
 
-        /**
-         * Get data value with key
-         *
-         * @access public
-         * @param  string key The data key
-         * @param  mixed  ... Any additional parameters to pass to the constructor (optional) (default null)
-         * @return mixed      The data value
-         */
-        get(key)
+        _isInvokable(mixed_var)
         {
-            if (key.includes('.') || key.includes('['))
+            // Not a function
+            if (typeof mixed_var !== 'function' || mixed_var === null)
             {
-                return Arr.get(key, this.data);
+                return false;
             }
 
-            if (this.has(key))
+            // Strict ES6 class
+            if (/^\s*class\s+\w+/.test(mixed_var.toString()))
             {
-                if (this._isSingleton(key))
-                {
-                    return this.data[key].apply(this);
-                }
-                else if (this._isInvokable(this.data[key]))
-                {
-                    return this._newInstance(this.data[key], arguments);
-                }
-
-                return this.data[key];
+                return true;
             }
 
-            return false;
-        }
-
-        /**
-         * Does this set contain a key?
-         *
-         * @access public
-         * @param  string  key The data key
-         * @return boolean
-         */
-        has(key)
-        {
-            if (key.includes('.') || key.includes('['))
+            // Native arrow functions
+            if (!mixed_var.prototype || !mixed_var.prototype.constructor)
             {
-                return Arr.has(key, this.data);
+                return false;
             }
 
-            for (var _key in this.data)
-            {
-                if (_key === key)
-                {
-                    return true;
-                }
-            }
+            // If prototype is empty 
+            let props = this._object_props(mixed_var.prototype);
 
-            return false;
-        }
-
-        /**
-         * Checks if key is a singleton
-         *
-         * @access private
-         * @
-         * @return bool
-         */
-        _isSingleton(key)
-        {
-            for (var _key in this.singletons)
-            {
-                if (_key === key)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /**
-         * Checks if a variable is invokable
-         *
-         * @access private
-         * @param  mixed mixedVar The object instance or reference
-         * @return bool
-         */
-        _isInvokable(mixedVar)
-        {
-            return Object.prototype.toString.call(mixedVar) === '[object Function]';
+            return props.length >= 1;
         }
 
         /**
          * Checks if a class object has been invoked
          *
-         * @access private
-         * @param  mixed classObj The object instance or reference
-         * @return bool
+         * @access {private}
+         * @param  {mixed} mixedVar The object instance or reference
+         * @return {bool}
          */
-        _isInvoked(classObj)
+        _isInvoked(mixedVar)
         {
-            return typeof classObj === 'object' && classObj.constructor && typeof classObj.constructor === 'function' && classObj.constructor.toString().includes('function (');
+            if (typeof mixedVar === 'object' && mixedVar.constructor && typeof mixedVar.constructor === 'function')
+            {
+                var constr = mixedVar.constructor.toString().trim();
+                
+                return constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class ') ;
+            }
+
+            return false;
         }
 
         /**
          * Invokes and returns a new class instance
          *
-         * @access private
-         * @param  mixed classObj The object instance or reference
-         * @param  array args     Arguements to pass to class constructor (optional) (default null)
-         * @return object
+         * @access {private}
+         * @param  {mixed} classObj The object instance or reference
+         * @param  {array} args     Arguements to pass to class constructor (optional) (default null)
+         * @return {object}
          */
         _newInstance(reference, args)
         {
-            return new(Function.prototype.bind.apply(reference, args));
+            return new reference(...args);
+            //return new(Function.prototype.bind.apply(reference, args));
         }
 
         /**
-         * Fixes args passed to constructors 
+         * Invokes and returns a new class instance
          *
-         * @access private
-         * @param  array args Array of args passed to origional function
-         * @return array
+         * @access {private}
+         * @param  {mixed} classObj The object instance or reference
+         * @param  {array} args     Arguements to pass to class constructor (optional) (default null)
+         * @return {object}
          */
-        _normalizeArgs(args)
+        _storeObj(mixedVar, isSingleton)
         {
-            if (Object.prototype.toString.call(args) === '[object Arguments]')
-            {
-                var _args = Array.prototype.slice.call(args);
+            isSingleton = typeof isSingleton === 'undefined' ? false : isSingleton;
 
-                _args.shift();
+            var invokable   = this._isInvokable(mixedVar);
+            var invoked     = this._isInvoked(mixedVar);
+            var instance    = invoked && isSingleton ? mixedVar : null;
+            var isFunc      = this._is_func(mixedVar) && !invokable && !invoked && !isSingleton;
+            var singleton   = isSingleton ? this._singletonFunc : false;
 
-                return _args;
-            }
-
-            return args;
+            return {
+                funcn     : isFunc,
+                invokable : invokable,
+                invoked   : invoked,
+                value     : mixedVar,
+                instance  : instance,
+                singleton : singleton,
+            };
         }
 
         /**
          * Normalizes key for prototypes
          *
-         * @access private
-         * @param  string key Key to normalize
-         * @return string
+         * @access {private}
+         * @param  {string} key Key to normalize
+         * @return {string}
          */
         _normalizeKey(key)
         {
@@ -542,6 +307,66 @@
 
             return key;
         }
+
+        /**
+         * Returns object properties and methods as array of keys.
+         * 
+         * @param   {mixed}    mixed_var    Variable to test
+         * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+         * @returns {array}
+         */
+        _object_props(mixed_var, withMethods)
+        {
+            var array_unique = function(arr)
+            {
+                let uniq = function(value, index, self)
+                {
+                    return self.indexOf(value) === index;
+                }
+
+                return arr.filter(uniq);
+            }
+
+            withMethods = typeof withMethods === 'undefined' ? true : false;
+
+            let keys = Object.keys(mixed_var);
+
+            if (withMethods)
+            {
+                let protos = [];
+                let funcs = Object.getOwnPropertyNames(mixed_var);
+                let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+
+                while (proto)
+                {
+                    // recursive stopper
+                    if (protos.includes.proto)
+                    {
+                        break;
+                    }
+
+                    protos.push(proto);
+
+                    let protoFuncs = Object.getOwnPropertyNames(proto);
+
+                    funcs = [...funcs, ...protoFuncs];
+
+                    proto = proto.prototype || Object.getPrototypeOf(proto);
+                }
+
+                keys = [...keys, ...funcs];
+            }
+
+            return array_unique(keys.filter(function(key)
+            {
+                return !PROTO_EXCLUDES.includes(key);
+            }));
+        }
+
+        _is_func(mixedVar)
+        {
+            return Object.prototype.toString.call(mixedVar) === '[object Function]';
+        }
     }
 
     /**
@@ -550,9 +375,9 @@
      */
     if (!window.Container)
     {
-        var ContainerInstance = new Container;
+        var container = new Inverse;
 
-        window.Container = ContainerInstance;
+        window.Container = container;
     }
 
 })(window);

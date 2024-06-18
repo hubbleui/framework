@@ -1,86 +1,73 @@
-/**
- * Application core
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
- */
 (function()
 {
     /**
-     * Module constructor
+     * Application core
      *
-     * @class
-     * @constructor
-     * @params null
-     * @access public
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    var Application = function()
+    class Application
     {
-        return this;
-    };
+        /**
+         * Called when the application is first initialized
+         *
+         * @access {public}
+         */
+        boot()
+        {        
+            this.dom().boot();
+        }
 
-    /**
-     * Called when the application is first initialized
-     *
-     * @access public
-     */
-    Application.prototype.boot = function()
-    {
-        this.dom().boot();
-    }
+        /**
+         * Get the Container component
+         *
+         * @access {public}
+         * @return {object}
+         */
+        container()
+        {
+            return Container;
+        }
 
-    /**
-     * Get the Container component
-     *
-     * @access public
-     * @return object
-     */
-    Application.prototype.container = function()
-    {
-        return Container;
-    }
+        /**
+         * Get the DOM component
+         *
+         * @access {public}
+         * @return {object}
+         */
+        dom()
+        {
+            return Container.get('HubbleDom');
+        }
 
-    /**
-     * Get the DOM component
-     *
-     * @access public
-     * @return object
-     */
-    Application.prototype.dom = function()
-    {
-        return Container.get('HubbleDom');
-    }
+        /**
+         * Get the Helper component
+         *
+         * @access {public}
+         * @return {object}
+         */
+        helper()
+        {
+            return Container.Helper();
+        }
 
-    /**
-     * Get the Helper component
-     *
-     * @access public
-     * @return object
-     */
-    Application.prototype.helper = function()
-    {
-        return Container.Helper();
-    }
-
-    /**
-     * Require a module and/or key/value
-     *
-     * @access public
-     * @param  string key The name of the key
-     * @return mixed
-     */
-    Application.prototype.require = function()
-    {
-        return Container.get.apply(Container, arguments);
+        /**
+         * Require a module and/or key/value
+         *
+         * @access {public}
+         * @param  {string} key The name of the key
+         * @return {mixed}
+         */
+        require()
+        {
+            return Container.get(...arguments);
+        }
     }
 
     // Loads into container
     Container.singleton('Hubble', Application);
 
-    if (!window.Hubble)
-    {
-        window.Hubble = Container.get('Hubble');
-    }
+    window.Hubble = Container.get('Hubble');
 
 })();

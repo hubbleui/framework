@@ -3,29 +3,29 @@
     /**
      * JS Helper reference
      * 
-     * @var object
+     * @var {object}
      */
     var Helper = Hubble.helper();
 
     /**
      * Dropdown Buttons
      *
-     * @author    Joe J. Howard
-     * @copyright Joe J. Howard
-     * @license   https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     class DropDowns
     {
         /**
          * Module constructor
          *
-         * @access public
+         * @access {public}
          */
         constructor()
-        {
+        {            
             this._triggers = Helper.$All('.js-drop-trigger');
 
-            if (!Helper.empty(this._triggers))
+            if (!Helper.is_empty(this._triggers))
             {
                 this._bind();
             }
@@ -34,7 +34,7 @@
         /**
          * Module destructor
          *
-         * @access public
+         * @access {public}
          */
         destruct()
         {
@@ -46,7 +46,7 @@
         /**
          * Bind click listener to containers
          *
-         * @access private
+         * @access {private}
          */
         _bind()
         {
@@ -58,7 +58,7 @@
         /**
          * Unbind listener to containers
          *
-         * @access private
+         * @access {private}
          */
         _unbind()
         {
@@ -70,8 +70,8 @@
         /**
          * Click event handler
          *
-         * @param  event|null e JavaScript Click event
-         * @access private
+         * @param  {event|null} e JavaScript Click event
+         * @access {private}
          */
         _clickHandler(e)
         {
@@ -85,7 +85,7 @@
             _this._hideDropDowns(button);
 
             // Remove active and return
-            if (Helper.hasClass(button, 'active'))
+            if (Helper.has_class(button, 'active'))
             {
                 _this._hideDrop(button);
             }
@@ -98,38 +98,38 @@
         /**
          * Click event handler
          *
-         * @param  event|null e JavaScript Click event
-         * @access private
+         * @param  {event|null} e JavaScript Click event
+         * @access {private}
          */
         _hideDrop(button)
         {
             var drop = Helper.$('.drop-menu', button.parentNode);
-            Helper.removeClass(button, 'active');
+            Helper.remove_class(button, 'active');
             button.setAttribute('aria-pressed', 'false');
-            Helper.hideAria(drop);
+            Helper.hide_aria(drop);
             drop.blur();
         }
 
         /**
          * Click event handler
          *
-         * @param  event|null e JavaScript Click event
-         * @access private
+         * @param  {event|null} e JavaScript Click event
+         * @access {private}
          */
         _showDrop(button)
         {
             var drop = Helper.$('.drop-menu', button.parentNode);
-            Helper.addClass(button, 'active');
+            Helper.add_class(button, 'active');
             button.setAttribute('aria-pressed', 'true');
-            Helper.showAria(drop);
+            Helper.show_aria(drop);
             drop.focus();
         }
 
         /**
          * Window click event
          *
-         * @param event|null e JavaScript click event
-         * @access private
+         * @param {event|null} e JavaScript click event
+         * @access {private}
          */
         _windowClick(e)
         {
@@ -138,7 +138,7 @@
             {
                 return;
             }
-            if (!Helper.hasClass(e.target, 'js-drop-trigger'))
+            if (!Helper.has_class(e.target, 'js-drop-trigger'))
             {
                 var _this = Container.get('DropDowns');
 
@@ -149,8 +149,8 @@
         /**
          * Hide all dropdowns
          *
-         * @param exception (optional) Button to skip
-         * @access private
+         * @param {exception} (optional) Button to skip
+         * @access {private}
          */
         _hideDropDowns(exception)
         {
@@ -172,6 +172,6 @@
     }
 
     // Load into Hubble DOM core
-    Container.get('Hubble').dom().register('DropDowns', DropDowns);
+    Hubble.dom().register('DropDowns', DropDowns);
 
 })();
