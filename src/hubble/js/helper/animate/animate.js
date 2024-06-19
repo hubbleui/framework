@@ -16,7 +16,7 @@ animate(AN_DOMElement, options)
     // args have not been processed
     if (!options.FROM_FACTORY)
     {
-        const optionSets = this._animation_factory(AN_DOMElement, options);
+        const optionSets = this.__animation_factory(AN_DOMElement, options);
 
         this.each(optionSets, function(i, opts)
         {

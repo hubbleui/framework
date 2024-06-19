@@ -9,27 +9,7 @@
 @import 'application/_dom.js';
 
 // Helper
-(function()
-{
-	@import 'helper/_constants.js';
-	@import 'helper/animate/constants.js';
-	@import 'helper/_open.js';
-	@import 'helper/_dom.js';
-	@import 'helper/_attributes.js';
-	@import 'helper/_css.js';
-	@import 'helper/_validation.js';
-	@import 'helper/_string.js';
-	@import 'helper/_array.js';
-	@import 'helper/_object.js';
-	@import 'helper/_misc.js';
-	@import 'helper/_events.js';
-	@import 'helper/_browser.js';
-	@import 'helper/animate/animation_factory.js';
-	@import 'helper/animate/animate.js';
-	@import 'helper/animate/animate_css.js';
-	@import 'helper/_private.js';
-	@import 'helper/_close.js';
-})();
+@import 'helper/helper.js';
 
 // Vendors
 @import 'vendor/_promise.js';

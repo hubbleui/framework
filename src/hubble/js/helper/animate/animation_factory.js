@@ -24,7 +24,7 @@
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-_animation_factory(DOMElement, opts)
+__animation_factory(DOMElement, opts)
 {
     var optionSets = [];
 

@@ -36,8 +36,97 @@
         <pre><code></code></pre>
         <script src="build/js/hubble.js"></script>
         <script type="text/javascript">
-            
             var H = Hubble.helper();
+
+/*
+var selector_regex = /([^\r\n,{}]+)(,(?=[^}]*{)|\s*{)/g;
+
+var css = `
+
+normal { prop: value; }
+
+parent { child { nested_prop: nested_value;} }
+
+
+
+
+`;
+
+const splitAt = (index, input) => [input.slice(0, index), input.slice(index)];
+
+var selectors = [...css.matchAll(selector_regex)];
+
+
+var currIndex = 0;
+var currBlock = '';
+var next
+var currChar;
+var currSelector;
+var currRules;
+var inQuote = false;
+var currParent;
+var len = css.length -1;
+
+
+const SPACE               = /[\t\r\n\f ]/;
+const CHAR_QUOTES         = ['"', "'"];
+const CHAR_SELECTOR_START = '{';
+const CHAR_SELECTOR_END   = '{';
+const CHAR_PLUS           = '+';
+const CHAR_NEST           = '&';
+
+
+function peekUntill()
+{
+
+}
+
+function seekUntill()
+{
+
+}
+
+function seek()
+{
+    currChar = css[currIndex];
+
+    currBlock += currChar;
+
+    if (currChar === CHAR_SELECTOR_START)
+    {
+
+        
+        console.log(currBlock);
+
+        currBlock = '';
+        currChar++;
+    }
+
+    currIndex++;
+}
+
+
+while(currIndex < len)
+{
+    seek();
+}
+*/
+/*H.each(selectors, function(i, match)
+{
+    if (H.is_empty(match)) return false;
+    console.log(match);
+
+    index = (match.index + match[0].length) -1;
+
+    
+
+    console.log(css[index]);
+
+    //console.log(splitAt(match.index, css));
+    console.log("\n");
+});*/
+
+            
             var div = H.$('div');
 
             //console.log(H.computed_style(div, 'height'));

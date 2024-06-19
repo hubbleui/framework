@@ -1223,18 +1223,12 @@ const ARRAYISH_TAGS = [ARRAY_TAG, ARGS_TAG, NODELST_TAG];
 // Object.prototype.toString
 const TO_STR = Object.prototype.toString;
 
+// Array.prototype.slice
 const TO_ARR = Array.prototype.slice;
 
 // Regex for HTMLElement types
 const HTML_REGXP = /^\[object HTML\w*Element\]$/;
-
-// Excludes
-const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
-
-// Current clone map (stops recursive cloning between array/objects)
-let CURR_CLONES = new WeakMap();
-
-const CSS_EASINGS = 
+	const CSS_EASINGS = 
 {
     // Defaults
     ease: 'ease',
@@ -1285,81 +1279,6 @@ const CSS_EASINGS =
 };
 
 /**
- * List of shorthand properties and their longhand equivalents
- *
- * @var {object}
- */
-const SHORTHAND_PROPS =
-{
-    // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
-    'list-style': ['-type', '-position', '-image'],
-    'margin': ['-top', '-right', '-bottom', '-left'],
-    'outline': ['-width', '-style', '-color'],
-    'padding': ['-top', '-right', '-bottom', '-left'],
-
-    // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
-    'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
-    'border': ['-width', '-style', '-color'],
-    'border-color': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
-    'border-style': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
-    'border-width': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
-    'border-top': ['-width', '-style', '-color'],
-    'border-right': ['-width', '-style', '-color'],
-    'border-bottom': ['-width', '-style', '-color'],
-    'border-left': ['-width', '-style', '-color'],
-    'border-radius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
-    'border-image': ['-source', '-slice', '-width', '-outset', '-repeat'],
-
-    // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
-    'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
-    'font-variant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
-
-    // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
-    'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
-    'mask-border': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
-
-    // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
-    'columns': ['column-width', 'column-count'],
-    'column-rule': ['-width', '-style', '-color'],
-
-    // CSS Speech Module: http://www.w3.org/TR/css3-speech/
-    'cue': ['-before', '-after'],
-    'pause': ['-before', '-after'],
-    'rest': ['-before', '-after'],
-
-    // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
-    'text-decoration': ['-line', '-style', '-color'],
-    'text-emphasis': ['-style', '-color'],
-
-    // CSS Animations (WD): http://www.w3.org/TR/css3-animations
-    '-webkit-animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-    '-moz-animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-    '-ms-animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-    '-o-animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-    'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-
-    // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
-    'webkit-transition': ['-property', '-duration', '-timing-function', '-delay'],
-    '-moz-transition': ['-property', '-duration', '-timing-function', '-delay'],
-    '-ms-transition': ['-property', '-duration', '-timing-function', '-delay'],
-    '-o-transition': ['-property', '-duration', '-timing-function', '-delay'],
-    'transition': ['-property', '-duration', '-timing-function', '-delay'],
-
-    // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
-    '-webkit-flex': ['-grow', '-shrink', '-basis'],
-    '-ms-flex': ['-grow', '-shrink', '-basis'],
-    'flex': ['-grow', '-shrink', '-basis'],
-};
-
-/**
- * Cached CSS propery cases.
- *
- * @var {object}
- */
-const CSS_PROP_TO_HYPHEN_CASES = {};
-const CSS_PROP_TO_CAMEL_CASES  = {};
-
-	/**
  * Math Contstansts.
  * 
  * @var {mixed}
@@ -1582,7 +1501,7 @@ const ANIMATION_DEFAULT_OPTIONS =
     // Options
     //'property', 'from', 'to'
     easing:               'ease',
-    callback:              function() { console.log('complete'); },
+    callback:              (() => ),
 
     // Mutable options
     startValue:           null,
@@ -1620,6 +1539,102 @@ const ANIMATION_ALLOWED_OPTIONS = ['property', 'from', 'to', 'duration', 'easing
  */
 const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ...ANIMATION_ALLOWED_OPTIONS];
 	/**
+ * List of shorthand properties and their longhand equivalents
+ *
+ * @var {object}
+ */
+const SHORTHAND_PROPS =
+{
+    // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
+    'list-style': ['-type', '-position', '-image'],
+    'margin': ['-top', '-right', '-bottom', '-left'],
+    'outline': ['-width', '-style', '-color'],
+    'padding': ['-top', '-right', '-bottom', '-left'],
+
+    // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
+    'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
+    'border': ['-width', '-style', '-color'],
+    'border-color': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
+    'border-style': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
+    'border-width': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
+    'border-top': ['-width', '-style', '-color'],
+    'border-right': ['-width', '-style', '-color'],
+    'border-bottom': ['-width', '-style', '-color'],
+    'border-left': ['-width', '-style', '-color'],
+    'border-radius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
+    'border-image': ['-source', '-slice', '-width', '-outset', '-repeat'],
+
+    // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
+    'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
+    'font-variant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
+
+    // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
+    'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
+    'mask-border': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
+
+    // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
+    'columns': ['column-width', 'column-count'],
+    'column-rule': ['-width', '-style', '-color'],
+
+    // CSS Speech Module: http://www.w3.org/TR/css3-speech/
+    'cue': ['-before', '-after'],
+    'pause': ['-before', '-after'],
+    'rest': ['-before', '-after'],
+
+    // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
+    'text-decoration': ['-line', '-style', '-color'],
+    'text-emphasis': ['-style', '-color'],
+
+    // CSS Animations (WD): http://www.w3.org/TR/css3-animations
+    'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+
+    // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
+    'transition': ['-property', '-duration', '-timing-function', '-delay'],
+
+    // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
+    'flex': ['-grow', '-shrink', '-basis'],
+};
+
+/**
+ * List of shorthand properties and their longhand equivalents
+ *
+ * @var {object}
+ */
+const SHORTHAND_DEFAULTS = 
+{
+    '-width' : '0',
+    '-height' : '0',
+    '-top' : '0',
+    '-left' : '0',
+    '-bottom' : '0',
+    '-duration' : '0s',
+    '-delay' : '0s',
+    '-grow' : '1' ,
+    '-shrink' : '1' ,
+    '-iteration-count' : '1',
+    '-timing-function' : 'linear',
+    '-transition-property' : 'all',
+    '-fill-mode': 'none',
+    '-emphasis' : 'none',
+    '-color' : 'none',
+    '-decoration' : 'none',
+    '-direction' : 'normal',
+    '-play-state' : 'running',
+};
+
+/**
+ * Cached CSS propery cases.
+ *
+ * @var {object}
+ */
+const CSS_PROP_TO_HYPHEN_CASES = {};
+const CSS_PROP_TO_CAMEL_CASES  = {};
+	// Excludes
+const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
+
+// Current clone map (stops recursive cloning between array/objects)
+let CURR_CLONES = new WeakMap();
+	/**
  * JavaScript helper library
  *
  * @author    {Joe J. Howard}
@@ -1635,4495 +1650,7 @@ class HelperJS
     browser = false;
 
     _events = {};
-	/**
- * Helper DOM helpers
- *
- * @author    {Joe J. Howard}
- * @copyright {Joe J. Howard}
- * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
- */
-
-/**
- * Select and return all nodes by selector
- *
- * @access {public}
- * @param  {string} selector CSS selector
- * @param  {node}   context (optional) (default document)
- * @return {node}
- */
-$All(selector, context)
-{
-    context = (typeof context === 'undefined' ? document : context);
-    return TO_ARR.call(context.querySelectorAll(selector));
-}
-
-/**
- * Select single node by selector
- *
- * @access {public}
- * @param  {string} selector CSS selector
- * @param  {node}   context (optional) (default document)
- * @return {node}
- */
-$(selector, context)
-{
-    context = (typeof context === 'undefined' ? document : context);
-    return context.querySelector(selector)
-}
-
-/**
- * Closest parent node by type/class or array of either
- *
- * @access {public}
- * @param  {node}   el   Target element
- * @param  {string} type Node type to find
- * @return {node\null}
- */
-closest(el, type)
-{
-    // Type is class
-    if (this.is_array(type))
-    {
-        for (var i = 0; i < type.length; i++)
-        {
-            var response = this.closest(el, type[i]);
-
-            if (response)
-            {
-                return response;
-            }
-        }
-
-        return null;
-    }
-
-    if (type[0] === '.')
-    {
-        return this.closest_class(el, type);
-    }
-
-    type = type.toLowerCase();
-
-    if (typeof el === 'undefined')
-    {
-        return null;
-    }
-
-    if (el.nodeName.toLowerCase() === type)
-    {
-        return el;
-    }
-
-    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type)
-    {
-        return el.parentNode;
-    }
-
-    var parent = el.parentNode;
-
-    while (parent !== document.body && typeof parent !== "undefined" && parent !== null)
-    {
-        parent = parent.parentNode;
-
-        if (parent && parent.nodeName.toLowerCase() === type)
-        {
-            return parent;
-        }
-    }
-
-
-    return null;
-}
-
-/**
- * Closest parent node by class
- *
- * @access {public}
- * @param  {node}   el   Target element
- * @param  {string} clas Node class to find
- * @return {node\null}
- */
-closest_class(el, clas)
-{    
-    // Type is class
-    if (this.is_array(clas))
-    {
-        for (var i = 0; i < clas.length; i++)
-        {
-            var response = this.closest_class(el, clas[i]);
-
-            if (response)
-            {
-                return response;
-            }
-        }
-
-        return null;
-    }
-
-    if (this.has_class(el, clas))
-    {
-        return el;
-    }
-
-    if (this.has_class(el.parentNode, clas))
-    {
-        return el.parentNode;
-    }
-
-    var parent = el.parentNode;
-
-    if (parent === window.document)
-    {
-        return null;
-    }
-
-    while (parent !== document.body)
-    {
-        if (this.has_class(parent, clas))
-        {
-            return parent;
-        }
-
-        if (parent === null || typeof parent === 'undefined')
-        {
-            return null;
-        }
-
-        parent = parent.parentNode;
-    }
-
-    return null;
-}
-
-/**
- * Get all first level children
- *
- * @access {public}
- * @param  {node}   el   Target element
- * @return {node\null}
- */
-first_children(el)
-{
-    var children = [];
-
-    var childnodes = el.childNodes;
-
-    for (var i = 0; i < childnodes.length; i++)
-    {
-        if (childnodes[i].nodeType == 1)
-        {
-            children.push(childnodes[i]);
-        }
-    }
-
-    return children;
-}
-
-/**
- * Traverse nextSibling untill type or class or array of either
- *
- * @access {public}
- * @param  {node}   el   Target element
- * @param  {string} type Target node type
- * @return {node\null}
- */
-next(el, type)
-{
-    // Type is class
-    if (this.is_array(type))
-    {
-        for (var i = 0; i < type.length; i++)
-        {
-            var response = this.next(el, type[i]);
-
-            if (response)
-            {
-                return response;
-            }
-        }
-
-        return null;
-    }
-
-    if (type[0] === '.')
-    {
-        return this.next_untill_class(el, type);
-    }
-
-    type = type.toLowerCase();
-
-    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type)
-    {
-        return el.nextSibling;
-    }
-    var next = el.nextSibling;
-
-    while (next !== document.body && typeof next !== "undefined" && next !== null)
-    {
-        next = next.nextSibling;
-
-        if (next && next.nodeName.toLowerCase() === type)
-        {
-            return next;
-        }
-    }
-
-    return null;
-}
-
-/**
- * Traverse nextSibling untill class type or class or array of either
- *
- * @access {public}
- * @param  {node}   el        Target element
- * @param  {string} className Target node classname
- * @return {node\null}
- */
-next_untill_class(el, className)
-{
-    if (className[0] === '.')
-    {
-        className = className.substring(1);
-    }
-
-    if (el.nextSibling && this.has_class(el.nextSibling, className))
-    {
-        return el.nextSibling;
-    }
-
-    var next = el.nextSibling;
-
-    while (next !== document.body && typeof next !== "undefined" && next !== null)
-    {
-        if (next && this.has_class(next, className))
-        {
-            return next;
-        }
-
-        next = next.nextSibling;
-
-    }
-
-    return null;
-}
-
-/**
- * Traverse previousSibling untill type
- *
- * @access {public}
- * @param  {node}   el   Target element
- * @param  {string} type Target node type
- * @return {node\null}
- */
-previous(el, type)
-{
-    // Type is class
-    if (this.is_array(type))
-    {
-        for (var i = 0; i < type.length; i++)
-        {
-            var response = this.previous(el, type[i]);
-
-            if (response)
-            {
-                return response;
-            }
-        }
-
-        return null;
-    }
-
-    if (type[0] === '.')
-    {
-        return this._previousUntillClass(el, type);
-    }
-
-
-    type = type.toLowerCase();
-    if (el.previousSibling && el.previousSibling.nodeName.toLowerCase() === type) return el.previousSibling;
-    var prev = el.previousSibling;
-    while (prev !== document.body && typeof prev !== "undefined" && prev !== null)
-    {
-        prev = prev.previousSibling;
-        if (prev && prev.nodeName.toLowerCase() === type)
-        {
-            return prev;
-        }
-    }
-    return null;
-}
-
-/**
- * Traverse previousSibling untill class
- *
- * @access {public}
- * @param  {node}   el        Target element
- * @param  {string} className Target node classname
- * @return {node\null}
- */
-_previousUntillClass(el, className)
-{
-    if (className[0] === '.')
-    {
-        className = className.substring(1);
-    }
-
-    if (el.previousSibling && this.has_class(el.previousSibling, className))
-    {
-        return el.previousSibling;
-    }
-
-    var prev = el.previousSibling;
-
-    while (prev !== document.body && typeof prev !== "undefined" && prev !== null)
-    {
-        prev = prev.previousSibling;
-
-        if (prev && this.has_class(prev, className))
-        {
-            return prev;
-        }
-    }
-
-    return null;
-}
-
-/**
- * Create and insert a new node
- *
- * @access {public}
- * @param  {string} type    New node type
- * @param  {string} classes New node class names (optional) (default '')
- * @param  {string} classes New node ID (optional) (default '')
- * @param  {string} content New node innerHTML (optional) (default '')
- * @param  {node}   target  Parent to append new node into
- * @return {node}
- */
-new_node(type, classes, ID, content, target)
-{
-    var node = document.createElement(type);
-    classes = (typeof classes === "undefined" ? null : classes);
-    ID = (typeof ID === "undefined" ? null : ID);
-    content = (typeof content === "undefined" ? null : content);
-
-    if (classes !== null)
-    {
-        node.className = classes
-    }
-    if (ID !== null)
-    {
-        node.id = ID
-    }
-    if (content !== null)
-    {
-        node.innerHTML = content
-    }
-
-    target.appendChild(node);
-
-    return node;
-}
-
-/**
- * Inserts node as first child
- *
- * @access {public}
- * @param  {node} node     New node to insert
- * @param  {node} wrapper  Parent to preappend new node into
- * @return {node}
- */
-preapend(node, wrapper)
-{
-    wrapper.insertBefore(node, wrapper.firstChild);
-
-    return node;
-}
-
-/**
- * Remove an element from the DOM
- *
- * This function also removes all attached event listeners
- * 
- * @access {public}
- * @param  {node}   el Target element
- */
-remove_from_dom(el)
-{
-    if (this.in_dom(el))
-    {
-        el.parentNode.removeChild(el);
-
-        var children = this.$All('*', el);
-
-        for (var i = 0, len = children.length; i < len; i++)
-        {
-            this.removeEventListener(children[i]);
-        }
-
-        this.removeEventListener(el);
-    }
-}
-
-/**
- * Add a css class or list of classes
- *
- * @access {public}
- * @param  {node}         el         Target element
- * @param  {array|string} className  Class name(s) to add
- */
-add_class(el, className)
-{
-    if (!this.in_dom(el))
-    {
-        return;
-    }
-
-    if (TO_STR.call(className) === '[object Array]')
-    {
-        for (var i = 0; i < className.length; i++)
-        {
-            el.classList.add(className[i]);
-        }
-
-        return;
-    }
-
-    el.classList.add(className);
-}
-
-/**
- * Remove a css class or list of classes
- *
- * @access {public}
- * @param  {node}         el         Target element
- * @param  {array|string} className  Class name(s) to remove
- */
-remove_class(el, className)
-{
-    if (!this.in_dom(el))
-    {
-        return;
-    }
-
-    if (TO_STR.call(className) === '[object Array]')
-    {
-        for (var i = 0; i < className.length; i++)
-        {
-            el.classList.remove(className[i]);
-        }
-
-        return;
-    }
-
-    el.classList.remove(className);
-}
-
-/**
- * Toogle a classname
- *
- * @access {public}
- * @param  {node}         el         Target element
- * @param  {string}       className  Class name to toggle
- */
-toggle_class(el, className)
-{
-    if (!this.in_dom(el))
-    {
-        return;
-    }
-
-    if (this.has_class(el, className))
-    {
-        this.remove_class(el, className);
-    }
-    else
-    {
-        this.add_class(el, className);
-    }
-}
-
-/**
- * Check if a node has a class
- *
- * @access {public}
- * @param  {node}         el         Target element
- * @param  {string|array} className  Class name(s) to check for
- * @return {bool}
- */
-has_class(el, className)
-{
-    if (!this.in_dom(el))
-    {
-        return false;
-    }
-
-    if (TO_STR.call(className) === '[object Array]')
-    {
-        for (var i = 0; i < className.length; i++)
-        {
-            if (el.classList.contains(className[i]))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    if (!el.classList)
-    {
-        return false;
-    }
-
-    var classNames = className.split('.');
-
-    if ((classNames.length - 1) > 1)
-    {
-        for (var i = 0; i < classNames.length; i++)
-        {
-            if (el.classList.contains(classNames[i]))
-            {
-                return true;
-            }
-        }
-    }
-
-    if (className[0] === '.')
-    {
-        className = className.substring(1);
-    }
-
-    return el.classList.contains(className);
-}
-
-/**
- * Check if a node is a certain type
- *
- * @access {public}
- * @param  {node}   el         Target element
- * @param  {string} NodeType   Node type to validate
- * @return {bool}
- */
-is_node_type(el, NodeType)
-{
-    return el.tagName.toUpperCase() === NodeType.toUpperCase();
-}
-
-/**
- * Get an element's absolute coordinates
- *
- * @access {public}
- * @param  {node}   el Target element
- * @return {object}
- */
-coordinates(el)
-{
-    var box = el.getBoundingClientRect();
-    var body = document.body;
-    var docEl = document.documentElement;
-    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-    var clientTop = docEl.clientTop || body.clientTop || 0;
-    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var borderL = parseInt(this.rendered_style(el, 'border-top-width'));
-    var borderR = parseInt(this.rendered_style(el, 'border-top-width'));
-    var borderT = parseInt(this.rendered_style(el, 'border-top-width'));
-    var borderB = parseInt(this.rendered_style(el, 'border-top-width'));
-    var top = box.top + scrollTop - clientTop - borderT - borderB;
-    var left = box.left + scrollLeft - clientLeft + borderL - borderR;
-    var width = parseFloat(this.rendered_style(el, "width"));
-    var height = parseFloat(this.rendered_style(el, "height"));
-
-    return {
-        top: top,
-        left: left,
-        right: left + width,
-        bottom: top + height,
-        height: height,
-        width: width,
-    };
-}
-
-/**
- * Get the current document scroll position
- *
- * @access {private}
- * @return {obj}
- */
-scroll_pos()
-{
-    var doc  = document.documentElement;
-    var top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-    var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-    
-    return {
-        top: top,
-        left: left
-    };
-}
-
-/**
- * Triggers a native event on an element
- *
- * @access {public}
- * @param  {node}   el   Target element
- * @param  {string} type Valid event name
- */
-trigger_event(el, type)
-{
-    if ('createEvent' in document)
-    {
-        var evt = document.createEvent("HTMLEvents");
-
-        evt.initEvent(type, false, true);
-
-        el.dispatchEvent(evt);
-    }
-    else
-    {
-        el.fireEvent(type);
-    }
-}
-
-/**
- * Get all input elements from a form
- *
- * @access {public}
- * @param  {node}   form Target element
- * @return {array}
- */
-form_inputs(form)
-{
-    var allInputs = this.$All('input, textarea, select', form);
-
-    var i = allInputs.length;
-
-    while (i--)
-    {
-        var input = allInputs[i];
-
-        if (input.type == "radio" && input.checked !== true)
-        {
-            allInputs.splice(i, 1);
-        }
-    }
-
-    return allInputs;
-}
-
-/**
- * Gets an input element's value
- *
- * @access {public}
- * @param  {node}   input Target element
- * @return {mixed}
- */
-input_value(input)
-{
-    if (input.type == "checkbox")
-    {
-        var val = '';
-
-        var checks = this.$All('input[name=' + input.name + ']');
-
-        for (var i = 0, len = checks.length; i < len; i++)
-        {
-            if (checks[i].checked)
-            {
-                val += checks[i].value + ', ';
-            }
-        }
-
-        return this.rtrim(val, ', ');
-    }
-
-    if (input.type == "number")
-    {
-        return parseInt(input.value);
-    }
-
-    if (input.type == "select")
-    {
-        return input.options[input.selectedIndex].value;
-    }
-
-    if (input.type == "file")
-    {
-        if (input.multiple == true)
-        {
-            return input.files;
-        }
-
-        return input.files[0];
-    }
-
-    return input.value;
-}
-
-/**
- * Get an array of name/value objects for all inputs in a form
- *
- * @access {public}
- * @param  {node}   form Target element
- * @return {array}
- */
-form_values(form)
-{
-    let inputs = this.form_inputs(form);
-    let ret    = {};
-
-    this.each(inputs, function(i, input)
-    {
-        let name = input.name;
-
-        if (input.type === 'radio' && input.checked == false)
-        {
-
-        }
-        else if (input.type === 'checkbox')
-        {
-            ret[name] = (input.checked == true);
-        }
-        if (name.indexOf('[]') > -1)
-        {
-            if (!ret[name])
-            {
-                ret[name] = [];
-            }
-
-            ret[name].push(this.input_value(input));
-        }
-        else
-        {
-            ret[name] = this.input_value(input);
-        }
-
-    }, this);
-   
-    return ret;
-}
-
-/**
- * Replace or append a node's innerHTML
- *
- * @access {public}
- * @param  {node}   DOMElement  Target element
- * @param  {string} content     Target content
- * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
- */
-inner_HTML(DOMElement, content, append)
-{
-    content = this.is_array(content) ? content.join("\n") : content;
-
-    if (append)
-    {
-        DOMElement.innerHTML += content;
-    }
-    else
-    {
-        DOMElement.innerHTML = content;
-    }
-}
-
-/**
- * Replaces element's innerText without destroying childnodes
- *
- * @access {public}
- * @param  {node}   el   Target element
- * @param  {string} text Text to replace
- */
-inner_Text(el, text)
-{
-    if (el.childNodes[0])
-    {
-        el.childNodes[0].nodeValue = text;
-    }
-}
-
-/**
- * Check if an element is in current viewport
- *
- * @access {public}
- * @param  {node}   el Target DOM node
- * @return {bool}
- */
-in_viewport(el)
-{
-
-    var rect = el.getBoundingClientRect();
-
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
-    );
-}
-
-/**
- * Aria hide an element
- *
- * @access {public}
- * @param  {node}   el Target DOM node
- */
-hide_aria(el)
-{
-    el.setAttribute("aria-hidden", 'true');
-}
-
-/**
- * Aria show an element
- *
- * @access {public}
- * @param  {node}   el Target DOM node
- */
-show_aria(el)
-{
-    el.setAttribute("aria-hidden", 'false');
-}
-
-	/**
- * Set DOM attribute.
- *
- * @param {HTMLElement}  DOMElement  Dom node
- * @param {string}       name        Property name
- * @apram {mixed}        value       Property value
- */
-attr(DOMElement, name, value)
-{
-    // Get attribute
-    // e.g attr(node, style)
-    if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
-    {
-        return this.__getAttribute(DOMElement, name);
-    }
-
-    // attr(node, {foo : 'bar', baz: 'bar'})
-    if (this.is_object(name))
-    {
-        this.each(name, function(prop, value)
-        {
-            this.attr(DOMElement, prop, value);
-        }, this);
-
-        return;
-    }
-
-    switch (name)
-    {
-        // innerHTML
-        case 'innerHTML':
-            DOMElement.innerHTML = value;
-            break;
-
-        // Children
-        case 'children':
-            this.each(value, function(node)
-            {
-                DOMElement.appendChild(node);
-            });
-            break;
-
-        // Class
-        case 'class':
-        case 'className':
-            DOMElement.className = value;
-            break;
-
-        // Style
-        case 'style':
-
-            // remove all styles completely
-            if (this.is_empty(value))
-            {
-                DOMElement.removeAttribute('style');
-            }
-            // Clear style and overwrite
-            else if (this.is_string(value))
-            {
-                DOMElement.style = '';
-                
-                // attr(node, 'css', 'foo : bar; baz: bar;})
-                this.each(value.split(';'), function(i, rule)
-                {
-                    var style = rule.split(':');
-
-                    if (style.length >= 2)
-                    {
-                        this.css(DOMElement, style.shift().trim(), style.join(':').trim());
-                    }
-                }, this);
-            }
-            // attr(node, 'css', {foo : 'bar', baz: 'bar'})
-            else if (this.is_object(value))
-            {
-                DOMElement.style = '';
-
-                this.each(value, function(prop, value)
-                {
-                    this.css(DOMElement, prop, value);
-                    
-                }, this);
-            }
-            break;
-
-        // Events / attributes
-        default:
-
-            // Events
-            if (name[0] === 'o' && name[1] === 'n')
-            {
-                var evt = name.slice(2).toLowerCase();
-
-                // Remove old listeners
-                this.removeEventListener(DOMElement, evt);
-
-                // Add new listener if one provided
-                if (value)
-                {
-                    this.addEventListener(DOMElement, evt, value);
-                }
-            }
-            // All other node attributes
-            else
-            {
-                if (
-                    name !== 'href' &&
-                    name !== 'list' &&
-                    name !== 'form' &&
-                    // Default value in browsers is `-1` and an empty string is
-                    // cast to `0` instead
-                    name !== 'tabIndex' &&
-                    name !== 'download' &&
-                    name in DOMElement
-                )
-                {
-                    try
-                    {
-                        DOMElement[name] = value == null ? '' : value;
-                        // labelled break is 1b smaller here than a return statement (sorry)
-                        break;
-                    } catch (e) {}
-                }
-
-                // ARIA-attributes have a different notion of boolean values.
-                // The value `false` is different from the attribute not
-                // existing on the DOM, so we can't remove it. For non-boolean
-                // ARIA-attributes we could treat false as a removal, but the
-                // amount of exceptions would cost us too many bytes. On top of
-                // that other VDOM frameworks also always stringify `false`.
-
-                if (typeof value === 'function')
-                {
-                    // never serialize functions as attribute values
-                }
-                else if (value != null && (value !== false || name.indexOf('-') != -1))
-                {
-                    DOMElement.setAttribute(name, value);
-                }
-                else
-                {
-                    DOMElement.removeAttribute(name);
-                }
-            }
-
-            break;
-    }
-}
-	/**
- * IMPORTANT ALL CSS PROPS ARE HANDLED BY THE LIBRARY IN 'hyphen-case'
- * 
- * However, you can provide a camelCase property to a css func and it will convert it
- * automatically
- * 
- *
- * use css_prop_to_camel_case() or css_prop_to_camel_case
- * to interchange between them
- */
-
-/**
- * Expand shorthand property to longhand properties 
- *
- * @access {private}
- * @param  {string} property  The CSS base property
- * @return {array}
- */
-css_to_longhand(property)
-{
-    property = this.css_prop_to_hyphen_case(property);
-
-    // Doesn't exist
-    if (!SHORTHAND_PROPS.hasOwnProperty(property))
-    {
-        return [property];
-    }
-
-    return this.map(SHORTHAND_PROPS[property], function(i, longhand)
-    {
-        // Object is setup so that if it starts with a '-'
-        // then it gets concatenated to the oridional prop
-        // e.g 'background' -> '-image'
-        if (longhand.startsWith('-'))
-        {
-            longhand = property + longhand;
-        }
-
-        // otherwise it gets replaced
-        // e.g 'border-color' -> 'border-top-color', 'border-right-color'... etc
-        return longhand;
-
-    }, this);
-}
-
-/**
- * Concatenate longhand to shorthand
- *
- * @access {private}
- * @param  {node}   el      Target element
- * @param  {string|array}  longHandProps Array of longhanded CSS properties in order (camelCased)
- * @return {string}
- */
-css_to_shorthand(el, longHandProps)
-{
-    var shorthand = '';
-    var multiValArr = [];
-
-    this.each(longHandProps, function()
-    {
-
-    }, this);
-
-    for (var j = 0, len = longHandProps.length; j < len; j++)
-    {
-        var longHandStyle = this.rendered_style(el, longHandProps[j]);
-
-        if (longHandStyle)
-        {
-            if (longHandStyle.indexOf(',') >= 0)
-            {
-                multiValArr.push(longHandStyle.split(',').map(Function.prototype.call, String.prototype.trim));
-            }
-            else
-            {
-                shorthand += ' ' + longHandStyle;
-            }
-        }
-    }
-
-    if (!this.is_empty(multiValArr))
-    {
-        var _this = this;
-        var multiValArrStrs = [];
-        for (var k = 0, len = multiValArr.length; k < len; k++)
-        {
-            multiValArr[k].map(function(val, n)
-            {
-                if (! multiValArrStrs[n])
-                {
-                    multiValArrStrs[n] = val;
-                }
-                else
-                {
-                    multiValArrStrs[n] += ' ' + val;
-                }
-            });
-        }
-
-        return multiValArrStrs.join(', ');
-    }
-
-    return shorthand.trim();
-}
-
-/**
- * Get an element's inline style if it exists
- *
- * @access {public}
- * @param  {node}   el   Target element
- * @param  {string} prop CSS property to check
- * @return {string}
- */
-inline_style(element, prop)
-{
-    // @todo expand shorthand    
-    const elementStyle = element.style;
-
-    prop = this.css_prop_to_hyphen_case(prop);
-
-    if (Object.hasOwn(elementStyle, prop))
-    {
-        const val = elementStyle.getPropertyValue(elementStyle[prop]) || elementStyle[prop];
-        
-        return val === '' ? undefined : val;
-    }
-}
-
-/**
- * Get the element's computed style on a property
- *
- * @access {private}
- * @param  {node}   el   Target element
- * @param  {string} prop CSS property to check (in camelCase) (optional)
- * @return {mixed}
- */
-rendered_style(el, property)
-{
-    if (window.getComputedStyle)
-    {
-        if (property)
-        {
-            return window.getComputedStyle(el, null)[property];
-        }
-
-        return window.getComputedStyle(el, null);
-
-    }
-    if (el.currentStyle)
-    {
-        if (property)
-        {
-            return el.currentStyle[property];
-        }
-        
-        return el.currentStyle;
-    }
-
-    return '';
-}
-
-/**
- * Set CSS value(s) on element
- *
- * @access {public}
- * @param  {node}   el     Target DOM node
- * @param  {string|object} Assoc array of property->value or string property
- * @example {Helper.css(node,} { display : 'none' });
- * @example {Helper.css(node,} 'display', 'none');
- */
-css(el, property, value)
-{
-    // If their is no value and property is an object
-    if (this.is_object(property))
-    {
-        this.each(property, function(prop, val)
-        {
-            this.css(el, prop, val);
-
-        }, this);
-    }
-    else
-    {
-        // Getting not settings
-        if (this.is_undefined(value))
-        {
-            return this.inline_style(el, property);
-        }
-        // Value is either null or false we remove
-        else if (this.is_null(value) || value === false)
-        {
-            if (el.style.removeProperty)
-            {
-                el.style.removeProperty(property);
-            }
-            else
-            {
-                el.style.removeAttribute(property);
-            }
-        }
-        else
-        {
-            el.style[property] = value;
-        }
-    }
-}
-
-/**
- * Remove inline css style
- * 
- * @access {public}
- * @param  {node}   el   Target element
- * @param  {string} prop CSS property to removes
- */
-remove_style(el, prop)
-{
-    if (typeof prop === 'undefined')
-    {
-        DOMElement.removeAttribute('style');
-
-        return;
-    }
-
-    this.css(el, prop);
-}
-
-/**
- * Converts CSS property to camel case.
- *
- * @access {public}
- * @param  {string} prop Property to convert
- * @retirm {string}
- */
-css_prop_to_camel_case(prop)
-{
-    if (!prop.includes('-')) return prop;
-
-    let camelProp = this.to_camel_case(prop);
-
-    if (this.in_array(prop, Object.keys(CSS_PROP_TO_CAMEL_CASES)))
-    {
-        return CSS_PROP_TO_CAMEL_CASES[prop];
-    }
-
-    // First char is always lowercase
-    let ret = camelProp.charAt(0).toLowerCase() + camelProp.slice(1);
-
-    CSS_PROP_TO_CAMEL_CASES[prop] = ret;
-
-    console.log(CSS_PROP_TO_CAMEL_CASES);
-
-    return ret;
-}
-
-/**
- * Converts CSS property to hyphen case.
- *
- * @access {public}
- * @param  {string} prop Property to convert
- * @retirm {string}
- */
-css_prop_to_hyphen_case(prop)
-{
-    if (!/[A-Z]/.test(prop)) return prop;
-    
-    if (this.in_array(prop, Object.keys(CSS_PROP_TO_HYPHEN_CASES)))
-    {
-        return CSS_PROP_TO_HYPHEN_CASES[prop];
-    }
-
-    var hyphenProp = this.camel_case_to_hyphen(prop);
-
-    if (hyphenProp.startsWith('webkit-') || hyphenProp.startsWith('moz-') || hyphenProp.startsWith('ms-') || hyphenProp.startsWith('o-'))
-    {
-        hyphenProp = '-' + hyphenProp;
-    }
-
-    CSS_PROP_TO_CAMEL_CASES[prop] = hyphenProp;
-
-    return hyphenProp;
-}
-	/**
- * Gets the `toStringTag` of `value`.
- *
- * @public
- * @param {*} value The value to query.
- * @returns {string} Returns the `toStringTag`.
- */
-var_type(value)
-{
-    if (value == null)
-    {
-        return value === undefined ? '[object Undefined]' : '[object Null]'
-    }
-
-    return TO_STR.call(value);
-}
-
-/**
- * Checks if variable is HTMLElement.
- *
- * @param   {mixed}  mixed_var  Variable to evaluate
- * @returns {boolean}
- */
-is_htmlElement(mixed_var)
-{
-    if (mixed_var && mixed_var.nodeType)
-    {
-        let type = this.var_type(mixed_var);
-
-        return HTML_REGXP.test(type) || type === '[object HTMLDocument]' || type === '[object Text]';
-    }
-
-    return false;
-}
-
-/**
- * Is undefined.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_undefined(mixed_var)
-{
-    return this.var_type(mixed_var) === UNDEF_TAG;
-}
-
-/**
- * Is null.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_null(mixed_var)
-{
-    return this.var_type(mixed_var) === NULL_TAG;
-}
-
-/**
- * Is bool.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_bool(mixed_var)
-{
-    return this.var_type(mixed_var) === BOOL_TAG;
-}
-
-/**
- * Is function.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_function(mixed_var)
-{
-    return this.var_type(mixed_var) === FUNC_TAG;
-}
-
-/**
- * Checks if variable is an object.
- *
- * @param   {mixed}  mixed_var Variable to evaluate
- * @returns {boolean}
- */
-is_object(mixed_var)
-{
-    return mixed_var !== null && this.var_type(mixed_var) === OBJECT_TAG;
-}
-
-/**
- * Is array.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_array(mixed_var, strict)
-{
-    strict = typeof strict === 'undefined' ? false : strict;
-
-    let type = this.var_type(mixed_var);
-
-    return !strict ? ARRAYISH_TAGS.includes(type) : type === ARRAY_TAG;
-}
-
-/**
- * Is nodelist.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_nodelist(mixed_var)
-{
-    return this.var_type(mixed_var) === NODELST_TAG;
-}
-
-/**
- * Is node type.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @param   {string} tag        Tag to compare
- * @returns {boolean}
- */
-is_node_type(mixed_var, tag)
-{
-    return mixed_var.tagName.toUpperCase() === tag.toUpperCase();
-}
-
-/**
- * Is args array.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_args(mixed_var)
-{
-    return this.var_type(mixed_var) === ARGS_TAG;
-}
-
-/**
- * Is string.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_string(mixed_var)
-{
-    return this.var_type(mixed_var) === STRING_TAG;
-}
-
-/**
- * Is number.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_number(mixed_var)
-{
-    return !isNaN(mixed_var) && this.var_type(mixed_var) === NUMBER_TAG;
-}
-
-/**
- * Is string.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_numeric(mixed_var)
-{
-    if (this.is_number(mixed_var))
-    {
-        return true;
-    }
-    else if (this.is_string(mixed_var))
-    {
-        return /^-?\d+$/.test(mixed_var.trim());
-    }
-
-    return false;
-}
-
-/**
- * Is date object.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_date(mixed_var)
-{
-    return this.var_type(mixed_var) === DATE_TAG;
-}
-
-/**
- * Is regexp.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_regexp(mixed_var)
-{
-    return this.var_type(mixed_var) === REGEXP_TAG;
-}
-
-/**
- * Is Set.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_set(mixed_var)
-{
-    return this.var_type(mixed_var) === SET_TAG;
-}
-
-/**
- * Is Map.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_map(mixed_var)
-{
-    return this.var_type(mixed_var) === MAP_TAG;
-}
-
-/**
- * Is Symbol.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_symbol(mixed_var)
-{
-    return this.var_type(mixed_var) === SYMBOL_TAG;
-}
-
-/**
- * Is Array buffer.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_buffer(mixed_var)
-{
-    return this.var_type(mixed_var) === ARRAY_BUFFER_TAG;
-}
-
-/**
- * Is dataView obj.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_dataview(mixed_var)
-{
-    return this.var_type(mixed_var) === DATAVIEW_TAG;
-}
-
-/**
- * Is variable a function / constructor.
- *
- * @param   {mixed}  mixed_var  Variable to check
- * @returns {boolean}
- */
-is_callable(mixed_var)
-{
-    return this.is_function(mixed_var);
-}
-
-/**
- * Checks if variable is construable.
- *
- * @param   {mixed}  mixed_var  Variable to evaluate
- * @returns {boolean}
- */
-is_constructable(mixed_var)
-{
-    // Not a function
-    if (typeof mixed_var !== 'function' || mixed_var === null)
-    {
-        return false;
-    }
-
-    // Strict ES6 class
-    if (/^\s*class\s+\w+/.test(mixed_var.toString()))
-    {
-        return true;
-    }
-
-    // Native arrow functions
-    if (!mixed_var.prototype || !mixed_var.prototype.constructor)
-    {
-        return false;
-    }
-
-    // If prototype is empty 
-    let props = this.object_props(mixed_var.prototype);
-
-    return props.length >= 1;
-}
-
-/**
- * Checks if variable is a class declaration or extends a class and/or constructable function.
- *
- * @param   {mixed}                        mixed_var  Variable to evaluate
- * @oaram   {string} | undefined | boolean} classname  Classname or strict if boolean provided
- * @param   {boolean}                      strict     If "true" only returns true on ES6 classes (default "false")
- * @returns {boolean}
- */
-is_class(mixed_var, classname, strict)
-{
-    // this.is_class(foo, true)
-    if (classname === true || classname === false)
-    {
-        strict = classname;
-        classname = null;
-    }
-    // this.is_class(foo, 'Bar') || this.is_class(foo, 'Bar', false)
-    else
-    {
-        strict = typeof strict === 'undefined' ? false : strict;
-    }
-
-    if (typeof mixed_var !== 'function' || !this.is_constructable(mixed_var))
-    {
-        return false;
-    }
-
-    let isES6 = /^\s*class\s+\w+/.test(mixed_var.toString());
-
-    if (classname)
-    {
-        if (!isES6 && strict)
-        {
-            return false;
-        }
-
-        if (mixed_var.name === classname || mixed_var.prototype.constructor.name === classname)
-        {
-            return true;
-        }
-
-        let protos = [];
-        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
-        let ret = false;
-
-        while (proto && proto.constructor)
-        {
-            // recursive stopper
-            if (protos.includes.proto)
-            {
-                break;
-            }
-
-            protos.push(proto);
-
-            if (proto.constructor.name === classname)
-            {
-                ret = true;
-
-                break;
-            }
-
-            proto = proto.prototype || Object.getPrototypeOf(proto);
-        }
-
-        return ret;
-    }
-
-    // ES6 class declaration depending on strict
-
-    return strict ? isES6 : this.is_constructable(mixed_var);
-}
-
-/**
- * Is empty
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {boolean}
- */
-is_empty(mixed_var)
-{
-    if (mixed_var === false || mixed_var === null || (typeof mixed_var === 'undefined'))
-    {
-        return true;
-    }
-    else if (this.is_array(mixed_var))
-    {
-        return mixed_var.length === null || mixed_var.length <= 0;
-    }
-    else if (this.is_object(mixed_var))
-    {
-        return Object.keys(mixed_var).length === 0;
-    }
-    else if (this.is_string(mixed_var))
-    {
-        return mixed_var.trim() === '';
-    }
-    else if (this.is_number(mixed_var))
-    {
-        return isNaN(mixed_var);
-    }
-    else if (this.is_function(mixed_var))
-    {
-        return false;
-    }
-
-    return false;
-}
-
-/**
- * Deep check for equal
- * 
- * @param   {mixed}  a
- * @param   {mixed}  b
- * @returns {boolean}
- */
-is_equal(a, b)
-{
-    if ((typeof a) !== (typeof b))
-    {
-        return false;
-    }
-    else if (this.is_string(a) || this.is_number(a) || this.is_bool(a) || this.is_null(a))
-    {
-        return a === b;
-    }
-    else if (this.is_function(a))
-    {
-        return this.___equalFunction(a, b);
-    }
-    else if (this.is_array(a) || this.is_object(b))
-    {
-        if (a === b)
-        {
-            return true;
-        }
-        else if (this.is_array(a) && !this.is_array(b))
-        {
-            return false;
-        }
-
-        return this.__equalTraverseable(a, b);
-    }
-
-    return true;
-}
-
-/**
- * Checks if HtmlElement is in current DOM
- *
- * @param   {HTMLElement}  element  Element to check
- * @returns {boolean}
- */
-in_dom(element)
-{
-    if (!this.is_htmlElement(element))
-    {
-        return false;
-    }
-
-    if (element === document.body || element === document.documentElement)
-    {
-        return true;
-    }
-
-    while (element)
-    {
-        if (element === document.documentElement)
-        {
-            return true;
-        }
-
-        element = element.parentNode;
-    }
-
-    return false;
-}
-
-/**
- * Is valid JSON
- * 
- * @param  {mixed} str String JSON
- * @return {object|false}
- */
-is_json(str)
-{
-    var obj;
-    try
-    {
-        obj = JSON.parse(str);
-    }
-    catch (e)
-    {
-        return false;
-    }
-    return obj;
-}
-
-
-/**
- * Returns array/object/string/number size.
- * 
- * @param   {mixed}  mixed_var  Variable to test
- * @returns {number}
- */
-size(mixed_var)
-{
-    if (this.is_string(mixed_var) || this.is_array(mixed_var))
-    {
-        return mixed_var.length;
-    }
-    else if (this.is_number(mixed_var))
-    {
-        return mixed_var;
-    }
-    else if (this.is_bool(mixed_var))
-    {
-        return mixed_var === true ? 1 : -1;
-    }
-    else(this.is_object(mixed_var))
-    {
-        return Object.keys(mixed_var).length;
-    }
-
-    return 1;
-}
-
-/**
- * Count
- *
- * @access {public}
- * @param  {mixed}  mixed_var Variable to count
- * @return {int}
- */
-count(mixed_var)
-{
-    return this.size(mixed_var);
-}
-
-/**
- * Returns function / class name
- *
- * @param   {mixed}  mixed_var Variable to evaluate
- * @returns {string}
- */
-callable_name(mixed_var)
-{
-    if (this.is_callable(mixed_var))
-    {
-        return mixed_var.name;
-    }
-    else if (this.is_object(mixed_var))
-    {
-        return mixed_var.constructor.name;
-    }
-}
-
-/**
- * Checks if variable should be considered "true" or "false" using "common sense".
- * 
- * @param   {mixed} mixed_var  Variable to test
- * @returns {boolean}
- */
-bool(mixed_var)
-{
-    mixed_var = (typeof mixed_var === 'undefined' ? false : mixed_var);
-
-    if (this.is_bool(mixed_var))
-    {
-        return mixed_var;
-    }
-
-    if (this.is_number(mixed_var))
-    {
-        return mixed_var > 0;
-    }
-
-    if (this.is_array(mixed_var))
-    {
-        return mixed_var.length > 0;
-    }
-
-    if (this.is_object(mixed_var))
-    {
-        return Object.keys(mixed_var).length > 0;
-    }
-
-    if (this.is_string(mixed_var))
-    {
-        mixed_var = mixed_var.toLowerCase().trim();
-
-        if (mixed_var === 'false')
-        {
-            return false;
-        }
-        if (mixed_var === 'true')
-        {
-            return true;
-        }
-        if (mixed_var === 'on')
-        {
-            return true;
-        }
-        if (mixed_var === 'off')
-        {
-            return false;
-        }
-        if (mixed_var === 'undefined')
-        {
-            return false;
-        }
-        if (this.is_numeric(mixed_var))
-        {
-            return Number(mixed_var) > 0;
-        }
-        if (mixed_var === '')
-        {
-            return false;
-        }
-    }
-
-    return false;
-}
-
-	/**
- * String Helper Functions
- *
- * @author    {Joe J. Howard}
- * @copyright {Joe J. Howard}
- * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
- */
-
-/**
- * Json encode
- * 
- * @param  {mixed} str String JSON
- * @return {object|false}
- */
-json_encode(str)
-{
-    var obj;
-    try
-    {
-        obj = JSON.stringify(str);
-    }
-    catch (e)
-    {
-        return false;
-    }
-    return obj;
-}
-
-/**
- * Json encode
- * 
- * @param  {mixed} str String JSON
- * @return {object|false}
- */
-json_decode(str)
-{
-    var obj;
-    try
-    {
-        obj = JSON.parse(str);
-    }
-    catch (e)
-    {
-        return false;
-    }
-    return obj;
-}
-
-
-/**
- * Make a random string
- *
- * @param  {int}    length String length
- * @return {string}
- */
-makeid(length)
-{
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-    for (var i = 0; i < length; i++)
-    {
-        text += possible.charAt(Math.floor(Math.random() * possible.length))
-    }
-
-    return text;
-}
-
-/**
- * Is variable numeric?
- *
- * @param  {mixed} mixed_var Variable to validate
- * @return {bool}
- */
-is_numeric(mixed_var)
-{
-    var whitespace =
-        " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
-    return (typeof mixed_var === 'number' || (typeof mixed_var === 'string' && whitespace.indexOf(mixed_var.slice(-1)) === -
-        1)) && mixed_var !== '' && !isNaN(mixed_var);
-}
-
-/**
- * Parse url
- *
- * @param  {string}    str       The URL to parse. Invalid characters are replaced by _.
- * @return {object}
- */
-parse_url(str)
-{
-    var ret = {};
-    var url = new URL(str);
-
-    if (url.search)
-    {
-        var queries = url.search.substring(1).split('&');
-        var qret    = {};
-        this.foreach(queries, function(i, query)
-        {
-            if (query.includes('='))
-            {
-                var set   = query.split('=');
-                var key   = decodeURI(set[0].trim());
-                var val   = true;
-
-                if (set.length === 2)
-                {
-                    val = set[1].trim();
-                }
-
-                if (key !== '' && val !== '')
-                {
-                    qret[key] = val;
-                }
-            }
-            else
-            {
-                qret[query] = true;
-            }
-        });
-
-        url.query = qret;
-    }
-
-    return url;
-}
-
-/* Left trim */
-ltrim(str, charlist)
-{
-    charlist = !charlist ? ' \\s\u00A0' : (charlist + '')
-        .replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g, '$1');
-    var re = new RegExp('^[' + charlist + ']+', 'g');
-    return (str + '')
-        .replace(re, '');
-}
-
-/* Left trim */
-rtrim(str, charlist)
-{
-    charlist = !charlist ? ' \\s\u00A0' : (charlist + '')
-        .replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g, '\\$1');
-    var re = new RegExp('[' + charlist + ']+$', 'g');
-    return (str + '')
-        .replace(re, '');
-}
-
-/* Trim */
-trim(str, charlist)
-{
-    return this.rtrim(this.ltrim(str, charlist), charlist);
-}
-
-
-/* split string at index */
-strSplitIndex(value, index)
-{
-    return [value.substring(0, index + 1), value.substring(index + 1)];
-}
-
-/* Capatalize first letter */
-uc_first(string)
-{
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-/* Capatalize first letter of all words */
-ucwords(str)
-{
-    return (str + '').replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1)
-    {
-        return $1.toUpperCase();
-    });
-}
-
-to_camel_case(str)
-{
-    str = str.trim();
-
-    // Shouldn't be changed
-    if (!str.includes(' ') && !str.includes('-') && /[A-Z]/.test(str))
-    {
-        return str;
-    }
-
-    return str.toLowerCase().replace(/['"]/g, '').replace(/\W+/g, ' ').replace(/ (.)/g, function($1)
-    {
-        return $1.toUpperCase();
-    })
-    .replace(/ /g, '');
-}
-
-camel_case_to_hyphen(str)
-{
-    return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1-$2$3').toLowerCase();
-}
-
-	/**
- * Array utility functions
- *
- * @author    {Joe J. Howard}
- * @copyright {Joe J. Howard}
- * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
- */
-
-/**
- * Map.
- *  
- * return undefined to break loop, true to keep, false to reject
- * 
- * @param   {array|object}  obj
- * @param   {function}      callback
- * @param   {array|mixed}   args      If single arg provided gets apllied as this to callback, otherwise args apllied to callback
- * @returns {array|object}
- */
-map(obj, callback)
-{
-    if (typeof obj !== 'object' || obj === null) return;
-
-    let isArray = TO_STR.call(obj) === '[object Array]';
-    let i       = 0;
-    let keys    = isArray ? null : Object.keys(obj);
-    let len     = isArray ? obj.length : keys.length;
-    let args    = TO_ARR.call(arguments).slice(2);
-    let ret     = isArray ? [] : {};
-    let key;
-    let val;
-    let clbkVal;
-
-    // Applies the value of "this" to the callback as the array or object provided
-    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
-
-    // Applies this arg as first extra arg if provided
-    // otherwise falls back to the array or object provided
-    // Removes "this" from args to callback
-    var thisArg = this.is_empty(args) ? obj : args[0];
-    args        = !this.is_empty(args) ? args.slice(1) : null;
-    args        = this.is_empty(args) ? null : args;
-
-    if (TO_STR.call(args) === '[object Array]')
-    {
-        for (; i < len; i++)
-        {
-            key   = isArray ? i : keys[i];
-            val   = isArray ? obj[i] : obj[key];
-            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
-
-            if (clbkVal === false)
-            {
-                continue;
-            }
-            else if (typeof clbkVal === 'undefined')
-            {
-                break;
-            }
-            else
-            {
-                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
-            }
-        }
-
-        // A special, fast, case for the most common use of each (no extra args provided)
-    }
-    else
-    {
-        for (; i < len; i++)
-        {
-            key   = isArray ? i : keys[i];
-            val   = isArray ? obj[i] : obj[key];
-            clbkVal = callback.call(thisArg, key, val);
-
-            if (clbkVal === false)
-            {
-                continue;
-            }
-            else if (typeof clbkVal === 'undefined')
-            {
-                break;
-            }
-            else
-            {
-                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
-            }
-        }
-    }
-
-    return ret;
-}
-
-
-/**
- * Foreach loop
- * 
- * @access {public}
- * @param  {object}  obj       The target object to loop over
- * @param  {closure} callback  Callback to apply to each iteration
- * @param  {array}   args      Array of params to apply to callback (optional) (default null)
- */
-foreach(obj, callback)
-{
-    if (typeof obj !== 'object' || obj === null) return;
-
-    let isArray = TO_STR.call(obj) === '[object Array]';
-    let i       = 0;
-    let keys    = isArray ? null : Object.keys(obj);
-    let len     = isArray ? obj.length : keys.length;
-    let args    = TO_ARR.call(arguments).slice(2);
-    let ret     = isArray ? [] : {};
-    let key;
-    let val;
-    let clbkVal;
-
-    // Applies the value of "this" to the callback as the array or object provided
-    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
-
-    // Applies this arg as first extra arg if provided
-    // otherwise falls back to the array or object provided
-    // Removes "this" from args to callback
-    var thisArg = this.is_empty(args) ? obj : args[0];
-    args        = !this.is_empty(args) ? args.slice(1) : null;
-    args        = this.is_empty(args) ? null : args;
-
-    if (TO_STR.call(args) === '[object Array]')
-    {
-        for (; i < len; i++)
-        {
-            key   = isArray ? i : keys[i];
-            val   = isArray ? obj[i] : obj[key];
-            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
-
-            if (clbkVal === false)
-            {
-                break;
-            }
-        }
-
-        // A special, fast, case for the most common use of each (no extra args provided)
-    }
-    else
-    {
-        for (; i < len; i++)
-        {
-            key   = isArray ? i : keys[i];
-            val   = isArray ? obj[i] : obj[key];
-            clbkVal = callback.call(thisArg, key, val);
-
-            if (clbkVal === false)
-            {
-                break;
-            }
-        }
-    }
-
-    return obj;
-}
-
-each()
-{
-    return this.foreach.apply(this, arguments);
-}
-
-/**
- * Merge multiple arrays together
- * 
- * @access {public}
- * @param  {...}   List of arrays to merge
- * @return {array}
- */
-/**
- * Merges multiple objects or arrays into the original.
- *
- * @param   {object|array} First array then any number of array or objects to merge into
- * @returns {object|array}
- */
-array_merge()
-{
-    let args = TO_ARR.call(arguments);
-
-    if (args.length === 0)
-    {
-        throw new Error('Nothing to merge.');
-    }
-    else if (args.length === 1)
-    {
-        return args[1];
-    }
-
-    var clone = false;
-
-    // Clone deep
-    this.each(args, function(i, arg)
-    {
-        if (arg = 'CLONE_FLAG_TRUE')
-        {
-            clone = true;
-
-            return false;
-        }
-    });
-
-    let first = args.shift();
-    let fType = this.is_array(first) ? 'array' : 'obj';
-
-    this.each(args, function(i, arg)
-    {
-        if (!this.is_array(arg) && !this.is_object(arg))
-        {
-            throw new Error('Arguments must be an array or object.');
-        }
-
-        first = fType === 'array' ? [...first, ...arg] : {...first, ...arg};
-
-    }, this);
-
-    return first;
-}
-
-/**
- * Filters empty array entries and returns new array
- *
- * @param   {object|array}  object Object to delete from
- * @returns {object|array}
- */
-array_filter(arr)
-{
-    let isArr = this.is_array(arr);
-
-    let ret = isArr ? [] : {};
-
-    this.foreach(arr, function(i, val)
-    {
-        if (!this.is_empty(val))
-        {
-            isArr ? ret.push(val) : ret[i] = val;
-        }
-    });
-
-    return ret;
-}
-
-/**
- * Removes duplicates and returns new array.
- *
- * @param   {array} arr Array to run
- * @returns {array}
- */
-array_unique(arr)
-{
-    let uniq = function(value, index, self)
-    {
-        return self.indexOf(value) === index;
-    }
-
-    return arr.filter(uniq);
-}
-
-/**
- * Set a key using dot/bracket notation on an object or array.
- *
- * @param   {string}       path   Path to set
- * @param   {mixed}        value  Value to set
- * @param   {object|array} object Object to set into
- * @returns {object|array}
- */
-array_set(path, value, object)
-{
-    this.__arraySetRecursive(this.__arrayKeySegment(path), value, object);
-
-    return object;
-}
-
-/**
- * Gets an from an array/object using dot/bracket notation.
- *
- * @param   {string}        path    Path to get
- * @param   {object|array}  object  Object to get from
- * @returns {mixed}
- */
-array_get(path, object)
-{
-    return this.__arrayGetRecursive(this.__arrayKeySegment(path), object);
-}
-
-/**
- * Checks if array/object contains path using dot/bracket notation.
- *
- * @param   {string}        path   Path to check
- * @param   {object|array}  object Object to check on
- * @returns {boolean}
- */
-array_has(path, object)
-{
-    return !this.is_undefined(this.array_get(path, object));
-}
-
-/**
- * Deletes from an array/object using dot/bracket notation.
- *
- * @param   {string}        path   Path to delete
- * @param   {object|array}  object Object to delete from
- * @returns {object|array}
- */
-array_delete(path, object)
-{
-    this.__arrayDeleteRecursive(this.__arrayKeySegment(path), object);
-
-    return object;
-}
-
-/**
- * Checks if an array contains a value
- *
- * @access {public}
- * @param  {string} needle    The value to search for
- * @param  {array}  haystack  The target array to index
- * @return {bool}
- */
-in_array(needle, haystack, strict)
-{
-    let ret = false;
-
-    this.each(haystack, function(k, v)
-    {
-        if (this.is_equal(needle, v))
-        {
-            ret = true;
-            return false;
-        }
-
-    }, this);
-
-    return ret;
-}
-
-	/**
- * Extends a function with prototype inheritance.
- *
- * @param   {function}           baseFunc    Base function to extend
- * @param   {function}           extendFunc  Function to get extended.
- * @param   {undefined|boolean}  callSuper   If true "extendFunc" is treated as a constructor and the BaseFunc / any nested prototypes will get instantiated. (default true)
- * @returns {function}
- */
-extend(baseFunc, extendFunc, callSuper)
-{
-    callSuper = this.is_undefined(callSuper) ? true : callSuper;
-
-    const oldConstructor = extendFunc.prototype.constructor;
-    const constructors = [...this.__protoConstructors(baseFunc), oldConstructor];
-    const newProto = function() {};
-    const oldProto = extendFunc.prototype;
-    const fncName = extendFunc.name;
-
-    newProto.prototype = oldProto;
-
-    Object.setPrototypeOf(oldProto, baseFunc.prototype);
-
-    Object.setPrototypeOf(extendFunc, newProto);
-
-    if (callSuper)
-    {
-        extendFunc = function()
-        {
-            let args = TO_ARR.call(arguments);
-
-            let _this = this;
-
-            this.each(constructors, function(i, constr)
-            {
-                if (constr.name !== 'Object')
-                {
-                    this.__bind(constr, _this).apply(_this, args);
-                }
-            }, this);
-        };
-    }
-
-    extendFunc.prototype = oldProto;
-
-    this.__applyStatics(constructors, extendFunc);
-
-    extendFunc.prototype.constructor = extendFunc;
-
-    Object.defineProperty(extendFunc, 'name', { value: fncName, writable: false });
-
-    return extendFunc;
-}
-
-
-/**
- * Returns object properties and methods as array of keys.
- * 
- * @param   {mixed}    mixed_var    Variable to test
- * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
- * @returns {array}
- */
-object_props(mixed_var, withMethods)
-{
-    withMethods = typeof withMethods === 'undefined' ? true : false;
-
-    let keys = Object.keys(mixed_var);
-
-    if (withMethods)
-    {
-        let protos = [];
-        let funcs = Object.getOwnPropertyNames(mixed_var);
-        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
-
-        while (proto)
-        {
-            // recursive stopper
-            if (protos.includes.proto)
-            {
-                break;
-            }
-
-            protos.push(proto);
-
-            let protoFuncs = Object.getOwnPropertyNames(proto);
-
-            funcs = [...funcs, ...protoFuncs];
-
-            proto = proto.prototype || Object.getPrototypeOf(proto);
-        }
-
-        keys = [...keys, ...funcs];
-    }
-
-    return this.array_unique(keys.filter(function(key)
-    {
-        return !PROTO_EXCLUDES.includes(key);
-    }));
-}
-
-
-/**
- * Clone an object
- * 
- * @access {public}
- * @param  {object}  src       The object to clone
- * @return {object}
- */
-obj_clone(src)
-{
-    var clone = {};
-
-    for (var prop in src)
-    {
-        if (src.hasOwnProperty(prop))
-        {
-            clone[prop] = src[prop];
-        }
-    }
-    return clone;
-}
-
-/**
- * Deep merge two objects.
- * 
- * @param   {object} target
- * @param   {object} ...sources
- * @returns {object}
- */
-merge_deep()
-{
-    let args = TO_ARR.call(arguments);
-
-    // No args
-    if (args.length === 0)
-    {
-        throw new Error('Nothing to merge.');
-    }
-    // Single arg
-    else if (args.length === 1)
-    {
-        return args[1];
-    }
-
-    // Must be an object
-    if (!this.is_object(args[0]))
-    {
-        throw new Error('Arguments must be an object.');
-    }
-
-    // Remove first and cache
-    let first = args.shift();
-
-    this.each(args, function(i, arg)
-    {
-        if (!this.is_object(arg))
-        {
-            throw new Error('Arguments must be an object.');
-        }
-
-        let cloned = this.clone_deep(arg, first);
-
-        this.each(cloned, function(k, v)
-        {
-            first[k] = v;
-        });
-        
-    }, this);
-
-    return first;
-}
-
-/**
- * Clones any variables
- * 
- * @param   {mixed}  mixed_var
- * @param   {mixed}  context   Context to bind functions
- * @returns {mixed}
- */
-clone_deep(mixed_var, context)
-{
-    let ret = this.__cloneVar(mixed_var, context, false);
-
-    CURR_CLONES = new WeakMap();
-
-    return ret;
-}
-
-/**
- * Creates a new object in 'dot.notation'
- * 
- * @param   {Object} obj Object
- * @returns {Object} 
- */
-dotify(obj)
-{
-    var res = {};
-
-    function recurse(obj, current)
-    {
-        for (var key in obj)
-        {
-            var value = obj[key];
-            var newKey = (current ? current + '.' + key : key); // joined key with dot
-
-            if (value && typeof value === 'object' && !(value instanceof Date))
-            {
-                recurse(value, newKey); // it's a nested object, so do it again
-            }
-            else
-            {
-                res[newKey] = value; // it's not an object, so set the property
-            }
-        }
-    }
-
-    recurse(obj);
-
-    return res;
-}
-
-/**
- * Returns an immutable object with set,get,isset,delete methods that accept dot.notation.
- *
- * @returns {object}
- */
-obj()
-{
-    return new __MAP;
-}
-
-/**
- * Creates a new object in 'dot.notation'
- * 
- * @param   {Object} obj Object
- * @returns {Object} 
- */
-dotify(obj)
-{
-    var res = {};
-
-    function recurse(obj, current)
-    {
-        for (var key in obj)
-        {
-            var value = obj[key];
-            var newKey = (current ? current + '.' + key : key); // joined key with dot
-
-            if (value && typeof value === 'object' && !(value instanceof Date))
-            {
-                recurse(value, newKey); // it's a nested object, so do it again
-            }
-            else
-            {
-                res[newKey] = value; // it's not an object, so set the property
-            }
-        }
-    }
-
-    recurse(obj);
-
-    return res;
-}
-
-/**
- * Joins an object into a string
- * 
- * @param   {Object} obj       Object
- * @param   {string} seperator Seperator Between key & value
- * @param   {string} glue      Glue between value and next key
- * @returns {string} 
- */
-join_obj(obj, seperator, glue, recursive)
-{
-    seperator = this.is_undefined(seperator) ? '' : seperator;
-    glue      = this.is_undefined(glue) ? '' : glue;
-    recursive = this.is_undefined(recursive) ? false : recursive;
-    
-    var ret = '';
-
-    this.each(obj, function(key, val)
-    {
-        if (this.is_object(val))
-        {
-            val = recursive ? '{' + this.join_obj(val, seperator, glue, recursive) + '}' : {};
-        }
-        else if (this.is_array(val))
-        {
-            val = recursive ? this.join_obj(val, seperator, glue, recursive) : val.join(', ').replaceAll('[object Object]', '{}');
-        }
-        else
-        {            
-            val = `${val}`;
-        }
-
-        ret += `${glue}${key}${seperator}${val}`;
-
-    }, this);
-
-    if (ret === `${glue}${seperator}`) return '';
-
-    return this.rtrim(this.ltrim(ret, glue), seperator);
-}
-	/**
- * Miscellaneous helper functions
- *
- * @author    {Joe J. Howard}
- * @copyright {Joe J. Howard}
- * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
- */
-
-/**
- * Gets url query
- *
- * @access {public}
- * @param  {string}  name String query to get (optional)
- * @return {object|string}
- */
-url_query(name)
-{
-    var results = {};
-
-    if (window.location.search !== '')
-    {
-        var params = window.location.search.substring(1).split('&');
-
-        for (var i = 0; i < params.length; i++)
-        {
-            if (!params[i].includes('='))
-            {
-                continue;
-            }
-
-            var split = params[i].split('=');
-
-            results[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
-        }
-    }
-
-    // No param return all url query
-    if (typeof name === 'undefined')
-    {
-        return results;
-    }
-
-    name = decodeURIComponent(name);
-
-    if (name in results)
-    {
-        return results[name];
-    }
-
-    return false;
-}
-	/**
- * DOM Event Listener Manager
- *
- * @author    {Joe J. Howard}
- * @copyright {Joe J. Howard}
- * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
- */
-
-/**
- * Add an event listener
- *
- * @access {public}
- * @param  {node}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
- */
-addEventListener(element, eventName, handler, useCapture)
-{
-    // Boolean use capture defaults to false
-    useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
-
-    // Class event storage
-    var events = this._events;
-
-    // Make sure events are set
-    if (!events)
-    {
-        this._events = events = {};
-    }
-
-    // Make sure an array for the event type exists
-    if (!events[eventName])
-    {
-        events[eventName] = [];
-    }
-
-    // Arrays
-    if (this.is_array(element))
-    {
-        for (var i = 0; i < element.length; i++)
-        {
-            this.addEventListener(element[i], eventName, handler, useCapture);
-        }
-    }
-    else
-    {
-        // Push the details to the events object
-        events[eventName].push(
-        {
-            element: element,
-            handler: handler,
-            useCapture: useCapture,
-        });
-
-        this.__addListener(element, eventName, handler, useCapture);
-    }
-}
-
-/**
- * Removes event listeners on a DOM node
- *
- * If no event name is given, all attached event listeners are removed.
- * If no callback is given, all callbacks for the event type will be removed.
- * This function can still remove "annonymous" functions that are given a name as they are declared.
- * 
- * @access {public}
- * @param  {node}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
- */
-removeEventListener(element, eventName, handler, useCapture)
-{
-    if (this.is_array(element))
-    {
-        for (var j = 0; j < element.length; j++)
-        {
-            this.removeEventListener(element[j], eventName, handler, useCapture);
-        }
-    }
-    else
-    {
-        // If the eventName name was not provided - remove all event handlers on element
-        if (!eventName)
-        {
-            return this.__removeElementListeners(element);
-        }
-
-        // If the callback was not provided - remove all events of the type on the element
-        if (!handler)
-        {
-            return this.__removeElementTypeListeners(element, eventName);
-        }
-
-        // Default use capture
-        useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
-
-        var eventObj = this._events[eventName];
-
-        if (typeof eventObj === 'undefined')
-        {
-            return;
-        }
-
-        // Loop stored events and match node, event name, handler, use capture
-        for (var i = 0, len = eventObj.length; i < len; i++)
-        {
-            if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
-            {
-                this.__removeListener(element, eventName, handler, useCapture);
-                this._events[eventName].splice(i, 1);
-                break;
-            }
-        }
-    }
-}
-
-/**
- * Removes all event listeners registered by the library
- *
- * @access {public}
- */
-clearEventListeners()
-{
-    var events = this._events;
-
-    for (var eventName in events)
-    {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
-        {
-            this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-            this._events[eventName].splice(i, 1);
-        }
-    }
-}
-
-/**
- * Removes all event listeners registered by the library on nodes
- * that are no longer part of the DOM tree
- *
- * @access {public}
- */
-collectGarbage()
-{
-    var events = this._events;
-    for (var eventName in events)
-    {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
-        {
-            var el = eventObj[i]['element'];
-            if (el == window || el == document || el == document.body) continue;
-            if (!this.in_dom(el))
-            {
-                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-                this._events[eventName].splice(i, 1);
-            }
-        }
-    }
-}
-
-
-/**
- * Removes event listeners on a DOM node
- *
- * If no element given, all attached event listeners are returned.
- * If no event name is given, all attached event listeners are returned on provided element.
- * If single arguement is provided and arg is a string, e.g 'click', all events of that type are returned
- * 
- * @access {public}
- * @param  {mixed}   element    The target DOM node
- * @param  {string}  eventName  Event type
- * @return {array}
- */
-eventListeners(DOMElement, eventName)
-{
-    var args = TO_ARR.call(arguments);
-    var events = this._events;
-
-    // No args, return all events
-    if (args.length === 0)
-    {
-        return events;
-    }
-    // eventListeners(node) or
-    // eventListeners('click')
-    else if (args.length === 1)
-    {
-        // eventListeners('click')
-        if (this.is_string(DOMElement))
-        {   
-            return events[DOMElement] || [];
-        }
-        
-        var ret = [];
-
-        // eventListeners(node)
-        for (var evt in events)
-        {
-            var eventArr = events[evt];
-
-            for (var i = 0; i < eventArr.length; i++)
-            {
-                var eventObj = eventArr[i];
-
-                if (eventObj.element === DOMElement)
-                {
-                    ret.push(eventObj);
-                }
-            }
-        }
-
-        return ret;
-    }
-    // eventListeners(node, 'click')
-    var ret = [];
-
-    if (events[eventName])
-    {
-        var _evts = events[eventName];
-
-        for (var i = 0; i < _evts.length; i++)
-        {
-            var eventObj = _evts[i];
-
-            if (eventObj.element === DOMElement)
-            {
-                ret.push(eventObj);
-            }
-        }
-    }
-
-    return ret;
-}
-
-
-
-	/**
- * Browser utility functions
- *
- * @author    {Joe J. Howard}
- * @copyright {Joe J. Howard}
- * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
- */
-
-/**
- * Get the browser with version
- *
- * @access {public}
- * @return {object}
- */
-get_browser()
-{
-    if (this.browser)
-    {
-        return this.browser;
-    }
-
-    /**
-     * Detect.js: User-Agent Parser
-     * https://github.com/darcyclarke/Detect.js
-     * Dual licensed under the MIT and GPL licenses.
-     *
-     * @version {2.2.2}
-     * @author {Darcy} Clarke}
-     * @url {http://darcyclarke.me}
-     * @createdat {Mon} Oct 26 2015 08:21:54 GMT-0200 (Horário brasileiro de verão)
-     *
-     * Based on UA-Parser (https://github.com/tobie/ua-parser) by Tobie Langel
-     *
-     * Example Usage:
-     * var agentInfo = detect.parse(navigator.userAgent);
-     * console.log(agentInfo.browser.family); // Chrome
-     *
-     */
-    (function(e)
-    {
-        Array.prototype.map || (Array.prototype.map = function(e, r)
-        {
-            var a, o, i;
-            if (null == this) throw new TypeError(" this is null or not defined");
-            var n = Object(this),
-                t = n.length >>> 0;
-            if ("function" != typeof e) throw new TypeError(e + " is not a function");
-            for (r && (a = r), o = Array(t), i = 0; t > i;)
-            {
-                var l, d;
-                i in n && (l = n[i], d = e.call(a, l, i, n), o[i] = d), i++
-            }
-            return o
-        });
-        var r = e.detect = function()
-        {
-            var e = function() {},
-                r = {
-                    browser_parsers: [
-                    {
-                        regex: "^(Opera)/(\\d+)\\.(\\d+) \\(Nintendo Wii",
-                        family_replacement: "Wii",
-                        manufacturer: "Nintendo"
-                    },
-                    {
-                        regex: "(SeaMonkey|Camino)/(\\d+)\\.(\\d+)\\.?([ab]?\\d+[a-z]*)",
-                        family_replacement: "Camino",
-                        other: !0
-                    },
-                    {
-                        regex: "(Pale[Mm]oon)/(\\d+)\\.(\\d+)\\.?(\\d+)?",
-                        family_replacement: "Pale Moon (Firefox Variant)",
-                        other: !0
-                    },
-                    {
-                        regex: "(Fennec)/(\\d+)\\.(\\d+)\\.?([ab]?\\d+[a-z]*)",
-                        family_replacement: "Firefox Mobile"
-                    },
-                    {
-                        regex: "(Fennec)/(\\d+)\\.(\\d+)(pre)",
-                        family_replacment: "Firefox Mobile"
-                    },
-                    {
-                        regex: "(Fennec)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Firefox Mobile"
-                    },
-                    {
-                        regex: "Mobile.*(Firefox)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Firefox Mobile"
-                    },
-                    {
-                        regex: "(Namoroka|Shiretoko|Minefield)/(\\d+)\\.(\\d+)\\.(\\d+(?:pre)?)",
-                        family_replacement: "Firefox ($1)"
-                    },
-                    {
-                        regex: "(Firefox)/(\\d+)\\.(\\d+)(a\\d+[a-z]*)",
-                        family_replacement: "Firefox Alpha"
-                    },
-                    {
-                        regex: "(Firefox)/(\\d+)\\.(\\d+)(b\\d+[a-z]*)",
-                        family_replacement: "Firefox Beta"
-                    },
-                    {
-                        regex: "(Firefox)-(?:\\d+\\.\\d+)?/(\\d+)\\.(\\d+)(a\\d+[a-z]*)",
-                        family_replacement: "Firefox Alpha"
-                    },
-                    {
-                        regex: "(Firefox)-(?:\\d+\\.\\d+)?/(\\d+)\\.(\\d+)(b\\d+[a-z]*)",
-                        family_replacement: "Firefox Beta"
-                    },
-                    {
-                        regex: "(Namoroka|Shiretoko|Minefield)/(\\d+)\\.(\\d+)([ab]\\d+[a-z]*)?",
-                        family_replacement: "Firefox ($1)"
-                    },
-                    {
-                        regex: "(Firefox).*Tablet browser (\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "MicroB",
-                        tablet: !0
-                    },
-                    {
-                        regex: "(MozillaDeveloperPreview)/(\\d+)\\.(\\d+)([ab]\\d+[a-z]*)?"
-                    },
-                    {
-                        regex: "(Flock)/(\\d+)\\.(\\d+)(b\\d+?)",
-                        family_replacement: "Flock",
-                        other: !0
-                    },
-                    {
-                        regex: "(RockMelt)/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Rockmelt",
-                        other: !0
-                    },
-                    {
-                        regex: "(Navigator)/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Netscape"
-                    },
-                    {
-                        regex: "(Navigator)/(\\d+)\\.(\\d+)([ab]\\d+)",
-                        family_replacement: "Netscape"
-                    },
-                    {
-                        regex: "(Netscape6)/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Netscape"
-                    },
-                    {
-                        regex: "(MyIBrow)/(\\d+)\\.(\\d+)",
-                        family_replacement: "My Internet Browser",
-                        other: !0
-                    },
-                    {
-                        regex: "(Opera Tablet).*Version/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
-                        family_replacement: "Opera Tablet",
-                        tablet: !0
-                    },
-                    {
-                        regex: "(Opera)/.+Opera Mobi.+Version/(\\d+)\\.(\\d+)",
-                        family_replacement: "Opera Mobile"
-                    },
-                    {
-                        regex: "Opera Mobi",
-                        family_replacement: "Opera Mobile"
-                    },
-                    {
-                        regex: "(Opera Mini)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Opera Mini"
-                    },
-                    {
-                        regex: "(Opera Mini)/att/(\\d+)\\.(\\d+)",
-                        family_replacement: "Opera Mini"
-                    },
-                    {
-                        regex: "(Opera)/9.80.*Version/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
-                        family_replacement: "Opera"
-                    },
-                    {
-                        regex: "(OPR)/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
-                        family_replacement: "Opera"
-                    },
-                    {
-                        regex: "(webOSBrowser)/(\\d+)\\.(\\d+)",
-                        family_replacement: "webOS"
-                    },
-                    {
-                        regex: "(webOS)/(\\d+)\\.(\\d+)",
-                        family_replacement: "webOS"
-                    },
-                    {
-                        regex: "(wOSBrowser).+TouchPad/(\\d+)\\.(\\d+)",
-                        family_replacement: "webOS TouchPad"
-                    },
-                    {
-                        regex: "(luakit)",
-                        family_replacement: "LuaKit",
-                        other: !0
-                    },
-                    {
-                        regex: "(Lightning)/(\\d+)\\.(\\d+)([ab]?\\d+[a-z]*)",
-                        family_replacement: "Lightning",
-                        other: !0
-                    },
-                    {
-                        regex: "(Firefox)/(\\d+)\\.(\\d+)\\.(\\d+(?:pre)?) \\(Swiftfox\\)",
-                        family_replacement: "Swiftfox",
-                        other: !0
-                    },
-                    {
-                        regex: "(Firefox)/(\\d+)\\.(\\d+)([ab]\\d+[a-z]*)? \\(Swiftfox\\)",
-                        family_replacement: "Swiftfox",
-                        other: !0
-                    },
-                    {
-                        regex: "rekonq",
-                        family_replacement: "Rekonq",
-                        other: !0
-                    },
-                    {
-                        regex: "(conkeror|Conkeror)/(\\d+)\\.(\\d+)\\.?(\\d+)?",
-                        family_replacement: "Conkeror",
-                        other: !0
-                    },
-                    {
-                        regex: "(konqueror)/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Konqueror",
-                        other: !0
-                    },
-                    {
-                        regex: "(WeTab)-Browser",
-                        family_replacement: "WeTab",
-                        other: !0
-                    },
-                    {
-                        regex: "(Comodo_Dragon)/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Comodo Dragon",
-                        other: !0
-                    },
-                    {
-                        regex: "(YottaaMonitor)",
-                        family_replacement: "Yottaa Monitor",
-                        other: !0
-                    },
-                    {
-                        regex: "(Kindle)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Kindle"
-                    },
-                    {
-                        regex: "(Symphony) (\\d+).(\\d+)",
-                        family_replacement: "Symphony",
-                        other: !0
-                    },
-                    {
-                        regex: "Minimo",
-                        family_replacement: "Minimo",
-                        other: !0
-                    },
-                    {
-                        regex: "(Edge)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Edge"
-                    },
-                    {
-                        regex: "(CrMo)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Chrome Mobile"
-                    },
-                    {
-                        regex: "(CriOS)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Chrome Mobile iOS"
-                    },
-                    {
-                        regex: "(Chrome)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+) Mobile",
-                        family_replacement: "Chrome Mobile"
-                    },
-                    {
-                        regex: "(chromeframe)/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Chrome Frame"
-                    },
-                    {
-                        regex: "(UC Browser)(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "UC Browser",
-                        other: !0
-                    },
-                    {
-                        regex: "(SLP Browser)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Tizen Browser",
-                        other: !0
-                    },
-                    {
-                        regex: "(Epiphany)/(\\d+)\\.(\\d+).(\\d+)",
-                        family_replacement: "Epiphany",
-                        other: !0
-                    },
-                    {
-                        regex: "(SE 2\\.X) MetaSr (\\d+)\\.(\\d+)",
-                        family_replacement: "Sogou Explorer",
-                        other: !0
-                    },
-                    {
-                        regex: "(Pingdom.com_bot_version_)(\\d+)\\.(\\d+)",
-                        family_replacement: "PingdomBot",
-                        other: !0
-                    },
-                    {
-                        regex: "(facebookexternalhit)/(\\d+)\\.(\\d+)",
-                        family_replacement: "FacebookBot"
-                    },
-                    {
-                        regex: "(Twitterbot)/(\\d+)\\.(\\d+)",
-                        family_replacement: "TwitterBot"
-                    },
-                    {
-                        regex: "(AdobeAIR|Chromium|FireWeb|Jasmine|ANTGalio|Midori|Fresco|Lobo|PaleMoon|Maxthon|Lynx|OmniWeb|Dillo|Camino|Demeter|Fluid|Fennec|Shiira|Sunrise|Chrome|Flock|Netscape|Lunascape|WebPilot|NetFront|Netfront|Konqueror|SeaMonkey|Kazehakase|Vienna|Iceape|Iceweasel|IceWeasel|Iron|K-Meleon|Sleipnir|Galeon|GranParadiso|Opera Mini|iCab|NetNewsWire|ThunderBrowse|Iron|Iris|UP\\.Browser|Bunjaloo|Google Earth|Raven for Mac)/(\\d+)\\.(\\d+)\\.(\\d+)"
-                    },
-                    {
-                        regex: "(Bolt|Jasmine|IceCat|Skyfire|Midori|Maxthon|Lynx|Arora|IBrowse|Dillo|Camino|Shiira|Fennec|Phoenix|Chrome|Flock|Netscape|Lunascape|Epiphany|WebPilot|Opera Mini|Opera|NetFront|Netfront|Konqueror|Googlebot|SeaMonkey|Kazehakase|Vienna|Iceape|Iceweasel|IceWeasel|Iron|K-Meleon|Sleipnir|Galeon|GranParadiso|iCab|NetNewsWire|Iron|Space Bison|Stainless|Orca|Dolfin|BOLT|Minimo|Tizen Browser|Polaris)/(\\d+)\\.(\\d+)"
-                    },
-                    {
-                        regex: "(iRider|Crazy Browser|SkipStone|iCab|Lunascape|Sleipnir|Maemo Browser) (\\d+)\\.(\\d+)\\.(\\d+)"
-                    },
-                    {
-                        regex: "(iCab|Lunascape|Opera|Android|Jasmine|Polaris|BREW) (\\d+)\\.(\\d+)\\.?(\\d+)?"
-                    },
-                    {
-                        regex: "(Android) Donut",
-                        v2_replacement: "2",
-                        v1_replacement: "1"
-                    },
-                    {
-                        regex: "(Android) Eclair",
-                        v2_replacement: "1",
-                        v1_replacement: "2"
-                    },
-                    {
-                        regex: "(Android) Froyo",
-                        v2_replacement: "2",
-                        v1_replacement: "2"
-                    },
-                    {
-                        regex: "(Android) Gingerbread",
-                        v2_replacement: "3",
-                        v1_replacement: "2"
-                    },
-                    {
-                        regex: "(Android) Honeycomb",
-                        v1_replacement: "3"
-                    },
-                    {
-                        regex: "(IEMobile)[ /](\\d+)\\.(\\d+)",
-                        family_replacement: "IE Mobile"
-                    },
-                    {
-                        regex: "(MSIE) (\\d+)\\.(\\d+).*XBLWP7",
-                        family_replacement: "IE Large Screen"
-                    },
-                    {
-                        regex: "(Firefox)/(\\d+)\\.(\\d+)\\.(\\d+)"
-                    },
-                    {
-                        regex: "(Firefox)/(\\d+)\\.(\\d+)(pre|[ab]\\d+[a-z]*)?"
-                    },
-                    {
-                        regex: "(Obigo)InternetBrowser",
-                        other: !0
-                    },
-                    {
-                        regex: "(Obigo)\\-Browser",
-                        other: !0
-                    },
-                    {
-                        regex: "(Obigo|OBIGO)[^\\d]*(\\d+)(?:.(\\d+))?",
-                        other: !0
-                    },
-                    {
-                        regex: "(MAXTHON|Maxthon) (\\d+)\\.(\\d+)",
-                        family_replacement: "Maxthon",
-                        other: !0
-                    },
-                    {
-                        regex: "(Maxthon|MyIE2|Uzbl|Shiira)",
-                        v1_replacement: "0",
-                        other: !0
-                    },
-                    {
-                        regex: "(PLAYSTATION) (\\d+)",
-                        family_replacement: "PlayStation",
-                        manufacturer: "Sony"
-                    },
-                    {
-                        regex: "(PlayStation Portable)[^\\d]+(\\d+).(\\d+)",
-                        manufacturer: "Sony"
-                    },
-                    {
-                        regex: "(BrowseX) \\((\\d+)\\.(\\d+)\\.(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(POLARIS)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Polaris",
-                        other: !0
-                    },
-                    {
-                        regex: "(Embider)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Polaris",
-                        other: !0
-                    },
-                    {
-                        regex: "(BonEcho)/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Bon Echo",
-                        other: !0
-                    },
-                    {
-                        regex: "(iPod).+Version/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Mobile Safari",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPod).*Version/(\\d+)\\.(\\d+)",
-                        family_replacement: "Mobile Safari",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPod)",
-                        family_replacement: "Mobile Safari",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPhone).*Version/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Mobile Safari",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPhone).*Version/(\\d+)\\.(\\d+)",
-                        family_replacement: "Mobile Safari",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPhone)",
-                        family_replacement: "Mobile Safari",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPad).*Version/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Mobile Safari",
-                        tablet: !0,
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPad).*Version/(\\d+)\\.(\\d+)",
-                        family_replacement: "Mobile Safari",
-                        tablet: !0,
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPad)",
-                        family_replacement: "Mobile Safari",
-                        tablet: !0,
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(AvantGo) (\\d+).(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(Avant)",
-                        v1_replacement: "1",
-                        other: !0
-                    },
-                    {
-                        regex: "^(Nokia)",
-                        family_replacement: "Nokia Services (WAP) Browser",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(NokiaBrowser)/(\\d+)\\.(\\d+).(\\d+)\\.(\\d+)",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(NokiaBrowser)/(\\d+)\\.(\\d+).(\\d+)",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(NokiaBrowser)/(\\d+)\\.(\\d+)",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(BrowserNG)/(\\d+)\\.(\\d+).(\\d+)",
-                        family_replacement: "NokiaBrowser",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(Series60)/5\\.0",
-                        v2_replacement: "0",
-                        v1_replacement: "7",
-                        family_replacement: "NokiaBrowser",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(Series60)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Nokia OSS Browser",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(S40OviBrowser)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Nokia Series 40 Ovi Browser",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(Nokia)[EN]?(\\d+)",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(PlayBook).+RIM Tablet OS (\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Blackberry WebKit",
-                        tablet: !0,
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(Black[bB]erry).+Version/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        family_replacement: "Blackberry WebKit",
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "(Black[bB]erry)\\s?(\\d+)",
-                        family_replacement: "Blackberry",
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "(OmniWeb)/v(\\d+)\\.(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(Blazer)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Palm Blazer",
-                        manufacturer: "Palm"
-                    },
-                    {
-                        regex: "(Pre)/(\\d+)\\.(\\d+)",
-                        family_replacement: "Palm Pre",
-                        manufacturer: "Palm"
-                    },
-                    {
-                        regex: "(Links) \\((\\d+)\\.(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(QtWeb) Internet Browser/(\\d+)\\.(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(Silk)/(\\d+)\\.(\\d+)(?:\\.([0-9\\-]+))?",
-                        other: !0,
-                        tablet: !0
-                    },
-                    {
-                        regex: "(AppleWebKit)/(\\d+)\\.?(\\d+)?\\+ .* Version/\\d+\\.\\d+.\\d+ Safari/",
-                        family_replacement: "WebKit Nightly"
-                    },
-                    {
-                        regex: "(Version)/(\\d+)\\.(\\d+)(?:\\.(\\d+))?.*Safari/",
-                        family_replacement: "Safari"
-                    },
-                    {
-                        regex: "(Safari)/\\d+"
-                    },
-                    {
-                        regex: "(OLPC)/Update(\\d+)\\.(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(OLPC)/Update()\\.(\\d+)",
-                        v1_replacement: "0",
-                        other: !0
-                    },
-                    {
-                        regex: "(SEMC\\-Browser)/(\\d+)\\.(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(Teleca)",
-                        family_replacement: "Teleca Browser",
-                        other: !0
-                    },
-                    {
-                        regex: "Trident(.*)rv.(\\d+)\\.(\\d+)",
-                        family_replacement: "IE"
-                    },
-                    {
-                        regex: "(MSIE) (\\d+)\\.(\\d+)",
-                        family_replacement: "IE"
-                    }],
-                    os_parsers: [
-                    {
-                        regex: "(Android) (\\d+)\\.(\\d+)(?:[.\\-]([a-z0-9]+))?"
-                    },
-                    {
-                        regex: "(Android)\\-(\\d+)\\.(\\d+)(?:[.\\-]([a-z0-9]+))?"
-                    },
-                    {
-                        regex: "(Android) Donut",
-                        os_v2_replacement: "2",
-                        os_v1_replacement: "1"
-                    },
-                    {
-                        regex: "(Android) Eclair",
-                        os_v2_replacement: "1",
-                        os_v1_replacement: "2"
-                    },
-                    {
-                        regex: "(Android) Froyo",
-                        os_v2_replacement: "2",
-                        os_v1_replacement: "2"
-                    },
-                    {
-                        regex: "(Android) Gingerbread",
-                        os_v2_replacement: "3",
-                        os_v1_replacement: "2"
-                    },
-                    {
-                        regex: "(Android) Honeycomb",
-                        os_v1_replacement: "3"
-                    },
-                    {
-                        regex: "(Silk-Accelerated=[a-z]{4,5})",
-                        os_replacement: "Android"
-                    },
-                    {
-                        regex: "(Windows Phone 6\\.5)"
-                    },
-                    {
-                        regex: "(Windows (?:NT 5\\.2|NT 5\\.1))",
-                        os_replacement: "Windows XP"
-                    },
-                    {
-                        regex: "(XBLWP7)",
-                        os_replacement: "Windows Phone OS"
-                    },
-                    {
-                        regex: "(Windows NT 6\\.1)",
-                        os_replacement: "Windows 7"
-                    },
-                    {
-                        regex: "(Windows NT 6\\.0)",
-                        os_replacement: "Windows Vista"
-                    },
-                    {
-                        regex: "(Windows 98|Windows XP|Windows ME|Windows 95|Windows CE|Windows 7|Windows NT 4\\.0|Windows Vista|Windows 2000)"
-                    },
-                    {
-                        regex: "(Windows NT 6\\.4|Windows NT 10\\.0)",
-                        os_replacement: "Windows 10"
-                    },
-                    {
-                        regex: "(Windows NT 6\\.2)",
-                        os_replacement: "Windows 8"
-                    },
-                    {
-                        regex: "(Windows Phone 8)",
-                        os_replacement: "Windows Phone 8"
-                    },
-                    {
-                        regex: "(Windows NT 5\\.0)",
-                        os_replacement: "Windows 2000"
-                    },
-                    {
-                        regex: "(Windows Phone OS) (\\d+)\\.(\\d+)"
-                    },
-                    {
-                        regex: "(Windows ?Mobile)",
-                        os_replacement: "Windows Mobile"
-                    },
-                    {
-                        regex: "(WinNT4.0)",
-                        os_replacement: "Windows NT 4.0"
-                    },
-                    {
-                        regex: "(Win98)",
-                        os_replacement: "Windows 98"
-                    },
-                    {
-                        regex: "(Tizen)/(\\d+)\\.(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(Mac OS X) (\\d+)[_.](\\d+)(?:[_.](\\d+))?",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(?:PPC|Intel) (Mac OS X)",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(CPU OS|iPhone OS) (\\d+)_(\\d+)(?:_(\\d+))?",
-                        os_replacement: "iOS",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPhone|iPad|iPod); Opera",
-                        os_replacement: "iOS",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPad); Opera",
-                        tablet: !0,
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPhone|iPad|iPod).*Mac OS X.*Version/(\\d+)\\.(\\d+)",
-                        os_replacement: "iOS",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(CrOS) [a-z0-9_]+ (\\d+)\\.(\\d+)(?:\\.(\\d+))?",
-                        os_replacement: "Chrome OS"
-                    },
-                    {
-                        regex: "(Debian)-(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
-                        other: !0
-                    },
-                    {
-                        regex: "(Linux Mint)(?:/(\\d+))?",
-                        other: !0
-                    },
-                    {
-                        regex: "(Mandriva)(?: Linux)?/(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
-                        other: !0
-                    },
-                    {
-                        regex: "(Symbian[Oo][Ss])/(\\d+)\\.(\\d+)",
-                        os_replacement: "Symbian OS"
-                    },
-                    {
-                        regex: "(Symbian/3).+NokiaBrowser/7\\.3",
-                        os_replacement: "Symbian^3 Anna"
-                    },
-                    {
-                        regex: "(Symbian/3).+NokiaBrowser/7\\.4",
-                        os_replacement: "Symbian^3 Belle"
-                    },
-                    {
-                        regex: "(Symbian/3)",
-                        os_replacement: "Symbian^3"
-                    },
-                    {
-                        regex: "(Series 60|SymbOS|S60)",
-                        os_replacement: "Symbian OS"
-                    },
-                    {
-                        regex: "(MeeGo)",
-                        other: !0
-                    },
-                    {
-                        regex: "Symbian [Oo][Ss]",
-                        os_replacement: "Symbian OS"
-                    },
-                    {
-                        regex: "(Black[Bb]erry)[0-9a-z]+/(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
-                        os_replacement: "BlackBerry OS",
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "(Black[Bb]erry).+Version/(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
-                        os_replacement: "BlackBerry OS",
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "(RIM Tablet OS) (\\d+)\\.(\\d+)\\.(\\d+)",
-                        os_replacement: "BlackBerry Tablet OS",
-                        tablet: !0,
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "(Play[Bb]ook)",
-                        os_replacement: "BlackBerry Tablet OS",
-                        tablet: !0,
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "(Black[Bb]erry)",
-                        os_replacement: "Blackberry OS",
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "(webOS|hpwOS)/(\\d+)\\.(\\d+)(?:\\.(\\d+))?",
-                        os_replacement: "webOS"
-                    },
-                    {
-                        regex: "(SUSE|Fedora|Red Hat|PCLinuxOS)/(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(SUSE|Fedora|Red Hat|Puppy|PCLinuxOS|CentOS)/(\\d+)\\.(\\d+)\\.(\\d+)",
-                        other: !0
-                    },
-                    {
-                        regex: "(Ubuntu|Kindle|Bada|Lubuntu|BackTrack|Red Hat|Slackware)/(\\d+)\\.(\\d+)"
-                    },
-                    {
-                        regex: "(Windows|OpenBSD|FreeBSD|NetBSD|Ubuntu|Kubuntu|Android|Arch Linux|CentOS|WeTab|Slackware)"
-                    },
-                    {
-                        regex: "(Linux|BSD)",
-                        other: !0
-                    }],
-                    mobile_os_families: ["Windows Phone 6.5", "Windows CE", "Symbian OS"],
-                    device_parsers: [
-                    {
-                        regex: "HTC ([A-Z][a-z0-9]+) Build",
-                        device_replacement: "HTC $1",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "HTC ([A-Z][a-z0-9 ]+) \\d+\\.\\d+\\.\\d+\\.\\d+",
-                        device_replacement: "HTC $1",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "HTC_Touch_([A-Za-z0-9]+)",
-                        device_replacement: "HTC Touch ($1)",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "USCCHTC(\\d+)",
-                        device_replacement: "HTC $1 (US Cellular)",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "Sprint APA(9292)",
-                        device_replacement: "HTC $1 (Sprint)",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "HTC ([A-Za-z0-9]+ [A-Z])",
-                        device_replacement: "HTC $1",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "HTC-([A-Za-z0-9]+)",
-                        device_replacement: "HTC $1",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "HTC_([A-Za-z0-9]+)",
-                        device_replacement: "HTC $1",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "HTC ([A-Za-z0-9]+)",
-                        device_replacement: "HTC $1",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "(ADR[A-Za-z0-9]+)",
-                        device_replacement: "HTC $1",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "(HTC)",
-                        manufacturer: "HTC"
-                    },
-                    {
-                        regex: "SonyEricsson([A-Za-z0-9]+)/",
-                        device_replacement: "Ericsson $1",
-                        other: !0,
-                        manufacturer: "Sony"
-                    },
-                    {
-                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\; [A-Za-z]{2}\\-[A-Za-z]{2}\\; WOWMobile (.+) Build"
-                    },
-                    {
-                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\.[\\d]+; [A-Za-z]{2}\\-[A-Za-z]{2}\\; (.+) Build"
-                    },
-                    {
-                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\-update1\\; [A-Za-z]{2}\\-[A-Za-z]{2}\\; (.+) Build"
-                    },
-                    {
-                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\; [A-Za-z]{2}\\-[A-Za-z]{2}\\; (.+) Build"
-                    },
-                    {
-                        regex: "Android[\\- ][\\d]+\\.[\\d]+\\.[\\d]+; (.+) Build"
-                    },
-                    {
-                        regex: "NokiaN([0-9]+)",
-                        device_replacement: "Nokia N$1",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "Nokia([A-Za-z0-9\\v-]+)",
-                        device_replacement: "Nokia $1",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "NOKIA ([A-Za-z0-9\\-]+)",
-                        device_replacement: "Nokia $1",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "Nokia ([A-Za-z0-9\\-]+)",
-                        device_replacement: "Nokia $1",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "Lumia ([A-Za-z0-9\\-]+)",
-                        device_replacement: "Lumia $1",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "Symbian",
-                        device_replacement: "Nokia",
-                        manufacturer: "Nokia"
-                    },
-                    {
-                        regex: "(PlayBook).+RIM Tablet OS",
-                        device_replacement: "Blackberry Playbook",
-                        tablet: !0,
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "(Black[Bb]erry [0-9]+);",
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "Black[Bb]erry([0-9]+)",
-                        device_replacement: "BlackBerry $1",
-                        manufacturer: "RIM"
-                    },
-                    {
-                        regex: "(Pre)/(\\d+)\\.(\\d+)",
-                        device_replacement: "Palm Pre",
-                        manufacturer: "Palm"
-                    },
-                    {
-                        regex: "(Pixi)/(\\d+)\\.(\\d+)",
-                        device_replacement: "Palm Pixi",
-                        manufacturer: "Palm"
-                    },
-                    {
-                        regex: "(Touchpad)/(\\d+)\\.(\\d+)",
-                        device_replacement: "HP Touchpad",
-                        manufacturer: "HP"
-                    },
-                    {
-                        regex: "HPiPAQ([A-Za-z0-9]+)/(\\d+).(\\d+)",
-                        device_replacement: "HP iPAQ $1",
-                        manufacturer: "HP"
-                    },
-                    {
-                        regex: "Palm([A-Za-z0-9]+)",
-                        device_replacement: "Palm $1",
-                        manufacturer: "Palm"
-                    },
-                    {
-                        regex: "Treo([A-Za-z0-9]+)",
-                        device_replacement: "Palm Treo $1",
-                        manufacturer: "Palm"
-                    },
-                    {
-                        regex: "webOS.*(P160UNA)/(\\d+).(\\d+)",
-                        device_replacement: "HP Veer",
-                        manufacturer: "HP"
-                    },
-                    {
-                        regex: "(Kindle Fire)",
-                        manufacturer: "Amazon"
-                    },
-                    {
-                        regex: "(Kindle)",
-                        manufacturer: "Amazon"
-                    },
-                    {
-                        regex: "(Silk)/(\\d+)\\.(\\d+)(?:\\.([0-9\\-]+))?",
-                        device_replacement: "Kindle Fire",
-                        tablet: !0,
-                        manufacturer: "Amazon"
-                    },
-                    {
-                        regex: "(iPad) Simulator;",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPad);",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPod);",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPhone) Simulator;",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "(iPhone);",
-                        manufacturer: "Apple"
-                    },
-                    {
-                        regex: "Nexus\\ ([A-Za-z0-9\\-]+)",
-                        device_replacement: "Nexus $1"
-                    },
-                    {
-                        regex: "acer_([A-Za-z0-9]+)_",
-                        device_replacement: "Acer $1",
-                        manufacturer: "Acer"
-                    },
-                    {
-                        regex: "acer_([A-Za-z0-9]+)_",
-                        device_replacement: "Acer $1",
-                        manufacturer: "Acer"
-                    },
-                    {
-                        regex: "Amoi\\-([A-Za-z0-9]+)",
-                        device_replacement: "Amoi $1",
-                        other: !0,
-                        manufacturer: "Amoi"
-                    },
-                    {
-                        regex: "AMOI\\-([A-Za-z0-9]+)",
-                        device_replacement: "Amoi $1",
-                        other: !0,
-                        manufacturer: "Amoi"
-                    },
-                    {
-                        regex: "Asus\\-([A-Za-z0-9]+)",
-                        device_replacement: "Asus $1",
-                        manufacturer: "Asus"
-                    },
-                    {
-                        regex: "ASUS\\-([A-Za-z0-9]+)",
-                        device_replacement: "Asus $1",
-                        manufacturer: "Asus"
-                    },
-                    {
-                        regex: "BIRD\\-([A-Za-z0-9]+)",
-                        device_replacement: "Bird $1",
-                        other: !0
-                    },
-                    {
-                        regex: "BIRD\\.([A-Za-z0-9]+)",
-                        device_replacement: "Bird $1",
-                        other: !0
-                    },
-                    {
-                        regex: "BIRD ([A-Za-z0-9]+)",
-                        device_replacement: "Bird $1",
-                        other: !0
-                    },
-                    {
-                        regex: "Dell ([A-Za-z0-9]+)",
-                        device_replacement: "Dell $1",
-                        manufacturer: "Dell"
-                    },
-                    {
-                        regex: "DoCoMo/2\\.0 ([A-Za-z0-9]+)",
-                        device_replacement: "DoCoMo $1",
-                        other: !0
-                    },
-                    {
-                        regex: "([A-Za-z0-9]+)\\_W\\;FOMA",
-                        device_replacement: "DoCoMo $1",
-                        other: !0
-                    },
-                    {
-                        regex: "([A-Za-z0-9]+)\\;FOMA",
-                        device_replacement: "DoCoMo $1",
-                        other: !0
-                    },
-                    {
-                        regex: "vodafone([A-Za-z0-9]+)",
-                        device_replacement: "Huawei Vodafone $1",
-                        other: !0
-                    },
-                    {
-                        regex: "i\\-mate ([A-Za-z0-9]+)",
-                        device_replacement: "i-mate $1",
-                        other: !0
-                    },
-                    {
-                        regex: "Kyocera\\-([A-Za-z0-9]+)",
-                        device_replacement: "Kyocera $1",
-                        other: !0
-                    },
-                    {
-                        regex: "KWC\\-([A-Za-z0-9]+)",
-                        device_replacement: "Kyocera $1",
-                        other: !0
-                    },
-                    {
-                        regex: "Lenovo\\-([A-Za-z0-9]+)",
-                        device_replacement: "Lenovo $1",
-                        manufacturer: "Lenovo"
-                    },
-                    {
-                        regex: "Lenovo\\_([A-Za-z0-9]+)",
-                        device_replacement: "Lenovo $1",
-                        manufacturer: "Levovo"
-                    },
-                    {
-                        regex: "LG/([A-Za-z0-9]+)",
-                        device_replacement: "LG $1",
-                        manufacturer: "LG"
-                    },
-                    {
-                        regex: "LG-LG([A-Za-z0-9]+)",
-                        device_replacement: "LG $1",
-                        manufacturer: "LG"
-                    },
-                    {
-                        regex: "LGE-LG([A-Za-z0-9]+)",
-                        device_replacement: "LG $1",
-                        manufacturer: "LG"
-                    },
-                    {
-                        regex: "LGE VX([A-Za-z0-9]+)",
-                        device_replacement: "LG $1",
-                        manufacturer: "LG"
-                    },
-                    {
-                        regex: "LG ([A-Za-z0-9]+)",
-                        device_replacement: "LG $1",
-                        manufacturer: "LG"
-                    },
-                    {
-                        regex: "LGE LG\\-AX([A-Za-z0-9]+)",
-                        device_replacement: "LG $1",
-                        manufacturer: "LG"
-                    },
-                    {
-                        regex: "LG\\-([A-Za-z0-9]+)",
-                        device_replacement: "LG $1",
-                        manufacturer: "LG"
-                    },
-                    {
-                        regex: "LGE\\-([A-Za-z0-9]+)",
-                        device_replacement: "LG $1",
-                        manufacturer: "LG"
-                    },
-                    {
-                        regex: "LG([A-Za-z0-9]+)",
-                        device_replacement: "LG $1",
-                        manufacturer: "LG"
-                    },
-                    {
-                        regex: "(KIN)\\.One (\\d+)\\.(\\d+)",
-                        device_replacement: "Microsoft $1"
-                    },
-                    {
-                        regex: "(KIN)\\.Two (\\d+)\\.(\\d+)",
-                        device_replacement: "Microsoft $1"
-                    },
-                    {
-                        regex: "(Motorola)\\-([A-Za-z0-9]+)",
-                        manufacturer: "Motorola"
-                    },
-                    {
-                        regex: "MOTO\\-([A-Za-z0-9]+)",
-                        device_replacement: "Motorola $1",
-                        manufacturer: "Motorola"
-                    },
-                    {
-                        regex: "MOT\\-([A-Za-z0-9]+)",
-                        device_replacement: "Motorola $1",
-                        manufacturer: "Motorola"
-                    },
-                    {
-                        regex: "Philips([A-Za-z0-9]+)",
-                        device_replacement: "Philips $1",
-                        manufacturer: "Philips"
-                    },
-                    {
-                        regex: "Philips ([A-Za-z0-9]+)",
-                        device_replacement: "Philips $1",
-                        manufacturer: "Philips"
-                    },
-                    {
-                        regex: "SAMSUNG-([A-Za-z0-9\\-]+)",
-                        device_replacement: "Samsung $1",
-                        manufacturer: "Samsung"
-                    },
-                    {
-                        regex: "SAMSUNG\\; ([A-Za-z0-9\\-]+)",
-                        device_replacement: "Samsung $1",
-                        manufacturer: "Samsung"
-                    },
-                    {
-                        regex: "Softbank/1\\.0/([A-Za-z0-9]+)",
-                        device_replacement: "Softbank $1",
-                        other: !0
-                    },
-                    {
-                        regex: "Softbank/2\\.0/([A-Za-z0-9]+)",
-                        device_replacement: "Softbank $1",
-                        other: !0
-                    },
-                    {
-                        regex: "(hiptop|avantgo|plucker|xiino|blazer|elaine|up.browser|up.link|mmp|smartphone|midp|wap|vodafone|o2|pocket|mobile|pda)",
-                        device_replacement: "Generic Smartphone"
-                    },
-                    {
-                        regex: "^(1207|3gso|4thp|501i|502i|503i|504i|505i|506i|6310|6590|770s|802s|a wa|acer|acs\\-|airn|alav|asus|attw|au\\-m|aur |aus |abac|acoo|aiko|alco|alca|amoi|anex|anny|anyw|aptu|arch|argo|bell|bird|bw\\-n|bw\\-u|beck|benq|bilb|blac|c55/|cdm\\-|chtm|capi|comp|cond|craw|dall|dbte|dc\\-s|dica|ds\\-d|ds12|dait|devi|dmob|doco|dopo|el49|erk0|esl8|ez40|ez60|ez70|ezos|ezze|elai|emul|eric|ezwa|fake|fly\\-|fly\\_|g\\-mo|g1 u|g560|gf\\-5|grun|gene|go.w|good|grad|hcit|hd\\-m|hd\\-p|hd\\-t|hei\\-|hp i|hpip|hs\\-c|htc |htc\\-|htca|htcg)",
-                        device_replacement: "Generic Feature Phone"
-                    },
-                    {
-                        regex: "^(htcp|htcs|htct|htc\\_|haie|hita|huaw|hutc|i\\-20|i\\-go|i\\-ma|i230|iac|iac\\-|iac/|ig01|im1k|inno|iris|jata|java|kddi|kgt|kgt/|kpt |kwc\\-|klon|lexi|lg g|lg\\-a|lg\\-b|lg\\-c|lg\\-d|lg\\-f|lg\\-g|lg\\-k|lg\\-l|lg\\-m|lg\\-o|lg\\-p|lg\\-s|lg\\-t|lg\\-u|lg\\-w|lg/k|lg/l|lg/u|lg50|lg54|lge\\-|lge/|lynx|leno|m1\\-w|m3ga|m50/|maui|mc01|mc21|mcca|medi|meri|mio8|mioa|mo01|mo02|mode|modo|mot |mot\\-|mt50|mtp1|mtv |mate|maxo|merc|mits|mobi|motv|mozz|n100|n101|n102|n202|n203|n300|n302|n500|n502|n505|n700|n701|n710|nec\\-|nem\\-|newg|neon)",
-                        device_replacement: "Generic Feature Phone"
-                    },
-                    {
-                        regex: "^(netf|noki|nzph|o2 x|o2\\-x|opwv|owg1|opti|oran|ot\\-s|p800|pand|pg\\-1|pg\\-2|pg\\-3|pg\\-6|pg\\-8|pg\\-c|pg13|phil|pn\\-2|pt\\-g|palm|pana|pire|pock|pose|psio|qa\\-a|qc\\-2|qc\\-3|qc\\-5|qc\\-7|qc07|qc12|qc21|qc32|qc60|qci\\-|qwap|qtek|r380|r600|raks|rim9|rove|s55/|sage|sams|sc01|sch\\-|scp\\-|sdk/|se47|sec\\-|sec0|sec1|semc|sgh\\-|shar|sie\\-|sk\\-0|sl45|slid|smb3|smt5|sp01|sph\\-|spv |spv\\-|sy01|samm|sany|sava|scoo|send|siem|smar|smit|soft|sony|t\\-mo|t218|t250|t600|t610|t618|tcl\\-|tdg\\-|telm|tim\\-|ts70|tsm\\-|tsm3|tsm5|tx\\-9|tagt)",
-                        device_replacement: "Generic Feature Phone"
-                    },
-                    {
-                        regex: "^(talk|teli|topl|tosh|up.b|upg1|utst|v400|v750|veri|vk\\-v|vk40|vk50|vk52|vk53|vm40|vx98|virg|vite|voda|vulc|w3c |w3c\\-|wapj|wapp|wapu|wapm|wig |wapi|wapr|wapv|wapy|wapa|waps|wapt|winc|winw|wonu|x700|xda2|xdag|yas\\-|your|zte\\-|zeto|aste|audi|avan|blaz|brew|brvw|bumb|ccwa|cell|cldc|cmd\\-|dang|eml2|fetc|hipt|http|ibro|idea|ikom|ipaq|jbro|jemu|jigs|keji|kyoc|kyok|libw|m\\-cr|midp|mmef|moto|mwbp|mywa|newt|nok6|o2im|pant|pdxg|play|pluc|port|prox|rozo|sama|seri|smal|symb|treo|upsi|vx52|vx53|vx60|vx61|vx70|vx80|vx81|vx83|vx85|wap\\-|webc|whit|wmlb|xda\\-|xda\\_)",
-                        device_replacement: "Generic Feature Phone"
-                    },
-                    {
-                        regex: "(bot|borg|google(^tv)|yahoo|slurp|msnbot|msrbot|openbot|archiver|netresearch|lycos|scooter|altavista|teoma|gigabot|baiduspider|blitzbot|oegp|charlotte|furlbot|http%20client|polybot|htdig|ichiro|mogimogi|larbin|pompos|scrubby|searchsight|seekbot|semanticdiscovery|silk|snappy|speedy|spider|voila|vortex|voyager|zao|zeal|fast\\-webcrawler|converacrawler|dataparksearch|findlinks)",
-                        device_replacement: "Spider"
-                    }],
-                    mobile_browser_families: ["Firefox Mobile", "Opera Mobile", "Opera Mini", "Mobile Safari", "webOS", "IE Mobile", "Playstation Portable", "Nokia", "Blackberry", "Palm", "Silk", "Android", "Maemo", "Obigo", "Netfront", "AvantGo", "Teleca", "SEMC-Browser", "Bolt", "Iris", "UP.Browser", "Symphony", "Minimo", "Bunjaloo", "Jasmine", "Dolfin", "Polaris", "BREW", "Chrome Mobile", "Chrome Mobile iOS", "UC Browser", "Tizen Browser"]
-                };
-            e.parsers = ["device_parsers", "browser_parsers", "os_parsers", "mobile_os_families", "mobile_browser_families"], e.types = ["browser", "os", "device"], e.regexes = r || function()
-            {
-                var r = {};
-                return e.parsers.map(function(e)
-                {
-                    r[e] = []
-                }), r
-            }(), e.families = function()
-            {
-                var r = {};
-                return e.types.map(function(e)
-                {
-                    r[e] = []
-                }), r
-            }();
-            var a = Array.prototype,
-                o = (Object.prototype, Function.prototype, a.forEach);
-            a.indexOf;
-            var i = function(e, r)
-                {
-                    for (var a = {}, o = 0; r.length > o && !(a = r[o](e)); o++);
-                    return a
-                },
-                n = function(e, r)
-                {
-                    t(e, function(e)
-                    {
-                        t(r, function(r)
-                        {
-                            delete e[r]
-                        })
-                    })
-                },
-                t = forEach = function(e, r, a)
-                {
-                    if (null != e)
-                        if (o && e.forEach === o) e.forEach(r, a);
-                        else if (e.length === +e.length)
-                        for (var i = 0, n = e.length; n > i; i++) r.call(a, e[i], i, e);
-                    else
-                        for (var t in e) _.has(e, t) && r.call(a, e[t], t, e)
-                },
-                l = function(e)
-                {
-                    return !(!e || e === undefined || null == e)
-                },
-                d = function(e)
-                {
-                    var r = "";
-                    return e = e ||
-                    {}, l(e) && l(e.major) && (r += e.major, l(e.minor) && (r += "." + e.minor, l(e.patch) && (r += "." + e.patch))), r
-                },
-                c = function(e)
-                {
-                    e = e ||
-                    {};
-                    var r = d(e);
-                    return r && (r = " " + r), e && l(e.family) ? e.family + r : ""
-                };
-            return e.parse = function(r)
-            {
-                var a = function(r)
-                    {
-                        return e.regexes[r + "_parsers"].map(function(e)
-                        {
-                            function a(r)
-                            {
-                                var a = r.match(o);
-                                if (!a) return null;
-                                var t = {};
-                                return t.family = (i ? i.replace("$1", a[1]) : a[1]) || "other", t.major = parseInt(n ? n : a[2]) || null, t.minor = a[3] ? parseInt(a[3]) : null, t.patch = a[4] ? parseInt(a[4]) : null, t.tablet = e.tablet, t.man = e.manufacturer || null, t
-                            }
-                            var o = RegExp(e.regex),
-                                i = e[("browser" === r ? "family" : r) + "_replacement"],
-                                n = e.major_version_replacement;
-                            return a
-                        })
-                    },
-                    o = function() {},
-                    t = a("browser"),
-                    m = a("os"),
-                    p = a("device"),
-                    s = new o;
-                s.source = r, s.browser = i(r, t), l(s.browser) ? (s.browser.name = c(s.browser), s.browser.version = d(s.browser)) : s.browser = {}, s.os = i(r, m), l(s.os) ? (s.os.name = c(s.os), s.os.version = d(s.os)) : s.os = {}, s.device = i(r, p), l(s.device) ? (s.device.name = c(s.device), s.device.version = d(s.device)) : s.device = {
-                    tablet: !1,
-                    family: "Other"
-                };
-                var g = {};
-                return e.regexes.mobile_browser_families.map(function(e)
-                {
-                    g[e] = !0
-                }), e.regexes.mobile_os_families.map(function(e)
-                {
-                    g[e] = !0
-                }), s.device.type = "Spider" === s.browser.family ? "Spider" : s.browser.tablet || s.os.tablet || s.device.tablet ? "Tablet" : g.hasOwnProperty(s.browser.family) ? "Mobile" : "Desktop", s.device.manufacturer = s.browser.man || s.os.man || s.device.man || null, n([s.browser, s.os, s.device], ["tablet", "man"]), s
-            }, e
-        }();
-        "undefined" != typeof exports ? ("undefined" != typeof module && module.exports && (exports = module.exports = r), exports.detect = r) : e.detect = r, "function" == typeof define && define.amd && define(function()
-        {
-            return r
-        })
-    })(window);
-
-    var ua = detect.parse(navigator.userAgent);
-
-    this.browser = {
-        'name': ua.browser.family,
-        'version': ua.browser.version,
-        'device': ua.device.type,
-        'os': ua.os.name
-    };
-
-    return this.browser;
-}
-
-/**
- * Is this a mobile user agent?
- *
- * @return {bool}
- */
-is_mobile()
-{
-    return this.get_browser()['device'] === 'Mobile';
-}
-
-/**
- * Is this a mobile user agent?
- *
- * @return {bool}
- */
-is_retina()
-{
-    var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
-                      (min--moz-device-pixel-ratio: 1.5),\
-                      (-o-min-device-pixel-ratio: 3/2),\
-                      (min-resolution: 1.5dppx)";
-
-    if (window.devicePixelRatio > 1)
-    {
-        return true;
-    }
-
-    if (window.matchMedia && window.matchMedia(mediaQuery).matches)
-    {
-        return true;
-    }
-
-    return false;
-}
-
-	/**
- * Animation factory.
- *
- * @access {private}
- * @param  {node}     el                  Target DOM node
- * @param  {object}   options             Options object
- * @param  {string}   options.property    CSS property
- * @param  {mixed}    options.from        Start value
- * @param  {mixed}    options.to          Ending value
- * @param  {int}      options.duration    Animation duration in MS
- * @param  {string}   options.easing      Easing function in camelCase
- * @param  {function} options.callback    Callback to apply when animation ends (optional)
- * @return {array}
- * Options can be provided three ways:
- * 
- * 1. Flat object with single property
- *      animate(el, { height: '500px', easing 'easeOut' })
- * 
- * 2. Flat Object with multiple properties 
- *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
- *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
- * 
- * 3. Multi object with different options per property
- *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
- * 
- */
-_animation_factory(DOMElement, opts)
-{
-    var optionSets = [];
-
-    this.each(opts, function(key, val)
-    {
-        // animation_factory('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
-        if (key === 'property')
-        {
-            var options = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, opts);
-
-            options.FROM_FACTORY = true;
-            options.property = val;
-            options.el = DOMElement;
-            optionSets.push(options);
-
-            // break
-            return false;
-        }
-        else if (!this.in_array(key, ANIMATION_ALLOWED_OPTIONS))
-        {
-            // Only worth adding if the property is vavlid
-            var camelProp = this.css_prop_to_camel_case(key);
-            
-            if (!this.is_undefined(document.body.style[camelProp]))
-            {
-                var isObjSet = this.is_object(val);
-                var toMerge  = isObjSet ? val : opts;
-                var options  = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, toMerge);
-                
-                // animation_factory('foo', { height: '100px', opacity: 0 } );
-                if (!isObjSet)
-                {
-                    options.to = val;
-                }
-
-                // animation_factory('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
-                options.FROM_FACTORY = true;
-                options.property = key;
-                options.el = DOMElement;
-                optionSets.push(options);
-            }
-        }
-    }, this);
-
-    this.each(optionSets, function(i, options)
-    {
-        // Not nessaray, but sanitize out redundant options
-        options = this.map(options, function(key, val)
-        {
-            return this.in_array(key, ANIMATION_FILTER_OPTIONS) ? val : false;
-
-        }, this);
-
-        options.FROM_FACTORY = true;
-
-        optionSets[i] = options;
-
-    }, this);
-
-    if (this.is_empty(optionSets))
-    {
-        console.error('Animation Error: Either no CSS property(s) was provided or the provided property(s) is unsupported.');
-    }
-
-    return optionSets;
-}
-	/**
+		/**
  * Animation handler
  *
  * @access {private}
@@ -6141,7 +1668,7 @@ animate(AN_DOMElement, options)
     // args have not been processed
     if (!options.FROM_FACTORY)
     {
-        const optionSets = this._animation_factory(AN_DOMElement, options);
+        const optionSets = this.__animation_factory(AN_DOMElement, options);
 
         this.each(optionSets, function(i, opts)
         {
@@ -6438,16 +1965,7 @@ animate(AN_DOMElement, options)
 
     init();
 }
-	/**
- * Helper Animation component
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
- */
-
-
-/**
+		/**
  * CSS Animation.
  *
  * @access {private}
@@ -6475,7 +1993,7 @@ animate(AN_DOMElement, options)
 animate_css(DOMElement, options)
 {    
     // Call does not from factory need to sanitize
-    options = !options.FROM_FACTORY ? this._animation_factory(DOMElement, options) : options;
+    options = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
 
     // Is this a mutli transition
     var isMulti = this.size(options > 1);
@@ -6588,320 +2106,2122 @@ css_transition_props(DOMElement)
 }
 
 
-	
-
-/**
- * Apply static properties to extended function.
+		/**
+ * Animation factory.
  *
- * @private
- * @param  {array}     constructors  Array of prototype chain constructors
- * @param  {function}  func          Function to apply props to
+ * @access {private}
+ * @param  {node}     el                  Target DOM node
+ * @param  {object}   options             Options object
+ * @param  {string}   options.property    CSS property
+ * @param  {mixed}    options.from        Start value
+ * @param  {mixed}    options.to          Ending value
+ * @param  {int}      options.duration    Animation duration in MS
+ * @param  {string}   options.easing      Easing function in camelCase
+ * @param  {function} options.callback    Callback to apply when animation ends (optional)
+ * @return {array}
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
  */
-__applyStatics(constructors, func)
+__animation_factory(DOMElement, opts)
 {
-    this.each(constructors, function(i, constructor)
+    var optionSets = [];
+
+    this.each(opts, function(key, val)
     {
-        let props = Object.keys(constructor).filter(key => !PROTO_EXCLUDES.includes(key));
-
-        if (props.length)
+        // animation_factory('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
+        if (key === 'property')
         {
-            this.each(props, function(i, key)
-            {
-                let prop = constructor[key];
+            var options = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, opts);
 
-                if (this.is_function(prop))
+            options.FROM_FACTORY = true;
+            options.property = val;
+            options.el = DOMElement;
+            optionSets.push(options);
+
+            // break
+            return false;
+        }
+        else if (!this.in_array(key, ANIMATION_ALLOWED_OPTIONS))
+        {
+            // Only worth adding if the property is vavlid
+            var camelProp = this.css_prop_to_camel_case(key);
+            
+            if (!this.is_undefined(document.body.style[camelProp]))
+            {
+                var isObjSet = this.is_object(val);
+                var toMerge  = isObjSet ? val : opts;
+                var options  = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, toMerge);
+                
+                // animation_factory('foo', { height: '100px', opacity: 0 } );
+                if (!isObjSet)
                 {
-                    prop = this.__bind(prop, func);
+                    options.to = val;
                 }
 
-                func[key] = prop;
-
-            }, this);
+                // animation_factory('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+                options.FROM_FACTORY = true;
+                options.property = key;
+                options.el = DOMElement;
+                optionSets.push(options);
+            }
         }
     }, this);
+
+    this.each(optionSets, function(i, options)
+    {
+        // Not nessaray, but sanitize out redundant options
+        options = this.map(options, function(key, val)
+        {
+            return this.in_array(key, ANIMATION_FILTER_OPTIONS) ? val : false;
+
+        }, this);
+
+        options.FROM_FACTORY = true;
+
+        optionSets[i] = options;
+
+    }, this);
+
+    if (this.is_empty(optionSets))
+    {
+        console.error('Animation Error: Either no CSS property(s) was provided or the provided property(s) is unsupported.');
+    }
+
+    return optionSets;
+}
+		/**
+ * Deletes from an array/object using dot/bracket notation.
+ *
+ * @param   {string}        path   Path to delete
+ * @param   {object|array}  object Object to delete from
+ * @returns {object|array}
+ */
+array_delete(path, object)
+{
+    this.__arrayDeleteRecursive(this.__arrayKeySegment(path), object);
+
+    return object;
+}
+		/**
+ * Filters empty array entries and returns new array
+ *
+ * @param   {object|array}  object Object to delete from
+ * @returns {object|array}
+ */
+array_filter(arr)
+{
+    let isArr = this.is_array(arr);
+
+    let ret = isArr ? [] : {};
+
+    this.foreach(arr, function(i, val)
+    {
+        if (!this.is_empty(val))
+        {
+            isArr ? ret.push(val) : ret[i] = val;
+        }
+    });
+
+    return ret;
+}
+		/**
+ * Gets an from an array/object using dot/bracket notation.
+ *
+ * @param   {string}        path    Path to get
+ * @param   {object|array}  object  Object to get from
+ * @returns {mixed}
+ */
+array_get(path, object)
+{
+    return this.__arrayGetRecursive(this.__arrayKeySegment(path), object);
 }
 
-/**
- * Returns an array of prototype constructors nested inside a function.
+
+		/**
+ * Checks if array/object contains path using dot/bracket notation.
  *
- * @private
- * @param   {function}  func  Function to loop
+ * e.g array_has('foo.bar.baz[0]', obj)
+ * 
+ * @param   {string}        path   Path to check
+ * @param   {object|array}  object Object to check on
+ * @returns {boolean}
+ */
+array_has(path, object)
+{
+    return !this.is_undefined(this.array_get(path, object));
+}
+		/**
+ * Merges multiple objects or arrays into the original.
+ *
+ * @param   {object|array} First array then any number of array or objects to merge into
+ * @returns {object|array}
+ */
+array_merge()
+{
+    let args = TO_ARR.call(arguments);
+
+    if (args.length === 0)
+    {
+        throw new Error('Nothing to merge.');
+    }
+    else if (args.length === 1)
+    {
+        return args[1];
+    }
+
+    var clone = false;
+
+    // Clone deep
+    this.each(args, function(i, arg)
+    {
+        if (arg = 'CLONE_FLAG_TRUE')
+        {
+            clone = true;
+
+            return false;
+        }
+    });
+
+    let first = args.shift();
+    let fType = this.is_array(first) ? 'array' : 'obj';
+
+    this.each(args, function(i, arg)
+    {
+        if (!this.is_array(arg) && !this.is_object(arg))
+        {
+            throw new Error('Arguments must be an array or object.');
+        }
+
+        first = fType === 'array' ? [...first, ...arg] : {...first, ...arg};
+
+    }, this);
+
+    return first;
+}
+		/**
+ * Set a key using dot/bracket notation on an object or array.
+ *
+ * @param   {string}       path   Path to set
+ * @param   {mixed}        value  Value to set
+ * @param   {object|array} object Object to set into
+ * @returns {object|array}
+ */
+array_set(path, value, object)
+{
+    this.__arraySetRecursive(this.__arrayKeySegment(path), value, object);
+
+    return object;
+}
+		/**
+ * Removes duplicates and returns new array.
+ *
+ * @param   {array} arr Array to run
  * @returns {array}
  */
-__protoConstructors(func)
+array_unique(arr)
 {
-    let protos = [];
-    let proto = func.prototype || Object.getPrototypeOf(func);
-
-    while (proto && proto.constructor)
+    let uniq = function(value, index, self)
     {
-        // recursive stopper
-        if (protos.includes.proto)
-        {
-            break;
-        }
-
-        protos.push(proto.constructor);
-
-        proto = proto.prototype || Object.getPrototypeOf(proto);
+        return self.indexOf(value) === index;
     }
 
-    return protos.reverse();
+    return arr.filter(uniq);
+}
+		/**
+ * Foreach loop
+ * 
+ * @access {public}
+ * @param  {object}  obj       The target object to loop over
+ * @param  {closure} callback  Callback to apply to each iteration
+ * @param  {array}   args      Array of params to apply to callback (optional) (default null)
+ */
+each(obj, callback)
+{
+    if (typeof obj !== 'object' || obj === null) return;
+
+    let isArray = TO_STR.call(obj) === '[object Array]';
+    let i       = 0;
+    let keys    = isArray ? null : Object.keys(obj);
+    let len     = isArray ? obj.length : keys.length;
+    let args    = TO_ARR.call(arguments).slice(2);
+    let ret     = isArray ? [] : {};
+    let key;
+    let val;
+    let clbkVal;
+
+    // Applies the value of "this" to the callback as the array or object provided
+    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
+
+    // Applies this arg as first extra arg if provided
+    // otherwise falls back to the array or object provided
+    // Removes "this" from args to callback
+    var thisArg = this.is_empty(args) ? obj : args[0];
+    args        = !this.is_empty(args) ? args.slice(1) : null;
+    args        = this.is_empty(args) ? null : args;
+
+    if (TO_STR.call(args) === '[object Array]')
+    {
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
+
+            if (clbkVal === false)
+            {
+                break;
+            }
+        }
+
+        // A special, fast, case for the most common use of each (no extra args provided)
+    }
+    else
+    {
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.call(thisArg, key, val);
+
+            if (clbkVal === false)
+            {
+                break;
+            }
+        }
+    }
+
+    return obj;
 }
 
-/**
- * Recursively delete from array/object.
- *
- * @param   {array}        keys    Keys in search order
- * @param   {object|array} object  Object to get from
- * @returns {mixed}
- */
-__arrayDeleteRecursive(keys, object)
+foreach()
 {
-    var key = keys.shift();
-
-    var islast = keys.length === 0;
-
-    if (islast)
-    {
-        if (TO_STR.call(object) === '[object Array]')
-        {
-            object.splice(key, 1);
-        }
-        else
-        {
-            delete object[key];
-        }
-    }
-
-    if (!object[key])
-    {
-        return false;
-    }
-
-    return this.__arrayDeleteRecursive(keys, object[key]);
+    return this.each.apply(this, arguments);
 }
-
-/**
- * Recursively search from array/object.
+		/**
+ * Checks if an array contains a value
  *
- * @param   {array}        keys    Keys in search order
- * @param   {object|array} object  Object to get from
- * @returns {mixed}
+ * @access {public}
+ * @param  {string} needle    The value to search for
+ * @param  {array}  haystack  The target array to index
+ * @param  {bool}   strict    Strict comparison (optional) (default false)
+ * @return {bool}
+ * 
  */
-__arrayGetRecursive(keys, object)
+in_array(needle, haystack, strict)
 {
-    var key = keys.shift();
-    var islast = keys.length === 0;
+    strict = this.is_undefined(strict) ? false : strict;
+    
+    let ret = false;
 
-    if (islast)
+    this.each(haystack, function(k, v)
     {
-        return object[key];
-    }
+        ret = this.is_equal(needle, v, strict);
 
-    if (!object[key])
-    {
-        return undefined;
-    }
+        if (ret) return false;
 
-    return this.__arrayGetRecursive(keys, object[key]);
+    }, this);
+
+    return ret;
 }
-
-/**
- * Recursively set array/object.
- *
- * @param {array}          keys     Keys in search order
- * @param {mixed}          value    Value to set
- * @param {object|array}   object   Object to get from
- * @param {string|number}  nextKey  Next key to set
+		/**
+ * Map.
+ *  
+ * return undefined to break loop, true to keep, false to reject
+ * 
+ * @param   {array|object}  obj
+ * @param   {function}      callback
+ * @param   {array|mixed}   args      If single arg provided gets apllied as this to callback, otherwise args apllied to callback
+ * @returns {array|object}
  */
-__arraySetRecursive(keys, value, object, nextKey)
+map(obj, callback)
 {
-    var key = keys.shift();
-    var islast = keys.length === 0;
-    var lastObj = object;
-    object = !nextKey ? object : object[nextKey];
+    if (typeof obj !== 'object' || obj === null) return;
 
-    // Trying to set a value on nested array that doesn't exist
-    if (!['object', 'function'].includes(typeof object))
+    let isArray = TO_STR.call(obj) === '[object Array]';
+    let i       = 0;
+    let keys    = isArray ? null : Object.keys(obj);
+    let len     = isArray ? obj.length : keys.length;
+    let args    = TO_ARR.call(arguments).slice(2);
+    let ret     = isArray ? [] : {};
+    let key;
+    let val;
+    let clbkVal;
+
+    // Applies the value of "this" to the callback as the array or object provided
+    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
+
+    // Applies this arg as first extra arg if provided
+    // otherwise falls back to the array or object provided
+    // Removes "this" from args to callback
+    var thisArg = this.is_empty(args) ? obj : args[0];
+    args        = !this.is_empty(args) ? args.slice(1) : null;
+    args        = this.is_empty(args) ? null : args;
+
+    if (TO_STR.call(args) === '[object Array]')
     {
-        throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
+
+            if (clbkVal === false)
+            {
+                continue;
+            }
+            else if (typeof clbkVal === 'undefined')
+            {
+                break;
+            }
+            else
+            {
+                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
+            }
+        }
+
+        // A special, fast, case for the most common use of each (no extra args provided)
+    }
+    else
+    {
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.call(thisArg, key, val);
+
+            if (clbkVal === false)
+            {
+                continue;
+            }
+            else if (typeof clbkVal === 'undefined')
+            {
+                break;
+            }
+            else
+            {
+                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
+            }
+        }
     }
 
-    if (!object[key])
+    return ret;
+}
+		/**
+ * Set, get or remove DOM attribute.
+ *
+ * No third arg returns attribute value, third arg set to null or false removes attribute.
+ * 
+ * @param {HTMLElement}  DOMElement  Dom node
+ * @param {string}       name        Property name
+ * @apram {mixed}        value       Property value
+ */
+attr(DOMElement, name, value)
+{
+    // Get attribute
+    // e.g attr(node, style)
+    if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
     {
-        // Trying to put object key into an array
-        if (TO_STR.call(object) === '[object Array]' && typeof key === 'string')
-        {
-            var converted = Object.assign({}, object);
-
-            lastObj[nextKey] = converted;
-
-            object = converted;
-        }
-
-        if (keys[0] && typeof keys[0] === 'string')
-        {
-            object[key] = {};
-        }
-        else
-        {
-            object[key] = [];
-        }
+        return this.__getAttribute(DOMElement, name);
     }
 
-    if (islast)
+    // attr(node, {foo : 'bar', baz: 'bar'})
+    if (this.is_object(name))
     {
-        object[key] = value;
+        this.each(name, function(prop, value)
+        {
+            this.attr(DOMElement, prop, value);
+        }, this);
 
         return;
     }
 
-    this.__arraySetRecursive(keys, value, object, key);
-}
-
-/**
- * Segments an array/object path using from "dot.notation" into an array of keys in order.
- *
- * @param   {string}  path Path to parse
- * @returns {array}
- */
-__arrayKeySegment(path)
-{
-    var result = [];
-    var segments = path.split('.');
-
-    for (var i = 0; i < segments.length; i++)
+    switch (name)
     {
-        var segment = segments[i];
+        // innerHTML
+        case 'innerHTML':
+            DOMElement.innerHTML = value;
+            break;
 
-        if (!segment.includes('['))
-        {
-            result.push(segment);
-
-            continue;
-        }
-
-        var subSegments = segment.split('[');
-
-        for (var j = 0; j < subSegments.length; j++)
-        {
-            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
+        // Children
+        case 'children':
+            this.each(value, function(node)
             {
-                result.push(parseInt(subSegments[j].replace(']')));
-            }
-            else if (subSegments[j] !== '')
+                DOMElement.appendChild(node);
+            });
+            break;
+
+        // Class
+        case 'class':
+        case 'className':
+            DOMElement.className = value;
+            break;
+
+        // Style
+        case 'style':
+
+            // remove all styles completely
+            if (this.is_empty(value))
             {
-                result.push(subSegments[j])
+                DOMElement.removeAttribute('style');
             }
-        }
+            // Clear style and overwrite
+            else if (this.is_string(value))
+            {
+                DOMElement.style = '';
+                
+                // attr(node, 'css', 'foo : bar; baz: bar;})
+                this.each(value.split(';'), function(i, rule)
+                {
+                    var style = rule.split(':');
+
+                    if (style.length >= 2)
+                    {
+                        this.css(DOMElement, style.shift().trim(), style.join(':').trim());
+                    }
+                }, this);
+            }
+            // attr(node, 'css', {foo : 'bar', baz: 'bar'})
+            else if (this.is_object(value))
+            {
+                DOMElement.style = '';
+
+                this.each(value, function(prop, value)
+                {
+                    this.css(DOMElement, prop, value);
+                    
+                }, this);
+            }
+            break;
+
+        // Events / attributes
+        default:
+
+            // Events
+            if (name[0] === 'o' && name[1] === 'n')
+            {
+                var evt = name.slice(2).toLowerCase();
+
+                // Remove old listeners
+                this.removeEventListener(DOMElement, evt);
+
+                // Add new listener if one provided
+                if (value)
+                {
+                    this.addEventListener(DOMElement, evt, value);
+                }
+            }
+            // All other node attributes
+            else
+            {
+                if (
+                    name !== 'href' &&
+                    name !== 'list' &&
+                    name !== 'form' &&
+                    // Default value in browsers is `-1` and an empty string is
+                    // cast to `0` instead
+                    name !== 'tabIndex' &&
+                    name !== 'download' &&
+                    name in DOMElement
+                )
+                {
+                    try
+                    {
+                        DOMElement[name] = value == null ? '' : value;
+                        // labelled break is 1b smaller here than a return statement (sorry)
+                        break;
+                    } catch (e) {}
+                }
+
+                // ARIA-attributes have a different notion of boolean values.
+                // The value `false` is different from the attribute not
+                // existing on the DOM, so we can't remove it. For non-boolean
+                // ARIA-attributes we could treat false as a removal, but the
+                // amount of exceptions would cost us too many bytes. On top of
+                // that other VDOM frameworks also always stringify `false`.
+
+                if (typeof value === 'function')
+                {
+                    // never serialize functions as attribute values
+                }
+                else if (value != null && (value !== false || name.indexOf('-') != -1))
+                {
+                    DOMElement.setAttribute(name, value);
+                }
+                else
+                {
+                    DOMElement.removeAttribute(name);
+                }
+            }
+
+            break;
     }
-
-    return result;
 }
-
-/**
- * Checks if traversable's are equal
+		/**
+ * Set, get or remove CSS value(s) on element.
  * 
- * @param   {array} | object}  a
- * @param   {array} | object}  b
- * @returns {boolean}
+ * Note that this will only return inline styles, use 'rendered_style' for
+ * currently displayed styles.
+ *
+ * @access {public}
+ * @param  {node}   el     Target DOM node
+ * @param  {string|object} Assoc array of property->value or string property
+ * @example {Helper.css(node,} { display : 'none' });
+ * @example {Helper.css(node,} 'display', 'none');
  */
-__equalTraverseable(a, b)
+css(el, property, value)
 {
-    if (size(a) !== size(b))
+    // If their is no value and property is an object
+    if (this.is_object(property))
     {
-        return false;
+        this.each(property, function(prop, val)
+        {
+            this.css(el, prop, val);
+
+        }, this);
+    }
+    else
+    {
+        // Getting not settings
+        if (this.is_undefined(value))
+        {
+            return this.inline_style(el, property);
+        }
+        // Value is either null or false we remove
+        else if (this.is_null(value) || value === false)
+        {
+            if (el.style.removeProperty)
+            {
+                el.style.removeProperty(property);
+            }
+            else
+            {
+                el.style.removeAttribute(property);
+            }
+        }
+        else
+        {
+            el.style[property] = value;
+        }
+    }
+}
+		/**
+ * Converts CSS property to camel case.
+ *
+ * @access {public}
+ * @param  {string} prop Property to convert
+ * @retirm {string}
+ */
+css_prop_to_camel_case(prop)
+{
+    if (!prop.includes('-')) return prop;
+
+    let camelProp = this.to_camel_case(prop);
+
+    if (this.in_array(prop, Object.keys(CSS_PROP_TO_CAMEL_CASES)))
+    {
+        return CSS_PROP_TO_CAMEL_CASES[prop];
     }
 
-    let ret = true;
+    // First char is always lowercase
+    let ret = camelProp.charAt(0).toLowerCase() + camelProp.slice(1);
 
-    this.each(a, function(i, val)
+    CSS_PROP_TO_CAMEL_CASES[prop] = ret;
+
+    return ret;
+}
+		/**
+ * Converts CSS property to hyphen case.
+ *
+ * @access {public}
+ * @param  {string} prop Property to convert
+ * @retirm {string}
+ */
+css_prop_to_hyphen_case(prop)
+{
+    if (!/[A-Z]/.test(prop)) return prop;
+    
+    if (this.in_array(prop, Object.keys(CSS_PROP_TO_HYPHEN_CASES)))
     {
-        if (!this.is_equal(val, b[i]))
-        {
-            ret = false;
+        return CSS_PROP_TO_HYPHEN_CASES[prop];
+    }
 
-            return false;
+    var hyphenProp = this.camel_case_to_hyphen(prop);
+
+    if (hyphenProp.startsWith('webkit-') || hyphenProp.startsWith('moz-') || hyphenProp.startsWith('ms-') || hyphenProp.startsWith('o-'))
+    {
+        hyphenProp = '-' + hyphenProp;
+    }
+
+    CSS_PROP_TO_CAMEL_CASES[prop] = hyphenProp;
+
+    return hyphenProp;
+}
+		/**
+ * Expand shorthand property to longhand properties 
+ *
+ * @access {private}
+ * @param  {string}  CSS rules
+ * @return {object}
+ */
+css_to_longhand(css)
+{
+    var ret    = {};
+    var values = this.css_to_object(css);
+
+    this.each(values, function(prop, value)
+    {
+        if (SHORTHAND_PROPS.hasOwnProperty(prop))
+        {
+            var splits  = value.split(' ').map( (x) => x.trim());
+            var dfault  = prop === 'margin' || prop === 'padding' ? '0' : 'initial';
+
+            this.each(SHORTHAND_PROPS[prop], function(i, longhand)
+            {
+                // Object is setup so that if it starts with a '-'
+                // then it gets concatenated to the oridional prop
+                // e.g 'background' -> '-image'
+                longhand = longhand.startsWith('-') ? prop + longhand : longhand;
+
+                // otherwise it gets replaced
+                // e.g 'border-color' -> 'border-top-color', 'border-right-color'... etc
+                ret[longhand] = this.is_undefined(splits[i]) ? dfault : splits[i];
+
+            }, this);
+        }
+        else
+        {
+            ret[prop] = value;
+        }
+
+    }, this);
+
+    return ret;
+}
+		/**
+ * Concats longhand property to shorthand
+ *
+ * Note if values are not provide not all browsers will except inital
+ * for all properties in shorthand syntax
+ * 
+ * @access {private}
+ * @param  {string}  CSS rules
+ * @return {object}
+ */
+css_to_shorthand(css)
+{
+    const needsFilling = ['margin', 'padding', 'transition', 'animation'];
+    var ret            = {};
+    var styles         = this.css_to_object(css);
+
+    // 'margin': ['-top', '-right', '-bottom', '-left'],
+    this.each(SHORTHAND_PROPS, function(property, longhands)
+    {
+        var value       = '';
+        var matched     = false;
+        var needsDefault = this.in_array(property, needsFilling) || property.includes('border');
+
+        this.each(longhands, function(i, longhand)
+        {
+            longhand = longhand.startsWith('-') ? property + longhand : longhand;
+
+            var suppliedVal = styles[longhand];
+
+            if (!this.is_undefined(suppliedVal))
+            {
+                matched = true;
+                // Colors get flatted
+                if (longhand.includes('-color'))
+                {
+                    value = suppliedVal;
+                }
+                else
+                {
+                    value += suppliedVal + ' ';
+                }
+            }
+            else if (needsDefault)
+            {
+                this.each(SHORTHAND_DEFAULTS, function(matcher, defaltVal)
+                {
+                    if (longhand.includes(matcher))
+                    {
+                        value += ` ${defaltVal} `;
+                    }
+                });
+                
+            }
+            
+        }, this);
+
+        if (!this.is_empty(value) && matched) ret[property] = value.trim();
+        
+    }, this);
+
+    return ret;
+}
+		/**
+ * Converts string styles into an object
+ *
+ * @param  {string} styles CSS
+ * @return {object}
+ */
+css_to_object(styles)
+{
+    var ret = {};
+
+    const nested_regex = /([^\{]+\{)([\s\S]+?\})(\s*\})/g;
+
+    const css_regex = /([^{]+\s*\{\s*)([^}]+)(\s*\}\s*)/g;
+
+    if (styles.includes('{'))
+    {
+        var nestedStyles = [...css.matchAll(nested_regex)];
+
+
+    }
+
+    this.each(styles.split(';'), function(i, rule)
+    {
+        var style = rule.split(':');
+
+        if (style.length >= 2)
+        {
+            var prop = style.shift().trim();
+            var val  = style.join(':').trim();
+
+            ret[prop] = val;
         }
     }, this);
 
     return ret;
 }
-
-/**
- * Binds a function so that it can be identified.
- * 
- * @param   {function}  b
- * @returns {boolean}
+		/**
+ * Get an element's inline style if it exists
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} prop CSS property to check
+ * @return {string}
  */
-__bind(func, context)
+inline_style(element, prop)
 {
-    context = typeof context === 'undefined' ? window : context;
+    // @todo expand shorthand    
+    const elementStyle = element.style;
 
-    const bound = func.bind(context);
+    prop = this.css_prop_to_hyphen_case(prop);
 
-    bound.__isBound = true;
+    if (Object.hasOwn(elementStyle, prop))
+    {
+        const val = elementStyle.getPropertyValue(elementStyle[prop]) || elementStyle[prop];
+        
+        return val === '' ? undefined : val;
+    }
+}
+		/**
+ * Remove inline css style
+ * 
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} prop CSS property to removes
+ */
+remove_style(el, prop)
+{
+    if (typeof prop === 'undefined')
+    {
+        DOMElement.removeAttribute('style');
 
-    bound.__boundContext = context;
+        return;
+    }
 
-    bound.__origional = func;
+    this.css(el, prop);
+}
+		/**
+ * Get the element's computed style on a property
+ *
+ * @access {private}
+ * @param  {node}   el   Target element
+ * @param  {string} prop CSS property to check (in camelCase) (optional)
+ * @return {mixed}
+ */
+rendered_style(el, property)
+{
+    if (window.getComputedStyle)
+    {
+        if (property)
+        {
+            return window.getComputedStyle(el, null)[property];
+        }
 
-    return bound;
+        return window.getComputedStyle(el, null);
+
+    }
+    if (el.currentStyle)
+    {
+        if (property)
+        {
+            return el.currentStyle[property];
+        }
+        
+        return el.currentStyle;
+    }
+
+    return '';
+}
+		/**
+ * Add a css class or list of classes
+ *
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {array|string} className  Class name(s) to add
+ */
+add_class(el, className)
+{
+    if (!this.in_dom(el))
+    {
+        return;
+    }
+
+    if (TO_STR.call(className) === '[object Array]')
+    {
+        for (var i = 0; i < className.length; i++)
+        {
+            el.classList.add(className[i]);
+        }
+
+        return;
+    }
+
+    el.classList.add(className);
+}
+		/**
+ * Closest parent node by type/class or array of either
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Node type to find
+ * @return {node\null}
+ */
+closest(el, type)
+{
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.closest(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this.closest_class(el, type);
+    }
+
+    type = type.toLowerCase();
+
+    if (typeof el === 'undefined')
+    {
+        return null;
+    }
+
+    if (el.nodeName.toLowerCase() === type)
+    {
+        return el;
+    }
+
+    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type)
+    {
+        return el.parentNode;
+    }
+
+    var parent = el.parentNode;
+
+    while (parent !== document.body && typeof parent !== "undefined" && parent !== null)
+    {
+        parent = parent.parentNode;
+
+        if (parent && parent.nodeName.toLowerCase() === type)
+        {
+            return parent;
+        }
+    }
+
+
+    return null;
 }
 
-/**
- * Checks if two functions are equal
- * 
- * @param   {function}  a
- * @param   {function}  b
- * @returns {boolean}
+		/**
+ * Closest parent node by class
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} clas Node class to find
+ * @return {node\null}
  */
-___equalFunction(a, b)
-{
-    // They're not technically equal
-    if (a !== b)
+closest_class(el, clas)
+{    
+    // Type is class
+    if (this.is_array(clas))
     {
-        // Functions have the same name
-        if (a.name === b.name)
+        for (var i = 0; i < clas.length; i++)
         {
-            // If the functions were bound or cloned by the library they can technically still be equal
-            if ( a.name.includes('bound '))
+            var response = this.closest_class(el, clas[i]);
+
+            if (response)
             {
-                return a.this.__isBound === b.this.__isBound && a.this.__boundContext === b.this.__boundContext && a.this.__origional === b.this.__origional;
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (this.has_class(el, clas))
+    {
+        return el;
+    }
+
+    if (this.has_class(el.parentNode, clas))
+    {
+        return el.parentNode;
+    }
+
+    var parent = el.parentNode;
+
+    if (parent === window.document)
+    {
+        return null;
+    }
+
+    while (parent !== document.body)
+    {
+        if (this.has_class(parent, clas))
+        {
+            return parent;
+        }
+
+        if (parent === null || typeof parent === 'undefined')
+        {
+            return null;
+        }
+
+        parent = parent.parentNode;
+    }
+
+    return null;
+}
+		/**
+ * Get an element's absolute coordinates
+ *
+ * @access {public}
+ * @param  {node}   el Target element
+ * @return {object}
+ */
+coordinates(el)
+{
+    var box = el.getBoundingClientRect();
+    var body = document.body;
+    var docEl = document.documentElement;
+    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+    var clientTop = docEl.clientTop || body.clientTop || 0;
+    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+    var borderL = parseInt(this.rendered_style(el, 'border-top-width'));
+    var borderR = parseInt(this.rendered_style(el, 'border-top-width'));
+    var borderT = parseInt(this.rendered_style(el, 'border-top-width'));
+    var borderB = parseInt(this.rendered_style(el, 'border-top-width'));
+    var top = box.top + scrollTop - clientTop - borderT - borderB;
+    var left = box.left + scrollLeft - clientLeft + borderL - borderR;
+    var width = parseFloat(this.rendered_style(el, "width"));
+    var height = parseFloat(this.rendered_style(el, "height"));
+
+    return {
+        top: top,
+        left: left,
+        right: left + width,
+        bottom: top + height,
+        height: height,
+        width: width,
+    };
+}
+		/**
+ * Get all first level children
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @return {node\null}
+ */
+first_children(el)
+{
+    var children = [];
+
+    var childnodes = el.childNodes;
+
+    for (var i = 0; i < childnodes.length; i++)
+    {
+        if (childnodes[i].nodeType == 1)
+        {
+            children.push(childnodes[i]);
+        }
+    }
+
+    return children;
+}
+		/**
+ * Get all input elements from a form
+ *
+ * @access {public}
+ * @param  {node}   form Target element
+ * @return {array}
+ */
+form_inputs(form)
+{
+    var allInputs = this.$All('input, textarea, select', form);
+
+    var i = allInputs.length;
+
+    while (i--)
+    {
+        var input = allInputs[i];
+
+        if (input.type == "radio" && input.checked !== true)
+        {
+            allInputs.splice(i, 1);
+        }
+    }
+
+    return allInputs;
+}
+		/**
+ * Get an array of name/value objects for all inputs in a form
+ *
+ * @access {public}
+ * @param  {node}   form Target element
+ * @return {array}
+ */
+form_values(form)
+{
+    let inputs = this.form_inputs(form);
+    let ret    = {};
+
+    this.each(inputs, function(i, input)
+    {
+        let name = input.name;
+
+        if (input.type === 'radio' && input.checked == false)
+        {
+
+        }
+        else if (input.type === 'checkbox')
+        {
+            ret[name] = (input.checked == true);
+        }
+        if (name.indexOf('[]') > -1)
+        {
+            if (!ret[name])
+            {
+                ret[name] = [];
             }
 
-            // Native arrow functions
-            if (!a.prototype || !a.prototype.constructor)
+            ret[name].push(this.input_value(input));
+        }
+        else
+        {
+            ret[name] = this.input_value(input);
+        }
+
+    }, this);
+   
+    return ret;
+}
+		/**
+ * Check if a node has a class
+ *
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {string|array} className  Class name(s) to check for
+ * @return {bool}
+ */
+has_class(el, className)
+{
+    if (!this.in_dom(el))
+    {
+        return false;
+    }
+
+    if (TO_STR.call(className) === '[object Array]')
+    {
+        for (var i = 0; i < className.length; i++)
+        {
+            if (el.classList.contains(className[i]))
             {
-                return false;
+                return true;
             }
-
-            // Check the prototypes
-            let aProps = object_props(a.prototype);
-            let bProps = object_props(b.prototype);
-
-            if (aProps.length === 0 && bProps.length === 0) return true;
-
-            let ret = true;
-
-            this.each(aProps, function(i, key)
-            {                
-                if (!this.is_equal(a.prototype[key], b.prototype[key]))
-                {
-                    ret = false;
-
-                    return false;
-                }
-            }, this);
-
-            return ret;
         }
 
         return false;
     }
 
-    return true;
+    if (!el.classList)
+    {
+        return false;
+    }
+
+    var classNames = className.split('.');
+
+    if ((classNames.length - 1) > 1)
+    {
+        for (var i = 0; i < classNames.length; i++)
+        {
+            if (el.classList.contains(classNames[i]))
+            {
+                return true;
+            }
+        }
+    }
+
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+
+    return el.classList.contains(className);
+}
+		/**
+ * Aria hide an element
+ *
+ * @access {public}
+ * @param  {node}   el Target DOM node
+ */
+hide_aria(el)
+{
+    el.setAttribute("aria-hidden", 'true');
+}
+		/**
+ * Check if an element is in current viewport
+ *
+ * @access {public}
+ * @param  {node}   el Target DOM node
+ * @return {bool}
+ */
+in_viewport(el)
+{
+    var rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+}
+		/**
+ * Replace or append a node's innerHTML
+ *
+ * @access {public}
+ * @param  {node}   DOMElement  Target element
+ * @param  {string} content     Target content
+ * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
+ */
+inner_HTML(DOMElement, content, append)
+{
+    content = this.is_array(content) ? content.join("\n") : content;
+
+    if (append)
+    {
+        DOMElement.innerHTML += content;
+    }
+    else
+    {
+        DOMElement.innerHTML = content;
+    }
+}
+		/**
+ * Replaces element's innerText without destroying childnodes
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} text Text to replace
+ */
+inner_Text(el, text)
+{
+    if (el.childNodes[0])
+    {
+        el.childNodes[0].nodeValue = text;
+    }
+}
+		/**
+ * Gets an input element's value
+ *
+ * @access {public}
+ * @param  {node}   input Target element
+ * @return {mixed}
+ */
+input_value(input)
+{
+    if (input.type == "checkbox")
+    {
+        var val = '';
+
+        var checks = this.$All('input[name=' + input.name + ']');
+
+        for (var i = 0, len = checks.length; i < len; i++)
+        {
+            if (checks[i].checked)
+            {
+                val += checks[i].value + ', ';
+            }
+        }
+
+        return this.rtrim(val, ', ');
+    }
+
+    if (input.type == "number")
+    {
+        return parseInt(input.value);
+    }
+
+    if (input.type == "select")
+    {
+        return input.options[input.selectedIndex].value;
+    }
+
+    if (input.type == "file")
+    {
+        if (input.multiple == true)
+        {
+            return input.files;
+        }
+
+        return input.files[0];
+    }
+
+    return input.value;
+}
+		/**
+ * Create and insert a new node
+ *
+ * @access {public}
+ * @param  {string} type    New node type
+ * @param  {string} classes New node class names (optional) (default '')
+ * @param  {string} classes New node ID (optional) (default '')
+ * @param  {string} content New node innerHTML (optional) (default '')
+ * @param  {node}   target  Parent to append new node into
+ * @return {node}
+ */
+new_node(type, classes, ID, content, target)
+{
+    var node = document.createElement(type);
+    classes = (typeof classes === "undefined" ? null : classes);
+    ID = (typeof ID === "undefined" ? null : ID);
+    content = (typeof content === "undefined" ? null : content);
+
+    if (classes !== null)
+    {
+        node.className = classes
+    }
+    if (ID !== null)
+    {
+        node.id = ID
+    }
+    if (content !== null)
+    {
+        node.innerHTML = content
+    }
+
+    target.appendChild(node);
+
+    return node;
+}
+		/**
+ * Traverse nextSibling untill type or class or array of either
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Target node type
+ * @return {node\null}
+ */
+next(el, type)
+{
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.next(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this.next_untill_class(el, type);
+    }
+
+    type = type.toLowerCase();
+
+    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type)
+    {
+        return el.nextSibling;
+    }
+    var next = el.nextSibling;
+
+    while (next !== document.body && typeof next !== "undefined" && next !== null)
+    {
+        next = next.nextSibling;
+
+        if (next && next.nodeName.toLowerCase() === type)
+        {
+            return next;
+        }
+    }
+
+    return null;
+}
+		/**
+ * Traverse nextSibling untill class type or class or array of either
+ *
+ * @access {public}
+ * @param  {node}   el        Target element
+ * @param  {string} className Target node classname
+ * @return {node\null}
+ */
+next_untill_class(el, className)
+{
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+
+    if (el.nextSibling && this.has_class(el.nextSibling, className))
+    {
+        return el.nextSibling;
+    }
+
+    var next = el.nextSibling;
+
+    while (next !== document.body && typeof next !== "undefined" && next !== null)
+    {
+        if (next && this.has_class(next, className))
+        {
+            return next;
+        }
+
+        next = next.nextSibling;
+
+    }
+
+    return null;
+}
+		/**
+ * Inserts node as first child
+ *
+ * @access {public}
+ * @param  {node} node     New node to insert
+ * @param  {node} wrapper  Parent to preappend new node into
+ * @return {node}
+ */
+preapend(node, wrapper)
+{
+    wrapper.insertBefore(node, wrapper.firstChild);
+
+    return node;
+}
+		/**
+ * Traverse previousSibling untill type
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Target node type
+ * @return {node\null}
+ */
+previous(el, type)
+{
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.previous(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this.previous_untill_class(el, type);
+    }
+
+
+    type = type.toLowerCase();
+    if (el.previousSibling && el.previousSibling.nodeName.toLowerCase() === type) return el.previousSibling;
+    var prev = el.previousSibling;
+    while (prev !== document.body && typeof prev !== "undefined" && prev !== null)
+    {
+        prev = prev.previousSibling;
+        if (prev && prev.nodeName.toLowerCase() === type)
+        {
+            return prev;
+        }
+    }
+    return null;
+}
+		/**
+ * Traverse previousSibling untill class
+ *
+ * @access {public}
+ * @param  {node}   el        Target element
+ * @param  {string} className Target node classname
+ * @return {node\null}
+ */
+previous_untill_class(el, className)
+{
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+
+    if (el.previousSibling && this.has_class(el.previousSibling, className))
+    {
+        return el.previousSibling;
+    }
+
+    var prev = el.previousSibling;
+
+    while (prev !== document.body && typeof prev !== "undefined" && prev !== null)
+    {
+        prev = prev.previousSibling;
+
+        if (prev && this.has_class(prev, className))
+        {
+            return prev;
+        }
+    }
+
+    return null;
+}
+		/**
+ * Remove a css class or list of classes
+ *
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {array|string} className  Class name(s) to remove
+ */
+remove_class(el, className)
+{
+    if (!this.in_dom(el))
+    {
+        return;
+    }
+
+    if (TO_STR.call(className) === '[object Array]')
+    {
+        for (var i = 0; i < className.length; i++)
+        {
+            el.classList.remove(className[i]);
+        }
+
+        return;
+    }
+
+    el.classList.remove(className);
+}
+		/**
+ * Remove an element from the DOM
+ *
+ * This function also removes all attached event listeners
+ * 
+ * @access {public}
+ * @param  {node}   el Target element
+ */
+remove_from_dom(el)
+{
+    if (this.in_dom(el))
+    {
+        el.parentNode.removeChild(el);
+
+        var children = this.$All('*', el);
+
+        for (var i = 0, len = children.length; i < len; i++)
+        {
+            this.removeEventListener(children[i]);
+        }
+
+        this.removeEventListener(el);
+    }
+}
+		/**
+ * Get the current document scroll position
+ *
+ * @access {private}
+ * @return {obj}
+ */
+scroll_pos()
+{
+    var doc  = document.documentElement;
+    var top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+    var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+    
+    return {
+        top: top,
+        left: left
+    };
+}
+		/**
+ * Select and return all nodes by selector
+ *
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {node}   context (optional) (default document)
+ * @return {node}
+ */
+$All(selector, context)
+{
+    context = (typeof context === 'undefined' ? document : context);
+    return TO_ARR.call(context.querySelectorAll(selector));
+}
+
+/**
+ * Select single node by selector
+ *
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {node}   context (optional) (default document)
+ * @return {node}
+ */
+$(selector, context)
+{
+    context = (typeof context === 'undefined' ? document : context);
+    return context.querySelector(selector)
+}
+		/**
+ * Aria show an element
+ *
+ * @access {public}
+ * @param  {node}   el Target DOM node
+ */
+show_aria(el)
+{
+    el.setAttribute("aria-hidden", 'false');
+}
+
+		/**
+ * Toogle a classname
+ *
+ * @access {public}
+ * @param  {node}         el         Target element
+ * @param  {string}       className  Class name to toggle
+ */
+toggle_class(el, className)
+{
+    if (!this.in_dom(el))
+    {
+        return;
+    }
+
+    if (this.has_class(el, className))
+    {
+        this.remove_class(el, className);
+    }
+    else
+    {
+        this.add_class(el, className);
+    }
+}
+		/**
+ * Triggers a native event on an element
+ *
+ * @access {public}
+ * @param  {node}   el   Target element
+ * @param  {string} type Valid event name
+ */
+trigger_event(el, type)
+{
+    if ('createEvent' in document)
+    {
+        var evt = document.createEvent("HTMLEvents");
+
+        evt.initEvent(type, false, true);
+
+        el.dispatchEvent(evt);
+    }
+    else
+    {
+        el.fireEvent(type);
+    }
+}
+		/**
+ * Add an event listener
+ *
+ * @access {public}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ */
+addEventListener(element, eventName, handler, useCapture)
+{
+    // Boolean use capture defaults to false
+    useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
+
+    // Class event storage
+    var events = this._events;
+
+    // Make sure events are set
+    if (!events)
+    {
+        this._events = events = {};
+    }
+
+    // Make sure an array for the event type exists
+    if (!events[eventName])
+    {
+        events[eventName] = [];
+    }
+
+    // Arrays
+    if (this.is_array(element))
+    {
+        for (var i = 0; i < element.length; i++)
+        {
+            this.addEventListener(element[i], eventName, handler, useCapture);
+        }
+    }
+    else
+    {
+        // Push the details to the events object
+        events[eventName].push(
+        {
+            element: element,
+            handler: handler,
+            useCapture: useCapture,
+        });
+
+        this.__addListener(element, eventName, handler, useCapture);
+    }
+}
+
+/**
+ * Adds a listener to the element
+ *
+ * @access {private}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ */
+__addListener(el, eventName, handler, useCapture)
+{
+    if (el.addEventListener)
+    {
+        el.addEventListener(eventName, handler, useCapture);
+    }
+    else
+    {
+        el.attachEvent('on' + eventName, handler, useCapture);
+    }
+}
+		/**
+ * Removes all event listeners registered by the library
+ *
+ * @access {public}
+ */
+clearEventListeners()
+{
+    var events = this._events;
+
+    for (var eventName in events)
+    {
+        var eventObj = events[eventName];
+        var i = eventObj.length;
+        while (i--)
+        {
+            this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
+            this._events[eventName].splice(i, 1);
+        }
+    }
+}
+		/**
+ * Removes all event listeners registered by the library on nodes
+ * that are no longer part of the DOM tree
+ *
+ * @access {public}
+ */
+collectGarbage()
+{
+    var events = this._events;
+    for (var eventName in events)
+    {
+        var eventObj = events[eventName];
+        var i = eventObj.length;
+        while (i--)
+        {
+            var el = eventObj[i]['element'];
+            if (el == window || el == document || el == document.body) continue;
+            if (!this.in_dom(el))
+            {
+                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
+                this._events[eventName].splice(i, 1);
+            }
+        }
+    }
+}
+		/**
+ * Removes event listeners on a DOM node
+ *
+ * If no element given, all attached event listeners are returned.
+ * If no event name is given, all attached event listeners are returned on provided element.
+ * If single arguement is provided and arg is a string, e.g 'click', all events of that type are returned
+ * 
+ * @access {public}
+ * @param  {mixed}   element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @return {array}
+ */
+eventListeners(DOMElement, eventName)
+{
+    var args = TO_ARR.call(arguments);
+    var events = this._events;
+
+    // No args, return all events
+    if (args.length === 0)
+    {
+        return events;
+    }
+    // eventListeners(node) or
+    // eventListeners('click')
+    else if (args.length === 1)
+    {
+        // eventListeners('click')
+        if (this.is_string(DOMElement))
+        {   
+            return events[DOMElement] || [];
+        }
+        
+        var ret = [];
+
+        // eventListeners(node)
+        for (var evt in events)
+        {
+            var eventArr = events[evt];
+
+            for (var i = 0; i < eventArr.length; i++)
+            {
+                var eventObj = eventArr[i];
+
+                if (eventObj.element === DOMElement)
+                {
+                    ret.push(eventObj);
+                }
+            }
+        }
+
+        return ret;
+    }
+    // eventListeners(node, 'click')
+    var ret = [];
+
+    if (events[eventName])
+    {
+        var _evts = events[eventName];
+
+        for (var i = 0; i < _evts.length; i++)
+        {
+            var eventObj = _evts[i];
+
+            if (eventObj.element === DOMElement)
+            {
+                ret.push(eventObj);
+            }
+        }
+    }
+
+    return ret;
+}
+		/**
+ * Removes event listeners on a DOM node
+ *
+ * If no event name is given, all attached event listeners are removed.
+ * If no callback is given, all callbacks for the event type will be removed.
+ * This function can still remove "annonymous" functions that are given a name as they are declared.
+ * 
+ * @access {public}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ */
+removeEventListener(element, eventName, handler, useCapture)
+{
+    if (this.is_array(element))
+    {
+        for (var j = 0; j < element.length; j++)
+        {
+            this.removeEventListener(element[j], eventName, handler, useCapture);
+        }
+    }
+    else
+    {
+        // If the eventName name was not provided - remove all event handlers on element
+        if (!eventName)
+        {
+            return this.__removeElementListeners(element);
+        }
+
+        // If the callback was not provided - remove all events of the type on the element
+        if (!handler)
+        {
+            return this.__removeElementTypeListeners(element, eventName);
+        }
+
+        // Default use capture
+        useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
+
+        var eventObj = this._events[eventName];
+
+        if (typeof eventObj === 'undefined')
+        {
+            return;
+        }
+
+        // Loop stored events and match node, event name, handler, use capture
+        for (var i = 0, len = eventObj.length; i < len; i++)
+        {
+            if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
+            {
+                this.__removeListener(element, eventName, handler, useCapture);
+                this._events[eventName].splice(i, 1);
+                break;
+            }
+        }
+    }
+}
+
+
+/**
+ * Removes all registered event listners on an element
+ *
+ * @access {private}
+ * @param  {node}    element Target node element
+ */
+__removeElementListeners(element)
+{
+    var events = this._events;
+    for (var eventName in events)
+    {
+        var eventObj = events[eventName];
+        var i = eventObj.length;
+        while (i--)
+        {
+            if (eventObj[i]['element'] === element)
+            {
+                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
+                this._events[eventName].splice(i, 1);
+            }
+        }
+    }
+}
+
+/**
+ * Removes all registered event listners of a specific type on an element
+ *
+ * @access {private}
+ * @param  {node}    element Target node element
+ * @param  {string}  type    Event listener type
+ */
+__removeElementTypeListeners(element, type)
+{
+    var eventObj = this._events[type];
+    var i = eventObj.length;
+    while (i--)
+    {
+        if (eventObj[i]['element'] === element)
+        {
+            this.__removeListener(eventObj[i]['element'], type, eventObj[i]['handler'], eventObj[i]['useCapture']);
+
+            this._events[type].splice(i, 1);
+        }
+    }
+}
+
+
+
+/**
+ * Removes a listener from the element
+ *
+ * @access {private}
+ * @param  {node}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ */
+__removeListener(el, eventName, handler, useCapture)
+{
+    if (el.removeEventListener)
+    {
+        el.removeEventListener(eventName, handler, useCapture);
+    }
+    else
+    {
+        el.detachEvent('on' + eventName, handler, useCapture);
+    }
+}
+
+		/**
+ * Is this a mobile user agent?
+ *
+ * @return {bool}
+ */
+is_retina()
+{
+    var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
+                      (min--moz-device-pixel-ratio: 1.5),\
+                      (-o-min-device-pixel-ratio: 3/2),\
+                      (min-resolution: 1.5dppx)";
+
+    if (window.devicePixelRatio > 1)
+    {
+        return true;
+    }
+
+    if (window.matchMedia && window.matchMedia(mediaQuery).matches)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+		/**
+ * Parse url
+ *
+ * @param  {string}    str       The URL to parse. Invalid characters are replaced by _.
+ * @return {object}
+ */
+parse_url(str)
+{
+    var ret = {};
+    var url = new URL(str);
+
+    if (url.search)
+    {
+        var queries = url.search.substring(1).split('&');
+        var qret    = {};
+        this.foreach(queries, function(i, query)
+        {
+            if (query.includes('='))
+            {
+                var set   = query.split('=');
+                var key   = decodeURI(set[0].trim());
+                var val   = true;
+
+                if (set.length === 2)
+                {
+                    val = set[1].trim();
+                }
+
+                if (key !== '' && val !== '')
+                {
+                    qret[key] = val;
+                }
+            }
+            else
+            {
+                qret[query] = true;
+            }
+        });
+
+        url.query = qret;
+    }
+
+    return url;
+}
+		/**
+ * Gets url query
+ *
+ * @access {public}
+ * @param  {string}  name String query to get (optional)
+ * @return {object|string}
+ */
+url_query(name)
+{
+    var results = {};
+
+    if (window.location.search !== '')
+    {
+        var params = window.location.search.substring(1).split('&');
+
+        for (var i = 0; i < params.length; i++)
+        {
+            if (!params[i].includes('='))
+            {
+                continue;
+            }
+
+            var split = params[i].split('=');
+
+            results[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
+        }
+    }
+
+    // No param return all url query
+    if (typeof name === 'undefined')
+    {
+        return results;
+    }
+
+    name = decodeURIComponent(name);
+
+    if (name in results)
+    {
+        return results[name];
+    }
+
+    return false;
+}
+		/**
+ * Clones any variables
+ * 
+ * @param   {mixed}  mixed_var
+ * @param   {mixed}  context   Context to bind functions
+ * @returns {mixed}
+ */
+clone_deep(mixed_var, context)
+{
+    let ret = this.__cloneVar(mixed_var, context, false);
+
+    CURR_CLONES = new WeakMap();
+
+    return ret;
 }
 
 /**
@@ -7168,94 +4488,1375 @@ __cloneTypedArray(typedArray)
     return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
 }
 
+
 /**
- * Removes all registered event listners on an element
- *
- * @access {private}
- * @param  {node}    element Target node element
+ * Binds a function so that it can be identified.
+ * 
+ * @param   {function}  b
+ * @returns {boolean}
  */
-__removeElementListeners(element)
+__bind(func, context)
 {
-    var events = this._events;
-    for (var eventName in events)
+    context = typeof context === 'undefined' ? window : context;
+
+    const bound = func.bind(context);
+
+    bound.__isBound = true;
+
+    bound.__boundContext = context;
+
+    bound.__origional = func;
+
+    return bound;
+}
+
+		/**
+ * Creates a new object in 'dot.notation'
+ * 
+ * @param   {Object} obj Object
+ * @returns {Object} 
+ */
+dotify(obj)
+{
+    var res = {};
+
+    function recurse(obj, current)
     {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
+        for (var key in obj)
         {
-            if (eventObj[i]['element'] === element)
+            var value = obj[key];
+            var newKey = (current ? current + '.' + key : key); // joined key with dot
+
+            if (value && typeof value === 'object' && !(value instanceof Date))
             {
-                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-                this._events[eventName].splice(i, 1);
+                recurse(value, newKey); // it's a nested object, so do it again
+            }
+            else
+            {
+                res[newKey] = value; // it's not an object, so set the property
             }
         }
     }
+
+    recurse(obj);
+
+    return res;
+}
+		/**
+ * Extends a function with prototype inheritance.
+ *
+ * @param   {function}           baseFunc    Base function to extend
+ * @param   {function}           extendFunc  Function to get extended.
+ * @param   {undefined|boolean}  callSuper   If true "extendFunc" is treated as a constructor and the BaseFunc / any nested prototypes will get instantiated. (default true)
+ * @returns {function}
+ */
+extend(baseFunc, extendFunc, callSuper)
+{
+    callSuper = this.is_undefined(callSuper) ? true : callSuper;
+
+    const oldConstructor = extendFunc.prototype.constructor;
+    const constructors = [...this.__protoConstructors(baseFunc), oldConstructor];
+    const newProto = function() {};
+    const oldProto = extendFunc.prototype;
+    const fncName = extendFunc.name;
+
+    newProto.prototype = oldProto;
+
+    Object.setPrototypeOf(oldProto, baseFunc.prototype);
+
+    Object.setPrototypeOf(extendFunc, newProto);
+
+    if (callSuper)
+    {
+        extendFunc = function()
+        {
+            let args = TO_ARR.call(arguments);
+
+            let _this = this;
+
+            this.each(constructors, function(i, constr)
+            {
+                if (constr.name !== 'Object')
+                {
+                    this.__bind(constr, _this).apply(_this, args);
+                }
+            }, this);
+        };
+    }
+
+    extendFunc.prototype = oldProto;
+
+    this.__applyStatics(constructors, extendFunc);
+
+    extendFunc.prototype.constructor = extendFunc;
+
+    Object.defineProperty(extendFunc, 'name', { value: fncName, writable: false });
+
+    return extendFunc;
 }
 
 /**
- * Removes all registered event listners of a specific type on an element
+ * Returns an array of prototype constructors nested inside a function.
  *
- * @access {private}
- * @param  {node}    element Target node element
- * @param  {string}  type    Event listener type
+ * @private
+ * @param   {function}  func  Function to loop
+ * @returns {array}
  */
-__removeElementTypeListeners(element, type)
+__protoConstructors(func)
 {
-    var eventObj = this._events[type];
-    var i = eventObj.length;
-    while (i--)
-    {
-        if (eventObj[i]['element'] === element)
-        {
-            this.__removeListener(eventObj[i]['element'], type, eventObj[i]['handler'], eventObj[i]['useCapture']);
+    let protos = [];
+    let proto = func.prototype || Object.getPrototypeOf(func);
 
-            this._events[type].splice(i, 1);
+    while (proto && proto.constructor)
+    {
+        // recursive stopper
+        if (protos.includes.proto)
+        {
+            break;
+        }
+
+        protos.push(proto.constructor);
+
+        proto = proto.prototype || Object.getPrototypeOf(proto);
+    }
+
+    return protos.reverse();
+}
+
+/**
+ * Apply static properties to extended function.
+ *
+ * @private
+ * @param  {array}     constructors  Array of prototype chain constructors
+ * @param  {function}  func          Function to apply props to
+ */
+__applyStatics(constructors, func)
+{
+    this.each(constructors, function(i, constructor)
+    {
+        let props = Object.keys(constructor).filter(key => !PROTO_EXCLUDES.includes(key));
+
+        if (props.length)
+        {
+            this.each(props, function(i, key)
+            {
+                let prop = constructor[key];
+
+                if (this.is_function(prop))
+                {
+                    prop = this.__bind(prop, func);
+                }
+
+                func[key] = prop;
+
+            }, this);
+        }
+    }, this);
+}
+
+		/**
+ * Joins an object into a string
+ * 
+ * @param   {Object} obj       Object
+ * @param   {string} seperator Seperator Between key & value
+ * @param   {string} glue      Glue between value and next key
+ * @returns {string} 
+ */
+join_obj(obj, seperator, glue, recursive)
+{
+    seperator = this.is_undefined(seperator) ? '' : seperator;
+    glue      = this.is_undefined(glue) ? '' : glue;
+    recursive = this.is_undefined(recursive) ? false : recursive;
+    
+    var ret = '';
+
+    this.each(obj, function(key, val)
+    {
+        if (this.is_object(val))
+        {
+            val = recursive ? '{' + this.join_obj(val, seperator, glue, recursive) + '}' : {};
+        }
+        else if (this.is_array(val))
+        {
+            val = recursive ? this.join_obj(val, seperator, glue, recursive) : val.join(', ').replaceAll('[object Object]', '{}');
+        }
+        else
+        {            
+            val = `${val}`;
+        }
+
+        ret += `${glue}${key}${seperator}${val}`;
+
+    }, this);
+
+    if (ret === `${glue}${seperator}`) return '';
+
+    return this.rtrim(this.ltrim(ret, glue), seperator);
+}
+		/**
+ * Deep merge two objects.
+ * 
+ * @param   {object} target
+ * @param   {object} ...sources
+ * @returns {object}
+ */
+merge_deep()
+{
+    let args = TO_ARR.call(arguments);
+
+    // No args
+    if (args.length === 0)
+    {
+        throw new Error('Nothing to merge.');
+    }
+    // Single arg
+    else if (args.length === 1)
+    {
+        return args[1];
+    }
+
+    // Must be an object
+    if (!this.is_object(args[0]))
+    {
+        throw new Error('Arguments must be an object.');
+    }
+
+    // Remove first and cache
+    let first = args.shift();
+
+    this.each(args, function(i, arg)
+    {
+        if (!this.is_object(arg))
+        {
+            throw new Error('Arguments must be an object.');
+        }
+
+        let cloned = this.clone_deep(arg, first);
+
+        this.each(cloned, function(k, v)
+        {
+            first[k] = v;
+        });
+        
+    }, this);
+
+    return first;
+}
+		/**
+ * Returns an immutable object with set,get,isset,delete methods that accept dot.notation.
+ *
+ * @returns {object}
+ */
+obj()
+{
+    return new __MAP;
+}
+
+/**
+ * Recursively delete from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+__arrayDeleteRecursive(keys, object)
+{
+    var key = keys.shift();
+
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        if (TO_STR.call(object) === '[object Array]')
+        {
+            object.splice(key, 1);
+        }
+        else
+        {
+            delete object[key];
         }
     }
+
+    if (!object[key])
+    {
+        return false;
+    }
+
+    return this.__arrayDeleteRecursive(keys, object[key]);
 }
 
 /**
- * Adds a listener to the element
+ * Recursively search from array/object.
  *
- * @access {private}
- * @param  {node}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
  */
-__addListener(el, eventName, handler, useCapture)
+__arrayGetRecursive(keys, object)
 {
-    if (el.addEventListener)
+    var key = keys.shift();
+    var islast = keys.length === 0;
+
+    if (islast)
     {
-        el.addEventListener(eventName, handler, useCapture);
+        return object[key];
     }
-    else
+
+    if (!object[key])
     {
-        el.attachEvent('on' + eventName, handler, useCapture);
+        return undefined;
     }
+
+    return this.__arrayGetRecursive(keys, object[key]);
 }
 
 /**
- * Removes a listener from the element
+ * Recursively set array/object.
  *
- * @access {private}
- * @param  {node}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param {array}          keys     Keys in search order
+ * @param {mixed}          value    Value to set
+ * @param {object|array}   object   Object to get from
+ * @param {string|number}  nextKey  Next key to set
  */
-__removeListener(el, eventName, handler, useCapture)
+__arraySetRecursive(keys, value, object, nextKey)
 {
-    if (el.removeEventListener)
+    var key = keys.shift();
+    var islast = keys.length === 0;
+    var lastObj = object;
+    object = !nextKey ? object : object[nextKey];
+
+    // Trying to set a value on nested array that doesn't exist
+    if (!['object', 'function'].includes(typeof object))
     {
-        el.removeEventListener(eventName, handler, useCapture);
+        throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
     }
-    else
+
+    if (!object[key])
     {
-        el.detachEvent('on' + eventName, handler, useCapture);
+        // Trying to put object key into an array
+        if (TO_STR.call(object) === '[object Array]' && typeof key === 'string')
+        {
+            var converted = Object.assign({}, object);
+
+            lastObj[nextKey] = converted;
+
+            object = converted;
+        }
+
+        if (keys[0] && typeof keys[0] === 'string')
+        {
+            object[key] = {};
+        }
+        else
+        {
+            object[key] = [];
+        }
     }
+
+    if (islast)
+    {
+        object[key] = value;
+
+        return;
+    }
+
+    this.__arraySetRecursive(keys, value, object, key);
 }
 
+/**
+ * Segments an array/object path using from "dot.notation" into an array of keys in order.
+ *
+ * @param   {string}  path Path to parse
+ * @returns {array}
+ */
+__arrayKeySegment(path)
+{
+    var result = [];
+    var segments = path.split('.');
+
+    for (var i = 0; i < segments.length; i++)
+    {
+        var segment = segments[i];
+
+        if (!segment.includes('['))
+        {
+            result.push(segment);
+
+            continue;
+        }
+
+        var subSegments = segment.split('[');
+
+        for (var j = 0; j < subSegments.length; j++)
+        {
+            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
+            {
+                result.push(parseInt(subSegments[j].replace(']')));
+            }
+            else if (subSegments[j] !== '')
+            {
+                result.push(subSegments[j])
+            }
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Recursively delete from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+__arrayDeleteRecursive(keys, object)
+{
+    var key = keys.shift();
+
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        if (TO_STR.call(object) === '[object Array]')
+        {
+            object.splice(key, 1);
+        }
+        else
+        {
+            delete object[key];
+        }
+    }
+
+    if (!object[key])
+    {
+        return false;
+    }
+
+    return this.__arrayDeleteRecursive(keys, object[key]);
+}
+		/**
+ * Clone an object
+ * 
+ * @access {public}
+ * @param  {object}  src       The object to clone
+ * @return {object}
+ */
+obj_clone(src)
+{
+    var clone = {};
+
+    for (var prop in src)
+    {
+        if (src.hasOwnProperty(prop))
+        {
+            clone[prop] = src[prop];
+        }
+    }
+    return clone;
+}
+		/**
+ * Returns object properties and methods as array of keys.
+ * 
+ * @param   {mixed}    mixed_var    Variable to test
+ * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+ * @returns {array}
+ */
+object_props(mixed_var, withMethods)
+{
+    withMethods = typeof withMethods === 'undefined' ? true : false;
+
+    let keys = Object.keys(mixed_var);
+
+    if (withMethods)
+    {
+        let protos = [];
+        let funcs = Object.getOwnPropertyNames(mixed_var);
+        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+
+        while (proto)
+        {
+            // recursive stopper
+            if (protos.includes.proto)
+            {
+                break;
+            }
+
+            protos.push(proto);
+
+            let protoFuncs = Object.getOwnPropertyNames(proto);
+
+            funcs = [...funcs, ...protoFuncs];
+
+            proto = proto.prototype || Object.getPrototypeOf(proto);
+        }
+
+        keys = [...keys, ...funcs];
+    }
+
+    return this.array_unique(keys.filter(function(key)
+    {
+        return !PROTO_EXCLUDES.includes(key);
+    }));
+}
+		camel_case_to_hyphen(str)
+{
+    return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1-$2$3').toLowerCase();
+}
+		/**
+ * Json encode
+ * 
+ * @param  {mixed} str String JSON
+ * @return {object|false}
+ */
+json_decode(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.parse(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+		/**
+ * Json encode
+ * 
+ * @param  {mixed} str String JSON
+ * @return {object|false}
+ */
+json_encode(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.stringify(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+		/**
+ * Left trim string 
+ * 
+ * @param  {str}           str
+ * @return {array|string} charlist (optional)
+ */
+ltrim(str, charlist)
+{
+    // Special fast cases
+    if (!charlist) return str.trimStart();
+
+    if (this.is_string(charlist))
+    {
+        return str.slice(0, charlist.length) === charlist ? str.replace(charlist, '') : str;
+    }
+
+    var ret = str;
+
+    this.each(charlist, function(i, char)
+    {
+        if (str.slice(0, char.length) === char)
+        {
+            ret = str.replace(char, '');
+            
+            // break            
+            return false;
+        }
+
+    }, this);
+
+    return ret;
+}
+
+
+		/**
+ * Make a random string
+ *
+ * @param  {int}    length String length
+ * @return {string}
+ */
+makeid(length)
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    for (var i = 0; i < length; i++)
+    {
+        text += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+
+    return text;
+}
+		/**
+ * Left trim string 
+ * 
+ * @param  {str}           str
+ * @return {array|string} charlist (optional)
+ */
+rtrim(str, charlist)
+{
+    if (!charlist) return str.trimEnd();
+
+    if (this.is_string(charlist))
+    {
+        let len = charlist.length; 
+
+        return str.slice(-len) === charlist ? str.slice(0, -len) : str;
+    }
+
+    var ret = str;
+
+    this.each(charlist, function(i, chars)
+    {
+        var len = chars.length;
+
+        if (str.slice(-len) === chars)
+        {
+            ret = str.slice(0, -len);
+
+            return false;
+        }
+
+    }, this);
+
+    return ret;
+}
+		to_camel_case(str)
+{
+    str = str.trim();
+
+    // Shouldn't be changed
+    if (!str.includes(' ') && !str.includes('-') && /[A-Z]/.test(str))
+    {
+        return str;
+    }
+
+    return str.toLowerCase().replace(/['"]/g, '').replace(/\W+/g, ' ').replace(/ (.)/g, function($1)
+    {
+        return $1.toUpperCase();
+    })
+    .replace(/ /g, '');
+}
+		/**
+ * Left and right trim string.
+ * 
+ * @param  {str}           str
+ * @return {array|string} charlist (optional)
+ */
+trim(str, charlist)
+{
+    if (!charlist) return str.trim();
+
+    return this.rtrim(this.ltrim(str, charlist), charlist);
+}
+		/* Capatalize first letter */
+uc_first(string)
+{
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+		/* Capatalize first letter of all words */
+ucwords(str)
+{
+    return (str + '').replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1)
+    {
+        return $1.toUpperCase();
+    });
+}
+		/**
+ * Checks if variable should be considered "true" or "false" using "common sense".
+ * 
+ * @param   {mixed} mixed_var  Variable to test
+ * @returns {boolean}
+ */
+bool(mixed_var)
+{
+    mixed_var = (typeof mixed_var === 'undefined' ? false : mixed_var);
+
+    if (this.is_bool(mixed_var))
+    {
+        return mixed_var;
+    }
+
+    if (this.is_number(mixed_var))
+    {
+        return mixed_var > 0;
+    }
+
+    if (this.is_array(mixed_var))
+    {
+        return mixed_var.length > 0;
+    }
+
+    if (this.is_object(mixed_var))
+    {
+        return Object.keys(mixed_var).length > 0;
+    }
+
+    if (this.is_string(mixed_var))
+    {
+        mixed_var = mixed_var.toLowerCase().trim();
+
+        if (mixed_var === 'false')
+        {
+            return false;
+        }
+        if (mixed_var === 'true')
+        {
+            return true;
+        }
+        if (mixed_var === 'on')
+        {
+            return true;
+        }
+        if (mixed_var === 'off')
+        {
+            return false;
+        }
+        if (mixed_var === 'undefined')
+        {
+            return false;
+        }
+        if (this.is_numeric(mixed_var))
+        {
+            return Number(mixed_var) > 0;
+        }
+        if (mixed_var === '')
+        {
+            return false;
+        }
+    }
+
+    return false;
+}
+
+		/**
+ * Returns function / class name
+ *
+ * @param   {mixed}  mixed_var Variable to evaluate
+ * @returns {string}
+ */
+callable_name(mixed_var)
+{
+    if (this.is_callable(mixed_var))
+    {
+        return mixed_var.name;
+    }
+    else if (this.is_object(mixed_var))
+    {
+        return mixed_var.constructor.name;
+    }
+}
+		/**
+ * Count
+ *
+ * @access {public}
+ * @param  {mixed}  mixed_var Variable to count
+ * @return {int}
+ */
+count(mixed_var)
+{
+    return this.size(mixed_var);
+}
+		/**
+ * Checks if HtmlElement is in current DOM
+ *
+ * @param   {HTMLElement}  element  Element to check
+ * @returns {boolean}
+ */
+in_dom(element)
+{
+    if (!this.is_htmlElement(element))
+    {
+        return false;
+    }
+
+    if (element === document.body || element === document.documentElement)
+    {
+        return true;
+    }
+
+    while (element)
+    {
+        if (element === document.documentElement)
+        {
+            return true;
+        }
+
+        element = element.parentNode;
+    }
+
+    return false;
+}
+		/**
+ * Is args array.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_args(mixed_var)
+{
+    return this.var_type(mixed_var) === ARGS_TAG;
+}
+		/**
+ * Is array.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_array(mixed_var, strict)
+{
+    strict = typeof strict === 'undefined' ? false : strict;
+
+    let type = this.var_type(mixed_var);
+
+    return !strict ? ARRAYISH_TAGS.includes(type) : type === ARRAY_TAG;
+}
+		/**
+ * Is bool.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_bool(mixed_var)
+{
+    return this.var_type(mixed_var) === BOOL_TAG;
+}
+		/**
+ * Is Array buffer.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_buffer(mixed_var)
+{
+    return this.var_type(mixed_var) === ARRAY_BUFFER_TAG;
+}
+		/**
+ * Is variable a function / constructor.
+ *
+ * @param   {mixed}  mixed_var  Variable to check
+ * @returns {boolean}
+ */
+is_callable(mixed_var)
+{
+    return this.is_function(mixed_var);
+}
+		/**
+ * Checks if variable is a class declaration or extends a class and/or constructable function.
+ *
+ * @param   {mixed}                        mixed_var  Variable to evaluate
+ * @oaram   {string} | undefined | boolean} classname  Classname or strict if boolean provided
+ * @param   {boolean}                      strict     If "true" only returns true on ES6 classes (default "false")
+ * @returns {boolean}
+ */
+is_class(mixed_var, classname, strict)
+{
+    // this.is_class(foo, true)
+    if (classname === true || classname === false)
+    {
+        strict = classname;
+        classname = null;
+    }
+    // this.is_class(foo, 'Bar') || this.is_class(foo, 'Bar', false)
+    else
+    {
+        strict = typeof strict === 'undefined' ? false : strict;
+    }
+
+    if (typeof mixed_var !== 'function' || !this.is_constructable(mixed_var))
+    {
+        return false;
+    }
+
+    let isES6 = /^\s*class\s+\w+/.test(mixed_var.toString());
+
+    if (classname)
+    {
+        if (!isES6 && strict)
+        {
+            return false;
+        }
+
+        if (mixed_var.name === classname || mixed_var.prototype.constructor.name === classname)
+        {
+            return true;
+        }
+
+        let protos = [];
+        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+        let ret = false;
+
+        while (proto && proto.constructor)
+        {
+            // recursive stopper
+            if (protos.includes.proto)
+            {
+                break;
+            }
+
+            protos.push(proto);
+
+            if (proto.constructor.name === classname)
+            {
+                ret = true;
+
+                break;
+            }
+
+            proto = proto.prototype || Object.getPrototypeOf(proto);
+        }
+
+        return ret;
+    }
+
+    // ES6 class declaration depending on strict
+
+    return strict ? isES6 : this.is_constructable(mixed_var);
+}
+		/**
+ * Checks if variable is construable.
+ *
+ * @param   {mixed}  mixed_var  Variable to evaluate
+ * @returns {boolean}
+ */
+is_constructable(mixed_var)
+{
+    // Not a function
+    if (typeof mixed_var !== 'function' || mixed_var === null)
+    {
+        return false;
+    }
+
+    // Strict ES6 class
+    if (/^\s*class\s+\w+/.test(mixed_var.toString()))
+    {
+        return true;
+    }
+
+    // Native arrow functions
+    if (!mixed_var.prototype || !mixed_var.prototype.constructor)
+    {
+        return false;
+    }
+
+    // If prototype is empty 
+    let props = this.object_props(mixed_var.prototype);
+
+    return props.length >= 1;
+}
+		/**
+ * Is dataView obj.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_dataview(mixed_var)
+{
+    return this.var_type(mixed_var) === DATAVIEW_TAG;
+}
+		/**
+ * Is date object.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_date(mixed_var)
+{
+    return this.var_type(mixed_var) === DATE_TAG;
+}
+		/**
+ * Is empty
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_empty(mixed_var)
+{
+    if (mixed_var === false || mixed_var === null || (typeof mixed_var === 'undefined'))
+    {
+        return true;
+    }
+    else if (this.is_array(mixed_var))
+    {
+        return mixed_var.length === null || mixed_var.length <= 0;
+    }
+    else if (this.is_object(mixed_var))
+    {
+        return Object.keys(mixed_var).length === 0;
+    }
+    else if (this.is_string(mixed_var))
+    {
+        return mixed_var.trim() === '';
+    }
+    else if (this.is_number(mixed_var))
+    {
+        return isNaN(mixed_var);
+    }
+    else if (this.is_function(mixed_var))
+    {
+        return false;
+    }
+
+    return false;
+}
+		/**
+ * Deep check for equal
+ * 
+ * @param   {mixed}  a
+ * @param   {mixed}  b
+ * @param   {bool}   strict Strict comparison (optional) (default false)
+ * @returns {bool}
+ * 
+ *  * Note that strict set to true would return false in the following:
+ *  is_equal ({ foo : 'bar'}, { foo : 'bar'});
+ */
+is_equal(a, b, strict)
+{
+    strict = this.is_undefined(strict) ? false : strict;
+
+    if ((typeof a) !== (typeof b))
+    {
+        return false;
+    }
+    else if (this.is_string(a) || this.is_number(a) || this.is_bool(a) || this.is_null(a))
+    {
+        return a === b;
+    }
+    else if (this.is_function(a))
+    {
+        return this.___equalFunction(a, b);
+    }
+    else if (this.is_array(a) || this.is_object(b))
+    {
+        if (strict)
+        {
+            if (a !== b || this.is_array(a) && !this.is_array(b))
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        return this.__equalTraverseable(a, b);
+    }
+
+    return true;
+}
+
+/**
+ * Checks if two functions are equal
+ * 
+ * @param   {function}  a
+ * @param   {function}  b
+ * @returns {boolean}
+ */
+___equalFunction(a, b)
+{
+    // They're not technically equal
+    if (a !== b)
+    {
+        // Functions have the same name
+        if (a.name === b.name)
+        {
+            // If the functions were bound or cloned by the library they can technically still be equal
+            if ( a.name.includes('bound '))
+            {
+                return a.this.__isBound === b.this.__isBound && a.this.__boundContext === b.this.__boundContext && a.this.__origional === b.this.__origional;
+            }
+
+            // Native arrow functions
+            if (!a.prototype || !a.prototype.constructor)
+            {
+                return false;
+            }
+
+            // Check the prototypes
+            let aProps = object_props(a.prototype);
+            let bProps = object_props(b.prototype);
+
+            if (aProps.length === 0 && bProps.length === 0) return true;
+
+            let ret = true;
+
+            this.each(aProps, function(i, key)
+            {                
+                if (!this.is_equal(a.prototype[key], b.prototype[key]))
+                {
+                    ret = false;
+
+                    return false;
+                }
+            }, this);
+
+            return ret;
+        }
+
+        return false;
+    }
+
+    return true;
+}
+
+
+/**
+ * Checks if traversable's are equal
+ * 
+ * @param   {array} | object}  a
+ * @param   {array} | object}  b
+ * @returns {boolean}
+ */
+__equalTraverseable(a, b)
+{
+    if (this.size(a) !== this.size(b))
+    {
+        return false;
+    }
+
+    let ret = true;
+
+    this.each(a, function(i, val)
+    {
+        if (!this.is_equal(val, b[i]))
+        {
+            ret = false;
+
+            return false;
+        }
+    }, this);
+
+    return ret;
+}
+
+		/**
+ * Is function.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_function(mixed_var)
+{
+    return this.var_type(mixed_var) === FUNC_TAG;
+}
+		/**
+ * Checks if variable is HTMLElement.
+ *
+ * @param   {mixed}  mixed_var  Variable to evaluate
+ * @returns {boolean}
+ */
+is_htmlElement(mixed_var)
+{
+    if (mixed_var && mixed_var.nodeType)
+    {
+        let type = this.var_type(mixed_var);
+
+        return HTML_REGXP.test(type) || type === '[object HTMLDocument]' || type === '[object Text]';
+    }
+
+    return false;
+}
+		/**
+ * Is valid JSON
+ * 
+ * @param  {mixed} str String JSON
+ * @return {object|false}
+ */
+is_json(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.parse(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+
+
+		/**
+ * Is Map.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_map(mixed_var)
+{
+    return this.var_type(mixed_var) === MAP_TAG;
+}
+		/**
+ * Is node type.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @param   {string} tag        Tag to compare
+ * @returns {boolean}
+ */
+is_node_type(mixed_var, tag)
+{
+    return mixed_var.tagName.toUpperCase() === tag.toUpperCase();
+}
+
+		/**
+ * Is nodelist.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_nodelist(mixed_var)
+{
+    return this.var_type(mixed_var) === NODELST_TAG;
+}
+		/**
+ * Is null.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_null(mixed_var)
+{
+    return this.var_type(mixed_var) === NULL_TAG;
+}
+		/**
+ * Is number.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_number(mixed_var)
+{
+    return !isNaN(mixed_var) && this.var_type(mixed_var) === NUMBER_TAG;
+}
+		/**
+ * Is string.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_numeric(mixed_var)
+{
+    if (this.is_number(mixed_var))
+    {
+        return true;
+    }
+    else if (this.is_string(mixed_var))
+    {
+        return /^-?\d+$/.test(mixed_var.trim());
+    }
+
+    return false;
+}
+		/**
+ * Checks if variable is an object.
+ *
+ * @param   {mixed}  mixed_var Variable to evaluate
+ * @returns {boolean}
+ */
+is_object(mixed_var)
+{
+    return mixed_var !== null && this.var_type(mixed_var) === OBJECT_TAG;
+}
+		/**
+ * Is regexp.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_regexp(mixed_var)
+{
+    return this.var_type(mixed_var) === REGEXP_TAG;
+}
+		/**
+ * Is Set.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_set(mixed_var)
+{
+    return this.var_type(mixed_var) === SET_TAG;
+}
+		/**
+ * Is string.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_string(mixed_var)
+{
+    return this.var_type(mixed_var) === STRING_TAG;
+}
+		/**
+ * Is Symbol.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_symbol(mixed_var)
+{
+    return this.var_type(mixed_var) === SYMBOL_TAG;
+}
+		/**
+ * Is undefined.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+is_undefined(mixed_var)
+{
+    return this.var_type(mixed_var) === UNDEF_TAG;
+}
+		/**
+ * Returns array/object/string/number size.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {number}
+ */
+size(mixed_var)
+{
+    if (this.is_string(mixed_var) || this.is_array(mixed_var))
+    {
+        return mixed_var.length;
+    }
+    else if (this.is_number(mixed_var))
+    {
+        return mixed_var;
+    }
+    else if (this.is_bool(mixed_var))
+    {
+        return mixed_var === true ? 1 : -1;
+    }
+    else(this.is_object(mixed_var))
+    {
+        return Object.keys(mixed_var).length;
+    }
+
+    return 1;
+}
+
+		/**
+ * Gets the `toStringTag` of `value`.
+ *
+ * @public
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+var_type(value)
+{
+    if (value == null)
+    {
+        return value === undefined ? '[object Undefined]' : '[object Null]'
+    }
+
+    return TO_STR.call(value);
+}
 		 // Destructor
     destruct()
     {
@@ -7267,6 +5868,7 @@ Container.singleton('Helper', HelperJS);
 
 console.log(Container.get('Helper'));
 })();
+
 
 // Vendors
 (function()

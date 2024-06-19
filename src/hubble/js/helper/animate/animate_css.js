@@ -1,13 +1,4 @@
 /**
- * Helper Animation component
- *
- * @author    Joe J. Howard
- * @copyright Joe J. Howard
- * @license   https://github.com/kanso-cms/cms/blob/master/LICENSE
- */
-
-
-/**
  * CSS Animation.
  *
  * @access {private}
@@ -35,7 +26,7 @@
 animate_css(DOMElement, options)
 {    
     // Call does not from factory need to sanitize
-    options = !options.FROM_FACTORY ? this._animation_factory(DOMElement, options) : options;
+    options = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
 
     // Is this a mutli transition
     var isMulti = this.size(options > 1);
