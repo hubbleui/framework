@@ -58,14 +58,14 @@ $body-color-darkmode:           var(--hb-white) !default;
 // These are used in root.scss to generate color palettes
 $colors:
 (
-    "gray":                     $gray,
-    "brand-primary":            $brand-primary,
-    "brand-secondary":          $brand-secondary,
-    "brand-success":            $brand-success,
-    "brand-info":               $brand-info,
-    "brand-warning":            $brand-warning,
-    "brand-danger":             $brand-danger,
-    "on-primary":               $on-primary
+    'gray':                     $gray,
+    'brand-primary':            $brand-primary,
+    'brand-secondary':          $brand-secondary,
+    'brand-success':            $brand-success,
+    'brand-info':               $brand-info,
+    'brand-warning':            $brand-warning,
+    'brand-danger':             $brand-danger,
+    'on-primary':               $on-primary
 ) !default;
 
 // Contexts
@@ -73,15 +73,15 @@ $colors:
 // to things like buttons, badges, labels etc...
 $contexts:
 (
-    "primary":                  ("contrast" : var(--hb-white), "color": var(--hb-brand-primary)),
-    "secondary":                ("contrast" : var(--hb-white), "color": var(--hb-brand-secondary)),
-    "info":                     ("contrast" : var(--hb-white), "color": var(--hb-brand-info)),
-    "success":                  ("contrast" : var(--hb-white), "color": var(--hb-brand-success)),
-    "warning":                  ("contrast" : var(--hb-white), "color": var(--hb-brand-warning)),
-    "danger":                   ("contrast" : var(--hb-white), "color": var(--hb-brand-danger)),
-    "white":                    ("contrast" : var(--hb-black), "color": var(--hb-white)),
-    "black":                    ("contrast" : var(--hb-white), "color": var(--hb-black)),
-    "on-primary":               ("contrast" : var(--hb-white), "color": var(--hb-on-primary)),
+    'primary':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-primary)),
+    'secondary':                ('contrast' : var(--hb-white), 'color': var(--hb-brand-secondary)),
+    'info':                     ('contrast' : var(--hb-white), 'color': var(--hb-brand-info)),
+    'success':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-success)),
+    'warning':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-warning)),
+    'danger':                   ('contrast' : var(--hb-white), 'color': var(--hb-brand-danger)),
+    'white':                    ('contrast' : var(--hb-black), 'color': var(--hb-white)),
+    'black':                    ('contrast' : var(--hb-white), 'color': var(--hb-black)),
+    'on-primary':               ('contrast' : var(--hb-white), 'color': var(--hb-on-primary)),
 ) !default;
 
 // Global font families
@@ -137,8 +137,8 @@ $breakpoint-lg:                 992px !default;
 $breakpoint-xl:                 1200px !default;
 
 // Base transitions
-$base-easing:                   cubic-bezier(.4,0,1,1) !default;
-$base-easing-time:              .2s !default;
+$base-easing:                   var(--hb-ease-in-out-circ) !default;
+$base-easing-time:              var(--hb-ease-time-sm) !default;
 
 // Raised levels
 $raised-level-one:              0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !default;
@@ -435,70 +435,125 @@ $scrollbar-handle-active:       rgba(0, 0, 0, 0.35) !default;
 // Frontdrop
 
 // Backdrop
+$backdrop-bg:                   var(--hb-brand-primary) !default;
+$backdrop-color:                var(--hb-white) !default;
+$backdrop-shadow:               rgb(0 0 0 / 20%) 0px -5px 5px -3px, rgb(0 0 0 / 14%) 0px -8px 10px -1px, rgb(0 0 0 / 12%) 0px -6px 14px -6px !default;
 
 // Drawer
 $drawer-width:                  540px !default;
 
 // Smart search
 
-// Zindexs
-$z-index-tooltip:               100 !default;
-$z-index-popover:               200 !default;
-$z-index-dropdown:              300 !default;
-$z-index-drawer:                400 !default;
-$z-index-notification:          500 !default;
-$z-index-modal:                 600 !default;
-
 // Responsive breakpoints
 $breakpoints:
 (
-    "xs":                       $breakpoint-xs,
-    "sm":                       $breakpoint-sm,
-    "md":                       $breakpoint-md,
-    "lg":                       $breakpoint-lg,
-    "xl":                       $breakpoint-xl,
+    'xs':                       $breakpoint-xs,
+    'sm':                       $breakpoint-sm,
+    'md':                       $breakpoint-md,
+    'lg':                       $breakpoint-lg,
+    'xl':                       $breakpoint-xl,
 ) !default;
 
 // Grid gutters
 $grid-gutters:
 (
-    "xxs":                      0.5rem,
-    "xs":                       1.5rem,
-    "sm":                       2.0rem,
-    "md":                       2.5rem,
-    "lg":                       3.0rem,
-    "xl":                       3.5rem,
+    'xxs':                      0.5rem,
+    'xs':                       1.5rem,
+    'sm':                       2.0rem,
+    'md':                       2.5rem,
+    'lg':                       3.0rem,
+    'xl':                       3.5rem,
 ) !default;
 
 // Grid roof and floors
 $grid-v-gutters:
 (
-    "xxs":                      0.5rem,
-    "xs":                       1.5rem,
-    "sm":                       3.0rem,
-    "md":                       6.0rem,
-    "lg":                       8.0rem,
-    "xl":                       10.0rem,
+    'xxs':                      0.5rem,
+    'xs':                       1.5rem,
+    'sm':                       3.0rem,
+    'md':                       6.0rem,
+    'lg':                       8.0rem,
+    'xl':                       10.0rem,
 ) !default;
 
 // Container gutters
 $container-gutters:
 (
-    "xxs":                      0.5rem,
-    "xs":                       1.5rem,
-    "sm":                       3.0rem,
-    "md":                       3.0rem,
-    "lg":                       3.0rem,
-    "xl":                       3.0rem,
+    'xxs':                      0.5rem,
+    'xs':                       1.5rem,
+    'sm':                       3.0rem,
+    'md':                       3.0rem,
+    'lg':                       3.0rem,
+    'xl':                       3.0rem,
 ) !default;
 
 // Margin sizes
 $margin-sizes:
 (
-    "xxs":                      0.5rem,
-    "xs":                       1.5rem,
-    "sm":                       3.0rem,
-    "md":                       4.5rem,
-    "lg":                       6.0rem,
-    "xl":                       8.0rem,
+    'xxs':                      0.5rem,
+    'xs':                       1.5rem,
+    'sm':                       3.0rem,
+    'md':                       4.5rem,
+    'lg':                       6.0rem,
+    'xl':                       8.0rem,
+) !default;
+
+// Easings
+$easings:
+(
+    'ease-in-sine':             'cubic-bezier(0.47, 0, 0.745, 0.715)',
+    'ease-out-sine':            'cubic-bezier(0.39, 0.575, 0.565, 1)',
+    'ease-in-out-sine':         'cubic-bezier(0.445, 0.05, 0.55, 0.95)',
+
+    'ease-in-quad':             'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
+    'ease-out-quad':            'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    'ease-in-out-quad':         'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+
+    'ease-in-cubic':            'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
+    'ease-out-cubic':           'cubic-bezier(0.215, 0.61, 0.355, 1)',
+    'ease-in-out-cubic':        'cubic-bezier(0.645, 0.045, 0.355, 1)',
+
+    'ease-in-quart':            'cubic-bezier(0.895, 0.03, 0.685, 0.22)',
+    'ease-out-quart':           'cubic-bezier(0.165, 0.84, 0.44, 1)',
+    'ease-in-out-quart':        'cubic-bezier(0.77, 0, 0.175, 1)',
+
+    'ease-in-quint':            'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
+    'ease-out-quint':           'cubic-bezier(0.23, 1, 0.32, 1)',
+    'ease-in-out-quint':        'cubic-bezier(0.86, 0, 0.07, 1)',
+
+    'ease-in-expo':             'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
+    'ease-out-expo':            'cubic-bezier(0.19, 1, 0.22, 1)',
+    'ease-in-out-expo':         'cubic-bezier(1, 0, 0, 1)',
+
+    'ease-in-circ':             'cubic-bezier(0.6, 0.04, 0.98, 0.335)',
+    'ease-out-circ':            'cubic-bezier(0.075, 0.82, 0.165, 1)',
+    'ease-in-out-circ':         'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
+
+    'ease-in-back':             'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
+    'ease-out-back':            'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+    'ease-in-out-back':         'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+
+) !default;
+
+// Easing times
+$easing-times:
+(
+    'xs':                       0.1s,
+    'sm':                       0.3s,
+    'md':                       0.5s,
+    'lg':                       1s,
+    'xl':                       3s,
+) !default;
+
+// Zindexs
+$zindexs:
+(
+    'backdrop':                 100,
+    'tooltip':                  200,
+    'popover':                  300,
+    'dropdown':                 400,
+    'drawer':                   500,
+    'frontdrop':                600,
+    'notification':             700,
+    'modal':                    800,
 ) !default;

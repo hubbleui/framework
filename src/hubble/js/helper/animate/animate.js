@@ -18,44 +18,38 @@ animate(AN_DOMElement, options)
     {
         const optionSets = this.__animation_factory(AN_DOMElement, options);
 
-        this.each(optionSets, function(i, opts)
+        if (optionSets.length > 1)
         {
-            this.animate(AN_DOMElement, opts);
+            this.each(optionSets, function(i, opts)
+            {
+                this.animate(AN_DOMElement, opts);
 
-        }, this);
+            }, this);
 
-        return;
+            return;
+        }
+        else
+        {
+            options = optionSets[0];
+        }
     }
 
     const _this = this;
 
-    // Cache variables locally for faster reading / writing
-    // Options
-    var AN_CSSProperty           =  options.property;
-    var AN_easing                =  options.easing;
-    var AN_callback              =  options.callback;
+    // Local Animation Variables
+    var AN_keyframeMap       = [];
+    var AN_currentKeyframe   = 0;
+    var AN_intervalDelay     = Math.floor(1000 / options.fps);
+    var AN_callback          = options.callback;
+    var AN_ON_COMPLETE       = () => {};
+    var an_intervalTimer;
 
-    // Mutable options
-    var AN_startValue            =  options.startValue;
-    var AN_endValue              =  options.endValue;
-    var AN_duration              =  options.duration;
+    const round = (n, dp) => 
+    {
+        const h = +('1'.padEnd(dp + 1, '0')) // 10 or 100 or 1000 or etc
 
-    // Internal trackers
-    var AN_currentValue          =  options.currentValue;
-    var AN_totalDistance         =  options.totalDistance;
-    var AN_timeLapsed            =  options.timeLapsed;
-    var AN_percentage            =  options.percentage;
-    var AN_eventTimeout          =  options.eventTimeout;
-    var AN_animationInterval     =  options.animationInterval;
-    var AN_CSSPropertyUnits      =  options.CSSPropertyUnits;
-    var AN_backwardsAnimation    =  options.backwardsAnimation;
-    var AN_animationStepDuration =  options.animationStepDuration;
-
-    // Color specific
-    var AN_isColorAnimation      =  AN_CSSProperty.includes('color');
-    var AN_colorAnimationStep    =  options.colorAnimationStep;
-    var AN_colorAnimationCount   =  options.colorAnimationCount;
-    var AN_colorGradientMap      =  options.colorGradientMap;
+        return Math.round(n * h) / h;
+    }
 
     /**
      * Initialize
@@ -64,63 +58,43 @@ animate(AN_DOMElement, options)
      */
     var init = function()
     {
-        if (AN_isColorAnimation)
+        if (options.property.includes('transform'))
         {
-            AN_endValue   = options.to;
-            AN_startValue = options.from || _this.rendered_style(AN_DOMElement, AN_CSSProperty);
-            AN_animationStepDuration = 10;
-
-            AN_colorAnimationCount = Math.floor(AN_duration / AN_animationStepDuration);
-
-            AN_colorGradientMap = generateColorGradient(AN_easing);
-
-            startColorAnimation();
-
-            return;
+            AN_keyframeMap = generateTransformKeyframes(options.property, options.from, options.to, options.duration, options.easing, AN_intervalDelay);
+        }
+        else if (options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb'))
+        {
+            AN_keyframeMap = generateColorKeyframes(options.property, options.from, options.to, options.duration, options.easing, AN_intervalDelay);
+        }
+        else
+        {
+            AN_keyframeMap = generateKeyFrames(options.property, options.from, options.to, options.duration, options.easing, AN_intervalDelay);
         }
 
-        if (AN_CSSProperty === 'transform')
-        {
-            
-
-        }
-
-        // We need to set the end value, then remove it and re-apply any inline styles if they
-        // existed
-        if (options.to === 'auto' || options.to === 'initial' || options.to === 'unset')
-        {
-            var prevStyle = _this.inline_style(AN_DOMElement, AN_CSSProperty);
-            _this.css(AN_DOMElement, AN_CSSProperty, options.to);
-            options.to = _this.rendered_style(AN_DOMElement, AN_CSSProperty);
-            _this.css(AN_DOMElement, AN_CSSProperty, prevStyle ? prevStyle : false);
-        }
-       
-        AN_endValue           = parseFloat(options.to);
-        AN_CSSPropertyUnits   = getValueUnits(options.to);
-        AN_startValue         = _this.is_undefined(options.from) ? parseFloat(_this.rendered_style(AN_DOMElement, AN_CSSProperty)) : options.from;
-        AN_totalDistance      = Math.abs(AN_endValue - AN_startValue);
-        AN_backwardsAnimation = AN_endValue < AN_startValue;
-        
-        if (AN_endValue === AN_startValue) return;
-
-        startAnimation();
+        startAnimation(options.property);
     }
 
     /**
-     * Get value units e.g (px, rem, etc...)
+     * Calculate the easing pattern.
      * 
      * @private
+     * @link    {https://gist.github.com/gre/1650294}
+     * @param   {String} type Easing pattern
+     * @param   {Number} time Time animation should take to complete
+     * @returns {Number}
      */
-    var getValueUnits = function(value)
+    var clearTransitions = function(CSSProperty)
     {
-        if (_this.is_numeric(value) && AN_CSSProperty !== 'opacity')
-        {
-            return 'px';
-        }
+        var transitions    = _this.css_transition_props(AN_DOMElement);
+        var css_transition = _this.inline_style(AN_DOMElement, 'transition'); 
 
-        value = value + '';
+        if (_this.is_empty(transitions) || !transitions[CSSProperty]) return;
 
-        return value.split(/[0-9]/).pop().replaceAll(/[^a-z%]/g, '').trim();
+        transitions[CSSProperty] = '0s linear 0s';
+
+        _this.css(AN_DOMElement, 'transition', _this.join_obj(transitions, ' ', ', '));
+
+        AN_ON_COMPLETE = () => { _this.css(AN_DOMElement, 'transition', !css_transition ? false : css_transition ); };
     }
 
     /**
@@ -128,17 +102,19 @@ animate(AN_DOMElement, options)
      * 
      * @private
      */
-    var startAnimation = function()
+    var startAnimation = function(CSSProperty)
     {
-        clearInterval(AN_animationInterval);
+        clearInterval(an_intervalTimer);
+
+        clearTransitions(CSSProperty);
 
         var _this = this;
 
-        AN_animationInterval = setInterval(function()
+        an_intervalTimer = setInterval(function()
         {
             loopAnimation();
 
-        }, AN_animationStepDuration);
+        }, AN_intervalDelay);
     }
 
     /**
@@ -147,50 +123,13 @@ animate(AN_DOMElement, options)
      * @private
      */
     var loopAnimation = function()
-    {
-        AN_timeLapsed  += AN_animationStepDuration;
-        AN_percentage   = (AN_timeLapsed / parseFloat(AN_duration, 10));
-        AN_percentage   = (AN_percentage > 1) ? 1 : AN_percentage;
-        var change = (AN_totalDistance * easingPattern(AN_easing, AN_percentage));
-        AN_currentValue = AN_backwardsAnimation ? AN_startValue - change : AN_startValue + change;
+    {        
+        const keyframe = AN_keyframeMap.shift();
+        const prop     = Object.keys(keyframe)[0];
 
-        _this.css(AN_DOMElement, AN_CSSProperty, AN_currentValue + AN_CSSPropertyUnits);
-        
-        stopAnimation();
-    }
+        _this.css(AN_DOMElement, prop, keyframe[prop]);
 
-    /**
-     * Start color animation
-     * 
-     * @private
-     */
-    var startColorAnimation = function()
-    {
-        clearInterval(AN_animationInterval);
-
-        var _this = this;
-
-        AN_animationInterval = setInterval(function()
-        {
-            loopColorAnimation();
-
-        }, AN_animationStepDuration);
-    }
-
-    /**
-     * Loop the color animation.
-     * 
-     * @private
-     */
-    var loopColorAnimation = function()
-    {
-        AN_timeLapsed += AN_animationStepDuration;
-
-        const color = AN_colorGradientMap[AN_colorAnimationStep];
-
-        _this.css(AN_DOMElement, AN_CSSProperty, color);
-
-        AN_colorAnimationStep++;
+        AN_currentKeyframe++;
 
         stopAnimation();
     }
@@ -202,11 +141,11 @@ animate(AN_DOMElement, options)
      */
     var stopAnimation = function()
     {
-        AN_currentValue = parseFloat(_this.rendered_style(AN_DOMElement, AN_CSSProperty));
-
-        if (AN_currentValue == AN_endValue || (!AN_backwardsAnimation && AN_currentValue > AN_endValue) || (AN_backwardsAnimation && AN_currentValue <= AN_endValue) || AN_colorAnimationStep > AN_colorAnimationCount || AN_timeLapsed > AN_duration)
+        if (AN_keyframeMap.length === 0)
         {
-            clearInterval(AN_animationInterval);
+            clearInterval(an_intervalTimer);
+
+            AN_ON_COMPLETE();
 
             if (_this.is_function(AN_callback))
             {
@@ -292,23 +231,164 @@ animate(AN_DOMElement, options)
      * @param  {string} funcName Easing function name
      * @return {array}
      */
-    var generateColorGradient = function(funcName)
+    var generateTransformKeyframes = function(CSSProperty, startValue, endValue, duration, easing, keyframeInterval)
     {
-        const colors = [];
+        var startValues   = _this.css_transform_props(AN_DOMElement, false);
+        var endValues     = _this.css_transform_props(endValue, false);
+        var keyFrameCount = Math.floor(duration / keyframeInterval);
+        var keyframes     = [];
 
-        const rgbStart = sanitizeColor(AN_startValue);
-        const rgbEnd   = sanitizeColor(AN_endValue);
-
-        for (let i = 0; i <= AN_colorAnimationCount; i++)
+        // If a start value was specified it gets overwritten as the transform
+        // property is singular
+        if (startValue)
         {
-            const blend = ANIMATION_EASING_FUNCTIONS[funcName](i / AN_colorAnimationCount);
-            
-            const color = mixColors(rgbStart, rgbEnd, blend);
-
-            colors.push(color);
+            startValues = _this.css_transform_props(startValue);
         }
 
-        return colors;
+        var baseTransforms = _this.join_obj(_this.map(startValues, (prop, val) => !endValues[prop] ? val : false), '(', ') ') + ')';
+
+        _this.each(endValues, function(propAxis, valueStr)
+        {
+            var startValStr        = !startValues[propAxis] ? propAxis.includes('scale') ? 1 : 0 : startValues[propAxis];
+            var startVal           = _this.css_unit_value(startValStr);
+            var endVal             = _this.css_unit_value(valueStr);
+            var startUnit          = _this.css_value_unit(startValStr);
+            var endUnit            = _this.css_value_unit(valueStr);
+            var CSSpropertyUnits   = endUnit;
+
+            if (startUnit !== endUnit)
+            {
+                // 0 no need to convert
+                if (_this.is_empty(startUnit))
+                {
+                    startUnit = endUnit;
+                }
+                else
+                {
+                    if (startUnit !== 'px') startVal = _this.css_to_px(startVal + startUnit, AN_DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                    if (endUnit !== 'px') endVal = _this.css_to_px(endVal + endUnit, AN_DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                    CSSpropertyUnits = 'px';
+                }
+            }
+
+
+            var backWardsAnimation = endValue < startValue;
+            var totalDistance      = Math.abs(backWardsAnimation ? (startVal - endVal) : (endVal - startVal));
+            var propKeyframes      = [];
+         
+
+            _this.for(keyFrameCount + 1, function(i)
+            {
+                let change   = (totalDistance * easingPattern(easing, i / keyFrameCount));
+                let keyframe = generateKeyframe('transform', backWardsAnimation ? startVal - change : startVal + change, CSSpropertyUnits, propAxis);
+
+                if (_this.is_undefined(keyframes[i]))
+                {
+                    keyframe.transform = `${baseTransforms} ${keyframe.transform}`;
+                    keyframes[i] = keyframe;
+                }
+                else
+                {
+                    keyframes[i].transform += ` ${keyframe.transform}`;
+                }
+            });
+        });
+
+        return keyframes;        
+    }
+
+    /**
+     * Generate color gradient
+     * 
+     * @param  {string} easing Easing function name
+     * @return {array}
+     */
+    var generateColorKeyframes = function(CSSProperty, startValue, endValue, duration, easing, keyframeInterval)
+    {
+        startValue        = options.from || _this.rendered_style(AN_DOMElement, CSSProperty);
+        var keyframes     = [];
+        var keyFrameCount = Math.floor(duration / keyframeInterval);
+        const rgbStart    = sanitizeColor(startValue);
+        const rgbEnd      = sanitizeColor(endValue);
+
+        if (rgbStart === rgbEnd) return [];
+
+        for (let i = 0; i <= keyFrameCount; i++)
+        {
+            const blend = ANIMATION_EASING_FUNCTIONS[easing](i / keyFrameCount);
+            
+            keyframes.push( { [CSSProperty]: mixColors(rgbStart, rgbEnd, blend) });
+
+        }
+
+        // Incase of not enough keyframes
+        if (keyframes[keyframes.length - 1][CSSProperty] !== rgbEnd)
+        {
+            keyframes.push({ [CSSProperty]: rgbEnd });
+        }
+
+        return keyframes;
+    }
+
+    
+
+    /**
+     * Generate color gradient
+     * 
+     * @param  {string} funcName Easing function name
+     * @return {array}
+     */
+    var generateKeyframe = function(CSSProperty, value, units, transformAxis)
+    {
+        var isTransform = CSSProperty === 'transform';
+        var prefix = isTransform ? `${transformAxis}(` : '';
+        var suffix = units;
+        if (isTransform) suffix += ')';
+        value = CSSProperty === 'opacity' ? round(value, 5) : round(value, 2);
+        
+        return { [CSSProperty]:  `${prefix}${value}${suffix}` };
+    }
+
+    /**
+     * Generate color gradient
+     * 
+     * @param  {string} funcName Easing function name
+     * @return {array}
+     */
+    var generateKeyFrames = function(CSSProperty, startValue, endValue, duration, easing, keyframeInterval)
+    {
+        // We need to set the end value, then remove it and re-apply any inline styles if they
+        // existed
+        if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
+        {
+            var prevStyle = _this.inline_style(AN_DOMElement, CSSProperty);
+            _this.css(AN_DOMElement, CSSProperty, endValue);
+            endValue = _this.rendered_style(AN_DOMElement, CSSProperty);
+            _this.css(AN_DOMElement, CSSProperty, prevStyle ? prevStyle : false);
+        }
+
+        startValue             = _this.is_undefined(startValue) ? _this.css_unit_value(_this.rendered_style(AN_DOMElement, CSSProperty)) : startValue;
+        endValue               = _this.css_unit_value(endValue);
+        var CSSpropertyUnits   = _this.css_value_unit(endValue);
+        var backWardsAnimation = endValue < startValue;
+        var totalDistance      = Math.abs(backWardsAnimation ? (startValue - endValue) : (endValue - startValue));
+
+        if (endValue === startValue) [];
+
+        var keyframes     = [];
+        var keyFrameCount = Math.floor(duration / keyframeInterval);
+
+        for (let i = 0; i <= keyFrameCount; i++)
+        {            
+            var change = (totalDistance * easingPattern(easing, i / keyFrameCount));
+
+            keyframes.push(generateKeyframe(CSSProperty, backWardsAnimation ? startValue - change : startValue + change, CSSpropertyUnits));
+        }
+
+        // Incase match had some issues
+        keyframes.push(generateKeyframe(CSSProperty, endValue, CSSpropertyUnits));
+
+        return keyframes;
     }
 
     init();

@@ -13,7 +13,7 @@
      * 
      * @var {obj}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * AJAX Module

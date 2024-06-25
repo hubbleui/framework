@@ -23,7 +23,7 @@ clone_deep(mixed_var, context)
  */
 __cloneVar(mixed_var, context, isDeep)
 {
-    isDeep = is_undefined(isDeep) ? true : isDeep;
+    isDeep = this.is_undefined(isDeep) ? true : isDeep;
 
     let tag = this.var_type(mixed_var);
 
@@ -118,7 +118,7 @@ __cloneObj(obj, context, isDeep)
     }
 
     // Loop keys and functions
-    let keys = object_props(obj);
+    let keys = this.object_props(obj);
     let ret = {};
 
     if (keys.length === 0)
@@ -136,6 +136,7 @@ __cloneObj(obj, context, isDeep)
     this.each(keys, function(i, key)
     {
         ret[key] = this.__cloneVar(obj[key], typeof context === 'undefined' ? ret : context);
+
     }, this);
 
     return ret;
@@ -175,7 +176,8 @@ __cloneArray(arr, context)
     this.each(arr, function(i, val)
     {
         ret[i] = this.__cloneVar(val, context);
-    });
+    
+    }, this);
 
     return ret;
 }
@@ -212,7 +214,8 @@ __cloneMap(m, context)
     m.this.each((v, k) =>
     {
         ret.set(k, this.__cloneVar(v, context));
-    });
+    
+    }, this);
 
     return ret;
 }
@@ -224,7 +227,8 @@ __cloneSet(s, context)
     s.this.each((val, k) =>
     {
         ret.add(k, this.__cloneVar(v, context));
-    });
+    
+    }, this);
 
     return ret;
 }

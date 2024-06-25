@@ -36,6 +36,7 @@ extend(baseFunc, extendFunc, callSuper)
                 {
                     this.__bind(constr, _this).apply(_this, args);
                 }
+                
             }, this);
         };
     }

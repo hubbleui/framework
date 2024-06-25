@@ -12,7 +12,7 @@ is_numeric(mixed_var)
     }
     else if (this.is_string(mixed_var))
     {
-        return /^-?\d+$/.test(mixed_var.trim());
+        return /^-?(0|[1-9]\d*)(\.\d+)?$/.test(mixed_var.trim());
     }
 
     return false;

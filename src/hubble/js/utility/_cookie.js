@@ -62,215 +62,213 @@
      * @constructor
      {*} @return this
      */
-    var Cookies = function()
+    class Cookies
     {
-        return this;
-    }
-
-    /**
-     * Set a cookie
-     *
-     * @access {public}
-     * @param  {string}    key      Cookie key
-     * @param  {string}    value    Cookie value
-     * @param  {int}    days     Cookie expiry in days (optional) (default when browser closes)
-     * @param  {string}    path     Cookie path (optional) (default "/")
-     * @param  {bool}   secure   Secure policy (optional) (default) (true)
-     * @param  {stringing} samesite Samesite policy (optional) (default) (true)
-     * @return {sting}
-     */
-    Cookies.prototype.set = function(key, value, days, path, secure, samesite)
-    {
-        value = this._encodeCookieValue(value);
-        key = this._normaliseKey(key);
-        path = typeof path === 'undefined' ? '; path=/' : '; path=' + path;
-        secure = (typeof secure === 'undefined' || secure === true) && window.location.protocol === 'https:' ? '; secure' : '';
-        samesite = typeof samesite === 'undefined' ? '' : '; samesite=' + samesite;
-        var expires = expires = "; expires=" + this._normaliseExpiry(days | 365);
-
-        document.cookie = key + '=' + value + expires + path + secure + samesite;
-
-        return value;
-    }
-
-    /**
-     * Get a cookie
-     *
-     * @access {public}
-     * @param  {string} key Cookie key
-     * @return {mixed}
-     */
-    Cookies.prototype.get = function(key)
-    {
-        key = this._normaliseKey(key);
-
-        var ca = document.cookie.split(';');
-
-        for (var i = 0; i < ca.length; i++)
+        /**
+         * Set a cookie
+         *
+         * @access {public}
+         * @param  {string}    key      Cookie key
+         * @param  {string}    value    Cookie value
+         * @param  {int}    days     Cookie expiry in days (optional) (default when browser closes)
+         * @param  {string}    path     Cookie path (optional) (default "/")
+         * @param  {bool}   secure   Secure policy (optional) (default) (true)
+         * @param  {stringing} samesite Samesite policy (optional) (default) (true)
+         * @return {sting}
+         */
+        set(key, value, days, path, secure, samesite)
         {
-            var c = ca[i];
+            value = this._encodeCookieValue(value);
+            key = this._normaliseKey(key);
+            path = typeof path === 'undefined' ? '; path=/' : '; path=' + path;
+            secure = (typeof secure === 'undefined' || secure === true) && window.location.protocol === 'https:' ? '; secure' : '';
+            samesite = typeof samesite === 'undefined' ? '' : '; samesite=' + samesite;
+            var expires = expires = "; expires=" + this._normaliseExpiry(days | 365);
 
-            while (c.charAt(0) == ' ')
-            {
-                c = c.substring(1);
-            }
+            document.cookie = key + '=' + value + expires + path + secure + samesite;
 
-            if (c.indexOf(key) == 0)
-            {
-                return this._decodeCookieValue(c.split('=').pop());
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Remove a cookie
-     *
-     * @access {public}
-     * @param  {string} key Cookie to remove
-     */
-    Cookies.prototype.remove = function(key)
-    {
-        key = this._normaliseKey(key);
-
-        document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    }
-
-    /**
-     * Normalise cookie expiry date
-     *
-     * @access {private}
-     * @param  {int}    days Days when cookie expires
-     * @return {sting}
-     */
-    Cookies.prototype._normaliseExpiry = function(days)
-    {
-        var date = new Date();
-
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-
-        return date.toUTCString();
-    }
-
-    /**
-     * Normalise cookie key
-     *
-     * @access {private}
-     * @param  {string} key Cookie key
-     * @return {sting}
-     */
-    Cookies.prototype._normaliseKey = function(key)
-    {
-        key = key.replace(/[^a-z0-9+]+/gi, '').toLowerCase();
-
-        return _prefix + key;
-    }
-
-    /**
-     * Encode cookie value
-     *
-     * @access {private}
-     * @param  {mixed}  value Value to encode
-     * @return {sting}
-     */
-    Cookies.prototype._encodeCookieValue = function(value)
-    {
-        try
-        {
-            value = this._base64_encode(JSON.stringify(value));
-        }
-        catch (e)
-        {
-            value = this._base64_encode(value);
-        }
-
-        return value;
-    }
-
-    /**
-     * Decode cookie value
-     *
-     * @access {private}
-     * @param  {string}  str Value to decode
-     * @return {mixed}
-     */
-    Cookies.prototype._decodeCookieValue = function(str)
-    {
-        var value = this._base64_decode(str);
-
-        try
-        {
-            value = JSON.parse(value);
-        }
-        catch (e)
-        {
             return value;
         }
 
-        return value;
-    }
-
-    /**
-     * Base64 encode
-     *
-     * @access {private}
-     * @param  {string} str String to encode
-     * @return {sting}
-     */
-    Cookies.prototype._base64_encode = function(str)
-    {
-        return btoa(this._toBinary(str)).replace(/=/g, '_');
-    }
-
-    /**
-     * Base64 decode
-     *
-     * @access {pubic}
-     * @param  {string} str String to decode
-     * @return {sting}
-     */
-    Cookies.prototype._base64_decode = function(str)
-    {
-        return this._fromBinary(atob(str.replace(/_/g, '=')));
-    }
-
-    /**
-     * From binary
-     *
-     * @access {prvate}
-     * @param  {string} binary String to decode
-     * @return {string}
-     */
-    Cookies.prototype._fromBinary = function(binary)
-    {
-        const bytes = new Uint8Array(binary.length);
-
-        for (var i = 0; i < bytes.length; i++)
+        /**
+         * Get a cookie
+         *
+         * @access {public}
+         * @param  {string} key Cookie key
+         * @return {mixed}
+         */
+        get(key)
         {
-            bytes[i] = binary.charCodeAt(i);
+            key = this._normaliseKey(key);
+
+            var ca = document.cookie.split(';');
+
+            for (var i = 0; i < ca.length; i++)
+            {
+                var c = ca[i];
+
+                while (c.charAt(0) == ' ')
+                {
+                    c = c.substring(1);
+                }
+
+                if (c.indexOf(key) == 0)
+                {
+                    return this._decodeCookieValue(c.split('=').pop());
+                }
+            }
+
+            return false;
         }
 
-        return String.fromCharCode.apply(null, new Uint16Array(bytes.buffer));
-    }
-
-    /**
-     * To binary
-     *
-     * @access {pubic}
-     * @param  {string} string String to encode
-     * @return {sting}
-     */
-    Cookies.prototype._toBinary = function(string)
-    {
-        const codeUnits = new Uint16Array(string.length);
-
-        for (var i = 0; i < codeUnits.length; i++)
+        /**
+         * Remove a cookie
+         *
+         * @access {public}
+         * @param  {string} key Cookie to remove
+         */
+        remove(key)
         {
-            codeUnits[i] = string.charCodeAt(i);
+            key = this._normaliseKey(key);
+
+            document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         }
 
-        return String.fromCharCode.apply(null, new Uint8Array(codeUnits.buffer));
+        /**
+         * Normalise cookie expiry date
+         *
+         * @access {private}
+         * @param  {int}    days Days when cookie expires
+         * @return {sting}
+         */
+        _normaliseExpiry(days)
+        {
+            var date = new Date();
+
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+
+            return date.toUTCString();
+        }
+
+        /**
+         * Normalise cookie key
+         *
+         * @access {private}
+         * @param  {string} key Cookie key
+         * @return {sting}
+         */
+        _normaliseKey(key)
+        {
+            key = key.replace(/[^a-z0-9+]+/gi, '').toLowerCase();
+
+            return _prefix + key;
+        }
+
+        /**
+         * Encode cookie value
+         *
+         * @access {private}
+         * @param  {mixed}  value Value to encode
+         * @return {sting}
+         */
+        _encodeCookieValue(value)
+        {
+            try
+            {
+                value = this._base64_encode(JSON.stringify(value));
+            }
+            catch (e)
+            {
+                value = this._base64_encode(value);
+            }
+
+            return value;
+        }
+
+        /**
+         * Decode cookie value
+         *
+         * @access {private}
+         * @param  {string}  str Value to decode
+         * @return {mixed}
+         */
+        _decodeCookieValue(str)
+        {
+            var value = this._base64_decode(str);
+
+            try
+            {
+                value = JSON.parse(value);
+            }
+            catch (e)
+            {
+                return value;
+            }
+
+            return value;
+        }
+
+        /**
+         * Base64 encode
+         *
+         * @access {private}
+         * @param  {string} str String to encode
+         * @return {sting}
+         */
+        _base64_encode(str)
+        {
+            return btoa(this._toBinary(str)).replace(/=/g, '_');
+        }
+
+        /**
+         * Base64 decode
+         *
+         * @access {pubic}
+         * @param  {string} str String to decode
+         * @return {sting}
+         */
+        _base64_decode(str)
+        {
+            return this._fromBinary(atob(str.replace(/_/g, '=')));
+        }
+
+        /**
+         * From binary
+         *
+         * @access {prvate}
+         * @param  {string} binary String to decode
+         * @return {string}
+         */
+        _fromBinary(binary)
+        {
+            const bytes = new Uint8Array(binary.length);
+
+            for (var i = 0; i < bytes.length; i++)
+            {
+                bytes[i] = binary.charCodeAt(i);
+            }
+
+            return String.fromCharCode.apply(null, new Uint16Array(bytes.buffer));
+        }
+
+        /**
+         * To binary
+         *
+         * @access {pubic}
+         * @param  {string} string String to encode
+         * @return {sting}
+         */
+        _toBinary(string)
+        {
+            const codeUnits = new Uint16Array(string.length);
+
+            for (var i = 0; i < codeUnits.length; i++)
+            {
+                codeUnits[i] = string.charCodeAt(i);
+            }
+
+            return String.fromCharCode.apply(null, new Uint8Array(codeUnits.buffer));
+        }
     }
 
     // Register as DOM Module and invoke

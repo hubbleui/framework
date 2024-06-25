@@ -888,6 +888,8 @@ var Chain = function()
         window.Container = container;
     }
 
+    console.log(Container);
+
 })(window);
 (function()
 {
@@ -962,7 +964,6 @@ var Chain = function()
     window.Hubble = Container.get('Hubble');
 
 })();
-
 (function()
 {    
     /**
@@ -1501,30 +1502,11 @@ const ANIMATION_DEFAULT_OPTIONS =
     // Options
     //'property', 'from', 'to'
     easing:               'ease',
-    callback:              (() => ),
-
-    // Mutable options
-    startValue:           null,
-    endValue:             null,
-    duration:             500,
-
-    // Internal trackers
-    currentValue:          null,
-    totalDistance:         null,
-    timeLapsed:            0,
-    percentage:            0,
-    eventTimeout:          null,
-    animationInterval:     null,
-    CSSPropertyUnits:      '',
-    backwardsAnimation:    false,
-    animationStepDuration: 16,
-
-    // Color specific
-    isColorAnimation:      false,
-    colorAnimationStep:    0,
-    colorAnimationCount:   50,
-    colorGradientMap:      []
+    callback:              () => {},
+    duration:              500,
+    fps:                   90, // (11ms)
 };
+
  /**
  * Allowed Options.
  * 
@@ -1623,6 +1605,96 @@ const SHORTHAND_DEFAULTS =
 };
 
 /**
+ * CSS Transform value counts
+ *
+ * @var {object}
+ */
+const CSS_TRANSFORM_VALUES_COUNT = 
+{
+    perspective: 1,
+    skewY: 1,
+    translateY: 1,
+    translateZ: 1,
+    scaleY: 1,
+    scaleZ: 1,
+    rotateX: 1,
+    rotateY: 1,
+    rotateZ: 1,
+    translateX: 1,
+    skewX: 1,
+    scaleX: 1,
+    rotate: 1,
+
+    skew: 2,
+    translate: 2,
+    scale: 2,
+
+    translate3d: 3,
+    scale3d: 3,
+    rotate3d: 3,
+
+    matrix: 6,
+    matrix3d: 16
+};
+
+const CSS_3D_TRANSFORM_DEFAULTS =
+{
+    'translate3d' : ['0','0','0'],
+    'scale3d'     : ['1','1','1'],
+    'rotate3d'    : ['0','0','1','0'],
+    'skew'        : ['0', '0'],
+};
+
+const CSS_3D_TRANSFORM_MAP_KEYS =
+{
+    x: 0,
+    y: 1,
+    z: 3
+};
+
+/* USED FOR css_to_px */
+const CSS_PIXELS_PER_INCH = 96;
+const CSS_RELATIVE_UNITS  = {
+    // Relative to the font-size of the element (2em means 2 times the size of the current font)
+    'em' : 16,
+
+    // Relative to the x-height of the current font (rarely used)
+    'ex' : 7.15625,
+
+    // Relative to the width of the "0" (zero)
+    'ch' : 8,
+
+    // Relative to font-size of the root element
+    'rem' : 16,
+
+    // Relative to 1% of the width of the viewport
+    'vw' : 1,
+
+    // Relative to 1% of the height of the viewport
+    'vh' : 1,
+
+    // Relative to 1% of viewport's* smaller dimension
+    // If the viewport height is smaller than the width, 
+    // the value of 1vmin will be equal to 1% of the viewport height.
+    // Similarly, if the viewport width is smaller than the height, the value of 1vmin will be equal to 1% of the viewport width.
+    'vmin' : 765,
+    'vmax' : 1200,
+
+    // Relative to the parent element
+    '%' : 16
+}
+const CSS_ABSOLUTE_UNITS =
+{
+    'in': CSS_PIXELS_PER_INCH,
+    'cm': CSS_PIXELS_PER_INCH / 2.54,
+    'mm': CSS_PIXELS_PER_INCH / 25.4,
+    'pt': CSS_PIXELS_PER_INCH / 72,
+    'pc': CSS_PIXELS_PER_INCH / 6,
+    'px': 1
+}
+
+
+/**
  * Cached CSS propery cases.
  *
  * @var {object}
@@ -1670,44 +1742,38 @@ animate(AN_DOMElement, options)
     {
         const optionSets = this.__animation_factory(AN_DOMElement, options);
 
-        this.each(optionSets, function(i, opts)
+        if (optionSets.length > 1)
         {
-            this.animate(AN_DOMElement, opts);
+            this.each(optionSets, function(i, opts)
+            {
+                this.animate(AN_DOMElement, opts);
 
-        }, this);
+            }, this);
 
-        return;
+            return;
+        }
+        else
+        {
+            options = optionSets[0];
+        }
     }
 
     const _this = this;
 
-    // Cache variables locally for faster reading / writing
-    // Options
-    var AN_CSSProperty           =  options.property;
-    var AN_easing                =  options.easing;
-    var AN_callback              =  options.callback;
+    // Local Animation Variables
+    var AN_keyframeMap       = [];
+    var AN_currentKeyframe   = 0;
+    var AN_intervalDelay     = Math.floor(1000 / options.fps);
+    var AN_callback          = options.callback;
+    var AN_ON_COMPLETE       = () => {};
+    var an_intervalTimer;
 
-    // Mutable options
-    var AN_startValue            =  options.startValue;
-    var AN_endValue              =  options.endValue;
-    var AN_duration              =  options.duration;
+    const round = (n, dp) => 
+    {
+        const h = +('1'.padEnd(dp + 1, '0')) // 10 or 100 or 1000 or etc
 
-    // Internal trackers
-    var AN_currentValue          =  options.currentValue;
-    var AN_totalDistance         =  options.totalDistance;
-    var AN_timeLapsed            =  options.timeLapsed;
-    var AN_percentage            =  options.percentage;
-    var AN_eventTimeout          =  options.eventTimeout;
-    var AN_animationInterval     =  options.animationInterval;
-    var AN_CSSPropertyUnits      =  options.CSSPropertyUnits;
-    var AN_backwardsAnimation    =  options.backwardsAnimation;
-    var AN_animationStepDuration =  options.animationStepDuration;
-
-    // Color specific
-    var AN_isColorAnimation      =  AN_CSSProperty.includes('color');
-    var AN_colorAnimationStep    =  options.colorAnimationStep;
-    var AN_colorAnimationCount   =  options.colorAnimationCount;
-    var AN_colorGradientMap      =  options.colorGradientMap;
+        return Math.round(n * h) / h;
+    }
 
     /**
      * Initialize
@@ -1716,63 +1782,43 @@ animate(AN_DOMElement, options)
      */
     var init = function()
     {
-        if (AN_isColorAnimation)
+        if (options.property.includes('transform'))
         {
-            AN_endValue   = options.to;
-            AN_startValue = options.from || _this.rendered_style(AN_DOMElement, AN_CSSProperty);
-            AN_animationStepDuration = 10;
-
-            AN_colorAnimationCount = Math.floor(AN_duration / AN_animationStepDuration);
-
-            AN_colorGradientMap = generateColorGradient(AN_easing);
-
-            startColorAnimation();
-
-            return;
+            AN_keyframeMap = generateTransformKeyframes(options.property, options.from, options.to, options.duration, options.easing, AN_intervalDelay);
+        }
+        else if (options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb'))
+        {
+            AN_keyframeMap = generateColorKeyframes(options.property, options.from, options.to, options.duration, options.easing, AN_intervalDelay);
+        }
+        else
+        {
+            AN_keyframeMap = generateKeyFrames(options.property, options.from, options.to, options.duration, options.easing, AN_intervalDelay);
         }
 
-        if (AN_CSSProperty === 'transform')
-        {
-            
-
-        }
-
-        // We need to set the end value, then remove it and re-apply any inline styles if they
-        // existed
-        if (options.to === 'auto' || options.to === 'initial' || options.to === 'unset')
-        {
-            var prevStyle = _this.inline_style(AN_DOMElement, AN_CSSProperty);
-            _this.css(AN_DOMElement, AN_CSSProperty, options.to);
-            options.to = _this.rendered_style(AN_DOMElement, AN_CSSProperty);
-            _this.css(AN_DOMElement, AN_CSSProperty, prevStyle ? prevStyle : false);
-        }
-       
-        AN_endValue           = parseFloat(options.to);
-        AN_CSSPropertyUnits   = getValueUnits(options.to);
-        AN_startValue         = _this.is_undefined(options.from) ? parseFloat(_this.rendered_style(AN_DOMElement, AN_CSSProperty)) : options.from;
-        AN_totalDistance      = Math.abs(AN_endValue - AN_startValue);
-        AN_backwardsAnimation = AN_endValue < AN_startValue;
-        
-        if (AN_endValue === AN_startValue) return;
-
-        startAnimation();
+        startAnimation(options.property);
     }
 
     /**
-     * Get value units e.g (px, rem, etc...)
+     * Calculate the easing pattern.
      * 
      * @private
+     * @link    {https://gist.github.com/gre/1650294}
+     * @param   {String} type Easing pattern
+     * @param   {Number} time Time animation should take to complete
+     * @returns {Number}
      */
-    var getValueUnits = function(value)
+    var clearTransitions = function(CSSProperty)
     {
-        if (_this.is_numeric(value) && AN_CSSProperty !== 'opacity')
-        {
-            return 'px';
-        }
+        var transitions    = _this.css_transition_props(AN_DOMElement);
+        var css_transition = _this.inline_style(AN_DOMElement, 'transition'); 
 
-        value = value + '';
+        if (_this.is_empty(transitions) || !transitions[CSSProperty]) return;
 
-        return value.split(/[0-9]/).pop().replaceAll(/[^a-z%]/g, '').trim();
+        transitions[CSSProperty] = '0s linear 0s';
+
+        _this.css(AN_DOMElement, 'transition', _this.join_obj(transitions, ' ', ', '));
+
+        AN_ON_COMPLETE = () => { _this.css(AN_DOMElement, 'transition', !css_transition ? false : css_transition ); };
     }
 
     /**
@@ -1780,17 +1826,19 @@ animate(AN_DOMElement, options)
      * 
      * @private
      */
-    var startAnimation = function()
+    var startAnimation = function(CSSProperty)
     {
-        clearInterval(AN_animationInterval);
+        clearInterval(an_intervalTimer);
+
+        clearTransitions(CSSProperty);
 
         var _this = this;
 
-        AN_animationInterval = setInterval(function()
+        an_intervalTimer = setInterval(function()
         {
             loopAnimation();
 
-        }, AN_animationStepDuration);
+        }, AN_intervalDelay);
     }
 
     /**
@@ -1799,50 +1847,13 @@ animate(AN_DOMElement, options)
      * @private
      */
     var loopAnimation = function()
-    {
-        AN_timeLapsed  += AN_animationStepDuration;
-        AN_percentage   = (AN_timeLapsed / parseFloat(AN_duration, 10));
-        AN_percentage   = (AN_percentage > 1) ? 1 : AN_percentage;
-        var change = (AN_totalDistance * easingPattern(AN_easing, AN_percentage));
-        AN_currentValue = AN_backwardsAnimation ? AN_startValue - change : AN_startValue + change;
+    {        
+        const keyframe = AN_keyframeMap.shift();
+        const prop     = Object.keys(keyframe)[0];
 
-        _this.css(AN_DOMElement, AN_CSSProperty, AN_currentValue + AN_CSSPropertyUnits);
-        
-        stopAnimation();
-    }
+        _this.css(AN_DOMElement, prop, keyframe[prop]);
 
-    /**
-     * Start color animation
-     * 
-     * @private
-     */
-    var startColorAnimation = function()
-    {
-        clearInterval(AN_animationInterval);
-
-        var _this = this;
-
-        AN_animationInterval = setInterval(function()
-        {
-            loopColorAnimation();
-
-        }, AN_animationStepDuration);
-    }
-
-    /**
-     * Loop the color animation.
-     * 
-     * @private
-     */
-    var loopColorAnimation = function()
-    {
-        AN_timeLapsed += AN_animationStepDuration;
-
-        const color = AN_colorGradientMap[AN_colorAnimationStep];
-
-        _this.css(AN_DOMElement, AN_CSSProperty, color);
-
-        AN_colorAnimationStep++;
+        AN_currentKeyframe++;
 
         stopAnimation();
     }
@@ -1854,11 +1865,11 @@ animate(AN_DOMElement, options)
      */
     var stopAnimation = function()
     {
-        AN_currentValue = parseFloat(_this.rendered_style(AN_DOMElement, AN_CSSProperty));
-
-        if (AN_currentValue == AN_endValue || (!AN_backwardsAnimation && AN_currentValue > AN_endValue) || (AN_backwardsAnimation && AN_currentValue <= AN_endValue) || AN_colorAnimationStep > AN_colorAnimationCount || AN_timeLapsed > AN_duration)
+        if (AN_keyframeMap.length === 0)
         {
-            clearInterval(AN_animationInterval);
+            clearInterval(an_intervalTimer);
+
+            AN_ON_COMPLETE();
 
             if (_this.is_function(AN_callback))
             {
@@ -1944,28 +1955,224 @@ animate(AN_DOMElement, options)
      * @param  {string} funcName Easing function name
      * @return {array}
      */
-    var generateColorGradient = function(funcName)
+    var generateTransformKeyframes = function(CSSProperty, startValue, endValue, duration, easing, keyframeInterval)
     {
-        const colors = [];
+        var startValues   = _this.css_transform_props(AN_DOMElement, false);
+        var endValues     = _this.css_transform_props(endValue, false);
+        var keyFrameCount = Math.floor(duration / keyframeInterval);
+        var keyframes     = [];
 
-        const rgbStart = sanitizeColor(AN_startValue);
-        const rgbEnd   = sanitizeColor(AN_endValue);
-
-        for (let i = 0; i <= AN_colorAnimationCount; i++)
+        // If a start value was specified it gets overwritten as the transform
+        // property is singular
+        if (startValue)
         {
-            const blend = ANIMATION_EASING_FUNCTIONS[funcName](i / AN_colorAnimationCount);
-            
-            const color = mixColors(rgbStart, rgbEnd, blend);
-
-            colors.push(color);
+            startValues = _this.css_transform_props(startValue);
         }
 
-        return colors;
+        var baseTransforms = _this.join_obj(_this.map(startValues, (prop, val) => !endValues[prop] ? val : false), '(', ') ') + ')';
+
+        _this.each(endValues, function(propAxis, valueStr)
+        {
+            var startValStr        = !startValues[propAxis] ? propAxis.includes('scale') ? 1 : 0 : startValues[propAxis];
+            var startVal           = _this.css_unit_value(startValStr);
+            var endVal             = _this.css_unit_value(valueStr);
+            var startUnit          = _this.css_value_unit(startValStr);
+            var endUnit            = _this.css_value_unit(valueStr);
+            var CSSpropertyUnits   = endUnit;
+
+            if (startUnit !== endUnit)
+            {
+                // 0 no need to convert
+                if (_this.is_empty(startUnit))
+                {
+                    startUnit = endUnit;
+                }
+                else
+                {
+                    if (startUnit !== 'px') startVal = _this.css_to_px(startVal + startUnit, AN_DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                    if (endUnit !== 'px') endVal = _this.css_to_px(endVal + endUnit, AN_DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                    CSSpropertyUnits = 'px';
+                }
+            }
+
+
+            var backWardsAnimation = endValue < startValue;
+            var totalDistance      = Math.abs(backWardsAnimation ? (startVal - endVal) : (endVal - startVal));
+            var propKeyframes      = [];
+         
+
+            _this.for(keyFrameCount + 1, function(i)
+            {
+                let change   = (totalDistance * easingPattern(easing, i / keyFrameCount));
+                let keyframe = generateKeyframe('transform', backWardsAnimation ? startVal - change : startVal + change, CSSpropertyUnits, propAxis);
+
+                if (_this.is_undefined(keyframes[i]))
+                {
+                    keyframe.transform = `${baseTransforms} ${keyframe.transform}`;
+                    keyframes[i] = keyframe;
+                }
+                else
+                {
+                    keyframes[i].transform += ` ${keyframe.transform}`;
+                }
+            });
+        });
+
+        return keyframes;        
+    }
+
+    /**
+     * Generate color gradient
+     * 
+     * @param  {string} easing Easing function name
+     * @return {array}
+     */
+    var generateColorKeyframes = function(CSSProperty, startValue, endValue, duration, easing, keyframeInterval)
+    {
+        startValue        = options.from || _this.rendered_style(AN_DOMElement, CSSProperty);
+        var keyframes     = [];
+        var keyFrameCount = Math.floor(duration / keyframeInterval);
+        const rgbStart    = sanitizeColor(startValue);
+        const rgbEnd      = sanitizeColor(endValue);
+
+        if (rgbStart === rgbEnd) return [];
+
+        for (let i = 0; i <= keyFrameCount; i++)
+        {
+            const blend = ANIMATION_EASING_FUNCTIONS[easing](i / keyFrameCount);
+            
+            keyframes.push( { [CSSProperty]: mixColors(rgbStart, rgbEnd, blend) });
+
+        }
+
+        // Incase of not enough keyframes
+        if (keyframes[keyframes.length - 1][CSSProperty] !== rgbEnd)
+        {
+            keyframes.push({ [CSSProperty]: rgbEnd });
+        }
+
+        return keyframes;
+    }
+
+    
+
+    /**
+     * Generate color gradient
+     * 
+     * @param  {string} funcName Easing function name
+     * @return {array}
+     */
+    var generateKeyframe = function(CSSProperty, value, units, transformAxis)
+    {
+        var isTransform = CSSProperty === 'transform';
+        var prefix = isTransform ? `${transformAxis}(` : '';
+        var suffix = units;
+        if (isTransform) suffix += ')';
+        value = CSSProperty === 'opacity' ? round(value, 5) : round(value, 2);
+        
+        return { [CSSProperty]:  `${prefix}${value}${suffix}` };
+    }
+
+    /**
+     * Generate color gradient
+     * 
+     * @param  {string} funcName Easing function name
+     * @return {array}
+     */
+    var generateKeyFrames = function(CSSProperty, startValue, endValue, duration, easing, keyframeInterval)
+    {
+        // We need to set the end value, then remove it and re-apply any inline styles if they
+        // existed
+        if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
+        {
+            var prevStyle = _this.inline_style(AN_DOMElement, CSSProperty);
+            _this.css(AN_DOMElement, CSSProperty, endValue);
+            endValue = _this.rendered_style(AN_DOMElement, CSSProperty);
+            _this.css(AN_DOMElement, CSSProperty, prevStyle ? prevStyle : false);
+        }
+
+        startValue             = _this.is_undefined(startValue) ? _this.css_unit_value(_this.rendered_style(AN_DOMElement, CSSProperty)) : startValue;
+        endValue               = _this.css_unit_value(endValue);
+        var CSSpropertyUnits   = _this.css_value_unit(endValue);
+        var backWardsAnimation = endValue < startValue;
+        var totalDistance      = Math.abs(backWardsAnimation ? (startValue - endValue) : (endValue - startValue));
+
+        if (endValue === startValue) [];
+
+        var keyframes     = [];
+        var keyFrameCount = Math.floor(duration / keyframeInterval);
+
+        for (let i = 0; i <= keyFrameCount; i++)
+        {            
+            var change = (totalDistance * easingPattern(easing, i / keyFrameCount));
+
+            keyframes.push(generateKeyframe(CSSProperty, backWardsAnimation ? startValue - change : startValue + change, CSSpropertyUnits));
+        }
+
+        // Incase match had some issues
+        keyframes.push(generateKeyframe(CSSProperty, endValue, CSSpropertyUnits));
+
+        return keyframes;
     }
 
     init();
 }
 		/**
+ * Returns an object of CSS transforms by transform property as keys.
+ *
+ * @param  {node|string} DOMElement  Target element or transform value string
+ * @return {object}
+ */
+css_transform_values(DOMElement)
+{
+    if (!DOMElement) return {};
+    var transforms     = {};
+    var transformValue = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transform');
+
+    // No transforms
+    if (!transformValue || transformValue === 'none' || transformValue === 'unset' || transformValue === 'auto' || transformValue === 'revert' || transformValue === 'initial')
+    {
+        return transforms;
+    }
+
+    this.each(transformValue.trim().split(')'), function(i, transform)
+    {
+        transform = transform.trim();
+
+        if (transform === '') return;
+
+        transform    = transform.split('(');
+        let prop     = transform.shift().trim();
+        let value    = transform.pop().trim();
+        let valCount = CSS_TRANSFORM_VALUES_COUNT[prop];
+        
+        if (valCount === 1)
+        {
+            transforms[prop] = [value];
+        }
+        else
+        {
+            let values = value.split(',').map((x) => x.trim());
+
+            if (values.length < valCount)
+            {
+                let pad = new Array(valCount - values.length).fill('0');
+
+                transforms[prop] = [...values, ...pad];
+            }
+            else
+            {
+                transforms[prop] = values;
+            }
+        }
+
+    }, this);
+
+    return transforms;
+}
+
+
+/**
  * CSS Animation.
  *
  * @access {private}
@@ -1995,9 +2202,6 @@ animate_css(DOMElement, options)
     // Call does not from factory need to sanitize
     options = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
 
-    // Is this a mutli transition
-    var isMulti = this.size(options > 1);
-
     // Cache inline transitions to revert back to on completion
     var inlineTransitions = this.css_transition_props(this.inline_style(DOMElement, 'transition'));
     inlineTransitions = this.is_empty(inlineTransitions) ? false : this.join_obj(inlineTransitions, ' ', ', ');;
@@ -2009,23 +2213,42 @@ animate_css(DOMElement, options)
 
     // Props to animate / transition
     var styles = {};
-    this.each(options, function(i, option)
+
+    if (this.is_array(options))
     {
-        // Setup and convert duration from MS to seconds
-        var property = option.property;
-        var duration = (option.duration / 1000);
-        var easing   = CSS_EASINGS[option.easing];
+        this.each(options, function(i, option)
+        {
+            // Setup and convert duration from MS to seconds
+            var property = option.property;
+            var duration = (option.duration / 1000);
+            var easing   = CSS_EASINGS[option.easing];
+
+            // Set the transition for the property
+            // in our merged obj
+            renderedTransions[property] = `${duration}s ${easing}`;
+
+            // Set the property style
+            styles[property] = option.to;
+
+            callback = option.callback;
+
+        }, this);
+    }
+    else
+    {
+        var property = options.property;
+        var duration = (options.duration / 1000);
+        var easing   = CSS_EASINGS[options.easing];
 
         // Set the transition for the property
         // in our merged obj
         renderedTransions[property] = `${duration}s ${easing}`;
 
         // Set the property style
-        styles[property] = option.to;
+        styles[property] = options.to;
 
-        callback = option.callback;
-
-    }, this);
+        callback = options.callback;
+    }
 
     // Flatten transition ready for css
     var transition = this.join_obj(renderedTransions, ' ', ', ');
@@ -2064,45 +2287,6 @@ animate_css(DOMElement, options)
     DOMElement.addEventListener('transitionend', onTransitionEnd, true);
 
     this.css(DOMElement, styles);
-}
-
-/**
- * Returns an object of CSS transitions by transition property as keys.
- *
- * @param  {node|string} DOMElement  Target element or transition value string
- * @return {object}
- */
-css_transition_props(DOMElement)
-{
-    if (!DOMElement) return {};
-    var transitions   = {};
-    var transitionVal = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transition');
-
-    // No transition
-    if (!transitionVal || transitionVal.startsWith('all 0s ease 0s') || transitionVal === 'none' || transitionVal === 'unset' || transitionVal === 'auto')
-    {
-        return transitions;
-    }
-
-    this.each(transitionVal.trim().split(','), function(i, transition)
-    {
-        transition = transition.trim();
-
-        // Variants of all
-        if (transition[0] === '.' || transition.startsWith('all ') ||  this.is_numeric(transition[0]))
-        {
-            transitions.all = transition.replace('all ', '');
-
-            return false;
-        }
-
-        var prop = transition.split(' ', 4).shift();
-
-        transitions[prop] = transition.replace(prop, '').trim();
-
-    }, this);
-
-    return transitions;
 }
 
 
@@ -2407,6 +2591,25 @@ foreach()
 {
     return this.each.apply(this, arguments);
 }
+
+/**
+ * For loop with count
+ * 
+ * @access {public}
+ * @param  {object}  obj       The target object to loop over
+ * @param  {closure} callback  Callback to apply to each iteration
+ * @param  {array}   args      Array of params to apply to callback (optional) (default null)
+ */
+for(count, callback)
+{
+    var args = TO_ARR.call(arguments);
+
+    args[0] = Array.from(Array(count).keys());
+
+    return this.each.apply(this, args);
+}
+
+
 		/**
  * Checks if an array contains a value
  *
@@ -2905,6 +3108,96 @@ css_to_object(styles)
 
     return ret;
 }
+		
+/**
+ * Get value number
+ * 
+ * @private
+ */
+css_unit_value(value)
+{
+    if (this.is_numeric(value))
+    {
+        return parseFloat(value);
+    }
+
+    if (this.is_empty(value))
+    {
+        return 0;
+    }
+
+    return parseFloat(value.replaceAll(/[^0-9-.]/g, ''));
+}
+
+css_value_unit(value)
+{
+    value = value + '';
+
+    return value.split(/[0-9]/).pop().replaceAll(/[^a-z%]/g, '').trim();
+}
+
+css_to_px(valueStr, DOMElement, property)
+{
+    valueStr = valueStr + '';
+    
+    if (valueStr.includes('calc')) return valueStr;
+
+    var unit  = this.css_value_unit(valueStr);
+    var value = this.css_unit_value(valueStr);
+
+    if (valueStr.includes('px')) return value;
+
+    if (!this.is_undefined(CSS_ABSOLUTE_UNITS[unit]))
+    {
+        return (value * CSS_ABSOLUTE_UNITS[unit]);
+    }
+
+    if (!this.is_undefined(CSS_RELATIVE_UNITS[unit]))
+    {
+        if (unit === 'em' || unit === 'ex' || 'unit' === 'ch')
+        {
+            if (!DOMElement) return value * CSS_RELATIVE_UNITS[unit];
+            let psize = this.css_unit_value(this.rendered_style(DOMElement.parentNode, 'font-size'));
+            if (unit === 'em') return value * psize;
+            if (unit === 'ex') return value * (psize / 1.8);
+            if (unit === 'ch') return value * (psize / 2);
+            if (unit === '%')  return value * psize;
+        }
+        else if (unit === '%')
+        {
+            if (!DOMElement) return value * CSS_RELATIVE_UNITS[unit];
+            if (!property) property = 'height';
+            
+            let psize = this.css_unit_value(this.rendered_style(DOMElement, property));
+
+            return psize * (value / 100);
+        }
+        else if (unit === 'rem')
+        {
+            // font sizes are always returned in px with JS
+            return value * this.css_unit_value(this.rendered_style(document.documentElement, 'font-size'));
+        }
+        else if (unit === 'vw')
+        {
+            return this.width(window) * (value / 100);
+        }
+        else if (unit === 'vh')
+        {
+            return this.height(window) * (value / 100);
+        }
+        else if (unit === 'vmin' || unit === 'vmax')
+        {
+            let w = this.width(window);
+            let h = this.height(window);
+            let m = unit === 'vmin' ? Math.min(w, h) : Math.max(w, h)
+
+            return m * (value / 100);
+        }
+    }
+
+    return value;
+}
+
 		/**
  * Get an element's inline style if it exists
  *
@@ -2948,60 +3241,384 @@ remove_style(el, prop)
 		/**
  * Get the element's computed style on a property
  *
- * @access {private}
+ * @access {public}
  * @param  {node}   el   Target element
  * @param  {string} prop CSS property to check (in camelCase) (optional)
  * @return {mixed}
  */
-rendered_style(el, property)
+rendered_style(DOMElement, property)
+{
+    if (property.includes('ransform'))
+    {
+        return this.css_transform_props(DOMElement, true);
+    }
+
+    return this.__computed_style(DOMElement, property);
+}
+
+/**
+ * Get the elements computed style.
+ *
+ * @access {private}
+ * @param  {node}          el   Target element
+ * @param  {string}        prop CSS property to check (in camelCase) (optional)
+ * @return {string|object}
+ */
+__computed_style(DOMElement, property)
 {
     if (window.getComputedStyle)
     {
-        if (property)
-        {
-            return window.getComputedStyle(el, null)[property];
-        }
+        let styles = window.getComputedStyle(DOMElement, null);
 
-        return window.getComputedStyle(el, null);
-
+        return !property ? styles : styles[property];
     }
-    if (el.currentStyle)
+    else if (DOMElement.currentStyle)
     {
-        if (property)
-        {
-            return el.currentStyle[property];
-        }
-        
-        return el.currentStyle;
+        let styles = DOMElement.currentStyle;
+
+        return !property ? styles : styles[property];
     }
 
     return '';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		/**
+ * Returns an object of CSS transitions by transition property as keys.
+ *
+ * @param  {node|string} DOMElement  Target element or transition value string
+ * @return {object}
+ */
+css_transition_props(DOMElement)
+{
+    if (!DOMElement) return {};
+    var transitions   = {};
+    var transitionVal = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transition');
+
+    // No transition
+    if (!transitionVal || transitionVal.startsWith('all 0s ease 0s') || transitionVal === 'none' || transitionVal === 'unset' || transitionVal === 'auto')
+    {
+        return transitions;
+    }
+
+    this.each(transitionVal.trim().split(','), function(i, transition)
+    {
+        transition = transition.trim();
+
+        // Variants of all
+        if (transition[0] === '.' || transition.startsWith('all ') ||  this.is_numeric(transition[0]))
+        {
+            transitions.all = transition.replace('all ', '');
+
+            return false;
+        }
+
+        var prop = transition.split(' ', 4).shift();
+
+        transitions[prop] = transition.replace(prop, '').trim();
+
+    }, this);
+
+    return transitions;
+}
+		/**
+ * Returns an object of CSS transforms by property as keys or transforms as string.
+ *
+ * @param  {node|string} DOMElement     Target element or transition value string
+ * @param  {bool}        returnAsString Returns transforms as string (optional) (default true)
+ * @return {object}
+ */
+css_transform_props(DOMElement, returnAsString)
+{
+    if (this.is_string(DOMElement))
+    {
+        return this.__un_css_matrix(DOMElement, returnAsString);
+    }
+
+    returnAsString = this.is_undefined(returnAsString) ? true : returnAsString;
+
+    let styles = this.__computed_style(DOMElement, 'transform');
+
+    // If element is set to "display:none" only inline transforms will show up
+    // so we check those first
+    let inline   = this.inline_style(DOMElement, 'transform');
+    let emptys   = [undefined, '', 'none', 'unset', 'initial', 'inherit'];
+
+    // Has inline styles - inline do not need to converted
+    if (!this.in_array(inline, emptys))
+    {
+        return inline;
+    }
+
+    // If element is hiddien we need to display it quickly
+    // to get the CSS defined transform prop to be renderd
+    let inlineDisplay = this.inline_style(DOMElement, 'display');
+    let cssDisplay    = this.rendered_style(DOMElement, 'display');
+    let isHidden      = cssDisplay === 'none';
+
+    // Re-get transform value
+    if (isHidden)
+    {
+        this.css(DOMElement, 'display', 'unset');
+
+        styles = this.__computed_style(DOMElement, 'transform');
+    }
+
+    // Doesn't have stylesheet styles
+    if (this.in_array(styles, emptys))
+    {
+        styles = styles === 'none' || styles === undefined ? '' : styles;
+    }
+
+    // Empty return
+    if (!styles)
+    {
+        return returnAsString ? '' : {};
+    }
+
+    // revert matrix
+    styles = this.__un_css_matrix(DOMElement, returnAsString);
+    
+    // Revert back origional styles
+    if (isHidden)
+    {
+        this.css(DOMElement, 'display', !inlineDisplay ? false : inlineDisplay);
+    }
+
+    return returnAsString ? styles : styles;
+}
+
+/**
+ * Converts an element's matrix transform value back to component transforms
+ *
+ * @access {private}
+ * @param  {node}   DOMElement     Target element
+ * @param  {bool}   returnAsString Returns string
+ * @return {string|object}
+ */
+__un_css_matrix(DOMElement, returnAsString)
+{
+    if (!this.is_string(DOMElement))
+    {
+        if (!DOMElement.computedStyleMap)
+        {
+            return returnAsString ? '' : {};
+        }
+
+        var computedTransforms = DOMElement.computedStyleMap().get('transform');
+
+        var transforms = Array.prototype.slice.call(computedTransforms).map( (x) => x.toString() ).sort().reverse();
+    }
+    else
+    {
+        var transforms = DOMElement.split(')');
+    }
+
+    const axisMap = ['X', 'Y', 'Z'];
+
+    const ret = {};
+
+    this.each(transforms, function(i, transform)
+    {
+        if (transform.trim() === '') return;
+
+        var split    = transform.split('(');
+        var bsName   = split[0].replace('3d', '');
+        var prop     = split.shift().trim();
+        var value    = split.pop().trim().replace(')', '');
+        var values   = value.split(',').map((x) => x.trim());
+        var lastChar = prop.slice(-1);
+
+        if (prop === 'perspective')
+        {
+            ret.perspective = value;
+
+            return;
+        }
+        
+        this.each(values, function(i, val)
+        {
+            if (i > 2) return false;
+
+            let defltVal = prop.includes('scale') ? 1 : 0;
+            let axisProp = !axisMap.includes(lastChar) ? `${bsName}${axisMap[i]}` : bsName;
+
+            if (prop === 'rotate')
+            {
+                ret.rotateZ = val;
+            }
+            else if (prop === 'rotate3d')
+            {
+                if (parseFloat(val) !== defltVal)
+                {
+                    ret[axisProp] = values[values.length - 1];
+                }
+            }
+            else if (parseFloat(val) === defltVal && ret[axisProp])
+            {
+                return;
+            }
+            else
+            {
+                ret[axisProp] = val;
+            }
+        });
+
+    }, this);
+
+
+    if (returnAsString)
+    {
+        return !this.is_empty(ret) ? this.join_obj(ret, '(', ') ') + ')' : '';
+    }
+    
+    return ret;
+}
+		/**
+ * Returns an object of CSS transitions by transition property as keys.
+ *
+ * @param  {string} transforms A CSS transform value e.g translateY(300px) 
+ * @return {object}
+ */
+css_to_3d_transform(transformsStr)
+{        
+    var transforms = {};
+
+    var _this = this;
+
+    /**
+     * Get value number
+     * 
+     * @private
+     */
+    var getPropValue = function(value)
+    {
+        if (_this.is_numeric(value))
+        {
+            return parseFloat(value);
+        }
+
+        if (_this.is_empty(value))
+        {
+            return 0;
+        }
+
+        return parseFloat(value.replaceAll(/[^0-9-.]/g, ''));
+    }
+
+    if (transformsStr.includes('matrix'))
+    {
+        return transformsStr;
+    }
+
+    // Split into object
+    this.each(transformsStr.trim().split(')'), function(i, transform)
+    {
+        transform = transform.trim();
+
+        if (transform === '') return;
+
+        transform      = transform.split('(');
+        var prop       = transform.shift().trim();
+        var value      = transform.pop().trim();
+        var values     = value.split(',').map((x) => x.trim());
+        var valueCount = CSS_TRANSFORM_VALUES_COUNT[prop];
+
+        if (prop === 'perspective')
+        {
+            transforms.perspective = values[0];
+        }
+        else if (valueCount === 1 || valueCount === 2)
+        {
+            var initialVal = prop === 'scale' ? 1 : 0;
+            var name3d     = valueCount === 1 ? `${prop.slice(0,-1)}3d` : `${prop}3d`;
+                name3d     = name3d.includes('skew') ? 'skew' : name3d;
+                name3d     = name3d === 'rotat3d' ? 'rotate3d' : name3d;
+            var key        = CSS_3D_TRANSFORM_MAP_KEYS[prop.slice(-1).toLowerCase()];
+            
+            if (this.is_empty(transforms[name3d]))
+            {
+                transforms[name3d] = CSS_3D_TRANSFORM_DEFAULTS[name3d];
+            }
+            
+            if (prop === 'rotate')
+            {
+                transforms.rotate3d[3] = values[0];
+            }
+            else
+            {
+                this.each(values, function(i, value)
+                {
+                    var compValue = parseFloat(value.replaceAll(/[^0-9]-/g, ''));
+
+                    if (getPropValue(value) !== initialVal)
+                    {
+                        transforms[name3d][!key ? i : key] = value;
+                    }
+                });
+            }
+        }
+        else 
+        {
+            transforms[prop] = values;
+        }
+
+    }, this);
+
+    return transforms;
 }
 		/**
  * Add a css class or list of classes
  *
  * @access {public}
- * @param  {node}         el         Target element
+ * @param  {node}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to add
  */
-add_class(el, className)
+add_class(DOMElement, className)
 {
-    if (!this.in_dom(el))
+    if (this.is_array(DOMElement))
     {
-        return;
-    }
-
-    if (TO_STR.call(className) === '[object Array]')
-    {
-        for (var i = 0; i < className.length; i++)
+        this.each(DOMElement, function(i, _DOMElement)
         {
-            el.classList.add(className[i]);
-        }
+            this.add_class(_DOMElement, className);
+
+        }, this);
+
+        return this;
+    }
+
+    if (!this.in_dom(DOMElement))
+    {
+        return;
+    }
+
+    if (this.is_array(className))
+    {
+        this.each(className, function(i, _className)
+        {
+            DOMElement.classList.add(_className);
+
+        });
 
         return;
     }
 
-    el.classList.add(className);
+    DOMElement.classList.add(className);
 }
 		/**
  * Closest parent node by type/class or array of either
@@ -3134,23 +3751,53 @@ closest_class(el, clas)
  * @param  {node}   el Target element
  * @return {object}
  */
-coordinates(el)
+coordinates(DOMElement)
 {
-    var box = el.getBoundingClientRect();
-    var body = document.body;
-    var docEl = document.documentElement;
-    var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    // If element is hiddien we need to display it quickly
+    var inlineDisplay = this.inline_style(DOMElement, 'display');
+    var hidden        = this.rendered_style(DOMElement, 'display');
+    
+    if (hidden === 'none')
+    {
+        // If the element was "display:none" with an inline
+        // style, remove the inline display so it defaults to
+        // whatever styles are set on in through stylesheet
+        if (inlineDisplay)
+        {
+            this.css(DOMElement, 'display', false);
+        }
+        // Otherwise set it to unset
+        else
+        {
+            this.css(DOMElement, 'display', 'unset');
+        }
+    }
+
+    var box        = DOMElement.getBoundingClientRect();
+    var body       = document.body;
+    var docEl      = document.documentElement;
+    var scrollTop  = window.pageYOffset || docEl.scrollTop || body.scrollTop;
     var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-    var clientTop = docEl.clientTop || body.clientTop || 0;
+    var clientTop  = docEl.clientTop || body.clientTop || 0;
     var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var borderL = parseInt(this.rendered_style(el, 'border-top-width'));
-    var borderR = parseInt(this.rendered_style(el, 'border-top-width'));
-    var borderT = parseInt(this.rendered_style(el, 'border-top-width'));
-    var borderB = parseInt(this.rendered_style(el, 'border-top-width'));
-    var top = box.top + scrollTop - clientTop - borderT - borderB;
-    var left = box.left + scrollLeft - clientLeft + borderL - borderR;
-    var width = parseFloat(this.rendered_style(el, "width"));
-    var height = parseFloat(this.rendered_style(el, "height"));
+    var borderL    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
+    var borderR    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
+    var borderT    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
+    var borderB    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
+    var top        = box.top + scrollTop - clientTop - borderT - borderB;
+    var left       = box.left + scrollLeft - clientLeft + borderL - borderR;
+    var width      = parseFloat(this.rendered_style(DOMElement, "width"));
+    var height     = parseFloat(this.rendered_style(DOMElement, "height"));
+
+    if (inlineDisplay)
+    {
+        this.css(DOMElement, 'display', inlineDisplay);
+    }
+    else
+    {
+        this.css(DOMElement, 'display', false);
+    }
+    
 
     return {
         top: top,
@@ -3633,27 +4280,39 @@ previous_untill_class(el, className)
  * Remove a css class or list of classes
  *
  * @access {public}
- * @param  {node}         el         Target element
+ * @param  {node}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to remove
  */
-remove_class(el, className)
+remove_class(DOMElement, className)
 {
-    if (!this.in_dom(el))
+    if (this.is_array(DOMElement))
     {
-        return;
-    }
-
-    if (TO_STR.call(className) === '[object Array]')
-    {
-        for (var i = 0; i < className.length; i++)
+        this.each(DOMElement, function(i, _DOMElement)
         {
-            el.classList.remove(className[i]);
-        }
+            this.remove_class(_DOMElement, className);
+
+        }, this);
+
+        return this;
+    }
+
+    if (!this.in_dom(DOMElement))
+    {
+        return this;
+    }
+
+    if (this.is_array(className))
+    {
+        this.each(className, function(i, _className)
+        {
+            DOMElement.classList.remove(_className);
+
+        });
 
         return;
     }
 
-    el.classList.remove(className);
+    DOMElement.classList.remove(className);
 }
 		/**
  * Remove an element from the DOM
@@ -3778,6 +4437,32 @@ trigger_event(el, type)
     {
         el.fireEvent(type);
     }
+}
+		/**
+ * Get an element's actual width in px
+ *
+ * @access {public}
+ * @param  {node}   DOMElement Target element
+ * @return {object}
+ */
+width(DOMElement)
+{
+	if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement ) return Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+
+    return this.rendered_style(DOMElement, 'width');
+}
+		/**
+ * Get an element's actual height in px
+ *
+ * @access {public}
+ * @param  {node}   DOMElement Target element
+ * @return {object}
+ */
+height(DOMElement)
+{
+    if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement ) return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+    return this.rendered_style(DOMElement, 'height');
 }
 		/**
  * Add an event listener
@@ -4233,7 +4918,7 @@ clone_deep(mixed_var, context)
  */
 __cloneVar(mixed_var, context, isDeep)
 {
-    isDeep = is_undefined(isDeep) ? true : isDeep;
+    isDeep = this.is_undefined(isDeep) ? true : isDeep;
 
     let tag = this.var_type(mixed_var);
 
@@ -4328,7 +5013,7 @@ __cloneObj(obj, context, isDeep)
     }
 
     // Loop keys and functions
-    let keys = object_props(obj);
+    let keys = this.object_props(obj);
     let ret = {};
 
     if (keys.length === 0)
@@ -4346,6 +5031,7 @@ __cloneObj(obj, context, isDeep)
     this.each(keys, function(i, key)
     {
         ret[key] = this.__cloneVar(obj[key], typeof context === 'undefined' ? ret : context);
+
     }, this);
 
     return ret;
@@ -4385,7 +5071,8 @@ __cloneArray(arr, context)
     this.each(arr, function(i, val)
     {
         ret[i] = this.__cloneVar(val, context);
-    });
+    
+    }, this);
 
     return ret;
 }
@@ -4422,7 +5109,8 @@ __cloneMap(m, context)
     m.this.each((v, k) =>
     {
         ret.set(k, this.__cloneVar(v, context));
-    });
+    
+    }, this);
 
     return ret;
 }
@@ -4434,7 +5122,8 @@ __cloneSet(s, context)
     s.this.each((val, k) =>
     {
         ret.add(k, this.__cloneVar(v, context));
-    });
+    
+    }, this);
 
     return ret;
 }
@@ -4580,6 +5269,7 @@ extend(baseFunc, extendFunc, callSuper)
                 {
                     this.__bind(constr, _this).apply(_this, args);
                 }
+                
             }, this);
         };
     }
@@ -5168,6 +5858,10 @@ ucwords(str)
         return $1.toUpperCase();
     });
 }
+		lc_first(string)
+{
+    return string.charAt(0).toLowerCase() + string.slice(1);
+}
 		/**
  * Checks if variable should be considered "true" or "false" using "common sense".
  * 
@@ -5748,7 +6442,7 @@ is_numeric(mixed_var)
     }
     else if (this.is_string(mixed_var))
     {
-        return /^-?\d+$/.test(mixed_var.trim());
+        return /^-?(0|[1-9]\d*)(\.\d+)?$/.test(mixed_var.trim());
     }
 
     return false;
@@ -7429,215 +8123,213 @@ console.log(Container.get('Helper'));
      * @constructor
      {*} @return this
      */
-    var Cookies = function()
+    class Cookies
     {
-        return this;
-    }
-
-    /**
-     * Set a cookie
-     *
-     * @access {public}
-     * @param  {string}    key      Cookie key
-     * @param  {string}    value    Cookie value
-     * @param  {int}    days     Cookie expiry in days (optional) (default when browser closes)
-     * @param  {string}    path     Cookie path (optional) (default "/")
-     * @param  {bool}   secure   Secure policy (optional) (default) (true)
-     * @param  {stringing} samesite Samesite policy (optional) (default) (true)
-     * @return {sting}
-     */
-    Cookies.prototype.set = function(key, value, days, path, secure, samesite)
-    {
-        value = this._encodeCookieValue(value);
-        key = this._normaliseKey(key);
-        path = typeof path === 'undefined' ? '; path=/' : '; path=' + path;
-        secure = (typeof secure === 'undefined' || secure === true) && window.location.protocol === 'https:' ? '; secure' : '';
-        samesite = typeof samesite === 'undefined' ? '' : '; samesite=' + samesite;
-        var expires = expires = "; expires=" + this._normaliseExpiry(days | 365);
-
-        document.cookie = key + '=' + value + expires + path + secure + samesite;
-
-        return value;
-    }
-
-    /**
-     * Get a cookie
-     *
-     * @access {public}
-     * @param  {string} key Cookie key
-     * @return {mixed}
-     */
-    Cookies.prototype.get = function(key)
-    {
-        key = this._normaliseKey(key);
-
-        var ca = document.cookie.split(';');
-
-        for (var i = 0; i < ca.length; i++)
+        /**
+         * Set a cookie
+         *
+         * @access {public}
+         * @param  {string}    key      Cookie key
+         * @param  {string}    value    Cookie value
+         * @param  {int}    days     Cookie expiry in days (optional) (default when browser closes)
+         * @param  {string}    path     Cookie path (optional) (default "/")
+         * @param  {bool}   secure   Secure policy (optional) (default) (true)
+         * @param  {stringing} samesite Samesite policy (optional) (default) (true)
+         * @return {sting}
+         */
+        set(key, value, days, path, secure, samesite)
         {
-            var c = ca[i];
+            value = this._encodeCookieValue(value);
+            key = this._normaliseKey(key);
+            path = typeof path === 'undefined' ? '; path=/' : '; path=' + path;
+            secure = (typeof secure === 'undefined' || secure === true) && window.location.protocol === 'https:' ? '; secure' : '';
+            samesite = typeof samesite === 'undefined' ? '' : '; samesite=' + samesite;
+            var expires = expires = "; expires=" + this._normaliseExpiry(days | 365);
 
-            while (c.charAt(0) == ' ')
-            {
-                c = c.substring(1);
-            }
+            document.cookie = key + '=' + value + expires + path + secure + samesite;
 
-            if (c.indexOf(key) == 0)
-            {
-                return this._decodeCookieValue(c.split('=').pop());
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Remove a cookie
-     *
-     * @access {public}
-     * @param  {string} key Cookie to remove
-     */
-    Cookies.prototype.remove = function(key)
-    {
-        key = this._normaliseKey(key);
-
-        document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    }
-
-    /**
-     * Normalise cookie expiry date
-     *
-     * @access {private}
-     * @param  {int}    days Days when cookie expires
-     * @return {sting}
-     */
-    Cookies.prototype._normaliseExpiry = function(days)
-    {
-        var date = new Date();
-
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-
-        return date.toUTCString();
-    }
-
-    /**
-     * Normalise cookie key
-     *
-     * @access {private}
-     * @param  {string} key Cookie key
-     * @return {sting}
-     */
-    Cookies.prototype._normaliseKey = function(key)
-    {
-        key = key.replace(/[^a-z0-9+]+/gi, '').toLowerCase();
-
-        return _prefix + key;
-    }
-
-    /**
-     * Encode cookie value
-     *
-     * @access {private}
-     * @param  {mixed}  value Value to encode
-     * @return {sting}
-     */
-    Cookies.prototype._encodeCookieValue = function(value)
-    {
-        try
-        {
-            value = this._base64_encode(JSON.stringify(value));
-        }
-        catch (e)
-        {
-            value = this._base64_encode(value);
-        }
-
-        return value;
-    }
-
-    /**
-     * Decode cookie value
-     *
-     * @access {private}
-     * @param  {string}  str Value to decode
-     * @return {mixed}
-     */
-    Cookies.prototype._decodeCookieValue = function(str)
-    {
-        var value = this._base64_decode(str);
-
-        try
-        {
-            value = JSON.parse(value);
-        }
-        catch (e)
-        {
             return value;
         }
 
-        return value;
-    }
-
-    /**
-     * Base64 encode
-     *
-     * @access {private}
-     * @param  {string} str String to encode
-     * @return {sting}
-     */
-    Cookies.prototype._base64_encode = function(str)
-    {
-        return btoa(this._toBinary(str)).replace(/=/g, '_');
-    }
-
-    /**
-     * Base64 decode
-     *
-     * @access {pubic}
-     * @param  {string} str String to decode
-     * @return {sting}
-     */
-    Cookies.prototype._base64_decode = function(str)
-    {
-        return this._fromBinary(atob(str.replace(/_/g, '=')));
-    }
-
-    /**
-     * From binary
-     *
-     * @access {prvate}
-     * @param  {string} binary String to decode
-     * @return {string}
-     */
-    Cookies.prototype._fromBinary = function(binary)
-    {
-        const bytes = new Uint8Array(binary.length);
-
-        for (var i = 0; i < bytes.length; i++)
+        /**
+         * Get a cookie
+         *
+         * @access {public}
+         * @param  {string} key Cookie key
+         * @return {mixed}
+         */
+        get(key)
         {
-            bytes[i] = binary.charCodeAt(i);
+            key = this._normaliseKey(key);
+
+            var ca = document.cookie.split(';');
+
+            for (var i = 0; i < ca.length; i++)
+            {
+                var c = ca[i];
+
+                while (c.charAt(0) == ' ')
+                {
+                    c = c.substring(1);
+                }
+
+                if (c.indexOf(key) == 0)
+                {
+                    return this._decodeCookieValue(c.split('=').pop());
+                }
+            }
+
+            return false;
         }
 
-        return String.fromCharCode.apply(null, new Uint16Array(bytes.buffer));
-    }
-
-    /**
-     * To binary
-     *
-     * @access {pubic}
-     * @param  {string} string String to encode
-     * @return {sting}
-     */
-    Cookies.prototype._toBinary = function(string)
-    {
-        const codeUnits = new Uint16Array(string.length);
-
-        for (var i = 0; i < codeUnits.length; i++)
+        /**
+         * Remove a cookie
+         *
+         * @access {public}
+         * @param  {string} key Cookie to remove
+         */
+        remove(key)
         {
-            codeUnits[i] = string.charCodeAt(i);
+            key = this._normaliseKey(key);
+
+            document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         }
 
-        return String.fromCharCode.apply(null, new Uint8Array(codeUnits.buffer));
+        /**
+         * Normalise cookie expiry date
+         *
+         * @access {private}
+         * @param  {int}    days Days when cookie expires
+         * @return {sting}
+         */
+        _normaliseExpiry(days)
+        {
+            var date = new Date();
+
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+
+            return date.toUTCString();
+        }
+
+        /**
+         * Normalise cookie key
+         *
+         * @access {private}
+         * @param  {string} key Cookie key
+         * @return {sting}
+         */
+        _normaliseKey(key)
+        {
+            key = key.replace(/[^a-z0-9+]+/gi, '').toLowerCase();
+
+            return _prefix + key;
+        }
+
+        /**
+         * Encode cookie value
+         *
+         * @access {private}
+         * @param  {mixed}  value Value to encode
+         * @return {sting}
+         */
+        _encodeCookieValue(value)
+        {
+            try
+            {
+                value = this._base64_encode(JSON.stringify(value));
+            }
+            catch (e)
+            {
+                value = this._base64_encode(value);
+            }
+
+            return value;
+        }
+
+        /**
+         * Decode cookie value
+         *
+         * @access {private}
+         * @param  {string}  str Value to decode
+         * @return {mixed}
+         */
+        _decodeCookieValue(str)
+        {
+            var value = this._base64_decode(str);
+
+            try
+            {
+                value = JSON.parse(value);
+            }
+            catch (e)
+            {
+                return value;
+            }
+
+            return value;
+        }
+
+        /**
+         * Base64 encode
+         *
+         * @access {private}
+         * @param  {string} str String to encode
+         * @return {sting}
+         */
+        _base64_encode(str)
+        {
+            return btoa(this._toBinary(str)).replace(/=/g, '_');
+        }
+
+        /**
+         * Base64 decode
+         *
+         * @access {pubic}
+         * @param  {string} str String to decode
+         * @return {sting}
+         */
+        _base64_decode(str)
+        {
+            return this._fromBinary(atob(str.replace(/_/g, '=')));
+        }
+
+        /**
+         * From binary
+         *
+         * @access {prvate}
+         * @param  {string} binary String to decode
+         * @return {string}
+         */
+        _fromBinary(binary)
+        {
+            const bytes = new Uint8Array(binary.length);
+
+            for (var i = 0; i < bytes.length; i++)
+            {
+                bytes[i] = binary.charCodeAt(i);
+            }
+
+            return String.fromCharCode.apply(null, new Uint16Array(bytes.buffer));
+        }
+
+        /**
+         * To binary
+         *
+         * @access {pubic}
+         * @param  {string} string String to encode
+         * @return {sting}
+         */
+        _toBinary(string)
+        {
+            const codeUnits = new Uint16Array(string.length);
+
+            for (var i = 0; i < codeUnits.length; i++)
+            {
+                codeUnits[i] = string.charCodeAt(i);
+            }
+
+            return String.fromCharCode.apply(null, new Uint8Array(codeUnits.buffer));
+        }
     }
 
     // Register as DOM Module and invoke
@@ -7658,7 +8350,7 @@ console.log(Container.get('Helper'));
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Module constructor
@@ -7668,130 +8360,127 @@ console.log(Container.get('Helper'));
      * @access {public}
      * @return {this}
      */
-    var Events = function()
+    class Events
     {
+        _callbacks = {};
 
-        this._callbacks = {};
-
-        return this;
-    }
-
-    /**
-     * Module destructor - clears event cache
-     *
-     * @access {public}
-     */
-    Events.prototype.destruct = function()
-    {
-        this._callbacks = {};
-    }
-
-    /**
-     * Fire a custom event
-     *
-     * @param {string} eventName The event name to fire
-     * @param {mixed}  subject   What should be given as "this" to the event callbacks
-     * @param {mixed}  args      List of additional args to push (optional)
-     * @access {public}
-     */
-    Events.prototype.fire = function()
-    {
-        var args = Array.prototype.slice.call(arguments);
-
-        var eventName = args.shift();
-
-        for (var key in this._callbacks)
+        /**
+         * Module destructor - clears event cache
+         *
+         * @access {public}
+         */
+        destruct()
         {
-            if (!this._callbacks.hasOwnProperty(key))
+            this._callbacks = {};
+        }
+
+        /**
+         * Fire a custom event
+         *
+         * @param {string} eventName The event name to fire
+         * @param {mixed}  subject   What should be given as "this" to the event callbacks
+         * @param {mixed}  args      List of additional args to push (optional)
+         * @access {public}
+         */
+        fire()
+        {
+            var args = Array.prototype.slice.call(arguments);
+
+            var eventName = args.shift();
+
+            for (var key in this._callbacks)
             {
-                continue;
-            }
-
-            var callbackEvent = key.split('______')[0];
-
-            if (callbackEvent === eventName)
-            {
-                var callback   = this._callbacks[key].callback;
-                var _this      = null;
-
-                if (args.length >= 1)
+                if (!this._callbacks.hasOwnProperty(key))
                 {
-                    _this = args[0];
-
-                    args.shift();
+                    continue;
                 }
 
-                callback.apply(_this, args);
+                var callbackEvent = key.split('______')[0];
+
+                if (callbackEvent === eventName)
+                {
+                    var callback   = this._callbacks[key].callback;
+                    var _this      = null;
+
+                    if (args.length >= 1)
+                    {
+                        _this = args[0];
+
+                        args.shift();
+                    }
+
+                    callback.apply(_this, args);
+                }
             }
         }
-    }
 
-    /**
-     * Bind a callback to an event
-     *
-     * @param {eventName} string The event name
-     * @param {callback}  func   The callback function
-     * @access {public}
-     */
-    Events.prototype.on = function(eventName, callback)
-    {
-        // Make sure the function is unique - unless it is ananonymous
-        var callbackName = this._getFnName(callback);
-
-        if (callbackName === 'anonymous')
+        /**
+         * Bind a callback to an event
+         *
+         * @param {eventName} string The event name
+         * @param {callback}  func   The callback function
+         * @access {public}
+         */
+        on(eventName, callback)
         {
-            callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
-        }
+            // Make sure the function is unique - unless it is ananonymous
+            var callbackName = this._getFnName(callback);
 
-        var key = eventName + '______' + callbackName;
-
-        // Save the callback and event name
-        this._callbacks[key] =
-        {
-            name: eventName,
-            callback: callback,
-        };
-    }
-
-    /**
-     * UnBind a callback to an event
-     *
-     * @param {eventName} string The event name
-     * @param {callback}  func   The callback function
-     * @access {public}
-     */
-    Events.prototype.off = function(eventName, callback)
-    {
-        for (var key in this._callbacks)
-        {
-            if (!this._callbacks.hasOwnProperty(key))
+            if (callbackName === 'anonymous')
             {
-                continue;
+                callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
             }
 
-            var callbackEvent = key.split('______')[0];
+            var key = eventName + '______' + callbackName;
 
-            if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
+            // Save the callback and event name
+            this._callbacks[key] =
             {
-                delete this._callbacks[key];
+                name: eventName,
+                callback: callback,
+            };
+        }
+
+        /**
+         * UnBind a callback to an event
+         *
+         * @param {eventName} string The event name
+         * @param {callback}  func   The callback function
+         * @access {public}
+         */
+        off(eventName, callback)
+        {
+            for (var key in this._callbacks)
+            {
+                if (!this._callbacks.hasOwnProperty(key))
+                {
+                    continue;
+                }
+
+                var callbackEvent = key.split('______')[0];
+
+                if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
+                {
+                    delete this._callbacks[key];
+                }
             }
         }
-    }
 
-    /**
-     * Get a callback function by key
-     *
-     * @param {fn} string The function key
-     * @access {private}
-     * @return {string}
-     */
-    Events.prototype._getFnName = function(fn)
-    {
-        var f = typeof fn == 'function';
+        /**
+         * Get a callback function by key
+         *
+         * @param {fn} string The function key
+         * @access {private}
+         * @return {string}
+         */
+        _getFnName(fn)
+        {
+            var f = typeof fn == 'function';
 
-        var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
+            var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
 
-        return (!f && 'not a function') || (s && s[1] || 'anonymous');
+            return (!f && 'not a function') || (s && s[1] || 'anonymous');
+        }
     }
 
     // Load into container and invoke
@@ -7816,119 +8505,117 @@ console.log(Container.get('Helper'));
      * @access {public}
      * @return {this}
      */
-    var Filters = function()
+    class Filters
     {
-        this._callbacks = {};
+        _callbacks = {};
 
-        return this;
-    }
-
-    /**
-     * Module destructor - clears event cache
-     *
-     * @access {public}
-     */
-    Filters.prototype.destruct = function()
-    {
-        this._callbacks = {};
-    }
-
-    /**
-     * Fire a custom event
-     *
-     * @param {eventName} string The event name to fire
-     * @param {subject}   mixed  What should be given as "this" to the event callbacks
-     * @access {public}
-     */
-    Filters.prototype.filter = function(eventName, subject)
-    {
-        var response = subject;
-
-        for (var key in this._callbacks)
+        /**
+         * Module destructor - clears event cache
+         *
+         * @access {public}
+         */
+        destruct()
         {
-            if (!this._callbacks.hasOwnProperty(key))
+            this._callbacks = {};
+        }
+
+        /**
+         * Fire a custom event
+         *
+         * @param {eventName} string The event name to fire
+         * @param {subject}   mixed  What should be given as "this" to the event callbacks
+         * @access {public}
+         */
+        filter(eventName, subject)
+        {
+            var response = subject;
+
+            for (var key in this._callbacks)
             {
-                continue;
+                if (!this._callbacks.hasOwnProperty(key))
+                {
+                    continue;
+                }
+
+                var callbackEvent = key.split('______')[0];
+
+                if (callbackEvent === eventName)
+                {
+                    var callback = this._callbacks[key].callback;
+
+                    response = callback.call(response, response);
+                }
             }
 
-            var callbackEvent = key.split('______')[0];
+            return response;
+        }
 
-            if (callbackEvent === eventName)
+        /**
+         * Bind a callback to an event
+         *
+         * @param {eventName} string The event name
+         * @param {callback}  func   The callback function
+         * @access {public}
+         */
+        on(eventName, callback)
+        {
+            // Make sure the function is unique - unless it is ananonymous
+            var callbackName = this._getFnName(callback);
+
+            if (callbackName === 'anonymous')
             {
-                var callback = this._callbacks[key].callback;
+                callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
+            }
 
-                response = callback.call(response, response);
+            var key = eventName + '______' + callbackName;
+
+            // Save the callback and event name
+            this._callbacks[key] = {
+                name: eventName,
+                callback: callback,
+            };
+        }
+
+        /**
+         * UnBind a callback to an event
+         *
+         * @param {eventName} string The event name
+         * @param {callback}  func   The callback function
+         * @access {public}
+         */
+        off(eventName, callback)
+        {
+            for (var key in this._callbacks)
+            {
+                if (!this._callbacks.hasOwnProperty(key))
+                {
+                    continue;
+                }
+
+                var callbackEvent = key.split('______')[0];
+
+                if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
+                {
+                    delete this._callbacks[key];
+                }
             }
         }
 
-        return response;
-    }
-
-    /**
-     * Bind a callback to an event
-     *
-     * @param {eventName} string The event name
-     * @param {callback}  func   The callback function
-     * @access {public}
-     */
-    Filters.prototype.on = function(eventName, callback)
-    {
-        // Make sure the function is unique - unless it is ananonymous
-        var callbackName = this._getFnName(callback);
-
-        if (callbackName === 'anonymous')
+        /**
+         * Get a callback function by key
+         *
+         * @param {fn} string The function key
+         * @access {private}
+         * @return {string}
+         */
+        _getFnName(fn)
         {
-            callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
+            var f = typeof fn == 'function';
+
+            var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
+
+            return (!f && 'not a function') || (s && s[1] || 'anonymous');
         }
-
-        var key = eventName + '______' + callbackName;
-
-        // Save the callback and event name
-        this._callbacks[key] = {
-            name: eventName,
-            callback: callback,
-        };
-    }
-
-    /**
-     * UnBind a callback to an event
-     *
-     * @param {eventName} string The event name
-     * @param {callback}  func   The callback function
-     * @access {public}
-     */
-    Filters.prototype.off = function(eventName, callback)
-    {
-        for (var key in this._callbacks)
-        {
-            if (!this._callbacks.hasOwnProperty(key))
-            {
-                continue;
-            }
-
-            var callbackEvent = key.split('______')[0];
-
-            if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
-            {
-                delete this._callbacks[key];
-            }
-        }
-    }
-
-    /**
-     * Get a callback function by key
-     *
-     * @param {fn} string The function key
-     * @access {private}
-     * @return {string}
-     */
-    Filters.prototype._getFnName = function(fn)
-    {
-        var f = typeof fn == 'function';
-
-        var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
-
-        return (!f && 'not a function') || (s && s[1] || 'anonymous');
     }
 
     // Load into container and invoke
@@ -8458,7 +9145,7 @@ console.log(Container.get('Helper'));
      * 
      * @var {object}
      */
-    var Helper = Container.Helper();
+    const Helper = Container.Helper();
 
     /**
      * Module constructor
@@ -8466,349 +9153,351 @@ console.log(Container.get('Helper'));
      * @constructor
      {*} @access public
      */
-    var InputMasker = function(element)
+    class InputMasker
     {
-        this._element = element;
-
-        this._mask = null;
-
-        return this;
-    }
-
-
-    /**
-     * Mask Credit Card
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.creditcard = function()
-    {
-        var _mask = vanillaMasker.maskInput(
+        constructor(element)
         {
-            inputElement: this._element,
-            guide: false,
-            mask: [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]
-        });
+            this._element = element;
 
-        _mask['_element'] = this._element;
+            this._mask = null;
 
-        _masks.push(_mask);
-    };
+            return this;
+        }
 
-    /**
-     * Mask money
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.money = function()
-    {
-        var _filter = function(rawValue)
+        /**
+         * Mask Credit Card
+         *
+         * @access {public}
+         */
+        creditcard()
         {
-            var mask = [];
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask money
+         *
+         * @access {public}
+         */
+        money()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(/[0-9]|\./);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(/[0-9]|\./);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [/[0-9]/];
+            };
 
-            return [/[0-9]/];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask money
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.numeric = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask money
+         *
+         * @access {public}
+         */
+        numeric()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(/[0-9]/);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(/[0-9]/);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [/[0-9]/];
+            };
 
-            return [/[0-9]/];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask numeric with decimals
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.numericDecimal = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask numeric with decimals
+         *
+         * @access {public}
+         */
+        numericDecimal()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(/[0-9]|\./);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(/[0-9]|\./);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [/[0-9]/];
+            };
 
-            return [/[0-9]/];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask alpha numeric
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.alphaNumeric = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            var regex = /[A-z0-9]/;
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask alpha numeric
+         *
+         * @access {public}
+         */
+        alphaNumeric()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                var regex = /[A-z0-9]/;
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(regex);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(regex);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [regex];
+            };
 
-            return [regex];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask alpha space
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.alphaSpace = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            var regex = /[A-z ]/;
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask alpha space
+         *
+         * @access {public}
+         */
+        alphaSpace()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                var regex = /[A-z ]/;
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(regex);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(regex);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [regex];
+            };
 
-            return [regex];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask alpha dash
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.alphaDash = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            var regex = /[A-z-]/;
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask alpha dash
+         *
+         * @access {public}
+         */
+        alphaDash()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                var regex = /[A-z-]/;
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(regex);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(regex);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [regex];
+            };
 
-            return [regex];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask alphanumeric dash
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.alphaNumericDash = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            var regex = /[A-z0-9-]/;
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask alphanumeric dash
+         *
+         * @access {public}
+         */
+        alphaNumericDash()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                var regex = /[A-z0-9-]/;
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(regex);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(regex);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [regex];
+            };
 
-            return [regex];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask custom regex
-     *
-     * @access {public}
-     * @param  {regex}  pattern The pattern regex to mask
-     */
-    InputMasker.prototype.regex = function(pattern)
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask custom regex
+         *
+         * @access {public}
+         * @param  {regex}  pattern The pattern regex to mask
+         */
+        regex(pattern)
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(pattern);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(pattern);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [pattern];
+            };
 
-            return [pattern];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Disable the mask
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.remove = function()
-    {
-        for (var i = _masks.length - 1; i >= 0; i--)
-        {
-            if (_masks[i]['_element'] === this._element)
+            var _mask = vanillaMasker.maskInput(
             {
-                _masks[i]._destroy();
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
 
-                _masks.splice(i, 1);
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Disable the mask
+         *
+         * @access {public}
+         */
+        remove()
+        {
+            for (var i = _masks.length - 1; i >= 0; i--)
+            {
+                if (_masks[i]['_element'] === this._element)
+                {
+                    _masks[i]._destroy();
+
+                    _masks.splice(i, 1);
+                }
             }
         }
-    };
+    }
 
     // SET IN IOC
     /*****************************************/
@@ -8828,7 +9517,7 @@ console.log(Container.get('Helper'));
     /**
      * @var {obj}
      */
-    var Helper = Container.Helper();
+    const Helper = Container.Helper();
 
     /**
      * @var {obj}
@@ -8869,307 +9558,310 @@ console.log(Container.get('Helper'));
      * @access {public}
      * @return {this}
      */
-    var Modal = function(options)
-    {
-        this._options = Helper.array_merge(defaults, options);
-        this._timer = null;
-        this._modal = null;
-        this._overlay = null;
-        this._modalInner = null;
-
-        this._invoke();
-
-        return this;
-    };
-
-    /**
-     * After options have parsed invoke the modal
-     *
-     * @access {private}
-     */
-    Modal.prototype._invoke = function()
-    {
-        // Build the modal
-        this._buildModal();
-
-        // Render the modal        
-        this._render();
-
-        // Add listeners
-        this._bindListeners();
-
-        return this;
-    }
-
-    /**
-     * Build the actual modal
-     *
-     * @access {private}
-     */
-    Modal.prototype._buildModal = function()
-    {
-        var modal = document.createElement('DIV');
-        modal.className = 'modal-wrap';
-
-        var overlay = document.createElement('DIV');
-        overlay.className = 'modal-overlay ' + this._options['overlay'];
-
-        var content = '';
-
-        if (this._options.targetContent)
+    class Modal
+    { 
+        constructor(options)
         {
-            modal.innerHTML = this._buildTargetModal();
-        }
-        else
-        {
-            var closeButton = this._options.cancelBtn === true ? '<button type="button" class="btn ' + this._options.cancelClass + ' js-modal-close js-modal-cancel">' + this._options.cancelText + '</button>' : '';
-            var confirmButton = this._options.confirmBtn === true ? '<button type="button" class="btn ' + this._options.confirmClass + ' js-modal-close js-modal-confirm">' + this._options.confirmText + '</button>' : '';
+            this._options = Helper.array_merge(defaults, options);
+            this._timer = null;
+            this._modal = null;
+            this._overlay = null;
+            this._modalInner = null;
 
-            Helper.inner_HTML(modal, [
-                '<div class="modal-dialog js-modal-dialog">',
-                '<div class="card js-modal-panel">',
-                '<div class="card-header">',
-                '<h4 class="card-title">' + this._options.title + '</h4>',
-                '</div>',
-                this._options.extras,
-                '<div class="card-block">',
-                '<p class="card-text">' + this._options.message + '</p>',
-                '</div>',
-                '<div class="card-actions">',
-                closeButton,
-                confirmButton,
-                '</div>',
-                '</div>',
-                '</div>',
-            ]);
+            this._invoke();
+
+            return this;
         }
 
-        this._modal = modal;
-        this._overlay = overlay;
-        this._modalInner = Helper.$('.js-modal-dialog', modal);
-        this._fireBuilt();
-    }
-
-    /**
-     * Get modal content from an existing DOM node
-     *
-     * @access {private}
-     * @return {string}
-     */
-    Modal.prototype._buildTargetModal = function()
-    {
-        var content = Helper.$(this._options.targetContent);
-
-        if (!Helper.in_dom(content))
+        /**
+         * After options have parsed invoke the modal
+         *
+         * @access {private}
+         */
+        _invoke()
         {
-            throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
+            // Build the modal
+            this._buildModal();
+
+            // Render the modal        
+            this._render();
+
+            // Add listeners
+            this._bindListeners();
+
+            return this;
         }
 
-        return '<div class="modal-dialog js-modal-dialog"><div class="card js-modal-panel">' + content.innerHTML + '</div></div>';
-    }
-
-    /**
-     * Render the modal
-     *
-     * @access {private}
-     */
-    Modal.prototype._render = function()
-    {
-        var _this = this;
-        document.body.appendChild(this._overlay);
-        document.body.appendChild(this._modal);
-
-        this._centerModal();
-
-        Helper.add_class(this._overlay, 'active');
-
-        this._fireRender();
-
-        Helper.addEventListener(window, 'resize', function modalResize()
+        /**
+         * Build the actual modal
+         *
+         * @access {private}
+         */
+        _buildModal()
         {
-            _this._centerModal();
-        });
+            var modal = document.createElement('DIV');
+            modal.className = 'modal-wrap';
 
-        Helper.add_class(document.body, 'no-scroll');
-    }
+            var overlay = document.createElement('DIV');
+            overlay.className = 'modal-overlay ' + this._options['overlay'];
 
-    /**
-     * Bind event listeners inside the built modal
-     *
-     * @access {private}
-     */
-    Modal.prototype._bindListeners = function()
-    {
-        var _this = this;
+            var content = '';
 
-        var closeModal = function(e)
-        {
-            e = e || window.event;
-
-            if (_this._options.closeAnywhere === true)
+            if (this._options.targetContent)
             {
-                if (this === _this._modal)
-                {
-                    var clickedInner = Helper.closest(e.target, '.js-modal-dialog');
+                modal.innerHTML = this._buildTargetModal();
+            }
+            else
+            {
+                var closeButton = this._options.cancelBtn === true ? '<button type="button" class="btn ' + this._options.cancelClass + ' js-modal-close js-modal-cancel">' + this._options.cancelText + '</button>' : '';
+                var confirmButton = this._options.confirmBtn === true ? '<button type="button" class="btn ' + this._options.confirmClass + ' js-modal-close js-modal-confirm">' + this._options.confirmText + '</button>' : '';
 
-                    if (clickedInner)
+                Helper.inner_HTML(modal, [
+                    '<div class="modal-dialog js-modal-dialog">',
+                    '<div class="card js-modal-panel">',
+                    '<div class="card-header">',
+                    '<h4 class="card-title">' + this._options.title + '</h4>',
+                    '</div>',
+                    this._options.extras,
+                    '<div class="card-block">',
+                    '<p class="card-text">' + this._options.message + '</p>',
+                    '</div>',
+                    '<div class="card-actions">',
+                    closeButton,
+                    confirmButton,
+                    '</div>',
+                    '</div>',
+                    '</div>',
+                ]);
+            }
+
+            this._modal = modal;
+            this._overlay = overlay;
+            this._modalInner = Helper.$('.js-modal-dialog', modal);
+            this._fireBuilt();
+        }
+
+        /**
+         * Get modal content from an existing DOM node
+         *
+         * @access {private}
+         * @return {string}
+         */
+        _buildTargetModal()
+        {
+            var content = Helper.$(this._options.targetContent);
+
+            if (!Helper.in_dom(content))
+            {
+                throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
+            }
+
+            return '<div class="modal-dialog js-modal-dialog"><div class="card js-modal-panel">' + content.innerHTML + '</div></div>';
+        }
+
+        /**
+         * Render the modal
+         *
+         * @access {private}
+         */
+        _render()
+        {
+            var _this = this;
+            document.body.appendChild(this._overlay);
+            document.body.appendChild(this._modal);
+
+            this._centerModal();
+
+            Helper.add_class(this._overlay, 'active');
+
+            this._fireRender();
+
+            Helper.addEventListener(window, 'resize', function modalResize()
+            {
+                _this._centerModal();
+            });
+
+            Helper.add_class(document.body, 'no-scroll');
+        }
+
+        /**
+         * Bind event listeners inside the built modal
+         *
+         * @access {private}
+         */
+        _bindListeners()
+        {
+            var _this = this;
+
+            var closeModal = function(e)
+            {
+                e = e || window.event;
+
+                if (_this._options.closeAnywhere === true)
+                {
+                    if (this === _this._modal)
+                    {
+                        var clickedInner = Helper.closest(e.target, '.js-modal-dialog');
+
+                        if (clickedInner)
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                e.preventDefault();
+
+                clearTimeout(_this._timer);
+
+                if (Helper.has_class(this, 'js-modal-confirm'))
+                {
+                    var canClose = _this._fireConfirmValidator();
+
+                    if (!canClose)
                     {
                         return;
                     }
                 }
-            }
 
-            e.preventDefault();
+                Helper.add_class(_this._overlay, 'transition-off');
 
-            clearTimeout(_this._timer);
+                _this._fireClosed();
 
-            if (Helper.has_class(this, 'js-modal-confirm'))
-            {
-                var canClose = _this._fireConfirmValidator();
-
-                if (!canClose)
+                if (Helper.has_class(this, 'js-modal-confirm'))
                 {
-                    return;
+                    _this._fireConfirm();
                 }
+
+                _this._timer = setTimeout(function()
+                {
+                    Helper.remove_from_dom(_this._overlay);
+                    Helper.remove_from_dom(_this._modal);
+                    Helper.remove_class(document.body, 'no-scroll');
+                }, 600);
             }
 
-            Helper.add_class(_this._overlay, 'transition-off');
-
-            _this._fireClosed();
-
-            if (Helper.has_class(this, 'js-modal-confirm'))
+            if (this._options.closeAnywhere === true)
             {
-                _this._fireConfirm();
+                Helper.addEventListener(this._modal, 'click', closeModal, false);
             }
 
-            _this._timer = setTimeout(function()
+            var modalCloses = Helper.$All('.js-modal-close', this._modal);
+            if (!Helper.is_empty(modalCloses))
             {
-                Helper.remove_from_dom(_this._overlay);
-                Helper.remove_from_dom(_this._modal);
+                Helper.addEventListener(modalCloses, 'click', closeModal, false);
+            }
+
+            var modalCancel = Helper.$('.js-modal-cancel', this._modal);
+            if (Helper.in_dom(modalCancel))
+            {
+                Helper.addEventListener(modalCancel, 'click', closeModal, false);
+            }
+        }
+
+        /**
+         * Fire render event
+         *
+         * @access {private}
+         */
+        _fireRender()
+        {
+            if (this._options.onRender !== null && Helper.is_callable(this._options.onRender))
+            {
+                var callback = this._options.onRender;
+                var args = this._options.onRenderArgs;
+                callback.apply(this._modal, args);
+
+            }
+        }
+
+        /**
+         * Fire the closed event
+         *
+         * @access {private}
+         */
+        _fireClosed()
+        {
+            if (this._options.onClose !== null && Helper.is_callable(this._options.onClose))
+            {
+                var callback = this._options.onClose;
+                var args = this._options.onCloseArgs;
+                callback.apply(this._modal, args);
                 Helper.remove_class(document.body, 'no-scroll');
-            }, 600);
+            }
         }
 
-        if (this._options.closeAnywhere === true)
+        /**
+         * Fire the confirm event
+         *
+         * @access {private}
+         */
+        _fireConfirm()
         {
-            Helper.addEventListener(this._modal, 'click', closeModal, false);
+            if (this._options.onConfirm !== null && Helper.is_callable(this._options.onConfirm))
+            {
+                var callback = this._options.onConfirm;
+                var args = this._options.onConfirmArgs;
+                callback.apply(this._modal, args);
+            }
         }
 
-        var modalCloses = Helper.$All('.js-modal-close', this._modal);
-        if (!Helper.is_empty(modalCloses))
+        /**
+         * Fire the confirm validation
+         *
+         * @access {private}
+         */
+        _fireConfirmValidator()
         {
-            Helper.addEventListener(modalCloses, 'click', closeModal, false);
+            if (this._options.validateConfirm !== null && Helper.is_callable(this._options.validateConfirm))
+            {
+                var callback = this._options.validateConfirm;
+                var args = this._options.validateConfirmArgs;
+                return callback.apply(this._modal, args);
+            }
+
+            return true;
         }
 
-        var modalCancel = Helper.$('.js-modal-cancel', this._modal);
-        if (Helper.in_dom(modalCancel))
+        /**
+         * Fire the built event
+         *
+         * @access {private}
+         */
+        _fireBuilt()
         {
-            Helper.addEventListener(modalCancel, 'click', closeModal, false);
-        }
-    }
-
-    /**
-     * Fire render event
-     *
-     * @access {private}
-     */
-    Modal.prototype._fireRender = function()
-    {
-        if (this._options.onRender !== null && Helper.is_callable(this._options.onRender))
-        {
-            var callback = this._options.onRender;
-            var args = this._options.onRenderArgs;
-            callback.apply(this._modal, args);
-
-        }
-    }
-
-    /**
-     * Fire the closed event
-     *
-     * @access {private}
-     */
-    Modal.prototype._fireClosed = function()
-    {
-        if (this._options.onClose !== null && Helper.is_callable(this._options.onClose))
-        {
-            var callback = this._options.onClose;
-            var args = this._options.onCloseArgs;
-            callback.apply(this._modal, args);
-            Helper.remove_class(document.body, 'no-scroll');
-        }
-    }
-
-    /**
-     * Fire the confirm event
-     *
-     * @access {private}
-     */
-    Modal.prototype._fireConfirm = function()
-    {
-        if (this._options.onConfirm !== null && Helper.is_callable(this._options.onConfirm))
-        {
-            var callback = this._options.onConfirm;
-            var args = this._options.onConfirmArgs;
-            callback.apply(this._modal, args);
-        }
-    }
-
-    /**
-     * Fire the confirm validation
-     *
-     * @access {private}
-     */
-    Modal.prototype._fireConfirmValidator = function()
-    {
-        if (this._options.validateConfirm !== null && Helper.is_callable(this._options.validateConfirm))
-        {
-            var callback = this._options.validateConfirm;
-            var args = this._options.validateConfirmArgs;
-            return callback.apply(this._modal, args);
+            if (this._options.onBuilt !== null && Helper.is_callable(this._options.onBuilt))
+            {
+                var callback = this._options.onBuilt;
+                var args = this._options.onBuiltArgs;
+                callback.apply(this._modal, args);
+            }
         }
 
-        return true;
-    }
-
-    /**
-     * Fire the built event
-     *
-     * @access {private}
-     */
-    Modal.prototype._fireBuilt = function()
-    {
-        if (this._options.onBuilt !== null && Helper.is_callable(this._options.onBuilt))
+        /**
+         * Center the modal vertically
+         *
+         * @access {private}
+         */
+        _centerModal()
         {
-            var callback = this._options.onBuilt;
-            var args = this._options.onBuiltArgs;
-            callback.apply(this._modal, args);
-        }
-    }
+            var el = this._modalInner;
+            var computedStyle = window.getComputedStyle(el);
+            var modalH = parseInt(el.offsetHeight);
+            var windowH = window.innerHeight || document.documentElement.clientHeight || getElementsByTagName('body')[0].clientHeight;
 
-    /**
-     * Center the modal vertically
-     *
-     * @access {private}
-     */
-    Modal.prototype._centerModal = function()
-    {
-        var el = this._modalInner;
-        var computedStyle = window.getComputedStyle(el);
-        var modalH = parseInt(el.offsetHeight);
-        var windowH = window.innerHeight || document.documentElement.clientHeight || getElementsByTagName('body')[0].clientHeight;
-
-        // If the window height is less than the modal dialog
-        // We need to adjust the dialog so it is at the top of the page
-        if (windowH <= modalH)
-        {
-            el.style.marginTop = '0px';
-            el.style.top = '0';
-        }
-        else
-        {
-            el.style.marginTop = '-' + (modalH / 2) + 'px';
-            el.style.top = '50%';
+            // If the window height is less than the modal dialog
+            // We need to adjust the dialog so it is at the top of the page
+            if (windowH <= modalH)
+            {
+                el.style.marginTop = '0px';
+                el.style.top = '0';
+            }
+            else
+            {
+                el.style.marginTop = '-' + (modalH / 2) + 'px';
+                el.style.top = '50%';
+            }
         }
     }
 
@@ -9190,7 +9882,7 @@ console.log(Container.get('Helper'));
     /**
      * @var {obj}
      */
-    var Helper = Container.Helper();
+    const Helper = Container.Helper();
 
     /**
      * @var {obj}
@@ -9231,276 +9923,279 @@ console.log(Container.get('Helper'));
      * @access {public}
      * @return {this}
      */
-    var Frontdrop = function(options)
+    class Frontdrop
     {
-        if (typeof options !== 'undefined')
+        constructor(options)
         {
-            this._options = Helper.array_merge(defaults, options);
-            this._timer = null;
-            this._modal = null;
-            this._overlay = null;
-            this._modalInner = null;
-
-            this._invoke();
-        }
-
-        return this;
-    };
-
-    /**
-     * After options have parsed invoke the modal
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._invoke = function()
-    {
-        // Build the modal
-        this._buildModal();
-
-        // Render the modal        
-        this._render();
-
-        // Add listeners
-        this._bindListeners();
-
-        return this;
-    }
-
-    /**
-     * Build the actual modal
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._buildModal = function()
-    {
-        var modal = document.createElement('DIV');
-        modal.className = 'frontdrop-wrap';
-
-        var overlay = document.createElement('DIV');
-        overlay.className = 'frontdrop-overlay ' + this._options['overlay'];
-
-        var close   = '';
-        var content = this._options.targetContent !== null ? this._getTargetContent() : this._options.content;
-        var confirm = this._options.confirmBtn === true ? '<button type="button" class="btn btn-xl ' + this._options.confirmClass + ' btn-confirm js-frontdrop-close js-frontdrop-confirm">' + this._options.confirmText + '</button>' : '';
-
-        if (this._options.closeBtn)
-        {
-            if (this._options.closeText)
+            if (typeof options !== 'undefined')
             {
-                close = '<button type="button" class="' + this._options.closeClass + ' js-frontdrop-close">' + this._options.closeText + '</button>';
+                this._options = Helper.array_merge(defaults, options);
+                this._timer = null;
+                this._modal = null;
+                this._overlay = null;
+                this._modalInner = null;
+
+                this._invoke();
             }
-            else
-            {
-                close = '<button type="button" class="btn btn-pure btn-sm btn-circle btn-close js-frontdrop-close"><span class="glyph-icon glyph-icon-cross2"></span></button>';
-            }
+
+            return this;
         }
 
-        Helper.inner_HTML(modal, [
-            '<div class="frontdrop-dialog js-frontdrop-dialog">',
-                '<div class="frontdrop-header">',
-                    close,
-                    '<h4 class="frontdrop-title">' + this._options.title + '</h4>',
-                '</div>',
-                '<div class="frontdrop-body">',
-                    content,
-                '</div>',
-                confirm,
-            '</div>',
-        ]);
-
-        this._modal      = modal;
-        this._overlay    = overlay;
-        this._modalInner = Helper.$('.js-frontdrop-dialog', modal);
-        this._fireBuilt();
-    }
-
-    /**
-     * Get modal content from an existing DOM node
-     *
-     * @access {private}
-     * @return {string}
-     */
-    Frontdrop.prototype._getTargetContent = function()
-    {
-        var content = Helper.$(this._options.targetContent);
-
-        if (!Helper.in_dom(content))
+        /**
+         * After options have parsed invoke the modal
+         *
+         * @access {private}
+         */
+        _invoke()
         {
-            throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
+            // Build the modal
+            this._buildModal();
+
+            // Render the modal        
+            this._render();
+
+            // Add listeners
+            this._bindListeners();
+
+            return this;
         }
 
-        return content.innerHTML.trim();
-    }
-
-    /**
-     * Render the modal
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._render = function()
-    {
-        var _this = this;
-        document.body.appendChild(this._overlay);
-        document.body.appendChild(this._modal);
-
-        var overlay = this._overlay;
-
-        setTimeout(function()
+        /**
+         * Build the actual modal
+         *
+         * @access {private}
+         */
+        _buildModal()
         {
-            Helper.add_class(overlay, 'active');
+            var modal = document.createElement('DIV');
+            modal.className = 'frontdrop-wrap';
 
-        }, 50);
+            var overlay = document.createElement('DIV');
+            overlay.className = 'frontdrop-overlay ' + this._options['overlay'];
 
-        this._fireRender();
+            var close   = '';
+            var content = this._options.targetContent !== null ? this._getTargetContent() : this._options.content;
+            var confirm = this._options.confirmBtn === true ? '<button type="button" class="btn btn-xl ' + this._options.confirmClass + ' btn-confirm js-frontdrop-close js-frontdrop-confirm">' + this._options.confirmText + '</button>' : '';
 
-        Helper.add_class(document.body, 'no-scroll');
-    }
-
-    /**
-     * Bind event listeners inside the built modal
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._bindListeners = function()
-    {
-        var _this = this;
-
-        var closeModal = function(e)
-        {
-            e = e || window.event;
-
-            if (_this._options.closeAnywhere === true)
+            if (this._options.closeBtn)
             {
-                if (this === _this._modal)
+                if (this._options.closeText)
                 {
-                    var clickedInner = Helper.closest(e.target, '.js-frontdrop-dialog');
+                    close = '<button type="button" class="' + this._options.closeClass + ' js-frontdrop-close">' + this._options.closeText + '</button>';
+                }
+                else
+                {
+                    close = '<button type="button" class="btn btn-pure btn-sm btn-circle btn-close js-frontdrop-close"><span class="glyph-icon glyph-icon-cross2"></span></button>';
+                }
+            }
 
-                    if (clickedInner)
+            Helper.inner_HTML(modal, [
+                '<div class="frontdrop-dialog js-frontdrop-dialog">',
+                    '<div class="frontdrop-header">',
+                        close,
+                        '<h4 class="frontdrop-title">' + this._options.title + '</h4>',
+                    '</div>',
+                    '<div class="frontdrop-body">',
+                        content,
+                    '</div>',
+                    confirm,
+                '</div>',
+            ]);
+
+            this._modal      = modal;
+            this._overlay    = overlay;
+            this._modalInner = Helper.$('.js-frontdrop-dialog', modal);
+            this._fireBuilt();
+        }
+
+        /**
+         * Get modal content from an existing DOM node
+         *
+         * @access {private}
+         * @return {string}
+         */
+        _getTargetContent()
+        {
+            var content = Helper.$(this._options.targetContent);
+
+            if (!Helper.in_dom(content))
+            {
+                throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
+            }
+
+            return content.innerHTML.trim();
+        }
+
+        /**
+         * Render the modal
+         *
+         * @access {private}
+         */
+        _render()
+        {
+            var _this = this;
+            document.body.appendChild(this._overlay);
+            document.body.appendChild(this._modal);
+
+            var overlay = this._overlay;
+
+            setTimeout(function()
+            {
+                Helper.add_class(overlay, 'active');
+
+            }, 50);
+
+            this._fireRender();
+
+            Helper.add_class(document.body, 'no-scroll');
+        }
+
+        /**
+         * Bind event listeners inside the built modal
+         *
+         * @access {private}
+         */
+        _bindListeners()
+        {
+            var _this = this;
+
+            var closeModal = function(e)
+            {
+                e = e || window.event;
+
+                if (_this._options.closeAnywhere === true)
+                {
+                    if (this === _this._modal)
+                    {
+                        var clickedInner = Helper.closest(e.target, '.js-frontdrop-dialog');
+
+                        if (clickedInner)
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                e.preventDefault();
+
+                clearTimeout(_this._timer);
+
+                if (Helper.has_class(this, 'js-frontdrop-confirm'))
+                {
+                    var canClose = _this._fireConfirmValidator();
+
+                    if (!canClose)
                     {
                         return;
                     }
                 }
-            }
 
-            e.preventDefault();
+                Helper.add_class(_this._overlay, 'transition-off');
 
-            clearTimeout(_this._timer);
+                _this._fireClosed();
 
-            if (Helper.has_class(this, 'js-frontdrop-confirm'))
-            {
-                var canClose = _this._fireConfirmValidator();
-
-                if (!canClose)
+                if (Helper.has_class(this, 'js-frontdrop-confirm'))
                 {
-                    return;
+                    _this._fireConfirm();
                 }
+
+                _this._timer = setTimeout(function()
+                {
+                    Helper.remove_from_dom(_this._overlay);
+                    Helper.remove_from_dom(_this._modal);
+                    Helper.remove_class(document.body, 'no-scroll');
+                }, 500);
             }
 
-            Helper.add_class(_this._overlay, 'transition-off');
-
-            _this._fireClosed();
-
-            if (Helper.has_class(this, 'js-frontdrop-confirm'))
+            if (this._options.closeAnywhere === true)
             {
-                _this._fireConfirm();
+                Helper.addEventListener(this._modal, 'click', closeModal, false);
             }
 
-            _this._timer = setTimeout(function()
+            var modalCloses = Helper.$All('.js-frontdrop-close', this._modal);
+            if (!Helper.is_empty(modalCloses))
             {
-                Helper.remove_from_dom(_this._overlay);
-                Helper.remove_from_dom(_this._modal);
+                Helper.addEventListener(modalCloses, 'click', closeModal, false);
+            }
+        }
+
+        /**
+         * Fire render event
+         *
+         * @access {private}
+         */
+        _fireRender()
+        {
+            if (this._options.onRender !== null && Helper.is_callable(this._options.onRender))
+            {
+                var callback = this._options.onRender;
+                var args = this._options.onRenderArgs;
+                callback.apply(this._modal, args);
+
+            }
+        }
+
+        /**
+         * Fire the closed event
+         *
+         * @access {private}
+         */
+        _fireClosed()
+        {
+            if (this._options.onClose !== null && Helper.is_callable(this._options.onClose))
+            {
+                var callback = this._options.onClose;
+                var args = this._options.onCloseArgs;
+                callback.apply(this._modal, args);
                 Helper.remove_class(document.body, 'no-scroll');
-            }, 500);
+            }
         }
 
-        if (this._options.closeAnywhere === true)
+        /**
+         * Fire the confirm event
+         *
+         * @access {private}
+         */
+        _fireConfirm()
         {
-            Helper.addEventListener(this._modal, 'click', closeModal, false);
+            if (this._options.onConfirm !== null && Helper.is_callable(this._options.onConfirm))
+            {
+                var callback = this._options.onConfirm;
+                var args = this._options.onConfirmArgs;
+                callback.apply(this._modal, args);
+            }
         }
 
-        var modalCloses = Helper.$All('.js-frontdrop-close', this._modal);
-        if (!Helper.is_empty(modalCloses))
+        /**
+         * Fire the confirm validation
+         *
+         * @access {private}
+         */
+        _fireConfirmValidator()
         {
-            Helper.addEventListener(modalCloses, 'click', closeModal, false);
-        }
-    }
+            if (this._options.validateConfirm !== null && Helper.is_callable(this._options.validateConfirm))
+            {
+                var callback = this._options.validateConfirm;
+                var args = this._options.validateConfirmArgs;
+                return callback.apply(this._modal, args);
+            }
 
-    /**
-     * Fire render event
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._fireRender = function()
-    {
-        if (this._options.onRender !== null && Helper.is_callable(this._options.onRender))
-        {
-            var callback = this._options.onRender;
-            var args = this._options.onRenderArgs;
-            callback.apply(this._modal, args);
-
-        }
-    }
-
-    /**
-     * Fire the closed event
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._fireClosed = function()
-    {
-        if (this._options.onClose !== null && Helper.is_callable(this._options.onClose))
-        {
-            var callback = this._options.onClose;
-            var args = this._options.onCloseArgs;
-            callback.apply(this._modal, args);
-            Helper.remove_class(document.body, 'no-scroll');
-        }
-    }
-
-    /**
-     * Fire the confirm event
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._fireConfirm = function()
-    {
-        if (this._options.onConfirm !== null && Helper.is_callable(this._options.onConfirm))
-        {
-            var callback = this._options.onConfirm;
-            var args = this._options.onConfirmArgs;
-            callback.apply(this._modal, args);
-        }
-    }
-
-    /**
-     * Fire the confirm validation
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._fireConfirmValidator = function()
-    {
-        if (this._options.validateConfirm !== null && Helper.is_callable(this._options.validateConfirm))
-        {
-            var callback = this._options.validateConfirm;
-            var args = this._options.validateConfirmArgs;
-            return callback.apply(this._modal, args);
+            return true;
         }
 
-        return true;
-    }
-
-    /**
-     * Fire the built event
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._fireBuilt = function()
-    {
-        if (this._options.onBuilt !== null && Helper.is_callable(this._options.onBuilt))
+        /**
+         * Fire the built event
+         *
+         * @access {private}
+         */
+        _fireBuilt()
         {
-            var callback = this._options.onBuilt;
-            var args = this._options.onBuiltArgs;
-            callback.apply(this._modal, args);
+            if (this._options.onBuilt !== null && Helper.is_callable(this._options.onBuilt))
+            {
+                var callback = this._options.onBuilt;
+                var args = this._options.onBuiltArgs;
+                callback.apply(this._modal, args);
+            }
         }
     }
 
@@ -9522,7 +10217,7 @@ console.log(Container.get('Helper'));
     /**
      * @var {Helper} obj
      */
-    var Helper = Container.Helper();
+    const Helper = Container.Helper();
 
     /**
      * @var {_activeNotifs} array
@@ -9538,128 +10233,107 @@ console.log(Container.get('Helper'));
      * @access {public}
      * @return {this}
      */
-    var Notification = function(options)
+    class Notification
     {
-        this._notifWrap = Helper.$('.js-nofification-wrap');
-
-        if (!Helper.in_dom(this._notifWrap))
+        constructor(options)
         {
-            this._buildNotificationContainer();
-        }
+            this._notifWrap = Helper.$('.js-nofification-wrap');
 
-        this._invoke(options);
-
-        return this;
-    }
-
-    /**
-     * Build the notification container
-     *
-     * @access {private}
-     */
-    Notification.prototype._buildNotificationContainer = function()
-    {
-        var wrap = document.createElement('DIV');
-        wrap.className = 'notification-wrap js-nofification-wrap';
-        document.body.appendChild(wrap);
-        this._notifWrap = Helper.$('.js-nofification-wrap');
-    }
-
-
-    /**
-     * Display the notification
-     *
-     * @params {options} obj
-     * @access {private}
-     */
-    Notification.prototype._invoke = function(options)
-    {
-        if (typeof options.isCallback !== 'undefined' && options.isCallback === true)
-        {
-            this._invokeCallbackable(options);
-
-            return;
-        }
-
-        var _this = this;
-        var content = '<div class="msg-body"><p>' + options.msg + '</p></div>';
-        var notif = Helper.new_node('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
-        var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
-
-        Helper.add_class(this._notifWrap, 'active');
-
-        // Timout remove automatically
-        _activeNotifs.push(
-        {
-            node: notif,
-            timeout: setTimeout(function()
+            if (!Helper.in_dom(this._notifWrap))
             {
-                _this._removeNotification(notif);
-            }, timeout),
-        });
-
-        // Click to remove
-        notif.addEventListener('click', function()
-        {
-            _this._removeNotification(notif);
-        });
-    }
-
-    /**
-     * Create a notification that has callback buttons 
-     *
-     * @params {options} obj
-     * @access {private}
-     */
-    Notification.prototype._invokeCallbackable = function(options)
-    {
-        var _this = this;
-        var confirmText = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
-        var dismissX = typeof options.showDismiss === 'undefined' ? '' : '<button type="button" class="btn btn-xs btn-pure btn-dismiss btn-circle js-dismiss"><span class="glyph-icon glyph-icon-cross2"></span></button>';
-        var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
-
-        var content = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX + '</div>';
-
-        var notif = Helper.new_node('div', 'msg animate-notif', null, content, this._notifWrap);
-        var confirm = Helper.$('.js-confirm', notif);
-        var dismiss = Helper.$('.js-dismiss', notif);
-
-        Helper.add_class(this._notifWrap, 'active');
-
-        _activeNotifs.push(
-        {
-            node: notif,
-            timeout: setTimeout(function()
-            {
-                _this._removeNotification(notif);
-            }, timeout),
-        });
-
-        // Click to remove
-        notif.addEventListener('click', function()
-        {
-            if (Helper.is_callable(options.onDismiss))
-            {
-                options.onDismiss(options.onDismissArgs);
+                this._buildNotificationContainer();
             }
 
-            _this._removeNotification(notif);
-        });
+            this._invoke(options);
 
-        // Click confirm to remove
-        confirm.addEventListener('click', function()
+            return this;
+        }
+
+        /**
+         * Build the notification container
+         *
+         * @access {private}
+         */
+        _buildNotificationContainer()
         {
-            if (Helper.is_callable(options.onConfirm))
+            var wrap = document.createElement('DIV');
+            wrap.className = 'notification-wrap js-nofification-wrap';
+            document.body.appendChild(wrap);
+            this._notifWrap = Helper.$('.js-nofification-wrap');
+        }
+
+
+        /**
+         * Display the notification
+         *
+         * @params {options} obj
+         * @access {private}
+         */
+        _invoke(options)
+        {
+            if (typeof options.isCallback !== 'undefined' && options.isCallback === true)
             {
-                options.onConfirm(options.onConfirmArgs);
+                this._invokeCallbackable(options);
+
+                return;
             }
 
-            _this._removeNotification(notif);
-        });
+            var _this = this;
+            var content = '<div class="msg-body"><p>' + options.msg + '</p></div>';
+            var notif = Helper.new_node('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
+            var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
-        if (dismiss)
+            Helper.add_class(this._notifWrap, 'active');
+
+            // Timout remove automatically
+            _activeNotifs.push(
+            {
+                node: notif,
+                timeout: setTimeout(function()
+                {
+                    _this._removeNotification(notif);
+                }, timeout),
+            });
+
+            // Click to remove
+            notif.addEventListener('click', function()
+            {
+                _this._removeNotification(notif);
+            });
+        }
+
+        /**
+         * Create a notification that has callback buttons 
+         *
+         * @params {options} obj
+         * @access {private}
+         */
+        _invokeCallbackable(options)
         {
-            dismiss.addEventListener('click', function()
+            var _this = this;
+            var confirmText = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
+            var dismissX = typeof options.showDismiss === 'undefined' ? '' : '<button type="button" class="btn btn-xs btn-pure btn-dismiss btn-circle js-dismiss"><span class="glyph-icon glyph-icon-cross2"></span></button>';
+            var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
+
+            var content = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX + '</div>';
+
+            var notif = Helper.new_node('div', 'msg animate-notif', null, content, this._notifWrap);
+            var confirm = Helper.$('.js-confirm', notif);
+            var dismiss = Helper.$('.js-dismiss', notif);
+
+            Helper.add_class(this._notifWrap, 'active');
+
+            _activeNotifs.push(
+            {
+                node: notif,
+                timeout: setTimeout(function()
+                {
+                    _this._removeNotification(notif);
+                }, timeout),
+            });
+
+            // Click to remove
+            notif.addEventListener('click', function()
             {
                 if (Helper.is_callable(options.onDismiss))
                 {
@@ -9668,38 +10342,62 @@ console.log(Container.get('Helper'));
 
                 _this._removeNotification(notif);
             });
-        }
-    }
 
-    /**
-     * Remove a notification
-     *
-     * @params {_node} node
-     * @access {private}
-     */
-    Notification.prototype._removeNotification = function(_node)
-    {
-        var _this = this;
-        var i = _activeNotifs.length;
-        while (i--)
-        {
-            if (_node === _activeNotifs[i].node)
+            // Click confirm to remove
+            confirm.addEventListener('click', function()
             {
-                clearTimeout(_activeNotifs[i].timeout);
-                Helper.remove_class(_node, 'animate-notif');
-                Helper.animate(_node, 'opacity', '1', '0', 350, 'ease');
-                Helper.animate(_node, 'max-height', '100px', '0', 450, 'ease');
-                _activeNotifs.splice(i, 1);
-                setTimeout(function()
+                if (Helper.is_callable(options.onConfirm))
                 {
-                    Helper.remove_from_dom(_node);
+                    options.onConfirm(options.onConfirmArgs);
+                }
 
-                    if (_activeNotifs.length === 0)
+                _this._removeNotification(notif);
+            });
+
+            if (dismiss)
+            {
+                dismiss.addEventListener('click', function()
+                {
+                    if (Helper.is_callable(options.onDismiss))
                     {
-                        Helper.remove_class(_this._notifWrap, 'active');
+                        options.onDismiss(options.onDismissArgs);
                     }
-                }, 450);
-                return;
+
+                    _this._removeNotification(notif);
+                });
+            }
+        }
+
+        /**
+         * Remove a notification
+         *
+         * @params {_node} node
+         * @access {private}
+         */
+        _removeNotification(_node)
+        {
+            var _this = this;
+            var i = _activeNotifs.length;
+            while (i--)
+            {
+                if (_node === _activeNotifs[i].node)
+                {
+                    clearTimeout(_activeNotifs[i].timeout);
+                    Helper.remove_class(_node, 'animate-notif');
+                    Helper.animate(_node, 'opacity', '1', '0', 350, 'ease');
+                    Helper.animate(_node, 'max-height', '100px', '0', 450, 'ease');
+                    _activeNotifs.splice(i, 1);
+                    setTimeout(function()
+                    {
+                        Helper.remove_from_dom(_node);
+
+                        if (_activeNotifs.length === 0)
+                        {
+                            Helper.remove_class(_this._notifWrap, 'active');
+                        }
+                    }, 450);
+                    return;
+                }
             }
         }
     }
@@ -10484,7 +11182,7 @@ function abort()
     /**
      * @var {Helper} obj
      */
-    var Helper = Container.Helper();
+    const Helper = Container.Helper();
 
     /**
      * Module constructor
@@ -10495,320 +11193,320 @@ function abort()
      * @access {public}
      * @return {this}
      */
-    var FormValidator = function(form)
+    class FormValidator
     {
-
-        // Save inputs
-        this._form = form;
-        this._inputs = Helper.form_inputs(form);
-
-        // Defaults
-        this._rulesIndex = [];
-        this._invalids = [];
-        this._formObj = {};
-        this._nameIndex = {};
-        this._validForm = true;
-
-        // Initialize
-        this._indexInputs();
-
-        return this;
-
-    };
-
-    // PUBLIC ACCESS
-
-    /**
-     *  Is the form valid?
-     *
-     * @access {public}
-     * @return {boolean}
-     */
-    FormValidator.prototype.isValid = function()
-    {
-        return this._validateForm();
-    };
-
-    /**
-     * Show invalid inputs
-     *
-     * @access {public}
-     */
-    FormValidator.prototype.showInvalid = function()
-    {
-        this._clearForm();
-
-        // Show the invalid inputs
-        for (var j = 0; j < this._invalids.length; j++)
+        constructor(form)
         {
-            var __wrap = Helper.closest(this._invalids[j], '.form-field');
-            if (Helper.in_dom(__wrap)) Helper.add_class(__wrap, 'danger');
+            // Save inputs
+            this._form = form;
+            this._inputs = Helper.form_inputs(form);
+
+            // Defaults
+            this._rulesIndex = [];
+            this._invalids = [];
+            this._formObj = {};
+            this._nameIndex = {};
+            this._validForm = true;
+
+            // Initialize
+            this._indexInputs();
+
+            return this;
+        }
+
+        // PUBLIC ACCESS
+
+        /**
+         *  Is the form valid?
+         *
+         * @access {public}
+         * @return {boolean}
+         */
+        isValid()
+        {
+            return this._validateForm();
+        }
+
+        /**
+         * Show invalid inputs
+         *
+         * @access {public}
+         */
+        showInvalid()
+        {
+            this._clearForm();
+
+            // Show the invalid inputs
+            for (var j = 0; j < this._invalids.length; j++)
+            {
+                var __wrap = Helper.closest(this._invalids[j], '.form-field');
+                if (Helper.in_dom(__wrap)) Helper.add_class(__wrap, 'danger');
+            }
+        }
+
+        /**
+         * Remove errored inputs
+         *
+         * @access {public}
+         */
+        clearInvalid()
+        {
+            this._clearForm();
+        }
+
+        /**
+         * Show form result
+         *
+         * @access {public}
+         */
+        showResult(result)
+        {
+            this._clearForm();
+            Helper.add_class(this._form, result);
+        }
+
+        /**
+         * Append a key/pair and return form obj
+         *
+         * @access {public}
+         * @return {obj}
+         */
+        append(key, value)
+        {
+            this._formObj[key] = value;
+            return this._generateForm();
+        };
+
+        /**
+         * Get the form object
+         *
+         * @access {public}
+         * @return {obj}
+         */
+        form()
+        {
+            return this._generateForm();
+        }
+
+        // PRIVATE FUNCTIONS
+
+        /**
+         * Index form inputs by name and rules
+         *
+         * @access {public}
+         */
+        _indexInputs()
+        {
+            for (var i = 0; i < this._inputs.length; i++)
+            {
+                if (!this._inputs[i].name) continue;
+                var name = this._inputs[i].name;
+                this._nameIndex[name] = this._inputs[i];
+                this._rulesIndex.push(
+                {
+                    node: this._inputs[i],
+                    isRequired: this._inputs[i].dataset.jsRequired || null,
+                    validationMinLength: this._inputs[i].dataset.jsMinLegnth || null,
+                    validationMaxLength: this._inputs[i].dataset.jsMaxLegnth || null,
+                    validationType: this._inputs[i].dataset.jsValidation || null,
+                    isValid: true,
+                });
+            }
+        }
+
+        /**
+         * Validate the form inputs
+         *
+         * @access {private}
+         * @return {boolean}
+         */
+        _validateForm()
+        {
+            this._invalids = [];
+            this._validForm = true;
+
+            for (var i = 0; i < this._rulesIndex.length; i++)
+            {
+
+                this._rulesIndex[i].isValid = true;
+
+                var pos = this._rulesIndex[i];
+                var value = Helper.input_value(pos.node);
+
+                if (!pos.isRequired && value === '')
+                {
+                    continue;
+                }
+                else if (pos.isRequired && value.replace(/ /g, '') === '')
+                {
+                    this._devalidate(i);
+                }
+                else if (pos.validationMinLength && !this._validateMinLength(value, pos.validationMinLength))
+                {
+                    this._devalidate(i);
+                }
+                else if (pos.validationMaxLength && !this._validateMaxLength(value, pos.validationMaxLength))
+                {
+                    this._devalidate(i);
+                }
+                else if (pos.validationType)
+                {
+                    var isValid = true;
+                    if (pos.validationType === 'email') isValid = this._validateEmail(value);
+                    if (pos.validationType === 'name') isValid = this._validateName(value);
+                    if (pos.validationType === 'password') isValid = this._validatePassword(value);
+                    if (pos.validationType === 'creditcard') isValid = this._validateCreditCard(value);
+                    if (pos.validationType === 'url') isValid = this._validateUrl(value);
+                    if (pos.validationType === 'alpha') isValid = this.alpha(value);
+                    if (pos.validationType === 'numeric') isValid = this._validateNumeric(value);
+                    if (pos.validationType === 'list') isValid = this._validateList(value);
+                    if (!isValid) this._devalidate(i);
+                }
+            }
+
+            return this._validForm;
+        }
+
+        /**
+         * Generate the form object
+         *
+         * @access {private}
+         * @return {obj}
+         */
+        _generateForm()
+        {
+            for (var i = 0; i < this._inputs.length; i++)
+            {
+                var name = this._inputs[i].name;
+                var value = Helper.input_value(this._inputs[i]);
+                if (this._inputs[i].type === 'radio' && this._inputs[i].checked == false)
+                {
+                    continue;
+                }
+                if (this._inputs[i].type === 'checkbox')
+                {
+                    this._formObj[name] = (this._inputs[i].checked == true);
+                    continue;
+                }
+                if (name.indexOf('[]') > -1)
+                {
+                    if (!this._formObj[name]) this._formObj[name] = [];
+                    this._formObj[name].push(value);
+                }
+                else
+                {
+                    this._formObj[name] = value;
+                }
+            }
+            return this._formObj;
+        }
+
+        /**
+         * Mark an input as not valid (internally)
+         *
+         * @access {private}
+         * @return {obj}
+         */
+        _devalidate(i)
+        {
+            this._rulesIndex[i].isValid = false;
+            this._validForm = false;
+            this._invalids.push(this._rulesIndex[i].node);
+        }
+
+        /**
+         * Clear form result and input errors
+         *
+         * @access {private}
+         * @return {obj}
+         */
+        _clearForm(i)
+        {
+            // Remove the form result
+            Helper.remove_class(this._form, ['info', 'success', 'warning', 'danger']);
+
+            // Make all input elements 'valid' - i.e hide the error msg and styles.
+            for (var i = 0; i < this._inputs.length; i++)
+            {
+                var _wrap = Helper.closest(this._inputs[i], '.form-field');
+                if (Helper.in_dom(_wrap)) Helper.remove_class(_wrap, ['info', 'success', 'warning', 'danger'])
+            }
+        }
+
+        /**
+         * Private validator methods
+         *
+         * @access {private}
+         * @return {boolean}
+         */
+        _validateEmail(value)
+        {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(value);
+        }
+        _validateName(value)
+        {
+            var re = /^[A-z _-]+$/;
+            return re.test(value);
+        }
+        _validateNumeric(value)
+        {
+            var re = /^[\d]+$/;
+            return re.test(value);
+        }
+        _validatePassword(value)
+        {
+            var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
+            return re.test(value);
+        }
+        _validateUrl(value)
+        {
+            re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+            return re.test(value);
+        }
+        _validateMinLength(value, min)
+        {
+            return value.length >= min;
+        }
+        _validateMaxLength(value, max)
+        {
+            return value.length <= max;
+        }
+        _validateAplha(value)
+        {
+            var re = /^[A-z _-]+$/;
+            return re.test(value);
+        }
+        _validateAplhaNumeric(value)
+        {
+            var re = /^[A-z0-9]+$/;
+            return re.test(value);
+        }
+        _validateList(value)
+        {
+            var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
+            return re.test(value);
+        }
+        _validateCreditCard(value)
+        {
+            var arr = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+            var ccNum = String(value).replace(/[- ]/g, '');
+
+            var
+                len = ccNum.length,
+                bit = 1,
+                sum = 0,
+                val;
+
+            while (len)
+            {
+                val = parseInt(ccNum.charAt(--len), 10);
+                sum += (bit ^= 1) ? arr[val] : val;
+            }
+
+            return sum && sum % 10 === 0;
         }
     }
-
-    /**
-     * Remove errored inputs
-     *
-     * @access {public}
-     */
-    FormValidator.prototype.clearInvalid = function()
-    {
-        this._clearForm();
-    }
-
-    /**
-     * Show form result
-     *
-     * @access {public}
-     */
-    FormValidator.prototype.showResult = function(result)
-    {
-        this._clearForm();
-        Helper.add_class(this._form, result);
-    }
-
-    /**
-     * Append a key/pair and return form obj
-     *
-     * @access {public}
-     * @return {obj}
-     */
-    FormValidator.prototype.append = function(key, value)
-    {
-        this._formObj[key] = value;
-        return this._generateForm();
-    };
-
-    /**
-     * Get the form object
-     *
-     * @access {public}
-     * @return {obj}
-     */
-    FormValidator.prototype.form = function()
-    {
-        return this._generateForm();
-    };
-
-
-    // PRIVATE FUNCTIONS
-
-    /**
-     * Index form inputs by name and rules
-     *
-     * @access {public}
-     */
-    FormValidator.prototype._indexInputs = function()
-    {
-        for (var i = 0; i < this._inputs.length; i++)
-        {
-            if (!this._inputs[i].name) continue;
-            var name = this._inputs[i].name;
-            this._nameIndex[name] = this._inputs[i];
-            this._rulesIndex.push(
-            {
-                node: this._inputs[i],
-                isRequired: this._inputs[i].dataset.jsRequired || null,
-                validationMinLength: this._inputs[i].dataset.jsMinLegnth || null,
-                validationMaxLength: this._inputs[i].dataset.jsMaxLegnth || null,
-                validationType: this._inputs[i].dataset.jsValidation || null,
-                isValid: true,
-            });
-        }
-    };
-
-    /**
-     * Validate the form inputs
-     *
-     * @access {private}
-     * @return {boolean}
-     */
-    FormValidator.prototype._validateForm = function()
-    {
-        this._invalids = [];
-        this._validForm = true;
-
-        for (var i = 0; i < this._rulesIndex.length; i++)
-        {
-
-            this._rulesIndex[i].isValid = true;
-
-            var pos = this._rulesIndex[i];
-            var value = Helper.input_value(pos.node);
-
-            if (!pos.isRequired && value === '')
-            {
-                continue;
-            }
-            else if (pos.isRequired && value.replace(/ /g, '') === '')
-            {
-                this._devalidate(i);
-            }
-            else if (pos.validationMinLength && !this._validateMinLength(value, pos.validationMinLength))
-            {
-                this._devalidate(i);
-            }
-            else if (pos.validationMaxLength && !this._validateMaxLength(value, pos.validationMaxLength))
-            {
-                this._devalidate(i);
-            }
-            else if (pos.validationType)
-            {
-                var isValid = true;
-                if (pos.validationType === 'email') isValid = this._validateEmail(value);
-                if (pos.validationType === 'name') isValid = this._validateName(value);
-                if (pos.validationType === 'password') isValid = this._validatePassword(value);
-                if (pos.validationType === 'creditcard') isValid = this._validateCreditCard(value);
-                if (pos.validationType === 'url') isValid = this._validateUrl(value);
-                if (pos.validationType === 'alpha') isValid = this.alpha(value);
-                if (pos.validationType === 'numeric') isValid = this._validateNumeric(value);
-                if (pos.validationType === 'list') isValid = this._validateList(value);
-                if (!isValid) this._devalidate(i);
-            }
-        }
-
-        return this._validForm;
-    };
-
-    /**
-     * Generate the form object
-     *
-     * @access {private}
-     * @return {obj}
-     */
-    FormValidator.prototype._generateForm = function()
-    {
-        for (var i = 0; i < this._inputs.length; i++)
-        {
-            var name = this._inputs[i].name;
-            var value = Helper.input_value(this._inputs[i]);
-            if (this._inputs[i].type === 'radio' && this._inputs[i].checked == false)
-            {
-                continue;
-            }
-            if (this._inputs[i].type === 'checkbox')
-            {
-                this._formObj[name] = (this._inputs[i].checked == true);
-                continue;
-            }
-            if (name.indexOf('[]') > -1)
-            {
-                if (!this._formObj[name]) this._formObj[name] = [];
-                this._formObj[name].push(value);
-            }
-            else
-            {
-                this._formObj[name] = value;
-            }
-        }
-        return this._formObj;
-    };
-
-    /**
-     * Mark an input as not valid (internally)
-     *
-     * @access {private}
-     * @return {obj}
-     */
-    FormValidator.prototype._devalidate = function(i)
-    {
-        this._rulesIndex[i].isValid = false;
-        this._validForm = false;
-        this._invalids.push(this._rulesIndex[i].node);
-    };
-
-    /**
-     * Clear form result and input errors
-     *
-     * @access {private}
-     * @return {obj}
-     */
-    FormValidator.prototype._clearForm = function(i)
-    {
-        // Remove the form result
-        Helper.remove_class(this._form, ['info', 'success', 'warning', 'danger']);
-
-        // Make all input elements 'valid' - i.e hide the error msg and styles.
-        for (var i = 0; i < this._inputs.length; i++)
-        {
-            var _wrap = Helper.closest(this._inputs[i], '.form-field');
-            if (Helper.in_dom(_wrap)) Helper.remove_class(_wrap, ['info', 'success', 'warning', 'danger'])
-        }
-    };
-
-    /**
-     * Private validator methods
-     *
-     * @access {private}
-     * @return {boolean}
-     */
-    FormValidator.prototype._validateEmail = function(value)
-    {
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(value);
-    };
-    FormValidator.prototype._validateName = function(value)
-    {
-        var re = /^[A-z _-]+$/;
-        return re.test(value);
-    };
-    FormValidator.prototype._validateNumeric = function(value)
-    {
-        var re = /^[\d]+$/;
-        return re.test(value);
-    };
-    FormValidator.prototype._validatePassword = function(value)
-    {
-        var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
-        return re.test(value);
-    };
-    FormValidator.prototype._validateUrl = function(value)
-    {
-        re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
-        return re.test(value);
-    };
-    FormValidator.prototype._validateMinLength = function(value, min)
-    {
-        return value.length >= min;
-    };
-    FormValidator.prototype._validateMaxLength = function(value, max)
-    {
-        return value.length <= max;
-    };
-    FormValidator.prototype._validateAplha = function(value)
-    {
-        var re = /^[A-z _-]+$/;
-        return re.test(value);
-    };
-    FormValidator.prototype._validateAplhaNumeric = function(value)
-    {
-        var re = /^[A-z0-9]+$/;
-        return re.test(value);
-    };
-    FormValidator.prototype._validateList = function(value)
-    {
-        var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
-        return re.test(value);
-    };
-    FormValidator.prototype._validateCreditCard = function(value)
-    {
-        var arr = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-        var ccNum = String(value).replace(/[- ]/g, '');
-
-        var
-            len = ccNum.length,
-            bit = 1,
-            sum = 0,
-            val;
-
-        while (len)
-        {
-            val = parseInt(ccNum.charAt(--len), 10);
-            sum += (bit ^= 1) ? arr[val] : val;
-        }
-
-        return sum && sum % 10 === 0;
-    };
 
     // Load into container
     Container.set('FormValidator', FormValidator);
@@ -10824,7 +11522,7 @@ function abort()
      * 
      * @var {obj}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * AJAX Module
@@ -11339,7 +12037,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
     
     /**
      * Pjax Links Module
@@ -11904,7 +12602,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Custom Scrollbars
@@ -12143,7 +12841,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Toggle height on click
@@ -12255,7 +12953,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Dropdown Buttons
@@ -12433,7 +13131,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Tab Nav
@@ -12555,141 +13253,20 @@ function abort()
     Hubble.dom().register('TabNav', TabNav);
 
 })();
+/**
+ * Modal
+ *
+ * The Modal class is a utility class used to
+ * display a Backdrop.
+ *
+ */
 (function()
 {
     /**
-     * Helper instance
-     * 
-     * @var {object}
+     * @var {obj}
      */
-    var Helper = Hubble.helper();
-
-    /**
-     * Bottom nav
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class BottomNav
-    {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-        constructor()
-        {
-            // Find nodes
-            this._nav = Helper.$('.js-bottom-nav');
-
-            if (Helper.in_dom(this._nav))
-            {
-                this._bind();
-            }
-
-            return this;
-        }
-
-        /**
-         * Show nav
-         *
-         * @access {public}
-         */
-        show()
-        {
-            if (Helper.in_dom(this._nav))
-            {
-                Helper.add_class(this._nav, 'active');
-            }
-        }
-
-        /**
-         * Hide nav
-         *
-         * @access {public}
-         */
-        hide()
-        {
-            if (Helper.in_dom(this._nav))
-            {
-                Helper.remove_class(this._nav, 'active');
-            }
-        }
-
-        /**
-         * Show nav
-         *
-         * @access {public}
-         */
-        state()
-        {
-            if (Helper.in_dom(this._nav))
-            {
-                if (Helper.has_class(this._nav, 'active'))
-                {
-                    return 'show';
-                }
-            }
-
-            return 'hide';
-        }
-
-        /**
-         * Module destructor - unbinds click events
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            if (Helper.in_dom(this._nav))
-            {
-                var links = Helper.$All('.btn', this._nav);
-
-                Helper.removeEventListener(links, 'click', this._eventHandler);
-
-                this._nav = null;
-            }
-        }
-
-        /**
-         * Bind click events on all button
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            var links = Helper.$All('.btn', this._nav);
-
-            Helper.addEventListener(links, 'click', this._eventHandler);
-        }
-
-        /**
-         * Click event handler
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-
-            e.preventDefault();
-
-            if (Helper.has_class(this, 'active'))
-            {
-                return;
-            }
-
-            Helper.remove_class(Helper.$('.js-bottom-nav .btn.active'), 'active');
-
-            Helper.add_class(this, 'active');
-        }
-    }
-
-    // Load into Hubble DOM core
-    Hubble.dom().register('BottomNav', BottomNav);
+    const _ = Container.Helper();
+    
 
 })();
 
@@ -12700,7 +13277,7 @@ function abort()
      * 
      * @var {obj}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Show/hide sidebar overlay timer
@@ -12902,7 +13479,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Popover Handler
@@ -13025,7 +13602,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Popovers
@@ -13450,7 +14027,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     
     class Ripple
@@ -13603,7 +14180,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Input masker
@@ -13753,7 +14330,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Message closers
@@ -13853,7 +14430,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Has the page loaded?
@@ -14011,7 +14588,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Adds classes to inputs
@@ -14176,7 +14753,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * File inputs
@@ -14270,7 +14847,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Chip inputs
@@ -14534,7 +15111,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Chip suggestions.
@@ -14658,7 +15235,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Choice chips
@@ -14757,7 +15334,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Filter chips
@@ -14843,7 +15420,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Clicking one element triggers a lick on another
@@ -14939,6 +15516,287 @@ function abort()
 
 })();
 
+/**
+ * Modal
+ *
+ * The Modal class is a utility class used to
+ * display a Backdrop.
+ *
+ */
+(function()
+{
+    /**
+     * @var {obj}
+     */
+    const _ = Container.Helper();
+
+    /**
+     * Cached so we can throttle later.
+     * 
+     * @var {function}
+     */
+    const RESIZE_HANDLER = throttle(function() { Container.Backdrop().resize() }, 100);
+
+    /**
+     * @var {obj}
+     */
+    var BACKDROP_OPEN = false;
+
+    /**
+     * @var {obj}
+     */
+    var DEFAULTS =
+    {
+        pushBody:          true,
+        noScroll:          true,
+        onOpen:            () => { },
+        onOpenArgs:        null,
+        onClose:           () => { },
+        onCloseArgs:       null,
+        validateClose:     () => { return true; },
+        validateCloseArgs: null
+    };
+
+    class Backdrop
+    {
+        
+        /**
+         * Module constructor
+         *
+         * @class
+         * @constructor
+         * @params {options} obj
+         * @access {public}
+         * @return {this}
+         */
+        constructor()
+        {
+            this._DOMElementopenBtns  = _.$All('.js-backdrop-open-trigger');
+            this._DOMElementCloseBtns = _.$All('.js-backdrop-close-trigger');
+            this._DOMElementBackdrop  = _.$('.js-backdrop-wrapper');
+            this._DOMElementPageWrap  = _.$('.js-backdrop-page-wrapper');
+            
+            if (!_.is_empty(this._DOMElementopenBtns))
+            {
+                this._bind();
+            }
+
+            this._setOptions();
+        }
+
+        /**
+         * Module destructor
+         *
+         * @access {public}
+         */
+        destruct()
+        {
+            this.close();
+
+            this._unbind();
+
+            this._DOMElementopenBtns = [];
+
+            this._DOMElementCloseBtns = [];
+        }
+
+        /**
+         * Bind click listener to containers
+         *
+         * @access {private}
+         */
+        _bind()
+        {
+            _.addEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
+
+            _.addEventListener(this._DOMElementCloseBtns, 'click', this.close);
+        }
+
+        /**
+         * Unbind listener to containers
+         *
+         * @access {private}
+         */
+        _unbind()
+        {
+            _.removeEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
+
+            _.removeEventListener(this._DOMElementCloseBtns, 'click', this.close);
+
+            _.removeEventListener(window, 'resize', RESIZE_HANDLER);
+
+            this._DOMElementopenBtns = [];
+
+            this._DOMElementCloseBtns = [];
+        }
+
+        /**
+         * Open the backdrop.
+         *
+         * @access {public}
+         * @param  {object} options Options (optional)
+         */
+        open(options)
+        {
+            if (!_.in_dom(this._DOMElementBackdrop))
+            {
+                console.error('Backdrop Error: The backdrop wrapper was not found in the DOM.');
+            }
+            else if (!_.in_dom(this._DOMElementPageWrap))
+            {
+                console.error('Backdrop Error: The backdrop page wrapper was not found in the DOM.');
+            }
+            else if (BACKDROP_OPEN)
+            {
+                return;
+            }
+
+            // Backdrop now open
+            BACKDROP_OPEN = true;
+
+            // Merge options if provided
+            if (options) this._setOptions(options);
+
+            // Push body down
+            if (this.pushBody)
+            {
+                let fromTop = _.height(this._DOMElementBackdrop) + 'px';
+                _.add_class(this._DOMElementBackdrop, 'backdrop-push-body');
+                _.animate(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, easing: 'ease' });
+            }
+
+            // Push the backdrop in
+            _.animate(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, easing: 'ease' });
+
+            // No scrolling
+            if (this.noScroll)
+            {
+                _.add_class([document.documentElement, document.body], 'no-scroll');
+            }
+
+            /*
+           
+
+            // Open classes
+            _.add_class(this._DOMElementBackdrop, 'backdrop-open');
+            _.add_class(this._DOMElementPageWrap, 'backdrop-open');
+
+            // Resize handler
+            _.addEventListener(window, 'resize', RESIZE_HANDLER);*/
+            
+            this._fireOpen();
+        }
+
+        /**
+         * Close the backdrop.
+         *
+         * @access {public}
+         * @param  {object} options Options (optional)
+         */
+        close()
+        {
+            if (this.pushBody)
+            {
+                /*_.animate_css(this._DOMElementBackdrop, { transform: `translateY(0)`});
+                _.animate_css(this._DOMElementPageWrap, { transform: `translateY(0)`});*/
+            }
+            else
+            {
+
+            }
+
+            /*_.remove_class(this._DOMElementBackdrop, ['backdrop-push-body', 'backdrop-open']);
+            _.remove_class(this._DOMElementPageWrap, 'backdrop-open');
+            _.remove_class([document.documentElement, document.body], 'no-scroll');*/
+
+            if (this._fireValidateClose())
+            {
+                this._fireClose();
+
+                BACKDROP_OPEN = false;
+            }
+        }
+
+        /**
+         * Update the the sizing
+         *
+         */
+        resize()
+        {
+            if (this.pushBody)
+            {
+                //_.css(this._DOMElementPageWrap, 'transform', `translateY(${_.height(this._DOMElementBackdrop)}px)`);
+            }
+        }
+
+        /**
+         * Set options from open/close call.
+         *
+         * @access {private}
+         * @param  {object} options Options (optional)
+         */
+        _setOptions(options)
+        {
+            options = _.is_object(options) ? _.array_merge({}, DEFAULTS, options) : _.array_merge({}, DEFAULTS);
+
+            _.each(options, function(k, v)
+            {
+                this[k] = v;
+
+            }, this);
+
+        }
+
+        /**
+         * Fire render event
+         *
+         * @access {private}
+         */
+        _fireOpen()
+        {
+            this.onOpen.apply(this._DOMElementBackdrop, this.onOpenArgs);
+        }
+
+        /**
+         * Fire the closed event
+         *
+         * @access {private}
+         */
+        _fireClose()
+        {
+            this.onClose.apply(this._DOMElementBackdrop, this.onCloseArgs);
+        }
+
+        /**
+         * Fire the confirm validation
+         *
+         * @access {private}
+         */
+        _fireValidateClose()
+        {
+            return this.validateClose.apply(this._DOMElementBackdrop, this.validateCloseArgs);
+        }
+    }
+
+    // Load into container 
+    Hubble.dom().register('Backdrop', Backdrop);
+
+    /*window.addEventListener('DOMReady', function()
+    {
+        setTimeout(function()
+        {
+            Container.Backdrop().open();
+
+        }, 1000);
+    });
+
+    setTimeout(function()
+    {
+        Container.Backdrop().close();
+    }, 5000);*/
+
+})();
+
 (function()
 {
     /**
@@ -14946,7 +15804,7 @@ function abort()
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     
     /**

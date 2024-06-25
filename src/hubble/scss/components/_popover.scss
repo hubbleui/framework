@@ -23,7 +23,6 @@
     --hb-popover-title-color: none;
     --hb-popover-title-border: none;
     position: absolute;
-    z-index: $z-index-popover;
     font-size: var(--hb-popover-font-size);
     border-radius: var(--hb-popover-radius);
     max-width: var(--hb-popover-max-width);
@@ -31,6 +30,7 @@
     @include raise(--hb-popover-shadow, $popover-shadow, $black);
     background-color: var(--hb-popover-bg);
     color: var(--hb-popover-color);
+    z-index: var(--hb-zindex-popover);
 
     .popover-title
     {

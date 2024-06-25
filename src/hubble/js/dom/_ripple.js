@@ -108,7 +108,7 @@
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     
     class Ripple

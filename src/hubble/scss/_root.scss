@@ -37,7 +37,7 @@
     @each $name, $color in $colors
     {
         --hb-#{$name}-rgb:                 #{_to-rgb-vals($color)};
-    }   
+    }
 
     /* Typeography */
     /* Font stacks */
@@ -85,37 +85,47 @@
     /* Breakpoints */
     @each $name, $breakpoint in $breakpoints
     {
-        --hb-breakpoint-#{$name}:    #{$breakpoint};
+        --hb-breakpoint-#{$name}:          #{$breakpoint};
     }
     /* Gutters */
     @each $name, $gutter in $grid-gutters
     {
-        --hb-grid-gutter-#{$name}:       #{$gutter};
+        --hb-grid-gutter-#{$name}:         #{$gutter};
     }
     /* Roofs/floors */
     @each $name, $vgutter in $grid-v-gutters
     {
-        --hb-grid-vgutter-#{$name}:      #{$vgutter};
+        --hb-grid-vgutter-#{$name}:        #{$vgutter};
     }
     /* Container gutters */
     @each $name, $cgutter in $container-gutters
     {
-        --hb-container-gutter-#{$name}: #{$cgutter};
+        --hb-container-gutter-#{$name}:    #{$cgutter};
     }
     /* Margins */
     @each $name, $margin in $margin-sizes
     {
-        --hb-margin-#{$name}:            #{$margin};
+        --hb-margin-#{$name}:              #{$margin};
     }
 
     /* Easings */
-    /* Base transitions */
-    --hb-base-easing:                      cubic-bezier(.4,0,1,1);
-    --hb-base-easing-time:                 .2s;
-    /* Timing */
-    --hb-ease-time-xs:                     0.1s;
-    --hb-ease-time-s:                      0.3s;
-    --hb-ease-time-m:                      0.5s;
-    --hb-ease-time-l:                      0.75s;
-    --hb-ease-time-xl:                     1s;
+    /* Easing functions */
+    @each $name, $easing in $easings
+    {
+        --hb-#{$name}:                     #{$easing};
+    }
+    /* Easing times */
+    @each $name, $time in $easing-times
+    {
+        --hb-ease-time-#{$name}:           #{$time};
+    }
+    /* Base Easings */
+    --hb-base-easing:                      #{$base-easing};
+    --hb-base-easing-time:                 #{$base-easing-time};
+
+    /* Zindexs */
+    @each $name, $zindex in $zindexs
+    {
+        --hb-zindex-#{$name}:              #{$zindex};
+    }
 }

@@ -47,7 +47,7 @@
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Module constructor

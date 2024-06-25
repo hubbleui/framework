@@ -1,4 +1,59 @@
 /**
+ * Returns an object of CSS transforms by transform property as keys.
+ *
+ * @param  {node|string} DOMElement  Target element or transform value string
+ * @return {object}
+ */
+css_transform_values(DOMElement)
+{
+    if (!DOMElement) return {};
+    var transforms     = {};
+    var transformValue = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transform');
+
+    // No transforms
+    if (!transformValue || transformValue === 'none' || transformValue === 'unset' || transformValue === 'auto' || transformValue === 'revert' || transformValue === 'initial')
+    {
+        return transforms;
+    }
+
+    this.each(transformValue.trim().split(')'), function(i, transform)
+    {
+        transform = transform.trim();
+
+        if (transform === '') return;
+
+        transform    = transform.split('(');
+        let prop     = transform.shift().trim();
+        let value    = transform.pop().trim();
+        let valCount = CSS_TRANSFORM_VALUES_COUNT[prop];
+        
+        if (valCount === 1)
+        {
+            transforms[prop] = [value];
+        }
+        else
+        {
+            let values = value.split(',').map((x) => x.trim());
+
+            if (values.length < valCount)
+            {
+                let pad = new Array(valCount - values.length).fill('0');
+
+                transforms[prop] = [...values, ...pad];
+            }
+            else
+            {
+                transforms[prop] = values;
+            }
+        }
+
+    }, this);
+
+    return transforms;
+}
+
+
+/**
  * CSS Animation.
  *
  * @access {private}
@@ -28,9 +83,6 @@ animate_css(DOMElement, options)
     // Call does not from factory need to sanitize
     options = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
 
-    // Is this a mutli transition
-    var isMulti = this.size(options > 1);
-
     // Cache inline transitions to revert back to on completion
     var inlineTransitions = this.css_transition_props(this.inline_style(DOMElement, 'transition'));
     inlineTransitions = this.is_empty(inlineTransitions) ? false : this.join_obj(inlineTransitions, ' ', ', ');;
@@ -42,23 +94,42 @@ animate_css(DOMElement, options)
 
     // Props to animate / transition
     var styles = {};
-    this.each(options, function(i, option)
+
+    if (this.is_array(options))
     {
-        // Setup and convert duration from MS to seconds
-        var property = option.property;
-        var duration = (option.duration / 1000);
-        var easing   = CSS_EASINGS[option.easing];
+        this.each(options, function(i, option)
+        {
+            // Setup and convert duration from MS to seconds
+            var property = option.property;
+            var duration = (option.duration / 1000);
+            var easing   = CSS_EASINGS[option.easing];
+
+            // Set the transition for the property
+            // in our merged obj
+            renderedTransions[property] = `${duration}s ${easing}`;
+
+            // Set the property style
+            styles[property] = option.to;
+
+            callback = option.callback;
+
+        }, this);
+    }
+    else
+    {
+        var property = options.property;
+        var duration = (options.duration / 1000);
+        var easing   = CSS_EASINGS[options.easing];
 
         // Set the transition for the property
         // in our merged obj
         renderedTransions[property] = `${duration}s ${easing}`;
 
         // Set the property style
-        styles[property] = option.to;
+        styles[property] = options.to;
 
-        callback = option.callback;
-
-    }, this);
+        callback = options.callback;
+    }
 
     // Flatten transition ready for css
     var transition = this.join_obj(renderedTransions, ' ', ', ');
@@ -97,44 +168,5 @@ animate_css(DOMElement, options)
     DOMElement.addEventListener('transitionend', onTransitionEnd, true);
 
     this.css(DOMElement, styles);
-}
-
-/**
- * Returns an object of CSS transitions by transition property as keys.
- *
- * @param  {node|string} DOMElement  Target element or transition value string
- * @return {object}
- */
-css_transition_props(DOMElement)
-{
-    if (!DOMElement) return {};
-    var transitions   = {};
-    var transitionVal = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transition');
-
-    // No transition
-    if (!transitionVal || transitionVal.startsWith('all 0s ease 0s') || transitionVal === 'none' || transitionVal === 'unset' || transitionVal === 'auto')
-    {
-        return transitions;
-    }
-
-    this.each(transitionVal.trim().split(','), function(i, transition)
-    {
-        transition = transition.trim();
-
-        // Variants of all
-        if (transition[0] === '.' || transition.startsWith('all ') ||  this.is_numeric(transition[0]))
-        {
-            transitions.all = transition.replace('all ', '');
-
-            return false;
-        }
-
-        var prop = transition.split(' ', 4).shift();
-
-        transitions[prop] = transition.replace(prop, '').trim();
-
-    }, this);
-
-    return transitions;
 }
 

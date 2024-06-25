@@ -5,12 +5,12 @@
 	left: 0;
 	margin: 0 auto;
 	display: none;
-	z-index: $z-index-notification;
 	bottom: 5px;
     padding-left:  map-get($container-gutters, xs);
     padding-right: map-get($container-gutters, xs);
     width: 100%;
-    max-width: $breakpoint-xl;
+    max-width: var(--hb-breakpoint-xl);
+    z-index: var(--hb-zindex-notification);
 	
 	&.active
 	{

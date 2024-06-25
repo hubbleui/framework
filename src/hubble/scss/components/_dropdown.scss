@@ -34,9 +34,9 @@
         width: 100%;
         left: 0;
         border-radius: var(--hb-dropdown-border-radius);
-        z-index: $z-index-dropdown;
         top: $btn-height + 5;
         min-width: var(--hb-dropdown-width);
+        z-index: var(--hb-zindex-dropdown);
         width: auto;
         .drop
         {

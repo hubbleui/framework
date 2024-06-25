@@ -4,13 +4,13 @@
 	top: 0;
 	left: 0;
 	height: 100%;
-	z-index: $z-index-drawer;
 	width: 80%;
 	max-width: $drawer-width;
 	background-color: $body-bg;
 	visibility: hidden;
 	overflow: hidden;
 	transform: translateX(-$drawer-width);
+	z-index: var(--hb-zindex-drawer);
 	@include raised(3);
 	&.drawer-right
 	{
@@ -27,7 +27,7 @@
 	width: 100%;
 	height: 100%;
 	background-color: rgba(35, 47, 52, .32);
-	z-index: ($z-index-drawer - 1);
+	z-index: var(--hb-zindex-drawer-overlay);
 	opacity: 0;
 	visibility: hidden;
 	transition: opacity 0.3s ease;

@@ -2,25 +2,37 @@
  * Remove a css class or list of classes
  *
  * @access {public}
- * @param  {node}         el         Target element
+ * @param  {node}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to remove
  */
-remove_class(el, className)
+remove_class(DOMElement, className)
 {
-    if (!this.in_dom(el))
+    if (this.is_array(DOMElement))
     {
-        return;
-    }
-
-    if (TO_STR.call(className) === '[object Array]')
-    {
-        for (var i = 0; i < className.length; i++)
+        this.each(DOMElement, function(i, _DOMElement)
         {
-            el.classList.remove(className[i]);
-        }
+            this.remove_class(_DOMElement, className);
+
+        }, this);
+
+        return this;
+    }
+
+    if (!this.in_dom(DOMElement))
+    {
+        return this;
+    }
+
+    if (this.is_array(className))
+    {
+        this.each(className, function(i, _className)
+        {
+            DOMElement.classList.remove(_className);
+
+        });
 
         return;
     }
 
-    el.classList.remove(className);
+    DOMElement.classList.remove(className);
 }

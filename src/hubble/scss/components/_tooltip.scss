@@ -27,7 +27,7 @@
         color: var(--hb-tooltip-color);
         padding: var(--hb-tooltip-pad-y) var(--hb-tooltip-pad-x);
         font-size: var(--hb-tooltip-font-size) !important;
-        z-index: $z-index-tooltip;
+        z-index: var(--hb-zindex-tooltip);
         
         font-weight: var(--hb-tooltip-font-weight);
         line-height: var(--hb-tooltip-line-height);
@@ -47,7 +47,7 @@
     &:before
     {
         position: absolute;
-        z-index: $z-index-tooltip;
+        z-index: var(--hb-zindex-tooltip);
         display: none;
         width: 0;
         height: 0;

@@ -184,15 +184,49 @@
   --hb-margin-lg: 6rem;
   --hb-margin-xl: 8rem;
   /* Easings */
-  /* Base transitions */
-  --hb-base-easing: cubic-bezier(.4,0,1,1);
-  --hb-base-easing-time: .2s;
-  /* Timing */
+  /* Easing functions */
+  --hb-ease-in-sine: cubic-bezier(0.47, 0, 0.745, 0.715);
+  --hb-ease-out-sine: cubic-bezier(0.39, 0.575, 0.565, 1);
+  --hb-ease-in-out-sine: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  --hb-ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --hb-ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --hb-ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --hb-ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --hb-ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --hb-ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --hb-ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --hb-ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --hb-ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+  --hb-ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --hb-ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --hb-ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+  --hb-ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --hb-ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --hb-ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
+  --hb-ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+  --hb-ease-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+  --hb-ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  --hb-ease-in-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  --hb-ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --hb-ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* Easing times */
   --hb-ease-time-xs: 0.1s;
-  --hb-ease-time-s: 0.3s;
-  --hb-ease-time-m: 0.5s;
-  --hb-ease-time-l: 0.75s;
-  --hb-ease-time-xl: 1s;
+  --hb-ease-time-sm: 0.3s;
+  --hb-ease-time-md: 0.5s;
+  --hb-ease-time-lg: 1s;
+  --hb-ease-time-xl: 3s;
+  /* Base Easings */
+  --hb-base-easing: var(--hb-ease-in-out-circ);
+  --hb-base-easing-time: var(--hb-ease-time-sm);
+  /* Zindexs */
+  --hb-zindex-backdrop: 100;
+  --hb-zindex-tooltip: 200;
+  --hb-zindex-popover: 300;
+  --hb-zindex-dropdown: 400;
+  --hb-zindex-drawer: 500;
+  --hb-zindex-frontdrop: 600;
+  --hb-zindex-notification: 700;
+  --hb-zindex-modal: 800;
 }
 
 /* ------------------------------------ BASE --------------------------------------- */
@@ -255,8 +289,9 @@ a.no-link:hover {
   clear: both;
 }
 
+html.no-scroll,
 body.no-scroll {
-  height: 100%;
+  height: 100% !important;
   overflow: hidden !important;
 }
 
@@ -2424,9 +2459,9 @@ blockquote.bq-on-primary {
 .btn .glyph-icon {
   vertical-align: text-top;
   color: var(--hb-btn-icon-color);
-  -webkit-transition: color 0.5s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: color 0.5s cubic-bezier(0.4, 0, 1, 1);
-          transition: color 0.5s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: color 0.5s var(--hb-ease-in-out-circ);
+       -o-transition: color 0.5s var(--hb-ease-in-out-circ);
+          transition: color 0.5s var(--hb-ease-in-out-circ);
 }
 .btn .loading-spinner .path {
   stroke: var(--hb-btn-loader-color);
@@ -2443,37 +2478,37 @@ blockquote.bq-on-primary {
   background-color: var(--hb-btn-bg-color-active);
   -webkit-box-shadow: var(--hb-btn-box-shadow-active);
           box-shadow: var(--hb-btn-box-shadow-active);
-  --hb-btn-transition: background-color 0.5s cubic-bezier(0.4, 0, 1, 1), color 0.5s cubic-bezier(0.4, 0, 1, 1), box-shadow 0.5s cubic-bezier(0.4, 0, 1, 1);
+  --hb-btn-transition: background-color 0.5s var(--hb-ease-in-out-circ), color 0.5s var(--hb-ease-in-out-circ), box-shadow 0.5s var(--hb-ease-in-out-circ);
   --hb-btn-icon-color: var(--hb-btn-color-active);
 }
 .btn:active .glyph-icon, .btn.active .glyph-icon {
-  -webkit-transition: color 0.5s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: color 0.5s cubic-bezier(0.4, 0, 1, 1);
-          transition: color 0.5s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: color 0.5s var(--hb-ease-in-out-circ);
+       -o-transition: color 0.5s var(--hb-ease-in-out-circ);
+          transition: color 0.5s var(--hb-ease-in-out-circ);
 }
 .btn.raised-1 {
   --hb-btn-box-shadow: 0px 2px 1px -1px rgba(35, 35, 35, 0.2), 0px 1px 1px 0px rgba(35, 35, 35, 0.14), 0px 1px 3px 0px rgba(35, 35, 35, 0.12);
   --hb-btn-box-shadow-hover: 0 1px 1px rgba(35, 35, 35, 0.16), 0 1px 3px rgba(35, 35, 35, 0.23);
   --hb-btn-box-shadow-active: none;
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .btn.raised-2 {
   --hb-btn-box-shadow: 0 1px 3px rgba(35, 35, 35, 0.12), 0 1px 2px rgba(35, 35, 35, 0.24);
   --hb-btn-box-shadow-hover: 0 3px 6px rgba(35, 35, 35, 0.16), 0 3px 6px rgba(35, 35, 35, 0.23);
   --hb-btn-box-shadow-active: none;
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .btn.raised-3 {
   --hb-btn-box-shadow: rgba(35, 35, 35, 0.2) 0px 5px 5px -3px, rgba(35, 35, 35, 0.14) 0px 8px 10px 1px, rgba(35, 35, 35, 0.12) 0px 3px 14px 2px;
   --hb-btn-box-shadow-hover: 0 10px 20px rgba(35, 35, 35, 0.19), 0 6px 6px rgba(35, 35, 35, 0.23);
   --hb-btn-box-shadow-active: none;
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .btn:hover, .btn.hover, .btn:active, .btn.active, .btn:focus, .btn.focus {
   text-decoration: none;
@@ -3052,9 +3087,9 @@ input[type=hidden] {
   top: 50%;
   left: 12px;
   height: 1.6rem;
-  -webkit-transition: -webkit-transform 0.15s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: -o-transform 0.15s cubic-bezier(0.4, 0, 1, 1);
-          transition: transform 0.15s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-transform 0.15s var(--hb-ease-in-out-circ);
+       -o-transition: -o-transform 0.15s var(--hb-ease-in-out-circ);
+          transition: transform 0.15s var(--hb-ease-in-out-circ);
   -webkit-transform: translateY(-0.8rem);
       -ms-transform: translateY(-0.8rem);
        -o-transform: translateY(-0.8rem);
@@ -3092,8 +3127,8 @@ input[type=hidden] {
   line-height: 1.6rem;
   opacity: 0;
   color: transparent;
-  -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .form-field input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
 .form-field textarea::-moz-placeholder,
@@ -3103,7 +3138,7 @@ input[type=hidden] {
   line-height: 1.6rem;
   opacity: 0;
   color: transparent;
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
+  transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .form-field input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
 .form-field textarea:-ms-input-placeholder,
@@ -3113,7 +3148,7 @@ input[type=hidden] {
   line-height: 1.6rem;
   opacity: 0;
   color: transparent;
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
+  transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .form-field input:not([type=radio]):not([type=checkbox])::placeholder,
 .form-field textarea::placeholder,
@@ -3123,9 +3158,9 @@ input[type=hidden] {
   line-height: 1.6rem;
   opacity: 0;
   color: transparent;
-  -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .form-field input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
 .form-field textarea::-webkit-input-placeholder,
@@ -3135,8 +3170,8 @@ input[type=hidden] {
   line-height: 1.6rem;
   opacity: 0;
   color: transparent;
-  -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .form-field input:not([type=radio]):not([type=checkbox]):-moz-placeholder,
 .form-field textarea:-moz-placeholder,
@@ -3146,7 +3181,7 @@ input[type=hidden] {
   line-height: 1.6rem;
   opacity: 0;
   color: transparent;
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
+  transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .form-field input:not([type=radio]):not([type=checkbox])::-moz-placeholder,
 .form-field textarea::-moz-placeholder,
@@ -3156,7 +3191,7 @@ input[type=hidden] {
   line-height: 1.6rem;
   opacity: 0;
   color: transparent;
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
+  transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .form-field input:not([type=radio]):not([type=checkbox]):-ms-input-placeholder,
 .form-field textarea:-ms-input-placeholder,
@@ -3166,7 +3201,7 @@ input[type=hidden] {
   line-height: 1.6rem;
   opacity: 0;
   color: transparent;
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1);
+  transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .form-field.focus input:not([type=radio]):not([type=checkbox])::-webkit-input-placeholder,
 .form-field.focus textarea::-webkit-input-placeholder,
@@ -3327,9 +3362,9 @@ input[type=hidden] {
   color: var(--hb-gray-700);
   background-color: transparent;
   border: 1px solid #9597a0;
-  -webkit-transition: background-color 0.2s cubic-bezier(0.4, 0, 1, 1), border-color 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1), -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: background-color 0.2s cubic-bezier(0.4, 0, 1, 1), border-color 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: background-color 0.2s cubic-bezier(0.4, 0, 1, 1), border-color 0.2s cubic-bezier(0.4, 0, 1, 1), color 0.2s cubic-bezier(0.4, 0, 1, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: background-color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), border-color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: background-color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), border-color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: background-color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), border-color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), color var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
   -webkit-box-shadow: none;
           box-shadow: none;
   -webkit-appearance: none;
@@ -3502,9 +3537,9 @@ input[type=hidden] {
   margin: 0;
   font-weight: 500;
   max-height: 0;
-  -webkit-transition: max-height 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: max-height 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: max-height 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: max-height var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: max-height var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: max-height var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
   font-size: 1.2rem;
   font-style: italic;
   line-height: 3.2rem;
@@ -3521,9 +3556,9 @@ input[type=hidden] {
 .danger + .help-danger,
 .warning + .help-warning {
   max-height: 50px;
-  -webkit-transition: max-height 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: max-height 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: max-height 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: max-height var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: max-height var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: max-height var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 
 /* styles/forms/unstyled'; */
@@ -3626,9 +3661,9 @@ input[type=checkbox]:focus {
        -o-transform: translateY(-50%);
           transform: translateY(-50%);
   opacity: 0;
-  -webkit-transition: opacity 0.15s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: opacity 0.15s cubic-bezier(0.4, 0, 1, 1);
-          transition: opacity 0.15s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: opacity 0.15s var(--hb-ease-in-out-circ);
+       -o-transition: opacity 0.15s var(--hb-ease-in-out-circ);
+          transition: opacity 0.15s var(--hb-ease-in-out-circ);
 }
 .checkbox:hover:before {
   opacity: 0.2;
@@ -3658,9 +3693,9 @@ input[type=checkbox]:focus {
   height: 2rem;
   margin-left: -1rem;
   border: 2px solid #9597a0;
-  -webkit-transition: border-width 0.15s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: border-width 0.15s cubic-bezier(0.4, 0, 1, 1);
-          transition: border-width 0.15s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: border-width 0.15s var(--hb-ease-in-out-circ);
+       -o-transition: border-width 0.15s var(--hb-ease-in-out-circ);
+          transition: border-width 0.15s var(--hb-ease-in-out-circ);
 }
 .checkbox label:after {
   display: inline-block;
@@ -4548,9 +4583,9 @@ form.success .msg-success {
           border-radius: var(--hb-card-border-radius);
   -webkit-box-shadow: var(--hb-card-box-shadow);
           box-shadow: var(--hb-card-box-shadow);
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.15s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.15s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.15s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), background-color 0.15s var(--hb-ease-in-out-circ);
+       -o-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), background-color 0.15s var(--hb-ease-in-out-circ);
+          transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), background-color 0.15s var(--hb-ease-in-out-circ);
 }
 .card:hover, .card:focus {
   -webkit-box-shadow: var(--hb-card-box-shadow-hover);
@@ -4667,10 +4702,10 @@ form.success .msg-success {
   overflow: hidden;
 }
 .card .card-header {
-  padding: var(--hb-card-spacer-y) var(--hb-card-spacer-x);
   margin-bottom: 0;
   position: relative;
-  z-index: 300;
+  padding: var(--hb-card-spacer-y) var(--hb-card-spacer-x);
+  z-index: var(--hb-zindex-dropdown);
 }
 .card .card-header:first-child {
   -webkit-border-radius: 0;
@@ -4817,9 +4852,9 @@ form.success .msg-success {
   background-color: transparent;
   opacity: 0;
   color: var(--hb-slider-nav-btn-color);
-  -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .carousel .flickity-prev-next-button:hover, .carousel .flickity-prev-next-button:active {
   background-color: transparent;
@@ -4870,7 +4905,7 @@ form.success .msg-success {
   --hb-chip-border-hover: none;
   --hb-chip-bg-selected: var(--hb-brand-primary-200);
   --hb-chip-color-selected: var(--hb-brand-primary);
-  --hb-chip-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), width 0.2s cubic-bezier(0.4, 0, 1, 1);
+  --hb-chip-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ), width var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
   position: relative;
   text-align: center;
   display: inline-block;
@@ -4978,9 +5013,9 @@ form.success .msg-success {
   vertical-align: text-top;
   max-width: 0;
   overflow: hidden;
-  -webkit-transition: padding 0.1s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: padding 0.1s cubic-bezier(0.4, 0, 1, 1);
-          transition: padding 0.1s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: padding 0.1s var(--hb-ease-in-out-circ);
+       -o-transition: padding 0.1s var(--hb-ease-in-out-circ);
+          transition: padding 0.1s var(--hb-ease-in-out-circ);
   padding-right: 0;
   color: #c349ff;
   display: inline-block;
@@ -4992,9 +5027,9 @@ form.success .msg-success {
 }
 .filter-chips .chip.checked .chip-text:before {
   max-width: 20px;
-  -webkit-transition: padding 0.1s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: padding 0.1s cubic-bezier(0.4, 0, 1, 1);
-          transition: padding 0.1s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: padding 0.1s var(--hb-ease-in-out-circ);
+       -o-transition: padding 0.1s var(--hb-ease-in-out-circ);
+          transition: padding 0.1s var(--hb-ease-in-out-circ);
   padding-right: 5px;
 }
 .filter-chips .chip.checked > .glyph-icon {
@@ -5095,9 +5130,9 @@ form.success .msg-success {
   left: 0;
   -webkit-border-radius: var(--hb-dropdown-border-radius);
           border-radius: var(--hb-dropdown-border-radius);
-  z-index: 300;
   top: 43px;
   min-width: var(--hb-dropdown-width);
+  z-index: var(--hb-zindex-dropdown);
   width: auto;
 }
 .drop-container .drop-menu .drop {
@@ -5110,9 +5145,9 @@ form.success .msg-success {
   --hb-dropdown-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   --hb-dropdown-shadow-hover: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   --hb-dropdown-shadow-active: none;
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .drop-container .drop ul {
   list-style: none;
@@ -5437,8 +5472,8 @@ form.success .msg-success {
   height: 100%;
   visibility: hidden;
   overflow: hidden;
-  z-index: 600;
   overflow-y: auto;
+  z-index: var(--hb-zindex-modal);
 }
 
 .modal-dialog {
@@ -5465,9 +5500,9 @@ form.success .msg-success {
   --hb-modal-shadow: rgba(35, 35, 35, 0.2) 0px 5px 5px -3px, rgba(35, 35, 35, 0.14) 0px 8px 10px 1px, rgba(35, 35, 35, 0.12) 0px 3px 14px 2px;
   --hb-modal-shadow-hover: 0 10px 20px rgba(35, 35, 35, 0.19), 0 6px 6px rgba(35, 35, 35, 0.23);
   --hb-modal-shadow-active: none;
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 
 .modal-wrap .card-header {
@@ -5490,7 +5525,7 @@ form.success .msg-success {
   visibility: hidden;
   top: 0;
   left: 0;
-  z-index: 600;
+  z-index: var(--hb-zindex-modal);
   -webkit-transition: var(--hb-modal-overlay-transition-on);
        -o-transition: var(--hb-modal-overlay-transition-on);
           transition: var(--hb-modal-overlay-transition-on);
@@ -5558,12 +5593,12 @@ form.success .msg-success {
   left: 0;
   margin: 0 auto;
   display: none;
-  z-index: 500;
   bottom: 5px;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   width: 100%;
-  max-width: 1200px;
+  max-width: var(--hb-breakpoint-xl);
+  z-index: var(--hb-zindex-notification);
 }
 .notification-wrap.active {
   display: block;
@@ -5580,9 +5615,9 @@ form.success .msg-success {
   margin-bottom: 15px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
           box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .notification-wrap .msg:hover {
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
@@ -5770,7 +5805,6 @@ form.success .msg-success {
   --hb-popover-title-color: none;
   --hb-popover-title-border: none;
   position: absolute;
-  z-index: 200;
   font-size: var(--hb-popover-font-size);
   -webkit-border-radius: var(--hb-popover-radius);
           border-radius: var(--hb-popover-radius);
@@ -5780,11 +5814,12 @@ form.success .msg-success {
   --hb-popover-shadow: 0 1px 3px rgba(35, 35, 35, 0.12), 0 1px 2px rgba(35, 35, 35, 0.24);
   --hb-popover-shadow-hover: 0 3px 6px rgba(35, 35, 35, 0.16), 0 3px 6px rgba(35, 35, 35, 0.23);
   --hb-popover-shadow-active: none;
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
   background-color: var(--hb-popover-bg);
   color: var(--hb-popover-color);
+  z-index: var(--hb-zindex-popover);
 }
 .popover .popover-title {
   font-size: var(--hb-popover-title-size);
@@ -6096,7 +6131,7 @@ form.success .msg-success {
 }
 
 .tab-panels-wrap .tab-panel {
-  --hb-tab-transition: 0.2s cubic-bezier(0.4, 0, 1, 1);
+  --hb-tab-transition: var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
   visibility: hidden;
   opacity: 0;
   height: 0;
@@ -6140,7 +6175,7 @@ form.success .msg-success {
   color: var(--hb-tooltip-color);
   padding: var(--hb-tooltip-pad-y) var(--hb-tooltip-pad-x);
   font-size: var(--hb-tooltip-font-size) !important;
-  z-index: 100;
+  z-index: var(--hb-zindex-tooltip);
   font-weight: var(--hb-tooltip-font-weight);
   line-height: var(--hb-tooltip-line-height);
   text-align: center;
@@ -6157,7 +6192,7 @@ form.success .msg-success {
 }
 .tooltipped:before {
   position: absolute;
-  z-index: 100;
+  z-index: var(--hb-zindex-tooltip);
   display: none;
   width: 0;
   height: 0;
@@ -6429,7 +6464,7 @@ form.success .msg-success {
   --hb-list-pad-y: 1rem;
   --hb-list-pad-x: 1.5rem;
   --hb-list-font-size: var(--hb-base-font-size);
-  --hb-list-transition: background-color 0.15s cubic-bezier(0.4, 0, 1, 1);
+  --hb-list-transition: background-color 0.15s var(--hb-ease-in-out-circ);
   --hb-list-title-color: var(--hb-body-color);
   --hb-list-subtitle-color: var(--hb-gray-500);
   --hb-list-title-font-size: 1.4rem;
@@ -6496,7 +6531,6 @@ form.success .msg-success {
   top: 0;
   left: 0;
   height: 100%;
-  z-index: 400;
   width: 80%;
   max-width: 540px;
   background-color: #fafafa;
@@ -6506,11 +6540,12 @@ form.success .msg-success {
       -ms-transform: translateX(-540px);
        -o-transform: translateX(-540px);
           transform: translateX(-540px);
+  z-index: var(--hb-zindex-drawer);
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
           box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
-  -webkit-transition: -webkit-box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: -webkit-box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: box-shadow var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .drawer:hover {
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
@@ -6536,7 +6571,7 @@ form.success .msg-success {
   width: 100%;
   height: 100%;
   background-color: rgba(35, 47, 52, 0.32);
-  z-index: 399;
+  z-index: var(--hb-zindex-drawer-overlay);
   opacity: 0;
   visibility: hidden;
   -webkit-transition: opacity 0.3s ease;
@@ -6556,7 +6591,7 @@ form.success .msg-success {
   visibility: hidden;
   top: 0;
   left: 0;
-  z-index: 600;
+  z-index: var(--hb-zindex-frontdrop);
   -webkit-transition: opacity 0.3s var(--hb-ease);
        -o-transition: opacity 0.3s var(--hb-ease);
           transition: opacity 0.3s var(--hb-ease);
@@ -6580,7 +6615,7 @@ form.success .msg-success {
   height: 100%;
   visibility: hidden;
   overflow: hidden;
-  z-index: 600;
+  z-index: var(--hb-zindex-frontdrop);
 }
 
 .frontdrop-dialog {
@@ -6706,6 +6741,26 @@ form.success .msg-success {
           transform: translateY(50%);
 }
 
+/* ---------------------------- components/backdrop.scss --------------------------- */
+.backdrop-wrapper {
+  --hb-backdrop-bg: var(--hb-brand-primary);
+  --hb-backdrop-color: var(--hb-white);
+  position: fixed;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+  visibility: hidden;
+  opacity: 0;
+  background: var(--hb-backdrop-bg);
+  color: var(--hb-backdrop-color);
+}
+
+.backdrop-page-wrapper {
+  background-color: var(--hb-body-bg);
+}
+
 /* ---------------------------- components/imagezoom.scss --------------------------- */
 .img-hover-zoom {
   -webkit-background-size: 200% 200%;
@@ -6723,9 +6778,9 @@ form.success .msg-success {
 }
 
 .img-hover-zoom img {
-  -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: opacity 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: opacity var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
   display: block;
   width: 100%;
   height: auto;
@@ -6761,9 +6816,9 @@ form.success .msg-success {
   width: 20px;
   height: 1px;
   margin: 0 auto 6px;
-  -webkit-transition: 0.2s cubic-bezier(0.4, 0, 1, 1);
-       -o-transition: 0.2s cubic-bezier(0.4, 0, 1, 1);
-          transition: 0.2s cubic-bezier(0.4, 0, 1, 1);
+  -webkit-transition: var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+       -o-transition: var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
+          transition: var(--hb-ease-time-sm) var(--hb-ease-in-out-circ);
 }
 .hamburger.active .hamburger-bun, .hamburger.active .hamburger-patty {
   background-color: var(--hb-hamburger-color-active);

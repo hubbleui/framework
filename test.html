@@ -28,15 +28,35 @@
                 overflow: hidden;
                 height: 300px;
                 opacity: 1;
-                left: -400px;
+                left: 450px;
+                transform: scale(1.1) rotate(10deg) translate3d(30px, 50%, 20px);
+                position: absolute;
+                transition: background 3s ease, color 2s ease, left 3s ease, transform 10s ease;
+                /*transition: 2s ease;*/
+               /* visibility: hidden;
+                opacity: 0;
+                display: none;*/
+                /*
+                translate -> 3d
+                scale -> 3d
+                rotate -> 3d
+                skew -> 2d
+                */
+
             }
+            .foo div
+            {
+                transform: scaleX(1.5);
+            }
+
         </style>
     <body>
-        <div style="transition: width 10s ;">Hello World</div>
+        <div>Hello World</div>
         <pre><code></code></pre>
         <script src="build/js/hubble.js"></script>
         <script type="text/javascript">
             var H = Hubble.helper();
+
 
 /*
 var selector_regex = /([^\r\n,{}]+)(,(?=[^}]*{)|\s*{)/g;
@@ -126,7 +146,7 @@ while(currIndex < len)
     console.log("\n");
 });*/
 
-            
+
             var div = H.$('div');
 
             //console.log(H.computed_style(div, 'height'));
@@ -149,14 +169,97 @@ while(currIndex < len)
                
             }, 1000);
 
-            //H.animate_css(div, { width : '500px', height : '500px', easing: 'easeInOutCirc', duration: 500} );
-            H.animate_css(div, { width: { to : '350px', duration: 500 }, height: {to: '450px', duration: 200}, "font-size": { to: '20px', duration: 200} });
 
+
+            //scaleX(1.5) skewY(10deg) skewX(10deg) scaleY(1.5) translateX(10px) translateY(10px)
+            //var m = 'matrix(1.5, 0.176327, 0.396736, 1.54664, 18.9674, 17.2296)';
+
+
+            // translate3d(14px, -4px, 7px)
+            //m = 'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 14, -4, 7, 1)';
+
+            //console.log('scaleX(1.5) skewY(10deg) skewX(10deg) scaleY(1.5) translateX(10px) translateY(10px)');
+            //console.log('matrix(1.5, 0.176327, 0.396736, 1.54664, 18.9674, 17.2296)');
+            //m = m.split(',').map((x) => parseFloat(x.replace('matrix3', '').replaceAll(/[^0-9.-]/g, '')));
+            //console.log(m);
+
+
+            //console.log(qrDecompone(m));
+            //console.log(__un_css_matrix2(m))
+
+            // translate3d(10px, 10px, 10px) scale3d(1.5, 1.5, 1.5) skew(10deg, 10deg) rotate3d(2, 2, 2, 45deg)
+            //m = 'matrix3d(1.34091, 0.971665, -0.465926, 0, -0.25308, 1.12495, 0.758819, 0, 0.676664, -0.332126, 1.20711, 0, 10, 10, 10, 1)';
+
+            //console.log(m);
+            //console.log('translate3d(10px, 10px, 10px) scale3d(1.5, 1.5, 1.5) skew(10deg, 10deg) rotate3d(2, 2, 2, 45deg)');
+
+            //console.log(m);
+            //m = m.split(',').map((x) => parseFloat(x.replace('matrix3', '').replaceAll(/[^0-9.-]/g, '')));
+
+            //console.log(H.rendered_style(div, 'transform'));
+
+
+            //console.log(H.join_obj(transforms, '(', ') ') + ')');
+
+
+
+            // 
+            // matrix(1, 0.36397, 0.57735, 1, 12, 150)
+
+            // scaleX(1.5) skewY(10deg) skewX(10deg) scaleY(1.5) translateX(10px) translateY(10px)
+            
+            //H.animate(div, { transform: { to : 'translateY(300px)', duration: 500, easing: 'easeOutBounce' }, height: { to: '500px', duration: 500} });
+
+            H.animate(div, { transform: 'translateY(50%) translateX(100px)', background: '#c42c36', easing: 'easeOutBounce', duration: 1000, });
+
+            //H.animate(div, { property: 'transform', from: 'translate3d(10px, 0, 0)', to: 'translate3d(300px, 0, 0)', easing: 'easeOutBounce', duration: 1000, });
+
+            //H.animate(div, { left: '-150px',  easing: 'ease', duration: 100, });
+
+            //console.log(H.rendered_style(div, 'transform'));
+
+            //H.animate(div, { property : 'width', to : '500px', easing: 'easeOutBounce', duration: 1000 });
+
+            //H.animate_css(div, { width : '500px', height : '500px', easing: 'easeInOutCirc', duration: 500} );
+            //H.animate(div, { transform: { to : 'translateY(300px)', duration: 500, easing: 'easeOutBounce' }, height: { to: '500px', duration: 500} });
+
+            //H.animate(div, { transform: { to : 'translateY(300px)', from: 'translateY(-300px)', easing: 'easeOutBounce' } });
 
             //H.animate('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
             //H.animate('foo', { height : '500px', width : '200px', easing: 'easeInOutElastic', duration: 3000} );
             //H.animate('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
             
+
+            console.log(H.height(window));
+            console.log(H.width(window));
+
+        /*'em' : 16,
+
+        // Relative to the x-height of the current font (rarely used)
+        'ex' : 7.15625,
+
+        // Relative to the width of the "0" (zero)
+        'ch' : 8,
+
+        // Relative to font-size of the root element
+        'rem' : 16,
+
+        // Relative to 1% of the width of the viewport
+        'vw' : 1,
+
+        // Relative to 1% of the height of the viewport
+        'vh' : 1,
+
+        // Relative to 1% of viewport's* smaller dimension
+        'vmin' : 1,
+
+        // Relative to 1% of viewport's* larger dimension
+        'vmax' : 1,
+
+        // Relative to the parent element
+        '%' : 1*/
+
+
         </script>
     </body>
 </html>

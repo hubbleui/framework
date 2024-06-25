@@ -2,25 +2,37 @@
  * Add a css class or list of classes
  *
  * @access {public}
- * @param  {node}         el         Target element
+ * @param  {node}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to add
  */
-add_class(el, className)
+add_class(DOMElement, className)
 {
-    if (!this.in_dom(el))
+    if (this.is_array(DOMElement))
     {
-        return;
-    }
-
-    if (TO_STR.call(className) === '[object Array]')
-    {
-        for (var i = 0; i < className.length; i++)
+        this.each(DOMElement, function(i, _DOMElement)
         {
-            el.classList.add(className[i]);
-        }
+            this.add_class(_DOMElement, className);
+
+        }, this);
+
+        return this;
+    }
+
+    if (!this.in_dom(DOMElement))
+    {
+        return;
+    }
+
+    if (this.is_array(className))
+    {
+        this.each(className, function(i, _className)
+        {
+            DOMElement.classList.add(_className);
+
+        });
 
         return;
     }
 
-    el.classList.add(className);
+    DOMElement.classList.add(className);
 }

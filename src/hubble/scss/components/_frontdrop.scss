@@ -7,7 +7,7 @@
 	visibility: hidden;
 	top: 0;
 	left: 0;
-	z-index: $z-index-modal;
+	z-index: var(--hb-zindex-frontdrop);
 	transition: opacity .3s var(--hb-ease);
 }
 .frontdrop-overlay.dark
@@ -29,7 +29,7 @@
 	height: 100%;
 	visibility: hidden;
 	overflow: hidden;
-	z-index: $z-index-modal;
+	z-index: var(--hb-zindex-frontdrop);
 }
 .frontdrop-dialog
 {

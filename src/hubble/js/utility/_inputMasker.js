@@ -520,7 +520,7 @@
      * 
      * @var {object}
      */
-    var Helper = Container.Helper();
+    const Helper = Container.Helper();
 
     /**
      * Module constructor
@@ -528,349 +528,351 @@
      * @constructor
      {*} @access public
      */
-    var InputMasker = function(element)
+    class InputMasker
     {
-        this._element = element;
-
-        this._mask = null;
-
-        return this;
-    }
-
-
-    /**
-     * Mask Credit Card
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.creditcard = function()
-    {
-        var _mask = vanillaMasker.maskInput(
+        constructor(element)
         {
-            inputElement: this._element,
-            guide: false,
-            mask: [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]
-        });
+            this._element = element;
 
-        _mask['_element'] = this._element;
+            this._mask = null;
 
-        _masks.push(_mask);
-    };
+            return this;
+        }
 
-    /**
-     * Mask money
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.money = function()
-    {
-        var _filter = function(rawValue)
+        /**
+         * Mask Credit Card
+         *
+         * @access {public}
+         */
+        creditcard()
         {
-            var mask = [];
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask money
+         *
+         * @access {public}
+         */
+        money()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(/[0-9]|\./);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(/[0-9]|\./);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [/[0-9]/];
+            };
 
-            return [/[0-9]/];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask money
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.numeric = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask money
+         *
+         * @access {public}
+         */
+        numeric()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(/[0-9]/);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(/[0-9]/);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [/[0-9]/];
+            };
 
-            return [/[0-9]/];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask numeric with decimals
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.numericDecimal = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask numeric with decimals
+         *
+         * @access {public}
+         */
+        numericDecimal()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(/[0-9]|\./);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(/[0-9]|\./);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [/[0-9]/];
+            };
 
-            return [/[0-9]/];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask alpha numeric
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.alphaNumeric = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            var regex = /[A-z0-9]/;
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask alpha numeric
+         *
+         * @access {public}
+         */
+        alphaNumeric()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                var regex = /[A-z0-9]/;
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(regex);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(regex);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [regex];
+            };
 
-            return [regex];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask alpha space
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.alphaSpace = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            var regex = /[A-z ]/;
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask alpha space
+         *
+         * @access {public}
+         */
+        alphaSpace()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                var regex = /[A-z ]/;
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(regex);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(regex);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [regex];
+            };
 
-            return [regex];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask alpha dash
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.alphaDash = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            var regex = /[A-z-]/;
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask alpha dash
+         *
+         * @access {public}
+         */
+        alphaDash()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                var regex = /[A-z-]/;
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(regex);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(regex);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [regex];
+            };
 
-            return [regex];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask alphanumeric dash
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.alphaNumericDash = function()
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            var regex = /[A-z0-9-]/;
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask alphanumeric dash
+         *
+         * @access {public}
+         */
+        alphaNumericDash()
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                var regex = /[A-z0-9-]/;
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(regex);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(regex);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [regex];
+            };
 
-            return [regex];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Mask custom regex
-     *
-     * @access {public}
-     * @param  {regex}  pattern The pattern regex to mask
-     */
-    InputMasker.prototype.regex = function(pattern)
-    {
-        var _filter = function(rawValue)
-        {
-            var mask = [];
-
-            if (rawValue.length > 1)
+            var _mask = vanillaMasker.maskInput(
             {
-                for (var i = 0; i < rawValue.length; i++)
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
+
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Mask custom regex
+         *
+         * @access {public}
+         * @param  {regex}  pattern The pattern regex to mask
+         */
+        regex(pattern)
+        {
+            var _filter = function(rawValue)
+            {
+                var mask = [];
+
+                if (rawValue.length > 1)
                 {
-                    mask.push(pattern);
+                    for (var i = 0; i < rawValue.length; i++)
+                    {
+                        mask.push(pattern);
+                    }
+
+                    return mask;
                 }
 
-                return mask;
-            }
+                return [pattern];
+            };
 
-            return [pattern];
-        };
-
-        var _mask = vanillaMasker.maskInput(
-        {
-            inputElement: this._element,
-            guide: false,
-            mask: _filter
-        });
-
-        _mask['_element'] = this._element;
-
-        _masks.push(_mask);
-    };
-
-    /**
-     * Disable the mask
-     *
-     * @access {public}
-     */
-    InputMasker.prototype.remove = function()
-    {
-        for (var i = _masks.length - 1; i >= 0; i--)
-        {
-            if (_masks[i]['_element'] === this._element)
+            var _mask = vanillaMasker.maskInput(
             {
-                _masks[i]._destroy();
+                inputElement: this._element,
+                guide: false,
+                mask: _filter
+            });
 
-                _masks.splice(i, 1);
+            _mask['_element'] = this._element;
+
+            _masks.push(_mask);
+        }
+
+        /**
+         * Disable the mask
+         *
+         * @access {public}
+         */
+        remove()
+        {
+            for (var i = _masks.length - 1; i >= 0; i--)
+            {
+                if (_masks[i]['_element'] === this._element)
+                {
+                    _masks[i]._destroy();
+
+                    _masks.splice(i, 1);
+                }
             }
         }
-    };
+    }
 
     // SET IN IOC
     /*****************************************/

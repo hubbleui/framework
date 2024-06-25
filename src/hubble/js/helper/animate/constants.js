@@ -271,30 +271,11 @@ const ANIMATION_DEFAULT_OPTIONS =
     // Options
     //'property', 'from', 'to'
     easing:               'ease',
-    callback:              (() => ),
-
-    // Mutable options
-    startValue:           null,
-    endValue:             null,
-    duration:             500,
-
-    // Internal trackers
-    currentValue:          null,
-    totalDistance:         null,
-    timeLapsed:            0,
-    percentage:            0,
-    eventTimeout:          null,
-    animationInterval:     null,
-    CSSPropertyUnits:      '',
-    backwardsAnimation:    false,
-    animationStepDuration: 16,
-
-    // Color specific
-    isColorAnimation:      false,
-    colorAnimationStep:    0,
-    colorAnimationCount:   50,
-    colorGradientMap:      []
+    callback:              () => {},
+    duration:              500,
+    fps:                   90, // (11ms)
 };
+
  /**
  * Allowed Options.
  * 

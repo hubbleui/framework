@@ -5,7 +5,7 @@
      * 
      * @var {obj}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Show/hide sidebar overlay timer

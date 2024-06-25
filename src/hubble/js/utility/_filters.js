@@ -15,119 +15,117 @@
      * @access {public}
      * @return {this}
      */
-    var Filters = function()
+    class Filters
     {
-        this._callbacks = {};
+        _callbacks = {};
 
-        return this;
-    }
-
-    /**
-     * Module destructor - clears event cache
-     *
-     * @access {public}
-     */
-    Filters.prototype.destruct = function()
-    {
-        this._callbacks = {};
-    }
-
-    /**
-     * Fire a custom event
-     *
-     * @param {eventName} string The event name to fire
-     * @param {subject}   mixed  What should be given as "this" to the event callbacks
-     * @access {public}
-     */
-    Filters.prototype.filter = function(eventName, subject)
-    {
-        var response = subject;
-
-        for (var key in this._callbacks)
+        /**
+         * Module destructor - clears event cache
+         *
+         * @access {public}
+         */
+        destruct()
         {
-            if (!this._callbacks.hasOwnProperty(key))
+            this._callbacks = {};
+        }
+
+        /**
+         * Fire a custom event
+         *
+         * @param {eventName} string The event name to fire
+         * @param {subject}   mixed  What should be given as "this" to the event callbacks
+         * @access {public}
+         */
+        filter(eventName, subject)
+        {
+            var response = subject;
+
+            for (var key in this._callbacks)
             {
-                continue;
+                if (!this._callbacks.hasOwnProperty(key))
+                {
+                    continue;
+                }
+
+                var callbackEvent = key.split('______')[0];
+
+                if (callbackEvent === eventName)
+                {
+                    var callback = this._callbacks[key].callback;
+
+                    response = callback.call(response, response);
+                }
             }
 
-            var callbackEvent = key.split('______')[0];
+            return response;
+        }
 
-            if (callbackEvent === eventName)
+        /**
+         * Bind a callback to an event
+         *
+         * @param {eventName} string The event name
+         * @param {callback}  func   The callback function
+         * @access {public}
+         */
+        on(eventName, callback)
+        {
+            // Make sure the function is unique - unless it is ananonymous
+            var callbackName = this._getFnName(callback);
+
+            if (callbackName === 'anonymous')
             {
-                var callback = this._callbacks[key].callback;
+                callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
+            }
 
-                response = callback.call(response, response);
+            var key = eventName + '______' + callbackName;
+
+            // Save the callback and event name
+            this._callbacks[key] = {
+                name: eventName,
+                callback: callback,
+            };
+        }
+
+        /**
+         * UnBind a callback to an event
+         *
+         * @param {eventName} string The event name
+         * @param {callback}  func   The callback function
+         * @access {public}
+         */
+        off(eventName, callback)
+        {
+            for (var key in this._callbacks)
+            {
+                if (!this._callbacks.hasOwnProperty(key))
+                {
+                    continue;
+                }
+
+                var callbackEvent = key.split('______')[0];
+
+                if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
+                {
+                    delete this._callbacks[key];
+                }
             }
         }
 
-        return response;
-    }
-
-    /**
-     * Bind a callback to an event
-     *
-     * @param {eventName} string The event name
-     * @param {callback}  func   The callback function
-     * @access {public}
-     */
-    Filters.prototype.on = function(eventName, callback)
-    {
-        // Make sure the function is unique - unless it is ananonymous
-        var callbackName = this._getFnName(callback);
-
-        if (callbackName === 'anonymous')
+        /**
+         * Get a callback function by key
+         *
+         * @param {fn} string The function key
+         * @access {private}
+         * @return {string}
+         */
+        _getFnName(fn)
         {
-            callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
+            var f = typeof fn == 'function';
+
+            var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
+
+            return (!f && 'not a function') || (s && s[1] || 'anonymous');
         }
-
-        var key = eventName + '______' + callbackName;
-
-        // Save the callback and event name
-        this._callbacks[key] = {
-            name: eventName,
-            callback: callback,
-        };
-    }
-
-    /**
-     * UnBind a callback to an event
-     *
-     * @param {eventName} string The event name
-     * @param {callback}  func   The callback function
-     * @access {public}
-     */
-    Filters.prototype.off = function(eventName, callback)
-    {
-        for (var key in this._callbacks)
-        {
-            if (!this._callbacks.hasOwnProperty(key))
-            {
-                continue;
-            }
-
-            var callbackEvent = key.split('______')[0];
-
-            if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
-            {
-                delete this._callbacks[key];
-            }
-        }
-    }
-
-    /**
-     * Get a callback function by key
-     *
-     * @param {fn} string The function key
-     * @access {private}
-     * @return {string}
-     */
-    Filters.prototype._getFnName = function(fn)
-    {
-        var f = typeof fn == 'function';
-
-        var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
-
-        return (!f && 'not a function') || (s && s[1] || 'anonymous');
     }
 
     // Load into container and invoke

@@ -51,6 +51,7 @@
 @import 'dom/chips/_choice.js';
 @import 'dom/chips/_filter.js';
 @import 'dom/_clickTriggers.js';
+@import 'dom/_backdrop.js';
 @import 'dom/_imgZoom.js';
 
 // Boot Hubble

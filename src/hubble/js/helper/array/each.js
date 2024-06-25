@@ -68,3 +68,21 @@ foreach()
 {
     return this.each.apply(this, arguments);
 }
+
+/**
+ * For loop with count
+ * 
+ * @access {public}
+ * @param  {object}  obj       The target object to loop over
+ * @param  {closure} callback  Callback to apply to each iteration
+ * @param  {array}   args      Array of params to apply to callback (optional) (default null)
+ */
+for(count, callback)
+{
+    var args = TO_ARR.call(arguments);
+
+    args[0] = Array.from(Array(count).keys());
+
+    return this.each.apply(this, args);
+}
+

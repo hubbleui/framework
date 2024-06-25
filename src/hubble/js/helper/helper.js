@@ -25,9 +25,13 @@
 		@import 'css/css_to_longhand.js';
 		@import 'css/css_to_shorthand.js';
 		@import 'css/css_to_object.js';
+		@import 'css/css_to_px.js';
 		@import 'css/inline_style.js';
 		@import 'css/remove_style.js';
 		@import 'css/rendered_style.js';
+		@import 'css/css_transition_props.js';
+		@import 'css/css_transform_props.js';
+		@import 'css/css_to_3d_transform.js';
 		@import 'dom/add_class.js';
 		@import 'dom/closest.js';
 		@import 'dom/closest_class.js';
@@ -54,6 +58,8 @@
 		@import 'dom/show_aria.js';
 		@import 'dom/toggle_class.js';
 		@import 'dom/trigger_event.js';
+		@import 'dom/width.js';
+		@import 'dom/height.js';
 		@import 'events/addEventListener.js';
 		@import 'events/clearEventListeners.js';
 		@import 'events/collectGarbage.js';
@@ -80,6 +86,7 @@
 		@import 'string/trim.js';
 		@import 'string/uc_first.js';
 		@import 'string/uc_words.js';
+		@import 'string/lc_first.js';
 		@import 'validation/bool.js';
 		@import 'validation/callable_name.js';
 		@import 'validation/count.js';

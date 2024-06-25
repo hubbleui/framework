@@ -11,8 +11,8 @@
 	height: 100%;
 	visibility: hidden;
 	overflow: hidden;
-	z-index: $z-index-modal;
 	overflow-y: auto;
+	z-index: var(--hb-zindex-modal);
 }
 .modal-dialog
 {
@@ -56,7 +56,7 @@
 	visibility: hidden;
 	top: 0;
 	left: 0;
-	z-index: $z-index-modal;
+	z-index: var(--hb-zindex-modal);
 	transition: var(--hb-modal-overlay-transition-on);
 
 	&.dark

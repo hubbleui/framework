@@ -5,7 +5,7 @@
      * 
      * @var {object}
      */
-    var Helper = Hubble.helper();
+    const Helper = Container.Helper();
 
     /**
      * Has the page loaded?

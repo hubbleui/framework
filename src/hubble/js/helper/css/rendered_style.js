@@ -1,32 +1,59 @@
 /**
  * Get the element's computed style on a property
  *
- * @access {private}
+ * @access {public}
  * @param  {node}   el   Target element
  * @param  {string} prop CSS property to check (in camelCase) (optional)
  * @return {mixed}
  */
-rendered_style(el, property)
+rendered_style(DOMElement, property)
+{
+    if (property.includes('ransform'))
+    {
+        return this.css_transform_props(DOMElement, true);
+    }
+
+    return this.__computed_style(DOMElement, property);
+}
+
+/**
+ * Get the elements computed style.
+ *
+ * @access {private}
+ * @param  {node}          el   Target element
+ * @param  {string}        prop CSS property to check (in camelCase) (optional)
+ * @return {string|object}
+ */
+__computed_style(DOMElement, property)
 {
     if (window.getComputedStyle)
     {
-        if (property)
-        {
-            return window.getComputedStyle(el, null)[property];
-        }
+        let styles = window.getComputedStyle(DOMElement, null);
 
-        return window.getComputedStyle(el, null);
-
+        return !property ? styles : styles[property];
     }
-    if (el.currentStyle)
+    else if (DOMElement.currentStyle)
     {
-        if (property)
-        {
-            return el.currentStyle[property];
-        }
-        
-        return el.currentStyle;
+        let styles = DOMElement.currentStyle;
+
+        return !property ? styles : styles[property];
     }
 
     return '';
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

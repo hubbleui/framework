@@ -83,6 +83,96 @@ const SHORTHAND_DEFAULTS =
 };
 
 /**
+ * CSS Transform value counts
+ *
+ * @var {object}
+ */
+const CSS_TRANSFORM_VALUES_COUNT = 
+{
+    perspective: 1,
+    skewY: 1,
+    translateY: 1,
+    translateZ: 1,
+    scaleY: 1,
+    scaleZ: 1,
+    rotateX: 1,
+    rotateY: 1,
+    rotateZ: 1,
+    translateX: 1,
+    skewX: 1,
+    scaleX: 1,
+    rotate: 1,
+
+    skew: 2,
+    translate: 2,
+    scale: 2,
+
+    translate3d: 3,
+    scale3d: 3,
+    rotate3d: 3,
+
+    matrix: 6,
+    matrix3d: 16
+};
+
+const CSS_3D_TRANSFORM_DEFAULTS =
+{
+    'translate3d' : ['0','0','0'],
+    'scale3d'     : ['1','1','1'],
+    'rotate3d'    : ['0','0','1','0'],
+    'skew'        : ['0', '0'],
+};
+
+const CSS_3D_TRANSFORM_MAP_KEYS =
+{
+    x: 0,
+    y: 1,
+    z: 3
+};
+
+/* USED FOR css_to_px */
+const CSS_PIXELS_PER_INCH = 96;
+const CSS_RELATIVE_UNITS  = {
+    // Relative to the font-size of the element (2em means 2 times the size of the current font)
+    'em' : 16,
+
+    // Relative to the x-height of the current font (rarely used)
+    'ex' : 7.15625,
+
+    // Relative to the width of the "0" (zero)
+    'ch' : 8,
+
+    // Relative to font-size of the root element
+    'rem' : 16,
+
+    // Relative to 1% of the width of the viewport
+    'vw' : 1,
+
+    // Relative to 1% of the height of the viewport
+    'vh' : 1,
+
+    // Relative to 1% of viewport's* smaller dimension
+    // If the viewport height is smaller than the width, 
+    // the value of 1vmin will be equal to 1% of the viewport height.
+    // Similarly, if the viewport width is smaller than the height, the value of 1vmin will be equal to 1% of the viewport width.
+    'vmin' : 765,
+    'vmax' : 1200,
+
+    // Relative to the parent element
+    '%' : 16
+}
+const CSS_ABSOLUTE_UNITS =
+{
+    'in': CSS_PIXELS_PER_INCH,
+    'cm': CSS_PIXELS_PER_INCH / 2.54,
+    'mm': CSS_PIXELS_PER_INCH / 25.4,
+    'pt': CSS_PIXELS_PER_INCH / 72,
+    'pc': CSS_PIXELS_PER_INCH / 6,
+    'px': 1
+}
+
+
+/**
  * Cached CSS propery cases.
  *
  * @var {object}

@@ -165,10 +165,10 @@
 	}
 	.card-header
 	{
-		padding: var(--hb-card-spacer-y) var(--hb-card-spacer-x);
 		margin-bottom: 0;
 		position: relative;
-		z-index: $z-index-dropdown;
+		padding: var(--hb-card-spacer-y) var(--hb-card-spacer-x);
+		z-index: var(--hb-zindex-dropdown);
 
 	  	&:first-child
 	  	{
