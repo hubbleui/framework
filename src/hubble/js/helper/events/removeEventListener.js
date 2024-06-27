@@ -6,7 +6,7 @@
  * This function can still remove "annonymous" functions that are given a name as they are declared.
  * 
  * @access {public}
- * @param  {node}    element    The target DOM node
+ * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)
@@ -62,7 +62,7 @@ removeEventListener(element, eventName, handler, useCapture)
  * Removes all registered event listners on an element
  *
  * @access {private}
- * @param  {node}    element Target node element
+ * @param  {DOMElement}    element Target node element
  */
 __removeElementListeners(element)
 {
@@ -86,7 +86,7 @@ __removeElementListeners(element)
  * Removes all registered event listners of a specific type on an element
  *
  * @access {private}
- * @param  {node}    element Target node element
+ * @param  {DOMElement}    element Target node element
  * @param  {string}  type    Event listener type
  */
 __removeElementTypeListeners(element, type)
@@ -110,7 +110,7 @@ __removeElementTypeListeners(element, type)
  * Removes a listener from the element
  *
  * @access {private}
- * @param  {node}    element    The target DOM node
+ * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)

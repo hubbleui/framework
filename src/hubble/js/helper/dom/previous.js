@@ -2,7 +2,7 @@
  * Traverse previousSibling untill type
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} type Target node type
  * @return {node\null}
  */

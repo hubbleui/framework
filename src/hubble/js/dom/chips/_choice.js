@@ -1,11 +1,6 @@
 (function()
 {
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
+    const [$, $All, add_class, addEventListener, closest, has_class, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'remove_class', 'removeEventListener']).from('Helper');
 
     /**
      * Choice chips
@@ -22,9 +17,9 @@
          * @constructor
          {*} @access public
          */
-    	constructor()
+        constructor()
         {
-            this._chips = Helper.$All('.js-choice-chips .chip');
+            this._chips = $All('.js-choice-chips .chip');
 
             this._bind();
 
@@ -50,7 +45,7 @@
          */
         _bind()
         {
-            Helper.addEventListener(this._chips, 'click', this._clickHandler);
+            addEventListener(this._chips, 'click', this._clickHandler);
         }
 
         /**
@@ -60,7 +55,7 @@
          */
         _unbind()
         {
-            Helper.removeEventListener(this._chips, 'click', this._clickHandler);
+            removeEventListener(this._chips, 'click', this._clickHandler);
         }
 
         /**
@@ -73,20 +68,20 @@
         {
             e = e || window.event;
 
-            var _wrapper = Helper.closest(this, '.js-choice-chips');
-            var _input = Helper.$('.js-choice-input', _wrapper);
+            var _wrapper = closest(this, '.js-choice-chips');
+            var _input = $('.js-choice-input', _wrapper);
 
-            if (!Helper.has_class(this, 'selected'))
-            {
-                Helper.remove_class(Helper.$('.chip.selected', _wrapper), 'selected');
+            if (!has_class(this, 'selected'))
+            {                
+                remove_class($('.chip.selected', _wrapper), 'selected');
 
-                Helper.add_class(this, 'selected');
+                add_class(this, 'selected');
 
                 if (_input)
                 {
                     _input.value = this.dataset.value;
 
-                    Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.has_class(this, 'selected')]);
+                    Container.Events().fire('Chips:selected', [this.dataset.value, !has_class(this, 'selected')]);
                 }
             }
         }

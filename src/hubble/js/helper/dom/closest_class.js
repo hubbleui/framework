@@ -2,7 +2,7 @@
  * Closest parent node by class
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} clas Node class to find
  * @return {node\null}
  */

@@ -1,11 +1,6 @@
 (function()
 {
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
+    const [$, $All, addEventListener, animate_css, bool, has_class, is_node_type, removeEventListener, toggle_class] = Container.import(['$','$All','addEventListener','animate_css','bool','has_class','is_node_type','removeEventListener','toggle_class']).from('Helper');
 
     /**
      * Toggle height on click
@@ -29,7 +24,7 @@
              * 
              * @var {array}
              */
-            this._nodes = Helper.$All('.js-collapse');
+            this._nodes = $All('.js-collapse');
 
             this._bind();
 
@@ -55,7 +50,7 @@
          */
         _bind()
         {
-            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
+            addEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -65,7 +60,7 @@
          */
         _unbind()
         {
-            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
+            removeEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -78,30 +73,27 @@
         {
             e = e || window.event;
 
-            if (Helper.is_node_type(this, 'a'))
+            if (is_node_type(this, 'a'))
             {
                 e.preventDefault();
             }
 
             var clicked  = this;
-            var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
+            var targetEl = $('#' + clicked.dataset.collapseTarget);
             var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
             var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
-            var opacity  = Helper.bool(clicked.dataset.withOpacity);
+            var opacity  = bool(clicked.dataset.withOpacity);
             var options  = 
             {
-                height: Helper.has_class(clicked, 'active') ? '0px' : 'auto',
+                property: 'height',
+                to: has_class(clicked, 'active') ? '0px' : 'auto',
+                from: has_class(clicked, 'active') ? 'auto' : '0px',
                 duration: duration, 
                 easing: easing
             };
 
-            if (opacity)
-            {
-                options.opacity = Helper.has_class(clicked, 'active') ? '0' : '1';
-            }
-
-            Helper.animate(targetEl, options);
-            Helper.toggle_class(clicked, 'active');
+            animate_css(targetEl, options);
+            toggle_class(clicked, 'active');
         }
     }
 

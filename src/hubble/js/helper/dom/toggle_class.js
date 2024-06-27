@@ -2,7 +2,7 @@
  * Toogle a classname
  *
  * @access {public}
- * @param  {node}         el         Target element
+ * @param  {DOMElement}         el         Target element
  * @param  {string}       className  Class name to toggle
  */
 toggle_class(el, className)

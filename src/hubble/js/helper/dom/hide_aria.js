@@ -2,7 +2,7 @@
  * Aria hide an element
  *
  * @access {public}
- * @param  {node}   el Target DOM node
+ * @param  {DOMElement}   el Target DOM node
  */
 hide_aria(el)
 {

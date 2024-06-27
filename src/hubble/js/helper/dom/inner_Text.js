@@ -2,7 +2,7 @@
  * Replaces element's innerText without destroying childnodes
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} text Text to replace
  */
 inner_Text(el, text)

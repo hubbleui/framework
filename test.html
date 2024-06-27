@@ -26,12 +26,10 @@
                 box-sizing: border-box;
                 font-size: 30px;
                 overflow: hidden;
-                height: 300px;
-                opacity: 1;
                 left: 450px;
-                transform: scale(1.1) rotate(10deg) translate3d(30px, 50%, 20px);
                 position: absolute;
                 transition: background 3s ease, color 2s ease, left 3s ease, transform 10s ease;
+                
                 /*transition: 2s ease;*/
                /* visibility: hidden;
                 opacity: 0;
@@ -51,7 +49,7 @@
 
         </style>
     <body>
-        <div>Hello World</div>
+        <div >Hello World</div>
         <pre><code></code></pre>
         <script src="build/js/hubble.js"></script>
         <script type="text/javascript">
@@ -208,11 +206,21 @@ while(currIndex < len)
 
             // scaleX(1.5) skewY(10deg) skewX(10deg) scaleY(1.5) translateX(10px) translateY(10px)
             
-            //H.animate(div, { transform: { to : 'translateY(300px)', duration: 500, easing: 'easeOutBounce' }, height: { to: '500px', duration: 500} });
+            //H.animate(div, { height: { to: 'auto', duration: 500} });
 
-            H.animate(div, { transform: 'translateY(50%) translateX(100px)', background: '#c42c36', easing: 'easeOutBounce', duration: 1000, });
+            //var animation = H.animate(div, { height: '500px', background: '#c42c36', easing: 'easeOutBounce', duration: 1000, });
 
-            //H.animate(div, { property: 'transform', from: 'translate3d(10px, 0, 0)', to: 'translate3d(300px, 0, 0)', easing: 'easeOutBounce', duration: 1000, });
+            //var animation = H.animate_css(div, { transform: { from: 'translateY(0)', to : 'translateY(300px)', duration: 500, easing: 'ease' }, background: { to: '#c42c36' }, height: { to: '500px', duration: 300} });
+
+            H.animate_css(div, { property: 'transform', to: 'translateY(200px)', duration: 10000, easing: 'easeInOutQuart' });
+
+            /*setTimeout(function()
+            {
+                animation.stop();
+
+            }, 500);*/
+
+            //H.animate_css(div, { property: 'transform', from: 'translate3d(0, 0, 0)', to: 'translate3d(300px, 0, 0)', easing: 'easeOutBounce', duration: 1000, });
 
             //H.animate(div, { left: '-150px',  easing: 'ease', duration: 100, });
 
@@ -228,10 +236,7 @@ while(currIndex < len)
             //H.animate('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
             //H.animate('foo', { height : '500px', width : '200px', easing: 'easeInOutElastic', duration: 3000} );
             //H.animate('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
-            
 
-            console.log(H.height(window));
-            console.log(H.width(window));
 
         /*'em' : 16,
 

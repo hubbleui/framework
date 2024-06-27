@@ -73,7 +73,7 @@
          * Init a chips input
          *
          * @access {private}
-         * @param  {node}    _wrapper
+         * @param  {DOMElement}    _wrapper
          */
         _initInput(_wrapper)
         {
@@ -94,7 +94,7 @@
          * Destroy chip listeners
          *
          * @access {private}
-         * @param  {node}    _wrapper
+         * @param  {DOMElement}    _wrapper
          */
         _destroy(_wrapper)
         {
@@ -175,7 +175,7 @@
          * Remove last chip
          *
          * @access {private}
-         * @param  {node}    _wrapper
+         * @param  {DOMElement}    _wrapper
          */
         _removeLastChip(_wrapper)
         {
@@ -192,7 +192,7 @@
          *
          * @access {public}
          * @param  {string}      _value
-         * @param  {node}        _wrapper
+         * @param  {DOMElement}        _wrapper
          * @param  {string|bool} _icon
          */
         addChip(_value, _wrapper, _icon)
@@ -239,7 +239,7 @@
          * Get all values from chip input
          *
          * @access {private}
-         * @param  {node}    _wrapper
+         * @param  {DOMElement}    _wrapper
          * @return {array}
          */
         _getChipsValues(_wrapper)

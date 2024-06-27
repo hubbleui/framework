@@ -1,63 +1,8 @@
 /**
- * Returns an object of CSS transforms by transform property as keys.
- *
- * @param  {node|string} DOMElement  Target element or transform value string
- * @return {object}
- */
-css_transform_values(DOMElement)
-{
-    if (!DOMElement) return {};
-    var transforms     = {};
-    var transformValue = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transform');
-
-    // No transforms
-    if (!transformValue || transformValue === 'none' || transformValue === 'unset' || transformValue === 'auto' || transformValue === 'revert' || transformValue === 'initial')
-    {
-        return transforms;
-    }
-
-    this.each(transformValue.trim().split(')'), function(i, transform)
-    {
-        transform = transform.trim();
-
-        if (transform === '') return;
-
-        transform    = transform.split('(');
-        let prop     = transform.shift().trim();
-        let value    = transform.pop().trim();
-        let valCount = CSS_TRANSFORM_VALUES_COUNT[prop];
-        
-        if (valCount === 1)
-        {
-            transforms[prop] = [value];
-        }
-        else
-        {
-            let values = value.split(',').map((x) => x.trim());
-
-            if (values.length < valCount)
-            {
-                let pad = new Array(valCount - values.length).fill('0');
-
-                transforms[prop] = [...values, ...pad];
-            }
-            else
-            {
-                transforms[prop] = values;
-            }
-        }
-
-    }, this);
-
-    return transforms;
-}
-
-
-/**
  * CSS Animation.
  *
  * @access {private}
- * @param  {node}     DOMElement          Target DOM node
+ * @param  {DOMElement}     DOMElement          Target DOM node
  * @param  {object}   options             Options object
  * @param  {string}   options.property    CSS property
  * @param  {mixed}    options.from        Start value
@@ -78,95 +23,220 @@ css_transform_values(DOMElement)
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-animate_css(DOMElement, options)
+__animate_css(DOMElement, options)
 {    
-    // Call does not from factory need to sanitize
-    options = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
+    const _helper = this;
 
-    // Cache inline transitions to revert back to on completion
-    var inlineTransitions = this.css_transition_props(this.inline_style(DOMElement, 'transition'));
-    inlineTransitions = this.is_empty(inlineTransitions) ? false : this.join_obj(inlineTransitions, ' ', ', ');;
+    var _this;
 
-    // Cache rendered transitions to merge into for this animation
-    var renderedTransions = this.css_transition_props(DOMElement);
+    const AnimateCss = function(DOMElement, options)
+    {        
+        _this = this;
 
-    var callback;
+        this.DOMElement = DOMElement;
 
-    // Props to animate / transition
-    var styles = {};
+        this.options = options;
 
-    if (this.is_array(options))
+        this.animatedProps = {};
+
+        this.animatedTransitions = {};
+
+        this.preAnimatedTransitions = {};
+
+        this.callback = null;
+
+        this.preProcessStartEndValues();
+
+        return this;
+    };
+
+    /**
+     * Start animation.
+     *
+     */
+    AnimateCss.prototype.start = function()
     {
-        this.each(options, function(i, option)
-        {
-            // Setup and convert duration from MS to seconds
-            var property = option.property;
-            var duration = (option.duration / 1000);
-            var easing   = CSS_EASINGS[option.easing];
+        this.applyStartValues();
 
-            // Set the transition for the property
-            // in our merged obj
-            renderedTransions[property] = `${duration}s ${easing}`;
+        this.applyTransitions();
 
-            // Set the property style
-            styles[property] = option.to;
+        DOMElement.addEventListener('transitionend', this.on_complete, true);
 
-            callback = option.callback;
+        this.applyEndValues();
 
-        }, this);
-    }
-    else
-    {
-        var property = options.property;
-        var duration = (options.duration / 1000);
-        var easing   = CSS_EASINGS[options.easing];
-
-        // Set the transition for the property
-        // in our merged obj
-        renderedTransions[property] = `${duration}s ${easing}`;
-
-        // Set the property style
-        styles[property] = options.to;
-
-        callback = options.callback;
+        return this;
     }
 
-    // Flatten transition ready for css
-    var transition = this.join_obj(renderedTransions, ' ', ', ');
-
-    this.css(DOMElement, 'transition', transition);
-
-    const _this = this;
-
-    var onTransitionEnd;
-
-    onTransitionEnd = function(e)
+    /**
+     * Stop animation.
+     *
+     */
+    AnimateCss.prototype.stop = function()
     {
+        DOMElement.removeEventListener('transitionend', _this.on_complete, true);
+
+        _helper.css(DOMElement, 'transition', this.preAnimatedTransitions);
+    }
+
+    /**
+     * Stop animation and destroy.
+     *
+     */
+    AnimateCss.prototype.destory = function()
+    {
+        this.stop();
+
+        this.animatedProps = {};
+
+        this.animatedTransitions = {};
+
+        this.preAnimatedTransitions = {};
+
+        this.callback = null;
+    }
+
+    /**
+     * On transition end.
+     * 
+     * Note if a multiple animation properties wer supplied
+     * we only want to call the callback once when all transitions
+     * have completed.
+     *
+     * @param  {Event} e transitionEnd event
+     */
+    AnimateCss.prototype.on_complete = function(e)
+    {        
         e = e || window.event;
 
-        var prop = _this.css_prop_to_hyphen_case(e.propertyName);
+        var prop = _helper.css_prop_to_hyphen_case(e.propertyName);
 
-        delete renderedTransions[prop];
+        if (prop === 'background-color') prop = 'background';
 
-        var completed = _this.is_empty(renderedTransions);
+        // Change inline style back to auto
+        let endVal = _this.animatedProps[prop];
+        if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset') _helper.css(DOMElement, prop, endVal);
 
-        var transition = completed ? inlineTransitions : _this.join_obj(renderedTransions, ' ', ', ');
+        delete _this.animatedTransitions[prop];
 
-        _this.css(DOMElement, 'transition', transition);
+        delete _this.animatedProps[prop];
+        
+        var completed = _helper.is_empty(_this.animatedProps);
 
-        if (_this.is_empty(renderedTransions))
+        var transition = completed ? _this.preAnimatedTransitions : _helper.join_obj(_this.animatedTransitions, ' ', ', ');
+
+        _helper.css(DOMElement, 'transition', _this.preAnimatedTransitions);
+
+        if (completed)
         {
-            DOMElement.removeEventListener('transitionend', onTransitionEnd, true);
-
-            if (callback)
+            DOMElement.removeEventListener('transitionend', _this.on_complete, true);
+            
+            if (_helper.is_function(_this.callback))
             {
-                callback(DOMElement);
+                _this.callback(_this.DOMElement);
             }
         }
     }
 
-    DOMElement.addEventListener('transitionend', onTransitionEnd, true);
+    /**
+     * Checks for "auto" transtions.
+     * 
+     */
+    AnimateCss.prototype.preProcessStartEndValues = function()
+    {
+        var DOMElement = this.DOMElement;
+        
+        // We need to set the end value explicitly as these values will not
+        // transition with CSS
+        _helper.each(this.options, function(i, option)
+        {
+            let startValue  = option.from;
+            let endValue    = option.to;
+            let CSSProperty = option.property;
 
-    this.css(DOMElement, styles);
+            if (startValue === 'auto' || startValue === 'initial' || startValue === 'unset' || !startValue)
+            {
+                this.options[i].from = _helper.rendered_style(DOMElement, CSSProperty);
+            }
+
+            if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
+            {
+                var inlineStyle = _helper.inline_style(DOMElement, CSSProperty);
+
+                _helper.css(DOMElement, CSSProperty, endValue);
+
+                this.options[i].to = _helper.rendered_style(DOMElement, CSSProperty);
+
+                _helper.css(DOMElement, CSSProperty, inlineStyle ? inlineStyle : false);
+            }
+
+            this.animatedProps[CSSProperty] = endValue;
+        
+        }, this);
+    }
+
+    /**
+     * Apply start values.
+     * 
+     */
+    AnimateCss.prototype.applyStartValues = function()
+    {
+        var styles = {};
+
+        _helper.each(this.options, function(i, option)
+        {
+            if (option.from)
+            {
+                styles[option.property] = option.from;
+            }
+        });
+
+        if (!_helper.is_empty(styles)) _helper.css(this.DOMElement, styles);
+    }
+
+    /**
+     * Apply animation transitions.
+     * 
+     */
+    AnimateCss.prototype.applyTransitions = function()
+    {
+        this.preAnimatedTransitions  = _helper.inline_style(this.DOMElement, 'transition');
+        this.preAnimatedTransitions  = !this.preAnimatedTransitions ? false : this.preAnimatedTransitions;
+        this.animatedTransitions     = _helper.css_transition_props(this.DOMElement);
+
+        _helper.each(this.options, function(i, option)
+        {
+            // Setup and convert duration from MS to seconds
+            let property = option.property;
+            let duration = (option.duration / 1000);
+            let easing   = CSS_EASINGS[option.easing] || 'ease';
+
+            // Set the transition for the property
+            // in our merged obj
+            this.animatedTransitions[property] = `${duration}s ${easing}`;
+
+        }, this);
+
+        _helper.css(this.DOMElement, 'transition', _helper.join_obj(this.animatedTransitions, ' ', ', '));
+    }
+
+    /**
+     * Apply animation end values.
+     * 
+     */
+    AnimateCss.prototype.applyEndValues = function()
+    {
+        var styles = {};
+
+        _helper.each(options, function(i, option)
+        {
+            styles[option.property] = option.to;
+
+            this.callback = option.callback;
+
+        }, this);
+
+        _helper.css(DOMElement, styles);
+    }
+
+    return new AnimateCss(DOMElement, options).start();
 }
-

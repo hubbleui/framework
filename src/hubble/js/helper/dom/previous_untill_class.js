@@ -2,7 +2,7 @@
  * Traverse previousSibling untill class
  *
  * @access {public}
- * @param  {node}   el        Target element
+ * @param  {DOMElement}   el        Target element
  * @param  {string} className Target node classname
  * @return {node\null}
  */

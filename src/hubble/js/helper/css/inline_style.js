@@ -2,13 +2,12 @@
  * Get an element's inline style if it exists
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} prop CSS property to check
  * @return {string}
  */
 inline_style(element, prop)
 {
-    // @todo expand shorthand    
     const elementStyle = element.style;
 
     prop = this.css_prop_to_hyphen_case(prop);

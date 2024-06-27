@@ -2,7 +2,7 @@
  * Closest parent node by type/class or array of either
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} type Node type to find
  * @return {node\null}
  */

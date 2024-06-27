@@ -121,7 +121,7 @@
     /**
      * Initializes a gallery
      *
-     * @parm   {node}    wrapper  Wrapper element
+     * @parm   {DOMElement}    wrapper  Wrapper element
      * @access {private}
      */
     PhotoswipeDom.prototype._initGallery = function(_wrapper)

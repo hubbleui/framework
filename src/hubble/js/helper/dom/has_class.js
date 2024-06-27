@@ -2,7 +2,7 @@
  * Check if a node has a class
  *
  * @access {public}
- * @param  {node}         el         Target element
+ * @param  {DOMElement}         el         Target element
  * @param  {string|array} className  Class name(s) to check for
  * @return {bool}
  */

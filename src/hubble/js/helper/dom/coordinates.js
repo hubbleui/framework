@@ -2,7 +2,7 @@
  * Get an element's absolute coordinates
  *
  * @access {public}
- * @param  {node}   el Target element
+ * @param  {DOMElement}   el Target element
  * @return {object}
  */
 coordinates(DOMElement)

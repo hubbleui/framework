@@ -5,7 +5,7 @@
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
+    const [$, $All, add_class, addEventListener, closest, has_class, is_empty, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'is_empty', 'remove_class', 'removeEventListener']).from('Helper');
 
     /**
      * Popovers
@@ -28,10 +28,10 @@
             this._nodes = [];
 
             // Find nodes
-            this._nodes = Helper.$All('.js-popover');
+            this._nodes = $All('.js-popover');
 
             // Bind events
-            if (!Helper.is_empty(this._nodes))
+            if (!is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -52,7 +52,7 @@
          */
         destruct()
         {
-            if (!Helper.is_empty(this._nodes))
+            if (!is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -79,13 +79,13 @@
 
             if (evnt === 'click')
             {
-                Helper.removeEventListener(trigger, 'click', this._clickHandler);
+                removeEventListener(trigger, 'click', this._clickHandler);
                 window.removeEventListener('resize', this._windowResize);
             }
             else
             {
-                Helper.removeEventListener(trigger, 'mouseenter', this._hoverOver);
-                Helper.removeEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
+                removeEventListener(trigger, 'mouseenter', this._hoverOver);
+                removeEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
             }
         }
 
@@ -93,7 +93,7 @@
          * Initialize the handlers on a trigger
          *
          * @access {private}
-         * @param  {node} trigger Click/hover trigger
+         * @param  {DOMElement} trigger Click/hover trigger
          */
         _bind(trigger)
         {
@@ -115,7 +115,7 @@
 
             if (target)
             {
-                pop = Helper.$('#' + target).cloneNode(true);
+                pop = $('#' + target).cloneNode(true);
                 pop.classList.remove('hidden');
             }
 
@@ -132,14 +132,14 @@
 
             if (evnt === 'click')
             {
-                Helper.addEventListener(trigger, 'click', this._clickHandler);
+                addEventListener(trigger, 'click', this._clickHandler);
                 window.addEventListener('resize', this._windowResize);
             }
             else
             {
                 var _this = this;
-                Helper.addEventListener(trigger, 'mouseenter', this._hoverOver);
-                Helper.addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
+                addEventListener(trigger, 'mouseenter', this._hoverOver);
+                addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
             }
         }
 
@@ -167,9 +167,9 @@
             var trigger = this;
             var _this = Container.get('Popovers');
             var popHandler = _this._getHandler(trigger);
-            if (Helper.has_class(trigger, 'popped')) return;
+            if (has_class(trigger, 'popped')) return;
             popHandler.render();
-            Helper.add_class(trigger, 'popped');
+            add_class(trigger, 'popped');
         }
 
         /**
@@ -180,10 +180,10 @@
         _hoverLeave(e)
         {
             var _this = Container.get('Popovers');
-            var hovers = Helper.$All(':hover');
+            var hovers = $All(':hover');
             for (var i = 0; i < hovers.length; i++)
             {
-                if (Helper.has_class(hovers[i], 'popover'))
+                if (has_class(hovers[i], 'popover'))
                 {
                     hovers[i].addEventListener('mouseleave', function(_e)
                     {
@@ -208,7 +208,7 @@
 
             for (var i = 0; i < _this._nodes.length; i++)
             {
-                if (Helper.has_class(_this._nodes[i], 'popped'))
+                if (has_class(_this._nodes[i], 'popped'))
                 {
                     var popHandler = _this._getHandler(_this._nodes[i]);
                     popHandler.stylePop();
@@ -230,17 +230,17 @@
             var _this = Container.get('Popovers');
             var popHandler = _this._getHandler(trigger);
 
-            if (Helper.has_class(trigger, 'popped'))
+            if (has_class(trigger, 'popped'))
             {
                 _this._removeAll();
                 popHandler.remove();
-                Helper.remove_class(trigger, 'popped');
+                remove_class(trigger, 'popped');
             }
             else
             {
                 _this._removeAll();
                 popHandler.render();
-                Helper.add_class(trigger, 'popped');
+                add_class(trigger, 'popped');
             }
         }
 
@@ -259,7 +259,7 @@
                 var clicked = e.target;
 
                 // Clicked the close button
-                if (Helper.has_class(clicked, 'js-remove-pop') || Helper.closest(clicked, '.js-remove-pop'))
+                if (has_class(clicked, 'js-remove-pop') || closest(clicked, '.js-remove-pop'))
                 {
                     _this._removeAll();
 
@@ -267,13 +267,13 @@
                 }
 
                 // Clicked inside the popover
-                if (Helper.has_class(clicked, 'popover') || Helper.closest(clicked, '.popover'))
+                if (has_class(clicked, 'popover') || closest(clicked, '.popover'))
                 {
                     return;
                 }
 
                 // Clicked a popover trigger
-                if (Helper.has_class(clicked, 'js-popover') || Helper.closest(clicked, '.js-popover'))
+                if (has_class(clicked, 'js-popover') || closest(clicked, '.js-popover'))
                 {
                     return;
                 }
@@ -286,7 +286,7 @@
          * Get the handler for the trigger
          * 
          * @access {private}
-         * @param  {node}    trigger DOM node that triggered event
+         * @param  {DOMElement}    trigger DOM node that triggered event
          * @return {object|false}
          */
         _getHandler(trigger)
@@ -310,7 +310,7 @@
             {
                 this._pops[i].remove();
 
-                Helper.remove_class(this._pops[i].options.target, 'popped');
+                remove_class(this._pops[i].options.target, 'popped');
             }
         }
     }

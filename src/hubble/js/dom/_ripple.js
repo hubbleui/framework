@@ -193,7 +193,7 @@
          * Insert ripple
          *
          * @access {private}
-         * @param  {node}    wrapper
+         * @param  {DOMElement}    wrapper
          */
         _insertRipple(wrapper)
         {

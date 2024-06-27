@@ -2,7 +2,7 @@
  * Add a css class or list of classes
  *
  * @access {public}
- * @param  {node}         DOMElement Target element
+ * @param  {DOMElement}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to add
  */
 add_class(DOMElement, className)

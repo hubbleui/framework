@@ -27,10 +27,14 @@
     /**
      * @var {obj}
      */
-    var DEFAULTS =
+    const DEFAULTS =
     {
-        pushBody:          true,
         noScroll:          true,
+        pushBody:          false,
+        direction:         'top',
+        height:            'auto',
+        width:             '100%',
+
         onOpen:            () => { },
         onOpenArgs:        null,
         onClose:           () => { },
@@ -120,6 +124,9 @@
          */
         open(options)
         {
+            const DOMElementBackdrop = this._DOMElementBackdrop;
+            const DOMElementPageWrap = this._DOMElementPageWrap;
+
             if (!_.in_dom(this._DOMElementBackdrop))
             {
                 console.error('Backdrop Error: The backdrop wrapper was not found in the DOM.');
@@ -139,17 +146,32 @@
             // Merge options if provided
             if (options) this._setOptions(options);
 
+            // Set width and heights
+            _.css(DOMElementBackdrop, 'height', this.height);
+            _.css(DOMElementBackdrop, 'width', this.width);
+
+            // Make backdrop visible
+            _.add_class(DOMElementBackdrop, 'backdrop-open');
+
             // Push body down
-            if (this.pushBody)
+            /*if (this.pushBody)
             {
-                let fromTop = _.height(this._DOMElementBackdrop) + 'px';
+                _.add_class(this._DOMElementBackdrop, 'backdrop-open');
                 _.add_class(this._DOMElementBackdrop, 'backdrop-push-body');
-                _.animate(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, easing: 'ease' });
-            }
 
-            // Push the backdrop in
-            _.animate(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, easing: 'ease' });
+                _.animate_css(this._DOMElementBackdrop, { top: '0px', duration: 300 });
+                _.animate_css(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, duration: 300 });
+            }*/
 
+            // Set backdrop to position top, left, bottom, right
+
+            // Push backdrop in
+            _.animate_css(DOMElementBackdrop, { 
+                [this.direction]: { from: '-50px', to: '0px', duration: 350, easing: 'easeOutCirc'},
+                opacity:          { from: '0', to: '1', duration: 350, easing: 'easeOutCirc'}
+            });
+
+        
             // No scrolling
             if (this.noScroll)
             {
@@ -270,9 +292,9 @@
             Container.Backdrop().open();
 
         }, 1000);
-    });
+    });*/
 
-    setTimeout(function()
+   /* setTimeout(function()
     {
         Container.Backdrop().close();
     }, 5000);*/

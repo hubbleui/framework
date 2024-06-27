@@ -3,15 +3,18 @@
 	--hb-backdrop-bg: #{$backdrop-bg};
 	--hb-backdrop-color: #{$backdrop-color};
 	position: fixed;
-	top: -100%;
 	left: 0;
 	width: 100%;
+	height: 100%;
 	overflow: hidden;
 	text-align: center;
 	visibility: hidden;
-	opacity: 0;
 	background: var(--hb-backdrop-bg);
 	color: var(--hb-backdrop-color);
+	&.backdrop-open
+	{
+		visibility: visible;
+	}
 }
 .backdrop-page-wrapper
 {

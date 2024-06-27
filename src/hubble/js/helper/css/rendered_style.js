@@ -2,7 +2,7 @@
  * Get the element's computed style on a property
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} prop CSS property to check (in camelCase) (optional)
  * @return {mixed}
  */
@@ -20,7 +20,7 @@ rendered_style(DOMElement, property)
  * Get the elements computed style.
  *
  * @access {private}
- * @param  {node}          el   Target element
+ * @param  {DOMElement}          el   Target element
  * @param  {string}        prop CSS property to check (in camelCase) (optional)
  * @return {string|object}
  */

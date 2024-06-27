@@ -281,25 +281,3 @@ __cloneTypedArray(typedArray)
 
     return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
 }
-
-
-/**
- * Binds a function so that it can be identified.
- * 
- * @param   {function}  b
- * @returns {boolean}
- */
-__bind(func, context)
-{
-    context = typeof context === 'undefined' ? window : context;
-
-    const bound = func.bind(context);
-
-    bound.__isBound = true;
-
-    bound.__boundContext = context;
-
-    bound.__origional = func;
-
-    return bound;
-}

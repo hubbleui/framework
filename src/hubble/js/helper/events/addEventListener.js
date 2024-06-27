@@ -2,7 +2,7 @@
  * Add an event listener
  *
  * @access {public}
- * @param  {node}    element    The target DOM node
+ * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)
@@ -53,7 +53,7 @@ addEventListener(element, eventName, handler, useCapture)
  * Adds a listener to the element
  *
  * @access {private}
- * @param  {node}    element    The target DOM node
+ * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)

@@ -2,7 +2,7 @@
  * Check if an element is in current viewport
  *
  * @access {public}
- * @param  {node}   el Target DOM node
+ * @param  {DOMElement}   el Target DOM node
  * @return {bool}
  */
 in_viewport(el)

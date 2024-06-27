@@ -16,7 +16,40 @@ css_transition_props(DOMElement)
         return transitions;
     }
 
-    this.each(transitionVal.trim().split(','), function(i, transition)
+    let transitionSplit = transitionVal.includes('cubic-bezier') ? '' : transitionVal.trim().split(',');
+
+    if (transitionVal.includes('cubic-bezier'))
+    {
+        let map      = [];
+        let inBezier = false;
+        let block    = '';
+        let char;
+
+        this.for(transitionVal.length, function(i)
+        {
+            char = transitionVal[i];
+
+            if (char === '(') inBezier = true;
+            if (char === ')') inBezier = false;
+
+            if (char === ',' && !inBezier)
+            {
+                map.push(block.trim());
+                block = '';
+
+                // next
+                return;
+            }
+
+            block += char;
+
+            if (i === transitionVal.length -1) map.push(block.trim());
+        });
+
+        transitionSplit = map;
+    }
+
+    this.each(transitionSplit, function(i, transition)
     {
         transition = transition.trim();
 

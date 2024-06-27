@@ -4,7 +4,7 @@
  * This function also removes all attached event listeners
  * 
  * @access {public}
- * @param  {node}   el Target element
+ * @param  {DOMElement}   el Target element
  */
 remove_from_dom(el)
 {

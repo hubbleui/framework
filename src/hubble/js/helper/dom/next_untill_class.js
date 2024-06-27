@@ -2,7 +2,7 @@
  * Traverse nextSibling untill class type or class or array of either
  *
  * @access {public}
- * @param  {node}   el        Target element
+ * @param  {DOMElement}   el        Target element
  * @param  {string} className Target node classname
  * @return {node\null}
  */

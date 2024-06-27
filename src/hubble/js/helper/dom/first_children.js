@@ -2,7 +2,7 @@
  * Get all first level children
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @return {node\null}
  */
 first_children(el)

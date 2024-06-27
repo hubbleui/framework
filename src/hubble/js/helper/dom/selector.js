@@ -3,8 +3,8 @@
  *
  * @access {public}
  * @param  {string} selector CSS selector
- * @param  {node}   context (optional) (default document)
- * @return {node}
+ * @param  {DOMElement}   context (optional) (default document)
+ * @return {DOMElement}
  */
 $All(selector, context)
 {
@@ -17,8 +17,8 @@ $All(selector, context)
  *
  * @access {public}
  * @param  {string} selector CSS selector
- * @param  {node}   context (optional) (default document)
- * @return {node}
+ * @param  {DOMElement}   context (optional) (default document)
+ * @return {DOMElement}
  */
 $(selector, context)
 {

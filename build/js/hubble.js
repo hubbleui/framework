@@ -506,7 +506,6 @@ var Chain = function()
 
 
 // Container
-
 (function(window)
 {
     const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
@@ -656,6 +655,72 @@ var Chain = function()
                 return valObj.value;
             }
         }
+
+        /**
+         * Get data value with key
+         *
+         * @access {public}
+         * @param  {string} key The data key
+         * @param  {mixed}  ... Any additional parameters to pass to the constructor (optional) (default null)
+         * @return {mixed}      The data value
+         */
+        import(names)
+        {
+            const _this   = this;
+            const _import = {};
+
+            _import.from = function(module)
+            {
+                const _rets = [];
+
+                const _context = _this.get(module);
+
+                for (var i = 0; i < names.length; i++)
+                {
+                    const mixedVar = _context[names[i]];
+
+                    _rets.push(_this._is_func(mixedVar) ? _this.bind(_context[names[i]], _context) : mixedVar);
+
+                }
+
+                return _rets;
+            };
+
+            return _import;
+        }
+
+        bind(callback, context)
+        {
+            context = typeof context === 'undefined' ? window : context;
+
+            const bound = function()
+            {
+                return callback.apply(context, arguments);
+            }
+
+            Object.defineProperty(bound, 'name', { value: callback.name });
+
+            bound.__isBound      = true;
+            bound.__boundContext = context;
+            bound.__origional    = callback;
+
+            return bound;
+        }
+
+
+        /*import(['foo', 'member2','alias2']).from('Helper');
+        import('*').from('Helper');
+        
+        export_default(fooFunction)
+        {
+
+        }
+
+        export('{ funct1, func2 }')
+        {
+
+        }*/
+
 
         /**
          * Sets the key as a prototype method
@@ -1229,57 +1294,221 @@ const TO_ARR = Array.prototype.slice;
 
 // Regex for HTMLElement types
 const HTML_REGXP = /^\[object HTML\w*Element\]$/;
-	const CSS_EASINGS = 
+	/**
+ * List of shorthand properties and their longhand equivalents
+ *
+ * @var {object}
+ */
+const SHORTHAND_PROPS =
 {
-    // Defaults
-    ease: 'ease',
-    linear: 'linear',
-    easeIn: 'ease-in',
-    easeOut: 'ease-out',
-    easeInOut: 'ease-in-out',
+    // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
+    'list-style': ['-type', '-position', '-image'],
+    'margin': ['-top', '-right', '-bottom', '-left'],
+    'outline': ['-width', '-style', '-color'],
+    'padding': ['-top', '-right', '-bottom', '-left'],
 
-    // sine
-    easeInSine: 'cubic-bezier(0.47, 0, 0.745, 0.715)',
-    easeOutSine: 'cubic-bezier(0.39, 0.575, 0.565, 1)',
-    easeInOutSine: 'cubic-bezier(0.445, 0.05, 0.55, 0.95)',
+    // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
+    'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
+    'border': ['-width', '-style', '-color'],
+    'border-color': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
+    'border-style': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
+    'border-width': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
+    'border-top': ['-width', '-style', '-color'],
+    'border-right': ['-width', '-style', '-color'],
+    'border-bottom': ['-width', '-style', '-color'],
+    'border-left': ['-width', '-style', '-color'],
+    'border-radius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
+    'border-image': ['-source', '-slice', '-width', '-outset', '-repeat'],
 
-    // Quad
-    easeInQuad: 'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
-    easeOutQuad: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-    easeInOutQuad: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+    // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
+    'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
+    'font-variant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
 
-    // Cubic
-    easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
-    easeOutCubic: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
-    easeInOutCubic: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+    // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
+    'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
+    'mask-border': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
 
-    // Queart
-    easeInQuart: 'cubic-bezier(0.895, 0.03, 0.685, 0.22)',
-    easeOutQuart: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
-    easeInOutQuart: 'cubic-bezier(0.77, 0, 0.175, 1)',
+    // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
+    'columns': ['column-width', 'column-count'],
+    'column-rule': ['-width', '-style', '-color'],
 
-    // Quint
-    easeInQuint: 'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
-    easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1)',
-    easeInOutQuint: 'cubic-bezier(0.86, 0, 0.07, 1)',
+    // CSS Speech Module: http://www.w3.org/TR/css3-speech/
+    'cue': ['-before', '-after'],
+    'pause': ['-before', '-after'],
+    'rest': ['-before', '-after'],
 
-    // Expo
-    easeInExpo: 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
-    easeOutExpo: 'cubic-bezier(0.19, 1, 0.22, 1)',
-    easeInOutExpo: 'cubic-bezier(1, 0, 0, 1)',
+    // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
+    'text-decoration': ['-line', '-style', '-color'],
+    'text-emphasis': ['-style', '-color'],
 
-    // Circ
-    easeInCirc: 'cubic-bezier(0.6, 0.04, 0.98, 0.335)',
-    easeOutCirc: 'cubic-bezier(0.075, 0.82, 0.165, 1)',
-    easeInOutCirc: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
+    // CSS Animations (WD): http://www.w3.org/TR/css3-animations
+    'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
 
-    // Back
-    easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
-    easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-    easeInOutBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+    // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
+    'transition': ['-property', '-duration', '-timing-function', '-delay'],
+
+    // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
+    'flex': ['-grow', '-shrink', '-basis'],
 };
 
 /**
+ * List of shorthand properties and their longhand equivalents
+ *
+ * @var {object}
+ */
+const SHORTHAND_DEFAULTS = 
+{
+    '-width' : '0',
+    '-height' : '0',
+    '-top' : '0',
+    '-left' : '0',
+    '-bottom' : '0',
+    '-duration' : '0s',
+    '-delay' : '0s',
+    '-grow' : '1' ,
+    '-shrink' : '1' ,
+    '-iteration-count' : '1',
+    '-timing-function' : 'linear',
+    '-transition-property' : 'all',
+    '-fill-mode': 'none',
+    '-emphasis' : 'none',
+    '-color' : 'none',
+    '-decoration' : 'none',
+    '-direction' : 'normal',
+    '-play-state' : 'running',
+};
+
+/**
+ * CSS Transform value counts
+ *
+ * @var {object}
+ */
+const CSS_TRANSFORM_VALUES_COUNT = 
+{
+    perspective: 1,
+    skewY: 1,
+    translateY: 1,
+    translateZ: 1,
+    scaleY: 1,
+    scaleZ: 1,
+    rotateX: 1,
+    rotateY: 1,
+    rotateZ: 1,
+    translateX: 1,
+    skewX: 1,
+    scaleX: 1,
+    rotate: 1,
+
+    skew: 2,
+    translate: 2,
+    scale: 2,
+
+    translate3d: 3,
+    scale3d: 3,
+    rotate3d: 3,
+
+    matrix: 6,
+    matrix3d: 16
+};
+
+const CSS_3D_TRANSFORM_DEFAULTS =
+{
+    'translate3d' : ['0','0','0'],
+    'scale3d'     : ['1','1','1'],
+    'rotate3d'    : ['0','0','1','0'],
+    'skew'        : ['0', '0'],
+};
+
+const CSS_3D_TRANSFORM_MAP_KEYS =
+{
+    x: 0,
+    y: 1,
+    z: 3
+};
+
+/* USED FOR css_to_px */
+const CSS_PIXELS_PER_INCH = 96;
+const CSS_RELATIVE_UNITS  = {
+    // Relative to the font-size of the element (2em means 2 times the size of the current font)
+    'em' : 16,
+
+    // Relative to the x-height of the current font (rarely used)
+    'ex' : 7.15625,
+
+    // Relative to the width of the "0" (zero)
+    'ch' : 8,
+
+    // Relative to font-size of the root element
+    'rem' : 16,
+
+    // Relative to 1% of the width of the viewport
+    'vw' : 1,
+
+    // Relative to 1% of the height of the viewport
+    'vh' : 1,
+
+    // Relative to 1% of viewport's* smaller dimension
+    // If the viewport height is smaller than the width, 
+    // the value of 1vmin will be equal to 1% of the viewport height.
+    // Similarly, if the viewport width is smaller than the height, the value of 1vmin will be equal to 1% of the viewport width.
+    'vmin' : 765,
+    'vmax' : 1200,
+
+    // Relative to the parent element
+    '%' : 16
+}
+const CSS_ABSOLUTE_UNITS =
+{
+    'in': CSS_PIXELS_PER_INCH,
+    'cm': CSS_PIXELS_PER_INCH / 2.54,
+    'mm': CSS_PIXELS_PER_INCH / 25.4,
+    'pt': CSS_PIXELS_PER_INCH / 72,
+    'pc': CSS_PIXELS_PER_INCH / 6,
+    'px': 1
+}
+
+
+/**
+ * Cached CSS propery cases.
+ *
+ * @var {object}
+ */
+const CSS_PROP_TO_HYPHEN_CASES = {};
+const CSS_PROP_TO_CAMEL_CASES  = {};
+	// Excludes
+const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
+
+// Current clone map (stops recursive cloning between array/objects)
+let CURR_CLONES = new WeakMap();
+	/**
+ * Default options.
+ * 
+ * @var {object}
+ */
+const ANIMATION_DEFAULT_OPTIONS =
+{
+    // Options
+    //'property', 'from', 'to'
+    easing:               'ease',
+    callback:              () => {},
+    duration:              500,
+    fps:                   90, // (11ms)
+};
+
+ /**
+ * Allowed Options.
+ * 
+ * @var {array}
+ */
+const ANIMATION_ALLOWED_OPTIONS = ['property', 'from', 'to', 'duration', 'easing', 'callback'];
+
+/**
+ * Allowed Options.
+ * 
+ * @var {array}
+ */
+const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ...ANIMATION_ALLOWED_OPTIONS];
+	/**
  * Math Contstansts.
  * 
  * @var {mixed}
@@ -1492,220 +1721,56 @@ const ANIMATION_EASING_FUNCTIONS =
     },
 };
 
-/**
- * Default options.
- * 
- * @var {object}
- */
-const ANIMATION_DEFAULT_OPTIONS =
+const CSS_EASINGS = 
 {
-    // Options
-    //'property', 'from', 'to'
-    easing:               'ease',
-    callback:              () => {},
-    duration:              500,
-    fps:                   90, // (11ms)
+    // Defaults
+    ease: 'ease',
+    linear: 'linear',
+    easeIn: 'ease-in',
+    easeOut: 'ease-out',
+    easeInOut: 'ease-in-out',
+
+    // sine
+    easeInSine: 'cubic-bezier(0.47, 0, 0.745, 0.715)',
+    easeOutSine: 'cubic-bezier(0.39, 0.575, 0.565, 1)',
+    easeInOutSine: 'cubic-bezier(0.445, 0.05, 0.55, 0.95)',
+
+    // Quad
+    easeInQuad: 'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
+    easeOutQuad: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    easeInOutQuad: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+
+    // Cubic
+    easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
+    easeOutCubic: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+    easeInOutCubic: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+
+    // Queart
+    easeInQuart: 'cubic-bezier(0.895, 0.03, 0.685, 0.22)',
+    easeOutQuart: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+    easeInOutQuart: 'cubic-bezier(0.77, 0, 0.175, 1)',
+
+    // Quint
+    easeInQuint: 'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
+    easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1)',
+    easeInOutQuint: 'cubic-bezier(0.86, 0, 0.07, 1)',
+
+    // Expo
+    easeInExpo: 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
+    easeOutExpo: 'cubic-bezier(0.19, 1, 0.22, 1)',
+    easeInOutExpo: 'cubic-bezier(1, 0, 0, 1)',
+
+    // Circ
+    easeInCirc: 'cubic-bezier(0.6, 0.04, 0.98, 0.335)',
+    easeOutCirc: 'cubic-bezier(0.075, 0.82, 0.165, 1)',
+    easeInOutCirc: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
+
+    // Back
+    easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
+    easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+    easeInOutBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 };
 
- /**
- * Allowed Options.
- * 
- * @var {array}
- */
-const ANIMATION_ALLOWED_OPTIONS = ['property', 'from', 'to', 'duration', 'easing', 'callback'];
-
-/**
- * Allowed Options.
- * 
- * @var {array}
- */
-const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ...ANIMATION_ALLOWED_OPTIONS];
-	/**
- * List of shorthand properties and their longhand equivalents
- *
- * @var {object}
- */
-const SHORTHAND_PROPS =
-{
-    // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
-    'list-style': ['-type', '-position', '-image'],
-    'margin': ['-top', '-right', '-bottom', '-left'],
-    'outline': ['-width', '-style', '-color'],
-    'padding': ['-top', '-right', '-bottom', '-left'],
-
-    // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
-    'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
-    'border': ['-width', '-style', '-color'],
-    'border-color': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
-    'border-style': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
-    'border-width': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
-    'border-top': ['-width', '-style', '-color'],
-    'border-right': ['-width', '-style', '-color'],
-    'border-bottom': ['-width', '-style', '-color'],
-    'border-left': ['-width', '-style', '-color'],
-    'border-radius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
-    'border-image': ['-source', '-slice', '-width', '-outset', '-repeat'],
-
-    // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
-    'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
-    'font-variant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
-
-    // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
-    'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
-    'mask-border': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
-
-    // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
-    'columns': ['column-width', 'column-count'],
-    'column-rule': ['-width', '-style', '-color'],
-
-    // CSS Speech Module: http://www.w3.org/TR/css3-speech/
-    'cue': ['-before', '-after'],
-    'pause': ['-before', '-after'],
-    'rest': ['-before', '-after'],
-
-    // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
-    'text-decoration': ['-line', '-style', '-color'],
-    'text-emphasis': ['-style', '-color'],
-
-    // CSS Animations (WD): http://www.w3.org/TR/css3-animations
-    'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-
-    // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
-    'transition': ['-property', '-duration', '-timing-function', '-delay'],
-
-    // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
-    'flex': ['-grow', '-shrink', '-basis'],
-};
-
-/**
- * List of shorthand properties and their longhand equivalents
- *
- * @var {object}
- */
-const SHORTHAND_DEFAULTS = 
-{
-    '-width' : '0',
-    '-height' : '0',
-    '-top' : '0',
-    '-left' : '0',
-    '-bottom' : '0',
-    '-duration' : '0s',
-    '-delay' : '0s',
-    '-grow' : '1' ,
-    '-shrink' : '1' ,
-    '-iteration-count' : '1',
-    '-timing-function' : 'linear',
-    '-transition-property' : 'all',
-    '-fill-mode': 'none',
-    '-emphasis' : 'none',
-    '-color' : 'none',
-    '-decoration' : 'none',
-    '-direction' : 'normal',
-    '-play-state' : 'running',
-};
-
-/**
- * CSS Transform value counts
- *
- * @var {object}
- */
-const CSS_TRANSFORM_VALUES_COUNT = 
-{
-    perspective: 1,
-    skewY: 1,
-    translateY: 1,
-    translateZ: 1,
-    scaleY: 1,
-    scaleZ: 1,
-    rotateX: 1,
-    rotateY: 1,
-    rotateZ: 1,
-    translateX: 1,
-    skewX: 1,
-    scaleX: 1,
-    rotate: 1,
-
-    skew: 2,
-    translate: 2,
-    scale: 2,
-
-    translate3d: 3,
-    scale3d: 3,
-    rotate3d: 3,
-
-    matrix: 6,
-    matrix3d: 16
-};
-
-const CSS_3D_TRANSFORM_DEFAULTS =
-{
-    'translate3d' : ['0','0','0'],
-    'scale3d'     : ['1','1','1'],
-    'rotate3d'    : ['0','0','1','0'],
-    'skew'        : ['0', '0'],
-};
-
-const CSS_3D_TRANSFORM_MAP_KEYS =
-{
-    x: 0,
-    y: 1,
-    z: 3
-};
-
-/* USED FOR css_to_px */
-const CSS_PIXELS_PER_INCH = 96;
-const CSS_RELATIVE_UNITS  = {
-    // Relative to the font-size of the element (2em means 2 times the size of the current font)
-    'em' : 16,
-
-    // Relative to the x-height of the current font (rarely used)
-    'ex' : 7.15625,
-
-    // Relative to the width of the "0" (zero)
-    'ch' : 8,
-
-    // Relative to font-size of the root element
-    'rem' : 16,
-
-    // Relative to 1% of the width of the viewport
-    'vw' : 1,
-
-    // Relative to 1% of the height of the viewport
-    'vh' : 1,
-
-    // Relative to 1% of viewport's* smaller dimension
-    // If the viewport height is smaller than the width, 
-    // the value of 1vmin will be equal to 1% of the viewport height.
-    // Similarly, if the viewport width is smaller than the height, the value of 1vmin will be equal to 1% of the viewport width.
-    'vmin' : 765,
-    'vmax' : 1200,
-
-    // Relative to the parent element
-    '%' : 16
-}
-const CSS_ABSOLUTE_UNITS =
-{
-    'in': CSS_PIXELS_PER_INCH,
-    'cm': CSS_PIXELS_PER_INCH / 2.54,
-    'mm': CSS_PIXELS_PER_INCH / 25.4,
-    'pt': CSS_PIXELS_PER_INCH / 72,
-    'pc': CSS_PIXELS_PER_INCH / 6,
-    'px': 1
-}
-
-
-/**
- * Cached CSS propery cases.
- *
- * @var {object}
- */
-const CSS_PROP_TO_HYPHEN_CASES = {};
-const CSS_PROP_TO_CAMEL_CASES  = {};
-	// Excludes
-const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
-
-// Current clone map (stops recursive cloning between array/objects)
-let CURR_CLONES = new WeakMap();
 	/**
  * JavaScript helper library
  *
@@ -1723,173 +1788,226 @@ class HelperJS
 
     _events = {};
 		/**
- * Animation handler
+ * JS Aniamation Core
  *
  * @access {private}
- * @param  {node}     el                  Target DOM node
- * @param  {object}   options             Options object
- * @param  {string}   options.property    CSS property
- * @param  {mixed}    options.from        Start value
- * @param  {mixed}    options.to          Ending value
- * @param  {int}      options.duration    Animation duration in MS
- * @param  {string}   options.easing      Easing function in camelCase
- * @param  {function} options.callback    Callback to apply when animation ends (optional)
+ * @param  {DOMElement} DOMElement          Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
  */
-animate(AN_DOMElement, options)
+__animate_js(DOMElement, options)
 {
-    // args have not been processed
-    if (!options.FROM_FACTORY)
+    const _helper = this;
+
+    const AnimateJS = function(DOMElement, options)
     {
-        const optionSets = this.__animation_factory(AN_DOMElement, options);
+        this.DOMElement = DOMElement;
 
-        if (optionSets.length > 1)
-        {
-            this.each(optionSets, function(i, opts)
-            {
-                this.animate(AN_DOMElement, opts);
+        this.options = options;
 
-            }, this);
+        this.keyframes = [];
 
-            return;
-        }
-        else
-        {
-            options = optionSets[0];
-        }
+        this.currentKeyframe = 0;
+
+        this.duration = options.duration;
+
+        this.intervalDelay = Math.floor(1000 / options.fps);
+
+        this.keyFrameCount = Math.floor(this.duration / this.intervalDelay) + 1;
+
+        this.intervalTimer = null;
+
+        this.callbacks = [options.callback];
+
+        this.easing = options.easing;
+
+        this.CSSProperty = options.property;
+
+        this.isTransform = this.CSSProperty.toLowerCase().includes('transform');
+
+        this.isColor = options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb');
+
+        this.parseOptions();
+
+        this.generateKeyframes();
     }
 
-    const _this = this;
-
-    // Local Animation Variables
-    var AN_keyframeMap       = [];
-    var AN_currentKeyframe   = 0;
-    var AN_intervalDelay     = Math.floor(1000 / options.fps);
-    var AN_callback          = options.callback;
-    var AN_ON_COMPLETE       = () => {};
-    var an_intervalTimer;
-
-    const round = (n, dp) => 
+    AnimateJS.prototype.start = function()
     {
-        const h = +('1'.padEnd(dp + 1, '0')) // 10 or 100 or 1000 or etc
+        if (this.keyFrameCount === 0) return;
 
-        return Math.round(n * h) / h;
-    }
+        clearInterval(this.intervalTimer);
 
-    /**
-     * Initialize
-     * 
-     * @private
-     */
-    var init = function()
-    {
-        if (options.property.includes('transform'))
-        {
-            AN_keyframeMap = generateTransformKeyframes(options.property, options.from, options.to, options.duration, options.easing, AN_intervalDelay);
-        }
-        else if (options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb'))
-        {
-            AN_keyframeMap = generateColorKeyframes(options.property, options.from, options.to, options.duration, options.easing, AN_intervalDelay);
-        }
-        else
-        {
-            AN_keyframeMap = generateKeyFrames(options.property, options.from, options.to, options.duration, options.easing, AN_intervalDelay);
-        }
-
-        startAnimation(options.property);
-    }
-
-    /**
-     * Calculate the easing pattern.
-     * 
-     * @private
-     * @link    {https://gist.github.com/gre/1650294}
-     * @param   {String} type Easing pattern
-     * @param   {Number} time Time animation should take to complete
-     * @returns {Number}
-     */
-    var clearTransitions = function(CSSProperty)
-    {
-        var transitions    = _this.css_transition_props(AN_DOMElement);
-        var css_transition = _this.inline_style(AN_DOMElement, 'transition'); 
-
-        if (_this.is_empty(transitions) || !transitions[CSSProperty]) return;
-
-        transitions[CSSProperty] = '0s linear 0s';
-
-        _this.css(AN_DOMElement, 'transition', _this.join_obj(transitions, ' ', ', '));
-
-        AN_ON_COMPLETE = () => { _this.css(AN_DOMElement, 'transition', !css_transition ? false : css_transition ); };
-    }
-
-    /**
-     * Start animation
-     * 
-     * @private
-     */
-    var startAnimation = function(CSSProperty)
-    {
-        clearInterval(an_intervalTimer);
-
-        clearTransitions(CSSProperty);
+        this.clearTransitions();
 
         var _this = this;
 
-        an_intervalTimer = setInterval(function()
+        this.intervalTimer = setInterval(function()
         {
-            loopAnimation();
+            _this.loop();
 
-        }, AN_intervalDelay);
+        }, this.intervalDelay);
+
+        return this;
     }
 
-    /**
-     * Loop animation
-     * 
-     * @private
-     */
-    var loopAnimation = function()
+    AnimateJS.prototype.loop = function()
     {        
-        const keyframe = AN_keyframeMap.shift();
+        const keyframe = this.keyframes.shift();
         const prop     = Object.keys(keyframe)[0];
 
-        _this.css(AN_DOMElement, prop, keyframe[prop]);
+        _helper.css(this.DOMElement, prop, keyframe[prop]);
 
-        AN_currentKeyframe++;
+        this.currentKeyframe++;
 
-        stopAnimation();
+        this.stop();
     }
 
-    /**
-     * Stop the animation if nessasary.
-     * @private
-     * 
-     */
-    var stopAnimation = function()
+    AnimateJS.prototype.stop = function(force)
     {
-        if (AN_keyframeMap.length === 0)
+        if (this.keyframes.length === 0 || force === true)
         {
-            clearInterval(an_intervalTimer);
+            clearInterval(this.intervalTimer);
 
-            AN_ON_COMPLETE();
+            this.keyframes = [];
 
-            if (_this.is_function(AN_callback))
+            _helper.each(this.callbacks, function(i, callback)
             {
-                AN_callback(AN_DOMElement);
-            }
+                if (_helper.is_function(callback))
+                {
+                    callback(this.DOMElement);
+                }
+                
+            }, this);
         }
     }
 
-    /**
-     * Calculate the easing pattern.
-     * 
-     * @private
-     * @link    {https://gist.github.com/gre/1650294}
-     * @param   {String} type Easing pattern
-     * @param   {Number} time Time animation should take to complete
-     * @returns {Number}
-     */
-    var easingPattern = function(type, time)
+    AnimateJS.prototype.parseOptions = function()
     {
-        return ANIMATION_EASING_FUNCTIONS[type].call(null, time) || time;
+        if (this.isTransform)
+        {
+            this.parseTransformOptions();
+        }
+        else if (this.isColor)
+        {
+            this.parseColorOptions();
+        }
+        else
+        {
+            this.parseDefaultOptions();
+        }
+    }
+
+    AnimateJS.prototype.parseDefaultOptions = function()
+    {
+        var startVal = _helper.is_undefined(this.options.from) ? _helper.rendered_style(this.DOMElement, this.CSSProperty) : this.options.from;
+        var endVal   = this.options.to;
+
+        // We need to set the end value, then remove it and re-apply any inline styles if they
+        // existed
+        if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset')
+        {
+            let prevStyle = _helper.inline_style(this.DOMElement, this.CSSProperty);
+
+            _helper.css(this.DOMElement, this.CSSProperty, endVal);
+            
+            endVal = _helper.rendered_style(this.DOMElement, this.CSSProperty);
+            
+            _helper.css(this.DOMElement, this.CSSProperty, prevStyle ? prevStyle : false);
+
+        }
+
+        var startUnit = _helper.css_value_unit(startVal);
+        var endUnit   = _helper.css_value_unit(endVal);
+
+        if (startUnit !== endUnit && this.CSSProperty !== 'opacity')
+        {
+            if (startUnit !== 'px')
+            {
+                startVal  = _helper.css_to_px(startVal + startUnit, this.DOMElement, this.CSSProperty);
+                startUnit = 'px';
+            }
+            if (endUnit !== 'px')
+            {
+                endVal  = _helper.css_to_px(this.options.to, this.DOMElement, this.CSSProperty);
+                endUnit = 'px';
+            }
+        }
+
+        startVal = _helper.css_unit_value(startVal);
+        endVal   = _helper.css_unit_value(endVal);
+
+        this.startValue    = _helper.css_unit_value(startVal);
+        this.endValue      = _helper.css_unit_value(endVal);
+        this.backAnimation = endVal < startVal;
+        this.distance      = Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal));
+        this.CSSunits      = endUnit;
+    }
+
+    AnimateJS.prototype.parseTransformOptions = function()
+    {
+        var DOMElement    = this.DOMElement;
+        var startValues   = _helper.css_transform_props(DOMElement, false);
+        var endValues     = _helper.css_transform_props(this.options.to, false);
+
+        // If a start value was specified it gets overwritten as the transform
+        // property is singular
+        if (this.options.from)
+        {
+            startValues = _helper.css_transform_props(this.options.from);
+        }
+
+        this.CSSProperty    = [];
+        this.startValue     = [];
+        this.endValue       = [];
+        this.CSSunits       = [];
+        this.backAnimation  = [];
+        this.distance       = [];
+        this.baseTransforms = _helper.is_empty(startValues) ? '' : _helper.join_obj(_helper.map(startValues, (prop, val) => !endValues[prop] ? val : false), '(', ') ', false, false);
+
+        _helper.each(endValues, function(propAxis, valueStr)
+        {
+            var startValStr        = !startValues[propAxis] ? (propAxis.includes('scale') ? '1' : '0') : startValues[propAxis];
+            var startVal           = _helper.css_unit_value(startValStr);
+            var endVal             = _helper.css_unit_value(valueStr);
+            var startUnit          = _helper.css_value_unit(startValStr);
+            var endUnit            = _helper.css_value_unit(valueStr);
+            var CSSpropertyUnits   = endUnit;
+
+            if (startUnit !== endUnit)
+            {
+                // 0 no need to convert
+                if (_helper.is_empty(startUnit))
+                {
+                    startUnit = endUnit;
+                }
+                else
+                {
+                    if (startUnit !== 'px') startVal = _helper.css_to_px(startVal + startUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                    if (endUnit !== 'px') endVal = _helper.css_to_px(endVal + endUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                    CSSpropertyUnits = 'px';
+                }
+            }
+
+            this.CSSProperty.push(propAxis);
+            this.CSSunits.push(endUnit);
+            this.endValue.push(endVal);
+            this.startValue.push(startVal);
+            this.backAnimation.push(endVal < startVal);
+            this.distance.push(Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal)));
+
+        }, this);
+    }
+
+    AnimateJS.prototype.parseColorOptions = function()
+    {
+        this.startValue = this.sanitizeColor(this.options.from || _helper.rendered_style(this.DOMElement, this.CSSProperty));
+        this.endValue   = this.sanitizeColor(this.options.to);
     }
 
     /**
@@ -1898,7 +2016,7 @@ animate(AN_DOMElement, options)
      * @param  {string} color  hex or rgb color as as string
      * @return {array}
      */
-    var sanitizeColor = function(color)
+    AnimateJS.prototype.sanitizeColor = function(color)
     {
         if (color.startsWith('rgb('))
         {
@@ -1922,6 +2040,72 @@ animate(AN_DOMElement, options)
         }
     }
 
+    AnimateJS.prototype.generateKeyframes = function()
+    {    
+        if (_helper.is_equal(this.startValue, this.endValue))
+        {
+            this.keyFrameCount = 0;
+
+            return;
+        }
+
+        if (this.isTransform)
+        {
+            _helper.for(this.endValue, function(transformIndex)
+            {
+                _helper.for(this.keyFrameCount, function(index)
+                {
+                    this.keyframes.push(this.generateKeyframe(index, transformIndex));
+                    
+                }, this);
+                
+            }, this);
+
+            return;
+        }
+
+        _helper.for(this.keyFrameCount, function(index)
+        {
+            this.keyframes.push(this.generateKeyframe(index));
+            
+        }, this);
+    }
+
+    AnimateJS.prototype.generateKeyframe = function(index, transformIndex)
+    {
+        if (this.isColor)
+        {
+            const change = this.tween(this.easing, (index / this.keyFrameCount));
+            
+            return { [this.CSSProperty]: this.mixColors(this.startValue, this.endValue, change) };
+        }
+        
+        const backAnimation = this.isTransform ? this.backAnimation[transformIndex] : this.backAnimation;
+
+        const startValue = this.isTransform ? this.startValue[transformIndex] : this.startValue;
+
+        const distance = this.isTransform ? this.distance[transformIndex] : this.distance;
+
+        const change = (distance * this.tween(this.easing, (index / this.keyFrameCount)));
+
+        const keyVal = this.roundNumber(backAnimation ? startValue - change : startValue + change, 5);
+
+        var property = this.isTransform ? 'transform' : this.CSSProperty;
+
+        var prefix  = this.isTransform ? `${this.CSSProperty[transformIndex]}(` : '';
+
+        var suffix  = this.isTransform ? `${this.CSSunits[transformIndex]})` : this.CSSunits;
+        
+        var keyframe = { [property]:  `${prefix}${keyVal}${suffix}` };
+        
+        if (this.isTransform && _helper.is_undefined(this.keyframes[index]))
+        {
+            keyframe[property] = `${this.baseTransforms} ${keyframe[property]}`.trim();
+        }
+
+        return keyframe;
+    }
+
     /**
      * Mix 2 colors.
      * 
@@ -1930,7 +2114,7 @@ animate(AN_DOMElement, options)
      * @param  {number} blend % between 0 and 1
      * @return {string} 
      */
-    var mixColors = function(color1RGB, color2RGB, blend)
+    AnimateJS.prototype.mixColors = function(color1RGB, color2RGB, blend)
     {
         function linearInterpolation(y1, y2, x)
         {
@@ -1950,233 +2134,59 @@ animate(AN_DOMElement, options)
     }
 
     /**
-     * Generate color gradient
+     * Calculate the easing pattern.
      * 
-     * @param  {string} funcName Easing function name
-     * @return {array}
+     * @private
+     * @link    {https://gist.github.com/gre/1650294}
+     * @param   {String} type Easing pattern
+     * @param   {Number} time Time animation should take to complete
+     * @returns {Number}
      */
-    var generateTransformKeyframes = function(CSSProperty, startValue, endValue, duration, easing, keyframeInterval)
+    AnimateJS.prototype.clearTransitions = function()
+    {        
+        var CSSProperty    = this.isTransform ? 'transform' : this.CSSProperty;
+        var transitions    = _helper.css_transition_props(this.DOMElement);
+        var css_transition = _helper.inline_style(this.DOMElement, 'transition'); 
+
+        if (_helper.is_empty(transitions) || !transitions[CSSProperty]) return;
+
+        transitions[CSSProperty] = '0s linear 0s';
+
+        _helper.css(this.DOMElement, 'transition', _helper.join_obj(transitions, ' ', ', '));
+
+        this.callbacks.push(() => { _helper.css(this.DOMElement, 'transition', !css_transition ? false : css_transition ); });
+
+    }
+
+    AnimateJS.prototype.roundNumber = (n, dp) => 
     {
-        var startValues   = _this.css_transform_props(AN_DOMElement, false);
-        var endValues     = _this.css_transform_props(endValue, false);
-        var keyFrameCount = Math.floor(duration / keyframeInterval);
-        var keyframes     = [];
+        const h = +('1'.padEnd(dp + 1, '0')) // 10 or 100 or 1000 or etc
 
-        // If a start value was specified it gets overwritten as the transform
-        // property is singular
-        if (startValue)
-        {
-            startValues = _this.css_transform_props(startValue);
-        }
-
-        var baseTransforms = _this.join_obj(_this.map(startValues, (prop, val) => !endValues[prop] ? val : false), '(', ') ') + ')';
-
-        _this.each(endValues, function(propAxis, valueStr)
-        {
-            var startValStr        = !startValues[propAxis] ? propAxis.includes('scale') ? 1 : 0 : startValues[propAxis];
-            var startVal           = _this.css_unit_value(startValStr);
-            var endVal             = _this.css_unit_value(valueStr);
-            var startUnit          = _this.css_value_unit(startValStr);
-            var endUnit            = _this.css_value_unit(valueStr);
-            var CSSpropertyUnits   = endUnit;
-
-            if (startUnit !== endUnit)
-            {
-                // 0 no need to convert
-                if (_this.is_empty(startUnit))
-                {
-                    startUnit = endUnit;
-                }
-                else
-                {
-                    if (startUnit !== 'px') startVal = _this.css_to_px(startVal + startUnit, AN_DOMElement, propAxis.includes('Y') ? 'height' : 'width');
-                    if (endUnit !== 'px') endVal = _this.css_to_px(endVal + endUnit, AN_DOMElement, propAxis.includes('Y') ? 'height' : 'width');
-                    CSSpropertyUnits = 'px';
-                }
-            }
-
-
-            var backWardsAnimation = endValue < startValue;
-            var totalDistance      = Math.abs(backWardsAnimation ? (startVal - endVal) : (endVal - startVal));
-            var propKeyframes      = [];
-         
-
-            _this.for(keyFrameCount + 1, function(i)
-            {
-                let change   = (totalDistance * easingPattern(easing, i / keyFrameCount));
-                let keyframe = generateKeyframe('transform', backWardsAnimation ? startVal - change : startVal + change, CSSpropertyUnits, propAxis);
-
-                if (_this.is_undefined(keyframes[i]))
-                {
-                    keyframe.transform = `${baseTransforms} ${keyframe.transform}`;
-                    keyframes[i] = keyframe;
-                }
-                else
-                {
-                    keyframes[i].transform += ` ${keyframe.transform}`;
-                }
-            });
-        });
-
-        return keyframes;        
+        return Math.round(n * h) / h;
     }
 
     /**
-     * Generate color gradient
+     * Calculate the easing pattern.
      * 
-     * @param  {string} easing Easing function name
-     * @return {array}
+     * @private
+     * @link    {https://gist.github.com/gre/1650294}
+     * @param   {String} type Easing pattern
+     * @param   {Number} time Time animation should take to complete
+     * @returns {Number}
      */
-    var generateColorKeyframes = function(CSSProperty, startValue, endValue, duration, easing, keyframeInterval)
+    AnimateJS.prototype.tween = function(type, time)
     {
-        startValue        = options.from || _this.rendered_style(AN_DOMElement, CSSProperty);
-        var keyframes     = [];
-        var keyFrameCount = Math.floor(duration / keyframeInterval);
-        const rgbStart    = sanitizeColor(startValue);
-        const rgbEnd      = sanitizeColor(endValue);
-
-        if (rgbStart === rgbEnd) return [];
-
-        for (let i = 0; i <= keyFrameCount; i++)
-        {
-            const blend = ANIMATION_EASING_FUNCTIONS[easing](i / keyFrameCount);
-            
-            keyframes.push( { [CSSProperty]: mixColors(rgbStart, rgbEnd, blend) });
-
-        }
-
-        // Incase of not enough keyframes
-        if (keyframes[keyframes.length - 1][CSSProperty] !== rgbEnd)
-        {
-            keyframes.push({ [CSSProperty]: rgbEnd });
-        }
-
-        return keyframes;
+        return ANIMATION_EASING_FUNCTIONS[type].call(null, time) || time;
     }
 
+    return (new AnimateJS(DOMElement, options)).start();
     
-
-    /**
-     * Generate color gradient
-     * 
-     * @param  {string} funcName Easing function name
-     * @return {array}
-     */
-    var generateKeyframe = function(CSSProperty, value, units, transformAxis)
-    {
-        var isTransform = CSSProperty === 'transform';
-        var prefix = isTransform ? `${transformAxis}(` : '';
-        var suffix = units;
-        if (isTransform) suffix += ')';
-        value = CSSProperty === 'opacity' ? round(value, 5) : round(value, 2);
-        
-        return { [CSSProperty]:  `${prefix}${value}${suffix}` };
-    }
-
-    /**
-     * Generate color gradient
-     * 
-     * @param  {string} funcName Easing function name
-     * @return {array}
-     */
-    var generateKeyFrames = function(CSSProperty, startValue, endValue, duration, easing, keyframeInterval)
-    {
-        // We need to set the end value, then remove it and re-apply any inline styles if they
-        // existed
-        if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
-        {
-            var prevStyle = _this.inline_style(AN_DOMElement, CSSProperty);
-            _this.css(AN_DOMElement, CSSProperty, endValue);
-            endValue = _this.rendered_style(AN_DOMElement, CSSProperty);
-            _this.css(AN_DOMElement, CSSProperty, prevStyle ? prevStyle : false);
-        }
-
-        startValue             = _this.is_undefined(startValue) ? _this.css_unit_value(_this.rendered_style(AN_DOMElement, CSSProperty)) : startValue;
-        endValue               = _this.css_unit_value(endValue);
-        var CSSpropertyUnits   = _this.css_value_unit(endValue);
-        var backWardsAnimation = endValue < startValue;
-        var totalDistance      = Math.abs(backWardsAnimation ? (startValue - endValue) : (endValue - startValue));
-
-        if (endValue === startValue) [];
-
-        var keyframes     = [];
-        var keyFrameCount = Math.floor(duration / keyframeInterval);
-
-        for (let i = 0; i <= keyFrameCount; i++)
-        {            
-            var change = (totalDistance * easingPattern(easing, i / keyFrameCount));
-
-            keyframes.push(generateKeyframe(CSSProperty, backWardsAnimation ? startValue - change : startValue + change, CSSpropertyUnits));
-        }
-
-        // Incase match had some issues
-        keyframes.push(generateKeyframe(CSSProperty, endValue, CSSpropertyUnits));
-
-        return keyframes;
-    }
-
-    init();
 }
 		/**
- * Returns an object of CSS transforms by transform property as keys.
- *
- * @param  {node|string} DOMElement  Target element or transform value string
- * @return {object}
- */
-css_transform_values(DOMElement)
-{
-    if (!DOMElement) return {};
-    var transforms     = {};
-    var transformValue = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transform');
-
-    // No transforms
-    if (!transformValue || transformValue === 'none' || transformValue === 'unset' || transformValue === 'auto' || transformValue === 'revert' || transformValue === 'initial')
-    {
-        return transforms;
-    }
-
-    this.each(transformValue.trim().split(')'), function(i, transform)
-    {
-        transform = transform.trim();
-
-        if (transform === '') return;
-
-        transform    = transform.split('(');
-        let prop     = transform.shift().trim();
-        let value    = transform.pop().trim();
-        let valCount = CSS_TRANSFORM_VALUES_COUNT[prop];
-        
-        if (valCount === 1)
-        {
-            transforms[prop] = [value];
-        }
-        else
-        {
-            let values = value.split(',').map((x) => x.trim());
-
-            if (values.length < valCount)
-            {
-                let pad = new Array(valCount - values.length).fill('0');
-
-                transforms[prop] = [...values, ...pad];
-            }
-            else
-            {
-                transforms[prop] = values;
-            }
-        }
-
-    }, this);
-
-    return transforms;
-}
-
-
-/**
  * CSS Animation.
  *
  * @access {private}
- * @param  {node}     DOMElement          Target DOM node
+ * @param  {DOMElement}     DOMElement          Target DOM node
  * @param  {object}   options             Options object
  * @param  {string}   options.property    CSS property
  * @param  {mixed}    options.from        Start value
@@ -2197,111 +2207,354 @@ css_transform_values(DOMElement)
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-animate_css(DOMElement, options)
+__animate_css(DOMElement, options)
 {    
-    // Call does not from factory need to sanitize
-    options = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
+    const _helper = this;
 
-    // Cache inline transitions to revert back to on completion
-    var inlineTransitions = this.css_transition_props(this.inline_style(DOMElement, 'transition'));
-    inlineTransitions = this.is_empty(inlineTransitions) ? false : this.join_obj(inlineTransitions, ' ', ', ');;
+    var _this;
 
-    // Cache rendered transitions to merge into for this animation
-    var renderedTransions = this.css_transition_props(DOMElement);
+    const AnimateCss = function(DOMElement, options)
+    {        
+        _this = this;
 
-    var callback;
+        this.DOMElement = DOMElement;
 
-    // Props to animate / transition
-    var styles = {};
+        this.options = options;
 
-    if (this.is_array(options))
+        this.animatedProps = {};
+
+        this.animatedTransitions = {};
+
+        this.preAnimatedTransitions = {};
+
+        this.callback = null;
+
+        this.preProcessStartEndValues();
+
+        return this;
+    };
+
+    /**
+     * Start animation.
+     *
+     */
+    AnimateCss.prototype.start = function()
     {
-        this.each(options, function(i, option)
-        {
-            // Setup and convert duration from MS to seconds
-            var property = option.property;
-            var duration = (option.duration / 1000);
-            var easing   = CSS_EASINGS[option.easing];
+        this.applyStartValues();
 
-            // Set the transition for the property
-            // in our merged obj
-            renderedTransions[property] = `${duration}s ${easing}`;
+        this.applyTransitions();
 
-            // Set the property style
-            styles[property] = option.to;
+        DOMElement.addEventListener('transitionend', this.on_complete, true);
 
-            callback = option.callback;
+        this.applyEndValues();
 
-        }, this);
-    }
-    else
-    {
-        var property = options.property;
-        var duration = (options.duration / 1000);
-        var easing   = CSS_EASINGS[options.easing];
-
-        // Set the transition for the property
-        // in our merged obj
-        renderedTransions[property] = `${duration}s ${easing}`;
-
-        // Set the property style
-        styles[property] = options.to;
-
-        callback = options.callback;
+        return this;
     }
 
-    // Flatten transition ready for css
-    var transition = this.join_obj(renderedTransions, ' ', ', ');
-
-    this.css(DOMElement, 'transition', transition);
-
-    const _this = this;
-
-    var onTransitionEnd;
-
-    onTransitionEnd = function(e)
+    /**
+     * Stop animation.
+     *
+     */
+    AnimateCss.prototype.stop = function()
     {
+        DOMElement.removeEventListener('transitionend', _this.on_complete, true);
+
+        _helper.css(DOMElement, 'transition', this.preAnimatedTransitions);
+    }
+
+    /**
+     * Stop animation and destroy.
+     *
+     */
+    AnimateCss.prototype.destory = function()
+    {
+        this.stop();
+
+        this.animatedProps = {};
+
+        this.animatedTransitions = {};
+
+        this.preAnimatedTransitions = {};
+
+        this.callback = null;
+    }
+
+    /**
+     * On transition end.
+     * 
+     * Note if a multiple animation properties wer supplied
+     * we only want to call the callback once when all transitions
+     * have completed.
+     *
+     * @param  {Event} e transitionEnd event
+     */
+    AnimateCss.prototype.on_complete = function(e)
+    {        
         e = e || window.event;
 
-        var prop = _this.css_prop_to_hyphen_case(e.propertyName);
+        var prop = _helper.css_prop_to_hyphen_case(e.propertyName);
 
-        delete renderedTransions[prop];
+        if (prop === 'background-color') prop = 'background';
 
-        var completed = _this.is_empty(renderedTransions);
+        // Change inline style back to auto
+        let endVal = _this.animatedProps[prop];
+        if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset') _helper.css(DOMElement, prop, endVal);
 
-        var transition = completed ? inlineTransitions : _this.join_obj(renderedTransions, ' ', ', ');
+        delete _this.animatedTransitions[prop];
 
-        _this.css(DOMElement, 'transition', transition);
+        delete _this.animatedProps[prop];
+        
+        var completed = _helper.is_empty(_this.animatedProps);
 
-        if (_this.is_empty(renderedTransions))
+        var transition = completed ? _this.preAnimatedTransitions : _helper.join_obj(_this.animatedTransitions, ' ', ', ');
+
+        _helper.css(DOMElement, 'transition', _this.preAnimatedTransitions);
+
+        if (completed)
         {
-            DOMElement.removeEventListener('transitionend', onTransitionEnd, true);
-
-            if (callback)
+            DOMElement.removeEventListener('transitionend', _this.on_complete, true);
+            
+            if (_helper.is_function(_this.callback))
             {
-                callback(DOMElement);
+                _this.callback(_this.DOMElement);
             }
         }
     }
 
-    DOMElement.addEventListener('transitionend', onTransitionEnd, true);
+    /**
+     * Checks for "auto" transtions.
+     * 
+     */
+    AnimateCss.prototype.preProcessStartEndValues = function()
+    {
+        var DOMElement = this.DOMElement;
+        
+        // We need to set the end value explicitly as these values will not
+        // transition with CSS
+        _helper.each(this.options, function(i, option)
+        {
+            let startValue  = option.from;
+            let endValue    = option.to;
+            let CSSProperty = option.property;
 
-    this.css(DOMElement, styles);
+            if (startValue === 'auto' || startValue === 'initial' || startValue === 'unset' || !startValue)
+            {
+                this.options[i].from = _helper.rendered_style(DOMElement, CSSProperty);
+            }
+
+            if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
+            {
+                var inlineStyle = _helper.inline_style(DOMElement, CSSProperty);
+
+                _helper.css(DOMElement, CSSProperty, endValue);
+
+                this.options[i].to = _helper.rendered_style(DOMElement, CSSProperty);
+
+                _helper.css(DOMElement, CSSProperty, inlineStyle ? inlineStyle : false);
+            }
+
+            this.animatedProps[CSSProperty] = endValue;
+        
+        }, this);
+    }
+
+    /**
+     * Apply start values.
+     * 
+     */
+    AnimateCss.prototype.applyStartValues = function()
+    {
+        var styles = {};
+
+        _helper.each(this.options, function(i, option)
+        {
+            if (option.from)
+            {
+                styles[option.property] = option.from;
+            }
+        });
+
+        if (!_helper.is_empty(styles)) _helper.css(this.DOMElement, styles);
+    }
+
+    /**
+     * Apply animation transitions.
+     * 
+     */
+    AnimateCss.prototype.applyTransitions = function()
+    {
+        this.preAnimatedTransitions  = _helper.inline_style(this.DOMElement, 'transition');
+        this.preAnimatedTransitions  = !this.preAnimatedTransitions ? false : this.preAnimatedTransitions;
+        this.animatedTransitions     = _helper.css_transition_props(this.DOMElement);
+
+        _helper.each(this.options, function(i, option)
+        {
+            // Setup and convert duration from MS to seconds
+            let property = option.property;
+            let duration = (option.duration / 1000);
+            let easing   = CSS_EASINGS[option.easing] || 'ease';
+
+            // Set the transition for the property
+            // in our merged obj
+            this.animatedTransitions[property] = `${duration}s ${easing}`;
+
+        }, this);
+
+        _helper.css(this.DOMElement, 'transition', _helper.join_obj(this.animatedTransitions, ' ', ', '));
+    }
+
+    /**
+     * Apply animation end values.
+     * 
+     */
+    AnimateCss.prototype.applyEndValues = function()
+    {
+        var styles = {};
+
+        _helper.each(options, function(i, option)
+        {
+            styles[option.property] = option.to;
+
+            this.callback = option.callback;
+
+        }, this);
+
+        _helper.css(DOMElement, styles);
+    }
+
+    return new AnimateCss(DOMElement, options).start();
 }
 
-
 		/**
+ * Animate JS
+ *
+ * @access {public}
+ * @param  {DOMElement} DOMElement                  Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
+ * @return {array}
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+animate(DOMElement, options)
+{
+    const animations = [];
+
+    const Animation = function()
+    {
+        return this;
+    };
+
+    Animation.prototype.stop = function()
+    {
+        for (var i = 0; i < animations.length; i++)
+        {
+            animations[i].stop(true);
+        }
+    };
+
+    Animation.prototype.destory = function()
+    {
+        for (var i = 0; i < animations.length; i++)
+        {
+            animations[i].destory();
+        }
+
+        animations = [];
+    };
+
+    const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
+
+    const AnimationInstance = new Animation;
+
+    this.each(factoryOptions, function(i, opts)
+    {
+        animations.push(this.__animate_js(DOMElement, opts));
+
+    }, this);
+
+    return AnimationInstance;
+}
+
+/**
+ * Animate CSS
+ *
+ * @access {public}
+ * @param  {DOMElement} DOMElement                  Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
+ * @return {array}
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+animate_css(DOMElement, options)
+{
+    var cssAnimation;
+
+    const Animation = function()
+    {
+        return this;
+    };
+
+    Animation.prototype.stop = function()
+    {
+        cssAnimation.stop(true);
+    };
+
+    Animation.prototype.destory = function()
+    {
+        cssAnimation.destory(true);
+    };
+
+    const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
+
+    cssAnimation = this.__animate_css(DOMElement, factoryOptions);
+    
+    return new Animation;
+}
+
+/**
  * Animation factory.
  *
  * @access {private}
- * @param  {node}     el                  Target DOM node
- * @param  {object}   options             Options object
- * @param  {string}   options.property    CSS property
- * @param  {mixed}    options.from        Start value
- * @param  {mixed}    options.to          Ending value
- * @param  {int}      options.duration    Animation duration in MS
- * @param  {string}   options.easing      Easing function in camelCase
- * @param  {function} options.callback    Callback to apply when animation ends (optional)
+ * @param  {DOMElement} DOMElement                  Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
  * @return {array}
  * Options can be provided three ways:
  * 
@@ -2354,8 +2607,8 @@ __animation_factory(DOMElement, opts)
 
                 // animation_factory('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
                 options.FROM_FACTORY = true;
-                options.property = key;
-                options.el = DOMElement;
+                options.property     = key;
+                options.el           = DOMElement;
                 optionSets.push(options);
             }
         }
@@ -2369,6 +2622,8 @@ __animation_factory(DOMElement, opts)
             return this.in_array(key, ANIMATION_FILTER_OPTIONS) ? val : false;
 
         }, this);
+
+        if (!ANIMATION_EASING_FUNCTIONS[options.easing]) options.easing = 'ease';
 
         options.FROM_FACTORY = true;
 
@@ -2876,7 +3131,7 @@ attr(DOMElement, name, value)
  * currently displayed styles.
  *
  * @access {public}
- * @param  {node}   el     Target DOM node
+ * @param  {DOMElement}   el     Target DOM node
  * @param  {string|object} Assoc array of property->value or string property
  * @example {Helper.css(node,} { display : 'none' });
  * @example {Helper.css(node,} 'display', 'none');
@@ -3108,14 +3363,16 @@ css_to_object(styles)
 
     return ret;
 }
-		
-/**
- * Get value number
+		/**
+ * Get CSS property.
  * 
- * @private
+ * @param  {string} value CSS value (e.g "12px")
+ * @return {Number}
  */
 css_unit_value(value)
 {
+    value = value + '';
+
     if (this.is_numeric(value))
     {
         return parseFloat(value);
@@ -3129,6 +3386,12 @@ css_unit_value(value)
     return parseFloat(value.replaceAll(/[^0-9-.]/g, ''));
 }
 
+/**
+ * Get CSS property unit.
+ * 
+ * @param  {string} value CSS value (e.g "12px")
+ * @return {string}
+ */
 css_value_unit(value)
 {
     value = value + '';
@@ -3136,6 +3399,14 @@ css_value_unit(value)
     return value.split(/[0-9]/).pop().replaceAll(/[^a-z%]/g, '').trim();
 }
 
+/**
+ * Converts CSS units to px.
+ * 
+ * @param  {String}     value      CSS value (e.g "12rem")
+ * @param  {DomElement} DOMElement CSS value (optional) (used to relative units)
+ * @param  {String}     property   CSS property (optional) (used for % unit)
+ * @return {Number}
+ */
 css_to_px(valueStr, DOMElement, property)
 {
     valueStr = valueStr + '';
@@ -3202,13 +3473,12 @@ css_to_px(valueStr, DOMElement, property)
  * Get an element's inline style if it exists
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} prop CSS property to check
  * @return {string}
  */
 inline_style(element, prop)
 {
-    // @todo expand shorthand    
     const elementStyle = element.style;
 
     prop = this.css_prop_to_hyphen_case(prop);
@@ -3224,7 +3494,7 @@ inline_style(element, prop)
  * Remove inline css style
  * 
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} prop CSS property to removes
  */
 remove_style(el, prop)
@@ -3242,7 +3512,7 @@ remove_style(el, prop)
  * Get the element's computed style on a property
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} prop CSS property to check (in camelCase) (optional)
  * @return {mixed}
  */
@@ -3260,7 +3530,7 @@ rendered_style(DOMElement, property)
  * Get the elements computed style.
  *
  * @access {private}
- * @param  {node}          el   Target element
+ * @param  {DOMElement}          el   Target element
  * @param  {string}        prop CSS property to check (in camelCase) (optional)
  * @return {string|object}
  */
@@ -3316,7 +3586,40 @@ css_transition_props(DOMElement)
         return transitions;
     }
 
-    this.each(transitionVal.trim().split(','), function(i, transition)
+    let transitionSplit = transitionVal.includes('cubic-bezier') ? '' : transitionVal.trim().split(',');
+
+    if (transitionVal.includes('cubic-bezier'))
+    {
+        let map      = [];
+        let inBezier = false;
+        let block    = '';
+        let char;
+
+        this.for(transitionVal.length, function(i)
+        {
+            char = transitionVal[i];
+
+            if (char === '(') inBezier = true;
+            if (char === ')') inBezier = false;
+
+            if (char === ',' && !inBezier)
+            {
+                map.push(block.trim());
+                block = '';
+
+                // next
+                return;
+            }
+
+            block += char;
+
+            if (i === transitionVal.length -1) map.push(block.trim());
+        });
+
+        transitionSplit = map;
+    }
+
+    this.each(transitionSplit, function(i, transition)
     {
         transition = transition.trim();
 
@@ -3407,7 +3710,7 @@ css_transform_props(DOMElement, returnAsString)
  * Converts an element's matrix transform value back to component transforms
  *
  * @access {private}
- * @param  {node}   DOMElement     Target element
+ * @param  {DOMElement}   DOMElement     Target element
  * @param  {bool}   returnAsString Returns string
  * @return {string|object}
  */
@@ -3586,7 +3889,7 @@ css_to_3d_transform(transformsStr)
  * Add a css class or list of classes
  *
  * @access {public}
- * @param  {node}         DOMElement Target element
+ * @param  {DOMElement}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to add
  */
 add_class(DOMElement, className)
@@ -3624,7 +3927,7 @@ add_class(DOMElement, className)
  * Closest parent node by type/class or array of either
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} type Node type to find
  * @return {node\null}
  */
@@ -3688,7 +3991,7 @@ closest(el, type)
  * Closest parent node by class
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} clas Node class to find
  * @return {node\null}
  */
@@ -3748,7 +4051,7 @@ closest_class(el, clas)
  * Get an element's absolute coordinates
  *
  * @access {public}
- * @param  {node}   el Target element
+ * @param  {DOMElement}   el Target element
  * @return {object}
  */
 coordinates(DOMElement)
@@ -3812,7 +4115,7 @@ coordinates(DOMElement)
  * Get all first level children
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @return {node\null}
  */
 first_children(el)
@@ -3835,7 +4138,7 @@ first_children(el)
  * Get all input elements from a form
  *
  * @access {public}
- * @param  {node}   form Target element
+ * @param  {DOMElement}   form Target element
  * @return {array}
  */
 form_inputs(form)
@@ -3860,7 +4163,7 @@ form_inputs(form)
  * Get an array of name/value objects for all inputs in a form
  *
  * @access {public}
- * @param  {node}   form Target element
+ * @param  {DOMElement}   form Target element
  * @return {array}
  */
 form_values(form)
@@ -3902,7 +4205,7 @@ form_values(form)
  * Check if a node has a class
  *
  * @access {public}
- * @param  {node}         el         Target element
+ * @param  {DOMElement}         el         Target element
  * @param  {string|array} className  Class name(s) to check for
  * @return {bool}
  */
@@ -3955,7 +4258,7 @@ has_class(el, className)
  * Aria hide an element
  *
  * @access {public}
- * @param  {node}   el Target DOM node
+ * @param  {DOMElement}   el Target DOM node
  */
 hide_aria(el)
 {
@@ -3965,7 +4268,7 @@ hide_aria(el)
  * Check if an element is in current viewport
  *
  * @access {public}
- * @param  {node}   el Target DOM node
+ * @param  {DOMElement}   el Target DOM node
  * @return {bool}
  */
 in_viewport(el)
@@ -3983,7 +4286,7 @@ in_viewport(el)
  * Replace or append a node's innerHTML
  *
  * @access {public}
- * @param  {node}   DOMElement  Target element
+ * @param  {DOMElement}   DOMElement  Target element
  * @param  {string} content     Target content
  * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
  */
@@ -4004,7 +4307,7 @@ inner_HTML(DOMElement, content, append)
  * Replaces element's innerText without destroying childnodes
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} text Text to replace
  */
 inner_Text(el, text)
@@ -4018,7 +4321,7 @@ inner_Text(el, text)
  * Gets an input element's value
  *
  * @access {public}
- * @param  {node}   input Target element
+ * @param  {DOMElement}   input Target element
  * @return {mixed}
  */
 input_value(input)
@@ -4070,8 +4373,8 @@ input_value(input)
  * @param  {string} classes New node class names (optional) (default '')
  * @param  {string} classes New node ID (optional) (default '')
  * @param  {string} content New node innerHTML (optional) (default '')
- * @param  {node}   target  Parent to append new node into
- * @return {node}
+ * @param  {DOMElement}   target  Parent to append new node into
+ * @return {DOMElement}
  */
 new_node(type, classes, ID, content, target)
 {
@@ -4101,7 +4404,7 @@ new_node(type, classes, ID, content, target)
  * Traverse nextSibling untill type or class or array of either
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} type Target node type
  * @return {node\null}
  */
@@ -4152,7 +4455,7 @@ next(el, type)
  * Traverse nextSibling untill class type or class or array of either
  *
  * @access {public}
- * @param  {node}   el        Target element
+ * @param  {DOMElement}   el        Target element
  * @param  {string} className Target node classname
  * @return {node\null}
  */
@@ -4187,9 +4490,9 @@ next_untill_class(el, className)
  * Inserts node as first child
  *
  * @access {public}
- * @param  {node} node     New node to insert
- * @param  {node} wrapper  Parent to preappend new node into
- * @return {node}
+ * @param  {DOMElement} node     New node to insert
+ * @param  {DOMElement} wrapper  Parent to preappend new node into
+ * @return {DOMElement}
  */
 preapend(node, wrapper)
 {
@@ -4201,7 +4504,7 @@ preapend(node, wrapper)
  * Traverse previousSibling untill type
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} type Target node type
  * @return {node\null}
  */
@@ -4246,7 +4549,7 @@ previous(el, type)
  * Traverse previousSibling untill class
  *
  * @access {public}
- * @param  {node}   el        Target element
+ * @param  {DOMElement}   el        Target element
  * @param  {string} className Target node classname
  * @return {node\null}
  */
@@ -4280,7 +4583,7 @@ previous_untill_class(el, className)
  * Remove a css class or list of classes
  *
  * @access {public}
- * @param  {node}         DOMElement Target element
+ * @param  {DOMElement}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to remove
  */
 remove_class(DOMElement, className)
@@ -4309,10 +4612,12 @@ remove_class(DOMElement, className)
 
         });
 
-        return;
+        return this;
     }
 
     DOMElement.classList.remove(className);
+
+    return this;
 }
 		/**
  * Remove an element from the DOM
@@ -4320,7 +4625,7 @@ remove_class(DOMElement, className)
  * This function also removes all attached event listeners
  * 
  * @access {public}
- * @param  {node}   el Target element
+ * @param  {DOMElement}   el Target element
  */
 remove_from_dom(el)
 {
@@ -4360,8 +4665,8 @@ scroll_pos()
  *
  * @access {public}
  * @param  {string} selector CSS selector
- * @param  {node}   context (optional) (default document)
- * @return {node}
+ * @param  {DOMElement}   context (optional) (default document)
+ * @return {DOMElement}
  */
 $All(selector, context)
 {
@@ -4374,8 +4679,8 @@ $All(selector, context)
  *
  * @access {public}
  * @param  {string} selector CSS selector
- * @param  {node}   context (optional) (default document)
- * @return {node}
+ * @param  {DOMElement}   context (optional) (default document)
+ * @return {DOMElement}
  */
 $(selector, context)
 {
@@ -4386,7 +4691,7 @@ $(selector, context)
  * Aria show an element
  *
  * @access {public}
- * @param  {node}   el Target DOM node
+ * @param  {DOMElement}   el Target DOM node
  */
 show_aria(el)
 {
@@ -4397,7 +4702,7 @@ show_aria(el)
  * Toogle a classname
  *
  * @access {public}
- * @param  {node}         el         Target element
+ * @param  {DOMElement}         el         Target element
  * @param  {string}       className  Class name to toggle
  */
 toggle_class(el, className)
@@ -4420,7 +4725,7 @@ toggle_class(el, className)
  * Triggers a native event on an element
  *
  * @access {public}
- * @param  {node}   el   Target element
+ * @param  {DOMElement}   el   Target element
  * @param  {string} type Valid event name
  */
 trigger_event(el, type)
@@ -4442,33 +4747,33 @@ trigger_event(el, type)
  * Get an element's actual width in px
  *
  * @access {public}
- * @param  {node}   DOMElement Target element
+ * @param  {DOMElement}   DOMElement Target element
  * @return {object}
  */
 width(DOMElement)
 {
 	if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement ) return Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 
-    return this.rendered_style(DOMElement, 'width');
+    return this.css_unit_value(this.rendered_style(DOMElement, 'width'));
 }
 		/**
  * Get an element's actual height in px
  *
  * @access {public}
- * @param  {node}   DOMElement Target element
+ * @param  {DOMElement}   DOMElement Target element
  * @return {object}
  */
 height(DOMElement)
 {
-    if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement ) return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement) return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
-    return this.rendered_style(DOMElement, 'height');
+    return this.css_unit_value(this.rendered_style(DOMElement, 'height'));
 }
 		/**
  * Add an event listener
  *
  * @access {public}
- * @param  {node}    element    The target DOM node
+ * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)
@@ -4519,7 +4824,7 @@ addEventListener(element, eventName, handler, useCapture)
  * Adds a listener to the element
  *
  * @access {private}
- * @param  {node}    element    The target DOM node
+ * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)
@@ -4660,7 +4965,7 @@ eventListeners(DOMElement, eventName)
  * This function can still remove "annonymous" functions that are given a name as they are declared.
  * 
  * @access {public}
- * @param  {node}    element    The target DOM node
+ * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)
@@ -4716,7 +5021,7 @@ removeEventListener(element, eventName, handler, useCapture)
  * Removes all registered event listners on an element
  *
  * @access {private}
- * @param  {node}    element Target node element
+ * @param  {DOMElement}    element Target node element
  */
 __removeElementListeners(element)
 {
@@ -4740,7 +5045,7 @@ __removeElementListeners(element)
  * Removes all registered event listners of a specific type on an element
  *
  * @access {private}
- * @param  {node}    element Target node element
+ * @param  {DOMElement}    element Target node element
  * @param  {string}  type    Event listener type
  */
 __removeElementTypeListeners(element, type)
@@ -4764,7 +5069,7 @@ __removeElementTypeListeners(element, type)
  * Removes a listener from the element
  *
  * @access {private}
- * @param  {node}    element    The target DOM node
+ * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)
@@ -5177,28 +5482,6 @@ __cloneTypedArray(typedArray)
     return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
 }
 
-
-/**
- * Binds a function so that it can be identified.
- * 
- * @param   {function}  b
- * @returns {boolean}
- */
-__bind(func, context)
-{
-    context = typeof context === 'undefined' ? window : context;
-
-    const bound = func.bind(context);
-
-    bound.__isBound = true;
-
-    bound.__boundContext = context;
-
-    bound.__origional = func;
-
-    return bound;
-}
-
 		/**
  * Creates a new object in 'dot.notation'
  * 
@@ -5352,11 +5635,12 @@ __applyStatics(constructors, func)
  * @param   {string} glue      Glue between value and next key
  * @returns {string} 
  */
-join_obj(obj, seperator, glue, recursive)
+join_obj(obj, seperator, glue, recursive, trimLast)
 {
     seperator = this.is_undefined(seperator) ? '' : seperator;
     glue      = this.is_undefined(glue) ? '' : glue;
     recursive = this.is_undefined(recursive) ? false : recursive;
+    trimLast  = this.is_undefined(trimLast)  ? true : trimLast;
     
     var ret = '';
 
@@ -5364,11 +5648,11 @@ join_obj(obj, seperator, glue, recursive)
     {
         if (this.is_object(val))
         {
-            val = recursive ? '{' + this.join_obj(val, seperator, glue, recursive) + '}' : {};
+            val = recursive ? '{' + this.join_obj(val, seperator, glue, recursive, trimLast) + '}' : {};
         }
         else if (this.is_array(val))
         {
-            val = recursive ? this.join_obj(val, seperator, glue, recursive) : val.join(', ').replaceAll('[object Object]', '{}');
+            val = recursive ? this.join_obj(val, seperator, glue, recursive, trimLast) : val.join(', ').replaceAll('[object Object]', '{}');
         }
         else
         {            
@@ -5379,9 +5663,9 @@ join_obj(obj, seperator, glue, recursive)
 
     }, this);
 
-    if (ret === `${glue}${seperator}`) return '';
+    if (ret === `${glue}${seperator}` || ret.trim() === '') return '';
 
-    return this.rtrim(this.ltrim(ret, glue), seperator);
+    return trimLast ? this.rtrim(this.ltrim(ret, glue), seperator) : this.ltrim(ret, glue).trim() + glue;
 }
 		/**
  * Deep merge two objects.
@@ -6872,7 +7156,7 @@ console.log(Container.get('Helper'));
         /**
          * Get the height of an element.
          * @private
-         * @param  {Node}   elem The element to get the height of
+         * @param  {DOMElement}   elem The element to get the height of
          * @return {Number}      The element's height in pixels
          */
         var getHeight = function(elem)
@@ -12836,12 +13120,7 @@ function abort()
 
 (function()
 {
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
+    const [$, $All, addEventListener, animate_css, bool, has_class, is_node_type, removeEventListener, toggle_class] = Container.import(['$','$All','addEventListener','animate_css','bool','has_class','is_node_type','removeEventListener','toggle_class']).from('Helper');
 
     /**
      * Toggle height on click
@@ -12865,7 +13144,7 @@ function abort()
              * 
              * @var {array}
              */
-            this._nodes = Helper.$All('.js-collapse');
+            this._nodes = $All('.js-collapse');
 
             this._bind();
 
@@ -12891,7 +13170,7 @@ function abort()
          */
         _bind()
         {
-            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
+            addEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -12901,7 +13180,7 @@ function abort()
          */
         _unbind()
         {
-            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
+            removeEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -12914,30 +13193,27 @@ function abort()
         {
             e = e || window.event;
 
-            if (Helper.is_node_type(this, 'a'))
+            if (is_node_type(this, 'a'))
             {
                 e.preventDefault();
             }
 
             var clicked  = this;
-            var targetEl = Helper.$('#' + clicked.dataset.collapseTarget);
+            var targetEl = $('#' + clicked.dataset.collapseTarget);
             var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
             var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
-            var opacity  = Helper.bool(clicked.dataset.withOpacity);
+            var opacity  = bool(clicked.dataset.withOpacity);
             var options  = 
             {
-                height: Helper.has_class(clicked, 'active') ? '0px' : 'auto',
+                property: 'height',
+                to: has_class(clicked, 'active') ? '0px' : 'auto',
+                from: has_class(clicked, 'active') ? 'auto' : '0px',
                 duration: duration, 
                 easing: easing
             };
 
-            if (opacity)
-            {
-                options.opacity = Helper.has_class(clicked, 'active') ? '0' : '1';
-            }
-
-            Helper.animate(targetEl, options);
-            Helper.toggle_class(clicked, 'active');
+            animate_css(targetEl, options);
+            toggle_class(clicked, 'active');
         }
     }
 
@@ -13602,7 +13878,7 @@ function abort()
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
+    const [$, $All, add_class, addEventListener, closest, has_class, is_empty, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'is_empty', 'remove_class', 'removeEventListener']).from('Helper');
 
     /**
      * Popovers
@@ -13625,10 +13901,10 @@ function abort()
             this._nodes = [];
 
             // Find nodes
-            this._nodes = Helper.$All('.js-popover');
+            this._nodes = $All('.js-popover');
 
             // Bind events
-            if (!Helper.is_empty(this._nodes))
+            if (!is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -13649,7 +13925,7 @@ function abort()
          */
         destruct()
         {
-            if (!Helper.is_empty(this._nodes))
+            if (!is_empty(this._nodes))
             {
                 for (var i = 0; i < this._nodes.length; i++)
                 {
@@ -13676,13 +13952,13 @@ function abort()
 
             if (evnt === 'click')
             {
-                Helper.removeEventListener(trigger, 'click', this._clickHandler);
+                removeEventListener(trigger, 'click', this._clickHandler);
                 window.removeEventListener('resize', this._windowResize);
             }
             else
             {
-                Helper.removeEventListener(trigger, 'mouseenter', this._hoverOver);
-                Helper.removeEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
+                removeEventListener(trigger, 'mouseenter', this._hoverOver);
+                removeEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
             }
         }
 
@@ -13690,7 +13966,7 @@ function abort()
          * Initialize the handlers on a trigger
          *
          * @access {private}
-         * @param  {node} trigger Click/hover trigger
+         * @param  {DOMElement} trigger Click/hover trigger
          */
         _bind(trigger)
         {
@@ -13712,7 +13988,7 @@ function abort()
 
             if (target)
             {
-                pop = Helper.$('#' + target).cloneNode(true);
+                pop = $('#' + target).cloneNode(true);
                 pop.classList.remove('hidden');
             }
 
@@ -13729,14 +14005,14 @@ function abort()
 
             if (evnt === 'click')
             {
-                Helper.addEventListener(trigger, 'click', this._clickHandler);
+                addEventListener(trigger, 'click', this._clickHandler);
                 window.addEventListener('resize', this._windowResize);
             }
             else
             {
                 var _this = this;
-                Helper.addEventListener(trigger, 'mouseenter', this._hoverOver);
-                Helper.addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
+                addEventListener(trigger, 'mouseenter', this._hoverOver);
+                addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
             }
         }
 
@@ -13764,9 +14040,9 @@ function abort()
             var trigger = this;
             var _this = Container.get('Popovers');
             var popHandler = _this._getHandler(trigger);
-            if (Helper.has_class(trigger, 'popped')) return;
+            if (has_class(trigger, 'popped')) return;
             popHandler.render();
-            Helper.add_class(trigger, 'popped');
+            add_class(trigger, 'popped');
         }
 
         /**
@@ -13777,10 +14053,10 @@ function abort()
         _hoverLeave(e)
         {
             var _this = Container.get('Popovers');
-            var hovers = Helper.$All(':hover');
+            var hovers = $All(':hover');
             for (var i = 0; i < hovers.length; i++)
             {
-                if (Helper.has_class(hovers[i], 'popover'))
+                if (has_class(hovers[i], 'popover'))
                 {
                     hovers[i].addEventListener('mouseleave', function(_e)
                     {
@@ -13805,7 +14081,7 @@ function abort()
 
             for (var i = 0; i < _this._nodes.length; i++)
             {
-                if (Helper.has_class(_this._nodes[i], 'popped'))
+                if (has_class(_this._nodes[i], 'popped'))
                 {
                     var popHandler = _this._getHandler(_this._nodes[i]);
                     popHandler.stylePop();
@@ -13827,17 +14103,17 @@ function abort()
             var _this = Container.get('Popovers');
             var popHandler = _this._getHandler(trigger);
 
-            if (Helper.has_class(trigger, 'popped'))
+            if (has_class(trigger, 'popped'))
             {
                 _this._removeAll();
                 popHandler.remove();
-                Helper.remove_class(trigger, 'popped');
+                remove_class(trigger, 'popped');
             }
             else
             {
                 _this._removeAll();
                 popHandler.render();
-                Helper.add_class(trigger, 'popped');
+                add_class(trigger, 'popped');
             }
         }
 
@@ -13856,7 +14132,7 @@ function abort()
                 var clicked = e.target;
 
                 // Clicked the close button
-                if (Helper.has_class(clicked, 'js-remove-pop') || Helper.closest(clicked, '.js-remove-pop'))
+                if (has_class(clicked, 'js-remove-pop') || closest(clicked, '.js-remove-pop'))
                 {
                     _this._removeAll();
 
@@ -13864,13 +14140,13 @@ function abort()
                 }
 
                 // Clicked inside the popover
-                if (Helper.has_class(clicked, 'popover') || Helper.closest(clicked, '.popover'))
+                if (has_class(clicked, 'popover') || closest(clicked, '.popover'))
                 {
                     return;
                 }
 
                 // Clicked a popover trigger
-                if (Helper.has_class(clicked, 'js-popover') || Helper.closest(clicked, '.js-popover'))
+                if (has_class(clicked, 'js-popover') || closest(clicked, '.js-popover'))
                 {
                     return;
                 }
@@ -13883,7 +14159,7 @@ function abort()
          * Get the handler for the trigger
          * 
          * @access {private}
-         * @param  {node}    trigger DOM node that triggered event
+         * @param  {DOMElement}    trigger DOM node that triggered event
          * @return {object|false}
          */
         _getHandler(trigger)
@@ -13907,7 +14183,7 @@ function abort()
             {
                 this._pops[i].remove();
 
-                Helper.remove_class(this._pops[i].options.target, 'popped');
+                remove_class(this._pops[i].options.target, 'popped');
             }
         }
     }
@@ -14112,7 +14388,7 @@ function abort()
          * Insert ripple
          *
          * @access {private}
-         * @param  {node}    wrapper
+         * @param  {DOMElement}    wrapper
          */
         _insertRipple(wrapper)
         {
@@ -14915,7 +15191,7 @@ function abort()
          * Init a chips input
          *
          * @access {private}
-         * @param  {node}    _wrapper
+         * @param  {DOMElement}    _wrapper
          */
         _initInput(_wrapper)
         {
@@ -14936,7 +15212,7 @@ function abort()
          * Destroy chip listeners
          *
          * @access {private}
-         * @param  {node}    _wrapper
+         * @param  {DOMElement}    _wrapper
          */
         _destroy(_wrapper)
         {
@@ -15017,7 +15293,7 @@ function abort()
          * Remove last chip
          *
          * @access {private}
-         * @param  {node}    _wrapper
+         * @param  {DOMElement}    _wrapper
          */
         _removeLastChip(_wrapper)
         {
@@ -15034,7 +15310,7 @@ function abort()
          *
          * @access {public}
          * @param  {string}      _value
-         * @param  {node}        _wrapper
+         * @param  {DOMElement}        _wrapper
          * @param  {string|bool} _icon
          */
         addChip(_value, _wrapper, _icon)
@@ -15081,7 +15357,7 @@ function abort()
          * Get all values from chip input
          *
          * @access {private}
-         * @param  {node}    _wrapper
+         * @param  {DOMElement}    _wrapper
          * @return {array}
          */
         _getChipsValues(_wrapper)
@@ -15230,12 +15506,7 @@ function abort()
 
 (function()
 {
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
+    const [$, $All, add_class, addEventListener, closest, has_class, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'remove_class', 'removeEventListener']).from('Helper');
 
     /**
      * Choice chips
@@ -15252,9 +15523,9 @@ function abort()
          * @constructor
          {*} @access public
          */
-    	constructor()
+        constructor()
         {
-            this._chips = Helper.$All('.js-choice-chips .chip');
+            this._chips = $All('.js-choice-chips .chip');
 
             this._bind();
 
@@ -15280,7 +15551,7 @@ function abort()
          */
         _bind()
         {
-            Helper.addEventListener(this._chips, 'click', this._clickHandler);
+            addEventListener(this._chips, 'click', this._clickHandler);
         }
 
         /**
@@ -15290,7 +15561,7 @@ function abort()
          */
         _unbind()
         {
-            Helper.removeEventListener(this._chips, 'click', this._clickHandler);
+            removeEventListener(this._chips, 'click', this._clickHandler);
         }
 
         /**
@@ -15303,20 +15574,20 @@ function abort()
         {
             e = e || window.event;
 
-            var _wrapper = Helper.closest(this, '.js-choice-chips');
-            var _input = Helper.$('.js-choice-input', _wrapper);
+            var _wrapper = closest(this, '.js-choice-chips');
+            var _input = $('.js-choice-input', _wrapper);
 
-            if (!Helper.has_class(this, 'selected'))
-            {
-                Helper.remove_class(Helper.$('.chip.selected', _wrapper), 'selected');
+            if (!has_class(this, 'selected'))
+            {                
+                remove_class($('.chip.selected', _wrapper), 'selected');
 
-                Helper.add_class(this, 'selected');
+                add_class(this, 'selected');
 
                 if (_input)
                 {
                     _input.value = this.dataset.value;
 
-                    Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.has_class(this, 'selected')]);
+                    Container.Events().fire('Chips:selected', [this.dataset.value, !has_class(this, 'selected')]);
                 }
             }
         }
@@ -15545,10 +15816,14 @@ function abort()
     /**
      * @var {obj}
      */
-    var DEFAULTS =
+    const DEFAULTS =
     {
-        pushBody:          true,
         noScroll:          true,
+        pushBody:          false,
+        direction:         'top',
+        height:            'auto',
+        width:             '100%',
+
         onOpen:            () => { },
         onOpenArgs:        null,
         onClose:           () => { },
@@ -15638,6 +15913,9 @@ function abort()
          */
         open(options)
         {
+            const DOMElementBackdrop = this._DOMElementBackdrop;
+            const DOMElementPageWrap = this._DOMElementPageWrap;
+
             if (!_.in_dom(this._DOMElementBackdrop))
             {
                 console.error('Backdrop Error: The backdrop wrapper was not found in the DOM.');
@@ -15657,17 +15935,32 @@ function abort()
             // Merge options if provided
             if (options) this._setOptions(options);
 
+            // Set width and heights
+            _.css(DOMElementBackdrop, 'height', this.height);
+            _.css(DOMElementBackdrop, 'width', this.width);
+
+            // Make backdrop visible
+            _.add_class(DOMElementBackdrop, 'backdrop-open');
+
             // Push body down
-            if (this.pushBody)
+            /*if (this.pushBody)
             {
-                let fromTop = _.height(this._DOMElementBackdrop) + 'px';
+                _.add_class(this._DOMElementBackdrop, 'backdrop-open');
                 _.add_class(this._DOMElementBackdrop, 'backdrop-push-body');
-                _.animate(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, easing: 'ease' });
-            }
 
-            // Push the backdrop in
-            _.animate(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, easing: 'ease' });
+                _.animate_css(this._DOMElementBackdrop, { top: '0px', duration: 300 });
+                _.animate_css(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, duration: 300 });
+            }*/
 
+            // Set backdrop to position top, left, bottom, right
+
+            // Push backdrop in
+            _.animate_css(DOMElementBackdrop, { 
+                [this.direction]: { from: '-50px', to: '0px', duration: 350, easing: 'easeOutCirc'},
+                opacity:          { from: '0', to: '1', duration: 350, easing: 'easeOutCirc'}
+            });
+
+        
             // No scrolling
             if (this.noScroll)
             {
@@ -15788,9 +16081,9 @@ function abort()
             Container.Backdrop().open();
 
         }, 1000);
-    });
+    });*/
 
-    setTimeout(function()
+   /* setTimeout(function()
     {
         Container.Backdrop().close();
     }, 5000);*/

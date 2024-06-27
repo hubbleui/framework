@@ -2,7 +2,7 @@
  * Get all input elements from a form
  *
  * @access {public}
- * @param  {node}   form Target element
+ * @param  {DOMElement}   form Target element
  * @return {array}
  */
 form_inputs(form)

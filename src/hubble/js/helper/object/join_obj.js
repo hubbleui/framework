@@ -6,11 +6,12 @@
  * @param   {string} glue      Glue between value and next key
  * @returns {string} 
  */
-join_obj(obj, seperator, glue, recursive)
+join_obj(obj, seperator, glue, recursive, trimLast)
 {
     seperator = this.is_undefined(seperator) ? '' : seperator;
     glue      = this.is_undefined(glue) ? '' : glue;
     recursive = this.is_undefined(recursive) ? false : recursive;
+    trimLast  = this.is_undefined(trimLast)  ? true : trimLast;
     
     var ret = '';
 
@@ -18,11 +19,11 @@ join_obj(obj, seperator, glue, recursive)
     {
         if (this.is_object(val))
         {
-            val = recursive ? '{' + this.join_obj(val, seperator, glue, recursive) + '}' : {};
+            val = recursive ? '{' + this.join_obj(val, seperator, glue, recursive, trimLast) + '}' : {};
         }
         else if (this.is_array(val))
         {
-            val = recursive ? this.join_obj(val, seperator, glue, recursive) : val.join(', ').replaceAll('[object Object]', '{}');
+            val = recursive ? this.join_obj(val, seperator, glue, recursive, trimLast) : val.join(', ').replaceAll('[object Object]', '{}');
         }
         else
         {            
@@ -33,7 +34,7 @@ join_obj(obj, seperator, glue, recursive)
 
     }, this);
 
-    if (ret === `${glue}${seperator}`) return '';
+    if (ret === `${glue}${seperator}` || ret.trim() === '') return '';
 
-    return this.rtrim(this.ltrim(ret, glue), seperator);
+    return trimLast ? this.rtrim(this.ltrim(ret, glue), seperator) : this.ltrim(ret, glue).trim() + glue;
 }

@@ -2,9 +2,9 @@
  * Inserts node as first child
  *
  * @access {public}
- * @param  {node} node     New node to insert
- * @param  {node} wrapper  Parent to preappend new node into
- * @return {node}
+ * @param  {DOMElement} node     New node to insert
+ * @param  {DOMElement} wrapper  Parent to preappend new node into
+ * @return {DOMElement}
  */
 preapend(node, wrapper)
 {

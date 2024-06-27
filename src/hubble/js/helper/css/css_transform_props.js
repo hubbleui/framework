@@ -69,7 +69,7 @@ css_transform_props(DOMElement, returnAsString)
  * Converts an element's matrix transform value back to component transforms
  *
  * @access {private}
- * @param  {node}   DOMElement     Target element
+ * @param  {DOMElement}   DOMElement     Target element
  * @param  {bool}   returnAsString Returns string
  * @return {string|object}
  */

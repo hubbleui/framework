@@ -1,9 +1,10 @@
 (function()
 {
 	@import 'validation/constants.js';
-	@import 'animate/constants.js';
 	@import 'css/constants.js';
 	@import 'object/constants.js';
+	@import 'animate/constants.js';
+	@import 'animate/easings.js';
 	@import 'open.js';
 		@import 'animate/animate.js';
 		@import 'animate/animate_css.js';

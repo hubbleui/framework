@@ -2,7 +2,7 @@
  * Gets an input element's value
  *
  * @access {public}
- * @param  {node}   input Target element
+ * @param  {DOMElement}   input Target element
  * @return {mixed}
  */
 input_value(input)

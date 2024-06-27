@@ -2,7 +2,7 @@
  * Remove a css class or list of classes
  *
  * @access {public}
- * @param  {node}         DOMElement Target element
+ * @param  {DOMElement}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to remove
  */
 remove_class(DOMElement, className)
@@ -31,8 +31,10 @@ remove_class(DOMElement, className)
 
         });
 
-        return;
+        return this;
     }
 
     DOMElement.classList.remove(className);
+
+    return this;
 }

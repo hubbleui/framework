@@ -1,15 +1,133 @@
 /**
+ * Animate JS
+ *
+ * @access {public}
+ * @param  {DOMElement} DOMElement                  Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
+ * @return {array}
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+animate(DOMElement, options)
+{
+    const animations = [];
+
+    const Animation = function()
+    {
+        return this;
+    };
+
+    Animation.prototype.stop = function()
+    {
+        for (var i = 0; i < animations.length; i++)
+        {
+            animations[i].stop(true);
+        }
+    };
+
+    Animation.prototype.destory = function()
+    {
+        for (var i = 0; i < animations.length; i++)
+        {
+            animations[i].destory();
+        }
+
+        animations = [];
+    };
+
+    const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
+
+    const AnimationInstance = new Animation;
+
+    this.each(factoryOptions, function(i, opts)
+    {
+        animations.push(this.__animate_js(DOMElement, opts));
+
+    }, this);
+
+    return AnimationInstance;
+}
+
+/**
+ * Animate CSS
+ *
+ * @access {public}
+ * @param  {DOMElement} DOMElement                  Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
+ * @return {array}
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+animate_css(DOMElement, options)
+{
+    var cssAnimation;
+
+    const Animation = function()
+    {
+        return this;
+    };
+
+    Animation.prototype.stop = function()
+    {
+        cssAnimation.stop(true);
+    };
+
+    Animation.prototype.destory = function()
+    {
+        cssAnimation.destory(true);
+    };
+
+    const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
+
+    cssAnimation = this.__animate_css(DOMElement, factoryOptions);
+    
+    return new Animation;
+}
+
+/**
  * Animation factory.
  *
  * @access {private}
- * @param  {node}     el                  Target DOM node
- * @param  {object}   options             Options object
- * @param  {string}   options.property    CSS property
- * @param  {mixed}    options.from        Start value
- * @param  {mixed}    options.to          Ending value
- * @param  {int}      options.duration    Animation duration in MS
- * @param  {string}   options.easing      Easing function in camelCase
- * @param  {function} options.callback    Callback to apply when animation ends (optional)
+ * @param  {DOMElement} DOMElement                  Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
  * @return {array}
  * Options can be provided three ways:
  * 
@@ -62,8 +180,8 @@ __animation_factory(DOMElement, opts)
 
                 // animation_factory('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
                 options.FROM_FACTORY = true;
-                options.property = key;
-                options.el = DOMElement;
+                options.property     = key;
+                options.el           = DOMElement;
                 optionSets.push(options);
             }
         }
@@ -77,6 +195,8 @@ __animation_factory(DOMElement, opts)
             return this.in_array(key, ANIMATION_FILTER_OPTIONS) ? val : false;
 
         }, this);
+
+        if (!ANIMATION_EASING_FUNCTIONS[options.easing]) options.easing = 'ease';
 
         options.FROM_FACTORY = true;
 

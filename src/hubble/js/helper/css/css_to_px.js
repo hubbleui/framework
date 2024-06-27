@@ -1,11 +1,13 @@
-
 /**
- * Get value number
+ * Get CSS property.
  * 
- * @private
+ * @param  {string} value CSS value (e.g "12px")
+ * @return {Number}
  */
 css_unit_value(value)
 {
+    value = value + '';
+
     if (this.is_numeric(value))
     {
         return parseFloat(value);
@@ -19,6 +21,12 @@ css_unit_value(value)
     return parseFloat(value.replaceAll(/[^0-9-.]/g, ''));
 }
 
+/**
+ * Get CSS property unit.
+ * 
+ * @param  {string} value CSS value (e.g "12px")
+ * @return {string}
+ */
 css_value_unit(value)
 {
     value = value + '';
@@ -26,6 +34,14 @@ css_value_unit(value)
     return value.split(/[0-9]/).pop().replaceAll(/[^a-z%]/g, '').trim();
 }
 
+/**
+ * Converts CSS units to px.
+ * 
+ * @param  {String}     value      CSS value (e.g "12rem")
+ * @param  {DomElement} DOMElement CSS value (optional) (used to relative units)
+ * @param  {String}     property   CSS property (optional) (used for % unit)
+ * @return {Number}
+ */
 css_to_px(valueStr, DOMElement, property)
 {
     valueStr = valueStr + '';

@@ -6746,15 +6746,17 @@ form.success .msg-success {
   --hb-backdrop-bg: var(--hb-brand-primary);
   --hb-backdrop-color: var(--hb-white);
   position: fixed;
-  top: -100%;
   left: 0;
   width: 100%;
+  height: 100%;
   overflow: hidden;
   text-align: center;
   visibility: hidden;
-  opacity: 0;
   background: var(--hb-backdrop-bg);
   color: var(--hb-backdrop-color);
+}
+.backdrop-wrapper.backdrop-open {
+  visibility: visible;
 }
 
 .backdrop-page-wrapper {

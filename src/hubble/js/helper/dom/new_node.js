@@ -6,8 +6,8 @@
  * @param  {string} classes New node class names (optional) (default '')
  * @param  {string} classes New node ID (optional) (default '')
  * @param  {string} content New node innerHTML (optional) (default '')
- * @param  {node}   target  Parent to append new node into
- * @return {node}
+ * @param  {DOMElement}   target  Parent to append new node into
+ * @return {DOMElement}
  */
 new_node(type, classes, ID, content, target)
 {

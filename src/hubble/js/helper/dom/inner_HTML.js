@@ -2,7 +2,7 @@
  * Replace or append a node's innerHTML
  *
  * @access {public}
- * @param  {node}   DOMElement  Target element
+ * @param  {DOMElement}   DOMElement  Target element
  * @param  {string} content     Target content
  * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
  */

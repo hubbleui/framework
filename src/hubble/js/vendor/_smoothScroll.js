@@ -110,7 +110,7 @@
         /**
          * Get the height of an element.
          * @private
-         * @param  {Node}   elem The element to get the height of
+         * @param  {DOMElement}   elem The element to get the height of
          * @return {Number}      The element's height in pixels
          */
         var getHeight = function(elem)

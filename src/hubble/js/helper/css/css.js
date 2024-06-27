@@ -5,7 +5,7 @@
  * currently displayed styles.
  *
  * @access {public}
- * @param  {node}   el     Target DOM node
+ * @param  {DOMElement}   el     Target DOM node
  * @param  {string|object} Assoc array of property->value or string property
  * @example {Helper.css(node,} { display : 'none' });
  * @example {Helper.css(node,} 'display', 'none');

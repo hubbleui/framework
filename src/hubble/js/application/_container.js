@@ -1,4 +1,3 @@
-
 (function(window)
 {
     const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
@@ -148,6 +147,72 @@
                 return valObj.value;
             }
         }
+
+        /**
+         * Get data value with key
+         *
+         * @access {public}
+         * @param  {string} key The data key
+         * @param  {mixed}  ... Any additional parameters to pass to the constructor (optional) (default null)
+         * @return {mixed}      The data value
+         */
+        import(names)
+        {
+            const _this   = this;
+            const _import = {};
+
+            _import.from = function(module)
+            {
+                const _rets = [];
+
+                const _context = _this.get(module);
+
+                for (var i = 0; i < names.length; i++)
+                {
+                    const mixedVar = _context[names[i]];
+
+                    _rets.push(_this._is_func(mixedVar) ? _this.bind(_context[names[i]], _context) : mixedVar);
+
+                }
+
+                return _rets;
+            };
+
+            return _import;
+        }
+
+        bind(callback, context)
+        {
+            context = typeof context === 'undefined' ? window : context;
+
+            const bound = function()
+            {
+                return callback.apply(context, arguments);
+            }
+
+            Object.defineProperty(bound, 'name', { value: callback.name });
+
+            bound.__isBound      = true;
+            bound.__boundContext = context;
+            bound.__origional    = callback;
+
+            return bound;
+        }
+
+
+        /*import(['foo', 'member2','alias2']).from('Helper');
+        import('*').from('Helper');
+        
+        export_default(fooFunction)
+        {
+
+        }
+
+        export('{ funct1, func2 }')
+        {
+
+        }*/
+
 
         /**
          * Sets the key as a prototype method
