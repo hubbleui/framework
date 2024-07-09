@@ -30,6 +30,16 @@
     }
 }
 
+// Placeholder
+@mixin placeholder
+{
+    &::placeholder               {@content}
+    &::-webkit-input-placeholder {@content}
+    &:-moz-placeholder           {@content}
+    &::-moz-placeholder          {@content}
+    &:-ms-input-placeholder      {@content}  
+}
+
 // Color mixing
 @function _lighter($color, $percentage)
 {

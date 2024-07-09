@@ -7,33 +7,14 @@
  */
 input_value(input)
 {
-    if (input.type == "checkbox")
+    if (input.type == "number" || this.is_numeric(input.value))
     {
-        var val = '';
-
-        var checks = this.$All('input[name=' + input.name + ']');
-
-        for (var i = 0, len = checks.length; i < len; i++)
-        {
-            if (checks[i].checked)
-            {
-                val += checks[i].value + ', ';
-            }
-        }
-
-        return this.rtrim(val, ', ');
+        return input.value.includes('.') ? parseInt(input.value) : parseFloat(input.value);
     }
-
-    if (input.type == "number")
-    {
-        return parseInt(input.value);
-    }
-
     if (input.type == "select")
     {
         return input.options[input.selectedIndex].value;
     }
-
     if (input.type == "file")
     {
         if (input.multiple == true)

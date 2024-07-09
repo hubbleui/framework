@@ -953,8 +953,6 @@ var Chain = function()
         window.Container = container;
     }
 
-    console.log(Container);
-
 })(window);
 (function()
 {
@@ -1121,11 +1119,11 @@ var Chain = function()
          * @access {public}
          * @param {string} name Name of the module (optional) (default false)
          */
-        refresh(module)
+        refresh(_module)
         {
-            module = (typeof module === 'undefined' ? false : module);
+            _module = (typeof _module === 'undefined' ? false : _module);
 
-            if (module)
+            if (_module)
             {
                 for (var key in this._modules)
                 {
@@ -1134,7 +1132,7 @@ var Chain = function()
                         continue;
                     }
 
-                    if (module === key)
+                    if (_module === key)
                     {
                         this._unbindModule(key);
 
@@ -1184,12 +1182,12 @@ var Chain = function()
          * @access {private}
          */
         _unbindModule(key)
-        {
-            var module = Container.get(key);
+        {            
+            var _module = Container.get(key);
 
-            if (this._hasMethod(module, 'destruct'))
+            if (this._hasMethod(_module, 'destruct'))
             {
-                module.destruct();
+                _module.destruct();
             }
 
             Container.delete(key);
@@ -1220,7 +1218,7 @@ var Chain = function()
          * @access {private}
          */
         _bindModule(key)
-        {
+        {            
             Container.singleton(key, this._modules[key], true);
         }
 
@@ -1772,6 +1770,39 @@ const CSS_EASINGS =
 };
 
 	/**
+ * Array of HTML events
+ *
+ * @var {array}
+ */
+const DOC_EVENTS = Object.getOwnPropertyNames(document).concat(Object.getOwnPropertyNames(Object.getPrototypeOf(Object.getPrototypeOf(document)))).concat(Object.getOwnPropertyNames(Object.getPrototypeOf(window))).filter(function(i){return !i.indexOf('on')&&(document[i]==null||typeof document[i]=='function');}).filter(function(elem, pos, self){return self.indexOf(elem) == pos;}).map((x) => x.replace('on', '').toLowerCase());
+	const BOOLEAN_ATTRS = 
+[
+	'allowfullscreen',
+	'async',
+	'autofocus',
+	'autoplay',
+	'checked',
+	'controls',
+	'default',
+	'defer',
+	'disabled',
+	'formnovalidate',
+	'inert',
+	'ismap',
+	'itemscope',
+	'loop',
+	'multiple',
+	'muted',
+	'nomodule',
+	'novalidate',
+	'open',
+	'playsinline',
+	'readonly',
+	'required',
+	'reversed',
+	'selected'
+];
+	/**
  * JavaScript helper library
  *
  * @author    {Joe J. Howard}
@@ -2069,6 +2100,12 @@ __animate_js(DOMElement, options)
             this.keyframes.push(this.generateKeyframe(index));
             
         }, this);
+
+        // Failsafe
+        if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== this.endValue)
+        {
+            this.keyframes.push({[this.CSSProperty]: this.endValue});
+        }
     }
 
     AnimateJS.prototype.generateKeyframe = function(index, transformIndex)
@@ -2998,11 +3035,13 @@ attr(DOMElement, name, value)
         this.each(name, function(prop, value)
         {
             this.attr(DOMElement, prop, value);
+
         }, this);
 
         return;
     }
 
+    // Set or remove attibute.
     switch (name)
     {
         // innerHTML
@@ -3124,6 +3163,43 @@ attr(DOMElement, name, value)
             break;
     }
 }
+
+/**
+ * Simple get html attribute.
+ *
+ * No third arg returns attribute value, third arg set to null or false removes attribute.
+ * 
+ * @access {private}
+ * @param  {HTMLElement}      DOMElement  Dom node
+ * @param  {string}           name        Property name
+ * @return {string|undefined}
+ */
+__getAttribute(DOMElement, name)
+{
+    if (name.startsWith('data'))
+    {
+        name = name.startsWith('data-') ? this.to_camel_case(name.substring(5)) : name.substring(4);
+
+        return DOMElement.dataset[name];
+    }
+
+    // Special booleans
+    if (this.in_array(name, BOOLEAN_ATTRS))
+    {
+        if (DOMElement[name] === '' || DOMElement[name] === 'true' || DOMElement[name] === true) return true;
+
+        return DOMElement[name] === 'false' || !DOMElement[name] ? false : true;
+    }
+
+    let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
+    let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
+    let retCamel   = DOMElement[camelName];
+    let retAttr    = DOMElement.getAttribute(hyphenName);
+
+    return retAttr === null || this.is_undefined(retAttr) ? retCamel : retAttr;
+}
+
+
 		/**
  * Set, get or remove CSS value(s) on element.
  * 
@@ -4143,21 +4219,7 @@ first_children(el)
  */
 form_inputs(form)
 {
-    var allInputs = this.$All('input, textarea, select', form);
-
-    var i = allInputs.length;
-
-    while (i--)
-    {
-        var input = allInputs[i];
-
-        if (input.type == "radio" && input.checked !== true)
-        {
-            allInputs.splice(i, 1);
-        }
-    }
-
-    return allInputs;
+    return this.$All('input, textarea, select', form);
 }
 		/**
  * Get an array of name/value objects for all inputs in a form
@@ -4168,33 +4230,33 @@ form_inputs(form)
  */
 form_values(form)
 {
-    let inputs = this.form_inputs(form);
-    let ret    = {};
-
+    var inputs = this.form_inputs(form);
+    var ret    = {};
+    
     this.each(inputs, function(i, input)
     {
         let name = input.name;
 
-        if (input.type === 'radio' && input.checked == false)
+        if (input.type === 'radio')
         {
-
+            if (this.attr(input, 'checked')) ret[name] = this.input_value(input);
         }
         else if (input.type === 'checkbox')
         {
-            ret[name] = (input.checked == true);
+            ret[name] = this.attr(input, 'checked');
         }
-        if (name.indexOf('[]') > -1)
+        else
         {
-            if (!ret[name])
+            ret[name] = this.input_value(input);
+        }
+        if (name.includes('[]'))
+        {
+            if (!ret[name] || !this.is_array(ret[name]))
             {
                 ret[name] = [];
             }
 
             ret[name].push(this.input_value(input));
-        }
-        else
-        {
-            ret[name] = this.input_value(input);
         }
 
     }, this);
@@ -4326,33 +4388,14 @@ inner_Text(el, text)
  */
 input_value(input)
 {
-    if (input.type == "checkbox")
+    if (input.type == "number" || this.is_numeric(input.value))
     {
-        var val = '';
-
-        var checks = this.$All('input[name=' + input.name + ']');
-
-        for (var i = 0, len = checks.length; i < len; i++)
-        {
-            if (checks[i].checked)
-            {
-                val += checks[i].value + ', ';
-            }
-        }
-
-        return this.rtrim(val, ', ');
+        return input.value.includes('.') ? parseInt(input.value) : parseFloat(input.value);
     }
-
-    if (input.type == "number")
-    {
-        return parseInt(input.value);
-    }
-
     if (input.type == "select")
     {
         return input.options[input.selectedIndex].value;
     }
-
     if (input.type == "file")
     {
         if (input.multiple == true)
@@ -4722,25 +4765,64 @@ toggle_class(el, className)
     }
 }
 		/**
- * Triggers a native event on an element
+ * Triggers an event on an element
  *
  * @access {public}
- * @param  {DOMElement}   el   Target element
- * @param  {string} type Valid event name
+ * @param  {DOMElement}   DOMElement   Target element
+ * @param  {string}       eventName    Event name
+ * @param  {mixed}        data         Extra data to pass to custom events 
  */
-trigger_event(el, type)
+trigger_event(DOMElement, eventName, data)
 {
-    if ('createEvent' in document)
+    if (this.in_array(eventName.toLowerCase(), DOC_EVENTS))
     {
-        var evt = document.createEvent("HTMLEvents");
+        if ('createEvent' in document)
+        {
+            var evt = document.createEvent('HTMLEvents');
 
-        evt.initEvent(type, false, true);
+            evt.initEvent(eventName, false, true);
 
-        el.dispatchEvent(evt);
+            DOMElement.dispatchEvent(evt);
+        }
+        else
+        {
+            DOMElement.fireEvent(eventName);
+        }
     }
     else
     {
-        el.fireEvent(type);
+        if (this.is_object(data))
+        {
+            data = this.array_merge(data, { DOMElement: DOMElement, name: eventName });
+        }
+        else if (!this.is_undefined(data))
+        {
+            data = { DOMElement: DOMElement, name: eventName, state: data };
+        }
+
+        const event = new CustomEvent(eventName, { detail: data });
+
+        DOMElement.dispatchEvent(event);
+
+        if (eventName.includes(':'))
+        {
+            var events = eventName.split(':').slice(0, -1);
+            var base   = events.shift();
+            var conut  = events.length + 1;
+
+            this.for(conut, function(i)
+            {
+                let subevent = i === (conut -1) ? base : `${base}:${events.join(':')}`;
+
+                data.name = eventName;
+
+                const evt = new CustomEvent(subevent, { detail: data });
+
+                DOMElement.dispatchEvent(evt);
+
+                events.pop();
+            });
+        }
     }
 }
 		/**
@@ -4801,13 +4883,28 @@ addEventListener(element, eventName, handler, useCapture)
     // Arrays
     if (this.is_array(element))
     {
-        for (var i = 0; i < element.length; i++)
+        this.each(element, function(i, el)
         {
-            this.addEventListener(element[i], eventName, handler, useCapture);
-        }
+            this.addEventListener(el, eventName, handler, useCapture);
+
+        }, this);
     }
     else
     {
+        // If event has a comma or is an array we're doing multiple events
+        if (this.is_array(eventName) || eventName.includes(','))
+        {
+            let eventsArr = this.is_array(eventName) ? eventName : eventName.split(',').map((x) => x.trim()).filter((x) => x !== '');
+
+            this.each(eventsArr, function(i, event)
+            {
+                this.addEventListener(element, event, handler, useCapture);
+                
+            }, this);
+
+            return;
+        }
+
         // Push the details to the events object
         events[eventName].push(
         {
@@ -4970,52 +5067,69 @@ eventListeners(DOMElement, eventName)
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)
  */
-removeEventListener(element, eventName, handler, useCapture)
+removeEventListener(DOMElement, eventName, callback, usecapture)
 {
-    if (this.is_array(element))
+    if (this.is_array(DOMElement))
     {
-        for (var j = 0; j < element.length; j++)
+        this.each(DOMElement, function(i, el)
         {
-            this.removeEventListener(element[j], eventName, handler, useCapture);
-        }
+            this.removeEventListener(el, eventName, callback, usecapture);
+        
+        }, this);
     }
     else
     {
         // If the eventName name was not provided - remove all event handlers on element
         if (!eventName)
         {
-            return this.__removeElementListeners(element);
+            return this.__removeElementListeners(DOMElement);
+        }
+
+        // If event has a comma or is an array we're doing multiple events
+        if (this.is_array(eventName) || eventName.includes(','))
+        {
+            let eventsArr = this.is_array(eventName) ? eventName : eventName.split(',').map((x) => x.trim()).filter((x) => x !== '');
+
+            this.each(eventsArr, function(i, event)
+            {
+                this.removeEventListener(DOMElement, event, callback, usecapture);
+
+            }, this);
+
+            return;
         }
 
         // If the callback was not provided - remove all events of the type on the element
-        if (!handler)
+        if (!callback)
         {
-            return this.__removeElementTypeListeners(element, eventName);
+            return this.__removeElementTypeListeners(DOMElement, eventName);
         }
 
         // Default use capture
-        useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
+        usecapture = typeof usecapture === 'undefined' ? false : Boolean(usecapture);
 
-        var eventObj = this._events[eventName];
-
-        if (typeof eventObj === 'undefined')
+        // No events to remove
+        if (!this._events[eventName])
         {
             return;
         }
 
         // Loop stored events and match node, event name, handler, use capture
-        for (var i = 0, len = eventObj.length; i < len; i++)
+        this.each(this._events[eventName], function(i, event)
         {
-            if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
+            if (event.handler === callback && event.useCapture === usecapture && event.element === DOMElement)
             {
-                this.__removeListener(element, eventName, handler, useCapture);
+                this.__removeListener(DOMElement, eventName, callback, usecapture);
+
                 this._events[eventName].splice(i, 1);
-                break;
+                
+                // Break only remove first
+                return false;
             }
-        }
+        
+        }, this);
     }
 }
-
 
 /**
  * Removes all registered event listners on an element
@@ -5023,22 +5137,24 @@ removeEventListener(element, eventName, handler, useCapture)
  * @access {private}
  * @param  {DOMElement}    element Target node element
  */
-__removeElementListeners(element)
+__removeElementListeners(DOMElement)
 {
-    var events = this._events;
-    for (var eventName in events)
+    this.each(this._events, function(type, events)
     {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
+        this._events[type] = this.map(events, function(i, event)
         {
-            if (eventObj[i]['element'] === element)
+            if (event.element === DOMElement)
             {
-                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-                this._events[eventName].splice(i, 1);
+                this.__removeListener(DOMElement, type, event.handler, event.useCapture);
+                
+                return false;
             }
-        }
-    }
+
+            return event;
+        
+        }, this);
+
+    }, this);
 }
 
 /**
@@ -5048,22 +5164,21 @@ __removeElementListeners(element)
  * @param  {DOMElement}    element Target node element
  * @param  {string}  type    Event listener type
  */
-__removeElementTypeListeners(element, type)
+__removeElementTypeListeners(DOMElement, type)
 {
-    var eventObj = this._events[type];
-    var i = eventObj.length;
-    while (i--)
+    this._events[type] = this.map(this._events[type], function(i, event)
     {
-        if (eventObj[i]['element'] === element)
+        if (event.element === DOMElement)
         {
-            this.__removeListener(eventObj[i]['element'], type, eventObj[i]['handler'], eventObj[i]['useCapture']);
-
-            this._events[type].splice(i, 1);
+            this.__removeListener(DOMElement, type, event.handler, event.useCapture);
+            
+            return false;
         }
-    }
+
+        return event;
+    
+    }, this);
 }
-
-
 
 /**
  * Removes a listener from the element
@@ -8684,14 +8799,7 @@ console.log(Container.get('Helper'));
                 if (callbackEvent === eventName)
                 {
                     var callback   = this._callbacks[key].callback;
-                    var _this      = null;
-
-                    if (args.length >= 1)
-                    {
-                        _this = args[0];
-
-                        args.shift();
-                    }
+                    var _this      = this._callbacks[key].thisArg;
 
                     callback.apply(_this, args);
                 }
@@ -8705,7 +8813,7 @@ console.log(Container.get('Helper'));
          * @param {callback}  func   The callback function
          * @access {public}
          */
-        on(eventName, callback)
+        on(eventName, callback, thisArg)
         {
             // Make sure the function is unique - unless it is ananonymous
             var callbackName = this._getFnName(callback);
@@ -8722,6 +8830,7 @@ console.log(Container.get('Helper'));
             {
                 name: eventName,
                 callback: callback,
+                thisArg : thisArg
             };
         }
 
@@ -8907,861 +9016,98 @@ console.log(Container.get('Helper'));
 
 }());
 
-/**
- * InputMasker
- *
- * @see {https://github.com/text-mask/text-mask/tree/master/vanilla}
- */
 (function()
 {
     /**
-     * JS Helper reference
+     * Cached helper functions.
      * 
-     * @see {https://github.com/text-mask/text-mask/tree/master/vanilla}
+     * @var {functions}
      */
-    ! function(e, r)
-    {
-        "object" == typeof exports && "object" == typeof module ? module.exports = r() : "function" == typeof define && define.amd ? define([], r) : "object" == typeof exports ? exports.vanillaTextMask = r() : e.vanillaTextMask = r()
-    }(this, function()
-    {
-        return function(e)
-        {
-            function r(n)
-            {
-                if (t[n]) return t[n].exports;
-                var o = t[n] = {
-                    exports:
-                    {},
-                    id: n,
-                    loaded: !1
-                };
-                return e[n].call(o.exports, o, o.exports, r), o.loaded = !0, o.exports
-            }
-            var t = {};
-            return r.m = e, r.c = t, r.p = "", r(0)
-        }([function(e, r, t)
-        {
-            "use strict";
-
-            function n(e)
-            {
-                return e && e.__esModule ? e :
-                {
-                    default: e
-                }
-            }
-
-            function o(e)
-            {
-                var r = e.inputElement,
-                    t = (0, u.default)(e),
-                    n = function(e)
-                    {
-                        var r = e.target.value;
-                        return t.update(r)
-                    };
-                return r.addEventListener("input", n), t.update(r.value),
-                {
-                    textMaskInputElement: t,
-                    _destroy: function()
-                    {
-                        r.removeEventListener("input", n)
-                    }
-                }
-            }
-            Object.defineProperty(r, "__esModule",
-            {
-                value: !0
-            }), r.conformToMask = void 0, r.maskInput = o;
-            var i = t(2);
-            Object.defineProperty(r, "conformToMask",
-            {
-                enumerable: !0,
-                get: function()
-                {
-                    return n(i).default
-                }
-            });
-            var a = t(5),
-                u = n(a);
-            r.default = o
-        }, function(e, r)
-        {
-            "use strict";
-            Object.defineProperty(r, "__esModule",
-            {
-                value: !0
-            }), r.placeholderChar = "_", r.strFunction = "function"
-        }, function(e, r, t)
-        {
-            "use strict";
-
-            function n()
-            {
-                var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : l,
-                    r = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : u,
-                    t = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] :
-                    {};
-                if (!(0, i.isArray)(r))
-                {
-                    if (("undefined" == typeof r ? "undefined" : o(r)) !== a.strFunction) throw new Error("Text-mask:conformToMask; The mask property must be an array.");
-                    r = r(e, t), r = (0, i.processCaretTraps)(r).maskWithoutCaretTraps
-                }
-                var n = t.guide,
-                    s = void 0 === n || n,
-                    f = t.previousConformedValue,
-                    d = void 0 === f ? l : f,
-                    c = t.placeholderChar,
-                    p = void 0 === c ? a.placeholderChar : c,
-                    v = t.placeholder,
-                    h = void 0 === v ? (0, i.convertMaskToPlaceholder)(r, p) : v,
-                    m = t.currentCaretPosition,
-                    y = t.keepCharPositions,
-                    g = s === !1 && void 0 !== d,
-                    b = e.length,
-                    C = d.length,
-                    k = h.length,
-                    x = r.length,
-                    P = b - C,
-                    T = P > 0,
-                    O = m + (T ? -P : 0),
-                    M = O + Math.abs(P);
-                if (y === !0 && !T)
-                {
-                    for (var w = l, S = O; S < M; S++) h[S] === p && (w += p);
-                    e = e.slice(0, O) + w + e.slice(O, b)
-                }
-                for (var _ = e.split(l).map(function(e, r)
-                    {
-                        return {
-                            char: e,
-                            isNew: r >= O && r < M
-                        }
-                    }), j = b - 1; j >= 0; j--)
-                {
-                    var V = _[j].char;
-                    if (V !== p)
-                    {
-                        var A = j >= O && C === x;
-                        V === h[A ? j - P : j] && _.splice(j, 1)
-                    }
-                }
-                var E = l,
-                    N = !1;
-                e: for (var F = 0; F < k; F++)
-                {
-                    var I = h[F];
-                    if (I === p)
-                    {
-                        if (_.length > 0)
-                            for (; _.length > 0;)
-                            {
-                                var L = _.shift(),
-                                    R = L.char,
-                                    J = L.isNew;
-                                if (R === p && g !== !0)
-                                {
-                                    E += p;
-                                    continue e
-                                }
-                                if (r[F].test(R))
-                                {
-                                    if (y === !0 && J !== !1 && d !== l && s !== !1 && T)
-                                    {
-                                        for (var W = _.length, q = null, z = 0; z < W; z++)
-                                        {
-                                            var B = _[z];
-                                            if (B.char !== p && B.isNew === !1) break;
-                                            if (B.char === p)
-                                            {
-                                                q = z;
-                                                break
-                                            }
-                                        }
-                                        null !== q ? (E += R, _.splice(q, 1)) : F--
-                                    }
-                                    else E += R;
-                                    continue e
-                                }
-                                N = !0
-                            }
-                        g === !1 && (E += h.substr(F, k));
-                        break
-                    }
-                    E += I
-                }
-                if (g && T === !1)
-                {
-                    for (var D = null, G = 0; G < E.length; G++) h[G] === p && (D = G);
-                    E = null !== D ? E.substr(0, D + 1) : l
-                }
-                return {
-                    conformedValue: E,
-                    meta:
-                    {
-                        someCharsRejected: N
-                    }
-                }
-            }
-            Object.defineProperty(r, "__esModule",
-            {
-                value: !0
-            });
-            var o = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(e)
-            {
-                return typeof e
-            } : function(e)
-            {
-                return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e
-            };
-            r.default = n;
-            var i = t(3),
-                a = t(1),
-                u = [],
-                l = ""
-        }, function(e, r, t)
-        {
-            "use strict";
-
-            function n()
-            {
-                var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : s,
-                    r = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : l.placeholderChar;
-                if (!o(e)) throw new Error("Text-mask:convertMaskToPlaceholder; The mask property must be an array.");
-                if (e.indexOf(r) !== -1) throw new Error("Placeholder character must not be used as part of the mask. Please specify a character that is not present in your mask as your placeholder character.\n\n" + ("The placeholder character that was received is: " + JSON.stringify(r) + "\n\n") + ("The mask that was received is: " + JSON.stringify(e)));
-                return e.map(function(e)
-                {
-                    return e instanceof RegExp ? r : e
-                }).join("")
-            }
-
-            function o(e)
-            {
-                return Array.isArray && Array.isArray(e) || e instanceof Array
-            }
-
-            function i(e)
-            {
-                return "string" == typeof e || e instanceof String
-            }
-
-            function a(e)
-            {
-                return "number" == typeof e && void 0 === e.length && !isNaN(e)
-            }
-
-            function u(e)
-            {
-                for (var r = [], t = void 0; t = e.indexOf(f), t !== -1;) r.push(t), e.splice(t, 1);
-                return {
-                    maskWithoutCaretTraps: e,
-                    indexes: r
-                }
-            }
-            Object.defineProperty(r, "__esModule",
-            {
-                value: !0
-            }), r.convertMaskToPlaceholder = n, r.isArray = o, r.isString = i, r.isNumber = a, r.processCaretTraps = u;
-            var l = t(1),
-                s = [],
-                f = "[]"
-        }, function(e, r)
-        {
-            "use strict";
-
-            function t(e)
-            {
-                var r = e.previousConformedValue,
-                    t = void 0 === r ? o : r,
-                    i = e.previousPlaceholder,
-                    a = void 0 === i ? o : i,
-                    u = e.currentCaretPosition,
-                    l = void 0 === u ? 0 : u,
-                    s = e.conformedValue,
-                    f = e.rawValue,
-                    d = e.placeholderChar,
-                    c = e.placeholder,
-                    p = e.indexesOfPipedChars,
-                    v = void 0 === p ? n : p,
-                    h = e.caretTrapIndexes,
-                    m = void 0 === h ? n : h;
-                if (0 === l || !f.length) return 0;
-                var y = f.length,
-                    g = t.length,
-                    b = c.length,
-                    C = s.length,
-                    k = y - g,
-                    x = k > 0,
-                    P = 0 === g,
-                    T = k > 1 && !x && !P;
-                if (T) return l;
-                var O = x && (t === s || s === c),
-                    M = 0,
-                    w = void 0,
-                    S = void 0;
-                if (O) M = l - k;
-                else
-                {
-                    var _ = s.toLowerCase(),
-                        j = f.toLowerCase(),
-                        V = j.substr(0, l).split(o),
-                        A = V.filter(function(e)
-                        {
-                            return _.indexOf(e) !== -1
-                        });
-                    S = A[A.length - 1];
-                    var E = a.substr(0, A.length).split(o).filter(function(e)
-                        {
-                            return e !== d
-                        }).length,
-                        N = c.substr(0, A.length).split(o).filter(function(e)
-                        {
-                            return e !== d
-                        }).length,
-                        F = N !== E,
-                        I = void 0 !== a[A.length - 1] && void 0 !== c[A.length - 2] && a[A.length - 1] !== d && a[A.length - 1] !== c[A.length - 1] && a[A.length - 1] === c[A.length - 2];
-                    !x && (F || I) && E > 0 && c.indexOf(S) > -1 && void 0 !== f[l] && (w = !0, S = f[l]);
-                    for (var L = v.map(function(e)
-                        {
-                            return _[e]
-                        }), R = L.filter(function(e)
-                        {
-                            return e === S
-                        }).length, J = A.filter(function(e)
-                        {
-                            return e === S
-                        }).length, W = c.substr(0, c.indexOf(d)).split(o).filter(function(e, r)
-                        {
-                            return e === S && f[r] !== e
-                        }).length, q = W + J + R + (w ? 1 : 0), z = 0, B = 0; B < C; B++)
-                    {
-                        var D = _[B];
-                        if (M = B + 1, D === S && z++, z >= q) break
-                    }
-                }
-                if (x)
-                {
-                    for (var G = M, H = M; H <= b; H++)
-                        if (c[H] === d && (G = H), c[H] === d || m.indexOf(H) !== -1 || H === b) return G
-                }
-                else if (w)
-                {
-                    for (var K = M - 1; K >= 0; K--)
-                        if (s[K] === S || m.indexOf(K) !== -1 || 0 === K) return K
-                }
-                else
-                    for (var Q = M; Q >= 0; Q--)
-                        if (c[Q - 1] === d || m.indexOf(Q) !== -1 || 0 === Q) return Q
-            }
-            Object.defineProperty(r, "__esModule",
-            {
-                value: !0
-            }), r.default = t;
-            var n = [],
-                o = ""
-        }, function(e, r, t)
-        {
-            "use strict";
-
-            function n(e)
-            {
-                return e && e.__esModule ? e :
-                {
-                    default: e
-                }
-            }
-
-            function o(e)
-            {
-                var r = {
-                    previousConformedValue: void 0,
-                    previousPlaceholder: void 0
-                };
-                return {
-                    state: r,
-                    update: function(t)
-                    {
-                        var n = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : e,
-                            o = n.inputElement,
-                            s = n.mask,
-                            d = n.guide,
-                            m = n.pipe,
-                            g = n.placeholderChar,
-                            b = void 0 === g ? v.placeholderChar : g,
-                            C = n.keepCharPositions,
-                            k = void 0 !== C && C,
-                            x = n.showMask,
-                            P = void 0 !== x && x;
-                        if ("undefined" == typeof t && (t = o.value), t !== r.previousConformedValue)
-                        {
-                            ("undefined" == typeof s ? "undefined" : l(s)) === y && void 0 !== s.pipe && void 0 !== s.mask && (m = s.pipe, s = s.mask);
-                            var T = void 0,
-                                O = void 0;
-                            if (s instanceof Array && (T = (0, p.convertMaskToPlaceholder)(s, b)), s !== !1)
-                            {
-                                var M = a(t),
-                                    w = o.selectionEnd,
-                                    S = r.previousConformedValue,
-                                    _ = r.previousPlaceholder,
-                                    j = void 0;
-                                if (("undefined" == typeof s ? "undefined" : l(s)) === v.strFunction)
-                                {
-                                    if (O = s(M,
-                                        {
-                                            currentCaretPosition: w,
-                                            previousConformedValue: S,
-                                            placeholderChar: b
-                                        }), O === !1) return;
-                                    var V = (0, p.processCaretTraps)(O),
-                                        A = V.maskWithoutCaretTraps,
-                                        E = V.indexes;
-                                    O = A, j = E, T = (0, p.convertMaskToPlaceholder)(O, b)
-                                }
-                                else O = s;
-                                var N = {
-                                        previousConformedValue: S,
-                                        guide: d,
-                                        placeholderChar: b,
-                                        pipe: m,
-                                        placeholder: T,
-                                        currentCaretPosition: w,
-                                        keepCharPositions: k
-                                    },
-                                    F = (0, c.default)(M, O, N),
-                                    I = F.conformedValue,
-                                    L = ("undefined" == typeof m ? "undefined" : l(m)) === v.strFunction,
-                                    R = {};
-                                L && (R = m(I, u(
-                                {
-                                    rawValue: M
-                                }, N)), R === !1 ? R = {
-                                    value: S,
-                                    rejected: !0
-                                } : (0, p.isString)(R) && (R = {
-                                    value: R
-                                }));
-                                var J = L ? R.value : I,
-                                    W = (0, f.default)(
-                                    {
-                                        previousConformedValue: S,
-                                        previousPlaceholder: _,
-                                        conformedValue: J,
-                                        placeholder: T,
-                                        rawValue: M,
-                                        currentCaretPosition: w,
-                                        placeholderChar: b,
-                                        indexesOfPipedChars: R.indexesOfPipedChars,
-                                        caretTrapIndexes: j
-                                    }),
-                                    q = J === T && 0 === W,
-                                    z = P ? T : h,
-                                    B = q ? z : J;
-                                r.previousConformedValue = B, r.previousPlaceholder = T, o.value !== B && (o.value = B, i(o, W))
-                            }
-                        }
-                    }
-                }
-            }
-
-            function i(e, r)
-            {
-                document.activeElement === e && (g ? b(function()
-                {
-                    return e.setSelectionRange(r, r, m)
-                }, 0) : e.setSelectionRange(r, r, m))
-            }
-
-            function a(e)
-            {
-                if ((0, p.isString)(e)) return e;
-                if ((0, p.isNumber)(e)) return String(e);
-                if (void 0 === e || null === e) return h;
-                throw new Error("The 'value' provided to Text Mask needs to be a string or a number. The value received was:\n\n " + JSON.stringify(e))
-            }
-            Object.defineProperty(r, "__esModule",
-            {
-                value: !0
-            });
-            var u = Object.assign || function(e)
-                {
-                    for (var r = 1; r < arguments.length; r++)
-                    {
-                        var t = arguments[r];
-                        for (var n in t) Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n])
-                    }
-                    return e
-                },
-                l = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(e)
-                {
-                    return typeof e
-                } : function(e)
-                {
-                    return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e
-                };
-            r.default = o;
-            var s = t(4),
-                f = n(s),
-                d = t(2),
-                c = n(d),
-                p = t(3),
-                v = t(1),
-                h = "",
-                m = "none",
-                y = "object",
-                g = "undefined" != typeof navigator && /Android/i.test(navigator.userAgent),
-                b = "undefined" != typeof requestAnimationFrame ? requestAnimationFrame : setTimeout
-        }])
-    });
-
-    var vanillaMasker = vanillaTextMask;
-
-    window.vanillaTextMask = null;
+    const [addEventListener, removeEventListener, _map, is_regexp] = Container.import(['addEventListener', 'removeEventListener', 'map', 'is_regexp']).from('Helper');
 
     /**
-     * Reference to all applied masks
-     * 
-     * @var {array}
-     */
-    var _masks = [];
-
-    /**
-     * JS Helper reference
+     * Regex masks
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
+    const MASK_MAP = 
+    {
+        creditcard: /[0-9]/,
+        money: /[0-9.]/,
+        numeric: /[0-9]/,
+        numericdecimal: /[0-9.]/,
+        alphanumeric: /[A-z0-9-]/,
+        alphaspace: /[A-z ]/,
+        alphadash: /[A-z-]/,
+        alphanumericdash: /[A-z0-9-]/,
+    };
 
     /**
-     * Module constructor
+     * Credit card formatters.
+     * 
+     * @var {function}
+     */
+    const _format_464 = function(cc)
+    {
+        return [cc.substring(0,4),cc.substring(4,10),cc.substring(10,14)].join(' ').trim()
+    };
+    const _format_465 = function(cc)
+    {
+        return [cc.substring(0,4),cc.substring(4,10),cc.substring(10,15)].join(' ').trim()
+    };
+    const _format_4444 = function(cc)
+    {
+        return cc?cc.match(/[0-9]{1,4}/g).join(' '):''
+    };
+
+    /**
+     * Credit card formatting.
+     * 
+     * @var {object}
+     */
+    const _CARD_TYPES =
+    [
+        {'type':'visa','pattern':/^4/, 'format': _format_4444, 'maxlength': 19},
+        {'type':'master','pattern':/^((5[12345])|(2[2-7]))/, 'format': _format_4444, 'maxlength': 16},
+        {'type':'amex','pattern':/^3[47]/, 'format': _format_465, 'maxlength':15},
+        {'type':'jcb','pattern':/^35[2-8]/, 'format': _format_465, 'maxlength':19},
+        {'type':'maestro','pattern':/^(5018|5020|5038|5893|6304|6759|676[123])/, 'format': _format_4444, 'maxlength':19},
+        {'type':'discover','pattern':/^6[024]/, 'format': _format_4444, 'maxlength':19},
+        {'type':'instapayment','pattern':/^63[789]/, 'format': _format_4444, 'maxlength':16},
+        {'type':'diners_club','pattern':/^54/, 'format': _format_4444, 'maxlength':16},
+        {'type':'diners_club_international','pattern':/^36/, 'format': _format_464, 'maxlength':14},
+        {'type':'diners_club_carte_blanche','pattern':/^30[0-5]/, 'format': _format_464, 'maxlength':14}
+    ];    
+
+    /**
+     * InputMasker
      *
-     * @constructor
-     {*} @access public
      */
     class InputMasker
     {
-        constructor(element)
+        /**
+         * Module constructor
+         *
+         * @constructor
+         * @param       {DOMElement}  element  Input element
+         * @param       {string}      mask     Supported mask name or regex filter as string
+         * @param       {string}      format   Optional format e.g (xxxx-xxxx-xxxx-xxxx);
+         */
+        constructor(element, mask, format)
         {
-            this._element = element;
+            this.DOMElement = element;
 
-            this._mask = null;
+            this.maskRegexp = this._getMaskRegexp(mask);
+
+            this.format = !format ? null : this._buildFormatRegexp(format);
+
+            this.maskName = mask;
+
+            this.handler = function(){};
+
+            this._bind();
 
             return this;
-        }
-
-        /**
-         * Mask Credit Card
-         *
-         * @access {public}
-         */
-        creditcard()
-        {
-            var _mask = vanillaMasker.maskInput(
-            {
-                inputElement: this._element,
-                guide: false,
-                mask: [/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, ' ', /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]
-            });
-
-            _mask['_element'] = this._element;
-
-            _masks.push(_mask);
-        }
-
-        /**
-         * Mask money
-         *
-         * @access {public}
-         */
-        money()
-        {
-            var _filter = function(rawValue)
-            {
-                var mask = [];
-
-                if (rawValue.length > 1)
-                {
-                    for (var i = 0; i < rawValue.length; i++)
-                    {
-                        mask.push(/[0-9]|\./);
-                    }
-
-                    return mask;
-                }
-
-                return [/[0-9]/];
-            };
-
-            var _mask = vanillaMasker.maskInput(
-            {
-                inputElement: this._element,
-                guide: false,
-                mask: _filter
-            });
-
-            _mask['_element'] = this._element;
-
-            _masks.push(_mask);
-        }
-
-        /**
-         * Mask money
-         *
-         * @access {public}
-         */
-        numeric()
-        {
-            var _filter = function(rawValue)
-            {
-                var mask = [];
-
-                if (rawValue.length > 1)
-                {
-                    for (var i = 0; i < rawValue.length; i++)
-                    {
-                        mask.push(/[0-9]/);
-                    }
-
-                    return mask;
-                }
-
-                return [/[0-9]/];
-            };
-
-            var _mask = vanillaMasker.maskInput(
-            {
-                inputElement: this._element,
-                guide: false,
-                mask: _filter
-            });
-
-            _mask['_element'] = this._element;
-
-            _masks.push(_mask);
-        }
-
-        /**
-         * Mask numeric with decimals
-         *
-         * @access {public}
-         */
-        numericDecimal()
-        {
-            var _filter = function(rawValue)
-            {
-                var mask = [];
-
-                if (rawValue.length > 1)
-                {
-                    for (var i = 0; i < rawValue.length; i++)
-                    {
-                        mask.push(/[0-9]|\./);
-                    }
-
-                    return mask;
-                }
-
-                return [/[0-9]/];
-            };
-
-            var _mask = vanillaMasker.maskInput(
-            {
-                inputElement: this._element,
-                guide: false,
-                mask: _filter
-            });
-
-            _mask['_element'] = this._element;
-
-            _masks.push(_mask);
-        }
-
-        /**
-         * Mask alpha numeric
-         *
-         * @access {public}
-         */
-        alphaNumeric()
-        {
-            var _filter = function(rawValue)
-            {
-                var mask = [];
-
-                var regex = /[A-z0-9]/;
-
-                if (rawValue.length > 1)
-                {
-                    for (var i = 0; i < rawValue.length; i++)
-                    {
-                        mask.push(regex);
-                    }
-
-                    return mask;
-                }
-
-                return [regex];
-            };
-
-            var _mask = vanillaMasker.maskInput(
-            {
-                inputElement: this._element,
-                guide: false,
-                mask: _filter
-            });
-
-            _mask['_element'] = this._element;
-
-            _masks.push(_mask);
-        }
-
-        /**
-         * Mask alpha space
-         *
-         * @access {public}
-         */
-        alphaSpace()
-        {
-            var _filter = function(rawValue)
-            {
-                var mask = [];
-
-                var regex = /[A-z ]/;
-
-                if (rawValue.length > 1)
-                {
-                    for (var i = 0; i < rawValue.length; i++)
-                    {
-                        mask.push(regex);
-                    }
-
-                    return mask;
-                }
-
-                return [regex];
-            };
-
-            var _mask = vanillaMasker.maskInput(
-            {
-                inputElement: this._element,
-                guide: false,
-                mask: _filter
-            });
-
-            _mask['_element'] = this._element;
-
-            _masks.push(_mask);
-        }
-
-        /**
-         * Mask alpha dash
-         *
-         * @access {public}
-         */
-        alphaDash()
-        {
-            var _filter = function(rawValue)
-            {
-                var mask = [];
-
-                var regex = /[A-z-]/;
-
-                if (rawValue.length > 1)
-                {
-                    for (var i = 0; i < rawValue.length; i++)
-                    {
-                        mask.push(regex);
-                    }
-
-                    return mask;
-                }
-
-                return [regex];
-            };
-
-            var _mask = vanillaMasker.maskInput(
-            {
-                inputElement: this._element,
-                guide: false,
-                mask: _filter
-            });
-
-            _mask['_element'] = this._element;
-
-            _masks.push(_mask);
-        }
-
-        /**
-         * Mask alphanumeric dash
-         *
-         * @access {public}
-         */
-        alphaNumericDash()
-        {
-            var _filter = function(rawValue)
-            {
-                var mask = [];
-
-                var regex = /[A-z0-9-]/;
-
-                if (rawValue.length > 1)
-                {
-                    for (var i = 0; i < rawValue.length; i++)
-                    {
-                        mask.push(regex);
-                    }
-
-                    return mask;
-                }
-
-                return [regex];
-            };
-
-            var _mask = vanillaMasker.maskInput(
-            {
-                inputElement: this._element,
-                guide: false,
-                mask: _filter
-            });
-
-            _mask['_element'] = this._element;
-
-            _masks.push(_mask);
-        }
-
-        /**
-         * Mask custom regex
-         *
-         * @access {public}
-         * @param  {regex}  pattern The pattern regex to mask
-         */
-        regex(pattern)
-        {
-            var _filter = function(rawValue)
-            {
-                var mask = [];
-
-                if (rawValue.length > 1)
-                {
-                    for (var i = 0; i < rawValue.length; i++)
-                    {
-                        mask.push(pattern);
-                    }
-
-                    return mask;
-                }
-
-                return [pattern];
-            };
-
-            var _mask = vanillaMasker.maskInput(
-            {
-                inputElement: this._element,
-                guide: false,
-                mask: _filter
-            });
-
-            _mask['_element'] = this._element;
-
-            _masks.push(_mask);
         }
 
         /**
@@ -9769,17 +9115,163 @@ console.log(Container.get('Helper'));
          *
          * @access {public}
          */
-        remove()
+        destroy()
         {
-            for (var i = _masks.length - 1; i >= 0; i--)
-            {
-                if (_masks[i]['_element'] === this._element)
-                {
-                    _masks[i]._destroy();
+            removeEventListener(this.DOMElement, 'input', this.handler);
+            removeEventListener(this.DOMElement, 'paste', this.handler);
+        }
 
-                    _masks.splice(i, 1);
+        /**
+         * Binds input events.
+         *
+         * @access {private}
+         */
+        _bind()
+        {
+            var _this      = this;
+            var DOMElement = this.DOMElement;
+            var maskRegexp = this.maskRegexp;
+            var format     = this.format;
+            var isCC       = _this.maskName === 'creditcard';
+
+            const _handler = function(e)
+            {
+                e = e || window.event;
+
+                _this._handle(DOMElement, DOMElement.value, maskRegexp, isCC);
+            }
+
+            this.handler = _handler;
+
+            addEventListener(this.DOMElement, 'input', _handler);
+            addEventListener(this.DOMElement, 'paste', _handler);
+        }
+
+        /**
+         * Get or builds mask regexp.
+         *
+         * @access {private}
+         * @param  {string}  mask
+         * @return {RegExp}
+         */
+        _getMaskRegexp(mask)
+        {
+            if (is_regexp(mask)) return mask;
+            
+            let regexp = MASK_MAP[mask.replaceAll('-', '').toLowerCase()];
+
+            if (!regexp)
+            {
+                return new RegExp(mask);
+            }
+
+            return regexp;
+        }
+
+        /**
+         * Builds custom format values.
+         *
+         * @access {private}
+         * @param  {string}  format Formatting string
+         * @return {object}
+         */
+        _buildFormatRegexp(format)
+        {
+            let raw        = format;
+            let seperators = format.split('x').filter((x) => x !== '');
+            let regexp     = new RegExp(_map(format.split(/[^x]/), (i, x) => x.includes('x') ? `(.{0,${x.length}})` : false ).join(''));
+            let prefix     = format.startsWith('x') ? '' : seperators.shift();
+            let suffix     = format.endsWith('x') ? '' : seperators.pop();
+            let len        = (raw.length -suffix.length);
+
+            return { seperators, regexp, prefix, suffix, raw, len };
+        }
+        
+        /**
+         * Custom format function.
+         *
+         * @access {private}
+         * @param  {string}  str
+         * @return {str}
+         */
+        _formatFilter(str)
+        {
+            // Regex filter
+            str = _map(str.split(''), (x, char) => !this.maskRegexp.test(char) ? null : char ).join('');
+
+            // Ignore or no formatting
+            if (str === '' || !this.format) return str;
+
+            // Cache seperators
+            let { seperators, regexp, prefix, suffix, raw, len } = this.format;
+
+            let splits = _map(str.match(regexp).slice(1), (i, str) => str === '' ? false : str);
+            let mapped = _map(splits, function(i, match)
+            {
+                return i === 0 ? prefix + match : seperators[i-1] + match;
+                
+            }).join('');
+
+            if (mapped.length === len)
+            {
+                mapped += suffix;
+            }
+
+            return mapped;
+        }
+
+        /**
+         * Sepcial handler for creditcard
+         *
+         * @access {private}
+         */
+        _formatCC(cc)
+        {           
+            cc = cc.replaceAll(/[^0-9]/g, '');
+
+            for(var i in _CARD_TYPES)
+            {
+                const ct = _CARD_TYPES[i];
+
+                if (cc.match(ct.pattern))
+                {
+                    cc = cc.substring(0, ct.maxlength)
+                    
+                    return ct.format(cc);
                 }
             }
+
+            cc = cc.substring(0,19);
+
+            return _format_4444(cc);
+        }
+
+        /**
+         * Handles input event
+         *
+         * @access {private}
+         * @param  {DOMElement} DOMElement
+         * @param  {string}     oldval     
+         * @param  {RegExp}     maskRegexp 
+         * @param  {bool}       isCC 
+         */
+        _handle(DOMElement, oldval, maskRegexp, isCC)
+        {
+            // Filter
+            let newVal = isCC ? this._formatCC(oldval) : this._formatFilter(oldval);
+
+            // Ignore no change
+            if (newVal == oldval) return;
+
+            // Set position and format
+            var pos          = DOMElement.selectionStart;
+            var before_caret = oldval.substring(0, pos);
+            before_caret     = isCC ? this._formatCC(oldval) : this._formatFilter(before_caret);
+            pos              = before_caret.length;
+            
+            DOMElement.value = newVal;
+            DOMElement.focus();
+            DOMElement.setSelectionRange(pos,pos);
         }
     }
 
@@ -11453,47 +10945,140 @@ function abort()
 
 })();
 
-/**
- * FormValidator
- *
- * This class is used to validate a form and 
- * also apply and classes to display form results and input errors.
- *
- */
+
 (function()
 {
-
     /**
      * @var {Helper} obj
      */
     const Helper = Container.Helper();
 
     /**
-     * Module constructor
+     * Validator functions
      *
-     * @class
-     {*} @constructor
-     * @param {form} node
-     * @access {public}
-     * @return {this}
+     * @access {private}
+     * @return {boolean}
+     */
+    const VALIDATORS = 
+    {
+        email: function(value)
+        {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(value);
+        },
+        name: function(value)
+        {
+            var re = /^[A-z _-]+$/;
+            return re.test(value);
+        },
+        numeric: function(value)
+        {
+            var re = /^[\d]+$/;
+            return re.test(value);
+        },
+        password: function(value)
+        {
+            var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
+            return re.test(value);
+        },
+        url: function(value)
+        {
+            re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+            return re.test(value);
+        },
+        alpha: function(value)
+        {
+            var re = /^[A-z _-]+$/;
+            return re.test(value);
+        },
+        alphanumeric: function(value)
+        {
+            var re = /^[A-z0-9]+$/;
+            return re.test(value);
+        },
+        list: function(value)
+        {
+            var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
+
+            return re.test(value);
+        },
+        creditcard: function(value)
+        {
+            /*Amex Card: ^3[47][0-9]{13}$
+            BCGlobal: ^(6541|6556)[0-9]{12}$
+            Carte Blanche Card: ^389[0-9]{11}$
+            Diners Club Card: ^3(?:0[0-5]|[68][0-9])[0-9]{11}$
+            Discover Card: ^65[4-9][0-9]{13}|64[4-9][0-9]{13}|6011[0-9]{12}|(622(?:12[6-9]|1[3-9][0-9]|[2-8][0-9][0-9]|9[01][0-9]|92[0-5])[0-9]{10})$
+            Insta Payment Card: ^63[7-9][0-9]{13}$
+            JCB Card: ^(?:2131|1800|35\d{3})\d{11}$
+            KoreanLocalCard: ^9[0-9]{15}$
+            Laser Card: ^(6304|6706|6709|6771)[0-9]{12,15}$
+            Maestro Card: ^(5018|5020|5038|6304|6759|6761|6763)[0-9]{8,15}$
+            Mastercard: ^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$
+            Solo Card: ^(6334|6767)[0-9]{12}|(6334|6767)[0-9]{14}|(6334|6767)[0-9]{15}$
+            Switch Card: ^(4903|4905|4911|4936|6333|6759)[0-9]{12}|(4903|4905|4911|4936|6333|6759)[0-9]{14}|(4903|4905|4911|4936|6333|6759)[0-9]{15}|564182[0-9]{10}|564182[0-9]{12}|564182[0-9]{13}|633110[0-9]{10}|633110[0-9]{12}|633110[0-9]{13}$
+            Union Pay Card: ^(62[0-9]{14,17})$
+            Visa Card: ^4[0-9]{12}(?:[0-9]{3})?$
+            Visa Master Card: ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})$*/
+
+            var arr = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+            var ccNum = String(value).replace(/[- ]/g, '');
+
+            var
+                len = ccNum.length,
+                bit = 1,
+                sum = 0,
+                val;
+
+            while (len)
+            {
+                val = parseInt(ccNum.charAt(--len), 10);
+                sum += (bit ^= 1) ? arr[val] : val;
+            }
+
+            return sum && sum % 10 === 0;
+        },
+        minlength: function(value, min)
+        {
+            return value.length >= min;
+        },
+        maxlength: function(value, max)
+        {
+            return value.length <= max;
+        }
+    };
+
+    /**
+     * FormValidator
+     *
+     * This class is used to validate a form and 
+     * also apply and classes to display form results and input errors.
+     *
      */
     class FormValidator
     {
+        /**
+         * Module constructor
+         *
+         * @class
+         * @param  {DOMElement} form
+         * @access {public}
+         * @return {this}
+         */
         constructor(form)
         {
             // Save inputs
-            this._form = form;
+            this._DOMElementForm = form;
+            this._DOMElementsFormFields = Helper.$All('.form-field', form);
             this._inputs = Helper.form_inputs(form);
 
             // Defaults
             this._rulesIndex = [];
-            this._invalids = [];
-            this._formObj = {};
-            this._nameIndex = {};
-            this._validForm = true;
+            this._invalids   = [];
+            this._formObj    = {};
 
             // Initialize
-            this._indexInputs();
+            this._indexValidations();
 
             return this;
         }
@@ -11520,12 +11105,12 @@ function abort()
         {
             this._clearForm();
 
-            // Show the invalid inputs
-            for (var j = 0; j < this._invalids.length; j++)
+            Helper.each(this._invalids, function(i, input)
             {
-                var __wrap = Helper.closest(this._invalids[j], '.form-field');
-                if (Helper.in_dom(__wrap)) Helper.add_class(__wrap, 'danger');
-            }
+                var fieldWrap = Helper.closest(input, '.form-field');
+
+                if (Helper.in_dom(fieldWrap)) Helper.add_class(fieldWrap, 'danger');
+            });
         }
 
         /**
@@ -11546,7 +11131,8 @@ function abort()
         showResult(result)
         {
             this._clearForm();
-            Helper.add_class(this._form, result);
+
+            Helper.add_class(this._DOMElementForm, result);
         }
 
         /**
@@ -11558,7 +11144,10 @@ function abort()
         append(key, value)
         {
             this._formObj[key] = value;
-            return this._generateForm();
+
+            let form = this.form();
+
+            return {...form, ...this._formObj};
         };
 
         /**
@@ -11569,7 +11158,7 @@ function abort()
          */
         form()
         {
-            return this._generateForm();
+            return Helper.form_values(this._DOMElementForm);
         }
 
         // PRIVATE FUNCTIONS
@@ -11579,23 +11168,40 @@ function abort()
          *
          * @access {public}
          */
-        _indexInputs()
+        _indexValidations()
         {
-            for (var i = 0; i < this._inputs.length; i++)
+            Helper.each(this._inputs, function(i, input)
             {
-                if (!this._inputs[i].name) continue;
-                var name = this._inputs[i].name;
-                this._nameIndex[name] = this._inputs[i];
+                // No name
+                if (!input.name) return;
+
                 this._rulesIndex.push(
                 {
-                    node: this._inputs[i],
-                    isRequired: this._inputs[i].dataset.jsRequired || null,
-                    validationMinLength: this._inputs[i].dataset.jsMinLegnth || null,
-                    validationMaxLength: this._inputs[i].dataset.jsMaxLegnth || null,
-                    validationType: this._inputs[i].dataset.jsValidation || null,
-                    isValid: true,
+                    node:       input,
+                    required:   Helper.bool(Helper.attr(input, 'data-js-required')),
+                    minlength:  Helper.attr(input, 'data-js-min-length'),
+                    maxlength:  Helper.attr(input, 'data-js-max-length'),
+                    validation: this._validationFunc(Helper.attr(input, 'data-js-validation')),
+                    valid:      true,
                 });
-            }
+
+            }, this);
+        }
+
+        /**
+         * Index form inputs by name and rules
+         *
+         * @access {public}
+         */
+        _validationFunc(name)
+        {
+            if (!name) return;
+
+            let key = name.replaceAll('-', '').toLowerCase();
+
+            if (!VALIDATORS[key]) throw new error(`Unsupported input validation [${name}].`)
+
+            return VALIDATORS[key];
         }
 
         /**
@@ -11607,82 +11213,36 @@ function abort()
         _validateForm()
         {
             this._invalids = [];
-            this._validForm = true;
+            this._isValid  = true;
 
-            for (var i = 0; i < this._rulesIndex.length; i++)
+            Helper.each(this._rulesIndex, function(i, ruleset)
             {
+                let input = ruleset.node;
+                let value = Helper.input_value(ruleset.node);
 
-                this._rulesIndex[i].isValid = true;
+                // Skip radios, they don't have any validation
+                if (input.type === 'radio') return;
+                
+                if (ruleset.required && Helper.is_empty(value))
+                {
+                    this._devalidate(input);
+                }
+                else if (ruleset.minlength && !VALIDATORS.minlength.call(null, value, ruleset.minlength))
+                {
+                    this._devalidate(input);
+                }
+                else if (ruleset.maxlength && !VALIDATORS.maxlength.call(null, value, ruleset.maxlength))
+                {
+                    this._devalidate(input);
+                }
+                else if (Helper.is_callable(ruleset.validation) && !ruleset.validation.call(null, value))
+                {
+                    this._devalidate(input);
+                }
 
-                var pos = this._rulesIndex[i];
-                var value = Helper.input_value(pos.node);
+            }, this);
 
-                if (!pos.isRequired && value === '')
-                {
-                    continue;
-                }
-                else if (pos.isRequired && value.replace(/ /g, '') === '')
-                {
-                    this._devalidate(i);
-                }
-                else if (pos.validationMinLength && !this._validateMinLength(value, pos.validationMinLength))
-                {
-                    this._devalidate(i);
-                }
-                else if (pos.validationMaxLength && !this._validateMaxLength(value, pos.validationMaxLength))
-                {
-                    this._devalidate(i);
-                }
-                else if (pos.validationType)
-                {
-                    var isValid = true;
-                    if (pos.validationType === 'email') isValid = this._validateEmail(value);
-                    if (pos.validationType === 'name') isValid = this._validateName(value);
-                    if (pos.validationType === 'password') isValid = this._validatePassword(value);
-                    if (pos.validationType === 'creditcard') isValid = this._validateCreditCard(value);
-                    if (pos.validationType === 'url') isValid = this._validateUrl(value);
-                    if (pos.validationType === 'alpha') isValid = this.alpha(value);
-                    if (pos.validationType === 'numeric') isValid = this._validateNumeric(value);
-                    if (pos.validationType === 'list') isValid = this._validateList(value);
-                    if (!isValid) this._devalidate(i);
-                }
-            }
-
-            return this._validForm;
-        }
-
-        /**
-         * Generate the form object
-         *
-         * @access {private}
-         * @return {obj}
-         */
-        _generateForm()
-        {
-            for (var i = 0; i < this._inputs.length; i++)
-            {
-                var name = this._inputs[i].name;
-                var value = Helper.input_value(this._inputs[i]);
-                if (this._inputs[i].type === 'radio' && this._inputs[i].checked == false)
-                {
-                    continue;
-                }
-                if (this._inputs[i].type === 'checkbox')
-                {
-                    this._formObj[name] = (this._inputs[i].checked == true);
-                    continue;
-                }
-                if (name.indexOf('[]') > -1)
-                {
-                    if (!this._formObj[name]) this._formObj[name] = [];
-                    this._formObj[name].push(value);
-                }
-                else
-                {
-                    this._formObj[name] = value;
-                }
-            }
-            return this._formObj;
+            return this._isValid;
         }
 
         /**
@@ -11691,11 +11251,11 @@ function abort()
          * @access {private}
          * @return {obj}
          */
-        _devalidate(i)
+        _devalidate(node)
         {
-            this._rulesIndex[i].isValid = false;
-            this._validForm = false;
-            this._invalids.push(this._rulesIndex[i].node);
+            this._isValid = false;
+
+            this._invalids.push(node);
         }
 
         /**
@@ -11704,92 +11264,15 @@ function abort()
          * @access {private}
          * @return {obj}
          */
-        _clearForm(i)
+        _clearForm()
         {
             // Remove the form result
-            Helper.remove_class(this._form, ['info', 'success', 'warning', 'danger']);
+            Helper.remove_class(this._DOMElementForm, ['info', 'success', 'warning', 'danger']);
 
             // Make all input elements 'valid' - i.e hide the error msg and styles.
-            for (var i = 0; i < this._inputs.length; i++)
-            {
-                var _wrap = Helper.closest(this._inputs[i], '.form-field');
-                if (Helper.in_dom(_wrap)) Helper.remove_class(_wrap, ['info', 'success', 'warning', 'danger'])
-            }
+            Helper.remove_class(this._DOMElementsFormFields, ['info', 'success', 'warning', 'danger']);
         }
-
-        /**
-         * Private validator methods
-         *
-         * @access {private}
-         * @return {boolean}
-         */
-        _validateEmail(value)
-        {
-            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(value);
-        }
-        _validateName(value)
-        {
-            var re = /^[A-z _-]+$/;
-            return re.test(value);
-        }
-        _validateNumeric(value)
-        {
-            var re = /^[\d]+$/;
-            return re.test(value);
-        }
-        _validatePassword(value)
-        {
-            var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
-            return re.test(value);
-        }
-        _validateUrl(value)
-        {
-            re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
-            return re.test(value);
-        }
-        _validateMinLength(value, min)
-        {
-            return value.length >= min;
-        }
-        _validateMaxLength(value, max)
-        {
-            return value.length <= max;
-        }
-        _validateAplha(value)
-        {
-            var re = /^[A-z _-]+$/;
-            return re.test(value);
-        }
-        _validateAplhaNumeric(value)
-        {
-            var re = /^[A-z0-9]+$/;
-            return re.test(value);
-        }
-        _validateList(value)
-        {
-            var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
-            return re.test(value);
-        }
-        _validateCreditCard(value)
-        {
-            var arr = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-            var ccNum = String(value).replace(/[- ]/g, '');
-
-            var
-                len = ccNum.length,
-                bit = 1,
-                sum = 0,
-                val;
-
-            while (len)
-            {
-                val = parseInt(ccNum.charAt(--len), 10);
-                sum += (bit ^= 1) ? arr[val] : val;
-            }
-
-            return sum && sum % 10 === 0;
-        }
+        
     }
 
     // Load into container
@@ -13120,7 +12603,7 @@ function abort()
 
 (function()
 {
-    const [$, $All, addEventListener, animate_css, bool, has_class, is_node_type, removeEventListener, toggle_class] = Container.import(['$','$All','addEventListener','animate_css','bool','has_class','is_node_type','removeEventListener','toggle_class']).from('Helper');
+    const [$, $All, addEventListener, animate_css, bool, has_class, is_node_type, removeEventListener, toggle_class, trigger_event] = Container.import(['$','$All','addEventListener','animate_css','bool','has_class','is_node_type','removeEventListener','toggle_class','trigger_event']).from('Helper');
 
     /**
      * Toggle height on click
@@ -13203,13 +12686,18 @@ function abort()
             var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
             var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
             var opacity  = bool(clicked.dataset.withOpacity);
+            var closing  = has_class(clicked, 'active');
+
+            trigger_event(targetEl, 'collapse:toggle', closing ? 'close' : 'open');
+
             var options  = 
             {
                 property: 'height',
-                to: has_class(clicked, 'active') ? '0px' : 'auto',
-                from: has_class(clicked, 'active') ? 'auto' : '0px',
+                to: closing ? '0px' : 'auto',
+                from: closing ? 'auto' : '0px',
                 duration: duration, 
-                easing: easing
+                easing: easing,
+                callback: () => { trigger_event(targetEl, 'collapse:toggled', closing ? 'close' : 'open'); }
             };
 
             animate_css(targetEl, options);
@@ -13219,6 +12707,98 @@ function abort()
 
     // Load into Hubble DOM core
     Hubble.dom().register('Collapse', Collapse);
+
+}());
+
+(function()
+{
+    const [$, $All, addEventListener, removeEventListener, has_class, add_class, remove_class, closest, trigger_event] = Container.import(['$', '$All', 'addEventListener', 'removeEventListener', 'has_class', 'add_class', 'remove_class', 'closest', 'trigger_event']).from('Helper');
+
+    /**
+     * Toggle active on lists
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    class Lists
+    {
+        /**
+         * Module constructor
+         *
+         * @access {public}
+         * @constructor
+         */
+    	constructor()
+        {
+            /**
+             * Array of click-triggers
+             * 
+             * @var {array}
+             */
+            this._nodes = $All('.js-select-list > li');
+
+            this._bind();
+
+            return this;
+        }
+
+        /**
+         * Module destructor
+         *
+         * @access {public}
+         */
+        destruct()
+        {
+            this._unbind();
+
+            this._nodes = [];
+        }
+
+        /**
+         * Event binder - Binds all events on button click
+         *
+         * @access {private}
+         */
+        _bind()
+        {            
+            addEventListener(this._nodes, 'click', this._eventHandler);
+        }
+
+        /**
+         * Event unbinder - Removes all events on button click
+         *
+         * @access {private}
+         */
+        _unbind()
+        {
+            removeEventListener(this._nodes, 'click', this._eventHandler);
+        }
+
+        /**
+         * Handle the click event
+         *
+         * @param {event|null} e JavaScript click event
+         * @access {private}
+         */
+        _eventHandler(e)
+        {
+            e = e || window.event;
+            
+            if (has_class(this, 'selected')) return;
+
+            var list = closest(this, '.js-select-list');
+
+            remove_class($('li.selected', list), 'selected');
+            
+            add_class(this, 'selected');
+
+            trigger_event(list, 'list:selected', {item: this});
+        }
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Lists', Lists);
 
 }());
 
@@ -14471,22 +14051,14 @@ function abort()
          * Module constructor
          *
          * @constructor
-         {*} @access public
          */
     	constructor()
         {
-            // Private
-            this._nodes_money = [];
-            this._nodes_creditcard = [];
-            this._nodes_numeric = [];
-            this._nodes_numericDecimal = [];
-            this._nodes_alphaNumeric = [];
-            this._nodes_alphaSpace = [];
-            this._nodes_alphaDash = [];
-            this._nodes_AlphaNumericDash = [];
+            this._nodes = Helper.$All('.js-mask');
+            
+            this._masks = [];
 
-            // Constructor
-            this._invoke();
+            this._bind();
 
             return this;
         }
@@ -14498,22 +14070,14 @@ function abort()
          */
         destruct()
         {
-            this._loopUnBind(this._nodes_money);
-            this._loopUnBind(this._nodes_creditcard);
-            this._loopUnBind(this._nodes_numeric);
-            this._loopUnBind(this._nodes_numericDecimal);
-            this._loopUnBind(this._nodes_alphaNumeric);
-            this._loopUnBind(this._nodes_alphaSpace);
-            this._loopUnBind(this._nodes_alphaDash);
-            this._loopUnBind(this._nodes_AlphaNumericDash);
-            this._nodes_money = [];
-            this._nodes_creditcard = [];
-            this._nodes_numeric = [];
-            this._nodes_numericDecimal = [];
-            this._nodes_alphaNumeric = [];
-            this._nodes_alphaSpace = [];
-            this._nodes_alphaDash = [];
-            this._nodes_AlphaNumericDash = [];
+            Helper.each(this._masks, function(i, mask)
+            {
+                mask.destroy();
+            });
+            
+            this._nodes = [];
+
+            this._masks = [];
         }
 
         /**
@@ -14521,76 +14085,26 @@ function abort()
          *
          * @access {private}
          */
-        _invoke()
+        _bind()
         {
             // Find all the nodes
-            this._nodes_money = Helper.$All('.js-mask-money');
-            this._nodes_creditcard = Helper.$All('.js-mask-creditcard');
-            this._nodes_numeric = Helper.$All('.js-mask-numeric');
-            this._nodes_numericDecimal = Helper.$All('.js-mask-numeric-decimal');
-            this._nodes_alphaNumeric = Helper.$All('.js-mask-alpha-numeric');
-            this._nodes_alphaSpace = Helper.$All('.js-mask-alpha-space');
-            this._nodes_alphaDash = Helper.$All('.js-mask-alpha-dash');
-            this._nodes_AlphaNumericDash = Helper.$All('.js-mask-alpha-numeric-dash');
+            Helper.each(this._nodes, function(i, input)
+            {
+                let mask = Helper.attr(input, 'data-mask');
 
-            if (!Helper.is_empty(this._nodes_money))
-            {
-                this._loopBind(this._nodes_money, 'money');
-            }
-            if (!Helper.is_empty(this._nodes_creditcard))
-            {
-                this._loopBind(this._nodes_creditcard, 'creditcard');
-            }
-            if (!Helper.is_empty(this._nodes_numeric))
-            {
-                this._loopBind(this._nodes_numeric, 'numeric');
-            }
-            if (!Helper.is_empty(this._nodes_numericDecimal))
-            {
-                this._loopBind(this._nodes_numericDecimal, 'numericDecimal');
-            }
-            if (!Helper.is_empty(this._nodes_alphaNumeric))
-            {
-                this._loopBind(this._nodes_alphaNumeric, 'alphaNumeric');
-            }
-            if (!Helper.is_empty(this._nodes_alphaSpace))
-            {
-                this._loopBind(this._nodes_alphaSpace, 'alphaSpace');
-            }
-            if (!Helper.is_empty(this._nodes_alphaDash))
-            {
-                this._loopBind(this._nodes_alphaDash, 'alphaDash');
-            }
-            if (!Helper.is_empty(this._nodes_AlphaNumericDash))
-            {
-                this._loopBind(this._nodes_AlphaNumericDash, 'alphaNumericDash');
-            }
-        }
+                let format = Helper.attr(input, 'data-format');
 
-        /**
-         * Loop and bind masks to DOM LIST
-         *
-         * @access {private}
-         */
-        _loopBind(nodes, mask)
-        {
-            for (var i = 0; i < nodes.length; i++)
-            {
-                Container.get('InputMasker', nodes[i])[mask]();
-            }
-        }
+                if (mask && mask.startsWith('regex('))
+                {
+                    mask = mask.trim().replace('regex(', '').slice(0, -1);
+                }
 
-        /**
-         * Loop and unbind masks to DOM LIST
-         *
-         * @access {private}
-         */
-        _loopUnBind(nodes)
-        {
-            for (var i = 0; i < nodes.length; i++)
-            {
-                Container.get('InputMasker', nodes[i]).remove();
-            }
+                if (mask)
+                {
+                    this._masks.push(Container.InputMasker(input, mask, format));
+                }
+
+            }, this);
         }
     }
 
@@ -14680,7 +14194,10 @@ function abort()
 
             e.preventDefault();
 
-            var toRemove = Helper.closest(this, '.msg');
+            let msg      = Helper.closest(this, '.msg');
+            let toRemove = msg;
+
+            Helper.trigger_event(msg, 'message:close');
 
             if (Helper.has_class(this, 'js-rmv-parent'))
             {
@@ -14688,7 +14205,9 @@ function abort()
             }
 
             Helper.animate_css(toRemove, { opacity: 0, duration: 500, easing: 'easeInOutCubic', callback: function()
-            {                
+            {
+                Helper.trigger_event(msg, 'message:closed');
+
                 Helper.remove_from_dom(toRemove);
             }});
         }
@@ -14912,14 +14431,9 @@ function abort()
          * @access {private}
          */
         _bind()
-        {
+        {            
             Helper.addEventListener(this._labels, 'click', this._onLabelClick);
-            Helper.addEventListener(this._inputs, 'click', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'focus', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'blur', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'change', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'input', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'hover', this._eventHandler);
+            Helper.addEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
         }
 
         /**
@@ -14929,13 +14443,8 @@ function abort()
          */
         _unbind()
         {
-            Helper.removeEventListener(this._labels, 'click', this._onLabelClick);
-            Helper.removeEventListener(this._inputs, 'click', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'focus', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'blur', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'change', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'input', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'hover', this._eventHandler);
+            Helper.removeEventListener(this._labels, 'click',  this._onLabelClick);
+            Helper.removeEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
         }
 
         /**
@@ -14986,17 +14495,19 @@ function abort()
         {
             e = e || window.event;
 
+            var wrapper = Helper.closest(this, '.form-field');
+
             if (e.type === 'click')
             {
                 this.focus();
             }
             else if (e.type === 'focus')
             {
-                Helper.add_class(this.parentNode, 'focus');
+                Helper.add_class(wrapper, 'focus');
             }
             else if (e.type === 'blur')
             {
-                Helper.remove_class(this.parentNode, 'focus');
+                Helper.remove_class(wrapper, 'focus');
             }
 
             if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
@@ -15005,13 +14516,13 @@ function abort()
 
                 if (_value === '')
                 {
-                    Helper.remove_class(this.parentNode, 'not-empty');
-                    Helper.add_class(this.parentNode, 'empty');
+                    Helper.remove_class(wrapper, 'not-empty');
+                    Helper.add_class(wrapper, 'empty');
                 }
                 else
                 {
-                    Helper.remove_class(this.parentNode, 'empty');
-                    Helper.add_class(this.parentNode, 'not-empty');
+                    Helper.remove_class(wrapper, 'empty');
+                    Helper.add_class(wrapper, 'not-empty');
                 }
             }
         }
@@ -15799,7 +15310,7 @@ function abort()
     /**
      * @var {obj}
      */
-    const _ = Container.Helper();
+    const [$, $All, add_class, addEventListener, animate, array_merge, css, each, in_dom, is_empty, is_object, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'animate', 'array_merge', 'css', 'each', 'in_dom', 'is_empty', 'is_object', 'remove_class', 'removeEventListener']).from('Helper');
 
     /**
      * Cached so we can throttle later.
@@ -15846,12 +15357,12 @@ function abort()
          */
         constructor()
         {
-            this._DOMElementopenBtns  = _.$All('.js-backdrop-open-trigger');
-            this._DOMElementCloseBtns = _.$All('.js-backdrop-close-trigger');
-            this._DOMElementBackdrop  = _.$('.js-backdrop-wrapper');
-            this._DOMElementPageWrap  = _.$('.js-backdrop-page-wrapper');
+            this._DOMElementopenBtns  = $All('.js-backdrop-open-trigger');
+            this._DOMElementCloseBtns = $All('.js-backdrop-close-trigger');
+            this._DOMElementBackdrop  = $('.js-backdrop-wrapper');
+            this._DOMElementPageWrap  = $('.js-backdrop-page-wrapper');
             
-            if (!_.is_empty(this._DOMElementopenBtns))
+            if (!is_empty(this._DOMElementopenBtns))
             {
                 this._bind();
             }
@@ -15882,9 +15393,9 @@ function abort()
          */
         _bind()
         {
-            _.addEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
+            addEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
 
-            _.addEventListener(this._DOMElementCloseBtns, 'click', this.close);
+            addEventListener(this._DOMElementCloseBtns, 'click', this.close);
         }
 
         /**
@@ -15894,11 +15405,11 @@ function abort()
          */
         _unbind()
         {
-            _.removeEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
+            removeEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
 
-            _.removeEventListener(this._DOMElementCloseBtns, 'click', this.close);
+            removeEventListener(this._DOMElementCloseBtns, 'click', this.close);
 
-            _.removeEventListener(window, 'resize', RESIZE_HANDLER);
+            removeEventListener(window, 'resize', RESIZE_HANDLER);
 
             this._DOMElementopenBtns = [];
 
@@ -15916,11 +15427,11 @@ function abort()
             const DOMElementBackdrop = this._DOMElementBackdrop;
             const DOMElementPageWrap = this._DOMElementPageWrap;
 
-            if (!_.in_dom(this._DOMElementBackdrop))
+            if (!in_dom(this._DOMElementBackdrop))
             {
                 console.error('Backdrop Error: The backdrop wrapper was not found in the DOM.');
             }
-            else if (!_.in_dom(this._DOMElementPageWrap))
+            else if (!in_dom(this._DOMElementPageWrap))
             {
                 console.error('Backdrop Error: The backdrop page wrapper was not found in the DOM.');
             }
@@ -15936,46 +15447,45 @@ function abort()
             if (options) this._setOptions(options);
 
             // Set width and heights
-            _.css(DOMElementBackdrop, 'height', this.height);
-            _.css(DOMElementBackdrop, 'width', this.width);
-
-            // Make backdrop visible
-            _.add_class(DOMElementBackdrop, 'backdrop-open');
+            css(DOMElementBackdrop, 'height', this.height);
+            css(DOMElementBackdrop, 'width', this.width);
 
             // Push body down
             /*if (this.pushBody)
             {
-                _.add_class(this._DOMElementBackdrop, 'backdrop-open');
-                _.add_class(this._DOMElementBackdrop, 'backdrop-push-body');
+                add_class(this._DOMElementBackdrop, 'backdrop-open');
+                add_class(this._DOMElementBackdrop, 'backdrop-push-body');
 
-                _.animate_css(this._DOMElementBackdrop, { top: '0px', duration: 300 });
-                _.animate_css(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, duration: 300 });
+                animate_css(this._DOMElementBackdrop, { top: '0px', duration: 300 });
+                animate_css(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, duration: 300 });
             }*/
 
             // Set backdrop to position top, left, bottom, right
 
             // Push backdrop in
-            _.animate_css(DOMElementBackdrop, { 
+            animate(DOMElementBackdrop, { 
                 [this.direction]: { from: '-50px', to: '0px', duration: 350, easing: 'easeOutCirc'},
-                opacity:          { from: '0', to: '1', duration: 350, easing: 'easeOutCirc'}
+                opacity:          { from: '0', to: '1', duration: 600, easing: 'easeOutCirc'}
             });
 
+            // Make backdrop visible
+            setTimeout(function(){ add_class(DOMElementBackdrop, 'backdrop-open');}, 10);
         
             // No scrolling
             if (this.noScroll)
             {
-                _.add_class([document.documentElement, document.body], 'no-scroll');
+                add_class([document.documentElement, document.body], 'no-scroll');
             }
 
             /*
            
 
             // Open classes
-            _.add_class(this._DOMElementBackdrop, 'backdrop-open');
-            _.add_class(this._DOMElementPageWrap, 'backdrop-open');
+            add_class(this._DOMElementBackdrop, 'backdrop-open');
+            add_class(this._DOMElementPageWrap, 'backdrop-open');
 
             // Resize handler
-            _.addEventListener(window, 'resize', RESIZE_HANDLER);*/
+            addEventListener(window, 'resize', RESIZE_HANDLER);*/
             
             this._fireOpen();
         }
@@ -15990,17 +15500,17 @@ function abort()
         {
             if (this.pushBody)
             {
-                /*_.animate_css(this._DOMElementBackdrop, { transform: `translateY(0)`});
-                _.animate_css(this._DOMElementPageWrap, { transform: `translateY(0)`});*/
+                /*animate_css(this._DOMElementBackdrop, { transform: `translateY(0)`});
+                animate_css(this._DOMElementPageWrap, { transform: `translateY(0)`});*/
             }
             else
             {
 
             }
 
-            /*_.remove_class(this._DOMElementBackdrop, ['backdrop-push-body', 'backdrop-open']);
-            _.remove_class(this._DOMElementPageWrap, 'backdrop-open');
-            _.remove_class([document.documentElement, document.body], 'no-scroll');*/
+            /*remove_class(this._DOMElementBackdrop, ['backdrop-push-body', 'backdrop-open']);
+            remove_class(this._DOMElementPageWrap, 'backdrop-open');
+            remove_class([document.documentElement, document.body], 'no-scroll');*/
 
             if (this._fireValidateClose())
             {
@@ -16018,7 +15528,7 @@ function abort()
         {
             if (this.pushBody)
             {
-                //_.css(this._DOMElementPageWrap, 'transform', `translateY(${_.height(this._DOMElementBackdrop)}px)`);
+                //css(this._DOMElementPageWrap, 'transform', `translateY(${height(this._DOMElementBackdrop)}px)`);
             }
         }
 
@@ -16030,9 +15540,9 @@ function abort()
          */
         _setOptions(options)
         {
-            options = _.is_object(options) ? _.array_merge({}, DEFAULTS, options) : _.array_merge({}, DEFAULTS);
+            options = is_object(options) ? array_merge({}, DEFAULTS, options) : array_merge({}, DEFAULTS);
 
-            _.each(options, function(k, v)
+            each(options, function(k, v)
             {
                 this[k] = v;
 

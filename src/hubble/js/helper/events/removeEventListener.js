@@ -11,52 +11,69 @@
  * @param  {closure} handler    Callback event
  * @param  {bool}    useCapture Use capture (optional) (defaul false)
  */
-removeEventListener(element, eventName, handler, useCapture)
+removeEventListener(DOMElement, eventName, callback, usecapture)
 {
-    if (this.is_array(element))
+    if (this.is_array(DOMElement))
     {
-        for (var j = 0; j < element.length; j++)
+        this.each(DOMElement, function(i, el)
         {
-            this.removeEventListener(element[j], eventName, handler, useCapture);
-        }
+            this.removeEventListener(el, eventName, callback, usecapture);
+        
+        }, this);
     }
     else
     {
         // If the eventName name was not provided - remove all event handlers on element
         if (!eventName)
         {
-            return this.__removeElementListeners(element);
+            return this.__removeElementListeners(DOMElement);
+        }
+
+        // If event has a comma or is an array we're doing multiple events
+        if (this.is_array(eventName) || eventName.includes(','))
+        {
+            let eventsArr = this.is_array(eventName) ? eventName : eventName.split(',').map((x) => x.trim()).filter((x) => x !== '');
+
+            this.each(eventsArr, function(i, event)
+            {
+                this.removeEventListener(DOMElement, event, callback, usecapture);
+
+            }, this);
+
+            return;
         }
 
         // If the callback was not provided - remove all events of the type on the element
-        if (!handler)
+        if (!callback)
         {
-            return this.__removeElementTypeListeners(element, eventName);
+            return this.__removeElementTypeListeners(DOMElement, eventName);
         }
 
         // Default use capture
-        useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
+        usecapture = typeof usecapture === 'undefined' ? false : Boolean(usecapture);
 
-        var eventObj = this._events[eventName];
-
-        if (typeof eventObj === 'undefined')
+        // No events to remove
+        if (!this._events[eventName])
         {
             return;
         }
 
         // Loop stored events and match node, event name, handler, use capture
-        for (var i = 0, len = eventObj.length; i < len; i++)
+        this.each(this._events[eventName], function(i, event)
         {
-            if (eventObj[i]['handler'] === handler && eventObj[i]['useCapture'] === useCapture && eventObj[i]['element'] === element)
+            if (event.handler === callback && event.useCapture === usecapture && event.element === DOMElement)
             {
-                this.__removeListener(element, eventName, handler, useCapture);
+                this.__removeListener(DOMElement, eventName, callback, usecapture);
+
                 this._events[eventName].splice(i, 1);
-                break;
+                
+                // Break only remove first
+                return false;
             }
-        }
+        
+        }, this);
     }
 }
-
 
 /**
  * Removes all registered event listners on an element
@@ -64,22 +81,24 @@ removeEventListener(element, eventName, handler, useCapture)
  * @access {private}
  * @param  {DOMElement}    element Target node element
  */
-__removeElementListeners(element)
+__removeElementListeners(DOMElement)
 {
-    var events = this._events;
-    for (var eventName in events)
+    this.each(this._events, function(type, events)
     {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
+        this._events[type] = this.map(events, function(i, event)
         {
-            if (eventObj[i]['element'] === element)
+            if (event.element === DOMElement)
             {
-                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-                this._events[eventName].splice(i, 1);
+                this.__removeListener(DOMElement, type, event.handler, event.useCapture);
+                
+                return false;
             }
-        }
-    }
+
+            return event;
+        
+        }, this);
+
+    }, this);
 }
 
 /**
@@ -89,22 +108,21 @@ __removeElementListeners(element)
  * @param  {DOMElement}    element Target node element
  * @param  {string}  type    Event listener type
  */
-__removeElementTypeListeners(element, type)
+__removeElementTypeListeners(DOMElement, type)
 {
-    var eventObj = this._events[type];
-    var i = eventObj.length;
-    while (i--)
+    this._events[type] = this.map(this._events[type], function(i, event)
     {
-        if (eventObj[i]['element'] === element)
+        if (event.element === DOMElement)
         {
-            this.__removeListener(eventObj[i]['element'], type, eventObj[i]['handler'], eventObj[i]['useCapture']);
-
-            this._events[type].splice(i, 1);
+            this.__removeListener(DOMElement, type, event.handler, event.useCapture);
+            
+            return false;
         }
-    }
+
+        return event;
+    
+    }, this);
 }
-
-
 
 /**
  * Removes a listener from the element

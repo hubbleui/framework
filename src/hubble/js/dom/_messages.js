@@ -79,7 +79,10 @@
 
             e.preventDefault();
 
-            var toRemove = Helper.closest(this, '.msg');
+            let msg      = Helper.closest(this, '.msg');
+            let toRemove = msg;
+
+            Helper.trigger_event(msg, 'message:close');
 
             if (Helper.has_class(this, 'js-rmv-parent'))
             {
@@ -87,7 +90,9 @@
             }
 
             Helper.animate_css(toRemove, { opacity: 0, duration: 500, easing: 'easeInOutCubic', callback: function()
-            {                
+            {
+                Helper.trigger_event(msg, 'message:closed');
+
                 Helper.remove_from_dom(toRemove);
             }});
         }

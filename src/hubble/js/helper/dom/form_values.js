@@ -7,33 +7,33 @@
  */
 form_values(form)
 {
-    let inputs = this.form_inputs(form);
-    let ret    = {};
-
+    var inputs = this.form_inputs(form);
+    var ret    = {};
+    
     this.each(inputs, function(i, input)
     {
         let name = input.name;
 
-        if (input.type === 'radio' && input.checked == false)
+        if (input.type === 'radio')
         {
-
+            if (this.attr(input, 'checked')) ret[name] = this.input_value(input);
         }
         else if (input.type === 'checkbox')
         {
-            ret[name] = (input.checked == true);
+            ret[name] = this.attr(input, 'checked');
         }
-        if (name.indexOf('[]') > -1)
+        else
         {
-            if (!ret[name])
+            ret[name] = this.input_value(input);
+        }
+        if (name.includes('[]'))
+        {
+            if (!ret[name] || !this.is_array(ret[name]))
             {
                 ret[name] = [];
             }
 
             ret[name].push(this.input_value(input));
-        }
-        else
-        {
-            ret[name] = this.input_value(input);
         }
 
     }, this);

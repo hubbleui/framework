@@ -1,113 +1,119 @@
-input[type=checkbox].switch
+.switch
 {
-    display: none;
+    --hb-switch-size :#{$switch-size};
+    --hb-switch-track-color-off :#{$switch-track-color-off};
+    --hb-switch-track-color-on :#{$switch-track-color-on};
+    --hb-switch-knob-color-off :#{$switch-knob-color-off};
+    --hb-switch-knob-color-on :#{$switch-knob-color-on};
 
-    + label
+    input[type=checkbox]
     {
-        position: relative;
-        display: inline-block;
-        padding-left: 46px;
-        cursor: pointer;
-        &:before, 
-        &:after
+        display: none;
+
+        + label
         {
-            content: "";
-            position: absolute;
-            margin: 0;
-            top: 50%;
-            outline: none;
-            transform: translate(0, -50%);
-            transition: all 0.3s ease;
-        }
-        &:before
-        {
-            background-color: $gray;
-            left: 1px;
-            width: 34px;
-            height: 14px;
-            border-radius: 8px;
-        }
-        &:after
-        {
-            left: 0;
-            width: 20px;
-            height: 20px;
-            background-color: #fff;
-            border-radius: 50%;
-            box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084);
-        }
-        .toggle-on
-        {
-            display: none;
-        }
-        .toggle-off
-        {
+            position: relative;
             display: inline-block;
+            padding-left: calc(var(--hb-switch-size) * 2.3);
+            cursor: pointer;
+            &:before, 
+            &:after
+            {
+                content: "";
+                position: absolute;
+                margin: 0;
+                top: 50%;
+                outline: none;
+                transform: translate(0, -50%);
+                transition: all 0.15s ease-in-out;
+            }
+            &:before
+            {
+                background-color: var(--hb-switch-track-color-off);
+                left: 1px;
+                width: calc(var(--hb-switch-size) * 1.7);
+                height: calc(var(--hb-switch-size) * 0.7);;
+                border-radius: 8px;
+            }
+            &:after
+            {
+                left: 0;
+                width: var(--hb-switch-size);
+                height: var(--hb-switch-size);
+                background-color: var(--hb-switch-knob-color-off);
+                border-radius: 50%;
+                box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084);
+            }
+            .toggle-on
+            {
+                display: none;
+            }
+            .toggle-off
+            {
+                display: inline-block;
+            }
+        }
+        &:checked + label
+        {
+            &:before
+            {
+                background-color: var(--hb-switch-track-color-on);
+            }
+            &:after
+            {
+                background-color: var(--hb-switch-knob-color-on);
+                transform: translate(80%, -50%);
+            }
+            .toggle-on
+            {
+                display: inline-block;
+            }
+            .toggle-off
+            {
+                display: none;
+            }
         }
     }
-    &:checked + label
+
+    // Disabled
+    &.disabled label,
+    input[type="checkbox"]:disabled + label
     {
-        &:before
-        {
-            background-color: var(--hb-gray-300);
-        }
-        &:after
-        {
-            background-color: var(--hb-gray-500);
-            transform: translate(80%, -50%);
-        }
-        .toggle-on
-        {
-            display: inline-block;
-        }
-        .toggle-off
-        {
-            display: none;
-        }
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+     // Sizing
+    &.switch-sm
+    {
+        --hb-switch-size: #{$switch-size * 0.75};
+    }
+    &.switch-md
+    {
+        --hb-switch-size: #{$switch-size * 0.95};
+    }
+    &.switch-lg
+    {
+        --hb-switch-size: #{$switch-size * 1.2};
     }
 }
 
 // Variants
-@mixin _switch($color)
+// Variants
+@mixin _checkbox($color)
 {
-    &:checked + label
-    {
-        &:before
-        {
-            background-color: _lighter($color, 20%);
-        }
-        &:after
-        {
-            background-color: $color;
-        }
-    }
+    $light: _color-name-from-var($color) + '-200';
+    $medium: _color-name-from-var($color) + '-300';
+
+    --hb-switch-track-color-off:  var(--hb-#{$light});
+    --hb-switch-track-color-on: var(--hb-#{$medium});
+    --hb-switch-knob-color-on :#{$color};
+
 }
 
-input[type=checkbox].switch
-{
-    &.switch-primary
+@each $context, $colors in $contexts
+{    
+    .switch.switch-#{$context}
     {
-        @include _switch($brand-primary);
+        @include _checkbox( map-get($colors, "color") );
     }
-    &.switch-secondary
-    {
-        @include _switch($brand-secondary);
-    }
-    &.switch-info
-    {
-        @include _switch($brand-info);
-    }
-    &.switch-success
-    {
-        @include _switch($brand-success);
-    }
-    &.switch-warning
-    {
-        @include _switch($brand-warning);
-    }
-    &.switch-danger
-    {
-        @include _switch($brand-danger);
-    }
-
 }

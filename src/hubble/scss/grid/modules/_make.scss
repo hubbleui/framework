@@ -14,8 +14,6 @@
     @include _make-flex-cols($curr-grid, $prev-grid);
     /* #{$commentName} Gutters */
     @include _make-gutters($curr-grid, $prev-grid);
-    /* #{$commentName} Roofs */
-    @include _make-roofs($curr-grid, $prev-grid);
-    /* #{$commentName} Floors */
-    @include _make-floors($curr-grid, $prev-grid);
+    /* #{$commentName} Poles */
+    @include _make-poles($curr-grid, $prev-grid);
 }

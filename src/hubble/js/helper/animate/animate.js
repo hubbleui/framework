@@ -280,6 +280,12 @@ __animate_js(DOMElement, options)
             this.keyframes.push(this.generateKeyframe(index));
             
         }, this);
+
+        // Failsafe
+        if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== this.endValue)
+        {
+            this.keyframes.push({[this.CSSProperty]: this.endValue});
+        }
     }
 
     AnimateJS.prototype.generateKeyframe = function(index, transformIndex)

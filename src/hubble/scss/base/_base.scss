@@ -32,8 +32,12 @@ input, select, label, button, textarea
 {
     font-family: var(--hb-base-font-family);
     font-size:   var(--hb-base-font-size);
-    color:       var(--hb-body-bg);
+    color:       var(--hb-body-color);
     @include _font-smooth;
+}
+input[type="hidden"]
+{
+    display: none !important;
 }
 // Links
 a

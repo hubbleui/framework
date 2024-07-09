@@ -30,13 +30,28 @@ addEventListener(element, eventName, handler, useCapture)
     // Arrays
     if (this.is_array(element))
     {
-        for (var i = 0; i < element.length; i++)
+        this.each(element, function(i, el)
         {
-            this.addEventListener(element[i], eventName, handler, useCapture);
-        }
+            this.addEventListener(el, eventName, handler, useCapture);
+
+        }, this);
     }
     else
     {
+        // If event has a comma or is an array we're doing multiple events
+        if (this.is_array(eventName) || eventName.includes(','))
+        {
+            let eventsArr = this.is_array(eventName) ? eventName : eventName.split(',').map((x) => x.trim()).filter((x) => x !== '');
+
+            this.each(eventsArr, function(i, event)
+            {
+                this.addEventListener(element, event, handler, useCapture);
+                
+            }, this);
+
+            return;
+        }
+
         // Push the details to the events object
         events[eventName].push(
         {

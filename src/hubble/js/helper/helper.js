@@ -5,6 +5,8 @@
 	@import 'object/constants.js';
 	@import 'animate/constants.js';
 	@import 'animate/easings.js';
+	@import 'dom/constants.js';
+	@import 'attributes/constants.js';
 	@import 'open.js';
 		@import 'animate/animate.js';
 		@import 'animate/animate_css.js';

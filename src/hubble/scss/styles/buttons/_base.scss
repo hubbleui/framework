@@ -12,8 +12,8 @@
     --hb-btn-border-radius: #{$border-radius};
     --hb-btn-font-size: #{$btn-font-size};
     --hb-btn-line-height: #{$btn-font-size};
-    --hb-btn-bg-color: var(--hb-gray-200);
-    --hb-btn-color: var(--hb-gray-700);
+    --hb-btn-bg-color: #{$btn-base-bg};
+    --hb-btn-color: #{$btn-base-color};
     --hb-btn-font-weight: #{$btn-font-weight};
     --hb-btn-text-transform: #{$btn-text-transform};
     --hb-btn-white-space: nowrap;
@@ -27,14 +27,15 @@
     --hb-btn-loader-color: var(--hb-btn-color);
     --hb-btn-icon-color: inherit;
     --hb-btn-box-shadow: none;
+    --hb-btn-transition: none;
+
     // Hover
-    --hb-btn-color-hover: var(--hb-gray-700);
-    --hb-btn-bg-color-hover:var(--hb-gray-300);
-    --hb-btn-box-shadow-hover: none;
+    --hb-btn-color-hover: #{$btn-base-color-hover};
+    --hb-btn-bg-color-hover: #{$btn-base-bg-hover};
+
     // Active
-    --hb-btn-color-active: var(--hb-gray-700);
-    --hb-btn-bg-color-active: var(--hb-gray-200);
-    --hb-btn-box-shadow-active: none;
+    --hb-btn-color-active: #{$btn-base-color-active};
+    --hb-btn-bg-color-active: #{$btn-base-bg-active};
     
     // Setup
     font-weight: var(--hb-btn-font-weight);
@@ -63,19 +64,14 @@
     {
         vertical-align: $btn-icon-vertical-align;
         color: var(--hb-btn-icon-color);
-        transition: color math.div($ripple-easing-time, 2) $base-easing;
+        transition: color var(--hb-ease-time-sm) $base-easing;
     }
-    .loading-spinner .path
-    {
-        stroke: var(--hb-btn-loader-color);
-    }
-
+   
     &:hover,
     &.hover
     {
         color: var(--hb-btn-color-hover);
         background-color: var(--hb-btn-bg-color-hover);
-        box-shadow: var(--hb-btn-box-shadow-hover);
         --hb-btn-icon-color: var(--hb-btn-color-hover);
     }
     &:active,
@@ -83,28 +79,13 @@
     {
         color: var(--hb-btn-color-active);
         background-color: var(--hb-btn-bg-color-active);
-        box-shadow: var(--hb-btn-box-shadow-active);
-        --hb-btn-transition: #{background-color math.div($ripple-easing-time, 2) $base-easing, color math.div($ripple-easing-time, 2) $base-easing, box-shadow math.div($ripple-easing-time, 2) $base-easing};
         --hb-btn-icon-color: var(--hb-btn-color-active);
+        --hb-btn-transition: #{background-color var(--hb-ease-time-sm) $base-easing, color var(--hb-ease-time-sm) $base-easing};
         .glyph-icon
         {
-            transition: color math.div($ripple-easing-time, 2) $base-easing;
+            transition: color var(--hb-ease-time-sm) $base-easing;
         }
-    }
-    
-    // Raised
-    &.raised-1
-    {
-        @include raise(--hb-btn-box-shadow, 1, $black);
-    }
-    &.raised-2
-    {
-        @include raise(--hb-btn-box-shadow, 2, $black);
-    }
-    &.raised-3
-    {
-        @include raise(--hb-btn-box-shadow, 3, $black);
-    }
+    }    
 
     // Hover/active/focus resets
     &:hover,
@@ -137,8 +118,6 @@
     &.flat
     {
         --hb-btn-box-shadow: none;
-        --hb-btn-box-shadow-hover: none;
-        --hb-btn-box-shadow-active: none;
     }
 }
 

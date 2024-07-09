@@ -4,11 +4,11 @@
 	outline: none;
 	box-shadow: none;
     margin: 0;
-	padding: 5px 0;
+	padding: var(--hb-input-pad-y) var(--hb-input-pad-x);
 	display: inline-block;
-    font-size: $input-font-size;
+    font-size: var(--hb-input-font-size);
     font-weight: $text-normal;
-    line-height: $input-line-height;
+    line-height: var(--hb-input-line-height);
     color: var(--hb-gray-700);
     background-color: transparent;
     transition: none

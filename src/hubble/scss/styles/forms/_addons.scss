@@ -9,7 +9,7 @@
 	    padding: 3px;
     	top: 50%;
     	margin-top: -10px;
-    	color: $gray;
+    	color: var(--hb-input-color-label);
 	}
 
 	// Left icon
@@ -36,29 +36,73 @@
 		left: initial;
 		right: 15px;
 	}
-	&.focus,
-    &:focus-within
-    {
-    	.glyph-icon
-    	{
-    		color: $brand-info;
-    	}
-    }
 
-    &.info .glyph-icon
-    {
-    	color: $brand-info;
-    }
-    &.success .glyph-icon
-    {
-    	color: $brand-success;
-    }
-    &.warning .glyph-icon
-    {
-    	color: $brand-warning;
-    }
-    &.danger .glyph-icon
-    {
-    	color: $brand-danger;
-    }
+	.input-addon
+	{
+		display: flex;
+    	align-items: center;
+    	color: var(--hb-input-addon-color);
+    	padding: calc(var(--hb-input-pad-y) * 0.8) var(--hb-input-pad-x);
+    	font-size: var(--hb-input-font-size);
+        background-color: var(--hb-input-addon-bg);
+        border-style: solid;
+        border-color: #{$input-border-color};
+        border-top-width: var(--hb-input-border-size-n);
+        border-right-width: var(--hb-input-border-size-e);
+        border-bottom-width: var(--hb-input-border-size-s);
+        border-left-width: var(--hb-input-border-size-w);
+
+        // First
+        &:first-child
+        {
+        	border-right-width: 0;
+        	border-top-left-radius: var(--hb-input-radius);
+    		border-bottom-left-radius: var(--hb-input-radius);
+        }
+
+        // Last
+        &:last-child
+        {
+        	border-left-width: 0;
+        	border-top-right-radius: var(--hb-input-radius);
+    		border-bottom-right-radius: var(--hb-input-radius);
+        }        
+	}
+
+
+	// Groups
+	&.input-group
+	{
+		display: flex;
+	    flex-wrap: wrap;
+	    align-items: stretch;
+	    width: 100%;
+
+	    > input, 
+	    > select, 
+	    > div
+	    {
+	    	position: relative;
+		    flex: 1 1 auto;
+		    width: 1%;
+		    min-width: 0;
+	    }
+
+	    // Second
+        .input-addon + input,
+        .input-addon + div input
+        {
+        	border-top-left-radius: 0;
+    		border-bottom-left-radius: 0;
+        }
+
+	    > div:not(:first-child):not(:last-child) input,
+        > div:not(:first-child):not(:last-child) select,
+        > input:not(:first-child):not(:last-child),
+        > select:not(:first-child):not(:last-child)
+       	{
+       		border-radius: 0;
+       	}
+
+	}
 }

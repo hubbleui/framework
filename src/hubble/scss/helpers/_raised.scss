@@ -2,35 +2,14 @@
 .raised-1
 {
     box-shadow: var(--hb-raised-level-one);
-    transition: box-shadow var(--hb-base-easing-time) var(--hb-base-easing);
-
-    &:hover,
-    &:focus
-    {
-        box-shadow: var(--hb-raised-level-one-hover);
-    }
 }
 .raised-2
 {
     box-shadow: var(--hb-raised-level-two);
-    transition: box-shadow var(--hb-base-easing-time) var(--hb-base-easing);
-
-    &:hover,
-    &:focus
-    {
-        box-shadow: var(--hb-raised-level-two-hover);
-    }
 }
 .raised-3
 {
     box-shadow: var(--hb-raised-level-three);
-    transition: box-shadow var(--hb-base-easing-time) var(--hb-base-easing);
-
-    &:hover,
-    &:focus
-    {
-        box-shadow: var(--hb-raised-level-three-hover);
-    }
 }
 .flat
 {

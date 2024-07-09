@@ -90,11 +90,11 @@
          * @access {public}
          * @param {string} name Name of the module (optional) (default false)
          */
-        refresh(module)
+        refresh(_module)
         {
-            module = (typeof module === 'undefined' ? false : module);
+            _module = (typeof _module === 'undefined' ? false : _module);
 
-            if (module)
+            if (_module)
             {
                 for (var key in this._modules)
                 {
@@ -103,7 +103,7 @@
                         continue;
                     }
 
-                    if (module === key)
+                    if (_module === key)
                     {
                         this._unbindModule(key);
 
@@ -153,12 +153,12 @@
          * @access {private}
          */
         _unbindModule(key)
-        {
-            var module = Container.get(key);
+        {            
+            var _module = Container.get(key);
 
-            if (this._hasMethod(module, 'destruct'))
+            if (this._hasMethod(_module, 'destruct'))
             {
-                module.destruct();
+                _module.destruct();
             }
 
             Container.delete(key);
@@ -189,7 +189,7 @@
          * @access {private}
          */
         _bindModule(key)
-        {
+        {            
             Container.singleton(key, this._modules[key], true);
         }
 

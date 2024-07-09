@@ -61,14 +61,7 @@
                 if (callbackEvent === eventName)
                 {
                     var callback   = this._callbacks[key].callback;
-                    var _this      = null;
-
-                    if (args.length >= 1)
-                    {
-                        _this = args[0];
-
-                        args.shift();
-                    }
+                    var _this      = this._callbacks[key].thisArg;
 
                     callback.apply(_this, args);
                 }
@@ -82,7 +75,7 @@
          * @param {callback}  func   The callback function
          * @access {public}
          */
-        on(eventName, callback)
+        on(eventName, callback, thisArg)
         {
             // Make sure the function is unique - unless it is ananonymous
             var callbackName = this._getFnName(callback);
@@ -99,6 +92,7 @@
             {
                 name: eventName,
                 callback: callback,
+                thisArg : thisArg
             };
         }
 

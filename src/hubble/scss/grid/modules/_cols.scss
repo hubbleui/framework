@@ -20,38 +20,30 @@
         }
     }
 
-    // Pushers
+    // Pushers / pullers
     @for $i from 1 through 12
     {
         @if $curr-grid == null
         {
-            .col-#{$i}-push-r
+            .col-push-#{$i}
             {
-                --hb-col-margin-l: #{unquote('#{math.div(100, 12) * (12-$i)}%')};
+                --hb-col-push: #{unquote('#{math.div(100, 12) * $i}%')};
             }
+            .col-pull-#{$i}
+            {
+                --hb-col-pull: #{unquote('#{math.div(100, 12) * $i}%')};
+            }
+
         }
         @else
         {
-            .col-#{$curr-grid}-#{$i}-push-r
+            .col-#{$curr-grid}-push-#{$i}
             {
-                --hb-col-margin-l: #{unquote('#{math.div(100, 12) * (12-$i)}%')};
+                --hb-col-push: #{unquote('#{math.div(100, 12) * $i}%')};
             }
-        }
-    }
-    @for $i from 1 through 12
-    {
-        @if $curr-grid == null
-        {
-            .col-#{$i}-push-l
+            .col-#{$curr-grid}-pull-#{$i}
             {
-                --hb-col-margin-r: #{unquote('#{math.div(100, 12) * (12-$i)}%')};
-            }
-        }
-        @else
-        {
-            .col-#{$curr-grid}-#{$i}-push-l
-            {
-                --hb-col-margin-r: #{unquote('#{math.div(100, 12) * (12-$i)}%')};
+                --hb-col-pull: #{unquote('#{math.div(100, 12) * $i}%')};
             }
         }
     }

@@ -1,44 +1,38 @@
-.progress-bar {
+.progress-bar
+{
+    --hb-progress-size: #{$progress-size};
+    --hb-progress-radius: #{$progress-radius};
+    --hb-progress-bg: #{$progress-bg};
+    --hb-progress-color: #{$progress-color};
+
     display: block;
     overflow: hidden;
     width: 100%;
-    border-radius: $border-radius;
-    height: 10px;
-    background-color: #f5f5f5;
+    border-radius: var(--hb-progress-radius);
+    height: var(--hb-progress-size);
+    background-color: var(--hb-progress-bg);
 
-    .progress {
+    .progress
+    {
         float: left;
         height: 100%;
         width: 100%;
         position: relative;
         width: 0;
-        background: #76838f;
+        background: var(--hb-progress-color);
     }
 
-    &.progress-default .progress {
-        background-color: $brand-primary;
+    @each $context, $colors in $contexts
+    {    
+        &.progress-#{$context}
+        {
+            --hb-progress-color: #{map-get($colors, "color")};
+        }
     }
-    &.progress-primary .progress {
-        background-color: $brand-primary;
-    }
-    &.progress-secondary .progress {
-        background-color: $brand-secondary;
-    }
-    &.progress-info .progress {
-        background-color: $brand-info;
-    }
-    &.progress-success .progress {
-        background-color: $brand-success;
-    }
-    &.progress-warning .progress {
-        background-color: $brand-warning;
-    }
-    &.progress-danger .progress {
-        background-color: $brand-danger;
-    }
-    &.bg-gradient .progress {
-        animation: none;
-        background-image: none;
-        background: linear-gradient(to right,  #b0e2fe 0%,#b0b2fb 100%);
+
+    &.progress-gradient .progress
+    {
+        --hb-progress-color: #{$progress-gradient};
     }
 }
+

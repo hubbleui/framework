@@ -1,0 +1,55 @@
+@mixin _make-poles($curr-grid, $prev-grid: null)
+{
+    @each $name, $size in $grid-poles
+    {
+        @if $curr-grid == null
+        {
+            .pole-#{$name}
+            {
+                --hb-pole-s: var(--hb-grid-pole-#{$name});
+                --hb-pole-n: var(--hb-grid-pole-#{$name});
+                
+            }
+        }
+        @else
+        {
+            .pole-#{$curr-grid}-#{$name}
+            {
+                --hb-pole-s: var(--hb-grid-pole-#{$name});
+                --hb-pole-n: var(--hb-grid-pole-#{$name});
+            }
+        }
+    }
+    @if $curr-grid == null
+    {
+        .pole-n
+        {
+            --hb-pole-s: 0;
+        }
+        .pole-s
+        {
+            --hb-pole-n: 0;
+        }
+        .no-pole
+        {
+            --hb-pole-s: 0;
+            --hb-pole-n: 0;
+        }
+    }
+    @else
+    {
+        .pole-#{$curr-grid}-n
+        {
+            --hb-pole-s: 0;
+        }
+        .pole-#{$curr-grid}-s
+        {
+            --hb-pole-n: 0;
+        }
+        .no-pole-#{$curr-grid}
+        {
+            --hb-pole-s: 0;
+            --hb-pole-n: 0;
+        }
+    }
+}

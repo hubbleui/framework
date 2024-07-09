@@ -1,44 +1,137 @@
-/**
- * FormValidator
- *
- * This class is used to validate a form and 
- * also apply and classes to display form results and input errors.
- *
- */
+
 (function()
 {
-
     /**
      * @var {Helper} obj
      */
     const Helper = Container.Helper();
 
     /**
-     * Module constructor
+     * Validator functions
      *
-     * @class
-     {*} @constructor
-     * @param {form} node
-     * @access {public}
-     * @return {this}
+     * @access {private}
+     * @return {boolean}
+     */
+    const VALIDATORS = 
+    {
+        email: function(value)
+        {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(value);
+        },
+        name: function(value)
+        {
+            var re = /^[A-z _-]+$/;
+            return re.test(value);
+        },
+        numeric: function(value)
+        {
+            var re = /^[\d]+$/;
+            return re.test(value);
+        },
+        password: function(value)
+        {
+            var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
+            return re.test(value);
+        },
+        url: function(value)
+        {
+            re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+            return re.test(value);
+        },
+        alpha: function(value)
+        {
+            var re = /^[A-z _-]+$/;
+            return re.test(value);
+        },
+        alphanumeric: function(value)
+        {
+            var re = /^[A-z0-9]+$/;
+            return re.test(value);
+        },
+        list: function(value)
+        {
+            var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
+
+            return re.test(value);
+        },
+        creditcard: function(value)
+        {
+            /*Amex Card: ^3[47][0-9]{13}$
+            BCGlobal: ^(6541|6556)[0-9]{12}$
+            Carte Blanche Card: ^389[0-9]{11}$
+            Diners Club Card: ^3(?:0[0-5]|[68][0-9])[0-9]{11}$
+            Discover Card: ^65[4-9][0-9]{13}|64[4-9][0-9]{13}|6011[0-9]{12}|(622(?:12[6-9]|1[3-9][0-9]|[2-8][0-9][0-9]|9[01][0-9]|92[0-5])[0-9]{10})$
+            Insta Payment Card: ^63[7-9][0-9]{13}$
+            JCB Card: ^(?:2131|1800|35\d{3})\d{11}$
+            KoreanLocalCard: ^9[0-9]{15}$
+            Laser Card: ^(6304|6706|6709|6771)[0-9]{12,15}$
+            Maestro Card: ^(5018|5020|5038|6304|6759|6761|6763)[0-9]{8,15}$
+            Mastercard: ^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$
+            Solo Card: ^(6334|6767)[0-9]{12}|(6334|6767)[0-9]{14}|(6334|6767)[0-9]{15}$
+            Switch Card: ^(4903|4905|4911|4936|6333|6759)[0-9]{12}|(4903|4905|4911|4936|6333|6759)[0-9]{14}|(4903|4905|4911|4936|6333|6759)[0-9]{15}|564182[0-9]{10}|564182[0-9]{12}|564182[0-9]{13}|633110[0-9]{10}|633110[0-9]{12}|633110[0-9]{13}$
+            Union Pay Card: ^(62[0-9]{14,17})$
+            Visa Card: ^4[0-9]{12}(?:[0-9]{3})?$
+            Visa Master Card: ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})$*/
+
+            var arr = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+            var ccNum = String(value).replace(/[- ]/g, '');
+
+            var
+                len = ccNum.length,
+                bit = 1,
+                sum = 0,
+                val;
+
+            while (len)
+            {
+                val = parseInt(ccNum.charAt(--len), 10);
+                sum += (bit ^= 1) ? arr[val] : val;
+            }
+
+            return sum && sum % 10 === 0;
+        },
+        minlength: function(value, min)
+        {
+            return value.length >= min;
+        },
+        maxlength: function(value, max)
+        {
+            return value.length <= max;
+        }
+    };
+
+    /**
+     * FormValidator
+     *
+     * This class is used to validate a form and 
+     * also apply and classes to display form results and input errors.
+     *
      */
     class FormValidator
     {
+        /**
+         * Module constructor
+         *
+         * @class
+         * @param  {DOMElement} form
+         * @access {public}
+         * @return {this}
+         */
         constructor(form)
         {
             // Save inputs
-            this._form = form;
+            this._DOMElementForm = form;
+            this._DOMElementsFormFields = Helper.$All('.form-field', form);
             this._inputs = Helper.form_inputs(form);
 
             // Defaults
             this._rulesIndex = [];
-            this._invalids = [];
-            this._formObj = {};
-            this._nameIndex = {};
-            this._validForm = true;
+            this._invalids   = [];
+            this._formObj    = {};
 
             // Initialize
-            this._indexInputs();
+            this._indexValidations();
 
             return this;
         }
@@ -65,12 +158,12 @@
         {
             this._clearForm();
 
-            // Show the invalid inputs
-            for (var j = 0; j < this._invalids.length; j++)
+            Helper.each(this._invalids, function(i, input)
             {
-                var __wrap = Helper.closest(this._invalids[j], '.form-field');
-                if (Helper.in_dom(__wrap)) Helper.add_class(__wrap, 'danger');
-            }
+                var fieldWrap = Helper.closest(input, '.form-field');
+
+                if (Helper.in_dom(fieldWrap)) Helper.add_class(fieldWrap, 'danger');
+            });
         }
 
         /**
@@ -91,7 +184,8 @@
         showResult(result)
         {
             this._clearForm();
-            Helper.add_class(this._form, result);
+
+            Helper.add_class(this._DOMElementForm, result);
         }
 
         /**
@@ -103,7 +197,10 @@
         append(key, value)
         {
             this._formObj[key] = value;
-            return this._generateForm();
+
+            let form = this.form();
+
+            return {...form, ...this._formObj};
         };
 
         /**
@@ -114,7 +211,7 @@
          */
         form()
         {
-            return this._generateForm();
+            return Helper.form_values(this._DOMElementForm);
         }
 
         // PRIVATE FUNCTIONS
@@ -124,23 +221,40 @@
          *
          * @access {public}
          */
-        _indexInputs()
+        _indexValidations()
         {
-            for (var i = 0; i < this._inputs.length; i++)
+            Helper.each(this._inputs, function(i, input)
             {
-                if (!this._inputs[i].name) continue;
-                var name = this._inputs[i].name;
-                this._nameIndex[name] = this._inputs[i];
+                // No name
+                if (!input.name) return;
+
                 this._rulesIndex.push(
                 {
-                    node: this._inputs[i],
-                    isRequired: this._inputs[i].dataset.jsRequired || null,
-                    validationMinLength: this._inputs[i].dataset.jsMinLegnth || null,
-                    validationMaxLength: this._inputs[i].dataset.jsMaxLegnth || null,
-                    validationType: this._inputs[i].dataset.jsValidation || null,
-                    isValid: true,
+                    node:       input,
+                    required:   Helper.bool(Helper.attr(input, 'data-js-required')),
+                    minlength:  Helper.attr(input, 'data-js-min-length'),
+                    maxlength:  Helper.attr(input, 'data-js-max-length'),
+                    validation: this._validationFunc(Helper.attr(input, 'data-js-validation')),
+                    valid:      true,
                 });
-            }
+
+            }, this);
+        }
+
+        /**
+         * Index form inputs by name and rules
+         *
+         * @access {public}
+         */
+        _validationFunc(name)
+        {
+            if (!name) return;
+
+            let key = name.replaceAll('-', '').toLowerCase();
+
+            if (!VALIDATORS[key]) throw new error(`Unsupported input validation [${name}].`)
+
+            return VALIDATORS[key];
         }
 
         /**
@@ -152,82 +266,36 @@
         _validateForm()
         {
             this._invalids = [];
-            this._validForm = true;
+            this._isValid  = true;
 
-            for (var i = 0; i < this._rulesIndex.length; i++)
+            Helper.each(this._rulesIndex, function(i, ruleset)
             {
+                let input = ruleset.node;
+                let value = Helper.input_value(ruleset.node);
 
-                this._rulesIndex[i].isValid = true;
+                // Skip radios, they don't have any validation
+                if (input.type === 'radio') return;
+                
+                if (ruleset.required && Helper.is_empty(value))
+                {
+                    this._devalidate(input);
+                }
+                else if (ruleset.minlength && !VALIDATORS.minlength.call(null, value, ruleset.minlength))
+                {
+                    this._devalidate(input);
+                }
+                else if (ruleset.maxlength && !VALIDATORS.maxlength.call(null, value, ruleset.maxlength))
+                {
+                    this._devalidate(input);
+                }
+                else if (Helper.is_callable(ruleset.validation) && !ruleset.validation.call(null, value))
+                {
+                    this._devalidate(input);
+                }
 
-                var pos = this._rulesIndex[i];
-                var value = Helper.input_value(pos.node);
+            }, this);
 
-                if (!pos.isRequired && value === '')
-                {
-                    continue;
-                }
-                else if (pos.isRequired && value.replace(/ /g, '') === '')
-                {
-                    this._devalidate(i);
-                }
-                else if (pos.validationMinLength && !this._validateMinLength(value, pos.validationMinLength))
-                {
-                    this._devalidate(i);
-                }
-                else if (pos.validationMaxLength && !this._validateMaxLength(value, pos.validationMaxLength))
-                {
-                    this._devalidate(i);
-                }
-                else if (pos.validationType)
-                {
-                    var isValid = true;
-                    if (pos.validationType === 'email') isValid = this._validateEmail(value);
-                    if (pos.validationType === 'name') isValid = this._validateName(value);
-                    if (pos.validationType === 'password') isValid = this._validatePassword(value);
-                    if (pos.validationType === 'creditcard') isValid = this._validateCreditCard(value);
-                    if (pos.validationType === 'url') isValid = this._validateUrl(value);
-                    if (pos.validationType === 'alpha') isValid = this.alpha(value);
-                    if (pos.validationType === 'numeric') isValid = this._validateNumeric(value);
-                    if (pos.validationType === 'list') isValid = this._validateList(value);
-                    if (!isValid) this._devalidate(i);
-                }
-            }
-
-            return this._validForm;
-        }
-
-        /**
-         * Generate the form object
-         *
-         * @access {private}
-         * @return {obj}
-         */
-        _generateForm()
-        {
-            for (var i = 0; i < this._inputs.length; i++)
-            {
-                var name = this._inputs[i].name;
-                var value = Helper.input_value(this._inputs[i]);
-                if (this._inputs[i].type === 'radio' && this._inputs[i].checked == false)
-                {
-                    continue;
-                }
-                if (this._inputs[i].type === 'checkbox')
-                {
-                    this._formObj[name] = (this._inputs[i].checked == true);
-                    continue;
-                }
-                if (name.indexOf('[]') > -1)
-                {
-                    if (!this._formObj[name]) this._formObj[name] = [];
-                    this._formObj[name].push(value);
-                }
-                else
-                {
-                    this._formObj[name] = value;
-                }
-            }
-            return this._formObj;
+            return this._isValid;
         }
 
         /**
@@ -236,11 +304,11 @@
          * @access {private}
          * @return {obj}
          */
-        _devalidate(i)
+        _devalidate(node)
         {
-            this._rulesIndex[i].isValid = false;
-            this._validForm = false;
-            this._invalids.push(this._rulesIndex[i].node);
+            this._isValid = false;
+
+            this._invalids.push(node);
         }
 
         /**
@@ -249,92 +317,15 @@
          * @access {private}
          * @return {obj}
          */
-        _clearForm(i)
+        _clearForm()
         {
             // Remove the form result
-            Helper.remove_class(this._form, ['info', 'success', 'warning', 'danger']);
+            Helper.remove_class(this._DOMElementForm, ['info', 'success', 'warning', 'danger']);
 
             // Make all input elements 'valid' - i.e hide the error msg and styles.
-            for (var i = 0; i < this._inputs.length; i++)
-            {
-                var _wrap = Helper.closest(this._inputs[i], '.form-field');
-                if (Helper.in_dom(_wrap)) Helper.remove_class(_wrap, ['info', 'success', 'warning', 'danger'])
-            }
+            Helper.remove_class(this._DOMElementsFormFields, ['info', 'success', 'warning', 'danger']);
         }
-
-        /**
-         * Private validator methods
-         *
-         * @access {private}
-         * @return {boolean}
-         */
-        _validateEmail(value)
-        {
-            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(value);
-        }
-        _validateName(value)
-        {
-            var re = /^[A-z _-]+$/;
-            return re.test(value);
-        }
-        _validateNumeric(value)
-        {
-            var re = /^[\d]+$/;
-            return re.test(value);
-        }
-        _validatePassword(value)
-        {
-            var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
-            return re.test(value);
-        }
-        _validateUrl(value)
-        {
-            re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
-            return re.test(value);
-        }
-        _validateMinLength(value, min)
-        {
-            return value.length >= min;
-        }
-        _validateMaxLength(value, max)
-        {
-            return value.length <= max;
-        }
-        _validateAplha(value)
-        {
-            var re = /^[A-z _-]+$/;
-            return re.test(value);
-        }
-        _validateAplhaNumeric(value)
-        {
-            var re = /^[A-z0-9]+$/;
-            return re.test(value);
-        }
-        _validateList(value)
-        {
-            var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
-            return re.test(value);
-        }
-        _validateCreditCard(value)
-        {
-            var arr = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-            var ccNum = String(value).replace(/[- ]/g, '');
-
-            var
-                len = ccNum.length,
-                bit = 1,
-                sum = 0,
-                val;
-
-            while (len)
-            {
-                val = parseInt(ccNum.charAt(--len), 10);
-                sum += (bit ^= 1) ? arr[val] : val;
-            }
-
-            return sum && sum % 10 === 0;
-        }
+        
     }
 
     // Load into container

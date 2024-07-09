@@ -53,14 +53,9 @@
          * @access {private}
          */
         _bind()
-        {
+        {            
             Helper.addEventListener(this._labels, 'click', this._onLabelClick);
-            Helper.addEventListener(this._inputs, 'click', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'focus', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'blur', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'change', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'input', this._eventHandler);
-            Helper.addEventListener(this._inputs, 'hover', this._eventHandler);
+            Helper.addEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
         }
 
         /**
@@ -70,13 +65,8 @@
          */
         _unbind()
         {
-            Helper.removeEventListener(this._labels, 'click', this._onLabelClick);
-            Helper.removeEventListener(this._inputs, 'click', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'focus', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'blur', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'change', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'input', this._eventHandler);
-            Helper.removeEventListener(this._inputs, 'hover', this._eventHandler);
+            Helper.removeEventListener(this._labels, 'click',  this._onLabelClick);
+            Helper.removeEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
         }
 
         /**
@@ -127,17 +117,19 @@
         {
             e = e || window.event;
 
+            var wrapper = Helper.closest(this, '.form-field');
+
             if (e.type === 'click')
             {
                 this.focus();
             }
             else if (e.type === 'focus')
             {
-                Helper.add_class(this.parentNode, 'focus');
+                Helper.add_class(wrapper, 'focus');
             }
             else if (e.type === 'blur')
             {
-                Helper.remove_class(this.parentNode, 'focus');
+                Helper.remove_class(wrapper, 'focus');
             }
 
             if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
@@ -146,13 +138,13 @@
 
                 if (_value === '')
                 {
-                    Helper.remove_class(this.parentNode, 'not-empty');
-                    Helper.add_class(this.parentNode, 'empty');
+                    Helper.remove_class(wrapper, 'not-empty');
+                    Helper.add_class(wrapper, 'empty');
                 }
                 else
                 {
-                    Helper.remove_class(this.parentNode, 'empty');
-                    Helper.add_class(this.parentNode, 'not-empty');
+                    Helper.remove_class(wrapper, 'empty');
+                    Helper.add_class(wrapper, 'not-empty');
                 }
             }
         }

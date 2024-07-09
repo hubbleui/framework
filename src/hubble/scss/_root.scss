@@ -71,11 +71,8 @@
 
     /* Raised Levels */
     --hb-raised-level-one:                 #{$raised-level-one};
-    --hb-raised-level-one-hover:           #{$raised-level-one-hover};
     --hb-raised-level-two:                 #{$raised-level-two};
-    --hb-raised-level-two-hover:           #{$raised-level-two-hover};
     --hb-raised-level-three:               #{$raised-level-three};
-    --hb-raised-level-three-hover:         #{$raised-level-three-hover};
     --hb-box-shadow-in:                    #{$box-shadow-in};
 
     /* Misc */
@@ -92,10 +89,10 @@
     {
         --hb-grid-gutter-#{$name}:         #{$gutter};
     }
-    /* Roofs/floors */
-    @each $name, $vgutter in $grid-v-gutters
+    /* Poles */
+    @each $name, $pole in $grid-poles
     {
-        --hb-grid-vgutter-#{$name}:        #{$vgutter};
+        --hb-grid-pole-#{$name}:           #{$pole};
     }
     /* Container gutters */
     @each $name, $cgutter in $container-gutters

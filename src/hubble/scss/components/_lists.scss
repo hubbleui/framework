@@ -24,6 +24,7 @@
 	padding: 8px 0;
     margin: 0;
     list-style: none;
+
     > li
     {
     	display: block;
@@ -41,12 +42,14 @@
     	}
     	&:active,
     	&:focus,
-    	&:focus-within
+    	&:focus-within,
+    	&.selected
     	{
     		background-color: var(--hb-list-bg-active);
     		color: var(--hb-list-color-active);
     	}
     }
+
     .item-body
 	{
 	    width: 10000px;

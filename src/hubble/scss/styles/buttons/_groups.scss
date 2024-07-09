@@ -1,6 +1,6 @@
 .btn-group
 {
-	--hb-btn-group-radius: $btn-group-radius;
+	--hb-btn-group-radius: #{$btn-group-radius};
 
 	> .btn
 	{

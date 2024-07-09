@@ -22,11 +22,13 @@ attr(DOMElement, name, value)
         this.each(name, function(prop, value)
         {
             this.attr(DOMElement, prop, value);
+
         }, this);
 
         return;
     }
 
+    // Set or remove attibute.
     switch (name)
     {
         // innerHTML
@@ -148,3 +150,39 @@ attr(DOMElement, name, value)
             break;
     }
 }
+
+/**
+ * Simple get html attribute.
+ *
+ * No third arg returns attribute value, third arg set to null or false removes attribute.
+ * 
+ * @access {private}
+ * @param  {HTMLElement}      DOMElement  Dom node
+ * @param  {string}           name        Property name
+ * @return {string|undefined}
+ */
+__getAttribute(DOMElement, name)
+{
+    if (name.startsWith('data'))
+    {
+        name = name.startsWith('data-') ? this.to_camel_case(name.substring(5)) : name.substring(4);
+
+        return DOMElement.dataset[name];
+    }
+
+    // Special booleans
+    if (this.in_array(name, BOOLEAN_ATTRS))
+    {
+        if (DOMElement[name] === '' || DOMElement[name] === 'true' || DOMElement[name] === true) return true;
+
+        return DOMElement[name] === 'false' || !DOMElement[name] ? false : true;
+    }
+
+    let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
+    let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
+    let retCamel   = DOMElement[camelName];
+    let retAttr    = DOMElement.getAttribute(hyphenName);
+
+    return retAttr === null || this.is_undefined(retAttr) ? retCamel : retAttr;
+}
+

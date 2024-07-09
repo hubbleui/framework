@@ -18,7 +18,6 @@ module.exports = function(grunt)
             object[key] = require(path + option);
         });
 
-
         return object;
     }
 
@@ -52,8 +51,15 @@ module.exports = function(grunt)
     grunt.loadNpmTasks('grunt-image');
     grunt.loadNpmTasks('grunt-svgmin');
     grunt.loadNpmTasks('grunt-prettify');
-    grunt.loadNpmTasks("grunt-jsbeautifier");
+    grunt.loadNpmTasks('grunt-jsbeautifier');
 
+    // Docs
+    grunt.registerTask('docs', 'Build docs from markdown.', function()
+    {
+        grunt.log.writeln('Creating docs....');
+        grunt.config.data.docs.build();
+        grunt.log.writeln('✓ Complete');
+    });
 
     // Default grunt task 
     grunt.registerTask('default', [ 'sass', 'autoprefixer' ,'cssmin', 'concat', 'import', 'uglify', 'image', 'svgmin']);

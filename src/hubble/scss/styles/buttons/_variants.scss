@@ -23,42 +23,6 @@
 // Outline buttons
 @mixin button-outline($color)
 {
-    color: $color;
-    background-color: transparent;
-    border: 1px solid $color;
-    box-shadow: none;
-
-    .glyph-icon
-    {
-        color: $color;
-    }
-    .loading-spinner .path
-    {
-        stroke: $white;
-    }
-
-    &:hover,
-    &.hover
-    {
-        background-color: rgba($color, 0.04);
-        border: 1px solid $color;
-    }
-    &:focus,
-    &.focus
-    {
-        background-color: rgba($color, 0.07);
-    }
-    &:active,
-    &.active
-    {
-        background-color: rgba($color, 0.15);
-        border: 1px solid $color;
-    }
-}
-
-// Outline buttons
-@mixin button-outline($color)
-{
     $rgb: _color-name-from-var($color) + '-rgb';
 
     // Base

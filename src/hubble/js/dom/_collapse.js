@@ -1,6 +1,6 @@
 (function()
 {
-    const [$, $All, addEventListener, animate_css, bool, has_class, is_node_type, removeEventListener, toggle_class] = Container.import(['$','$All','addEventListener','animate_css','bool','has_class','is_node_type','removeEventListener','toggle_class']).from('Helper');
+    const [$, $All, addEventListener, animate_css, bool, has_class, is_node_type, removeEventListener, toggle_class, trigger_event] = Container.import(['$','$All','addEventListener','animate_css','bool','has_class','is_node_type','removeEventListener','toggle_class','trigger_event']).from('Helper');
 
     /**
      * Toggle height on click
@@ -83,13 +83,18 @@
             var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
             var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
             var opacity  = bool(clicked.dataset.withOpacity);
+            var closing  = has_class(clicked, 'active');
+
+            trigger_event(targetEl, 'collapse:toggle', closing ? 'close' : 'open');
+
             var options  = 
             {
                 property: 'height',
-                to: has_class(clicked, 'active') ? '0px' : 'auto',
-                from: has_class(clicked, 'active') ? 'auto' : '0px',
+                to: closing ? '0px' : 'auto',
+                from: closing ? 'auto' : '0px',
                 duration: duration, 
-                easing: easing
+                easing: easing,
+                callback: () => { trigger_event(targetEl, 'collapse:toggled', closing ? 'close' : 'open'); }
             };
 
             animate_css(targetEl, options);

@@ -700,8 +700,7 @@ for (var contentType in httpLanguages)
                 code    = codeEl.innerHTML,
                 syntax  = codeEl.dataset.syntax;
                 code   = _helper.rtrim(_helper.ltrim(code.trim(), '<!--'), '-->').trim();
-                codeEl.innerHTML = '';
-                codeEl.innerText = code;
+                codeEl.textContent = code;
                 
                 if (!_helper.is_empty(syntax))
                 {
@@ -732,4 +731,10 @@ for (var contentType in httpLanguages)
                 b.remove_class(d, "active"), b.remove_class(d, "removing")
             }, 310)) : (b.add_class(c, "active"), b.add_class(d, "active"), b.add_class(e, "active"))
         })
+    }(),
+    function() {
+        var H = Container.Helper();
+        H.add_class(H.$All('.docs-body > table'), 'table');
     }();
+
+

@@ -1,22 +1,61 @@
 /**
- * Triggers a native event on an element
+ * Triggers an event on an element
  *
  * @access {public}
- * @param  {DOMElement}   el   Target element
- * @param  {string} type Valid event name
+ * @param  {DOMElement}   DOMElement   Target element
+ * @param  {string}       eventName    Event name
+ * @param  {mixed}        data         Extra data to pass to custom events 
  */
-trigger_event(el, type)
+trigger_event(DOMElement, eventName, data)
 {
-    if ('createEvent' in document)
+    if (this.in_array(eventName.toLowerCase(), DOC_EVENTS))
     {
-        var evt = document.createEvent("HTMLEvents");
+        if ('createEvent' in document)
+        {
+            var evt = document.createEvent('HTMLEvents');
 
-        evt.initEvent(type, false, true);
+            evt.initEvent(eventName, false, true);
 
-        el.dispatchEvent(evt);
+            DOMElement.dispatchEvent(evt);
+        }
+        else
+        {
+            DOMElement.fireEvent(eventName);
+        }
     }
     else
     {
-        el.fireEvent(type);
+        if (this.is_object(data))
+        {
+            data = this.array_merge(data, { DOMElement: DOMElement, name: eventName });
+        }
+        else if (!this.is_undefined(data))
+        {
+            data = { DOMElement: DOMElement, name: eventName, state: data };
+        }
+
+        const event = new CustomEvent(eventName, { detail: data });
+
+        DOMElement.dispatchEvent(event);
+
+        if (eventName.includes(':'))
+        {
+            var events = eventName.split(':').slice(0, -1);
+            var base   = events.shift();
+            var conut  = events.length + 1;
+
+            this.for(conut, function(i)
+            {
+                let subevent = i === (conut -1) ? base : `${base}:${events.join(':')}`;
+
+                data.name = eventName;
+
+                const evt = new CustomEvent(subevent, { detail: data });
+
+                DOMElement.dispatchEvent(evt);
+
+                events.pop();
+            });
+        }
     }
 }

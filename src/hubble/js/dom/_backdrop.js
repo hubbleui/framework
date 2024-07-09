@@ -10,7 +10,7 @@
     /**
      * @var {obj}
      */
-    const _ = Container.Helper();
+    const [$, $All, add_class, addEventListener, animate, array_merge, css, each, in_dom, is_empty, is_object, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'animate', 'array_merge', 'css', 'each', 'in_dom', 'is_empty', 'is_object', 'remove_class', 'removeEventListener']).from('Helper');
 
     /**
      * Cached so we can throttle later.
@@ -57,12 +57,12 @@
          */
         constructor()
         {
-            this._DOMElementopenBtns  = _.$All('.js-backdrop-open-trigger');
-            this._DOMElementCloseBtns = _.$All('.js-backdrop-close-trigger');
-            this._DOMElementBackdrop  = _.$('.js-backdrop-wrapper');
-            this._DOMElementPageWrap  = _.$('.js-backdrop-page-wrapper');
+            this._DOMElementopenBtns  = $All('.js-backdrop-open-trigger');
+            this._DOMElementCloseBtns = $All('.js-backdrop-close-trigger');
+            this._DOMElementBackdrop  = $('.js-backdrop-wrapper');
+            this._DOMElementPageWrap  = $('.js-backdrop-page-wrapper');
             
-            if (!_.is_empty(this._DOMElementopenBtns))
+            if (!is_empty(this._DOMElementopenBtns))
             {
                 this._bind();
             }
@@ -93,9 +93,9 @@
          */
         _bind()
         {
-            _.addEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
+            addEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
 
-            _.addEventListener(this._DOMElementCloseBtns, 'click', this.close);
+            addEventListener(this._DOMElementCloseBtns, 'click', this.close);
         }
 
         /**
@@ -105,11 +105,11 @@
          */
         _unbind()
         {
-            _.removeEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
+            removeEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
 
-            _.removeEventListener(this._DOMElementCloseBtns, 'click', this.close);
+            removeEventListener(this._DOMElementCloseBtns, 'click', this.close);
 
-            _.removeEventListener(window, 'resize', RESIZE_HANDLER);
+            removeEventListener(window, 'resize', RESIZE_HANDLER);
 
             this._DOMElementopenBtns = [];
 
@@ -127,11 +127,11 @@
             const DOMElementBackdrop = this._DOMElementBackdrop;
             const DOMElementPageWrap = this._DOMElementPageWrap;
 
-            if (!_.in_dom(this._DOMElementBackdrop))
+            if (!in_dom(this._DOMElementBackdrop))
             {
                 console.error('Backdrop Error: The backdrop wrapper was not found in the DOM.');
             }
-            else if (!_.in_dom(this._DOMElementPageWrap))
+            else if (!in_dom(this._DOMElementPageWrap))
             {
                 console.error('Backdrop Error: The backdrop page wrapper was not found in the DOM.');
             }
@@ -147,46 +147,45 @@
             if (options) this._setOptions(options);
 
             // Set width and heights
-            _.css(DOMElementBackdrop, 'height', this.height);
-            _.css(DOMElementBackdrop, 'width', this.width);
-
-            // Make backdrop visible
-            _.add_class(DOMElementBackdrop, 'backdrop-open');
+            css(DOMElementBackdrop, 'height', this.height);
+            css(DOMElementBackdrop, 'width', this.width);
 
             // Push body down
             /*if (this.pushBody)
             {
-                _.add_class(this._DOMElementBackdrop, 'backdrop-open');
-                _.add_class(this._DOMElementBackdrop, 'backdrop-push-body');
+                add_class(this._DOMElementBackdrop, 'backdrop-open');
+                add_class(this._DOMElementBackdrop, 'backdrop-push-body');
 
-                _.animate_css(this._DOMElementBackdrop, { top: '0px', duration: 300 });
-                _.animate_css(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, duration: 300 });
+                animate_css(this._DOMElementBackdrop, { top: '0px', duration: 300 });
+                animate_css(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, duration: 300 });
             }*/
 
             // Set backdrop to position top, left, bottom, right
 
             // Push backdrop in
-            _.animate_css(DOMElementBackdrop, { 
+            animate(DOMElementBackdrop, { 
                 [this.direction]: { from: '-50px', to: '0px', duration: 350, easing: 'easeOutCirc'},
-                opacity:          { from: '0', to: '1', duration: 350, easing: 'easeOutCirc'}
+                opacity:          { from: '0', to: '1', duration: 600, easing: 'easeOutCirc'}
             });
 
+            // Make backdrop visible
+            setTimeout(function(){ add_class(DOMElementBackdrop, 'backdrop-open');}, 10);
         
             // No scrolling
             if (this.noScroll)
             {
-                _.add_class([document.documentElement, document.body], 'no-scroll');
+                add_class([document.documentElement, document.body], 'no-scroll');
             }
 
             /*
            
 
             // Open classes
-            _.add_class(this._DOMElementBackdrop, 'backdrop-open');
-            _.add_class(this._DOMElementPageWrap, 'backdrop-open');
+            add_class(this._DOMElementBackdrop, 'backdrop-open');
+            add_class(this._DOMElementPageWrap, 'backdrop-open');
 
             // Resize handler
-            _.addEventListener(window, 'resize', RESIZE_HANDLER);*/
+            addEventListener(window, 'resize', RESIZE_HANDLER);*/
             
             this._fireOpen();
         }
@@ -201,17 +200,17 @@
         {
             if (this.pushBody)
             {
-                /*_.animate_css(this._DOMElementBackdrop, { transform: `translateY(0)`});
-                _.animate_css(this._DOMElementPageWrap, { transform: `translateY(0)`});*/
+                /*animate_css(this._DOMElementBackdrop, { transform: `translateY(0)`});
+                animate_css(this._DOMElementPageWrap, { transform: `translateY(0)`});*/
             }
             else
             {
 
             }
 
-            /*_.remove_class(this._DOMElementBackdrop, ['backdrop-push-body', 'backdrop-open']);
-            _.remove_class(this._DOMElementPageWrap, 'backdrop-open');
-            _.remove_class([document.documentElement, document.body], 'no-scroll');*/
+            /*remove_class(this._DOMElementBackdrop, ['backdrop-push-body', 'backdrop-open']);
+            remove_class(this._DOMElementPageWrap, 'backdrop-open');
+            remove_class([document.documentElement, document.body], 'no-scroll');*/
 
             if (this._fireValidateClose())
             {
@@ -229,7 +228,7 @@
         {
             if (this.pushBody)
             {
-                //_.css(this._DOMElementPageWrap, 'transform', `translateY(${_.height(this._DOMElementBackdrop)}px)`);
+                //css(this._DOMElementPageWrap, 'transform', `translateY(${height(this._DOMElementBackdrop)}px)`);
             }
         }
 
@@ -241,9 +240,9 @@
          */
         _setOptions(options)
         {
-            options = _.is_object(options) ? _.array_merge({}, DEFAULTS, options) : _.array_merge({}, DEFAULTS);
+            options = is_object(options) ? array_merge({}, DEFAULTS, options) : array_merge({}, DEFAULTS);
 
-            _.each(options, function(k, v)
+            each(options, function(k, v)
             {
                 this[k] = v;
 

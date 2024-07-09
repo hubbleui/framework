@@ -34,6 +34,7 @@
 @import 'dom/scrollbar/_handler.js';
 @import 'dom/scrollbar/_scrollbars.js';
 @import 'dom/_collapse.js';
+@import 'dom/_lists.js';
 @import 'dom/_dropdown.js';
 @import 'dom/_tabs.js';
 @import 'dom/_bottomNav.js';
