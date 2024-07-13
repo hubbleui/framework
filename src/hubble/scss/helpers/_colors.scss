@@ -1,21 +1,22 @@
-// Brand
-.color-primary       { color: var(--hb-brand-primary)}
-.color-secondary     { color: var(--hb-brand-secondary)}
-
-// Greys
-.color-gray-dark 	 { color: var(--hb-gray-500)}
-.color-gray 	 	 { color: var(--hb-gray)}
-.color-gray-light 	 { color: var(--hb-gray-400)}
-.color-gray-lighter  { color: var(--hb-gray-300)}
-.color-gray-lightest { color: var(--hb-gray-100)}
-
-// Accents
-.color-success       { color: var(--hb-brand-success)}
-.color-info          { color: var(--hb-brand-info)}
-.color-danger        { color: var(--hb-brand-danger)}
-.color-warning       { color: var(--hb-brand-warning)}
-
-// Defaults
-.color-transparent   { color: transparent }
+.color-transparent   { color: transparent}
 .color-white         { color: var(--hb-white)}
 .color-black         { color: var(--hb-black)}
+
+@each $name, $color in $colors
+{
+    $nicename : _str-replace($name, 'brand-', '');
+
+    @if ($name == 'gray')
+    {
+        .color-gray { color: var(--hb-gray) }
+
+        @for $i from 1 through 9
+        {
+            .color-#{$nicename}-#{$i}00 { color: var(--hb-#{$name}-#{$i}00) }
+        }
+    }
+    @else
+    {
+        .color-#{$nicename} { color: var(--hb-#{$name})}
+    }
+}

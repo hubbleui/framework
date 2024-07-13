@@ -3,9 +3,14 @@
 @import 'grid/modules/containers';
 @import 'grid/modules/rows';
 @import 'grid/modules/cols';
-@import 'grid/modules/flexcols';
 @import 'grid/modules/gutters';
 @import 'grid/modules/poles';
+@import 'grid/modules/flexrows';
+@import 'grid/modules/flexcols';
+@import 'grid/modules/flexgaps';
+@import 'grid/modules/flexaligns';
+@import 'grid/modules/flexgutters';
+@import 'grid/modules/flexorders';
 @import 'grid/modules/make';
 
 /* Grid base */

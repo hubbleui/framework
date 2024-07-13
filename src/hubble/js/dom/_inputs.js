@@ -56,6 +56,11 @@
         {            
             Helper.addEventListener(this._labels, 'click', this._onLabelClick);
             Helper.addEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
+
+            // Trigger change
+            let _this = this;
+
+            Helper.each(this._inputs, (i, input) => _this._setClasses(input));
         }
 
         /**
@@ -119,6 +124,8 @@
 
             var wrapper = Helper.closest(this, '.form-field');
 
+            if (!wrapper) return;
+
             if (e.type === 'click')
             {
                 this.focus();
@@ -146,6 +153,32 @@
                     Helper.remove_class(wrapper, 'empty');
                     Helper.add_class(wrapper, 'not-empty');
                 }
+            }
+        }
+
+        /**
+         * Sets initial classes on load.
+         *
+         * @access {private}
+         * @params {DOMElement} input 
+         */
+        _setClasses(input)
+        {
+            var wrapper = Helper.closest(input, '.form-field');
+
+            if (!wrapper) return;
+
+            var _value = Helper.input_value(input);
+
+            if (_value === '')
+            {
+                Helper.remove_class(wrapper, 'not-empty');
+                Helper.add_class(wrapper, 'empty');
+            }
+            else
+            {
+                Helper.remove_class(wrapper, 'empty');
+                Helper.add_class(wrapper, 'not-empty');
             }
         }
     }

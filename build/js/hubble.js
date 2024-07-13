@@ -2660,6 +2660,10 @@ __animation_factory(DOMElement, opts)
 
         }, this);
 
+        // Sanitize to/from to strings
+        if (this.array_has('to', options)) options.to = options.to + '';
+        if (this.array_has('from', options)) options.from = options.from + '';
+
         if (!ANIMATION_EASING_FUNCTIONS[options.easing]) options.easing = 'ease';
 
         options.FROM_FACTORY = true;
@@ -8736,286 +8740,6 @@ console.log(Container.get('Helper'));
 
 })();
 
-/**
- * Events
- *
- * This class handles custom event firing and callback assigning.
- *
- */
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
-
-    /**
-     * Module constructor
-     *
-     * @class
-     {*} @constructor
-     * @access {public}
-     * @return {this}
-     */
-    class Events
-    {
-        _callbacks = {};
-
-        /**
-         * Module destructor - clears event cache
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._callbacks = {};
-        }
-
-        /**
-         * Fire a custom event
-         *
-         * @param {string} eventName The event name to fire
-         * @param {mixed}  subject   What should be given as "this" to the event callbacks
-         * @param {mixed}  args      List of additional args to push (optional)
-         * @access {public}
-         */
-        fire()
-        {
-            var args = Array.prototype.slice.call(arguments);
-
-            var eventName = args.shift();
-
-            for (var key in this._callbacks)
-            {
-                if (!this._callbacks.hasOwnProperty(key))
-                {
-                    continue;
-                }
-
-                var callbackEvent = key.split('______')[0];
-
-                if (callbackEvent === eventName)
-                {
-                    var callback   = this._callbacks[key].callback;
-                    var _this      = this._callbacks[key].thisArg;
-
-                    callback.apply(_this, args);
-                }
-            }
-        }
-
-        /**
-         * Bind a callback to an event
-         *
-         * @param {eventName} string The event name
-         * @param {callback}  func   The callback function
-         * @access {public}
-         */
-        on(eventName, callback, thisArg)
-        {
-            // Make sure the function is unique - unless it is ananonymous
-            var callbackName = this._getFnName(callback);
-
-            if (callbackName === 'anonymous')
-            {
-                callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
-            }
-
-            var key = eventName + '______' + callbackName;
-
-            // Save the callback and event name
-            this._callbacks[key] =
-            {
-                name: eventName,
-                callback: callback,
-                thisArg : thisArg
-            };
-        }
-
-        /**
-         * UnBind a callback to an event
-         *
-         * @param {eventName} string The event name
-         * @param {callback}  func   The callback function
-         * @access {public}
-         */
-        off(eventName, callback)
-        {
-            for (var key in this._callbacks)
-            {
-                if (!this._callbacks.hasOwnProperty(key))
-                {
-                    continue;
-                }
-
-                var callbackEvent = key.split('______')[0];
-
-                if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
-                {
-                    delete this._callbacks[key];
-                }
-            }
-        }
-
-        /**
-         * Get a callback function by key
-         *
-         * @param {fn} string The function key
-         * @access {private}
-         * @return {string}
-         */
-        _getFnName(fn)
-        {
-            var f = typeof fn == 'function';
-
-            var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
-
-            return (!f && 'not a function') || (s && s[1] || 'anonymous');
-        }
-    }
-
-    // Load into container and invoke
-    Container.singleton('Events', Events);
-
-}());
-
-/**
- * Filters
- *
- * This class handles custom event firing and callback assigning.
- *
- */
-(function()
-{
-
-    /**
-     * Module constructor
-     *
-     * @class
-     {*} @constructor
-     * @access {public}
-     * @return {this}
-     */
-    class Filters
-    {
-        _callbacks = {};
-
-        /**
-         * Module destructor - clears event cache
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._callbacks = {};
-        }
-
-        /**
-         * Fire a custom event
-         *
-         * @param {eventName} string The event name to fire
-         * @param {subject}   mixed  What should be given as "this" to the event callbacks
-         * @access {public}
-         */
-        filter(eventName, subject)
-        {
-            var response = subject;
-
-            for (var key in this._callbacks)
-            {
-                if (!this._callbacks.hasOwnProperty(key))
-                {
-                    continue;
-                }
-
-                var callbackEvent = key.split('______')[0];
-
-                if (callbackEvent === eventName)
-                {
-                    var callback = this._callbacks[key].callback;
-
-                    response = callback.call(response, response);
-                }
-            }
-
-            return response;
-        }
-
-        /**
-         * Bind a callback to an event
-         *
-         * @param {eventName} string The event name
-         * @param {callback}  func   The callback function
-         * @access {public}
-         */
-        on(eventName, callback)
-        {
-            // Make sure the function is unique - unless it is ananonymous
-            var callbackName = this._getFnName(callback);
-
-            if (callbackName === 'anonymous')
-            {
-                callbackName = 'anonymous_' + Object.keys(this._callbacks).length;
-            }
-
-            var key = eventName + '______' + callbackName;
-
-            // Save the callback and event name
-            this._callbacks[key] = {
-                name: eventName,
-                callback: callback,
-            };
-        }
-
-        /**
-         * UnBind a callback to an event
-         *
-         * @param {eventName} string The event name
-         * @param {callback}  func   The callback function
-         * @access {public}
-         */
-        off(eventName, callback)
-        {
-            for (var key in this._callbacks)
-            {
-                if (!this._callbacks.hasOwnProperty(key))
-                {
-                    continue;
-                }
-
-                var callbackEvent = key.split('______')[0];
-
-                if (callbackEvent === eventName && this._callbacks[key]['callback'] === callback)
-                {
-                    delete this._callbacks[key];
-                }
-            }
-        }
-
-        /**
-         * Get a callback function by key
-         *
-         * @param {fn} string The function key
-         * @access {private}
-         * @return {string}
-         */
-        _getFnName(fn)
-        {
-            var f = typeof fn == 'function';
-
-            var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
-
-            return (!f && 'not a function') || (s && s[1] || 'anonymous');
-        }
-    }
-
-    // Load into container and invoke
-    Container.singleton('Filters', Filters);
-
-}());
-
 (function()
 {
     /**
@@ -11277,6 +11001,229 @@ function abort()
 
     // Load into container
     Container.set('FormValidator', FormValidator);
+
+})();
+
+(function()
+{
+    /**
+     * @var {Helper} obj
+     */
+    const [each, _for, in_array, is_undefined, is_callable, animate] = Container.import(['each','for','in_array','is_undefined','is_callable','animate']).from('Helper');
+
+    /**
+     * Default options.
+     * 
+     * @var {array}
+     */
+    const DEFAULT_OPTIONS =
+    {
+        count: 1,
+        height: null,
+        width: null,
+        variant: 'block',
+    };
+
+    /**
+     * Class variants.
+     * 
+     * @var {array}
+     */
+    const CLASS_VARIANTS = ['block', 'text', 'btn', 'input', 'circle', 'wave', 'rounded', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+
+    /**
+     * Class variants.
+     * 
+     * @var {array}
+     */
+    const WRAPPER_VARIANTS = ['text-block', 'block-h1', 'block-h2', 'block-h3', 'block-h4', 'block-h5', 'block-h6'];
+
+    /**
+     * Skeleton utility
+     *
+     * The Notification class is a utility class used to
+     * display a notification.
+     */
+    class Skeleton
+    {
+        /**
+         * Module constructor
+         *
+         * @params {options} obj
+         * @access {public}
+         * @return {this}
+         */
+        constructor(DOMElement, options)
+        {
+            this._DOMElement = DOMElement;
+            this._options    = {...DEFAULT_OPTIONS, ...options};
+            this._nodes      = [];
+            this._build();
+
+            return this;
+        }
+
+        /**
+         * Remove a notification
+         *
+         * @params {_node} node
+         * @access {private}
+         */
+        _build()
+        {
+            let wrapper    = null;
+            let skeleton   = document.createElement('div');
+            let variants   = this._options.variant.split(' ').map((x) => x.trim().toLowerCase()).filter((x) => x !== '');
+            let DOMElement = this._DOMElement;
+            let width      = this._options.width;
+            let height     = this._options.height;
+            let classes    = ['skeleton'];
+
+            skeleton.classList.add('skeleton');
+
+            each(variants, function(i, variant)
+            {
+                if (in_array(variant, CLASS_VARIANTS))
+                {
+                    classes.push(`skeleton-${variant}`);
+                }
+                else if (in_array(variant, WRAPPER_VARIANTS))
+                {
+                    if (!wrapper)
+                    {
+                        wrapper = document.createElement('div');
+                        wrapper.className = 'skeleton-text-block';
+                    }
+                    if (variant !== 'text-block')
+                    {
+                        wrapper.className += ` skeleton-text-${variant}`;
+                    }
+                }
+            });
+
+            skeleton.className = classes.join(' ');
+
+            let skeletons = [skeleton];
+
+            if (this._options.count > 1)
+            {
+                _for(this._options.count -1, (i) => skeletons.push(skeleton.cloneNode(true)));
+            }
+
+            each(skeletons, function(i, _skeleton)
+            {
+                this._setDimensions(_skeleton, width, height, wrapper);
+
+                if (wrapper)
+                {
+                    wrapper.appendChild(_skeleton);
+                }
+                else
+                {
+                    DOMElement.appendChild(_skeleton);
+                }
+
+            }, this);
+
+            if (wrapper)
+            {                
+                DOMElement.appendChild(wrapper);
+
+                this._nodes = [wrapper];
+            }
+            else
+            {
+                this._nodes = skeletons;
+            }
+        }
+
+        /**
+         * Remove and destroy
+         *
+         * @params {callback} node
+         * @access {private}
+         */
+        _setDimensions(skeleton, width, height, wrapper)
+        {
+            // Text blocks get random width;
+            if (wrapper)
+            {
+                let min = 15;
+                let max = 85;
+                let w   = Math.floor(Math.random() * (max - min + 1) + min);
+
+                skeleton.style.width = `${w}%`;
+
+                return;
+            }
+
+            if (width)
+            {
+                skeleton.style.width = width;
+            }
+
+            if (height)
+            {
+                skeleton.style.height = height;
+            }
+        }
+
+        /**
+         * Remove and destroy
+         *
+         * @params {callback} node
+         * @access {private}
+         */
+        fade_out(callback, destroy)
+        {
+            destroy = is_undefined(destroy) ? true : destroy;
+            
+            let _this = this;
+
+            const complete = function()
+            {
+                if (destroy)
+                {
+                    _this.destroy();
+                }
+
+                if (is_callable(callback))
+                {
+                    callback();
+                }
+            }
+
+            let madeCallback = false;
+
+            each(this._nodes, function(i, node)
+            {
+                let _callback = madeCallback ? undefined : complete;
+
+                animate(node, { property : 'opacity', to : 0, duration: 500, callback: complete});
+
+                madeCallback = true;
+            });
+        }
+
+        /**
+         * Remove and destroy
+         *
+         * @params {_node} node
+         * @access {private}
+         */
+        destroy()
+        {
+            each(this._nodes, function(i, node)
+            {
+                node.parentNode.removeChild(node);
+            });
+
+            this._nodes = [];
+        }
+    }
+
+    // Add to container
+    Container.set('Skeleton', Skeleton);
 
 })();
 
@@ -13773,110 +13720,24 @@ function abort()
 
 }());
 
-/**
- * Ripple click animation
- *
- * @author    {Joe J. Howard}
- * @copyright {Joe J. Howard}
- * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
- */
 (function()
 {
     /**
-     * Ripple handler
+     * Ripple animation time.
      * 
-     * @var {object}
-     */
-    /**
-     * Ripple handler
+     * Note 1. this is set in CSS
+     * Note 2. This value is actually half of total animation time as the the ripple scales (2.5)
      * 
-     * @see {https://github.com/samthor/js-ripple}
+     * @var {int}
      */
-    var rippleTypeAttr = 'data-event';
+    const RPL_AN_TIME = 300;
 
     /**
-     * @param {string} type
-     * @param {!Event|!Touch} at
+     * Wrappers that need "position:relative" to hide overflow.
+     * 
+     * @var {array}
      */
-    function startRipple(type, at, holder)
-    {
-        holder = Helper.$('.js-ripple-container', holder);
-
-        if (!holder)
-        {
-            return false; // ignore
-        }
-        
-        var cl = holder.classList;
-
-        // Store the event use to generate this ripple on the holder: don't allow
-        // further events of different types until we're done. Prevents double-
-        // ripples from mousedown/touchstart.
-        var prev = holder.getAttribute(rippleTypeAttr);
-        if (prev && prev !== type)
-        {
-            return false;
-        }
-        holder.setAttribute(rippleTypeAttr, type);
-
-        // Create and position the ripple.
-        var rect = holder.getBoundingClientRect();
-        var x = at.offsetX;
-        var y;
-        if (x !== undefined)
-        {
-            y = at.offsetY;
-        }
-        else
-        {
-            x = at.clientX - rect.left;
-            y = at.clientY - rect.top;
-        }
-        var ripple = document.createElement('div');
-        var max;
-        if (rect.width === rect.height)
-        {
-            max = rect.width * 1.412;
-        }
-        else
-        {
-            max = Math.sqrt(rect.width * rect.width + rect.height * rect.height);
-        }
-        var dim = max * 2 + 'px';
-        ripple.style.width = dim;
-        ripple.style.height = dim;
-        ripple.style.marginLeft = -max + x + 'px';
-        ripple.style.marginTop = -max + y + 'px';
-
-        // Activate/add the element.
-        ripple.className = 'ripple';
-        holder.appendChild(ripple);
-        window.setTimeout(function()
-        {
-            ripple.classList.add('held');
-        }, 0);
-
-        var releaseEvent = (type === 'mousedown' ? 'mouseup' : 'touchend');
-        var release = function(ev)
-        {
-            // TODO: We don't check for _our_ touch here. Releasing one finger
-            // releases all ripples.
-            document.removeEventListener(releaseEvent, release);
-            ripple.classList.add('done');
-
-            // larger than animation: duration in css
-            window.setTimeout(function()
-            {
-                holder.removeChild(ripple);
-                if (!holder.children.length)
-                {
-                    cl.remove('active');
-                    holder.removeAttribute(rippleTypeAttr);
-                }
-            }, 650);
-        };
-        document.addEventListener(releaseEvent, release);
-    }
+    const STATIC_POSITIONS = ['static', 'unset', 'initial'];
 
     /**
      * JS Helper reference
@@ -13884,8 +13745,14 @@ function abort()
      * @var {object}
      */
     const Helper = Container.Helper();
-
     
+    /**
+     * Ripple click animation
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
     class Ripple
     {
         /**
@@ -13903,8 +13770,9 @@ function abort()
                 '.list > li',
                 '.pagination li a',
                 '.tab-nav li a',
-                '.card-img',
-                '.card-img-top',
+                '.card.primary-action',
+                '.card .primary-action',
+                '.card-media',
                 '.js-ripple'
             ];
 
@@ -13934,10 +13802,17 @@ function abort()
          */
         _bind()
         {
-            for (var i = 0; i < this._nodes.length; i++)
+            Helper.each(this._nodes, function(i, node)
             {
-                this._insertRipple(this._nodes[i]);
-            }
+                // No ripples inside primary actions
+                if (!Helper.has_class(node, 'primary-action') && Helper.closest(node, '.primary-action') && !Helper.has_class(node, 'card'))
+                {
+                    return;
+                }
+
+                this._bindWrapper(node);
+
+            }, this);
         }
 
         /**
@@ -13947,21 +13822,11 @@ function abort()
          */
         _unbind()
         {
-            for (var i = 0; i < this._nodes.length; i++)
+            Helper.each(this._nodes, function(i, node)
             {
-                var wrapper = this._nodes[i];
+                Helper.removeEventListener(node, 'mousedown, touchstart', this._startRipple, true);
 
-                var ripples = Helper.$All('.js-ripple-container', wrapper);
-
-                Helper.removeEventListener(wrapper, 'mousedown', this._mouseDown);
-
-                Helper.removeEventListener(wrapper, 'touchstart', this._touchStart);
-
-                for (var j = 0; j < ripples.length; j++)
-                {
-                    Helper.remove_from_dom(ripples[j]);
-                }
-            }
+            }, this);
         }
 
         /**
@@ -13970,57 +13835,133 @@ function abort()
          * @access {private}
          * @param  {DOMElement}    wrapper
          */
-        _insertRipple(wrapper)
+        _bindWrapper(wrapper)
         {
-            // If this is a user-defined JS-Ripple we need to insert it
-            var rip  = document.createElement('span');
-                
-            rip.className = 'ripple-container js-ripple-container';
-
-            if (Helper.has_class(wrapper, 'chip'))
-            { 
-                rip.className = 'ripple-container fill js-ripple-container';
-            }
-            
-            Helper.preapend(rip, wrapper);
-
-            Helper.addEventListener(wrapper, 'mousedown', this._mouseDown, true, 'foo', 'bar');
-
-            Helper.addEventListener(wrapper, 'touchstart', this._touchStart, true, 'foo', 'bar');
-      
+            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple, true);
         }
 
         /**
-         * On mousedown
+         * Ripple handler
          *
          * @access {private}
          * @param  {event|null} e
          */
-        _mouseDown(e)
+        _startRipple(e)
         {
             e = e || window.event;
 
-            if (e.button === 0)
+            var wrapper = this;
+
+            // Single finger "clicks" only
+            if (e.touches && e.touches.length > 1) return;
+
+            // Left click only on mouse
+            if ('button' in e && e.button !== 0) return;
+
+            // Store the event used to generate this ripple on the holder: don't allow
+            // further events of different types until we're done.
+            // Prevents double-ripples from mousedown/touchstart.
+            var prev = wrapper.getAttribute('data-event');
+            if (prev && prev !== e.type) return;
+            
+            // Add the data-attribute to identify ripple event type
+            wrapper.setAttribute('data-event', e.type);
+
+            // Add class to parent do identify mousedown/touchstart
+            Helper.add_class(wrapper, 'ripple-down');
+
+            // Create ripple and append immediately
+            var ripple = document.createElement('div');
+            wrapper.appendChild(ripple);
+
+            // Figure out where to place ripple inside parent
+            var c = Helper.coordinates(wrapper);
+            var s = Math.max(Helper.height(wrapper), Helper.width(wrapper));
+            var x = (e.pageX - c.left) - (s / 2);
+            var y = (e.pageY - c.top) - (s / 2);
+
+            // Apply styles to ripple
+            Helper.css(ripple, 
             {
-                startRipple(e.type, e, this);
+                width:  `${s}px`,
+                height: `${s}px`,
+                left:   `${x}px`,
+                top:    `${y}px`
+            });
+            
+            
+            // Cache 'overflow' and 'position' inline styles
+            // to revert back to after complete
+            // If these are empty they will be removed
+            const CSSoverflow = Helper.inline_style(wrapper, 'overflow') || false;
+            const CSSposition = Helper.inline_style(wrapper, 'position') || false; 
+
+            // Ensure parent hides overflow
+            Helper.css(wrapper, 'overflow', 'hidden');
+
+            // Ensure position relative if needed
+            if (Helper.in_array(Helper.rendered_style(wrapper, 'position'), STATIC_POSITIONS))
+            {
+                Helper.css(wrapper, 'position', 'relative');
             }
 
-        }
+            // Start ripple animation
+            ripple.classList.add('ripple');
 
-        /**
-         * On touchstart
-         *
-         * @access {private}
-         * @param  {event|null}   e
-         */
-        _touchStart(e, foo, bar)
-        {
-            e = e || window.event;
+            // Animation started
+            const t0 = performance.now();
 
-            for (var i = 0; i < e.changedTouches.length; ++i)
+            // Figure out release event type
+            var releaseEvent = (e.type === 'mousedown' ? 'mouseup' : 'touchend');          
+            
+            // Cached timer for release
+            var timer;
+
+            // Remove handler
+            const remove = function()
             {
-                startRipple(e.type, e.changedTouches[i], this);
+                wrapper.removeChild(ripple);
+
+                Helper.css(wrapper, 'overflow', CSSoverflow);
+
+                Helper.css(wrapper, 'position', CSSposition);
             }
+
+            // Release event
+            const release = function(ev)
+            {
+                // Clear timer
+                clearTimeout(timer);
+
+                // Remove release listener
+                document.removeEventListener(releaseEvent, release);
+
+                // Check if release happened before ripple finished animating
+                const held = (performance.now() - t0);
+
+                // Release occurs before initial scale animation finishes with buffer
+                if (held < RPL_AN_TIME)
+                {
+                    let diff = parseInt(RPL_AN_TIME - held);
+
+                    if (diff > 150)
+                    {
+                        setTimeout(release, diff);
+
+                        return;
+                    }
+                }
+
+                // Cleanup and remove element
+                wrapper.removeAttribute('data-event');
+
+                Helper.remove_class(wrapper, 'ripple-down');
+
+                Helper.animate_css(ripple, {'opacity': 0, duration: 350, callback: remove });
+            };
+
+            // Release listener
+            document.addEventListener(releaseEvent, release);
         }
     }
     
@@ -14434,6 +14375,11 @@ function abort()
         {            
             Helper.addEventListener(this._labels, 'click', this._onLabelClick);
             Helper.addEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
+
+            // Trigger change
+            let _this = this;
+
+            Helper.each(this._inputs, (i, input) => _this._setClasses(input));
         }
 
         /**
@@ -14497,6 +14443,8 @@ function abort()
 
             var wrapper = Helper.closest(this, '.form-field');
 
+            if (!wrapper) return;
+
             if (e.type === 'click')
             {
                 this.focus();
@@ -14524,6 +14472,32 @@ function abort()
                     Helper.remove_class(wrapper, 'empty');
                     Helper.add_class(wrapper, 'not-empty');
                 }
+            }
+        }
+
+        /**
+         * Sets initial classes on load.
+         *
+         * @access {private}
+         * @params {DOMElement} input 
+         */
+        _setClasses(input)
+        {
+            var wrapper = Helper.closest(input, '.form-field');
+
+            if (!wrapper) return;
+
+            var _value = Helper.input_value(input);
+
+            if (_value === '')
+            {
+                Helper.remove_class(wrapper, 'not-empty');
+                Helper.add_class(wrapper, 'empty');
+            }
+            else
+            {
+                Helper.remove_class(wrapper, 'empty');
+                Helper.add_class(wrapper, 'not-empty');
             }
         }
     }

@@ -19,14 +19,13 @@
 
 // Utility
 @import 'utility/_cookie.js';
-@import 'utility/_events.js';
-@import 'utility/_filters.js';
 @import 'utility/_inputMasker.js';
 @import 'utility/_modal.js';
 @import 'utility/_frontdrop.js';
 @import 'utility/_notification.js';
 @import 'utility/_ajax.js';
 @import 'utility/_formValidator.js';
+@import 'utility/_skeleton.js';
 
 // DOM Module
 @import "dom/pjax/_pjax.js";

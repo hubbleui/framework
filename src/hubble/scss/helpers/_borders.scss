@@ -1,10 +1,6 @@
 // Reset
 .no-border              { border: 0; }
 
-// Box shadows 
-.shadow-out  		    { box-shadow: $raised-level-one }
-.shadow-in   		    { box-shadow: $box-shadow-in }
-
 // Color inheritance
 .border-s               {border-bottom: 1px solid;}
 .border-n               {border-top:    1px solid;}
@@ -12,7 +8,9 @@
 .border-w               {border-right:  1px solid;}
 
 // Color specific
-@each $context, $colors in $contexts
-{    
-    .border-#{$context} { border-color: map-get($colors, "color") }
+@each $name, $color in $colors
+{
+    $nicename : _str-replace($name, 'brand-', '');
+
+    .border-#{$nicename} { border-color: var(--hb-#{$name}) }
 }

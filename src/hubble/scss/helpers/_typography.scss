@@ -5,38 +5,29 @@
 .heading-font { font-family: var(--hb-font-headings) }
 
 // Font Weights
-.font-lightest { font-weight: $text-lightest }
-.font-light    { font-weight: $text-light }
-.font-normal   { font-weight: $text-normal }
-.font-bold     { font-weight: $text-bold }
-.font-bolder   { font-weight: $text-bolder }
-.font-boldest  { font-weight: $text-boldest }
+.text-lightest { font-weight: $text-lightest }
+.text-light    { font-weight: $text-light }
+.text-normal   { font-weight: $text-normal }
+.text-bold     { font-weight: $text-bold }
+.text-bolder   { font-weight: $text-bolder }
+.text-boldest  { font-weight: $text-boldest }
 
 // Font Styles
-.text-normal    { font-style: normal }
-.text-italic    { font-style: italic }
-.text-ellipses  { @include _ellipsis() }
-.text-strike    { text-decoration: line-through }
+.font-italic    { font-style: italic }
+.font-ellipses  { @include _ellipsis() }
+.font-strike    { text-decoration: line-through }
 
 // Text Modifications
 .uppercase          { text-transform: uppercase }
 .lowercase          { text-transform: lowercase }
 .capitalize         { text-transform: capitalize }
+.underline          { text-decoration: underline }
 .no-text-decoration { text-decoration: none }
 
 // Text Alignments
 .text-left    { text-align: left }
 .text-right   { text-align: right }
 .text-center  { text-align: center }
-.text-justify { text-align: justify }
-
-// Text colors
-.text-black   { color: var(--hb-black) }
-.text-warning { color: var(--hb-brand-warning) }
-.text-info    { color: var(--hb-brand-info)    }
-.text-danger  { color: var(--hb-brand-danger)  }
-.text-success { color: var(--hb-brand-success) }
-.text-muted   { color: var(--hb-gray-300)   }
 
 // Misc
 .nowrap       { white-space: nowrap }

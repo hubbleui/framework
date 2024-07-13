@@ -6,19 +6,12 @@
 .inline-block 	 { display: inline-block }
 .table 			 { display: table }
 .table-cell 	 { display: table-cell }
-.no-display		 { display: none }
 .visibility-show { visibility: visible }
 .visibility-hide { visibility: hidden }
 .opacity-hide 	 { opacity: 0 }
 .opacity-show 	 { opacity: 1 }
 .hidden          { display: none }
 .no-select       { user-select: none; }
-.img-responsive
-{
-	display: block;
-	width: 100%;
-    height: auto;
-}
 .sr-only
 { 
 	position: absolute;

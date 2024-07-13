@@ -41,7 +41,8 @@ module.exports =
         options: _options,
         files:
         {
-           'build/css/hubble.css' : 'src/hubble/scss/hubble.scss'
+           'build/css/hubble.css' : 'src/hubble/scss/hubble.scss',
+           'build/css/lazyload.css' : 'src/hubble/scss/lazyload.scss'
         }
     },
 

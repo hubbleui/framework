@@ -2,22 +2,6 @@
 {
 	-webkit-transform: translate3d(0,0,0);
 }
-.ease-xs
-{
-	transition: var(--hb-ease-time-xs) ease;
-}
-.ease
-{
-	transition: var(--hb-ease-time-s) ease;
-}
-.ease-md
-{
-	transition: var(--hb-ease-time-md) ease;
-}
-.ease-xl
-{
-	transition: var(--hb-ease-time-xl) ease;
-}
 .no-transition
 {
 	transition: 0s linear;

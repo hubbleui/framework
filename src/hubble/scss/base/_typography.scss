@@ -21,43 +21,42 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
-
 h1, .h1
 { 
     font-size: var(--hb-text-size-h1);
-    line-height: calc(var(--hb-text-size-h1) * 0.9);
+    line-height: var(--hb-headings-line-height);
 }
 h2, .h2
 { 
     font-size: var(--hb-text-size-h2);
-    line-height: calc(var(--hb-text-size-h2) * 0.9);
+    line-height: var(--hb-headings-line-height);
 }
 h3, .h3
 { 
     font-size: var(--hb-text-size-h3);
-    line-height: calc(var(--hb-text-size-h3) * 0.9);
+    line-height: var(--hb-headings-line-height);
 }
 h4, .h4
 { 
     font-size: var(--hb-text-size-h4);
-    line-height: calc(var(--hb-text-size-h4) * 0.9);
+    line-height: var(--hb-headings-line-height);
 }
 h5, .h5
 { 
     font-size: var(--hb-text-size-h5);
-    line-height: calc(var(--hb-text-size-h5) * 0.9);
+    line-height: var(--hb-headings-line-height);
 }
 h6, .h6
 { 
     font-size: var(--hb-text-size-h6);
-    line-height: calc(var(--hb-text-size-h6) * 0.9);
+    line-height: var(--hb-headings-line-height);
 }
 
 // Text sizes
 // Paragraph
 p
-{ 
-    margin: 0 0 1rem 0; 
+{
+    margin: 0 0 1rem 0;
     font-size: var(--hb-base-font-size);
 }
 .p1
@@ -138,6 +137,7 @@ mark,
     background: yellow;
     color: var(--hb-black);
 }
+
 // Sub and Sup
 sub,
 .sub,
@@ -169,6 +169,103 @@ address,
     font-size:   var(--hb-base-font-size);
     margin: 0 0 1rem 0;
 }
+
+// Sample
+samp
+{
+    font-size: 85%;
+}
+
+blockquote:not([class])
+{
+    padding: 0 1em;
+    color: var(--hb-gray);
+    border-left: 0.25em solid var(--hb-gray-300);
+
+    >
+    {
+        :first-child
+        {
+            margin-top: 0;
+        }
+
+        :last-child
+        {
+            margin-bottom: 0;
+        }
+    }
+}
+
+ul, ol
+{
+    padding-left: 2em;
+}
+
+ul.no-list
+{
+    padding: 0;
+    list-style-type: none;
+}
+
+ol
+{
+    &.no-list
+    {
+        padding: 0;
+        list-style-type: none;
+    }
+
+    &[type="az"]
+    {
+        list-style-type: lower-alpha;
+    }
+
+    &[type="AZ"]
+    {
+        list-style-type: upper-alpha;
+    }
+    &[type="1"]
+    {
+        list-style-type: decimal;
+    }
+}
+
+div > ol:not([type])
+{
+    list-style-type: decimal;
+}
+
+ul
+{
+    ul, ol
+    {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+ol
+{
+    ol, ul
+    {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+li
+{
+    > p
+    {
+        margin-top: 1.6rem;
+    }
+
+    + li
+    {
+        margin-top: 0.25em;
+    }
+}
+
 
 // Very basic code/pre
 code, pre

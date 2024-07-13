@@ -4,47 +4,28 @@
     // colums
     @for $i from 1 through 12
     {
-        @if $curr-grid == null
+        $colname : if($curr-grid == null, col-#{$i}, col-#{$curr-grid}-#{$i});
+
+        .#{$colname}
         {
-            .col-#{$i}
-            {
-                --hb-col-width: #{unquote('#{math.div(100, 12) * $i}%')};
-            }
-        }
-        @else
-        {
-            .col-#{$curr-grid}-#{$i}
-            {
-                --hb-col-width: #{unquote('#{math.div(100, 12) * $i}%')};
-            }
+            --hb-col-width: #{unquote('#{math.div(100, 12) * $i}%')};
         }
     }
 
     // Pushers / pullers
     @for $i from 1 through 12
     {
-        @if $curr-grid == null
-        {
-            .col-push-#{$i}
-            {
-                --hb-col-push: #{unquote('#{math.div(100, 12) * $i}%')};
-            }
-            .col-pull-#{$i}
-            {
-                --hb-col-pull: #{unquote('#{math.div(100, 12) * $i}%')};
-            }
+        $pushcol : if($curr-grid == null, col-push-#{$i}, col-#{$curr-grid}-push-#{$i});
 
-        }
-        @else
+        $pullcol : if($curr-grid == null, col-pull-#{$i}, col-#{$curr-grid}-pull-#{$i});
+
+        .#{$pushcol}
         {
-            .col-#{$curr-grid}-push-#{$i}
-            {
-                --hb-col-push: #{unquote('#{math.div(100, 12) * $i}%')};
-            }
-            .col-#{$curr-grid}-pull-#{$i}
-            {
-                --hb-col-pull: #{unquote('#{math.div(100, 12) * $i}%')};
-            }
+            --hb-col-push: #{unquote('#{math.div(100, 12) * $i}%')};
+        }
+        .#{$pullcol}
+        {
+            --hb-col-pull: #{unquote('#{math.div(100, 12) * $i}%')};
         }
     }
 }

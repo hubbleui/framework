@@ -66,7 +66,7 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
         background-position: right var(--hb-input-pad-x) center;
         background-size: 16px 12px;
         background-repeat: no-repeat;
-        padding: calc(var(--hb-input-pad-y) * 1.8) var(--hb-input-pad-x) calc(var(--hb-input-pad-y) * 0.885) var(--hb-input-pad-x);
+        padding: calc(var(--hb-input-pad-y) * 1.8) calc(var(--hb-input-pad-x) * 2) calc(var(--hb-input-pad-y) * 0.885) var(--hb-input-pad-x);
         cursor: pointer;
     }
 

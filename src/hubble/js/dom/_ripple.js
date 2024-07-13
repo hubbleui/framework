@@ -1,107 +1,21 @@
-/**
- * Ripple click animation
- *
- * @author    {Joe J. Howard}
- * @copyright {Joe J. Howard}
- * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
- */
 (function()
 {
     /**
-     * Ripple handler
+     * Ripple animation time.
      * 
-     * @var {object}
-     */
-    /**
-     * Ripple handler
+     * Note 1. this is set in CSS
+     * Note 2. This value is actually half of total animation time as the the ripple scales (2.5)
      * 
-     * @see {https://github.com/samthor/js-ripple}
+     * @var {int}
      */
-    var rippleTypeAttr = 'data-event';
+    const RPL_AN_TIME = 300;
 
     /**
-     * @param {string} type
-     * @param {!Event|!Touch} at
+     * Wrappers that need "position:relative" to hide overflow.
+     * 
+     * @var {array}
      */
-    function startRipple(type, at, holder)
-    {
-        holder = Helper.$('.js-ripple-container', holder);
-
-        if (!holder)
-        {
-            return false; // ignore
-        }
-        
-        var cl = holder.classList;
-
-        // Store the event use to generate this ripple on the holder: don't allow
-        // further events of different types until we're done. Prevents double-
-        // ripples from mousedown/touchstart.
-        var prev = holder.getAttribute(rippleTypeAttr);
-        if (prev && prev !== type)
-        {
-            return false;
-        }
-        holder.setAttribute(rippleTypeAttr, type);
-
-        // Create and position the ripple.
-        var rect = holder.getBoundingClientRect();
-        var x = at.offsetX;
-        var y;
-        if (x !== undefined)
-        {
-            y = at.offsetY;
-        }
-        else
-        {
-            x = at.clientX - rect.left;
-            y = at.clientY - rect.top;
-        }
-        var ripple = document.createElement('div');
-        var max;
-        if (rect.width === rect.height)
-        {
-            max = rect.width * 1.412;
-        }
-        else
-        {
-            max = Math.sqrt(rect.width * rect.width + rect.height * rect.height);
-        }
-        var dim = max * 2 + 'px';
-        ripple.style.width = dim;
-        ripple.style.height = dim;
-        ripple.style.marginLeft = -max + x + 'px';
-        ripple.style.marginTop = -max + y + 'px';
-
-        // Activate/add the element.
-        ripple.className = 'ripple';
-        holder.appendChild(ripple);
-        window.setTimeout(function()
-        {
-            ripple.classList.add('held');
-        }, 0);
-
-        var releaseEvent = (type === 'mousedown' ? 'mouseup' : 'touchend');
-        var release = function(ev)
-        {
-            // TODO: We don't check for _our_ touch here. Releasing one finger
-            // releases all ripples.
-            document.removeEventListener(releaseEvent, release);
-            ripple.classList.add('done');
-
-            // larger than animation: duration in css
-            window.setTimeout(function()
-            {
-                holder.removeChild(ripple);
-                if (!holder.children.length)
-                {
-                    cl.remove('active');
-                    holder.removeAttribute(rippleTypeAttr);
-                }
-            }, 650);
-        };
-        document.addEventListener(releaseEvent, release);
-    }
+    const STATIC_POSITIONS = ['static', 'unset', 'initial'];
 
     /**
      * JS Helper reference
@@ -109,8 +23,14 @@
      * @var {object}
      */
     const Helper = Container.Helper();
-
     
+    /**
+     * Ripple click animation
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
     class Ripple
     {
         /**
@@ -128,8 +48,9 @@
                 '.list > li',
                 '.pagination li a',
                 '.tab-nav li a',
-                '.card-img',
-                '.card-img-top',
+                '.card.primary-action',
+                '.card .primary-action',
+                '.card-media',
                 '.js-ripple'
             ];
 
@@ -159,10 +80,17 @@
          */
         _bind()
         {
-            for (var i = 0; i < this._nodes.length; i++)
+            Helper.each(this._nodes, function(i, node)
             {
-                this._insertRipple(this._nodes[i]);
-            }
+                // No ripples inside primary actions
+                if (!Helper.has_class(node, 'primary-action') && Helper.closest(node, '.primary-action') && !Helper.has_class(node, 'card'))
+                {
+                    return;
+                }
+
+                this._bindWrapper(node);
+
+            }, this);
         }
 
         /**
@@ -172,21 +100,11 @@
          */
         _unbind()
         {
-            for (var i = 0; i < this._nodes.length; i++)
+            Helper.each(this._nodes, function(i, node)
             {
-                var wrapper = this._nodes[i];
+                Helper.removeEventListener(node, 'mousedown, touchstart', this._startRipple, true);
 
-                var ripples = Helper.$All('.js-ripple-container', wrapper);
-
-                Helper.removeEventListener(wrapper, 'mousedown', this._mouseDown);
-
-                Helper.removeEventListener(wrapper, 'touchstart', this._touchStart);
-
-                for (var j = 0; j < ripples.length; j++)
-                {
-                    Helper.remove_from_dom(ripples[j]);
-                }
-            }
+            }, this);
         }
 
         /**
@@ -195,57 +113,133 @@
          * @access {private}
          * @param  {DOMElement}    wrapper
          */
-        _insertRipple(wrapper)
+        _bindWrapper(wrapper)
         {
-            // If this is a user-defined JS-Ripple we need to insert it
-            var rip  = document.createElement('span');
-                
-            rip.className = 'ripple-container js-ripple-container';
-
-            if (Helper.has_class(wrapper, 'chip'))
-            { 
-                rip.className = 'ripple-container fill js-ripple-container';
-            }
-            
-            Helper.preapend(rip, wrapper);
-
-            Helper.addEventListener(wrapper, 'mousedown', this._mouseDown, true, 'foo', 'bar');
-
-            Helper.addEventListener(wrapper, 'touchstart', this._touchStart, true, 'foo', 'bar');
-      
+            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple, true);
         }
 
         /**
-         * On mousedown
+         * Ripple handler
          *
          * @access {private}
          * @param  {event|null} e
          */
-        _mouseDown(e)
+        _startRipple(e)
         {
             e = e || window.event;
 
-            if (e.button === 0)
+            var wrapper = this;
+
+            // Single finger "clicks" only
+            if (e.touches && e.touches.length > 1) return;
+
+            // Left click only on mouse
+            if ('button' in e && e.button !== 0) return;
+
+            // Store the event used to generate this ripple on the holder: don't allow
+            // further events of different types until we're done.
+            // Prevents double-ripples from mousedown/touchstart.
+            var prev = wrapper.getAttribute('data-event');
+            if (prev && prev !== e.type) return;
+            
+            // Add the data-attribute to identify ripple event type
+            wrapper.setAttribute('data-event', e.type);
+
+            // Add class to parent do identify mousedown/touchstart
+            Helper.add_class(wrapper, 'ripple-down');
+
+            // Create ripple and append immediately
+            var ripple = document.createElement('div');
+            wrapper.appendChild(ripple);
+
+            // Figure out where to place ripple inside parent
+            var c = Helper.coordinates(wrapper);
+            var s = Math.max(Helper.height(wrapper), Helper.width(wrapper));
+            var x = (e.pageX - c.left) - (s / 2);
+            var y = (e.pageY - c.top) - (s / 2);
+
+            // Apply styles to ripple
+            Helper.css(ripple, 
             {
-                startRipple(e.type, e, this);
+                width:  `${s}px`,
+                height: `${s}px`,
+                left:   `${x}px`,
+                top:    `${y}px`
+            });
+            
+            
+            // Cache 'overflow' and 'position' inline styles
+            // to revert back to after complete
+            // If these are empty they will be removed
+            const CSSoverflow = Helper.inline_style(wrapper, 'overflow') || false;
+            const CSSposition = Helper.inline_style(wrapper, 'position') || false; 
+
+            // Ensure parent hides overflow
+            Helper.css(wrapper, 'overflow', 'hidden');
+
+            // Ensure position relative if needed
+            if (Helper.in_array(Helper.rendered_style(wrapper, 'position'), STATIC_POSITIONS))
+            {
+                Helper.css(wrapper, 'position', 'relative');
             }
 
-        }
+            // Start ripple animation
+            ripple.classList.add('ripple');
 
-        /**
-         * On touchstart
-         *
-         * @access {private}
-         * @param  {event|null}   e
-         */
-        _touchStart(e, foo, bar)
-        {
-            e = e || window.event;
+            // Animation started
+            const t0 = performance.now();
 
-            for (var i = 0; i < e.changedTouches.length; ++i)
+            // Figure out release event type
+            var releaseEvent = (e.type === 'mousedown' ? 'mouseup' : 'touchend');          
+            
+            // Cached timer for release
+            var timer;
+
+            // Remove handler
+            const remove = function()
             {
-                startRipple(e.type, e.changedTouches[i], this);
+                wrapper.removeChild(ripple);
+
+                Helper.css(wrapper, 'overflow', CSSoverflow);
+
+                Helper.css(wrapper, 'position', CSSposition);
             }
+
+            // Release event
+            const release = function(ev)
+            {
+                // Clear timer
+                clearTimeout(timer);
+
+                // Remove release listener
+                document.removeEventListener(releaseEvent, release);
+
+                // Check if release happened before ripple finished animating
+                const held = (performance.now() - t0);
+
+                // Release occurs before initial scale animation finishes with buffer
+                if (held < RPL_AN_TIME)
+                {
+                    let diff = parseInt(RPL_AN_TIME - held);
+
+                    if (diff > 150)
+                    {
+                        setTimeout(release, diff);
+
+                        return;
+                    }
+                }
+
+                // Cleanup and remove element
+                wrapper.removeAttribute('data-event');
+
+                Helper.remove_class(wrapper, 'ripple-down');
+
+                Helper.animate_css(ripple, {'opacity': 0, duration: 350, callback: remove });
+            };
+
+            // Release listener
+            document.addEventListener(releaseEvent, release);
         }
     }
     

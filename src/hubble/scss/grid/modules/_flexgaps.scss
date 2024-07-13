@@ -1,0 +1,26 @@
+@mixin _make-flex-gaps($curr-grid, $prev-grid: null)
+{
+    @each $name, $size in $grid-gutters
+    {
+        $gapName : if($curr-grid == null, col-gaps-#{$name}, col-gaps-#{$curr-grid}-#{$name});
+
+        .#{$gapName}
+        {
+            --hb-flex-col-gaps: var(--hb-grid-gutter-#{$name});
+        }
+        .flex-row.#{$gapName} > .col
+        {
+            --hb-col-flex: 1 0 calc(var(--hb-col-width) - var(--hb-grid-gutter-#{$name}));
+        }
+    }
+    
+    @each $name, $size in $grid-poles
+    {
+        $gapName : if($curr-grid == null, row-gaps-#{$name}, row-gaps-#{$curr-grid}-#{$name});
+
+        .#{$gapName}
+        {
+            --hb-flex-row-gaps: var(--hb-grid-pole-#{$name});;
+        }
+    }
+}

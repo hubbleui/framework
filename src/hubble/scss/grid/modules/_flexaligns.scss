@@ -1,0 +1,20 @@
+@mixin _make-flex-aligns($curr-grid, $prev-grid: null)
+{
+    $basename : if($curr-grid == null, align-cols, align-cols-#{$curr-grid});
+
+    // Basic alignments
+    .#{$basename}-left         { justify-content: flex-start; }
+    .#{$basename}-right        { justify-content: flex-end; }
+    .#{$basename}-top          { align-items: flex-start; }
+    .#{$basename}-bottom       { align-items: flex-end; }
+    .#{$basename}-center-x     { justify-content: center; }
+    .#{$basename}-center-y     { align-items: center; }
+    .#{$basename}-center       { justify-content: center; align-items: center; align-content: center; }
+
+    // Special
+    .#{$basename}-y-stretch    { align-items: stretch; }
+    .#{$basename}-y-baseline   { align-items: baseline; }
+    .#{$basename}-x-between    { justify-content: space-between; }
+    .#{$basename}-x-around     { justify-content: space-around; }
+    .#{$basename}-x-evenly     { justify-content: space-evenly; }
+}

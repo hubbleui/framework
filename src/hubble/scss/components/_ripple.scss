@@ -1,62 +1,26 @@
-.ripple-container
+@keyframes ripple
+{
+    to
+    {
+        transform: scale(2.5);
+    }
+}
+.ripple
 {
     --hb-ripple-color: #{$ripple-color};
-    --hb-ripple-opacity: #{$ripple-opacity};
-    --hb-ripple-easing: #{$ripple-easing};
-    --hb-ripple-easing-time: #{$ripple-easing-time};
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-    border-radius: inherit;
-    mask-image: radial-gradient(circle, black, white);
-    visibility: hidden;
 
-    &[data-event="mousedown"],
-    &[data-event="touchstart"]
-    {
-        visibility: visible;
-    }
+    position: absolute !important;
+    border-radius: 50% !important;
+    background: var(--hb-ripple-color);
+    transform: scale(0);
+    animation: ripple 0.6s ease-out forwards;
+}
 
-    &.fill::after
-    {
-        border-radius: 1000000px;
-
-        &:after
-        {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
-    }
-    .ripple
-    {
-        opacity: var(--hb-ripple-opacity);
-        background: var(--hb-ripple-color, #FFFFFF);
-        transition: transform var(--hb-ripple-easing-time) var(--hb-ripple-easing), opacity var(--hb-ripple-easing-time) var(--hb-ripple-easing);
-        position: absolute;
-        border-radius: 100%;
-        width: 0;
-        height: 0;
-        transform: scale(0);
-        pointer-events: none;
-        touch-callout: none;
-        user-select: none;
-        &.held
-        {
-            opacity: 0.15;
-            transform: scale(1);
-        }
-        &.done
-        {
-            opacity: 0;
-        }
-    }
+// Colors
+.btn.btn-outline .ripple,
+.btn.btn-pure .ripple
+{
+    --hb-ripple-color: currentColor;
+    opacity: 0.2;
 }
 

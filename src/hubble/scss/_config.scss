@@ -1,9 +1,11 @@
 // Prebuilt colors to choose a theme from
 // Flat colors
+$teal:                          #7de3b5 !default;
 $turquoise:                     #1abc9c !default;
 $greensea:                      #16a085 !default;
 $emerland:                      #2ecc71 !default;
 $nephritis:                     #27ae60 !default;
+$babyblue:                      #b0e2fe !default;
 $peterrive:                     #3498db !default;
 $belizehol:                     #2980b9 !default;
 $amethyst:                      #9b59b6 !default;
@@ -13,6 +15,7 @@ $midnightblue:                  #2c3e50 !default;
 $sunflower:                     #f1c40f !default;
 $orange:                        #f39c12 !default;
 $carrot:                        #e67e22 !default;
+$salmon:                        #ed5d81 !default;
 $pumpkin:                       #d35400 !default;
 $alizarin:                      #e74c3c !default;
 $pomegranate:                   #c0392b !default;
@@ -53,6 +56,43 @@ $link-color-hover:              var(--hb-brand-primary-500) !default;
 // Darkmode
 $body-bg-darkmode:              var(--hb-black) !default;
 $body-color-darkmode:           var(--hb-white) !default;
+
+// Used for optional themeing, not used by UI directly
+$themeColors:
+(
+    'teal':                     $teal,
+    'turquoise':                $turquoise,
+    'greensea':                 $greensea,
+    'emerland':                 $emerland,
+    'nephritis':                $nephritis,
+    'babyblue':                 $babyblue,
+    'peterrive':                $peterrive,
+    'belizehol':                $belizehol,
+    'amethyst':                 $amethyst,
+    'wisteria':                 $wisteria,
+    'wetasphalt':               $wetasphalt,
+    'midnightblue':             $midnightblue,
+    'sunflower':                $sunflower,
+    'orange':                   $orange,
+    'carrot':                   $carrot,
+    'salmon':                   $salmon,
+    'pumpkin':                  $pumpkin,
+    'alizarin':                 $alizarin,
+    'pomegranate':              $pomegranate,
+    'clouds':                   $clouds,
+    'silver':                   $silver,
+    'concrete':                 $concrete,
+    'asbestos':                 $asbestos,
+
+    // Neons
+    'neongreen':                $neongreen,
+    'skyblue':                  $skyblue,
+    'beetroot':                 $beetroot,
+    'hotpink':                  $hotpink,
+    'pineapple':                $pineapple,
+    'coralred':                 $coralred,
+    'ash':                      $ash,
+) !default;
 
 // Colors
 // These are used in root.scss to generate color palettes
@@ -96,7 +136,7 @@ $text-lightest:                 100 !default;
 $text-light:                    300 !default;
 $text-normal:                   400 !default;
 $text-bold:                     500 !default;
-$text-bolder:                   800 !default;
+$text-bolder:                   600 !default;
 $text-boldest:                  900 !default;
 
 // Global base font styles
@@ -123,8 +163,8 @@ $text-size-p6:                  $base-font-size !default;
 
 // Heading styles
 $headings-font-weight:          $text-bold !default;
-$headings-line-height:          1.1 !default;
-$headings-spacer:               1em !default;
+$headings-line-height:          1.2em !default;
+$headings-spacer:               0.75em !default;
 
 // Base aesthetics
 $border-radius:                 3px !default;
@@ -147,12 +187,12 @@ $raised-level-three:            rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 
 $box-shadow-in:                 inset 0 5px 8px -2px rgba(0,0,0,.13) !default;
 
 // Button
-$btn-height:                    38px !default;
-$btn-text-transform:            uppercase !default;
+$btn-text-transform:            none !default;
 $btn-pad-x:                     1.6rem !default;
-$btn-pad-y:                     1.2rem !default;
+$btn-pad-y:                     1.4rem !default;
 $btn-font-size:                 1.4rem !default;
 $btn-font-weight:               $text-bold !default;
+$btn-letter-spacing:            0 !default;
 
 $btn-base-bg:                   var(--hb-gray-200);
 $btn-base-color:                var(--hb-gray-700);
@@ -258,7 +298,7 @@ $modal-overlay-transition-off:  opacity .5s ease !default;
 // Card
 $card-bg:                       var(--hb-white) !default;
 $card-bg-focus:                 var(--hb-white) !default;
-$card-color:                    var(--hb-gray-500) !default;
+$card-color:                    var(--hb-gray-900) !default;
 $card-title-color:              var(--hb-body-color) !default;
 $card-line-height:              1.8 !default;
 $card-border-radius:            var(--hb-border-radius) !default;
@@ -266,18 +306,15 @@ $card-border-width:             0 !default;
 $card-border-color:             var(--hb-gray-300) !default;
 $card-box-shadow:               var(--hb-raised-level-two) !default;
 $card-box-shadow-hover:         var(--hb-raised-level-two) !default;
-$card-spacer-y:                 2rem !default;
+$card-spacer-y:                 1.2rem !default;
 $card-spacer-x:                 1.6rem !default;
-$card-title-spacer-y:           1.7rem !default;
 $card-divider-color:            var(--hb-gray-300) !default;
 $card-divider-size:             1px !default;
 $card-divier-space:             1rem !default;
 $card-actions-spacer-y:         2rem !default;
 $card-actions-spacer-x:         0.5rem !default;
-$card-icon-color:               var(--hb-gray-500) !default;
-$card-icon-bg:                  var(--hb-gray-200) !default;
-$card-img-padding:              0 !default;
-$card-img-bg:                   var(--hb-gray-100) !default;
+$card-media-padding:            0 !default;
+$card-media-bg:                 var(--hb-gray-100) !default;
 
 // Inputs
 $input-font-size:               1.5rem !default;
@@ -441,10 +478,7 @@ $spinner-color:                 var(--hb-gray) !default;
 $spinner-size:                  6.4rem !default;
 
 // Ripple
-$ripple-color:                  currentColor !default;
-$ripple-opacity:                0.5 !default;
-$ripple-easing:                 ease-out !default;
-$ripple-easing-time:            1s !default;
+$ripple-color:                  rgba(0, 0, 0, 0.15) !default;
 
 // Scrollbars
 $scrollbar-size:                0.8rem !default;
@@ -456,6 +490,11 @@ $scrollbar-track-active:        rgba(0, 0, 0, 0.07) !default;
 $scrollbar-handle-color:        rgba(0, 0, 0, 0.2) !default;
 $scrollbar-handle-hover:        rgba(0, 0, 0, 0.3) !default;
 $scrollbar-handle-active:       rgba(0, 0, 0, 0.35) !default;
+
+// Skeleton
+$skeleton-bg-1:                 rgba(0, 0, 0, 0.2) !default;
+$skeleton-bg-2:                 rgba(0, 0, 0, 0.4) !default;
+$skeleton-text-radius:          var(--hb-border-radius) !default;
 
 // Frontdrop
 
@@ -510,17 +549,6 @@ $container-gutters:
     'md':                       3.0rem,
     'lg':                       3.0rem,
     'xl':                       3.0rem,
-) !default;
-
-// Margin sizes
-$margin-sizes:
-(
-    'xxs':                      0.5rem,
-    'xs':                       1rem,
-    'sm':                       3.0rem,
-    'md':                       4.5rem,
-    'lg':                       6.0rem,
-    'xl':                       8.0rem,
 ) !default;
 
 // Easings

@@ -1,23 +1,22 @@
 .bg-transparent   { background-color: transparent}
+.bg-white         { background-color: var(--hb-white)}
+.bg-black         { background-color: var(--hb-black)}
 
-// Brand
-.bg-primary       { background-color: var(--hb-brand-primary)}
-.bg-secondary     { background-color: var(--hb-brand-secondary)}
+@each $name, $color in $colors
+{
+    $nicename : _str-replace($name, 'brand-', '');
 
-// Greys
-.bg-gray-dark 	  { background-color: var(--hb-gray-500)}
-.bg-gray 	 	  { background-color: var(--hb-gray)}
-.bg-gray-light 	  { background-color: var(--hb-gray-400)}
-.bg-gray-lighter  { background-color: var(--hb-gray-300)}
-.bg-gray-lightest { background-color: var(--hb-gray-100)}	
+    @if ($name == 'gray')
+    {
+        .bg-gray { background-color: var(--hb-gray) }
 
-// Accents
-.bg-success      { background-color: var(--hb-brand-success)}							
-.bg-info         { background-color: var(--hb-brand-info)}
-.bg-danger       { background-color: var(--hb-brand-danger)}
-.bg-warning      { background-color: var(--hb-brand-warning)}
-
-// Defaults
-
-.bg-white        { background-color: var(--hb-white)}
-.bg-black        { background-color: var(--hb-black);}
+        @for $i from 1 through 9
+        {
+            .bg-#{$nicename}-#{$i}00 { background-color: var(--hb-#{$name}-#{$i}00) }
+        }
+    }
+    @else
+    {
+        .bg-#{$nicename} { background-color: var(--hb-#{$name})}
+    }
+}

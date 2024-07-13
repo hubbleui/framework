@@ -34,7 +34,7 @@
         width: 100%;
         left: 0;
         border-radius: var(--hb-dropdown-border-radius);
-        top: $btn-height + 5;
+        top: calc( (var(--hb-btn-padding-y) * 2) + var(--hb-btn-font-size));
         min-width: var(--hb-dropdown-width);
         z-index: var(--hb-zindex-dropdown);
         width: auto;

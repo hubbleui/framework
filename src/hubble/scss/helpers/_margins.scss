@@ -1,12 +1,9 @@
-// Resets
-.margin-center 		  { margin: 0 auto }
-.no-margin 	   		  { margin: 0 }
-
-// Margin sizes
-@each $name, $margin in $margin-sizes
-{
-	.margin-#{$name}-n          { margin-top:    var(--hb-margin-#{$name}) }
-	.margin-#{$name}-e          { margin-right:  var(--hb-margin-#{$name}) }
-	.margin-#{$name}-s          { margin-bottom: var(--hb-margin-#{$name}) }
-	.margin-#{$name}-w          { margin-left:   var(--hb-margin-#{$name}) }
-}
+.no-margin  { margin: 0}
+.margin-5   { margin: .5rem; }
+.margin-10 	{ margin: 1rem; }
+.margin-15 	{ margin: 1.5rem; }
+.margin-20 	{ margin: 2rem; }
+.margin-25 	{ margin: 2.5rem; }
+.margin-30 	{ margin: 3rem; }
+.margin-35 	{ margin: 3.5rem; }
+.margin-40 	{ margin: 4rem; }

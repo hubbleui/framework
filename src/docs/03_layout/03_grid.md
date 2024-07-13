@@ -1,6 +1,6 @@
 # Grid system
 
-Hubble uses a powerful 12 column grid system for building layouts to fit any screen or size.
+Hubble uses a powerful 12 column grid system for building layouts to fit any screen or size. It's recommended to use the Flex Grid where possible however there are still instances where you may want to use the regular grid.
 
 ---
 
@@ -33,7 +33,6 @@ Grid systems are used for creating page layouts through a series of rows and col
 *   You can make column widths device-screen specific. e.g. `.col-12 .col-md-3` will be full width at small screens and 25% on medium screens.
 
 ---
-
 
 ### Responsive breakpoints
 
@@ -92,9 +91,10 @@ Rows are used to as a clearfixing wrapper element to contain columns. Empty rows
 | `.row` | `.row`  | Wraps around floated children, clearfixes and spans full width. |
 
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
         <div class="col col-12">
-            <div class="bg-salmon fill">.row</div>
+            <div class="bg-salmon fill"><code>.col-12</code></div>
         </div>
     </div>
 </div>
@@ -107,28 +107,30 @@ Rows are used to as a clearfixing wrapper element to contain columns. Empty rows
 
 Hubble's grid system comes with mobile-first fully responsive set of helpers to display rows according to screen size. The table below outlines the available options.
 
-| Usage           | Class    | Options                         | Example   | Behavior                                    |
-|-----------------|----------|---------------------------------|-----------|---------------------------------------------|
-| Breakpoint & up | `.row-*` | `xxs`, `xs`,`sm`,`md`,`lg`,`xl` | `.row-lg` | Displays row at specified breakpoint and up |
+| Usage           | Class          | Options                  | Example      | Behavior                                     |
+|-----------------|----------------|--------------------------|--------------|----------------------------------------------|
+| Breakpoint & up | `[breakpoint]` | `xs` `sm` `md` `lg` `xl` | `.row xs md` | Displays row at specified breakpoint *not up |
 
 The example below shows two rows. The first that displays on mobile (`<=md` breakpoint) and a second that displays on desktop (`>=lg` breakpoint).
 
 <div class="code-content-example">
-    <div class="row xs sm">
+    <div class="parent-row-diagram"><code>.row</code><code>.xs</code><code>.sm</code></div>
+    <div class="row xs sm pole-xs pole-s">
         <div class="col col-12">
-            <div class="bg-salmon fill">.xs.sm.md.row</div>
+            <div class="bg-salmon fill"><code>.col-12</code></div>
         </div>
     </div>
+    <div class="parent-row-diagram"><code>.row</code><code>.md</code><code>.lg</code><code>.xl</code></div>
     <div class="md lg xl row-lg">
         <div class="col col-12">
-            <div class="bg-teal fill">.lg.xl.row-lg</div>
+            <div class="bg-teal fill"><code>.col-12</code></div>
         </div>
     </div>
 </div>
 
 ```html
-<div class="row xs sm "></div>
-<div class="md lg xl row-lg"></div>
+<div class="row xs sm"></div>
+<div class="row md lg xl"></div>
 ```
 
 ---
@@ -137,29 +139,29 @@ The example below shows two rows. The first that displays on mobile (`<=md` brea
 
 The core base class of Hubble layouts is the `.col`. The table below outlines the classes and formats made available when implementing layouts using columns.
 
-| Usage       | Class    | Options | Example  | Behavior                                       |
-|-------------|----------|---------|----------|------------------------------------------------|
-| Column base | `.col`   | n/a     | `.col`   | Floats the column left                         |
-| Column size | `.col-*` | `1-12`  | `.col-6` | Uses available space defined by column number. |
+| Usage       | Class        | Options | Example  | Behavior                                       |
+|-------------|--------------|---------|----------|------------------------------------------------|
+| Column base | `.col`       | n/a     | `.col`   | Floats the column left                         |
+| Column size | `.col-[num]` | `1-12`  | `.col-6` | Uses available space defined by column number. |
 
 <div class="code-content-example">
-    <div class="row pole-xs pole-s">
-        <div class="col col-12">
-            <div class="bg-salmon fill">.col-12</div>
-        </div>
-    </div>
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
+        <div class="col col-12">
+            <div class="bg-salmon fill"><code>.col-12</code></div>
+        </div>
+        <div class="row pole-xs"></div>
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="bg-bb-blue fill">.col-6</div>
+            <div class="bg-bb-blue fill"><code>.col-6</code></div>
         </div>
         <div class="col col-6 gutter-xxs gutter-l">
-            <div class="bg-teal fill">.col-6</div>
+            <div class="bg-teal fill"><code>.col-6</code></div>
         </div>
     </div>
 </div> 
 
 ```html
-<div class="row pole-xs">
+<div class="row">
     <div class="col col-12"></div>
     <div class="col col-6"></div>
     <div class="col col-6"></div>
@@ -170,36 +172,31 @@ The core base class of Hubble layouts is the `.col`. The table below outlines th
 
 Hubble's grid system comes with mobile-first fully responsive set of helpers to size column layouts according to screen size. The table below outlines the available options.
 
-| Usage           | Class      | Options                                  | Example     | Behavior                                                                                              |
-|-----------------|------------|------------------------------------------|-------------|-------------------------------------------------------------------------------------------------------|
-| Breakpoint size | `.col-*-*` | `xxs`, `xs`,`sm`,`md`,`lg`,`xl` & `1-12` | `.col-sm-3` | \*Wildcard(1) defines breakpoint. \*Wildcard(2) defines the column number. Displays size on breakpoint and up |
-
-The columns below span 2x columns on mobile and 12 columns on desktop (`>=lg` breakpoint).
+| Usage           | Class                      | Options                           | Example     | Behavior                                             |
+|-----------------|----------------------------|-----------------------------------|-------------|------------------------------------------------------|
+| Breakpoint size | `.col-[breakpoint]-[size]` | `xs` `sm` `md` `lg` `xl` & `1-12` | `.col-sm-3` | Sizes column to width at specified breakpoint and up |
 
 <div class="code-content-example">
-    <div class="row pole-xs pole-s">
-        <div class="col col-12">
-            <div class="bg-salmon fill">.col-12</div>
-        </div>
-    </div>
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
-        <div class="col col-6 col-lg-12 gutter-xxs gutter-r no-gutter-lg">
-            <div class="bg-bb-blue fill">.col-6.col-lg-12</div>
+        <div class="col col-6 col-lg-4 gutter-xs gutter-r">
+            <div class="bg-bb-blue fill small"><code>.col</code><code>.col-6</code><code>.col-lg-4</code></div>
         </div>
-        <div class="row-lg lg xl pole-xs"></div>
-        <div class="col col-6 col-lg-12 gutter-xxs gutter-l no-gutter-lg">
-            <div class="bg-teal fill">.col-6.col-lg-12</div>
+        <div class="col col-6 col-lg-4 gutter-xs gutter-l no-gutter-lg">
+            <div class="bg-teal fill small"><code>.col</code><code>.col-6</code><code>.col-lg-4</code></div>
+        </div>
+        <div class="row pole-xs xs sm md"></div>
+        <div class="col col-12 col-lg-4 gutter-lg-xs gutter-lg-l">
+            <div class="bg-salmon fill small"><code>.col</code><code>.col-12</code><code>.col-lg-4</code></div>
         </div>
     </div>
 </div>
 
 ```html
-<div class="row ">
-    <div class="col col-12"></div>
-</div>
 <div class="row">
-    <div class="col col-6 col-lg-12"></div>
-    <div class="col col-6 col-lg-12"></div>
+    <div class="col col-6 col-lg-4"></div>
+    <div class="col col-6 col-lg-4"></div>
+    <div class="col col-12 col-lg-4"></div>
 </div>
 ```
 
@@ -209,21 +206,20 @@ The columns below span 2x columns on mobile and 12 columns on desktop (`>=lg` br
 
 Gutters apply a padding size on the sides of columns. The table below outlines the classes and formats made available when implementing layouts using gutters.
 
-| Usage       | Class        | Options                         | Example      | Behavior                                                |
-|-------------|--------------|---------------------------------|--------------|---------------------------------------------------------|
-| Gutter size | `.gutter-*`  | `xxs`, `xs`,`sm`,`md`,`lg`,`xl` | `.gutter-lg` | Applies padding size gutter to both sides of the column |
-| Gutter side | `.gutter-*`  | `l`, `r`                        | `.gutter-r`  | Applies padding to left or right gutter only            |
-| No gutter   | `.no-gutter` | None                            | `.no-gutter` | Sets horizontal padding to zero                         |
-
-<br>
+| Usage       | Class            | Options                         | Example      | Behavior                                                |
+|-------------|------------------|---------------------------------|--------------|---------------------------------------------------------|
+| Gutter size | `.gutter-[size]` |  `xs` `sm` `md` `lg` `xl` | `.gutter-lg` | Applies padding size gutter to both sides of the column |
+| Gutter side | `.gutter-[side]` | `l`, `r`                        | `.gutter-r`  | Applies padding to left or right gutter only            |
+| No gutter   | `.no-gutter`     | None                            | `.no-gutter` | Sets horizontal padding to zero                         |
 
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
         <div class="col col-6 gutter-xs gutter-r">
-            <div class="bg-bb-blue fill">.gutter-xs.gutter-r</div>
+            <div class="bg-bb-blue fill small"><code>.col</code><code>.gutter-xs</code><code>.gutter-r</code></div>
         </div>
         <div class="col col-6 gutter-xs gutter-l">
-            <div class="bg-teal fill">.gutter-xs.gutter-r</div>
+            <div class="bg-teal fill small"><code>.col</code><code>.gutter-xs</code><code>.gutter-l</code></div>
         </div>
     </div>
 </div> 
@@ -241,26 +237,27 @@ Hubble's grid system comes with mobile-first fully responsive set of helpers to 
 
 | Usage           | Class          | Options                        | Example         | Behavior                                                                                       |
 |-----------------|----------------|--------------------------------|-----------------|------------------------------------------------------------------------------------------------|
-| Breakpoint size | `.gutter-*-*`  | `xxs`,`xs`,`sm`,`md`,`lg`,`xl` | `.gutter-md-lg` | Applies horizontal padding size gutter to both sides of element at specified breakpoint and up |
+| Breakpoint size | `.gutter-*-*`  | `xs` `sm` `md` `lg` `xl` | `.gutter-md-lg` | Applies horizontal padding size gutter to both sides of element at specified breakpoint and up |
 | Breakpoint side | `.gutter-*`    | `l`, `r`                       | `.gutter-md-r`  | Applies horizontal padding to left or right gutter only - at specified breakpoint and up       |
-| No gutter       | `.no-gutter-*` | `xxs`,`xs`,`sm`,`md`,`lg`,`xl` | `.no-gutter-md` | Sets no horizontal padding at specified breakpoint and up                                      |
+| No gutter       | `.no-gutter-*` | `xs` `sm` `md` `lg` `xl` | `.no-gutter-md` | Sets no horizontal padding at specified breakpoint and up                                      |
 
 The example below is a little more complicated. It shows how to space columns evenly using a combination of left and right gutters and breakpoints.
 
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
         <div class="col col-6 col-lg-3 gutter-xxs gutter-r gutter-lg-xs gutter-lg-r">
-            <div class="bg-bb-blue fill small">.gutter-xxs.gutter-r.gutter-lg-xs.gutter-lg-r</div>
+            <div class="bg-bb-blue fill smaller"><code>.col</code><code>.gutter-xxs</code><code>.gutter-r</code><br><code>.gutter-lg-xs</code><code>.gutter-lg-r</code></div>
         </div>
         <div class="col col-6 col-lg-3 gutter-xxs gutter-l gutter-lg-xs gutter-lg-r">
-            <div class="bg-teal fill small">.gutter-xxs.gutter-l.gutter-lg-xs.gutter-lg-r</div>
+            <div class="bg-teal fill smaller"><code>.col</code><code>.gutter-xxs</code><code>.gutter-l</code><br><code>.gutter-lg-xs</code><code>.gutter-lg-r</code></div>
         </div>
         <div class="row xs sm md pole-xs"></div>
         <div class="col col-6 col-lg-3 gutter-xxs gutter-r gutter-lg-xs gutter-lg-r">
-            <div class="bg-teal fill small">.gutter-xxs.gutter-r.gutter-lg-xs.gutter-lg-r</div>
+            <div class="bg-teal fill smaller"><code>.col</code><code>.gutter-xxs</code><code>.gutter-r</code><br><code>.gutter-lg-xs</code><code>.gutter-lg-r</code></div>
         </div>
         <div class="col col-6 col-lg-3 gutter-xxs gutter-l gutter-lg-xs no-gutter-lg">
-            <div class="bg-bb-blue fill small">.gutter-xxs.gutter-l.gutter-lg-xs.no-gutter-lg</div>
+            <div class="bg-bb-blue fill smaller"><code>.col</code><code>.gutter-xxs</code><code>.gutter-l</code><br><code>.gutter-lg-xs</code><code>.no-gutter-lg</code></div>
         </div>
     </div>
 </div> 
@@ -284,44 +281,39 @@ The example below is a little more complicated. It shows how to space columns ev
 
 Poles are essentially vertical gutters. `.pole-n` applies a `padding-top` value while `.pole-s` applies a `padding-bottom` value. The table below outlines the classes and formats made available for poles.
 
-| Usage     | Class      | Options                         | Example    | Behavior                                                    |
-|-----------|------------|---------------------------------|------------|-------------------------------------------------------------|
-| Pole size | `.pole-*`  | `xxs`, `xs`,`sm`,`md`,`lg`,`xl` | `.pole-lg` | Applies padding size pole to both top and bottom of element |
-| Pole side | `.pole-*`  | `n`, `s`                        | `.pole-s`  | Applies padding to top or bottom pole only                  |
-| No pole   | `.no-pole` | None                            | `.no-pole` | Sets vertical padding to zero                               |
-
-<br>
+| Usage     | Class          | Options                         | Example    | Behavior                                                    |
+|-----------|----------------|---------------------------------|------------|-------------------------------------------------------------|
+| Pole size | `.pole-[size]` |  `xs` `sm` `md` `lg` `xl` | `.pole-lg` | Applies padding size pole to both top and bottom of element |
+| Pole side | `.pole-[side]` | `n`, `s`                        | `.pole-s`  | Applies padding to top or bottom pole only                  |
+| No pole   | `.no-pole`     | None                            | `.no-pole` | Sets vertical padding to zero                               |
 
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
         <div class="col col-12">
-            <div class="bg-salmon fill thin">.row</div>
+            <div class="bg-salmon fill thin small"><code>.col</code><code>.col-12</code></div>
         </div>
-    </div>
-    <div class="row">
         <div class="col col-6 gutter-xxs gutter-r pole-xs">
-            <div class="bg-bb-blue fill">.pole-xs</div>
+            <div class="bg-bb-blue fill small"><code>.col</code><code>.col-6</code><code>.pole-xs</code></div>
         </div>
         <div class="col col-6 gutter-xxs gutter-l pole-xs">
-            <div class="bg-teal fill">.pole-xs</div>
+            <div class="bg-teal fill small"><code>.col</code><code>.col-6</code><code>.pole-xs</code></div>
         </div>
-    </div>
-    <div class="row">
         <div class="col col-12">
-            <div class="bg-salmon fill thin">.row</div>
+            <div class="bg-salmon fill thin small"><code>.col</code><code>.col-12</code></div>
         </div>
     </div>
 </div> 
 
 ```html
-<div class="row"></div>
-<div class="col col-6 pole-xs">
-    <div class="bg-bb-blue fill">.pole-xs</div>
+<div class="row">
+    <div class="col col-12"></div>
+    
+    <div class="col col-6 pole-xs"></div>
+    <div class="col col-6 pole-xs"></div>
+    
+    <div class="col col-12"></div>
 </div>
-<div class="col col-6 pole-xs">
-    <div class="bg-teal fill">.pole-xs</div>
-</div>
-<div class="row"></div>
 ```
 
 #### Responsive poles
@@ -330,28 +322,29 @@ Hubble's grid system comes with mobile-first fully responsive set of helpers to 
 
 | Usage           | Class        | Options                        | Example       | Behavior                                                                                         |
 |-----------------|--------------|--------------------------------|---------------|--------------------------------------------------------------------------------------------------|
-| Breakpoint size | `.pole-*-*`  | `xxs`,`xs`,`sm`,`md`,`lg`,`xl` | `.pole-md-lg` | Applies vertical padding size pole to both top and bottom element at specified breakpoint and up |
+| Breakpoint size | `.pole-*-*`  | `xs` `sm` `md` `lg` `xl` | `.pole-md-lg` | Applies vertical padding size pole to both top and bottom element at specified breakpoint and up |
 | Breakpoint pole | `.pole-*`    | `n`, `s`                       | `.pole-md-s`  | Applies vertical padding to top or bottom pole only - at specified breakpoint and up             |
-| No pole         | `.no-pole-*` | `xxs`,`xs`,`sm`,`md`,`lg`,`xl` | `.no-pole-md` | Sets no vertical padding at specified breakpoint and up                                          |
+| No pole         | `.no-pole-*` | `xs` `sm` `md` `lg` `xl` | `.no-pole-md` | Sets no vertical padding at specified breakpoint and up                                          |
 
-In the example below, the first row has `.pole-s` while the second row has `.pole-n`, the poles are then sized differently and different breakpoints:
+In the example below, the first col the poles are sized differently and different breakpoints:
 
 <div class="code-content-example">
-    <div class="row pole-xxs pole-s pole-lg-xs pole-lg-s">
-        <div class="col col-12">
-            <div class="bg-salmon fill small">.pole-xxs.pole-s.pole-lg-xs.pole-lg-s</div>
+    <div class="parent-row-diagram"><code>row</code></div>
+    <div class="row">
+        <div class="col col-12 pole-xxs pole-lg-xs">
+            <div class="bg-salmon fill small"><code>.col</code><code>.pole-xxs</code><code>.pole-lg-xs</code></div>
+        </div>
+        <div class="col col-12 pole-xxs pole-lg-xs">
+            <div class="bg-salmon fill small"><code>.col</code><code>.pole-xxs</code><code>.pole-lg-xs</code></div>
         </div>
     </div>
-    <div class="row pole-xxs pole-n pole-lg-xs pole-lg-n">
-        <div class="col col-12">
-            <div class="bg-salmon fill small">.pole-xxs.pole-s.pole-lg-xs.pole-lg-n</div>
-        </div>
-    </div>
-</div> 
+</div>
 
 ```html
-<div class="row pole-xxs pole-s pole-lg-xs pole-lg-s"></div>
-<div class="row pole-xxs pole-n pole-lg-xs pole-lg-n"></div>
+<div class="row">
+    <div class="col col-12 pole-xxs pole-lg-xs"></div>
+    <div class="col col-12 pole-xxs pole-lg-xs"></div>
+</div>
 ```
 
 ---
@@ -368,20 +361,21 @@ The `.push` and `.pull` system allows you to easily change the order of grid col
 In the example below the second column is pushed to the left and the first is pushed right - reordering the layout of the columns:
 
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>row</code></div>
     <div class="row">
-        <div class="col col-9 col-pull-3 gutter-xxs gutter-l">
-            <div class="bg-teal fill">.col-9.col-pull-3</div>
+        <div class="col col-8 col-pull-4 gutter-xxs gutter-l">
+            <div class="bg-teal fill small"><code>.col</code><code>.col-8</code><code>.col-pull-4</code></div>
         </div>
-        <div class="col col-3 col-push-9 gutter-xxs gutter-r">
-            <div class="bg-bb-blue fill">.col-3.col-push-9</div>
+        <div class="col col-4 col-push-8 gutter-xxs gutter-r">
+            <div class="bg-bb-blue fill small"><code>.col</code><code>.col-4</code><code>.col-push-8</code></div>
         </div>
     </div>
 </div> 
 
 ```html
 <div class="row ">
-    <div class="col col-9 col-pull-3"></div>
-    <div class="col col-3 col-push-9"></div>
+    <div class="col col-8 col-pull-4"></div>
+    <div class="col col-4 col-push-8"></div>
 </div>
 ```
 
@@ -389,20 +383,21 @@ In the example below the second column is pushed to the left and the first is pu
 
 Hubble's grid system comes with mobile-first fully responsive set of helpers to order column layouts according to screen size. The table below outlines the available options.
 
-| Usage                | Class            | Options                                 | Example          | Behavior                                                              |
-|----------------------|------------------|-----------------------------------------|------------------|-----------------------------------------------------------------------|
-| Breakpoint pull size | `.col-*-pull-*`, | `xxs`,`xs`,`sm`,`md`,`lg`,`xl` & `1-12` | `.col-md-pull-3` | \*Wildcard(1) defines the breakpoint. \*Wildcard(2) defines pull size |
-| Breakpoint push size | `.col-*-push-*`, | `xxs`,`xs`,`sm`,`md`,`lg`,`xl` & `1-12` | `.col-md-push-9` | \*Wildcard(1) defines the breakpoint. \*Wildcard(2) defines push size |
+| Usage                | Class                           | Options                           | Example          | Behavior                                          |
+|----------------------|---------------------------------|-----------------------------------|------------------|---------------------------------------------------|
+| Breakpoint pull size | `.col-[breakpoint]-pull-[num]`, | `xs` `sm` `md` `lg` `xl` & `1-12` | `.col-md-pull-3` | Pulls col to size at specified breakpoint and up  |
+| Breakpoint push size | `.col-[breakpoint]-push-[num]`, | `xs` `sm` `md` `lg` `xl` & `1-12` | `.col-md-push-9` | Pushes col to size at specified breakpoint and up |
 
 In the example below both columns are full width on mobile. On breakpoint (>=md) they are re-ordered.
 
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>row</code></div>
     <div class="row">
-        <div class="col col-12 col-md-9 col-md-pull-3 gutter-md-xxs gutter-md-l pole-xxs pole-s no-pole-md">
-            <div class="bg-teal fill small">.col-md-9.col-md-pull-3</div>
+        <div class="col col-12 col-md-8 col-md-pull-4 gutter-md-xxs gutter-md-l pole-xxs pole-s no-pole-md">
+            <div class="bg-teal fill smaller"><code>.col</code><code>.col-12</code><code>.col-md-8</code><code>.col-md-pull-4</code></div>
         </div>
-        <div class="col col-12 col-md-3 col-md-push-9 gutter-md-xxs gutter-md-r pole-xxs pole-n no-pole-md">
-            <div class="bg-bb-blue fill small">.col-md-3.col-md-push-9</div>
+        <div class="col col-12 col-md-4 col-md-push-8 gutter-md-xxs gutter-md-r pole-xxs pole-n no-pole-md">
+            <div class="bg-bb-blue fill smaller"><code>.col</code><code>.col-12</code><code>.col-md-4</code><code>.col-md-push-8</code></div>
         </div>
     </div>
 </div>
@@ -468,32 +463,9 @@ src/scss/grid/_base.scss
     --hb-col-width: 0;
     --hb-col-push: initial;
     --hb-col-pull: initial;
-
-    width: var(--hb-col-width);
-    left:  var(--hb-col-pull);
-    right: var(--hb-col-push); 
-}
-
-/* Gutters base */
-[class*="gutter-"],
-.no-gutter
-{
     --hb-gutter-l: initial;
     --hb-gutter-r: initial;
-    padding-left: var(--hb-gutter-l);
-    padding-right: var(--hb-gutter-r);
-}
-
-/* Poles base */
-[class*="pole-"],
-.no-pole
-{
     --hb-pole-n: initial;
     --hb-pole-s: initial;
-    padding-top: var(--hb-pole-n);
-    padding-bottom: var(--hb-pole-s);
 }
 ```
-
-
-

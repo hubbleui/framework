@@ -2,7 +2,6 @@
 .container,
 .container-fluid
 {
-    @include _clearfix;
     --hb-container-width: 100%;
     --hb-container-max-width: 100%;
     --hb-container-pad-l: 0;
@@ -11,48 +10,83 @@
     width: var(--hb-container-width);
     padding-left: var(--hb-container-pad-l);
     padding-right: var(--hb-container-pad-r);
+    @include _clearfix;
     margin-left: auto;
     margin-right: auto;
 
 }
+
 /* Row base */
 .row
 {
-    @include _clearfix;
     --hb-row-width: 100%;
     width: var(--hb-row-width);
+    @include _clearfix;
 }
-.flex-row
+
+/* Flex row base */
+.flex-row,
+.flex-row-fluid
 {
-    box-sizing: border-box;
+    --hb-flex-wrap: wrap;
+    --hb-flex-direction: row;
+    --hb-flex-col-gaps: 0px;
+    --hb-flex-row-gaps: 0px;
+    flex: 1 0 100%;
     display: flex;
-    flex: 0 1 auto;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: var(--hb-flex-wrap);
+    flex-direction: var(--hb-flex-direction);
+    column-gap: var(--hb-flex-col-gaps);
+    row-gap: var(--hb-flex-row-gaps);
 }
 
 /* Column base */
-.col,
-.flex-col
-{
-    --hb-col-width: 0;
-    --hb-col-push: initial;
-    --hb-col-pull: initial;
-}
 .col
 {
     float: left;
     @include _clearfix;
     width: var(--hb-col-width);
     left: var(--hb-col-pull);
-    right: var(--hb-col-push); 
+    right: var(--hb-col-push);
+    --hb-col-width: 0;
+    --hb-col-push: initial;
+    --hb-col-pull: initial;
 }
-.flex-col
+
+/* Flex column base */
+.flex-row > .col
 {
-    box-sizing: border-box;
-    flex: 0 0 auto;
-    flex-basis: var(--hb-col-width);
+    --hb-col-flex: 0 0 100%;
+    --hb-col-width: 100%;
+}
+.flex-row-fluid > .col:not([class*="col-"])
+{
+    --hb-col-flex: 1 0 0%;
+    --hb-col-width: 100%;
+}
+.flex-row > .col,
+.flex-row-fluid > .col
+{
+    flex: var(--hb-col-flex);
+    width: var(--hb-col-width);
     max-width: var(--hb-col-width);
+    float: none;
+    &:after
+    {
+        content: none;
+    }
+}
+.flex-row[class*="flex-cols-"] > .col
+{
+    --hb-col-flex: 1 0 0%;
+}
+.flex-row > .col[class*="col-"]
+{
+    --hb-col-flex: 1 0 var(--hb-col-width);
+}
+.flex-row-fluid > .col[class*="col-"]
+{
+    --hb-col-flex: 0 0 auto;
 }
 
 /* Gutters base */
@@ -64,6 +98,17 @@
     padding-left: var(--hb-gutter-l);
     padding-right: var(--hb-gutter-r);
 }
+
+/* Flex gutters base */
+.flex-row > [class*="gutter-"],
+.flex-row > [class*="-gutter"],
+{
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: var(--hb-gutter-l);
+    margin-right: var(--hb-gutter-r);
+}
+
 
 /* Poles base */
 [class*="pole-"],

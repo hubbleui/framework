@@ -5,6 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Documentation | Hubble UI</title>
         <meta name="description" content="">
+        <script src="../../../build/js/lazyload.js"></script>
+        <link rel="stylesheet" href="../../../build/css/lazyload.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="../../../build/css/hubble.css">
         <link rel="stylesheet" href="../../../build/css/docs.css">
@@ -108,9 +110,10 @@
     </li>
     <li style="height:auto" id="menu-layout" class="menu-item menu-item-submenu">
         <ul>
+            <li class="menu-item"><a  href="../../layout/breakpoints/index.html">Breakpoints</a></li>
             <li class="menu-item"><a  href="../../layout/container/index.html">Container</a></li>
-            <li class="menu-item"><a class="active" href="../../layout/grid/index.html">Grid</a></li>
             <li class="menu-item"><a  href="../../layout/flex-grid/index.html">Flex Grid</a></li>
+            <li class="menu-item"><a class="active" href="../../layout/grid/index.html">Grid</a></li>
             <li class="menu-item"><a  href="../../layout/stack/index.html">Stack</a></li>
             <li class="menu-item"><a  href="../../layout/skeleton/index.html">Skeleton</a></li>
         </ul>
@@ -211,6 +214,15 @@
             </li>
         </ul>
     </li>
+    <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-css-helpers">
+        <h6>Css Helpers</h6>
+        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+    </li>
+    <li  id="menu-css-helpers" class="menu-item menu-item-submenu">
+        <ul>
+            <li class="menu-item"><a  href="../../css-helpers/css-helpers/index.html">Css Helpers</a></li>
+        </ul>
+    </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-javascript">
         <h6>Javascript</h6>
         <span class="icon glyph-icon glyph-icon-chevron-down"></span>
@@ -234,14 +246,6 @@
         <ul>
         </ul>
     </li>
-    <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-component-api">
-        <h6>Component Api</h6>
-        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
-    </li>
-    <li  id="menu-component-api" class="menu-item menu-item-submenu">
-        <ul>
-        </ul>
-    </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-scss">
         <h6>Scss</h6>
         <span class="icon glyph-icon glyph-icon-chevron-down"></span>
@@ -258,7 +262,7 @@
                     </div>
                     <article class="docs-body">
                         <h1 id="grid-system">Grid system</h1>
-<p>Hubble uses a powerful 12 column grid system for building layouts to fit any screen or size.</p>
+<p>Hubble uses a powerful 12 column grid system for building layouts to fit any screen or size. It's recommended to use the Flex Grid where possible however there are still instances where you may want to use the regular grid.</p>
 <hr />
 <ul>
 <li><a href="#introduction">Introduction</a></li>
@@ -337,9 +341,10 @@ $breakpoints:
 </tbody>
 </table>
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
         <div class="col col-12">
-            <div class="bg-salmon fill">.row</div>
+            <div class="bg-salmon fill"><code>.col-12</code></div>
         </div>
     </div>
 </div>
@@ -359,28 +364,30 @@ $breakpoints:
 <tbody>
 <tr>
 <td>Breakpoint &amp; up</td>
-<td><code>.row-*</code></td>
-<td><code>xxs</code>, <code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code></td>
-<td><code>.row-lg</code></td>
-<td>Displays row at specified breakpoint and up</td>
+<td><code>[breakpoint]</code></td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code></td>
+<td><code>.row xs md</code></td>
+<td>Displays row at specified breakpoint *not up</td>
 </tr>
 </tbody>
 </table>
 <p>The example below shows two rows. The first that displays on mobile (<code>&lt;=md</code> breakpoint) and a second that displays on desktop (<code>&gt;=lg</code> breakpoint).</p>
 <div class="code-content-example">
-    <div class="row xs sm">
+    <div class="parent-row-diagram"><code>.row</code><code>.xs</code><code>.sm</code></div>
+    <div class="row xs sm pole-xs pole-s">
         <div class="col col-12">
-            <div class="bg-salmon fill">.xs.sm.md.row</div>
+            <div class="bg-salmon fill"><code>.col-12</code></div>
         </div>
     </div>
+    <div class="parent-row-diagram"><code>.row</code><code>.md</code><code>.lg</code><code>.xl</code></div>
     <div class="md lg xl row-lg">
         <div class="col col-12">
-            <div class="bg-teal fill">.lg.xl.row-lg</div>
+            <div class="bg-teal fill"><code>.col-12</code></div>
         </div>
     </div>
 </div>
-<pre><code class="html language-html">&lt;div class="row xs sm "&gt;&lt;/div&gt;
-&lt;div class="md lg xl row-lg"&gt;&lt;/div&gt;</code></pre>
+<pre><code class="html language-html">&lt;div class="row xs sm"&gt;&lt;/div&gt;
+&lt;div class="row md lg xl"&gt;&lt;/div&gt;</code></pre>
 <hr />
 <h3 id="columns">Columns</h3>
 <p>The core base class of Hubble layouts is the <code>.col</code>. The table below outlines the classes and formats made available when implementing layouts using columns.</p>
@@ -404,7 +411,7 @@ $breakpoints:
 </tr>
 <tr>
 <td>Column size</td>
-<td><code>.col-*</code></td>
+<td><code>.col-[num]</code></td>
 <td><code>1-12</code></td>
 <td><code>.col-6</code></td>
 <td>Uses available space defined by column number.</td>
@@ -412,21 +419,21 @@ $breakpoints:
 </tbody>
 </table>
 <div class="code-content-example">
-    <div class="row pole-xs pole-s">
-        <div class="col col-12">
-            <div class="bg-salmon fill">.col-12</div>
-        </div>
-    </div>
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
+        <div class="col col-12">
+            <div class="bg-salmon fill"><code>.col-12</code></div>
+        </div>
+        <div class="row pole-xs"></div>
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="bg-bb-blue fill">.col-6</div>
+            <div class="bg-bb-blue fill"><code>.col-6</code></div>
         </div>
         <div class="col col-6 gutter-xxs gutter-l">
-            <div class="bg-teal fill">.col-6</div>
+            <div class="bg-teal fill"><code>.col-6</code></div>
         </div>
     </div>
 </div>
-<pre><code class="html language-html">&lt;div class="row pole-xs"&gt;
+<pre><code class="html language-html">&lt;div class="row"&gt;
     &lt;div class="col col-12"&gt;&lt;/div&gt;
     &lt;div class="col col-6"&gt;&lt;/div&gt;
     &lt;div class="col col-6"&gt;&lt;/div&gt;
@@ -446,36 +453,32 @@ $breakpoints:
 <tbody>
 <tr>
 <td>Breakpoint size</td>
-<td><code>.col-*-*</code></td>
-<td><code>xxs</code>, <code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code> &amp; <code>1-12</code></td>
+<td><code>.col-[breakpoint]-[size]</code></td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code> &amp; <code>1-12</code></td>
 <td><code>.col-sm-3</code></td>
-<td>*Wildcard(1) defines breakpoint. *Wildcard(2) defines the column number. Displays size on breakpoint and up</td>
+<td>Sizes column to width at specified breakpoint and up</td>
 </tr>
 </tbody>
 </table>
-<p>The columns below span 2x columns on mobile and 12 columns on desktop (<code>&gt;=lg</code> breakpoint).</p>
 <div class="code-content-example">
-    <div class="row pole-xs pole-s">
-        <div class="col col-12">
-            <div class="bg-salmon fill">.col-12</div>
-        </div>
-    </div>
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
-        <div class="col col-6 col-lg-12 gutter-xxs gutter-r no-gutter-lg">
-            <div class="bg-bb-blue fill">.col-6.col-lg-12</div>
+        <div class="col col-6 col-lg-4 gutter-xs gutter-r">
+            <div class="bg-bb-blue fill small"><code>.col</code><code>.col-6</code><code>.col-lg-4</code></div>
         </div>
-        <div class="row-lg lg xl pole-xs"></div>
-        <div class="col col-6 col-lg-12 gutter-xxs gutter-l no-gutter-lg">
-            <div class="bg-teal fill">.col-6.col-lg-12</div>
+        <div class="col col-6 col-lg-4 gutter-xs gutter-l no-gutter-lg">
+            <div class="bg-teal fill small"><code>.col</code><code>.col-6</code><code>.col-lg-4</code></div>
+        </div>
+        <div class="row pole-xs xs sm md"></div>
+        <div class="col col-12 col-lg-4 gutter-lg-xs gutter-lg-l">
+            <div class="bg-salmon fill small"><code>.col</code><code>.col-12</code><code>.col-lg-4</code></div>
         </div>
     </div>
 </div>
-<pre><code class="html language-html">&lt;div class="row "&gt;
-    &lt;div class="col col-12"&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="row"&gt;
-    &lt;div class="col col-6 col-lg-12"&gt;&lt;/div&gt;
-    &lt;div class="col col-6 col-lg-12"&gt;&lt;/div&gt;
+<pre><code class="html language-html">&lt;div class="row"&gt;
+    &lt;div class="col col-6 col-lg-4"&gt;&lt;/div&gt;
+    &lt;div class="col col-6 col-lg-4"&gt;&lt;/div&gt;
+    &lt;div class="col col-12 col-lg-4"&gt;&lt;/div&gt;
 &lt;/div&gt;</code></pre>
 <hr />
 <h3 id="gutters">Gutters</h3>
@@ -493,14 +496,14 @@ $breakpoints:
 <tbody>
 <tr>
 <td>Gutter size</td>
-<td><code>.gutter-*</code></td>
-<td><code>xxs</code>, <code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code></td>
+<td><code>.gutter-[size]</code></td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code></td>
 <td><code>.gutter-lg</code></td>
 <td>Applies padding size gutter to both sides of the column</td>
 </tr>
 <tr>
 <td>Gutter side</td>
-<td><code>.gutter-*</code></td>
+<td><code>.gutter-[side]</code></td>
 <td><code>l</code>, <code>r</code></td>
 <td><code>.gutter-r</code></td>
 <td>Applies padding to left or right gutter only</td>
@@ -514,14 +517,14 @@ $breakpoints:
 </tr>
 </tbody>
 </table>
-<p><br></p>
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
         <div class="col col-6 gutter-xs gutter-r">
-            <div class="bg-bb-blue fill">.gutter-xs.gutter-r</div>
+            <div class="bg-bb-blue fill small"><code>.col</code><code>.gutter-xs</code><code>.gutter-r</code></div>
         </div>
         <div class="col col-6 gutter-xs gutter-l">
-            <div class="bg-teal fill">.gutter-xs.gutter-r</div>
+            <div class="bg-teal fill small"><code>.col</code><code>.gutter-xs</code><code>.gutter-l</code></div>
         </div>
     </div>
 </div>
@@ -545,7 +548,7 @@ $breakpoints:
 <tr>
 <td>Breakpoint size</td>
 <td><code>.gutter-*-*</code></td>
-<td><code>xxs</code>,<code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code></td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code></td>
 <td><code>.gutter-md-lg</code></td>
 <td>Applies horizontal padding size gutter to both sides of element at specified breakpoint and up</td>
 </tr>
@@ -559,7 +562,7 @@ $breakpoints:
 <tr>
 <td>No gutter</td>
 <td><code>.no-gutter-*</code></td>
-<td><code>xxs</code>,<code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code></td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code></td>
 <td><code>.no-gutter-md</code></td>
 <td>Sets no horizontal padding at specified breakpoint and up</td>
 </tr>
@@ -567,19 +570,20 @@ $breakpoints:
 </table>
 <p>The example below is a little more complicated. It shows how to space columns evenly using a combination of left and right gutters and breakpoints.</p>
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
         <div class="col col-6 col-lg-3 gutter-xxs gutter-r gutter-lg-xs gutter-lg-r">
-            <div class="bg-bb-blue fill small">.gutter-xxs.gutter-r.gutter-lg-xs.gutter-lg-r</div>
+            <div class="bg-bb-blue fill smaller"><code>.col</code><code>.gutter-xxs</code><code>.gutter-r</code><br><code>.gutter-lg-xs</code><code>.gutter-lg-r</code></div>
         </div>
         <div class="col col-6 col-lg-3 gutter-xxs gutter-l gutter-lg-xs gutter-lg-r">
-            <div class="bg-teal fill small">.gutter-xxs.gutter-l.gutter-lg-xs.gutter-lg-r</div>
+            <div class="bg-teal fill smaller"><code>.col</code><code>.gutter-xxs</code><code>.gutter-l</code><br><code>.gutter-lg-xs</code><code>.gutter-lg-r</code></div>
         </div>
         <div class="row xs sm md pole-xs"></div>
         <div class="col col-6 col-lg-3 gutter-xxs gutter-r gutter-lg-xs gutter-lg-r">
-            <div class="bg-teal fill small">.gutter-xxs.gutter-r.gutter-lg-xs.gutter-lg-r</div>
+            <div class="bg-teal fill smaller"><code>.col</code><code>.gutter-xxs</code><code>.gutter-r</code><br><code>.gutter-lg-xs</code><code>.gutter-lg-r</code></div>
         </div>
         <div class="col col-6 col-lg-3 gutter-xxs gutter-l gutter-lg-xs no-gutter-lg">
-            <div class="bg-bb-blue fill small">.gutter-xxs.gutter-l.gutter-lg-xs.no-gutter-lg</div>
+            <div class="bg-bb-blue fill smaller"><code>.col</code><code>.gutter-xxs</code><code>.gutter-l</code><br><code>.gutter-lg-xs</code><code>.no-gutter-lg</code></div>
         </div>
     </div>
 </div>
@@ -609,14 +613,14 @@ $breakpoints:
 <tbody>
 <tr>
 <td>Pole size</td>
-<td><code>.pole-*</code></td>
-<td><code>xxs</code>, <code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code></td>
+<td><code>.pole-[size]</code></td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code></td>
 <td><code>.pole-lg</code></td>
 <td>Applies padding size pole to both top and bottom of element</td>
 </tr>
 <tr>
 <td>Pole side</td>
-<td><code>.pole-*</code></td>
+<td><code>.pole-[side]</code></td>
 <td><code>n</code>, <code>s</code></td>
 <td><code>.pole-s</code></td>
 <td>Applies padding to top or bottom pole only</td>
@@ -630,35 +634,31 @@ $breakpoints:
 </tr>
 </tbody>
 </table>
-<p><br></p>
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>.row</code></div>
     <div class="row">
         <div class="col col-12">
-            <div class="bg-salmon fill thin">.row</div>
+            <div class="bg-salmon fill thin small"><code>.col</code><code>.col-12</code></div>
         </div>
-    </div>
-    <div class="row">
         <div class="col col-6 gutter-xxs gutter-r pole-xs">
-            <div class="bg-bb-blue fill">.pole-xs</div>
+            <div class="bg-bb-blue fill small"><code>.col</code><code>.col-6</code><code>.pole-xs</code></div>
         </div>
         <div class="col col-6 gutter-xxs gutter-l pole-xs">
-            <div class="bg-teal fill">.pole-xs</div>
+            <div class="bg-teal fill small"><code>.col</code><code>.col-6</code><code>.pole-xs</code></div>
         </div>
-    </div>
-    <div class="row">
         <div class="col col-12">
-            <div class="bg-salmon fill thin">.row</div>
+            <div class="bg-salmon fill thin small"><code>.col</code><code>.col-12</code></div>
         </div>
     </div>
 </div>
-<pre><code class="html language-html">&lt;div class="row"&gt;&lt;/div&gt;
-&lt;div class="col col-6 pole-xs"&gt;
-    &lt;div class="bg-bb-blue fill"&gt;.pole-xs&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="col col-6 pole-xs"&gt;
-    &lt;div class="bg-teal fill"&gt;.pole-xs&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="row"&gt;&lt;/div&gt;</code></pre>
+<pre><code class="html language-html">&lt;div class="row"&gt;
+    &lt;div class="col col-12"&gt;&lt;/div&gt;
+
+    &lt;div class="col col-6 pole-xs"&gt;&lt;/div&gt;
+    &lt;div class="col col-6 pole-xs"&gt;&lt;/div&gt;
+
+    &lt;div class="col col-12"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
 <h4 id="responsive-poles">Responsive poles</h4>
 <p>Hubble's grid system comes with mobile-first fully responsive set of helpers to size gutters according to screen size. The table below outlines the available options.</p>
 <table>
@@ -675,7 +675,7 @@ $breakpoints:
 <tr>
 <td>Breakpoint size</td>
 <td><code>.pole-*-*</code></td>
-<td><code>xxs</code>,<code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code></td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code></td>
 <td><code>.pole-md-lg</code></td>
 <td>Applies vertical padding size pole to both top and bottom element at specified breakpoint and up</td>
 </tr>
@@ -689,27 +689,28 @@ $breakpoints:
 <tr>
 <td>No pole</td>
 <td><code>.no-pole-*</code></td>
-<td><code>xxs</code>,<code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code></td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code></td>
 <td><code>.no-pole-md</code></td>
 <td>Sets no vertical padding at specified breakpoint and up</td>
 </tr>
 </tbody>
 </table>
-<p>In the example below, the first row has <code>.pole-s</code> while the second row has <code>.pole-n</code>, the poles are then sized differently and different breakpoints:</p>
+<p>In the example below, the first col the poles are sized differently and different breakpoints:</p>
 <div class="code-content-example">
-    <div class="row pole-xxs pole-s pole-lg-xs pole-lg-s">
-        <div class="col col-12">
-            <div class="bg-salmon fill small">.pole-xxs.pole-s.pole-lg-xs.pole-lg-s</div>
+    <div class="parent-row-diagram"><code>row</code></div>
+    <div class="row">
+        <div class="col col-12 pole-xxs pole-lg-xs">
+            <div class="bg-salmon fill small"><code>.col</code><code>.pole-xxs</code><code>.pole-lg-xs</code></div>
         </div>
-    </div>
-    <div class="row pole-xxs pole-n pole-lg-xs pole-lg-n">
-        <div class="col col-12">
-            <div class="bg-salmon fill small">.pole-xxs.pole-s.pole-lg-xs.pole-lg-n</div>
+        <div class="col col-12 pole-xxs pole-lg-xs">
+            <div class="bg-salmon fill small"><code>.col</code><code>.pole-xxs</code><code>.pole-lg-xs</code></div>
         </div>
     </div>
 </div>
-<pre><code class="html language-html">&lt;div class="row pole-xxs pole-s pole-lg-xs pole-lg-s"&gt;&lt;/div&gt;
-&lt;div class="row pole-xxs pole-n pole-lg-xs pole-lg-n"&gt;&lt;/div&gt;</code></pre>
+<pre><code class="html language-html">&lt;div class="row"&gt;
+    &lt;div class="col col-12 pole-xxs pole-lg-xs"&gt;&lt;/div&gt;
+    &lt;div class="col col-12 pole-xxs pole-lg-xs"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
 <hr />
 <h3 id="push--pull">Push &amp; Pull</h3>
 <p>The <code>.push</code> and <code>.pull</code> system allows you to easily change the order of grid columns with modifier classes. The table below outlines the classes and formats made available when implementing push or pull.</p>
@@ -742,18 +743,19 @@ $breakpoints:
 </table>
 <p>In the example below the second column is pushed to the left and the first is pushed right - reordering the layout of the columns:</p>
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>row</code></div>
     <div class="row">
-        <div class="col col-9 col-pull-3 gutter-xxs gutter-l">
-            <div class="bg-teal fill">.col-9.col-pull-3</div>
+        <div class="col col-8 col-pull-4 gutter-xxs gutter-l">
+            <div class="bg-teal fill small"><code>.col</code><code>.col-8</code><code>.col-pull-4</code></div>
         </div>
-        <div class="col col-3 col-push-9 gutter-xxs gutter-r">
-            <div class="bg-bb-blue fill">.col-3.col-push-9</div>
+        <div class="col col-4 col-push-8 gutter-xxs gutter-r">
+            <div class="bg-bb-blue fill small"><code>.col</code><code>.col-4</code><code>.col-push-8</code></div>
         </div>
     </div>
 </div>
 <pre><code class="html language-html">&lt;div class="row "&gt;
-    &lt;div class="col col-9 col-pull-3"&gt;&lt;/div&gt;
-    &lt;div class="col col-3 col-push-9"&gt;&lt;/div&gt;
+    &lt;div class="col col-8 col-pull-4"&gt;&lt;/div&gt;
+    &lt;div class="col col-4 col-push-8"&gt;&lt;/div&gt;
 &lt;/div&gt;</code></pre>
 <h4 id="responsive-push--pull">Responsive Push &amp; Pull</h4>
 <p>Hubble's grid system comes with mobile-first fully responsive set of helpers to order column layouts according to screen size. The table below outlines the available options.</p>
@@ -770,28 +772,29 @@ $breakpoints:
 <tbody>
 <tr>
 <td>Breakpoint pull size</td>
-<td><code>.col-*-pull-*</code>,</td>
-<td><code>xxs</code>,<code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code> &amp; <code>1-12</code></td>
+<td><code>.col-[breakpoint]-pull-[num]</code>,</td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code> &amp; <code>1-12</code></td>
 <td><code>.col-md-pull-3</code></td>
-<td>*Wildcard(1) defines the breakpoint. *Wildcard(2) defines pull size</td>
+<td>Pulls col to size at specified breakpoint and up</td>
 </tr>
 <tr>
 <td>Breakpoint push size</td>
-<td><code>.col-*-push-*</code>,</td>
-<td><code>xxs</code>,<code>xs</code>,<code>sm</code>,<code>md</code>,<code>lg</code>,<code>xl</code> &amp; <code>1-12</code></td>
+<td><code>.col-[breakpoint]-push-[num]</code>,</td>
+<td><code>xs</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code> &amp; <code>1-12</code></td>
 <td><code>.col-md-push-9</code></td>
-<td>*Wildcard(1) defines the breakpoint. *Wildcard(2) defines push size</td>
+<td>Pushes col to size at specified breakpoint and up</td>
 </tr>
 </tbody>
 </table>
 <p>In the example below both columns are full width on mobile. On breakpoint (&gt;=md) they are re-ordered.</p>
 <div class="code-content-example">
+    <div class="parent-row-diagram"><code>row</code></div>
     <div class="row">
-        <div class="col col-12 col-md-9 col-md-pull-3 gutter-md-xxs gutter-md-l pole-xxs pole-s no-pole-md">
-            <div class="bg-teal fill small">.col-md-9.col-md-pull-3</div>
+        <div class="col col-12 col-md-8 col-md-pull-4 gutter-md-xxs gutter-md-l pole-xxs pole-s no-pole-md">
+            <div class="bg-teal fill smaller"><code>.col</code><code>.col-12</code><code>.col-md-8</code><code>.col-md-pull-4</code></div>
         </div>
-        <div class="col col-12 col-md-3 col-md-push-9 gutter-md-xxs gutter-md-r pole-xxs pole-n no-pole-md">
-            <div class="bg-bb-blue fill small">.col-md-3.col-md-push-9</div>
+        <div class="col col-12 col-md-4 col-md-push-8 gutter-md-xxs gutter-md-r pole-xxs pole-n no-pole-md">
+            <div class="bg-bb-blue fill smaller"><code>.col</code><code>.col-12</code><code>.col-md-4</code><code>.col-md-push-8</code></div>
         </div>
     </div>
 </div>
@@ -839,30 +842,10 @@ $grid-poles:
     --hb-col-width: 0;
     --hb-col-push: initial;
     --hb-col-pull: initial;
-
-    width: var(--hb-col-width);
-    left:  var(--hb-col-pull);
-    right: var(--hb-col-push); 
-}
-
-/* Gutters base */
-[class*="gutter-"],
-.no-gutter
-{
     --hb-gutter-l: initial;
     --hb-gutter-r: initial;
-    padding-left: var(--hb-gutter-l);
-    padding-right: var(--hb-gutter-r);
-}
-
-/* Poles base */
-[class*="pole-"],
-.no-pole
-{
     --hb-pole-n: initial;
     --hb-pole-s: initial;
-    padding-top: var(--hb-pole-n);
-    padding-bottom: var(--hb-pole-s);
 }</code></pre>
                     </article>
                 </div>

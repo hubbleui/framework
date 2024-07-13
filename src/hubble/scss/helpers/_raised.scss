@@ -11,7 +11,9 @@
 {
     box-shadow: var(--hb-raised-level-three);
 }
-.flat
+.flat,
+.flat:hover,
+.flat:active
 {
     box-shadow: none !important;
 }

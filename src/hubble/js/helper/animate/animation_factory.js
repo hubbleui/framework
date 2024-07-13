@@ -196,6 +196,10 @@ __animation_factory(DOMElement, opts)
 
         }, this);
 
+        // Sanitize to/from to strings
+        if (this.array_has('to', options)) options.to = options.to + '';
+        if (this.array_has('from', options)) options.from = options.from + '';
+
         if (!ANIMATION_EASING_FUNCTIONS[options.easing]) options.easing = 'ease';
 
         options.FROM_FACTORY = true;

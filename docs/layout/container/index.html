@@ -5,6 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Documentation | Hubble UI</title>
         <meta name="description" content="">
+        <script src="../../../build/js/lazyload.js"></script>
+        <link rel="stylesheet" href="../../../build/css/lazyload.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="../../../build/css/hubble.css">
         <link rel="stylesheet" href="../../../build/css/docs.css">
@@ -108,9 +110,10 @@
     </li>
     <li style="height:auto" id="menu-layout" class="menu-item menu-item-submenu">
         <ul>
+            <li class="menu-item"><a  href="../../layout/breakpoints/index.html">Breakpoints</a></li>
             <li class="menu-item"><a class="active" href="../../layout/container/index.html">Container</a></li>
-            <li class="menu-item"><a  href="../../layout/grid/index.html">Grid</a></li>
             <li class="menu-item"><a  href="../../layout/flex-grid/index.html">Flex Grid</a></li>
+            <li class="menu-item"><a  href="../../layout/grid/index.html">Grid</a></li>
             <li class="menu-item"><a  href="../../layout/stack/index.html">Stack</a></li>
             <li class="menu-item"><a  href="../../layout/skeleton/index.html">Skeleton</a></li>
         </ul>
@@ -211,6 +214,15 @@
             </li>
         </ul>
     </li>
+    <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-css-helpers">
+        <h6>Css Helpers</h6>
+        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
+    </li>
+    <li  id="menu-css-helpers" class="menu-item menu-item-submenu">
+        <ul>
+            <li class="menu-item"><a  href="../../css-helpers/css-helpers/index.html">Css Helpers</a></li>
+        </ul>
+    </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-javascript">
         <h6>Javascript</h6>
         <span class="icon glyph-icon glyph-icon-chevron-down"></span>
@@ -234,14 +246,6 @@
         <ul>
         </ul>
     </li>
-    <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-component-api">
-        <h6>Component Api</h6>
-        <span class="icon glyph-icon glyph-icon-chevron-down"></span>
-    </li>
-    <li  id="menu-component-api" class="menu-item menu-item-submenu">
-        <ul>
-        </ul>
-    </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-scss">
         <h6>Scss</h6>
         <span class="icon glyph-icon glyph-icon-chevron-down"></span>
@@ -257,7 +261,109 @@
                         <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger"> Documentation Menu </button>
                     </div>
                     <article class="docs-body">
-                        
+                        <h1 id="container">Container</h1>
+<p>Hubble's <code>.container</code> system is the most basic layout element in Hubble and should be used when using the grid system. Choose from a responsive, fixed-width container (meaning its max-width changes at each breakpoint) or fluid-width (meaning it’s 100% wide all the time).</p>
+<p>While containers can be nested, most layouts do not require a nested container.</p>
+<hr />
+<ul>
+<li><a href="#fixed-container">Fixed Container</a></li>
+<li><a href="#fluid-container">Fluid Container</a></li>
+<li><a href="#container-gutters">Container gutters</a></li>
+<li><a href="#css-customization">CSS customization</a></li>
+</ul>
+<hr />
+<h3 id="fixed-container">Fixed Container</h3>
+<p>The fixed width <code>.container</code> will wrap layouts providing a <code>100%</code> width on screen sizes below the <code>sm</code> breakpoint and a fixed <code>max-width</code> at each breakpoint above.</p>
+<div class="code-content-example">
+    <div class="parent-row-diagram"><code>.container</code></div>
+    <div class="container">
+        <div class="col col-9 gutter-xxs gutter-r">
+            <div class="bg-salmon fill"></div>
+        </div>
+        <div class="col col-3 gutter-xxs gutter-l">
+            <div class="bg-bb-blue fill"></div>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;div class="container"&gt;
+...
+&lt;/div&gt;</code></pre>
+<hr />
+<h3 id="fluid-container">Fluid Container</h3>
+<p>The fluid width <code>.container-fluid</code> will wrap layouts providing a <code>100%</code> at all breakpoints with a fixed <code>max-width</code> of the <code>xl</code>. breakpoint.</p>
+<div class="code-content-example">
+    <div class="parent-row-diagram"><code>.container-fluid</code></div>
+    <div class="container-fluid">
+        <div class="col col-9 gutter-xxs gutter-r">
+            <div class="bg-salmon fill"></div>
+        </div>
+        <div class="col col-3 gutter-xxs gutter-l">
+            <div class="bg-bb-blue fill"></div>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;div class="container-fluid"&gt;
+...
+&lt;/div&gt;</code></pre>
+<hr />
+<h3 id="container-gutters">Container gutters</h3>
+<p>Container gutters are left and right padding applied to the container element. The gutter sizes are configured via both Sass and CSS variables.</p>
+<div class="code-content-example">
+    <div class="parent-row-diagram"><code>.container-fluid</code></div>
+    <div class="container-fluid highlight-gutters">
+        <div class="col col-9 gutter-xxs gutter-r">
+            <div class="bg-salmon fill"></div>
+        </div>
+        <div class="col col-3 gutter-xxs gutter-l">
+            <div class="bg-bb-blue fill"></div>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;div class="container-fluid"&gt;
+...
+&lt;/div&gt;</code></pre>
+<hr />
+<h3 id="css-customization">CSS Customization</h3>
+<p>The container system uses a combination of both local root CSS variables for enhanced component customization and styling. The base values are used by the UI to create the gutters and sizings. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported, too.</p>
+<p>Customization via Sass can be made in the <code>src/scss/_config.scss</code> file in Hubble's source.</p>
+<pre><code class="file-path language-file-path">`src/scss/_config.scss`</code></pre>
+<pre><code class="sass language-sass">// Grid breakpoints
+$breakpoint-xs:                 0 !default;
+$breakpoint-sm:                 576px !default;
+$breakpoint-md:                 768px !default;
+$breakpoint-lg:                 992px !default;
+$breakpoint-xl:                 1200px !default;
+
+$container-gutters:
+(
+    'xxs':                      0.5rem,
+    'xs':                       1rem,
+    'sm':                       3.0rem,
+    'md':                       3.0rem,
+    'lg':                       3.0rem,
+    'xl':                       3.0rem,
+) !default;</code></pre>
+<p><br></p>
+<pre><code class="file-path language-file-path">src/scss/grid/_base.scss</code></pre>
+<pre><code class="sass language-sass">.container,
+.container-fluid
+{
+    --hb-container-width: 100%;
+    --hb-container-max-width: 100%;
+    --hb-container-pad-l: 0;
+    --hb-container-pad-r: 0;
+}</code></pre>
+<p><br></p>
+<pre><code class="css language-css">:root
+{
+    /* Container gutters */
+    --hb-container-gutter-xxs: 0.5rem;
+    --hb-container-gutter-xs: 1rem;
+    --hb-container-gutter-sm: 3rem;
+    --hb-container-gutter-md: 3rem;
+    --hb-container-gutter-lg: 3rem;
+    --hb-container-gutter-xl: 3rem;
+}</code></pre>
                     </article>
                 </div>
             </div>

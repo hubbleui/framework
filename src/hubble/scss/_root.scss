@@ -1,6 +1,12 @@
 @use "sass:math";
 :root
 {
+    /* Theme Colors */
+    @each $name, $color in $themeColors
+    {
+        --hb-color-#{$name}:               #{$color};
+    }
+
     /* Base Colors */
     --hb-white:                            #{$white};
     --hb-black:                            #{$black};
@@ -51,8 +57,8 @@
     --hb-font-smoothing:                   #{$font-smoothing};
     /* Heading styles */
     --hb-font-headings:                    #{$font-family-headings};
-    --hb-headings-font-weight:             #{$headings-font-weight};
     --hb-headings-line-height:             #{$headings-line-height};
+    --hb-headings-font-weight:             #{$headings-font-weight};
     --hb-headings-spacer:                  #{$headings-spacer};
     /* Headings sizes */
     --hb-text-size-h1:                     #{$text-size-h1};
@@ -98,11 +104,6 @@
     @each $name, $cgutter in $container-gutters
     {
         --hb-container-gutter-#{$name}:    #{$cgutter};
-    }
-    /* Margins */
-    @each $name, $margin in $margin-sizes
-    {
-        --hb-margin-#{$name}:              #{$margin};
     }
 
     /* Easings */

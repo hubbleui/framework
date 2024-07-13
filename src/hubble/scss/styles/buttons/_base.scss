@@ -23,7 +23,7 @@
     --hb-btn-transition: none;
     --hb-btn-padding-y: #{$btn-pad-y};
     --hb-btn-padding-x: #{$btn-pad-x};
-    --hb-btn-letter-spacing: 0.5px;
+    --hb-btn-letter-spacing: #{$btn-letter-spacing};
     --hb-btn-loader-color: var(--hb-btn-color);
     --hb-btn-icon-color: inherit;
     --hb-btn-box-shadow: none;
@@ -58,6 +58,8 @@
     padding: var(--hb-btn-padding-y) var(--hb-btn-padding-x);
     letter-spacing: var(--hb-btn-letter-spacing);
     box-shadow: var(--hb-btn-box-shadow);
+    width: var(--hb-btn-width);
+    display: var(--hb-btn-block);
     
     // Icon / Spinner
     .glyph-icon

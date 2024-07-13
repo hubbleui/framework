@@ -2,54 +2,30 @@
 {
     @each $name, $size in $grid-poles
     {
-        @if $curr-grid == null
+        $polename : if($curr-grid == null, pole-#{$name}, pole-#{$curr-grid}-#{$name});
+
+        .#{$polename}
         {
-            .pole-#{$name}
-            {
-                --hb-pole-s: var(--hb-grid-pole-#{$name});
-                --hb-pole-n: var(--hb-grid-pole-#{$name});
-                
-            }
-        }
-        @else
-        {
-            .pole-#{$curr-grid}-#{$name}
-            {
-                --hb-pole-s: var(--hb-grid-pole-#{$name});
-                --hb-pole-n: var(--hb-grid-pole-#{$name});
-            }
+            --hb-pole-s: var(--hb-grid-pole-#{$name});
+            --hb-pole-n: var(--hb-grid-pole-#{$name});
         }
     }
-    @if $curr-grid == null
+
+    $Nname : if($curr-grid == null, pole-n,  pole-#{$curr-grid}-n);
+    $Sname : if($curr-grid == null, pole-s,  pole-#{$curr-grid}-s);
+    $Ename : if($curr-grid == null, no-pole, no-pole-#{$curr-grid});
+
+    .#{$Nname}
     {
-        .pole-n
-        {
-            --hb-pole-s: 0;
-        }
-        .pole-s
-        {
-            --hb-pole-n: 0;
-        }
-        .no-pole
-        {
-            --hb-pole-s: 0;
-            --hb-pole-n: 0;
-        }
+        --hb-pole-s: 0px;
     }
-    @else
+    .#{$Sname}
     {
-        .pole-#{$curr-grid}-n
-        {
-            --hb-pole-s: 0;
-        }
-        .pole-#{$curr-grid}-s
-        {
-            --hb-pole-n: 0;
-        }
-        .no-pole-#{$curr-grid}
-        {
-            --hb-pole-s: 0;
-            --hb-pole-n: 0;
-        }
+        --hb-pole-n: 0px;
+    }
+    .#{$Ename}
+    {
+        --hb-pole-s: 0px;
+        --hb-pole-n: 0px;
     }
 }

@@ -83,3 +83,33 @@
     @return _str-replace(_str-replace(_str-replace($colorVar, ')', ''),  'var(--', ''), 'hb-', '');
 }
 
+// Array object helpers
+@function _map-keys($map)
+{
+    $ret : ();
+
+    @each $key, $value in $map
+    {
+        $ret: append($ret, $key);
+    }
+
+    @return $ret;
+}
+
+@function _list_merge($list1, $list2)
+{
+    $ret : ();
+
+    @each $val in $list1
+    {
+        $ret: append($ret, $val);
+    }
+    
+    @each $val in $list2
+    {
+        $ret: append($ret, $val);
+    }
+
+    @return $ret;
+}
+

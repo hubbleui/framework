@@ -30,4 +30,9 @@ module.exports =
         src: 'src/hubble/js/vendor/_flickity.js',
         dest: 'build/js/slider.js',
     },
+    lazy :
+    {
+        src: 'src/hubble/js/dom/_lazyLoad.js',
+        dest: 'build/js/lazyload.js',
+    },
 };

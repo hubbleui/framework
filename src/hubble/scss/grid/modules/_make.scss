@@ -8,6 +8,8 @@
     @include _make-containers($curr-grid, $prev-grid);
     /* #{$commentName} Rows */
     @include _make-rows($curr-grid, $prev-grid);
+    /* #{$commentName} Flex Rows */
+    @include _make-flex-rows($curr-grid, $prev-grid);
     /* #{$commentName} Columns */
     @include _make-cols($curr-grid, $prev-grid);
     /* #{$commentName} Flex Columns */
@@ -16,4 +18,12 @@
     @include _make-gutters($curr-grid, $prev-grid);
     /* #{$commentName} Poles */
     @include _make-poles($curr-grid, $prev-grid);
+    /* #{$commentName} Flex Gaps */
+    @include _make-flex-gaps($curr-grid, $prev-grid);
+    /* #{$commentName} Flex Aligns */
+    @include _make-flex-aligns($curr-grid, $prev-grid);
+    /* #{$commentName} Flex Gutters */
+    @include _make-flex-gutters($curr-grid, $prev-grid);
+     /* #{$commentName} Flex Orders */
+    @include _make-flex-orders($curr-grid, $prev-grid);
 }

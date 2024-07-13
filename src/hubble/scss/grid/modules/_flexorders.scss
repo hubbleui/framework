@@ -1,0 +1,13 @@
+@mixin _make-flex-orders($curr-grid, $prev-grid: null)
+{
+    // colums
+    @for $i from 1 through 5
+    {
+        $ordername : if($curr-grid == null, order-#{$i}, order-#{$curr-grid}-#{$i});
+
+        .flex-row > .#{$ordername}
+        {
+            order: #{$i} !important;
+        }
+    }
+}
