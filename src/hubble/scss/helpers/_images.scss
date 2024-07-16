@@ -1,27 +1,36 @@
 .img-responsive
 {
-	display: block;
-	width: 100%;
+    display: block;
+    width: 100%;
     height: auto;
     outline: none;
 }
 .bg-image
 {
-	--hb-width: 100%;
+    --hb-width: 100%;
     --hb-height: auto;
     --hb-aspect-ratio: 16/9;
+    aspect-ratio: var(--hb-aspect-ratio);
     width: var(--hb-width);
     height: var(--hb-height);
-    aspect-ratio: var(--hb-aspect-ratio);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
 
-	&.ratio-1-1  { --hb-aspect-ratio: 1/1  }
-	&.ratio-16-9 { --hb-aspect-ratio: 16/9 }
-	&.ratio-4-3  { --hb-aspect-ratio: 4/3  }
-	&.ratio-3-2  { --hb-aspect-ratio: 3/2  }
-	&.ratio-5-3  { --hb-aspect-ratio: 5/3  }
-	&.ratio-5-4  { --hb-aspect-ratio: 5/4  }
-	&.ratio-9-16 { --hb-aspect-ratio: 9/16 }
+    // Square
+    &.ratio-1-1  { --hb-aspect-ratio: 1/1  }
+
+    // Landscape
+    &.ratio-3-2  { --hb-aspect-ratio: 3/2  }
+    &.ratio-4-3  { --hb-aspect-ratio: 4/3  }
+    &.ratio-5-3  { --hb-aspect-ratio: 5/3  }
+    &.ratio-5-4  { --hb-aspect-ratio: 5/4  }
+    &.ratio-16-9 { --hb-aspect-ratio: 16/9 }
+
+    // Portrait
+    &.ratio-2-3  { --hb-aspect-ratio: 2/3  }
+    &.ratio-3-4  { --hb-aspect-ratio: 3/4  }
+    &.ratio-3-5  { --hb-aspect-ratio: 3/5  }
+    &.ratio-4-5  { --hb-aspect-ratio: 4/5  }
+    &.ratio-9-16 { --hb-aspect-ratio: 9/16 }
 }

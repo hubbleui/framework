@@ -8,7 +8,7 @@
      * 
      * @var {int}
      */
-    const RPL_AN_TIME = 300;
+    const RPL_AN_TIME = 400;
 
     /**
      * Wrappers that need "position:relative" to hide overflow.
@@ -167,7 +167,6 @@
                 top:    `${y}px`
             });
             
-            
             // Cache 'overflow' and 'position' inline styles
             // to revert back to after complete
             // If these are empty they will be removed
@@ -199,10 +198,12 @@
             const remove = function()
             {
                 wrapper.removeChild(ripple);
+                
+                Helper.remove_class(wrapper, 'ripple-down');
 
-                Helper.css(wrapper, 'overflow', CSSoverflow);
+                /*Helper.css(wrapper, 'overflow', CSSoverflow);
 
-                Helper.css(wrapper, 'position', CSSposition);
+                Helper.css(wrapper, 'position', CSSposition);*/
             }
 
             // Release event
@@ -232,8 +233,6 @@
 
                 // Cleanup and remove element
                 wrapper.removeAttribute('data-event');
-
-                Helper.remove_class(wrapper, 'ripple-down');
 
                 Helper.animate_css(ripple, {'opacity': 0, duration: 350, callback: remove });
             };

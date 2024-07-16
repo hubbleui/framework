@@ -217,7 +217,7 @@ function createDocs()
                 let slug   = `${dir}/${id}`;
 
                 HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li class="menu-item menu-item-title js-collapse ${active}" data-collapse-target="menu-${id}">`;
-                        HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}<h6>${name}</h6>`;
+                        HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}<div>${name}</div>`;
                         HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}<span class="icon glyph-icon glyph-icon-chevron-down"></span>`;
                 HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}</li>`;
 

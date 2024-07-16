@@ -13,6 +13,7 @@
     font-weight: normal;
     font-variant: normal;
     text-transform: none;
+    font-size: inherit;
     line-height: 1;
     
     /* Enable Ligatures ================ */
@@ -36,23 +37,23 @@
 
 .icon-xs
 {
-    font-size: _minusPercent($base-font-size, 20);
+    font-size: $icon-xs;
 }
 .icon-md
 {
-    font-size: _addPercent($base-font-size, 30);
+    font-size: $icon-md;
 }
 .icon-lg
 {
-    font-size: _addPercent($base-font-size, 50);
+    font-size: $icon-lg;
 }
 .icon-xl
 {
-    font-size: _addPercent($base-font-size, 110);
+    font-size: $icon-xl;
 }
 .icon-xxl
 {
-    font-size: _addPercent($base-font-size, 150);
+    font-size: $icon-xxl;
 }
 
 .glyph-icon-home:before

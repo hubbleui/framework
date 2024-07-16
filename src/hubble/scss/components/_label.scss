@@ -2,6 +2,7 @@
 .label
 {
     --hb-label-font-size: #{$label-font-size};
+    --hb-label-font-weight: #{$label-font-weight};
     --hb-label-color: #{$label-color};
     --hb-label-bg: #{$label-bg};
     --hb-label-pad-y: #{$label-pad-y};
@@ -17,42 +18,23 @@
     background-color: var(--hb-label-bg);
     color: var(--hb-label-color);
     font-size: var(--hb-label-font-size);
+    font-weight: var(--hb-label-font-weight);
     padding: var(--hb-label-pad-y) var(--hb-label-pad-x);
     
     &:hover
     {
-        text-decoration: none;
+        text-decoration: none !important;
     }
-    &.label-primary
+
+    @each $context, $colors in $contexts
     {
-        --hb-label-color: var(--hb-white);
-        --hb-label-bg: var(--hb-brand-primary);
+        &.label-#{$context}
+        {
+            --hb-label-color: #{map-get($colors, "contrast")};
+            --hb-label-bg: #{map-get($colors, "color")}
+        }
     }
-    &.label-secondary
-    {
-        --hb-label-color: var(--hb-white);
-        --hb-label-bg: var(--hb-brand-secondary);
-    }
-    &.label-success
-    {
-        --hb-label-color: var(--hb-white);
-        --hb-label-bg: var(--hb-brand-success);
-    }
-    &.label-info
-    {
-        --hb-label-color: var(--hb-white);
-        --hb-label-bg: var(--hb-brand-info);
-    }
-    &.label-warning
-    {
-        --hb-label-color: var(--hb-white);
-        --hb-label-bg: var(--hb-brand-warning);
-    }
-    &.label-danger
-    {
-        --hb-label-color: var(--hb-white);
-        --hb-label-bg: var(--hb-brand-danger);
-    }
+
     &.label-outline
     {
         --hb-label-color: var(--hb-label-bg);

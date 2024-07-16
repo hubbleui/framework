@@ -58,36 +58,37 @@ p
 {
     margin: 0 0 1rem 0;
     font-size: var(--hb-base-font-size);
+    line-height: var(--hb-base-line-height);
 }
 .p1
 {
     font-size: var(--hb-text-size-p1);
-    line-height: calc(var(--hb-text-size-p1) * 1.88);
+    line-height: calc(var(--hb-text-size-p1) * 1.45);
 }
 .p2
 {
     font-size: var(--hb-text-size-p2);
-    line-height: calc(var(--hb-text-size-p2) * 1.88);
+    line-height: calc(var(--hb-text-size-p2) * 1.45);
 }
 .p3
 {
     font-size: var(--hb-text-size-p3);
-    line-height: calc(var(--hb-text-size-p3) * 1.88);
+    line-height: calc(var(--hb-text-size-p3) * 1.45);
 }
 .p4
 {
     font-size: var(--hb-text-size-p4);
-    line-height: calc(var(--hb-text-size-p4) * 1.88);
+    line-height: calc(var(--hb-text-size-p4) * 1.45);
 }
 .p5
 {
     font-size: var(--hb-text-size-p5);
-    line-height: calc(var(--hb-text-size-p5) * 1.88);
+    line-height: calc(var(--hb-text-size-p5) * 1.45);
 }
 .p6
 {
     font-size: var(--hb-text-size-p6);
-    line-height: calc(var(--hb-text-size-p6) * 1.88);
+    line-height: calc(var(--hb-text-size-p6) * 1.45);
 }
 
 // Bold and Italics
@@ -196,17 +197,11 @@ blockquote:not([class])
     }
 }
 
+// Basic list styling
 ul, ol
 {
     padding-left: 2em;
 }
-
-ul.no-list
-{
-    padding: 0;
-    list-style-type: none;
-}
-
 ol
 {
     &.no-list
@@ -214,12 +209,10 @@ ol
         padding: 0;
         list-style-type: none;
     }
-
     &[type="az"]
     {
         list-style-type: lower-alpha;
     }
-
     &[type="AZ"]
     {
         list-style-type: upper-alpha;

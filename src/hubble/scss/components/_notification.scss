@@ -21,7 +21,6 @@
 		--hb-msg-bg: #{$notif-bg};
 	    --hb-msg-color: #{$notif-color};
 	    --hb-msg-font-size: #{$notif-font-size};
-	    --hb-msg-icon-color: #{$notif-icon-color};
 	    --hb-msg-spacer-y: #{$notif-spacer-y};
 	    --hb-msg-spacer-x: #{$notif-spacer-x};
 	    --hb-msg-border-radius: #{$notif-border-radius};
@@ -52,10 +51,26 @@
     	transform: translate3d(0, 0, 0);
   	}
 }
-.animate-notif
+@keyframes fadeOutUp
 {
-	animation-duration: .3s;
- 	animation-fill-mode: both;
-  	animation-name: fadeInUp;
+	from
+  	{
+    	opacity: 1;
+    	transform: translate3d(0, 0, 0);
+  	}
+
+  	to
+  	{
+    	opacity: 0;
+    	transform: translate3d(0, 100%, 0);
+  	}
+}
+.animate-in
+{
+	animation: fadeInUp .3s ease-in-out forwards;
+}
+.animate-out
+{
+	animation: fadeOutUp .25s ease-in-out forwards;
 }
 

@@ -130,7 +130,12 @@ __animate_js(DOMElement, options)
             endVal = _helper.rendered_style(this.DOMElement, this.CSSProperty);
             
             _helper.css(this.DOMElement, this.CSSProperty, prevStyle ? prevStyle : false);
+        }
 
+        // From auto
+        if (startVal === 'auto' || startVal === 'initial')
+        {
+            startVal = _helper.rendered_style(this.DOMElement, this.CSSProperty);
         }
 
         var startUnit = _helper.css_value_unit(startVal);
@@ -158,6 +163,7 @@ __animate_js(DOMElement, options)
         this.backAnimation = endVal < startVal;
         this.distance      = Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal));
         this.CSSunits      = endUnit;
+
     }
 
     AnimateJS.prototype.parseTransformOptions = function()

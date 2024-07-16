@@ -186,6 +186,28 @@
 		--hb-table-head-bg: var(--hb-brand-danger);
 		--hb-table-head-color: var(--hb-white);
 	}
+
+	&.table-dense
+	{
+		thead,
+		tfoot
+		{		
+			th
+			{
+				padding: calc(var(--hb-table-cell-pad-y) / 2) calc(var(--hb-table-cell-pad-x) / 2);
+			}
+		}
+
+		> tbody > tr > td,
+		> tbody > tr > th,
+		> tfoot > tr > td, 
+		> tfoot > tr > th,
+		> thead > tr > td,
+		> thead > tr > th
+		{
+			padding: calc(var(--hb-table-cell-pad-y) / 2) calc(var(--hb-table-cell-pad-x) / 2);
+		}
+	}
 }
 
 // Responsive table wrapped

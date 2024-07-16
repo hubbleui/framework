@@ -1950,7 +1950,12 @@ __animate_js(DOMElement, options)
             endVal = _helper.rendered_style(this.DOMElement, this.CSSProperty);
             
             _helper.css(this.DOMElement, this.CSSProperty, prevStyle ? prevStyle : false);
+        }
 
+        // From auto
+        if (startVal === 'auto' || startVal === 'initial')
+        {
+            startVal = _helper.rendered_style(this.DOMElement, this.CSSProperty);
         }
 
         var startUnit = _helper.css_value_unit(startVal);
@@ -1978,6 +1983,7 @@ __animate_js(DOMElement, options)
         this.backAnimation = endVal < startVal;
         this.distance      = Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal));
         this.CSSunits      = endUnit;
+
     }
 
     AnimateJS.prototype.parseTransformOptions = function()
@@ -9022,38 +9028,34 @@ console.log(Container.get('Helper'));
     /**
      * @var {obj}
      */
-    var defaults = {
+    var DEFALT_OPTIONS =
+    {
         title: '',
         message: '',
         closeAnywhere: true,
-        targetContent: null,
+        customContent: null,
 
-        cancelBtn: true,
-        cancelText: 'Cancel',
-        cancelClass: 'btn btn-pure',
+        cancelBtn: null,
+        cancelClass: 'btn-danger',
 
-        confirmBtn: true,
-        confirmClass: 'btn btn-pure btn-primary',
-        confirmText: 'Confirm',
-        overlay: 'light',
+        confirmBtn: null,
+        confirmClass: '',
+        
+        overlay: 'dark',
         extras: '',
 
-        onBuilt: null,
-        onBuiltArgs: null,
-        onRender: null,
-        onRenderArgs: null,
-        onClose: null,
-        onCloseArgs: null,
-        validateConfirm: null,
-        validateConfirmArgs: null
-
+        callbackBuilt:    () => { },
+        callbackRender:   () => { },
+        callbackCanel:    () => { },
+        callbackConfirm:  () => { },
+        callbackClose:    () => { },
+        callbackValidate: () => true,
     };
 
     /**
      * Module constructor
      *
      * @class
-     {*} @constructor
      * @params {options} obj
      * @access {public}
      * @return {this}
@@ -9062,15 +9064,34 @@ console.log(Container.get('Helper'));
     { 
         constructor(options)
         {
-            this._options = Helper.array_merge(defaults, options);
-            this._timer = null;
+            this._options = Helper.array_merge(DEFALT_OPTIONS, options);
             this._modal = null;
             this._overlay = null;
-            this._modalInner = null;
 
             this._invoke();
 
             return this;
+        }
+
+        /**
+         * Forced close
+         *
+         * @access {public}
+         */
+        close()
+        {
+            const _this = this;
+
+            Helper.add_class(this._overlay, 'transition-off');
+
+            Helper.remove_class(document.body, 'no-scroll');
+
+            setTimeout(function()
+            {
+                Helper.remove_from_dom(_this._overlay);
+                Helper.remove_from_dom(_this._modal);
+                Helper.remove_class(document.body, 'no-scroll');
+            }, 600);
         }
 
         /**
@@ -9107,56 +9128,38 @@ console.log(Container.get('Helper'));
 
             var content = '';
 
-            if (this._options.targetContent)
+            if (this._options.customContent)
             {
-                modal.innerHTML = this._buildTargetModal();
+                modal.innerHTML = `<div class="modal-dialog"><div class="container-fluid"><div class="card js-modal-inner">${this._options.customContent}</div></div></div>`;
             }
             else
             {
-                var closeButton = this._options.cancelBtn === true ? '<button type="button" class="btn ' + this._options.cancelClass + ' js-modal-close js-modal-cancel">' + this._options.cancelText + '</button>' : '';
-                var confirmButton = this._options.confirmBtn === true ? '<button type="button" class="btn ' + this._options.confirmClass + ' js-modal-close js-modal-confirm">' + this._options.confirmText + '</button>' : '';
+                let closeButton   = this._options.cancelBtn  ? `<button type="button" class="btn btn btn-pure ${this._options.cancelClass}  js-modal-cancel">${this._options.cancelBtn}</button>` : '';
+                let confirmButton = this._options.confirmBtn ? `<button type="button" class="btn btn btn-pure ${this._options.confirmClass} js-modal-confirm">${this._options.confirmBtn}</button>` : '';
 
                 Helper.inner_HTML(modal, [
-                    '<div class="modal-dialog js-modal-dialog">',
-                    '<div class="card js-modal-panel">',
-                    '<div class="card-header">',
-                    '<h4 class="card-title">' + this._options.title + '</h4>',
-                    '</div>',
-                    this._options.extras,
-                    '<div class="card-block">',
-                    '<p class="card-text">' + this._options.message + '</p>',
-                    '</div>',
-                    '<div class="card-actions">',
-                    closeButton,
-                    confirmButton,
-                    '</div>',
-                    '</div>',
+                    '<div class="modal-dialog">',
+                        '<div class="container-fluid">',
+                            '<div class="card js-modal-inner">',
+                                '<div class="card-header">',
+                                    `<div class="card-header-content"><span class="card-title">${this._options.title}</span></div>`,
+                                '</div>',
+                                '<div class="card-block">',
+                                    `<p>${this._options.message}</p>`,
+                                '</div>',
+                                this._options.extras,
+                                '<div class="card-footer">',
+                                    `<div class="card-footer-content">${closeButton}${confirmButton}</div>`,
+                                '</div>',
+                            '</div>',
+                        '</div>',
                     '</div>',
                 ]);
             }
 
             this._modal = modal;
             this._overlay = overlay;
-            this._modalInner = Helper.$('.js-modal-dialog', modal);
             this._fireBuilt();
-        }
-
-        /**
-         * Get modal content from an existing DOM node
-         *
-         * @access {private}
-         * @return {string}
-         */
-        _buildTargetModal()
-        {
-            var content = Helper.$(this._options.targetContent);
-
-            if (!Helper.in_dom(content))
-            {
-                throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
-            }
-
-            return '<div class="modal-dialog js-modal-dialog"><div class="card js-modal-panel">' + content.innerHTML + '</div></div>';
         }
 
         /**
@@ -9170,16 +9173,11 @@ console.log(Container.get('Helper'));
             document.body.appendChild(this._overlay);
             document.body.appendChild(this._modal);
 
-            this._centerModal();
+            this._modal.offsetHeight;
 
-            Helper.add_class(this._overlay, 'active');
+            setTimeout(() => Helper.add_class(this._overlay, 'active'), 15);
 
             this._fireRender();
-
-            Helper.addEventListener(window, 'resize', function modalResize()
-            {
-                _this._centerModal();
-            });
 
             Helper.add_class(document.body, 'no-scroll');
         }
@@ -9193,70 +9191,52 @@ console.log(Container.get('Helper'));
         {
             var _this = this;
 
-            var closeModal = function(e)
+            const closeAnywhere = _this._options.closeAnywhere;
+
+            const closeValidator = (e) =>
             {
                 e = e || window.event;
 
-                if (_this._options.closeAnywhere === true)
-                {
-                    if (this === _this._modal)
-                    {
-                        var clickedInner = Helper.closest(e.target, '.js-modal-dialog');
-
-                        if (clickedInner)
-                        {
-                            return;
-                        }
-                    }
-                }
-
                 e.preventDefault();
 
-                clearTimeout(_this._timer);
+                const clicked = e.target;
 
-                if (Helper.has_class(this, 'js-modal-confirm'))
+                // Clicked cancel or confirm button
+                if (Helper.has_class(clicked, ['js-modal-confirm', 'js-modal-cancel']))
                 {
-                    var canClose = _this._fireConfirmValidator();
-
-                    if (!canClose)
+                    if (_this._fireConfirmValidator())
                     {
-                        return;
+                        if (Helper.has_class(clicked, 'js-modal-confirm'))
+                        {
+                            this._fireConfirm();
+                        }
+                        else
+                        {
+                            this._fireCancel();
+                        }
+
+                        _this.close();
+
+                        _this._fireClosed();
+                    }
+
+                    return;
+                }
+
+                if (closeAnywhere)
+                {                       
+                    if (!Helper.closest(clicked, '.js-modal-inner'))
+                    {
+                        _this.close();
+
+                        _this._fireClosed();
                     }
                 }
-
-                Helper.add_class(_this._overlay, 'transition-off');
-
-                _this._fireClosed();
-
-                if (Helper.has_class(this, 'js-modal-confirm'))
-                {
-                    _this._fireConfirm();
-                }
-
-                _this._timer = setTimeout(function()
-                {
-                    Helper.remove_from_dom(_this._overlay);
-                    Helper.remove_from_dom(_this._modal);
-                    Helper.remove_class(document.body, 'no-scroll');
-                }, 600);
             }
 
-            if (this._options.closeAnywhere === true)
-            {
-                Helper.addEventListener(this._modal, 'click', closeModal, false);
-            }
-
-            var modalCloses = Helper.$All('.js-modal-close', this._modal);
-            if (!Helper.is_empty(modalCloses))
-            {
-                Helper.addEventListener(modalCloses, 'click', closeModal, false);
-            }
-
-            var modalCancel = Helper.$('.js-modal-cancel', this._modal);
-            if (Helper.in_dom(modalCancel))
-            {
-                Helper.addEventListener(modalCancel, 'click', closeModal, false);
-            }
+            Helper.addEventListener(this._modal, 'click', closeValidator);
+            Helper.addEventListener(this._overlay, 'click', closeValidator);
+            
         }
 
         /**
@@ -9266,13 +9246,7 @@ console.log(Container.get('Helper'));
          */
         _fireRender()
         {
-            if (this._options.onRender !== null && Helper.is_callable(this._options.onRender))
-            {
-                var callback = this._options.onRender;
-                var args = this._options.onRenderArgs;
-                callback.apply(this._modal, args);
-
-            }
+            this._options.callbackRender.call(null, this._modal);
         }
 
         /**
@@ -9282,13 +9256,7 @@ console.log(Container.get('Helper'));
          */
         _fireClosed()
         {
-            if (this._options.onClose !== null && Helper.is_callable(this._options.onClose))
-            {
-                var callback = this._options.onClose;
-                var args = this._options.onCloseArgs;
-                callback.apply(this._modal, args);
-                Helper.remove_class(document.body, 'no-scroll');
-            }
+            this._options.callbackClose.call(null, this._modal);
         }
 
         /**
@@ -9298,12 +9266,17 @@ console.log(Container.get('Helper'));
          */
         _fireConfirm()
         {
-            if (this._options.onConfirm !== null && Helper.is_callable(this._options.onConfirm))
-            {
-                var callback = this._options.onConfirm;
-                var args = this._options.onConfirmArgs;
-                callback.apply(this._modal, args);
-            }
+            this._options.callbackConfirm.call(null, this._modal);
+        }
+
+        /**
+         * Fire the confirm event
+         *
+         * @access {private}
+         */
+        _fireCancel()
+        {
+            this._options.callbackCanel.call(null, this._modal);
         }
 
         /**
@@ -9313,14 +9286,7 @@ console.log(Container.get('Helper'));
          */
         _fireConfirmValidator()
         {
-            if (this._options.validateConfirm !== null && Helper.is_callable(this._options.validateConfirm))
-            {
-                var callback = this._options.validateConfirm;
-                var args = this._options.validateConfirmArgs;
-                return callback.apply(this._modal, args);
-            }
-
-            return true;
+            return this._options.callbackValidate.call(null, this._modal);
         }
 
         /**
@@ -9330,38 +9296,7 @@ console.log(Container.get('Helper'));
          */
         _fireBuilt()
         {
-            if (this._options.onBuilt !== null && Helper.is_callable(this._options.onBuilt))
-            {
-                var callback = this._options.onBuilt;
-                var args = this._options.onBuiltArgs;
-                callback.apply(this._modal, args);
-            }
-        }
-
-        /**
-         * Center the modal vertically
-         *
-         * @access {private}
-         */
-        _centerModal()
-        {
-            var el = this._modalInner;
-            var computedStyle = window.getComputedStyle(el);
-            var modalH = parseInt(el.offsetHeight);
-            var windowH = window.innerHeight || document.documentElement.clientHeight || getElementsByTagName('body')[0].clientHeight;
-
-            // If the window height is less than the modal dialog
-            // We need to adjust the dialog so it is at the top of the page
-            if (windowH <= modalH)
-            {
-                el.style.marginTop = '0px';
-                el.style.top = '0';
-            }
-            else
-            {
-                el.style.marginTop = '-' + (modalH / 2) + 'px';
-                el.style.top = '50%';
-            }
+            this._options.callbackBuilt.call(null, this._modal);
         }
     }
 
@@ -9704,42 +9639,53 @@ console.log(Container.get('Helper'));
 
 })();
 
-/**
- * Notification
- *
- * The Notification class is a utility class used to
- * display a notification.
- *
- */
 (function()
 {
-
     /**
      * @var {Helper} obj
      */
     const Helper = Container.Helper();
 
     /**
-     * @var {_activeNotifs} array
+     * Default options
+     * 
+     * @var {array}
      */
-    var _activeNotifs = [];
+    const DEFAULT_OPTIONS =
+    {
+        text:             '',
+        variant:          '',
+        icon:             '',
+        timeout:          6000,
+        btn:              false,
+        btnVariant:       'primary',
+        callbackOpen:     () => {},
+        callbackBtn:      () => {},
+        callbackDismiss:  () => {},
+        callbackValidate: () => { return true; }
+    };
 
     /**
-     * Module constructor
+     * Notification
      *
-     * @class
-     {*} @constructor
-     * @params {options} obj
-     * @access {public}
-     * @return {this}
+     * The Notification class is a utility class used to
+     * display a notification.
+     *
      */
     class Notification
     {
+        /**
+         * Module constructor
+         *
+         * @params {options} obj
+         * @access {public}
+         * @return {this}
+         */
         constructor(options)
         {
-            this._notifWrap = Helper.$('.js-nofification-wrap');
+            this._DOMElementWrapper = Helper.$('.js-nofification-wrap');
 
-            if (!Helper.in_dom(this._notifWrap))
+            if (!Helper.in_dom(this._DOMElementWrapper))
             {
                 this._buildNotificationContainer();
             }
@@ -9757,9 +9703,12 @@ console.log(Container.get('Helper'));
         _buildNotificationContainer()
         {
             var wrap = document.createElement('DIV');
+
             wrap.className = 'notification-wrap js-nofification-wrap';
+            
             document.body.appendChild(wrap);
-            this._notifWrap = Helper.$('.js-nofification-wrap');
+            
+            this._DOMElementWrapper = Helper.$('.js-nofification-wrap');
         }
 
 
@@ -9771,134 +9720,91 @@ console.log(Container.get('Helper'));
          */
         _invoke(options)
         {
-            if (typeof options.isCallback !== 'undefined' && options.isCallback === true)
-            {
-                this._invokeCallbackable(options);
+            options = {...DEFAULT_OPTIONS, ...options };
+            
+            var content = '';
 
-                return;
+            if (options.icon)
+            {
+                content += `<div class="msg-icon"><span class="glyph-icon glyph-icon-${options.icon}"></span></div>`;
             }
 
+            content += `<div class="msg-body"><p>${options.text}</p></div>`;
+
+            if (options.btn)
+            {
+                content +=  `<div class="msg-btn"><button type="button" class="btn btn-pure btn-${options.btnVariant} btn-sm js-notif-btn">${options.btn}</button></div>`;
+            }     
+           
+            var notif       = document.createElement('DIV');
+            notif.className = 'msg animate-in';
+
+            if (options.variant)
+            {
+                notif.className += ` msg-${options.variant}`;
+            }
+
+            notif.innerHTML = content;
+
+            Helper.add_class(this._DOMElementWrapper, 'active');
+
+            this._DOMElementWrapper.appendChild(notif);
+
+            options.callbackOpen.call(null, notif);
+
             var _this = this;
-            var content = '<div class="msg-body"><p>' + options.msg + '</p></div>';
-            var notif = Helper.new_node('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
-            var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
-            Helper.add_class(this._notifWrap, 'active');
-
-            // Timout remove automatically
-            _activeNotifs.push(
+            const timer = setTimeout(function()
             {
-                node: notif,
-                timeout: setTimeout(function()
+                removefunction();
+
+            }, options.timeout);
+
+            const removefunction = () =>
+            {
+                if (options.callbackValidate.call(null, notif))
                 {
-                    _this._removeNotification(notif);
-                }, timeout),
-            });
+                    clearTimeout(timer);
 
-            // Click to remove
-            notif.addEventListener('click', function()
-            {
-                _this._removeNotification(notif);
-            });
-        }
+                    _this._remove(notif);
 
-        /**
-         * Create a notification that has callback buttons 
-         *
-         * @params {options} obj
-         * @access {private}
-         */
-        _invokeCallbackable(options)
-        {
-            var _this = this;
-            var confirmText = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
-            var dismissX = typeof options.showDismiss === 'undefined' ? '' : '<button type="button" class="btn btn-xs btn-pure btn-dismiss btn-circle js-dismiss"><span class="glyph-icon glyph-icon-cross2"></span></button>';
-            var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
-
-            var content = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX + '</div>';
-
-            var notif = Helper.new_node('div', 'msg animate-notif', null, content, this._notifWrap);
-            var confirm = Helper.$('.js-confirm', notif);
-            var dismiss = Helper.$('.js-dismiss', notif);
-
-            Helper.add_class(this._notifWrap, 'active');
-
-            _activeNotifs.push(
-            {
-                node: notif,
-                timeout: setTimeout(function()
-                {
-                    _this._removeNotification(notif);
-                }, timeout),
-            });
-
-            // Click to remove
-            notif.addEventListener('click', function()
-            {
-                if (Helper.is_callable(options.onDismiss))
-                {
-                    options.onDismiss(options.onDismissArgs);
+                    options.callbackDismiss.call(null, notif);
                 }
+            };
 
-                _this._removeNotification(notif);
-            });
+            Helper.addEventListener(notif, 'click', removefunction);
 
-            // Click confirm to remove
-            confirm.addEventListener('click', function()
+            if (options.btn)
             {
-                if (Helper.is_callable(options.onConfirm))
-                {
-                    options.onConfirm(options.onConfirmArgs);
-                }
-
-                _this._removeNotification(notif);
-            });
-
-            if (dismiss)
-            {
-                dismiss.addEventListener('click', function()
-                {
-                    if (Helper.is_callable(options.onDismiss))
-                    {
-                        options.onDismiss(options.onDismissArgs);
-                    }
-
-                    _this._removeNotification(notif);
-                });
+                Helper.addEventListener(Helper.$('.js-notif-btn', notif), 'click', options.callbackBtn);
+                Helper.addEventListener(Helper.$('.js-notif-btn', notif), 'click', removefunction);
             }
         }
 
         /**
          * Remove a notification
          *
-         * @params {_node} node
+         * @params {DOMElement} node
          * @access {private}
          */
-        _removeNotification(_node)
+        _remove(DOMElement)
         {
-            var _this = this;
-            var i = _activeNotifs.length;
-            while (i--)
-            {
-                if (_node === _activeNotifs[i].node)
-                {
-                    clearTimeout(_activeNotifs[i].timeout);
-                    Helper.remove_class(_node, 'animate-notif');
-                    Helper.animate(_node, 'opacity', '1', '0', 350, 'ease');
-                    Helper.animate(_node, 'max-height', '100px', '0', 450, 'ease');
-                    _activeNotifs.splice(i, 1);
-                    setTimeout(function()
-                    {
-                        Helper.remove_from_dom(_node);
+            const wrappper = this._DOMElementWrapper;
 
-                        if (_activeNotifs.length === 0)
-                        {
-                            Helper.remove_class(_this._notifWrap, 'active');
-                        }
-                    }, 450);
-                    return;
+            const removed = function()
+            {
+                Helper.remove_from_dom(DOMElement);
+
+                if (wrappper.children.length === 0)
+                {
+                    Helper.remove_class(wrappper, 'active');
                 }
             }
+            
+            Helper.add_class(DOMElement, 'animate-out');
+            Helper.remove_class(DOMElement, 'animate-in');
+
+            setTimeout(removed, 300);
         }
     }
 
@@ -11009,7 +10915,14 @@ function abort()
     /**
      * @var {Helper} obj
      */
-    const [each, _for, in_array, is_undefined, is_callable, animate] = Container.import(['each','for','in_array','is_undefined','is_callable','animate']).from('Helper');
+    const [$, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css] = Container.import(['$','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css']).from('Helper');
+
+    /**
+     * Wrappers that need "position:relative" to hide overflow.
+     * 
+     * @var {array}
+     */
+    const STATIC_POSITIONS = ['static', 'unset', 'initial'];
 
     /**
      * Default options.
@@ -11019,9 +10932,11 @@ function abort()
     const DEFAULT_OPTIONS =
     {
         count: 1,
+        lines: 0,
         height: null,
         width: null,
         variant: 'block',
+        aspectratio: '',
     };
 
     /**
@@ -11049,123 +10964,156 @@ function abort()
         /**
          * Module constructor
          *
-         * @params {options} obj
-         * @access {public}
+         * @param  {DOMElement}   DOMElement Target node
+         * @param  {object|array} options
          * @return {this}
          */
         constructor(DOMElement, options)
         {
             this._DOMElement = DOMElement;
-            this._options    = {...DEFAULT_OPTIONS, ...options};
-            this._nodes      = [];
-            this._build();
+            
+            this._nodes = [];
+
+            this._isMulti = is_array(options);
+
+            if (is_empty(options)) return this;
+
+            if (is_array(options))
+            {
+                each(options, function(i, optionSet)
+                {
+                    optionSet = {...DEFAULT_OPTIONS, ...optionSet};
+
+                    this._build(optionSet);
+
+                }, this);
+            }
+            else
+            {
+                options = {...DEFAULT_OPTIONS, ...options};
+
+                this._build(options);
+            }
 
             return this;
         }
 
-        /**
-         * Remove a notification
-         *
-         * @params {_node} node
-         * @access {private}
-         */
-        _build()
+
+        loadMulti(content, callback)
         {
-            let wrapper    = null;
-            let skeleton   = document.createElement('div');
-            let variants   = this._options.variant.split(' ').map((x) => x.trim().toLowerCase()).filter((x) => x !== '');
-            let DOMElement = this._DOMElement;
-            let width      = this._options.width;
-            let height     = this._options.height;
-            let classes    = ['skeleton'];
-
-            skeleton.classList.add('skeleton');
-
-            each(variants, function(i, variant)
+            each(content, (selector, content) => 
             {
-                if (in_array(variant, CLASS_VARIANTS))
-                {
-                    classes.push(`skeleton-${variant}`);
-                }
-                else if (in_array(variant, WRAPPER_VARIANTS))
-                {
-                    if (!wrapper)
-                    {
-                        wrapper = document.createElement('div');
-                        wrapper.className = 'skeleton-text-block';
-                    }
-                    if (variant !== 'text-block')
-                    {
-                        wrapper.className += ` skeleton-text-${variant}`;
-                    }
-                }
-            });
+                this.load(content, null, $(selector, this._DOMElement));
 
-            skeleton.className = classes.join(' ');
-
-            let skeletons = [skeleton];
-
-            if (this._options.count > 1)
-            {
-                _for(this._options.count -1, (i) => skeletons.push(skeleton.cloneNode(true)));
-            }
-
-            each(skeletons, function(i, _skeleton)
-            {
-                this._setDimensions(_skeleton, width, height, wrapper);
-
-                if (wrapper)
-                {
-                    wrapper.appendChild(_skeleton);
-                }
-                else
-                {
-                    DOMElement.appendChild(_skeleton);
-                }
+                // last has callback
 
             }, this);
-
-            if (wrapper)
-            {                
-                DOMElement.appendChild(wrapper);
-
-                this._nodes = [wrapper];
-            }
-            else
-            {
-                this._nodes = skeletons;
-            }
         }
 
         /**
-         * Remove and destroy
-         *
-         * @params {callback} node
-         * @access {private}
+         * Gracefully load content
+         * 
+         * @param  {DOMElement|String} content
+         * @param  {function|null}     callback
+         * @access {public}
          */
-        _setDimensions(skeleton, width, height, wrapper)
+        load(content, callback, wrapper)
         {
-            // Text blocks get random width;
-            if (wrapper)
+            if (is_object(content))
             {
-                let min = 15;
-                let max = 85;
-                let w   = Math.floor(Math.random() * (max - min + 1) + min);
-
-                skeleton.style.width = `${w}%`;
+                this.loadMulti(content, callback);
 
                 return;
             }
 
-            if (width)
+            wrapper = !wrapper ? this._DOMElement : wrapper;
+            const isHTML  = is_htmlElement(content);
+            
+            // Cache wrapper height and width and so we can transition content without changing layout
+            const h           = height(wrapper);
+            const w           = width(wrapper);
+            const position    = rendered_style(wrapper, 'position');
+            const InlOverflow = inline_style(wrapper, 'overflow') || false;
+            const InlPosition = inline_style(wrapper, 'overflow') || false;
+            const InlHeight   = inline_style(wrapper, 'height') || false;
+            const InlWidth    = inline_style(wrapper, 'width') || false;
+            const InlStyles   = { overflow: InlOverflow, position: InlPosition, height: InlHeight, width: InlWidth };
+            const newStyles   = { overflow: 'hidden', height: `${h}px`, width: `${w}px` };
+            if (in_array(position, STATIC_POSITIONS)) newStyles.position = 'relative';
+
+            // Prep content for inserting
+            var isFragment    = false;
+            var oldContnet;
+
+            if (isHTML)
             {
-                skeleton.style.width = width;
+                add_class(content, 'swapping-content-wrapper');
+            }
+            else
+            {
+                let div = document.createElement('DIV');
+                div.innerHTML = content;
+                div.className = div.children.length ? 'swapping-content-wrapper fragment' :'swapping-content-wrapper';
+                isFragment    = div.children.length > 1;
+                oldContnet    = content;
+                content       = div;
             }
 
-            if (height)
+            const _this = this;
+
+            const complete = function()
             {
-                skeleton.style.height = height;
+                // Make optional user callback
+                if (is_callable(callback))
+                {
+                    callback();
+                }
+
+                // Remove skeletons
+                each(_this._nodes, function(i, node)
+                {
+                    node.parentNode.removeChild(node);
+                });
+
+                // If we wrapped 'content' we need to remove the outer '.swapping-content-wrapper'
+                if (!isHTML)
+                {
+                    if (isFragment)
+                    {
+                        wrapper.innerHTML = oldContnet;
+                    }
+                    else
+                    {
+                        wrapper.replaceChild(content.children[0], content);
+                    }
+                }
+                else
+                {
+                    remove_class(content, 'swapping-content-wrapper');
+                }
+
+                // Set inline styles back to original
+                css(wrapper, InlStyles);
+
+                // Remove wrapper classes
+                remove_class(wrapper, 'skeleton-swapping-content');
             }
+
+            // Fix dimensions, overflow and positioning while transition.
+            css(wrapper, newStyles);
+
+            // Add wrapper class to position content swap while transitioning
+            add_class(wrapper, 'skeleton-swapping-content');
+
+            // Finally append content
+            wrapper.appendChild(content);
+
+            each(this._nodes, function(i, node)
+            {
+                animate(node, { property : 'opacity', to : 0, duration: 500 });
+            });
+
+            animate(content, { property : 'opacity', from: '0', to : '1', duration: 750, callback: complete});
         }
 
         /**
@@ -11219,6 +11167,123 @@ function abort()
             });
 
             this._nodes = [];
+        }
+
+        /**
+         * Remove a notification
+         *
+         * @params {_node} node
+         * @access {private}
+         */
+        _build(options)
+        {
+            let wrapper    = null;
+            let skeleton   = document.createElement('div');
+            let variants   = options.variant.split(' ').map((x) => x.trim().toLowerCase()).filter((x) => x !== '');
+            let DOMElement = options.selector ? $(options.selector, this._DOMElement) : this._DOMElement;
+            let width      = options.width;
+            let height     = options.height;
+            let classes    = ['skeleton'];
+
+            each(variants, function(i, variant)
+            {
+                if (in_array(variant, CLASS_VARIANTS))
+                {
+                    classes.push(`skeleton-${variant}`);
+                }
+                else if (in_array(variant, WRAPPER_VARIANTS))
+                {
+                    classes = ['skeleton'];
+
+                    if (!wrapper)
+                    {
+                        wrapper = document.createElement('div');
+                        wrapper.className = options.lines > 1 ? 'skeleton-text-block skeleton-lines' : 'skeleton-text-block' ;
+                    }
+
+                    if (variant !== 'text-block')
+                    {
+                        wrapper.className += ` skeleton-text-${variant}`;
+                    }
+                }
+            });
+
+            skeleton.className = classes.join(' ');
+
+            let skeletons = [skeleton];
+
+            if (options.count > 1 || options.lines > 1)
+            {
+                let count = Math.max(options.count, options.lines);
+
+                _for(count -1, (i) => skeletons.push(skeleton.cloneNode(true)));
+            }
+
+            each(skeletons, function(i, _skeleton)
+            {
+                this._setDimensions(_skeleton, width, height, wrapper, options.aspectratio, options.lines > 1);
+
+                if (wrapper)
+                {
+                    wrapper.appendChild(_skeleton);
+                }
+                else
+                {
+                    DOMElement.appendChild(_skeleton);
+                }
+
+            }, this);
+
+            if (wrapper)
+            {                
+                DOMElement.appendChild(wrapper);
+
+                this._nodes.push(wrapper);
+            }
+            else
+            {
+                each(skeletons, (i, skel) => this._nodes.push(skel), this);
+            }
+        }
+
+        /**
+         * Remove and destroy
+         *
+         * @params {callback} node
+         * @access {private}
+         */
+        _setDimensions(skeleton, width, height, wrapper, aspectRatio, isLines)
+        {
+            // Text blocks get random width;
+            if (wrapper)
+            {
+                let min = isLines ? 70 : 15;
+                let max = isLines ? 95 : 85;
+                let w   = Math.floor(Math.random() * (max - min + 1) + min);
+
+                skeleton.style.width = `${w}%`;
+
+                return;
+            }
+
+            if (aspectRatio !== '')
+            {
+                skeleton.style.width  = '100%';
+                skeleton.style.height = 'auto';
+                skeleton.style.aspectRatio = aspectRatio;
+
+                return;
+            }
+
+            if (width)
+            {
+                skeleton.style.width = width;
+            }
+
+            if (height)
+            {
+                skeleton.style.height = height;
+            }
         }
     }
 
@@ -13730,7 +13795,7 @@ function abort()
      * 
      * @var {int}
      */
-    const RPL_AN_TIME = 300;
+    const RPL_AN_TIME = 400;
 
     /**
      * Wrappers that need "position:relative" to hide overflow.
@@ -13889,7 +13954,6 @@ function abort()
                 top:    `${y}px`
             });
             
-            
             // Cache 'overflow' and 'position' inline styles
             // to revert back to after complete
             // If these are empty they will be removed
@@ -13921,10 +13985,12 @@ function abort()
             const remove = function()
             {
                 wrapper.removeChild(ripple);
+                
+                Helper.remove_class(wrapper, 'ripple-down');
 
-                Helper.css(wrapper, 'overflow', CSSoverflow);
+                /*Helper.css(wrapper, 'overflow', CSSoverflow);
 
-                Helper.css(wrapper, 'position', CSSposition);
+                Helper.css(wrapper, 'position', CSSposition);*/
             }
 
             // Release event
@@ -13954,8 +14020,6 @@ function abort()
 
                 // Cleanup and remove element
                 wrapper.removeAttribute('data-event');
-
-                Helper.remove_class(wrapper, 'ripple-down');
 
                 Helper.animate_css(ripple, {'opacity': 0, duration: 350, callback: remove });
             };

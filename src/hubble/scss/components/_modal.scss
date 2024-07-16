@@ -1,41 +1,45 @@
 .modal-wrap
 {
-	--hb-modal-shadow: #{$modal-shadow};
 	--hb-modal-title-size: #{$modal-title-size};
 	--hb-modal-transition-on: #{$modal-transition-on};
 	--hb-modal-transition-off: #{$modal-transition-off};
+	--hb-modal-max-width: #{$modal-max-width};
+
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
-	visibility: hidden;
 	overflow: hidden;
 	overflow-y: auto;
 	z-index: var(--hb-zindex-modal);
-}
-.modal-dialog
-{
-	position: absolute;
-	width: 100%;
-	left: 0;
-	right: 0;
-	top: 50%;
-	opacity: 0;
-	padding: 20px;
-	transform: translateY(-50px);
-	transition: var(--hb-modal-transition-on);
-	margin-left: auto;
-    margin-right: auto;
-    .card
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	.modal-dialog
 	{
-		box-shadow: var(--hb-modal-shadow);
-		@include raise(--hb-modal-shadow, $modal-shadow, $black);
+		width: 100%;
+		opacity: 0;
+		transform: translateY(-50px);
+		transition: var(--hb-modal-transition-on);
+
+	    .card
+		{
+			max-width: var(--hb-modal-max-width);
+			@include raised($modal-shadow);
+		}
+	}
+	.container-fluid
+	{
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 }
+
 .modal-wrap .card-header
 {
-	padding: 1.25rem;
 	h4
 	{
 		font-size: var(--hb-modal-title-size);
@@ -53,7 +57,6 @@
 	width: 100%;
 	height: 100%;
 	opacity: 0;
-	visibility: hidden;
 	top: 0;
 	left: 0;
 	z-index: var(--hb-zindex-modal);
@@ -72,12 +75,10 @@
 // Active
 .modal-overlay.active
 {
-	visibility: visible;
 	opacity: var(--hb-modal-overlay-opacity);
 }
 .modal-overlay.active + .modal-wrap
 {
-	visibility: visible;
 }
 .modal-overlay.active + .modal-wrap .modal-dialog
 {
@@ -88,13 +89,11 @@
 // Transition-off
 .modal-overlay.transition-off
 {
-	visibility: visible;
 	opacity: 0;
 	transition: var(--hb-modal-overlay-transition-off);
 }
 .modal-overlay.transition-off + .modal-wrap
 {
-	visibility: visible;
 }
 .modal-overlay.transition-off + .modal-wrap .modal-dialog
 {
@@ -102,12 +101,4 @@
 	transform: translateY(-50px);
 	transition: var(--hb-modal-transition-off);
 }
-.modal-dialog
-{
-	margin-left: auto;
-    margin-right: auto;
-    padding-left:  map-get($container-gutters, xs);
-    padding-right: map-get($container-gutters, xs);
-    width: 100%;
-    max-width: 600px;
-}
+

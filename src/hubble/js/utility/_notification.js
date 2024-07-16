@@ -1,39 +1,50 @@
-/**
- * Notification
- *
- * The Notification class is a utility class used to
- * display a notification.
- *
- */
 (function()
 {
-
     /**
      * @var {Helper} obj
      */
     const Helper = Container.Helper();
 
     /**
-     * @var {_activeNotifs} array
+     * Default options
+     * 
+     * @var {array}
      */
-    var _activeNotifs = [];
+    const DEFAULT_OPTIONS =
+    {
+        text:             '',
+        variant:          '',
+        icon:             '',
+        timeout:          6000,
+        btn:              false,
+        btnVariant:       'primary',
+        callbackOpen:     () => {},
+        callbackBtn:      () => {},
+        callbackDismiss:  () => {},
+        callbackValidate: () => { return true; }
+    };
 
     /**
-     * Module constructor
+     * Notification
      *
-     * @class
-     {*} @constructor
-     * @params {options} obj
-     * @access {public}
-     * @return {this}
+     * The Notification class is a utility class used to
+     * display a notification.
+     *
      */
     class Notification
     {
+        /**
+         * Module constructor
+         *
+         * @params {options} obj
+         * @access {public}
+         * @return {this}
+         */
         constructor(options)
         {
-            this._notifWrap = Helper.$('.js-nofification-wrap');
+            this._DOMElementWrapper = Helper.$('.js-nofification-wrap');
 
-            if (!Helper.in_dom(this._notifWrap))
+            if (!Helper.in_dom(this._DOMElementWrapper))
             {
                 this._buildNotificationContainer();
             }
@@ -51,9 +62,12 @@
         _buildNotificationContainer()
         {
             var wrap = document.createElement('DIV');
+
             wrap.className = 'notification-wrap js-nofification-wrap';
+            
             document.body.appendChild(wrap);
-            this._notifWrap = Helper.$('.js-nofification-wrap');
+            
+            this._DOMElementWrapper = Helper.$('.js-nofification-wrap');
         }
 
 
@@ -65,134 +79,91 @@
          */
         _invoke(options)
         {
-            if (typeof options.isCallback !== 'undefined' && options.isCallback === true)
-            {
-                this._invokeCallbackable(options);
+            options = {...DEFAULT_OPTIONS, ...options };
+            
+            var content = '';
 
-                return;
+            if (options.icon)
+            {
+                content += `<div class="msg-icon"><span class="glyph-icon glyph-icon-${options.icon}"></span></div>`;
             }
 
+            content += `<div class="msg-body"><p>${options.text}</p></div>`;
+
+            if (options.btn)
+            {
+                content +=  `<div class="msg-btn"><button type="button" class="btn btn-pure btn-${options.btnVariant} btn-sm js-notif-btn">${options.btn}</button></div>`;
+            }     
+           
+            var notif       = document.createElement('DIV');
+            notif.className = 'msg animate-in';
+
+            if (options.variant)
+            {
+                notif.className += ` msg-${options.variant}`;
+            }
+
+            notif.innerHTML = content;
+
+            Helper.add_class(this._DOMElementWrapper, 'active');
+
+            this._DOMElementWrapper.appendChild(notif);
+
+            options.callbackOpen.call(null, notif);
+
             var _this = this;
-            var content = '<div class="msg-body"><p>' + options.msg + '</p></div>';
-            var notif = Helper.new_node('div', 'msg-' + options.type + ' msg animate-notif', null, content, this._notifWrap);
-            var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
 
-            Helper.add_class(this._notifWrap, 'active');
-
-            // Timout remove automatically
-            _activeNotifs.push(
+            const timer = setTimeout(function()
             {
-                node: notif,
-                timeout: setTimeout(function()
+                removefunction();
+
+            }, options.timeout);
+
+            const removefunction = () =>
+            {
+                if (options.callbackValidate.call(null, notif))
                 {
-                    _this._removeNotification(notif);
-                }, timeout),
-            });
+                    clearTimeout(timer);
 
-            // Click to remove
-            notif.addEventListener('click', function()
-            {
-                _this._removeNotification(notif);
-            });
-        }
+                    _this._remove(notif);
 
-        /**
-         * Create a notification that has callback buttons 
-         *
-         * @params {options} obj
-         * @access {private}
-         */
-        _invokeCallbackable(options)
-        {
-            var _this = this;
-            var confirmText = typeof options.confirmText === 'undefined' ? 'Confirm' : options.confirmText;
-            var dismissX = typeof options.showDismiss === 'undefined' ? '' : '<button type="button" class="btn btn-xs btn-pure btn-dismiss btn-circle js-dismiss"><span class="glyph-icon glyph-icon-cross2"></span></button>';
-            var timeout = typeof options.timeoutMs === 'undefined' ? 6000 : options.timeoutMs;
-
-            var content = '<div class="msg-body"><p>' + options.msg + '</p></div><div class="msg-btn"><button type="button" class="btn btn-primary btn-sm btn-pure js-confirm">' + confirmText + '</button>' + dismissX + '</div>';
-
-            var notif = Helper.new_node('div', 'msg animate-notif', null, content, this._notifWrap);
-            var confirm = Helper.$('.js-confirm', notif);
-            var dismiss = Helper.$('.js-dismiss', notif);
-
-            Helper.add_class(this._notifWrap, 'active');
-
-            _activeNotifs.push(
-            {
-                node: notif,
-                timeout: setTimeout(function()
-                {
-                    _this._removeNotification(notif);
-                }, timeout),
-            });
-
-            // Click to remove
-            notif.addEventListener('click', function()
-            {
-                if (Helper.is_callable(options.onDismiss))
-                {
-                    options.onDismiss(options.onDismissArgs);
+                    options.callbackDismiss.call(null, notif);
                 }
+            };
 
-                _this._removeNotification(notif);
-            });
+            Helper.addEventListener(notif, 'click', removefunction);
 
-            // Click confirm to remove
-            confirm.addEventListener('click', function()
+            if (options.btn)
             {
-                if (Helper.is_callable(options.onConfirm))
-                {
-                    options.onConfirm(options.onConfirmArgs);
-                }
-
-                _this._removeNotification(notif);
-            });
-
-            if (dismiss)
-            {
-                dismiss.addEventListener('click', function()
-                {
-                    if (Helper.is_callable(options.onDismiss))
-                    {
-                        options.onDismiss(options.onDismissArgs);
-                    }
-
-                    _this._removeNotification(notif);
-                });
+                Helper.addEventListener(Helper.$('.js-notif-btn', notif), 'click', options.callbackBtn);
+                Helper.addEventListener(Helper.$('.js-notif-btn', notif), 'click', removefunction);
             }
         }
 
         /**
          * Remove a notification
          *
-         * @params {_node} node
+         * @params {DOMElement} node
          * @access {private}
          */
-        _removeNotification(_node)
+        _remove(DOMElement)
         {
-            var _this = this;
-            var i = _activeNotifs.length;
-            while (i--)
-            {
-                if (_node === _activeNotifs[i].node)
-                {
-                    clearTimeout(_activeNotifs[i].timeout);
-                    Helper.remove_class(_node, 'animate-notif');
-                    Helper.animate(_node, 'opacity', '1', '0', 350, 'ease');
-                    Helper.animate(_node, 'max-height', '100px', '0', 450, 'ease');
-                    _activeNotifs.splice(i, 1);
-                    setTimeout(function()
-                    {
-                        Helper.remove_from_dom(_node);
+            const wrappper = this._DOMElementWrapper;
 
-                        if (_activeNotifs.length === 0)
-                        {
-                            Helper.remove_class(_this._notifWrap, 'active');
-                        }
-                    }, 450);
-                    return;
+            const removed = function()
+            {
+                Helper.remove_from_dom(DOMElement);
+
+                if (wrappper.children.length === 0)
+                {
+                    Helper.remove_class(wrappper, 'active');
                 }
             }
+            
+            Helper.add_class(DOMElement, 'animate-out');
+            Helper.remove_class(DOMElement, 'animate-in');
+
+            setTimeout(removed, 300);
         }
     }
 

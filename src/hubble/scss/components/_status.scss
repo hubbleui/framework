@@ -1,37 +1,18 @@
 .status
 {
 	--hb-status-color: #{$status-color};
-	width: $status-size;
-	height: $status-size;
+	--hb-status-size: #{$status-size};
+	width: var(--hb-status-size);
+	height: var(--hb-status-size);
 	display: inline-block;
 	border-radius: 50%;
 	background-color: var(--hb-status-color);
 
-	@each $context, $colorVar in $contexts
+    @each $context, $colors in $contexts
     {
         &.status-#{$context}
         {
             --hb-status-color: #{map-get($colors, "color")};
         }
     }
-}
-.status-xs
-{
-	width:  _minusPercent($status-size, 30);
-	height: _minusPercent($status-size, 30);
-}
-.status-md
-{
-	width:  _addPercent($status-size, 30);
-	height: _addPercent($status-size, 30);
-}
-.status-lg
-{
-	width:  _addPercent($status-size, 50);
-	height: _addPercent($status-size, 50);
-}
-.status-xl
-{
-	width:  _addPercent($status-size, 100);
-	height: _addPercent($status-size, 100);
 }

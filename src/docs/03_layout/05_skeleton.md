@@ -8,12 +8,15 @@ Hubble's skeleton component lets you quickly display a placeholder preview of yo
 *   [Base Variants](#base-variants)
 *   [Text](#text)
 *   [Text Blocks](#text-blocks)
+*   [Variant examples](#variant-examples)
 *   [Component Example](#component-example)
 *   [JavaScript Utility](#javascript-utility)
+    *   [Usage](#usage)
+    *   [Options](#options)
+    *   [Loading Content](#loading-content)
 *   [CSS Customization](#css-customization)
 
 ---
-
 
 ### Markup
 
@@ -104,7 +107,9 @@ To display text and the `.skeleton-text` modifier class. The sizing, height and 
             <div class="skeleton skeleton-text"></div>
         </div>
         <div class="col col-6 gutter-xxs gutter-l">
-            <p>Aliquip veniam eu enim quis sit nisi enim exercitation ad irure sunt ut pariatur, cillum reprehenderit do duis voluptate proident dolor sint duis.</p>
+            <p>Lorem ipsum dolore excepteur culpa sit.</p>
+            <p>Lorem ipsum velit amet officia minim fugiat.</p>
+            <p>Cillum laboris do est.</p>
         </div>
     </div>
 </div>
@@ -115,7 +120,7 @@ To display text and the `.skeleton-text` modifier class. The sizing, height and 
 <div class="skeleton skeleton-text"></div>
 ```
 
-To display text headings add the appropriate heading `.skeleton-h*` modifier class. The sizing, height and line height will match Hubble's typography configurations:
+To display text headings add the appropriate heading `.skeleton-h[num]` modifier class. The sizing, height and line height will match Hubble's typography configurations:
 
 <div class="code-content-example">
     <div class="row">
@@ -156,7 +161,7 @@ For multi-line text blocks, you can wrap skeletons in a `.skeleton-text-block` e
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block">
+            <div class="skeleton-text-block text-right">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
@@ -185,53 +190,70 @@ For multi-line heading blocks use the same `.skeleton-text-block` and with the a
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h1">
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-            </div>
-        </div>
-        <div class="col col-6 gutter-xxs gutter-l">
-            <h1>Lorem ipsum voluptate eiusmod velit excepteur.</h1>
-        </div>
-    </div>
-</div>
-
-<div class="code-content-example">
-    <div class="row">
-        <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h2">
-                <div class="skeleton"></div>
+            <div class="skeleton-text-block skeleton-text-block-h1 text-right">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
         </div>
         <div class="col col-6 gutter-xxs gutter-l">
-            <h2>Lorem ipsum voluptate eiusmod velit excepteur.</h2>
+            <h1>Lorem ipsum voluptate eiusmod.</h1>
         </div>
     </div>
 </div>
 
+```html
+<div class="skeleton-text-block skeleton-text-block-h1">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+</div>
+```
+
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h3">
-                <div class="skeleton"></div>
+            <div class="skeleton-text-block skeleton-text-block-h2 text-right">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
         </div>
         <div class="col col-6 gutter-xxs gutter-l">
-            <h3>Lorem ipsum voluptate eiusmod velit excepteur quis ullamco.</h3>
+            <h2>Lorem ipsum voluptate eiusmod.</h2>
         </div>
     </div>
 </div>
 
+```html
+<div class="skeleton-text-block skeleton-text-block-h2">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+</div>
+```
+
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h4">
+            <div class="skeleton-text-block skeleton-text-block-h3 text-right">
                 <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+        </div>
+        <div class="col col-6 gutter-xxs gutter-l">
+            <h3>Lorem ipsum voluptate eiusmod velit.</h3>
+        </div>
+    </div>
+</div>
+
+```html
+<div class="skeleton-text-block skeleton-text-block-h3">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+</div>
+```
+
+<div class="code-content-example">
+    <div class="row">
+        <div class="col col-6 gutter-xxs gutter-r">
+            <div class="skeleton-text-block skeleton-text-block-h4 text-right">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -242,10 +264,17 @@ For multi-line heading blocks use the same `.skeleton-text-block` and with the a
     </div>
 </div>
 
+```html
+<div class="skeleton-text-block skeleton-text-block-h4">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+</div>
+```
+
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h5">
+            <div class="skeleton-text-block skeleton-text-block-h5 text-right">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -256,148 +285,37 @@ For multi-line heading blocks use the same `.skeleton-text-block` and with the a
     </div>
 </div>
 
+```html
+<div class="skeleton-text-block skeleton-text-block-h5">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+</div>
+```
+
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h6">
+            <div class="skeleton-text-block skeleton-text-block-h6 text-right">
                  <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
         </div>
         <div class="col col-6 gutter-xxs gutter-l">
-            <h6>Lorem ipsum voluptate eiusmod velit excepteur quis ullamco.</h6>
+            <h6>Eu cupidatat cupidatat ut consequat non cupidatat qui irure magna sunt ullamco eu non consectetur.</h6>
         </div>
     </div>
 </div>
 
 ```html
-<div class="skeleton-text-block skeleton-text-block-h1">
-    <div class="skeleton"></div>
-    ...
-</div>
-<div class="skeleton-text-block skeleton-text-block-h2">
-    <div class="skeleton"></div>
-    ...
-</div>
-<div class="skeleton-text-block skeleton-text-block-h3">
-    <div class="skeleton"></div>
-    ...
-</div>
-<div class="skeleton-text-block skeleton-text-block-h4">
-    <div class="skeleton"></div>
-    ...
-</div>
-<div class="skeleton-text-block skeleton-text-block-h5">
-    <div class="skeleton"></div>
-    ...
-</div>
 <div class="skeleton-text-block skeleton-text-block-h6">
     <div class="skeleton"></div>
-    ...
+    <div class="skeleton"></div>
 </div>
 ```
 
-### Component Example
+--- 
 
-The example below shows the markup for a skeleton using a simple card:
-
-<div class="code-content-example">
-    <div class="col col-12 col-md-5 center-horizontal">
-        <div class="card raised-1">
-            <div class="card-header">
-                <div class="card-icon">
-                    <div class="skeleton skeleton-circle circle-sm"></div>
-                </div>
-                <div class="card-title">
-                    <div class="skeleton skeleton-text" style="width:80%"></div>
-                    <div class="skeleton skeleton-text" style="width:45%"></div>
-                </div>
-            </div>
-            <div class="card-img">
-                <div class="skeleton skeleton-wave" style="height:150px"></div>
-            </div>
-            <div class="card-block">
-                <div class="skeleton-text-block">
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                    <div class="skeleton"></div>
-                </div>
-                <div class="skeleton skeleton-btn"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
----
-
-### JavaScript Utility
-
-Hubble comes with a handy JavaScript utility component for creating skeletons on the fly. You can create a skeleton by calling `Skeleton` via the container.
-
-```javascript
-const skeleton = Container.Skeleton(DOMElement, options);
-```
-
-The component will build the skeleton(s) with the supplied options and append them to the the `DOMElement`.
-
-Once you have created a `Skeleton` instance, you can destroy it via the `destroy` method. The skeleton(s) will be removed from the `DOMElement` wrapper.
-
-```javascript
-skeleton.destroy();
-```
-
-If you want to fade out skeletons before destroying use the `fade_out` method. An optional callback can be supplied once the animation completes:
-
-```javascript
-skeleton.fade_out(callback);
-```
-
-If you only want the skeleton(s) to fade out and want to destroy them manually, add a second argument as `false`:
-
-```javascript
-skeleton.fade_out(callback, false);
-```
-
-The table below outlines the available options:
-
-| Option    | Type      | Default | Values                                                                                                                                                              |
-|-----------|-----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `count`   | `integer` | `1`     | Any integer                                                                                                                                                         |
-| `variant` | `string`  | `block` | `block` `text` `btn` `input` `circle` `wave` `rounded` `h1` `h2` `h3` `h4` `h5` `h6` `text-block` `block-h1` `block-h2` `block-h3` `block-h4` `block-h5` `block-h6` |
-| `width`   | `string`  | `null`  | Any CSS width value                                                                                                                                                 |
-| `height`  | `string`  | `null`  | Any CSS height value                                                                                                                                                |
-
-
-Multi-variant values should be supplied as a single string seperated by spaces. e.g for a wave block skeleton with rounded corners you would supply `block wave rounded`.
-
-When creating a multi-line text-block variant (`text-block` `block-h1` `block-h2` `block-h3` `block-h4` `block-h5` `block-h6`), any other options apart from `count` will be ignored. There are no modifier options for these skeletons. Additionally, the JS component will set a random width on each skeleton to give a natural text paragraph look.
-
-```javascript
-const options  = {
-    count: 5,
-    variant: 'text-block',
-};
-
-const text = Container.Skeleton(DOMElement, options);
-
-const options  = {
-    count: 5,
-    variant: 'block wave rounded',
-    width: '100%',
-    height: '60px'
-};
-
-const blocks = Container.Skeleton(DOMElement, options);
-```
+### Variant Examples
 
 Try the example below create a few skeletons
 
@@ -483,11 +401,6 @@ Try the example below create a few skeletons
     </div>
 </div>
 
-<div class="row">
-    <div class="col col-12 col-md-6 center-horizontal">
-        
-    </div>
-</div>
 <script type="text/javascript">
 window.addEventListener('DOMContentLoaded', function()
 {
@@ -534,6 +447,273 @@ window.addEventListener('DOMContentLoaded', function()
 });
 
 </script>
+
+---
+
+### Component Example
+
+The example below shows the markup for a skeleton using a simple card:
+
+<div class="code-content-example">
+    <div class="flex-row align-cols-center-x">
+        <div class="card col col-lg-4">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"></div>
+                </div>
+                <div class="card-header-content">
+                    <div class="skeleton-text-block skeleton-lines">
+                        <div class="skeleton" style="width: 71%;"></div>
+                        <div class="skeleton" style="width: 81%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-media">
+                <div class="skeleton skeleton-block skeleton-wave" style="width: 100%; height: auto; aspect-ratio: 16 / 9;"></div>
+            </div>
+            <div class="card-block">
+                <div class="skeleton skeleton-h5"></div>
+                <div class="skeleton-text-block skeleton-lines">
+                    <div class="skeleton" style="width: 81%;"></div>
+                    <div class="skeleton" style="width: 84%;"></div>
+                    <div class="skeleton" style="width: 91%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+```html
+<div class="card">
+    <div class="card-header">
+        <div class="card-header-left">
+            <div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"></div>
+        </div>
+        <div class="card-header-content">
+            <div class="skeleton-text-block skeleton-lines">
+                <div class="skeleton" style="width: 71%;"></div>
+                <div class="skeleton" style="width: 81%;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="card-media">
+        <div class="skeleton skeleton-block skeleton-wave" style="width: 100%; height: auto; aspect-ratio: 16 / 9;"></div>
+    </div>
+    <div class="card-block">
+        <div class="skeleton skeleton-h5"></div>
+        <div class="skeleton-text-block skeleton-lines">
+            <div class="skeleton" style="width: 81%;"></div>
+            <div class="skeleton" style="width: 84%;"></div>
+            <div class="skeleton" style="width: 91%;"></div>
+        </div>
+    </div>
+</div>
+```
+
+---
+
+### JavaScript Utility
+
+Hubble comes with a handy JavaScript utility component for creating skeletons on the fly. You can create a skeleton by calling `Skeleton` via the container.
+
+#### Usage
+
+```javascript
+const skeleton = Container.Skeleton(DOMElement, options);
+```
+
+The component will build the skeleton(s) with the supplied options and append them to the the `DOMElement`.
+
+Once you have created a `Skeleton` instance, you can destroy it via the `destroy` method. The skeleton(s) will be removed from the `DOMElement` wrapper.
+
+```javascript
+skeleton.destroy();
+```
+
+If you want to fade out skeletons before destroying use the `fade_out` method. An optional callback can be supplied once the animation completes:
+
+```javascript
+skeleton.fade_out(callback);
+```
+
+If you only want the skeleton(s) to fade out and want to destroy them manually, add a second argument as `false`:
+
+```javascript
+skeleton.fade_out(callback, false);
+```
+
+#### Options
+
+The table below outlines the available options:
+
+| Option    | Type      | Default | Values                                                                                                                                                              |
+|-----------|-----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `count`   | `integer` | `1`     | Any integer                                                                                                                                                         |
+| `lines`   | `integer` | `1`     | Optional value for **Text Block** variants.                                                                                                                         |
+| `variant` | `string`  | `block` | `block` `text` `btn` `input` `circle` `wave` `rounded` `h1` `h2` `h3` `h4` `h5` `h6` `text-block` `block-h1` `block-h2` `block-h3` `block-h4` `block-h5` `block-h6` |
+| `width`   | `string`  | `null`  | Any CSS width value                                                                                                                                                 |
+| `height`  | `string`  | `null`  | Any CSS height value                                                                                                                                                |
+| `aspectratio`  | `string`  | `null`  | If provided will make skeleton width responsive while retaining aspect ratio. Value should be provided as `w/h` e.g `16/9`.                                    |
+
+
+Multi-variant values should be supplied as a single string separated by spaces. e.g for a wave block skeleton with rounded corners you would supply `block wave rounded`.
+
+```javascript
+const options  = {
+    count: 5,
+    variant: 'block wave rounded',
+    width: '100%',
+    height: '60px'
+};
+
+const skeleton = Container.Skeleton(DOMElement, options);
+```
+
+When creating a multi-line text-block variant (`text-block` `block-h1` `block-h2` `block-h3` `block-h4` `block-h5` `block-h6`), any other options apart from `count` or `lines` will be ignored. There are no modifier options for these skeletons. Additionally, the JS component will set a random width on each skeleton to give a natural text paragraph look.
+
+```javascript
+const options  = {
+    count: 3,
+    variant: 'text-block',
+};
+
+const skeleton = Container.Skeleton(DOMElement, options);
+```
+
+You can also provide options as an array to add multiple skeletons to single container element:
+
+```javascript
+const options = [
+    { lines: 2, variant: 'h3-block' },
+    { lines: 6, variant: 'text-block' },
+];
+
+const skeleton = Container.Skeleton(DOMElement, options);
+```
+
+For multi-instance layouts you can also provide an optional child `selector` key for each variant-set. The skeleton will get inserted into the the selector element rather than the parent wrapper element.
+
+```javascript
+const options = [
+    { selector: '.js-heading', lines: 2, variant: 'h3-block'},
+    { selector: '.js-text', lines: 6, variant: 'text-block' },
+];
+const text = Container.Skeleton(DOMElement, options);
+```
+
+#### Loading Content
+
+Once you have reference to a `Skeleton` instance, you can gracefully load your own content in via the `load` method.
+
+The method accepts both html as a `string` or an `HTMLDomElement` node with an optional callback when the animation completes.
+
+```javascript
+let content = '<div>...</div>';
+
+const callback = () => console.log('Complete!');
+
+skeleton.load(content, callback);
+```
+
+When calling `load` on a multi-instance Skeleton, provide an object with the selector as key to replace the content:
+
+```javascript
+let content =
+{
+    '.title' : '<div>...</div>',
+    '.text'  : '<p>...</p>',
+    '.image' :  document.createElement('IMG'),
+};
+
+skeleton.load(content);
+```
+
+The example below shows swapping out the contents of card component. Click the `Load content` button to try it out.
+
+<div class="code-content-example">
+    <div class="flex-row align-cols-center-x">
+        <div class="card col col-lg-4 js-skeleton-loader-card">
+            <div class="card-header">
+                <div class="card-header-left js-card-header-left">
+                </div>
+                <div class="card-header-content js-card-header-content">
+                </div>
+            </div>
+            <div class="card-media js-card-media">
+            </div>
+            <div class="card-block">
+                <div class="js-card-title"></div>
+                <div class="js-card-text"></div>
+            </div>
+        </div>
+    </div> 
+    <div class="flex-row align-cols-center col-gaps-xs pole-xs pole-n">
+        <button class=" btn btn-primary js-load-content">Load content</button>
+        <button class=" btn js-reset-skeletons">Reset</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+(function()
+{
+    const loader = function()
+    {
+        /* Helpers */
+        const [$, each] = Container.import(['$', 'each']).from('Helper');
+        const [cardWrapper, triggerLoad, triggerReset] = [$('.js-skeleton-loader-card'), $('.js-load-content'), $('.js-reset-skeletons')];
+        const contents  = 
+        {
+            '.js-card-header-left' : '<div class="avatar"><img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../build/img/trump-avatar.jpg"></div>',
+            '.js-card-header-content' : '<div class="text-bold">The Don</div><div class="color-gray font-italic">Make America Great Again</div>',
+            '.js-card-media' : '<img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />',
+            '.js-card-title' : '<h5 class="text-bold">MAGA Country</h5>',
+            '.js-card-text' : '<p>Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.</p>',
+        };
+        
+        let options =
+        [
+            { selector: '.js-card-header-left', variant: 'circle wave', width: '40px',height: '40px'},
+            { selector: '.js-card-header-content', variant: 'text-block', lines: 2},
+            { selector: '.js-card-media', variant: 'block wave', aspectratio: '16/9'},
+            { selector: '.js-card-title', variant: 'h5'},
+            { selector: '.js-card-text', variant: 'text-block', lines: 3},
+        ];
+
+        var skeletons = [];
+        var loaded    = false;
+        var skeleton;
+
+        const makeSkeletons = () =>
+        {
+            each(options, (i, option) => $(option.selector, cardWrapper).innerHTML = '' );
+
+            skeleton = Container.Skeleton($('.js-skeleton-loader-card'), options);
+        };
+
+        triggerLoad.addEventListener('click', () =>
+        {
+            if (loaded) return;
+
+            skeleton.load(contents);
+
+            Container.Hubble().dom().refresh('LazyLoad');
+        });
+
+        triggerReset.addEventListener('click', () =>
+        {
+            loaded = false;
+
+            makeSkeletons();
+        });
+        
+        makeSkeletons();
+    }
+
+    window.addEventListener('HubbleReady', loader);
+})();
+
+</script>
+
 
 ---
 

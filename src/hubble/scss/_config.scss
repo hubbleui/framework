@@ -39,13 +39,15 @@ $black:                         #323232 !default;
 $gray:                          #9597a0 !default;
 
 // Contexts
-$brand-primary:                 $beetroot !default;
-$brand-secondary:               #01aef0   !default;
-$brand-success:                 #40dc7a   !default;
-$brand-info:                    #33a6ff   !default;
-$brand-warning:                 #ffd800   !default;
-$brand-danger:                  #ff0042   !default;
-$on-primary:                    #7c25a3   !default;
+$brand-primary:                 $hotpink !default;
+$brand-secondary:               $salmon  !default;
+$brand-success:                 #40dc7a  !default;
+$brand-info:                    #33a6ff  !default;
+$brand-warning:                 #ffd800  !default;
+$brand-danger:                  #ff0042  !default;
+$brand-on-primary:              _darker($brand-primary, 10%) !default;
+
+@import 'colors';
 
 // Basic element coloring
 $body-bg:                       #fafafa !default;
@@ -105,7 +107,7 @@ $colors:
     'brand-info':               $brand-info,
     'brand-warning':            $brand-warning,
     'brand-danger':             $brand-danger,
-    'on-primary':               $on-primary
+    'brand-on-primary':         $brand-on-primary
 ) !default;
 
 // Contexts
@@ -119,9 +121,9 @@ $contexts:
     'success':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-success)),
     'warning':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-warning)),
     'danger':                   ('contrast' : var(--hb-white), 'color': var(--hb-brand-danger)),
+    'on-primary':               ('contrast' : var(--hb-white), 'color': var(--hb-brand-on-primary)),
     'white':                    ('contrast' : var(--hb-black), 'color': var(--hb-white)),
     'black':                    ('contrast' : var(--hb-white), 'color': var(--hb-black)),
-    'on-primary':               ('contrast' : var(--hb-white), 'color': var(--hb-on-primary)),
 ) !default;
 
 // Global font families
@@ -147,24 +149,31 @@ $font-smoothing:                true !default;
 
 // Headings sizes
 $text-size-h1:                  ($base-font-size * 3.1) !default;
-$text-size-h2:                  ($base-font-size * 2.8) !default;
-$text-size-h3:                  ($base-font-size * 2.5) !default;
-$text-size-h4:                  ($base-font-size * 2.0) !default;
-$text-size-h5:                  ($base-font-size * 1.5) !default;
+$text-size-h2:                  ($base-font-size * 2.6) !default;
+$text-size-h3:                  ($base-font-size * 2.2) !default;
+$text-size-h4:                  ($base-font-size * 1.6) !default;
+$text-size-h5:                  ($base-font-size * 1.2) !default;
 $text-size-h6:                  $base-font-size !default;
 
 // Paragraph sizes
-$text-size-p1:                  ($base-font-size * 2.5) !default;
-$text-size-p2:                  ($base-font-size * 2.0) !default;
-$text-size-p3:                  ($base-font-size * 1.75) !default;
-$text-size-p4:                  ($base-font-size * 1.5) !default;
-$text-size-p5:                  ($base-font-size * 1.3) !default;
-$text-size-p6:                  $base-font-size !default;
+$text-size-p1:                  ($base-font-size * 1.8) !default;
+$text-size-p2:                  ($base-font-size * 1.4) !default;
+$text-size-p3:                  ($base-font-size * 1.1) !default;
+$text-size-p4:                  ($base-font-size * 0.9) !default;
+$text-size-p5:                  ($base-font-size * 0.8) !default;
+$text-size-p6:                  ($base-font-size * 0.7) !default;
 
 // Heading styles
 $headings-font-weight:          $text-bold !default;
 $headings-line-height:          1.2em !default;
 $headings-spacer:               0.75em !default;
+
+// Icon sizes
+$icon-xs:                       16px !default;
+$icon-md:                       20px !default;
+$icon-lg:                       30px !default;
+$icon-xl:                       45px !default;
+$icon-xxl:                      50px !default;
 
 // Base aesthetics
 $border-radius:                 3px !default;
@@ -258,7 +267,7 @@ $dropdown-link-spacer-x:        1.2rem !default;
 $dropdown-shadow-level:         2 !default;
 
 // Inline elements
-$badge-size:                    20px !default;
+$badge-size:                    7px !default;
 
 // Table
 $table-font-size:               1.3rem !default;
@@ -285,6 +294,7 @@ $msg-font-size:                 1.4rem !default;
 $msg-border-radius:             var(--hb-border-radius) !default;
 
 // Modals
+$modal-max-width:               680px !default;
 $modal-shadow:                  3 !default; //0,1,2,3 
 $modal-overlay-bg:              var(--hb-white) !default;
 $modal-overlay-bg-dark:         var(--hb-black) !default;
@@ -294,6 +304,11 @@ $modal-transition-on:           opacity .2s .3s ease, transform .3s .3s ease !de
 $modal-transition-off:          opacity .4s  ease, transform .5s ease !default;
 $modal-overlay-transition-on:   opacity .5s ease !default;
 $modal-overlay-transition-off:  opacity .5s ease !default;
+
+// Paper
+$paper-bg:                      var(--hb-white) !default;
+$paper-radius:                  var(--hb-border-radius) !default;
+$paper-flat-border:             var(--hb-gray-300) !default;
 
 // Card
 $card-bg:                       var(--hb-white) !default;
@@ -315,6 +330,9 @@ $card-actions-spacer-y:         2rem !default;
 $card-actions-spacer-x:         0.5rem !default;
 $card-media-padding:            0 !default;
 $card-media-bg:                 var(--hb-gray-100) !default;
+$card-landscape-img-sm:         80px !default;
+$card-landscape-img-md:         150px !default;
+$card-landscape-img-lg:         300px !default;
 
 // Inputs
 $input-font-size:               1.5rem !default;
@@ -374,6 +392,16 @@ $tab-nav-pad-y:                 0.8rem !default;
 $tab-nav-pad-x:                 0.4rem !default;
 $tab-transition:                $base-easing-time $base-easing !default;
 
+// Lazyloading / images
+$lazyload-start-opacity:        0.6 !default;
+$lazyload-end-opacity:          1 !default;
+$lazyload-start-blur:           5px !default;
+$lazyload-end-blur:             0px !default;
+$lazyload-start-grayscale:      1 !default;
+$lazyload-end-grayscale:        0 !default;
+$lazyload-transition:           opacity 1s cubic-bezier(0.4, 0.0, 0.2, 1), filter 1s cubic-bezier(0.4, 0.0, 0.2, 1);
+$lazyload-falback-bg:           #d0d4d9;
+
 // Carousel
 $slider-bg:                     var(--body-bg) !default;
 $slider-height:                 420px !default;
@@ -419,6 +447,11 @@ $tooltip-pad-x:                 0.8rem !default;
 $tooltop-target-space:          0.5rem !default;
 $tooltop-target-space-neg:      -0.5rem !default;
 
+// Avatar
+$avatar-size:                   40px !default;
+$avatar-bg:                     var(--hb-gray-200) !default;
+$avatar-text-color:             inherit !default;
+
 // Nprogress
 $nprogress-color:               var(--hb-brand-primary) !default;
 
@@ -443,14 +476,15 @@ $popover-title-border-dark:     1px solid !default;
 
 // Labels
 $label-font-size:               1.1rem !default;
+$label-font-weight:             $text-bolder !default;
 $label-color:                   var(--hb-white) !default;
 $label-bg:                      var(--hb-gray) !default;
-$label-pad-y:                   0.3rem !default;
-$label-pad-x:                   0.9rem !default;
+$label-pad-y:                   5px !default;
+$label-pad-x:                   9px !default;
 $label-radius:                  var(--hb-border-radius) !default;
 
 // Status
-$status-size:                   10px !default;
+$status-size:                   14px !default;
 $status-color:                  var(--hb-gray) !default;
 
 // Blockquotes
@@ -463,7 +497,6 @@ $bq-pad-x:                      2rem !default;
 $notif-bg:                      var(--hb-black) !default;
 $notif-color:                   var(--hb-white) !default;
 $notif-font-size:               1.2rem !default;
-$notif-icon-color:              var(--hb-brand-primary) !default;
 $notif-spacer-y:                2rem !default;
 $notif-spacer-x:                2rem !default;
 $notif-border-radius:           var(--hb-border-radius) !default;
@@ -473,9 +506,10 @@ $notif-shadow:                  3 !default;
 $hamburger-color:               var(--hb-body-color) !default;
 $hamburger-color-active:        var(--hb-brand-primary) !default;
 
-// Spinner
-$spinner-color:                 var(--hb-gray) !default;
-$spinner-size:                  6.4rem !default;
+// Loading animations
+$loader-color1:                 var(--hb-gray) !default;
+$loader-color2:                 var(--hb-gray-300) !default;
+$loader-size:                   30px !default;
 
 // Ripple
 $ripple-color:                  rgba(0, 0, 0, 0.15) !default;
