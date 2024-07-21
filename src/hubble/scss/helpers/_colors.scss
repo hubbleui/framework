@@ -1,22 +1,12 @@
 .color-transparent   { color: transparent}
-.color-white         { color: var(--hb-white)}
-.color-black         { color: var(--hb-black)}
-
-@each $name, $color in $colors
+.color-gray          {color: var(--hb-gray)}
+@for $i from 1 through 9
 {
-    $nicename : _str-replace($name, 'brand-', '');
+    .color-gray-#{$i}00 { color: var(--hb-gray-#{$i}00) }
+}
+@each $context, $colors in $contexts
+{    
+    $color : map-get($colors, 'color');
 
-    @if ($name == 'gray')
-    {
-        .color-gray { color: var(--hb-gray) }
-
-        @for $i from 1 through 9
-        {
-            .color-#{$nicename}-#{$i}00 { color: var(--hb-#{$name}-#{$i}00) }
-        }
-    }
-    @else
-    {
-        .color-#{$nicename} { color: var(--hb-#{$name})}
-    }
+    .color-#{$context} { color: $color}
 }

@@ -8,6 +8,7 @@
         <script src="../../../build/js/lazyload.js"></script>
         <link rel="stylesheet" href="../../../build/css/lazyload.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../build/css/hubble-icons.css">
         <link rel="stylesheet" href="../../../build/css/hubble.css">
         <link rel="stylesheet" href="../../../build/css/docs.css">
     </head>
@@ -168,6 +169,8 @@
             <li class="menu-item"><a  href="../../forms/checkbox/index.html">Checkbox</a></li>
             <li class="menu-item"><a  href="../../forms/radio/index.html">Radio</a></li>
             <li class="menu-item"><a  href="../../forms/switch/index.html">Switch</a></li>
+            <li class="menu-item"><a  href="../../forms/chips/index.html">Chips</a></li>
+            <li class="menu-item"><a  href="../../forms/range/index.html">Range</a></li>
             <li class="menu-item"><a  href="../../forms/progress/index.html">Progress</a></li>
             <li class="menu-item"><a  href="../../forms/input-mask/index.html">Input Mask</a></li>
             <li class="menu-item"><a  href="../../forms/results/index.html">Results</a></li>
@@ -230,7 +233,75 @@
                         <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger"> Documentation Menu </button>
                     </div>
                     <article class="docs-body">
-                        
+                        <h1 id="waypoints">Waypoints</h1>
+<p>Waypoints</p>
+<p>Waypoints provide a convenient to automatically scroll to content on a page. They also provide the ability to land at a particular element on page load via the <code>URL</code> hash.</p>
+<hr />
+<ul>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#options">Options</a></li>
+</ul>
+<hr />
+<h3 id="usage">Usage</h3>
+<p>To setup a click-to-scroll event, simply add the <code>.js-waypoint-trigger</code> class to a clickable element and provide the <code>id</code> of target element as the <code>data-waypoint-target</code> attribute. </p>
+<div class="code-content-example">
+    <button class="btn btn-primary js-waypoint-trigger" data-waypoint-target="scroll-target">Scroll To Content</button>
+    <div id="scroll-target">
+        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;div class="code-content-example"&gt;
+    &lt;button class="btn btn-primary js-waypoint-trigger" data-waypoint-target="scroll-target"&gt;Scroll To Content&lt;/button&gt;
+    &lt;div id="scroll-target"&gt;
+        ...
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>Additionally, you can invoke smooth-scrolling to an element on page load by adding the class <code>.js-waypoint</code> to any element with an <code>id</code>. For example, <code>http://example.com#landhere</code> on page-load would scroll to the element. Try the example below:</p>
+<div class="code-content-example">
+    <div id="landhere" class="js-waypoint">
+        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+    </div>
+    <div class="row pole-xs pole-n">
+        <button class="btn btn-primary" onclick="(function(){ window.scrollTo(0,0); window.location.hash = '#landhere'; window.location.reload(true);return false;})();">Reload page</button>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;div id="landhere" class="js-waypoint"&gt;
+   ...
+&lt;/div&gt;</code></pre>
+<hr />
+<h3 id="options">Options</h3>
+<p>You can specify the the animation speed as well as the animation <code>easing</code> via HTML <code>data-</code> attributes on both the click-target and landing elements. The table below outlines possible options:</p>
+<table>
+<thead>
+<tr>
+<th id="attribute">Attribute</th>
+<th id="example">Example</th>
+<th id="description">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data-waypoint-target</code></td>
+<td><code>data-waypoint-target="my-id"</code></td>
+<td>Target element id.</td>
+</tr>
+<tr>
+<td><code>data-waypoint-speed</code></td>
+<td><code>data-waypoint-speed="1000"</code></td>
+<td>Scroll animation speed in milliseconds.</td>
+</tr>
+<tr>
+<td><code>data-waypoint-easing</code></td>
+<td><code>data-waypoint-easing="easeInOut</code></td>
+<td>Scroll animation easing in <code>camelCase</code>.</td>
+</tr>
+<tr>
+<td><code>data-waypoint-update-url</code></td>
+<td><code>data-waypoint-update-url="false"</code></td>
+<td>Update the URL hash.</td>
+</tr>
+</tbody>
+</table>
                     </article>
                 </div>
             </div>
@@ -265,17 +336,17 @@
                     <ul class="list-inline social-links">
                         <li>
                             <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/index.html">
-                                <span class="icon icon-social glyph-icon glyph-icon-github"></span>
+                                <span class="icon icon-social fa fa-github"></span>
                             </a>
                         </li>
                         <li>
                             <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
-                                <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
+                                <span class="icon icon-social fa fa-twitter"></span>
                             </a>
                         </li>
                         <li>
                             <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
-                                <span class="icon glyph-icon glyph-icon-arrow-up"></span>
+                                <span class="icon fa fa-arrow-up"></span>
                             </a>
                         </li>
                     </ul>

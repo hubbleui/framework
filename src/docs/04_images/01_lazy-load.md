@@ -30,7 +30,7 @@ Once that is setup, add your images, you'll want to have a reduced size thumbnai
 Remember to add the `.js-lazyload` `.lazyload` classes.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center">
+    <div class="flex-row-fluid align-cols-center">
         <div class="avatar avatar-xl">
             <img alt="Trump" data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload" src="../../../build/img/trump-avatar_thumb.jpg" />
         </div>
@@ -44,7 +44,7 @@ Remember to add the `.js-lazyload` `.lazyload` classes.
 Add the optional `.graysale` class to have the image fade from grayscale to full color.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center">
+    <div class="flex-row-fluid align-cols-center">
         <div class="avatar avatar-xl">
             <img alt="Trump" data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload" src="../../../build/img/trump-avatar_thumb.jpg" />
         </div>
@@ -62,7 +62,7 @@ Add the optional `.graysale` class to have the image fade from grayscale to full
 Lazyloading works on CSS background image elements too. This can be handy when you need an image at a fixed height.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center">
+    <div class="flex-row-fluid align-cols-center">
         <div style="height: 200px;width: auto;" data-src="../../../build/img/trump-hero.jpg" class="bg-image js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../build/img/trump-hero_thumb.jpg)"></div>
     </div>
 </div>
@@ -91,7 +91,7 @@ And portrait aspect ratios:
 *   `ratio-9-16`
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center col-gaps-xs">
+    <div class="flex-row-fluid align-cols-center col-gaps-xs">
         <div style="height: 200px;width: auto;" data-src="../../../build/img/trump-hero.jpg" class="bg-image ratio-2-3 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../build/img/trump-hero_thumb.jpg)"></div>
         <div style="height: 200px;width: auto;" data-src="../../../build/img/trump-hero.jpg" class="bg-image ratio-3-4 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../build/img/trump-hero_thumb.jpg)"></div>
         <div style="height: 200px;width: auto;" data-src="../../../build/img/trump-hero.jpg" class="bg-image ratio-3-5 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../build/img/trump-hero_thumb.jpg)"></div>
@@ -121,7 +121,7 @@ Background images can be customized using CSS variables below:
 Falback images gracefully display a simple icon and background when an image fails to load for whatever reason.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center col-gaps-xs">
+    <div class="flex-row-fluid align-cols-center col-gaps-xs">
         <div class="col col-12 col-md-3">
             <img alt="Trump" data-src="foobar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="foobar.jpg" />
         </div>
@@ -153,9 +153,9 @@ The fallback image is set via the JavaScript LazyLoad module from the variable `
 If your inserting elements into the DOM after the page has loaded, you refresh the `LazyLoad` module via the Hubble's `dom`.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center col-gaps-xs js-image-insert">
+    <div class="flex-row-fluid align-cols-center col-gaps-xs js-image-insert">
     </div>
-    <div class="flex-row align-cols-center pole-sm pole-n">
+    <div class="flex-row-fluid align-cols-center pole-sm pole-n">
         <button class="btn js-trigger-image">Insert Image</button>
     </div>
     <script type="text/javascript">
@@ -167,7 +167,7 @@ If your inserting elements into the DOM after the page has loaded, you refresh t
             {
                 wrapper.innerHTML += '<div class="avatar avatar-xl"><img alt="Trump" data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" /></div>';
 
-                Container.Hubble().dom().refresh('LazyLoad');
+                Hubble.dom().refresh('LazyLoad');
             });
         });
     </script>
@@ -175,7 +175,7 @@ If your inserting elements into the DOM after the page has loaded, you refresh t
 
 ```javascript
 
-Container.Hubble().dom().refresh('LazyLoad');
+Hubble.dom().refresh('LazyLoad');
 
 ```
 

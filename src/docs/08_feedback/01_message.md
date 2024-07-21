@@ -45,7 +45,7 @@ Hubble messages have built in styles for icons to help display a message's conte
 <div class="code-content-example">    
     <div class="msg">
         <div class="msg-icon">
-            <span class="glyph-icon glyph-icon-bell"></span>
+            <span class="fa fa-bell"></span>
         </div>
         <div class="msg-body">
             <p>This is an alert! Please read this carefully.</p>
@@ -56,7 +56,7 @@ Hubble messages have built in styles for icons to help display a message's conte
 ```html
 <div class="msg">
     <div class="msg-icon">
-        <span class="glyph-icon glyph-icon-bell"></span>
+        <span class="fa fa-bell"></span>
     </div>
     <div class="msg-body">
         <p>This is an alert! Please read this carefully.</p>
@@ -74,7 +74,7 @@ Add a class of `.msg-primary`, `.msg-info`, `.msg-success`, `.msg-warning` or `.
     <div class="flex-row row-gaps-xs">
         <div class="msg">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-bell"></span>
+                <span class="fa fa-bell"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -82,7 +82,7 @@ Add a class of `.msg-primary`, `.msg-info`, `.msg-success`, `.msg-warning` or `.
         </div>
         <div class="msg msg-info">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-bell"></span>
+                <span class="fa fa-bell"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -90,7 +90,7 @@ Add a class of `.msg-primary`, `.msg-info`, `.msg-success`, `.msg-warning` or `.
         </div>
         <div class="msg msg-success">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-checkmark"></span>
+                <span class="fa fa-checkmark"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -98,7 +98,7 @@ Add a class of `.msg-primary`, `.msg-info`, `.msg-success`, `.msg-warning` or `.
         </div>
         <div class="msg msg-warning">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-power"></span>
+                <span class="fa fa-power"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -106,7 +106,7 @@ Add a class of `.msg-primary`, `.msg-info`, `.msg-success`, `.msg-warning` or `.
         </div>
         <div class="msg msg-danger">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-cross"></span>
+                <span class="fa fa-cross"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -118,7 +118,7 @@ Add a class of `.msg-primary`, `.msg-info`, `.msg-success`, `.msg-warning` or `.
 ```html
 <div class="msg">
     <div class="msg-icon">
-        <span class="glyph-icon glyph-icon-bell"></span>
+        <span class="fa fa-bell"></span>
     </div>
     <div class="msg-body">
         <p>This is an alert! Please read this carefully.</p>
@@ -136,7 +136,7 @@ Adding a button to a message is easy, simply wrap it in a `.msg-btn` element aft
     <div class="flex-row row-gaps-xs">
         <div class="msg">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-bell"></span>
+                <span class="fa fa-bell"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -147,7 +147,7 @@ Adding a button to a message is easy, simply wrap it in a `.msg-btn` element aft
         </div>    
         <div class="msg msg-success">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-checkmark"></span>
+                <span class="fa fa-checkmark"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -162,7 +162,7 @@ Adding a button to a message is easy, simply wrap it in a `.msg-btn` element aft
 ```html
 <div class="msg">
     <div class="msg-icon">
-        <span class="glyph-icon glyph-icon-bell"></span>
+        <span class="fa fa-bell"></span>
     </div>
     <div class="msg-body">
         <p>This is an alert! Please read this carefully.</p>
@@ -185,7 +185,7 @@ Add a class of `.js-close-msg` to the button (or any element inside a message) t
     <div class="row">
         <div class="msg">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-bell"></span>
+                <span class="fa fa-bell"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -200,7 +200,7 @@ Add a class of `.js-close-msg` to the button (or any element inside a message) t
 ```html
 <div class="msg">
     <div class="msg-icon">
-        <span class="glyph-icon glyph-icon-bell"></span>
+        <span class="fa fa-bell"></span>
     </div>
     <div class="msg-body">
         <p>This is an alert! Please read this carefully.</p>

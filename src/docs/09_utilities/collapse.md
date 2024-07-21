@@ -19,7 +19,7 @@ The component uses a small amount of CSS, but mostly JavaScript to provide smoot
 Add the `.js-collapse` class to clickable element, with the `data-collapse-target` attribute set as the `id` of the element you want to toggle.
 
 <div class="code-content-example">
-    <button class="btn btn-info js-collapse" data-collapse-target="toggle-content">View Information</button>
+    <button class="btn js-collapse" data-collapse-target="toggle-content">View Information</button>
     <div class="hide-overflow collapsed" id="toggle-content">
         <div class="row roof-sm floor-sm">
             <p> Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, s ed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. </p>
@@ -28,7 +28,7 @@ Add the `.js-collapse` class to clickable element, with the `data-collapse-targe
 </div>
 
 ```html
-<button class="btn btn-block btn-lg btn-info js-collapse" data-collapse-target="toggle-content">View Information</button>
+<button class="btn js-collapse" data-collapse-target="toggle-content">View Information</button>
 
 <div class="hide-overflow collapsed" id="toggle-content">
 ...

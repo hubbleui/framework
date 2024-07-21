@@ -83,7 +83,7 @@
             var stateChange = Helper.bool(trigger.dataset.pjaxStateChange);
             var singleRequest = Helper.bool(trigger.dataset.pjaxSingleRequest);
 
-            Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
+            Container.Pjax().invoke(href, target, title, stateChange, singleRequest);
         }
     }
 

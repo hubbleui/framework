@@ -23,6 +23,20 @@
      * @var {object}
      */
     const Helper = Container.Helper();
+
+    /**
+     * Original inline styles
+     * 
+     * @var {Map}
+     */
+    const INLINESTYLES = new Map();
+
+    /**
+     * Currently rippling
+     * 
+     * @var {Map}
+     */
+    const RIPPLING = new Map();
     
     /**
      * Ripple click animation
@@ -44,7 +58,6 @@
             this._classes =
             [
                 '.btn',
-                '.chip',
                 '.list > li',
                 '.pagination li a',
                 '.tab-nav li a',
@@ -100,11 +113,7 @@
          */
         _unbind()
         {
-            Helper.each(this._nodes, function(i, node)
-            {
-                Helper.removeEventListener(node, 'mousedown, touchstart', this._startRipple, true);
-
-            }, this);
+            Helper.removeEventListener(this._nodes, 'mousedown, touchstart', this._startRipple, false);
         }
 
         /**
@@ -115,7 +124,7 @@
          */
         _bindWrapper(wrapper)
         {
-            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple, true);
+            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple, false);
         }
 
         /**
@@ -130,6 +139,9 @@
 
             var wrapper = this;
 
+            // Ignore disabled
+            if (wrapper.disabled || Helper.has_class(wrapper, 'disabled')) return;
+
             // Single finger "clicks" only
             if (e.touches && e.touches.length > 1) return;
 
@@ -141,7 +153,10 @@
             // Prevents double-ripples from mousedown/touchstart.
             var prev = wrapper.getAttribute('data-event');
             if (prev && prev !== e.type) return;
-            
+
+            // Clear restorer
+            clearTimeout(RIPPLING.get(wrapper));
+
             // Add the data-attribute to identify ripple event type
             wrapper.setAttribute('data-event', e.type);
 
@@ -166,15 +181,25 @@
                 left:   `${x}px`,
                 top:    `${y}px`
             });
-            
+
+            // Issue here is that if ripple is clicked multiple times in quick succession
+            // the original inline overflow and position styles are overwritten by the next
+            // click
+
             // Cache 'overflow' and 'position' inline styles
             // to revert back to after complete
             // If these are empty they will be removed
-            const CSSoverflow = Helper.inline_style(wrapper, 'overflow') || false;
-            const CSSposition = Helper.inline_style(wrapper, 'position') || false; 
+            if (!INLINESTYLES.has(wrapper))
+            {
+                let CSSoverflow = Helper.inline_style(wrapper, 'overflow') || false;
+                
+                let CSSposition = Helper.inline_style(wrapper, 'position') || false;
+
+                INLINESTYLES.set(wrapper, [CSSoverflow, CSSposition]);
+            }
 
             // Ensure parent hides overflow
-            Helper.css(wrapper, 'overflow', 'hidden');
+            Helper.css(wrapper, 'overflow', 'hidden !important');
 
             // Ensure position relative if needed
             if (Helper.in_array(Helper.rendered_style(wrapper, 'position'), STATIC_POSITIONS))
@@ -189,22 +214,38 @@
             const t0 = performance.now();
 
             // Figure out release event type
-            var releaseEvent = (e.type === 'mousedown' ? 'mouseup' : 'touchend');          
-            
-            // Cached timer for release
-            var timer;
+            var releaseEvent = (e.type === 'mousedown' ? 'mouseup' : 'touchend');
 
             // Remove handler
             const remove = function()
-            {
-                wrapper.removeChild(ripple);
-                
-                Helper.remove_class(wrapper, 'ripple-down');
-
-                /*Helper.css(wrapper, 'overflow', CSSoverflow);
-
-                Helper.css(wrapper, 'position', CSSposition);*/
+            {                
+                if (Helper.in_dom(ripple) && Helper.in_dom(wrapper))
+                {
+                    wrapper.removeChild(ripple); 
+                }
             }
+
+            // Restore handler
+            const restore = function()
+            {
+                if (Helper.in_dom(wrapper))
+                {
+                    wrapper.offsetHeight;
+
+                    wrapper.removeAttribute('data-event');
+                
+                    Helper.remove_class(wrapper, 'ripple-down');
+
+                    let styles = INLINESTYLES.get(wrapper);
+
+                    Helper.css(wrapper, 'overflow', styles[0]);
+
+                    Helper.css(wrapper, 'position', styles[1]);
+                }
+            }
+
+            // Cached timer for release
+            var timer;
 
             // Release event
             const release = function(ev)
@@ -225,16 +266,17 @@
 
                     if (diff > 150)
                     {
-                        setTimeout(release, diff);
+                        timer = setTimeout(release, diff);
 
                         return;
                     }
                 }
 
-                // Cleanup and remove element
-                wrapper.removeAttribute('data-event');
-
                 Helper.animate_css(ripple, {'opacity': 0, duration: 350, callback: remove });
+
+                let restoreTimer = setTimeout(restore, 500);
+
+                RIPPLING.set(wrapper, restoreTimer);
             };
 
             // Release listener

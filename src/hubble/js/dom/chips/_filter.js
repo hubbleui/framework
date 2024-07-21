@@ -24,7 +24,7 @@
          */
     	constructor()
         {
-            this._chips = Helper.$All('.js-filter-chips .chip');
+            this._chips = Helper.$All('.js-filter-chips .btn-chip');
 
             this._bind();
 
@@ -73,7 +73,9 @@
         {
             e = e || window.event;
 
-            Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.has_class(this, 'checked')]);
+            e.preventDefault();
+
+            console.log('clicked');
 
             Helper.toggle_class(this, 'checked');
         }

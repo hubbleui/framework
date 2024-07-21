@@ -51,7 +51,7 @@
          */
         _bind()
         {
-            Helper.addEventListener(this._nodes, 'click', this._eventHandler, false);
+            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -61,7 +61,7 @@
          */
         _unbind()
         {
-            Helper.removeEventListener(this._nodes, 'click', this._eventHandler, false);
+            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -83,7 +83,7 @@
             var stateChange = Helper.bool(trigger.dataset.pjaxStateChange);
             var singleRequest = Helper.bool(trigger.dataset.pjaxSingleRequest);
 
-            Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
+            Container.Pjax().invoke(href, target, title, stateChange, singleRequest);
         }
     }
 

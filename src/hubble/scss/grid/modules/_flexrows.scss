@@ -6,7 +6,7 @@
     {
         $colname : if($curr-grid == null, flex-cols-#{$i}, flex-cols-#{$curr-grid}-#{$i});
 
-        .#{$colname} > .col
+        .#{$colname} > *
         {
             --hb-col-width: #{unquote('#{math.div(100, 12) * $i}%')};
         }

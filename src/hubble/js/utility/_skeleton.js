@@ -3,7 +3,7 @@
     /**
      * @var {Helper} obj
      */
-    const [$, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css] = Container.import(['$','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css']).from('Helper');
+    const [$, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, in_dom, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css, is_array_last] = Container.import(['$','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','in_dom','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css', 'is_array_last']).from('Helper');
 
     /**
      * Wrappers that need "position:relative" to hide overflow.
@@ -25,6 +25,7 @@
         width: null,
         variant: 'block',
         aspectratio: '',
+
     };
 
     /**
@@ -86,20 +87,8 @@
             return this;
         }
 
-
-        loadMulti(content, callback)
-        {
-            each(content, (selector, content) => 
-            {
-                this.load(content, null, $(selector, this._DOMElement));
-
-                // last has callback
-
-            }, this);
-        }
-
         /**
-         * Gracefully load content
+         * Gracefully individual content
          * 
          * @param  {DOMElement|String} content
          * @param  {function|null}     callback
@@ -109,7 +98,13 @@
         {
             if (is_object(content))
             {
-                this.loadMulti(content, callback);
+                each(content, (selector, node) => 
+                {
+                    let cb = is_array_last(node, content) ? callback : null;
+
+                    this.load(node, cb, $(selector, this._DOMElement));
+
+                }, this);
 
                 return;
             }
@@ -157,12 +152,6 @@
                     callback();
                 }
 
-                // Remove skeletons
-                each(_this._nodes, function(i, node)
-                {
-                    node.parentNode.removeChild(node);
-                });
-
                 // If we wrapped 'content' we need to remove the outer '.swapping-content-wrapper'
                 if (!isHTML)
                 {
@@ -179,6 +168,12 @@
                 {
                     remove_class(content, 'swapping-content-wrapper');
                 }
+
+                // Remove skeletons
+                each(_this._nodes, function(i, node)
+                {
+                    if (in_dom(node)) node.parentNode.removeChild(node);                    
+                });
 
                 // Set inline styles back to original
                 css(wrapper, InlStyles);
@@ -207,7 +202,8 @@
         /**
          * Remove and destroy
          *
-         * @params {callback} node
+         * @params {function} callback (optional)
+         * @params {boolean}  destroy  (optional default true)
          * @access {private}
          */
         fade_out(callback, destroy)

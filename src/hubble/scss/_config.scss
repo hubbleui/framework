@@ -39,13 +39,12 @@ $black:                         #323232 !default;
 $gray:                          #9597a0 !default;
 
 // Contexts
-$brand-primary:                 $hotpink !default;
-$brand-secondary:               $salmon  !default;
-$brand-success:                 #40dc7a  !default;
-$brand-info:                    #33a6ff  !default;
-$brand-warning:                 #ffd800  !default;
-$brand-danger:                  #ff0042  !default;
-$brand-on-primary:              _darker($brand-primary, 10%) !default;
+$brand-primary:                 var(--hb-color-hotpink)     !default;
+$brand-secondary:               var(--hb-color-salmon)      !default;
+$brand-success:                 var(--hb-color-emerland)    !default;
+$brand-info:                    var(--hb-color-skyblue)     !default;
+$brand-warning:                 var(--hb-color-sunflower)   !default;
+$brand-danger:                  var(--hb-color-coralred)    !default;
 
 @import 'colors';
 
@@ -58,73 +57,6 @@ $link-color-hover:              var(--hb-brand-primary-500) !default;
 // Darkmode
 $body-bg-darkmode:              var(--hb-black) !default;
 $body-color-darkmode:           var(--hb-white) !default;
-
-// Used for optional themeing, not used by UI directly
-$themeColors:
-(
-    'teal':                     $teal,
-    'turquoise':                $turquoise,
-    'greensea':                 $greensea,
-    'emerland':                 $emerland,
-    'nephritis':                $nephritis,
-    'babyblue':                 $babyblue,
-    'peterrive':                $peterrive,
-    'belizehol':                $belizehol,
-    'amethyst':                 $amethyst,
-    'wisteria':                 $wisteria,
-    'wetasphalt':               $wetasphalt,
-    'midnightblue':             $midnightblue,
-    'sunflower':                $sunflower,
-    'orange':                   $orange,
-    'carrot':                   $carrot,
-    'salmon':                   $salmon,
-    'pumpkin':                  $pumpkin,
-    'alizarin':                 $alizarin,
-    'pomegranate':              $pomegranate,
-    'clouds':                   $clouds,
-    'silver':                   $silver,
-    'concrete':                 $concrete,
-    'asbestos':                 $asbestos,
-
-    // Neons
-    'neongreen':                $neongreen,
-    'skyblue':                  $skyblue,
-    'beetroot':                 $beetroot,
-    'hotpink':                  $hotpink,
-    'pineapple':                $pineapple,
-    'coralred':                 $coralred,
-    'ash':                      $ash,
-) !default;
-
-// Colors
-// These are used in root.scss to generate color palettes
-$colors:
-(
-    'gray':                     $gray,
-    'brand-primary':            $brand-primary,
-    'brand-secondary':          $brand-secondary,
-    'brand-success':            $brand-success,
-    'brand-info':               $brand-info,
-    'brand-warning':            $brand-warning,
-    'brand-danger':             $brand-danger,
-    'brand-on-primary':         $brand-on-primary
-) !default;
-
-// Contexts
-// This map is used to generate color loops for applying context classes
-// to things like buttons, badges, labels etc...
-$contexts:
-(
-    'primary':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-primary)),
-    'secondary':                ('contrast' : var(--hb-white), 'color': var(--hb-brand-secondary)),
-    'info':                     ('contrast' : var(--hb-white), 'color': var(--hb-brand-info)),
-    'success':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-success)),
-    'warning':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-warning)),
-    'danger':                   ('contrast' : var(--hb-white), 'color': var(--hb-brand-danger)),
-    'on-primary':               ('contrast' : var(--hb-white), 'color': var(--hb-brand-on-primary)),
-    'white':                    ('contrast' : var(--hb-black), 'color': var(--hb-white)),
-    'black':                    ('contrast' : var(--hb-white), 'color': var(--hb-black)),
-) !default;
 
 // Global font families
 $font-family-sans-serif:        -apple-system, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !default;
@@ -156,6 +88,7 @@ $text-size-h5:                  ($base-font-size * 1.2) !default;
 $text-size-h6:                  $base-font-size !default;
 
 // Paragraph sizes
+$text-spacer:                   1em !default;
 $text-size-p1:                  ($base-font-size * 1.8) !default;
 $text-size-p2:                  ($base-font-size * 1.4) !default;
 $text-size-p3:                  ($base-font-size * 1.1) !default;
@@ -165,10 +98,11 @@ $text-size-p6:                  ($base-font-size * 0.7) !default;
 
 // Heading styles
 $headings-font-weight:          $text-bold !default;
-$headings-line-height:          1.2em !default;
+$headings-line-height:          1.2 !default;
 $headings-spacer:               0.75em !default;
 
 // Icon sizes
+$icon-size:                     16px !default;
 $icon-xs:                       16px !default;
 $icon-md:                       20px !default;
 $icon-lg:                       30px !default;
@@ -226,9 +160,7 @@ $btn-xl-pad-y:                  _addPercent($btn-pad-y, 50) !default;
 
 $circle-btn-font-size:          2.0rem !default;
 
-$btn-icon-font-size:            1.6rem !default;
-$btn-icon-line-height:          1.4rem !default;
-$btn-icon-vertical-align:       text-top !default;
+$btn-icon-font-size:            20px !default;
 
 $btn-group-radius:              var(--hb-border-radius) !default;
 
@@ -355,25 +287,25 @@ $input-addon-bg:                var(--hb-gray-100) !default;
 $input-addon-color:             var(--hb-gray-400) !default;
 
 // Checkbox
-$checkbox-size:                 2rem !default;
+$checkbox-size:                 20px !default;
 $checkbox-color:                var(--hb-gray) !default;
 $checkbox-label-color:          var(--hb-gray) !default;
 $checkbox-radius:               2px !default;
 
 // Radio
-$radio-size:                    2rem !default;
+$radio-size:                    20px !default;
 $radio-color:                   var(--hb-gray) !default;
 $radio-label-color:             var(--hb-gray) !default;
 
 // Switch
-$switch-size:                   2rem !default;
+$switch-size:                   20px !default;
 $switch-track-color-off:        var(--hb-gray-300) !default;
 $switch-track-color-on:         var(--hb-gray-300) !default;
 $switch-knob-color-off:         var(--hb-white) !default;
 $switch-knob-color-on:          var(--hb-gray) !default;
 
 // Progress
-$progress-size:                 1rem !default;
+$progress-size:                 10px !default;
 $progress-radius:               var(--hb-border-radius) !default;
 $progress-bg:                   var(--hb-gray-200) !default;
 $progress-color:                var(--hb-gray) !default;
@@ -413,39 +345,17 @@ $slider-nav-icon-size:          2rem !default;
 $slider-nav-btn-color:          var(--hb-white) !default;
 $slider-nav-btn-color-hover:    var(--hb-brand-primary) !default;
 
-// Chips
-$chip-height:                   2.9rem !default;
-$chip-font-size:                1.4rem !default;
-$chip-ln-height:                2.9rem !default;
-$chip-icon-size:                1.4rem !default;
-$chip-radius:                   3rem !default;
-$chip-pad-x:                    1.4rem !default;
-
-$chip-color:                    var(--hb-gray-700) !default;
-$chip-color-hover:              var(--hb-gray-700) !default;
-
-$chip-bg:                       var(--hb-gray-200) !default;
-$chip-bg-hover:                 var(--hb-gray-300) !default;
-
-$chip-border:                   none !default;
-$chip-border-hover:             none !default;
-
-$chip-selected-bg:              var(--hb-brand-primary-200) !default;
-$chip-selected-color:           var(--hb-brand-primary) !default;
-
-$chip-transition:               box-shadow #{$base-easing-time} #{$base-easing}, width #{$base-easing-time} #{$base-easing} !default;
-
 // Tooltips
 $tooltip-bg:                    var(--hb-gray-900) !default;
 $tooltip-color:                 var(--hb-white) !default;
-$tooltip-font-size:             1.1rem !default;
-$tooltip-font-weight:           $text-light !default;
-$tooltip-line-height:           2rem !default;
+$tooltip-font-size:             11px !default;
+$tooltip-font-weight:           $text-bold !default;
+$tooltip-line-height:           20px !default;
 $tooltip-radius:                var(--hb-border-radius) !default;
-$tooltip-pad-y:                 0.2rem !default;
-$tooltip-pad-x:                 0.8rem !default;
-$tooltop-target-space:          0.5rem !default;
-$tooltop-target-space-neg:      -0.5rem !default;
+$tooltip-pad-y:                 2px !default;
+$tooltip-pad-x:                 8px !default;
+$tooltop-target-space:          5px !default;
+$tooltop-target-space-neg:      -5px !default;
 
 // Avatar
 $avatar-size:                   40px !default;
@@ -470,9 +380,9 @@ $popover-title-color-light:     var(--hb-brand-primary) !default;
 $popover-title-border-light:     1px solid !default;
 
 $popover-bg-dark:               var(--hb-black) !default;
-$popover-color-dark:            var(--hb-white) !default;
-$popover-title-color-dark:      var(--hb-brand-primary) !default;
-$popover-title-border-dark:     1px solid !default;
+$popover-color-dark:            var(--hb-gray-400) !default;
+$popover-title-color-dark:      var(--hb-white) !default;
+$popover-title-border-dark:     1px solid var(--hb-gray-400) !default;
 
 // Labels
 $label-font-size:               1.1rem !default;

@@ -8,9 +8,15 @@
 .border-w               {border-right:  1px solid;}
 
 // Color specific
-@each $name, $color in $colors
+.border-gray            {border-color: var(--hb-gray)}
+@for $i from 1 through 9
 {
-    $nicename : _str-replace($name, 'brand-', '');
-
-    .border-#{$nicename} { border-color: var(--hb-#{$name}) }
+    .border-gray-#{$i}00 { border-color: var(--hb-gray-#{$i}00) }
 }
+@each $context, $colors in $contexts
+{    
+    $color : map-get($colors, 'color');
+
+    .border-#{$context} { border-color: $color}
+}
+

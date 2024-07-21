@@ -70,3 +70,12 @@ body.no-scroll
     height: 100% !important;
     overflow: hidden !important;
 }
+
+// Icon overrides
+
+
+.fa
+{
+    --hb-icon-size: 16px;
+    font-size: var(--hb-icon-size);
+} 

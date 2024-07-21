@@ -4,7 +4,7 @@ h1, h2, h3, h4, h5, h6,
 {
     font-family: var(--hb-font-headings);
     font-weight: var(--hb-headings-font-weight);
-    margin-bottom: var(--hb-headings-spacer);
+    margin: 0 0 var(--hb-headings-spacer) 0;
     font-style: normal;
 
     // Overflow on tiny screens
@@ -56,7 +56,7 @@ h6, .h6
 // Paragraph
 p
 {
-    margin: 0 0 1rem 0;
+    margin: 0 0 var(--hb-p-text-spacer) 0;
     font-size: var(--hb-base-font-size);
     line-height: var(--hb-base-line-height);
 }

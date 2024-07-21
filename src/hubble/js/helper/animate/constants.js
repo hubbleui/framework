@@ -26,3 +26,10 @@ const ANIMATION_ALLOWED_OPTIONS = ['property', 'from', 'to', 'duration', 'easing
  * @var {array}
  */
 const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ...ANIMATION_ALLOWED_OPTIONS];
+
+/**
+ * Currently animating animations.
+ * 
+ * @var {array}
+ */
+const ANIMATING = [];

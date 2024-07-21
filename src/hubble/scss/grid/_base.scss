@@ -41,7 +41,8 @@
 }
 
 /* Column base */
-.col
+.col,
+.flex-row > *
 {
     float: left;
     @include _clearfix;
@@ -54,18 +55,18 @@
 }
 
 /* Flex column base */
-.flex-row > .col
+.flex-row > *
 {
     --hb-col-flex: 0 0 100%;
     --hb-col-width: 100%;
 }
-.flex-row-fluid > .col:not([class*="col-"])
+.flex-row-fluid > *:not([class*="col-"])
 {
     --hb-col-flex: 1 0 0%;
     --hb-col-width: 100%;
 }
-.flex-row > .col,
-.flex-row-fluid > .col
+.flex-row > *,
+.flex-row-fluid > *
 {
     flex: var(--hb-col-flex);
     width: var(--hb-col-width);
@@ -76,17 +77,23 @@
         content: none;
     }
 }
-.flex-row[class*="flex-cols-"] > .col
+.flex-row[class*="flex-cols-"] > *
 {
     --hb-col-flex: 1 0 0%;
 }
-.flex-row > .col[class*="col-"]
+.flex-row > *[class*="col-"]
 {
     --hb-col-flex: 1 0 var(--hb-col-width);
 }
-.flex-row-fluid > .col[class*="col-"]
+// Not a column or a column with specific sizing
+.flex-row-fluid > *[class*="col-"],
+.flex-row-fluid > *:not([class*="col"])
 {
     --hb-col-flex: 0 0 auto;
+}
+.flex-row-fluid > *:not([class*="col"])
+{
+    --hb-col-width: auto;
 }
 
 /* Gutters base */

@@ -15,7 +15,7 @@
     border: none;
     color: var(--hb-msg-color);
     
-    .msg-icon .glyph-icon
+    .msg-icon .fa
     {
        color: var(--hb-msg-icon-color);
        position: relative;
@@ -41,7 +41,7 @@
     {
         text-align: center;
         padding: 0 var(--hb-msg-spacer-x);
-        .glyph-icon
+        .fa
         {
             display: inline-block;
             font-size: 16px;

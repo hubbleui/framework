@@ -8,7 +8,7 @@
         {
             --hb-flex-col-gaps: var(--hb-grid-gutter-#{$name});
         }
-        .flex-row.#{$gapName} > .col
+        .flex-row.#{$gapName} > *
         {
             --hb-col-flex: 1 0 calc(var(--hb-col-width) - var(--hb-grid-gutter-#{$name}));
         }

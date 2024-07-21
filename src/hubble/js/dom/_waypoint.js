@@ -30,23 +30,20 @@
          {*} @access public
          */
     	constructor()
-        {    // Load nodes
+        {
+            // Load nodes
             this._nodes = Helper.$All('.js-waypoint-trigger');
 
             // bind listeners
-            if (!Helper.is_empty(this._nodes))
-            {
-                for (var i = 0; i < this._nodes.length; i++)
-                {
-                    this._bind(this._nodes[i]);
-                }
-            }
+            this._bind();
 
             // Invoke pageload
             if (!pageLoaded)
             {
                 this._invokePageLoad();
             }
+
+            pageLoaded = true;
 
             return this;
         }
@@ -58,11 +55,7 @@
          */
         destruct()
         {
-            // Unbind listeners
-            for (var i = 0; i < this._nodes.length; i++)
-            {
-                this._unbind(this._nodes[i]);
-            }
+            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
 
             // Clear Nodes
             this._nodes = [];
@@ -71,23 +64,11 @@
         /**
          * Event binder
          *
-         * @params {trigger} node
          * @access {private}
          */
-        _bind(trigger)
+        _bind()
         {
-            Helper.addEventListener(trigger, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event unbinder
-         *
-         * @params {trigger} node
-         * @access {private}
-         */
-        _unbind(trigger)
-        {
-            Helper.removeEventListener(trigger, 'click', this._eventHandler);
+            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -99,25 +80,16 @@
         _eventHandler(e)
         {
             e = e || window.event;
+            
             e.preventDefault();
-            var trigger = this;
-            var waypoint = trigger.dataset.waypointTarget;
-            var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
-            if (Helper.in_dom(targetEl))
-            {
-                var id = waypoint;
-                var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
-                var easing = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
-                targetEl.id = id;
+            let trigger   = this;
+            let id        = trigger.dataset.waypointTarget;
+            let speed     = parseInt(trigger.dataset.waypointSpeed) || 500;
+            let easing    = trigger.dataset.waypointEasing || 'easeInOutCubic';
+            let updateUrl = trigger.dataset.updateUrl === 'false' ? false : true;
 
-                var options = {
-                    easing: easing,
-                    speed: speed,
-                };
-
-                Container.get('SmoothScroll').animateScroll('#' + id, trigger, options);
-            }
+            Container.SmoothScroll('#' + id, { easing: easing, speed: speed, updateUrl: updateUrl });
         }
 
         /**
@@ -129,24 +101,23 @@
         {
             var url = Helper.parse_url(window.location.href);
 
-            if (url.hash && url.hash !== '')
-            {
-                var waypoint = Helper.trim(url.hash, '/');
-                var options = {
-                    speed: 100,
-                    easing: 'Linear'
-                };
-                var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
+            let targetEl = url.hash && url.hash !== '' ? Helper.$(url.hash) : false;
 
-                if (Helper.in_dom(targetEl))
-                {
-                    var id = waypoint;
-                    targetEl.id = id;
-                    Container.get('SmoothScroll').animateScroll('#' + id, null, options);
-                }
+            if (!Helper.in_dom(targetEl) || !Helper.has_class(targetEl, '.js-waypoint')) return;
+           
+            let speed  = parseInt(targetEl.dataset.waypointSpeed) || 500;
+            let easing = targetEl.dataset.waypointEasing || 'easeInOutCubic';
+
+            const scroll = function()
+            {
+                Container.SmoothScroll(url.hash, { easing: easing, speed: speed, updateUrl: false });
+
+                window.removeEventListener('HubbleReady', scroll);
             }
 
-            pageLoaded = true;
+            window.scrollTo(0, 0);
+
+            window.addEventListener('HubbleReady', scroll);
         }
     }
 

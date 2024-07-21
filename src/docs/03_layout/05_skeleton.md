@@ -57,11 +57,11 @@ The table below outlines their core styles
     <div class="row pole-xs pole-s">
         <div class="col col-12 col-md-4 center-horizontal">
             <div class="skeleton skeleton-text"></div>
-            <div class="skeleton skeleton-circle"></div>
-            <div class="skeleton skeleton-wave" style="height: 130px;"></div>
-            <div class="skeleton skeleton-rounded" style="height: 130px;"></div>
-            <div class="skeleton skeleton-input"></div>
-            <div class="skeleton skeleton-btn"></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-circle"></div></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-wave" style="height: 130px;"></div></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-rounded" style="height: 130px;"></div></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-input"></div></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-btn"></div></div>
         </div>
     </div>
 </div>
@@ -156,12 +156,12 @@ To display text headings add the appropriate heading `.skeleton-h[num]` modifier
 
 ### Text Blocks
 
-For multi-line text blocks, you can wrap skeletons in a `.skeleton-text-block` element.
+For multi-line text blocks, wrap skeletons in a `.skeleton-text-block` element.
 
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block text-right">
+            <div class="skeleton-text-block">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
@@ -181,16 +181,17 @@ For multi-line text blocks, you can wrap skeletons in a `.skeleton-text-block` e
 ```html
 <div class="skeleton-text-block">
     <div class="skeleton"></div>
+    <div class="skeleton"></div>
     ...
 </div>
 ```
 
-For multi-line heading blocks use the same `.skeleton-text-block` and with the appropriate heading modifier `.skeleton-text-block-h*`:
+For multi-line heading use the same `.skeleton-text-block` wrapper with the appropriate heading modifier `.skeleton-text-block-h[num]`:
 
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h1 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h1">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -211,7 +212,7 @@ For multi-line heading blocks use the same `.skeleton-text-block` and with the a
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h2 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h2">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -232,7 +233,7 @@ For multi-line heading blocks use the same `.skeleton-text-block` and with the a
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h3 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h3">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -253,7 +254,7 @@ For multi-line heading blocks use the same `.skeleton-text-block` and with the a
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h4 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h4">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -274,7 +275,7 @@ For multi-line heading blocks use the same `.skeleton-text-block` and with the a
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h5 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h5">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -295,7 +296,7 @@ For multi-line heading blocks use the same `.skeleton-text-block` and with the a
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h6 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h6">
                  <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -313,6 +314,50 @@ For multi-line heading blocks use the same `.skeleton-text-block` and with the a
 </div>
 ```
 
+To align skeleton text to the right, add the `text-right` modifier to the wrapping element
+
+<div class="code-content-example">
+    <div class="row">
+        <div class="col col-6 gutter-xxs gutter-r">
+            <div class="skeleton-text-block skeleton-text-block-h3 text-right">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+            <div class="skeleton-text-block text-right">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+            <div class="skeleton-text-block skeleton-text-block-h4 text-right">
+                <div class="skeleton"></div>
+            </div>
+            <div class="skeleton-text-block text-right">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+        </div>
+        <div class="col col-6 gutter-xxs gutter-l">
+            <h3>In culpa voluptate laboris adipisicing.</h3>
+            <p>In sed do incididunt labore magna elit ut consectetur do laborum ullamco do adipisicing mollit occaecat ad.</p>
+            <h4>Enim veniam voluptate sunt non.</h4>
+            <p>Incididunt amet nostrud in dolor aliquip in officia do ut duis incididunt ex ut.</p>
+        </div>
+    </div>
+</div>
+
+```html
+<div class="skeleton-text-block skeleton-text-block-h3 text-right">
+    <div class="skeleton"></div>
+</div>
+<div class="skeleton-text-block text-right">
+    <div class="skeleton"></div>
+</div>
+<div class="skeleton-text-block skeleton-text-block-h4 text-right">
+    <div class="skeleton"></div>
+</div>
+<div class="skeleton-text-block text-right">
+    <div class="skeleton"></div>
+</div>
+```
 --- 
 
 ### Variant Examples
@@ -546,17 +591,16 @@ skeleton.fade_out(callback, false);
 
 The table below outlines the available options:
 
-| Option    | Type      | Default | Values                                                                                                                                                              |
-|-----------|-----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `count`   | `integer` | `1`     | Any integer                                                                                                                                                         |
-| `lines`   | `integer` | `1`     | Optional value for **Text Block** variants.                                                                                                                         |
-| `variant` | `string`  | `block` | `block` `text` `btn` `input` `circle` `wave` `rounded` `h1` `h2` `h3` `h4` `h5` `h6` `text-block` `block-h1` `block-h2` `block-h3` `block-h4` `block-h5` `block-h6` |
-| `width`   | `string`  | `null`  | Any CSS width value                                                                                                                                                 |
-| `height`  | `string`  | `null`  | Any CSS height value                                                                                                                                                |
-| `aspectratio`  | `string`  | `null`  | If provided will make skeleton width responsive while retaining aspect ratio. Value should be provided as `w/h` e.g `16/9`.                                    |
+| Option        | Type      | Default | Values                                                                                                                                                              |
+|---------------|-----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `count`       | `integer` | `1`     | Number of skeletons to generate.                                                                                                                                    |
+| `lines`       | `integer` | `1`     | Optional value number of lines for **Text Block** variants.                                                                                                         |
+| `variant`     | `string`  | `block` | `block` `text` `btn` `input` `circle` `wave` `rounded` `h1` `h2` `h3` `h4` `h5` `h6` `text-block` `block-h1` `block-h2` `block-h3` `block-h4` `block-h5` `block-h6` |
+| `width`       | `string`  | `null`  | Any CSS width value                                                                                                                                                 |
+| `height`      | `string`  | `null`  | Any CSS height value                                                                                                                                                |
+| `aspectratio` | `string`  | `null`  | If provided will make skeleton width responsive while retaining aspect ratio. Value should be provided as `w/h` e.g `16/9`.                                         |
 
-
-Multi-variant values should be supplied as a single string separated by spaces. e.g for a wave block skeleton with rounded corners you would supply `block wave rounded`.
+Multi-variant values should be supplied as a single string separated by spaces. e.g for a wave block skeleton with rounded corners you would supply `block wave rounded` as the `variant` value.
 
 ```javascript
 const options  = {
@@ -569,11 +613,13 @@ const options  = {
 const skeleton = Container.Skeleton(DOMElement, options);
 ```
 
-When creating a multi-line text-block variant (`text-block` `block-h1` `block-h2` `block-h3` `block-h4` `block-h5` `block-h6`), any other options apart from `count` or `lines` will be ignored. There are no modifier options for these skeletons. Additionally, the JS component will set a random width on each skeleton to give a natural text paragraph look.
+When creating a multi-line text-block variant (`text-block` `block-h1` `block-h2` `block-h3` `block-h4` `block-h5` `block-h6`), any other options apart from `count` or `lines` will be ignored.
+
+There are no modifier options for these skeletons. Additionally, the JS component will set a random width on each skeleton to give a natural text paragraph look.
 
 ```javascript
 const options  = {
-    count: 3,
+    lines: 3,
     variant: 'text-block',
 };
 
@@ -591,14 +637,14 @@ const options = [
 const skeleton = Container.Skeleton(DOMElement, options);
 ```
 
-For multi-instance layouts you can also provide an optional child `selector` key for each variant-set. The skeleton will get inserted into the the selector element rather than the parent wrapper element.
+Or if you need more control to a layout you can provide an optional child `selector` key for each variant-set. The skeleton will get inserted into the the selector element rather than the parent wrapper element.
 
 ```javascript
 const options = [
     { selector: '.js-heading', lines: 2, variant: 'h3-block'},
     { selector: '.js-text', lines: 6, variant: 'text-block' },
 ];
-const text = Container.Skeleton(DOMElement, options);
+const skeleton = Container.Skeleton(DOMElement, options);
 ```
 
 #### Loading Content
@@ -684,7 +730,7 @@ The example below shows swapping out the contents of card component. Click the `
         var skeleton;
 
         const makeSkeletons = () =>
-        {
+        {            
             each(options, (i, option) => $(option.selector, cardWrapper).innerHTML = '' );
 
             skeleton = Container.Skeleton($('.js-skeleton-loader-card'), options);
@@ -696,7 +742,9 @@ The example below shows swapping out the contents of card component. Click the `
 
             skeleton.load(contents);
 
-            Container.Hubble().dom().refresh('LazyLoad');
+            Hubble.dom().refresh('LazyLoad');
+
+            loaded = true;
         });
 
         triggerReset.addEventListener('click', () =>

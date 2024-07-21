@@ -1,49 +1,56 @@
-@use "sass:math";
 :root
 {
-    /* Theme Colors */
-    @each $name, $color in $themeColors
+    /*  Palette base colors */
+    @each $name, $color in $palette
     {
         --hb-color-#{$name}:               #{$color};
+    }
+
+    /* Context shades */
+    /* gray */
+    --hb-gray-100:                 #{_lighter($gray, 90%)};
+    --hb-gray-200:                 #{_lighter($gray, 80%)};
+    --hb-gray-300:                 #{_lighter($gray, 50%)};
+    --hb-gray-400:                 #{_lighter($gray, 35%)};
+    // Default is between 400 and 500 (i.e 450)
+    --hb-gray-500:                 #{_darker($gray, 5%)};
+    --hb-gray-600:                 #{_darker($gray, 20%)};
+    --hb-gray-700:                 #{_darker($gray, 25%)};
+    --hb-gray-800:                 #{_darker($gray, 30%)};
+    --hb-gray-900:                 #{_darker($gray, 40%)};
+
+    @each $name, $colorVar in $contextsCSSVar
+    {
+        $color : map-get($palette, quote(_color-name-from-var($colorVar)));
+
+        /* #{$name} */
+        --hb-brand-#{$name}-100:                 #{_lighter($color, 90%)};
+        --hb-brand-#{$name}-200:                 #{_lighter($color, 80%)};
+        --hb-brand-#{$name}-300:                 #{_lighter($color, 50%)};
+        --hb-brand-#{$name}-400:                 #{_lighter($color, 35%)};
+        // Default is between 400 and 500 (i.e 450)
+        --hb-brand-#{$name}-500:                 #{_darker($color, 5%)};
+        --hb-brand-#{$name}-600:                 #{_darker($color, 20%)};
+        --hb-brand-#{$name}-700:                 #{_darker($color, 25%)};
+        --hb-brand-#{$name}-800:                 #{_darker($color, 30%)};
+        --hb-brand-#{$name}-900:                 #{_darker($color, 40%)};
+    }
+
+    /* Contextual color assignments */
+    @each $name, $colorVar in $contextsCSSVar
+    {
+        /* #{$name} */
+        --hb-brand-#{$name}:             #{$colorVar};
     }
 
     /* Base Colors */
     --hb-white:                            #{$white};
     --hb-black:                            #{$black};
     --hb-gray:                             #{$gray};
-    --hb-brand-primary:                    #{$brand-primary};
-    --hb-brand-secondary:                  #{$brand-secondary};
-    --hb-brand-success:                    #{$brand-success};
-    --hb-brand-info:                       #{$brand-info};
-    --hb-brand-warning:                    #{$brand-warning};
-    --hb-brand-danger:                     #{$brand-danger};
-    --hb-brand-on-primary:                 #{$brand-on-primary};
     --hb-body-bg:                          #{$body-bg};
     --hb-body-color:                       #{$body-color};
     --hb-link-color:                       #{$link-color};
     --hb-link-color-hover:                 #{$link-color-hover};
-
-    /* Context Colors */
-    @each $name, $color in $colors
-    {
-        /* #{$name} */
-        --hb-#{$name}-100:                 #{_lighter($color, 90%)};
-        --hb-#{$name}-200:                 #{_lighter($color, 80%)};
-        --hb-#{$name}-300:                 #{_lighter($color, 50%)};
-        --hb-#{$name}-400:                 #{_lighter($color, 35%)};
-        // Default is between 400 and 500 (i.e 450)
-        --hb-#{$name}-500:                 #{_darker($color, 5%)};
-        --hb-#{$name}-600:                 #{_darker($color, 20%)};
-        --hb-#{$name}-700:                 #{_darker($color, 25%)};
-        --hb-#{$name}-800:                 #{_darker($color, 30%)};
-        --hb-#{$name}-900:                 #{_darker($color, 40%)};
-    }
-
-    /* Contexts RGBA */
-    @each $name, $color in $colors
-    {
-        --hb-#{$name}-rgb:                 #{_to-rgb-vals($color)};
-    }
 
     /* Typeography */
     /* Font stacks */
@@ -55,6 +62,7 @@
     --hb-base-line-height:                 #{$base-line-height};
     --hb-base-font-weight:                 #{$base-font-weight};
     --hb-font-smoothing:                   #{$font-smoothing};
+    --hb-p-text-spacer:                    #{$text-spacer};
     /* Heading styles */
     --hb-font-headings:                    #{$font-family-headings};
     --hb-headings-line-height:             #{$headings-line-height};

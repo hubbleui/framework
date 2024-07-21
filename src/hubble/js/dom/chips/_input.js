@@ -77,10 +77,9 @@
          */
         _initInput(_wrapper)
         {
-            var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
-            var _input = Helper.$('.js-chip-input', _wrapper);
+            let _input = Helper.$('.js-chip-input', _wrapper);
 
-            Helper.addEventListener(_removeBtns, 'click', this._removeChip);
+            Helper.addEventListener(Helper.$All('.js-remove-btn', _wrapper), 'click', this._removeChip);
 
             Helper.addEventListener(_input, 'keyup', this._onKeyUp);
 
@@ -98,7 +97,7 @@
          */
         _destroy(_wrapper)
         {
-            var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
+            var _removeBtns = Helper.$All('.btn-chip .js-remove-btn', _wrapper);
             var _input = Helper.$('.js-chip-input', _wrapper);
 
             Helper.removeEventListener(_removeBtns, 'click', this._removeChip);
@@ -179,7 +178,7 @@
          */
         _removeLastChip(_wrapper)
         {
-            var _chips = Helper.$All('.chip', _wrapper);
+            var _chips = Helper.$All('.btn-chip', _wrapper);
 
             if (!Helper.is_empty(_chips))
             {
@@ -197,29 +196,16 @@
          */
         addChip(_value, _wrapper, _icon)
         {
-            _icon = typeof _icon === 'undefined' ? false : _icon;
-            var _name = _wrapper.dataset.inputName;
-            var _chip = document.createElement('span');
-            var _children = Helper.first_children(_wrapper);
-            var _classes = _wrapper.dataset.chipClass;
-            var _iconStr = '';
+            let chip = Container.Chip({
+                text       : _value.trim(),
+                removeable : true,
+                input      : _wrapper.dataset.inputName,
+                variant    : _wrapper.dataset.chipClass,
+            });
 
-            if (_classes)
-            {
-                _chip.className += ' ' + _classes;
-            }
+            _wrapper.insertBefore(chip, Helper.first_children(_wrapper).pop());
 
-            if (_icon)
-            {
-                _iconStr = '<span class="chip-icon"><span class="glyph-icon glyph-icon-' + _iconclass + '"></span></span>';
-            }
-
-            _chip.className = 'chip';
-            _chip.innerHTML = _iconStr + '<span class="chip-text">' + _value + '</span><span class="remove-icon"></span><input type="hidden" value="' + _value + '" name="' + _name + '">';
-
-            _wrapper.insertBefore(_chip, _children.pop());
-
-            Helper.addEventListener(_chip.querySelector('.remove-icon'), 'click', this._removeChip);
+            Helper.addEventListener(Helper.$('.js-remove-btn', chip), 'click', this._removeChip);
         }
 
         /**
@@ -232,7 +218,9 @@
         {
             e = e || window.event;
 
-            Helper.remove_from_dom(Helper.closest(this, '.chip'));
+            e.preventDefault();
+
+            Helper.remove_from_dom(Helper.closest(this, '.btn-chip'));
         }
 
         /**
@@ -246,7 +234,7 @@
         {
             var _result = [];
 
-            var _chips = Helper.$All('.chip input', _wrapper);
+            var _chips = Helper.$All('.btn-chip input', _wrapper);
 
             for (var i = 0; i < _chips.length; i++)
             {

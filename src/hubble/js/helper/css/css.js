@@ -42,6 +42,24 @@ css(el, property, value)
         }
         else
         {
+            if (value.includes('important'))
+            {
+                let styles = el.getAttribute('style');
+
+                if (styles && styles.includes(property))
+                {
+                    let re = new RegExp(`${property}\s?:[^;]+;?`, 'g');
+
+                    styles = styles.replace(re, '').trim();
+                }
+                
+                styles = !styles ? `${property}:${value}` : `${this.rtrim(styles, ';')};${property}:${value}`;
+
+                el.setAttribute('style', styles);
+
+                return;
+            }
+
             el.style[property] = value;
         }
     }

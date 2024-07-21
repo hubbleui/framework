@@ -62,7 +62,7 @@
          */
         _bindDOMListeners(navWrap)
         {
-            var links  = Helper.$All('li > *', navWrap);
+            var links = Helper.$All('> li > *, > *:not(li)', navWrap);
             
             Helper.addEventListener(links, 'click', this._eventHandler);
         }
@@ -75,7 +75,7 @@
          */
         _unbindDOMListeners(navWrap)
         {
-            var links = Helper.$All('li > *', navWrap);
+            var links = Helper.$All('> li > *, > *:not(li)', navWrap);
             
             Helper.removeEventListener(links, 'click', this._eventHandler);
         }
@@ -98,10 +98,10 @@
             if (Helper.has_class(node, 'active')) return;
             
             var tab           = node.dataset.tab;
-            var tabNav        = Helper.closest(node, 'ul');
+            var tabNav        = Helper.closest(node, '.js-tab-nav');
 
             var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-            var tabPanel      = Helper.closest_class(tabPane, 'js-tab-panels-wrap');
+            var tabPanel      = Helper.closest_class(tabPane, '.js-tab-panels-wrap');
             var activePanel   = Helper.$('.tab-panel.active', tabPanel);
 
             var navWrap       = Helper.closest_class(node, 'js-tab-nav');

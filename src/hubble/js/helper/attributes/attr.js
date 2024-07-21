@@ -33,21 +33,36 @@ attr(DOMElement, name, value)
     {
         // innerHTML
         case 'innerHTML':
-            DOMElement.innerHTML = value;
+            DOMElement.innerHTML = !value ? '' : value;
             break;
 
         // Children
         case 'children':
+
+            this.each(DOMElement.children, function(node)
+            {
+                this.remove_from_dom(node);
+            
+            }, this);
+
             this.each(value, function(node)
             {
                 DOMElement.appendChild(node);
             });
+
             break;
 
         // Class
         case 'class':
         case 'className':
+
+            if (!value)
+            {
+                DOMElement.removeAttribute('class');
+            }
+
             DOMElement.className = value;
+
             break;
 
         // Style
@@ -125,6 +140,11 @@ attr(DOMElement, name, value)
                         break;
                     } catch (e) {}
                 }
+
+                let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
+                let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
+
+                console.log(camelName, hyphenName);
 
                 // ARIA-attributes have a different notion of boolean values.
                 // The value `false` is different from the attribute not

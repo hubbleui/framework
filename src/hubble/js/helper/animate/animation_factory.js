@@ -26,7 +26,7 @@
  */
 animate(DOMElement, options)
 {
-    const animations = [];
+    const animationSet = [];
 
     const Animation = function()
     {
@@ -35,20 +35,20 @@ animate(DOMElement, options)
 
     Animation.prototype.stop = function()
     {
-        for (var i = 0; i < animations.length; i++)
+        for (var i = 0; i < animationSet.length; i++)
         {
-            animations[i].stop(true);
+            animationSet[i].stop(true);
         }
     };
 
     Animation.prototype.destory = function()
     {
-        for (var i = 0; i < animations.length; i++)
+        for (var i = 0; i < animationSet.length; i++)
         {
-            animations[i].destory();
+            animationSet[i].destory();
         }
 
-        animations = [];
+        animationSet = [];
     };
 
     const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
@@ -57,7 +57,7 @@ animate(DOMElement, options)
 
     this.each(factoryOptions, function(i, opts)
     {
-        animations.push(this.__animate_js(DOMElement, opts));
+        animationSet.push(this.__animate_js(DOMElement, opts));
 
     }, this);
 

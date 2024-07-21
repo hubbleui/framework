@@ -8,6 +8,7 @@
         <script src="../../../build/js/lazyload.js"></script>
         <link rel="stylesheet" href="../../../build/css/lazyload.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../build/css/hubble-icons.css">
         <link rel="stylesheet" href="../../../build/css/hubble.css">
         <link rel="stylesheet" href="../../../build/css/docs.css">
     </head>
@@ -168,6 +169,8 @@
             <li class="menu-item"><a  href="../../forms/checkbox/index.html">Checkbox</a></li>
             <li class="menu-item"><a  href="../../forms/radio/index.html">Radio</a></li>
             <li class="menu-item"><a  href="../../forms/switch/index.html">Switch</a></li>
+            <li class="menu-item"><a  href="../../forms/chips/index.html">Chips</a></li>
+            <li class="menu-item"><a  href="../../forms/range/index.html">Range</a></li>
             <li class="menu-item"><a  href="../../forms/progress/index.html">Progress</a></li>
             <li class="menu-item"><a  href="../../forms/input-mask/index.html">Input Mask</a></li>
             <li class="menu-item"><a  href="../../forms/results/index.html">Results</a></li>
@@ -244,14 +247,14 @@
 <h3 id="basic-example">Basic example</h3>
 <p>Add the <code>.js-collapse</code> class to clickable element, with the <code>data-collapse-target</code> attribute set as the <code>id</code> of the element you want to toggle.</p>
 <div class="code-content-example">
-    <button class="btn btn-info js-collapse" data-collapse-target="toggle-content">View Information</button>
+    <button class="btn js-collapse" data-collapse-target="toggle-content">View Information</button>
     <div class="hide-overflow collapsed" id="toggle-content">
         <div class="row roof-sm floor-sm">
             <p> Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, s ed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. </p>
         </div>
     </div>
 </div>
-<pre><code class="html language-html">&lt;button class="btn btn-block btn-lg btn-info js-collapse" data-collapse-target="toggle-content"&gt;View Information&lt;/button&gt;
+<pre><code class="html language-html">&lt;button class="btn js-collapse" data-collapse-target="toggle-content"&gt;View Information&lt;/button&gt;
 
 &lt;div class="hide-overflow collapsed" id="toggle-content"&gt;
 ...
@@ -349,17 +352,17 @@ collapse.addEventListener('collapse:open', event =&gt;
                     <ul class="list-inline social-links">
                         <li>
                             <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/index.html">
-                                <span class="icon icon-social glyph-icon glyph-icon-github"></span>
+                                <span class="icon icon-social fa fa-github"></span>
                             </a>
                         </li>
                         <li>
                             <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
-                                <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
+                                <span class="icon icon-social fa fa-twitter"></span>
                             </a>
                         </li>
                         <li>
                             <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
-                                <span class="icon glyph-icon glyph-icon-arrow-up"></span>
+                                <span class="icon fa fa-arrow-up"></span>
                             </a>
                         </li>
                     </ul>

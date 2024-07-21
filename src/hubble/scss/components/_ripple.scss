@@ -8,7 +8,6 @@
 .ripple
 {
     --hb-ripple-color: #{$ripple-color};
-
     position: absolute !important;
     border-radius: 50% !important;
     background: var(--hb-ripple-color);
@@ -23,4 +22,7 @@
     --hb-ripple-color: currentColor;
     opacity: 0.2;
 }
-
+.no-ripple .ripple
+{
+    display: none !important;
+}

@@ -288,10 +288,9 @@
 
     // Listen for HubbleReady and register into dom
     // Will no be invoked unless dom().refresh() is called
-    const AddModule = function(e)
+    const AddModule = function()
     {
-
-        Container.Hubble().dom().register('LazyLoad', LazyLoad, false);
+        Hubble.dom().register('LazyLoad', LazyLoad, false);
 
         window.removeEventListener('HubbleReady', AddModule);
     }

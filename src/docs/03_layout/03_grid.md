@@ -409,7 +409,6 @@ In the example below both columns are full width on mobile. On breakpoint (>=md)
 </div>
 ```
 
-
 ---
 
 ### CSS Customization

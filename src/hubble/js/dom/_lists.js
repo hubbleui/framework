@@ -17,7 +17,7 @@
          * @access {public}
          * @constructor
          */
-    	constructor()
+    	constructor(context)
         {
             /**
              * Array of click-triggers
@@ -36,7 +36,7 @@
          *
          * @access {public}
          */
-        destruct()
+        destruct(context)
         {
             this._unbind();
 

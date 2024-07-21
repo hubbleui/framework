@@ -12,7 +12,7 @@
      * 
      * @var {obj}
      */
-    var Ajax = Hubble.require('Ajax');
+    var Ajax = Container.Ajax();
 
     /**
      * AJAX URL to list paginated reviews
@@ -92,7 +92,7 @@
             _invoked = false;
             _listening = false;
 
-            window.removeEventListener('popstate', this._popStateHandler, false);
+            window.removeEventListener('popstate', this._popStateHandler);
         }
 
         /**
@@ -105,7 +105,7 @@
             _invoked   = true;
             _listening = true;
 
-            window.addEventListener('popstate', this._popStateHandler, false);
+            window.addEventListener('popstate', this._popStateHandler);
         }
 
         /**

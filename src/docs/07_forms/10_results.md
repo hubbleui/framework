@@ -1,4 +1,4 @@
-# Switch
+# Results
 
 ---
 
@@ -19,7 +19,7 @@ This is super handy as you can have all your messages setup in the form result, 
 	    <div class="form-result">
 	        <div class="msg msg-info" aria-hidden="true">
 	            <div class="msg-icon">
-	                <span class="glyph-icon glyph-icon-bell icon"></span>
+	                <span class="fa fa-bell icon"></span>
 	            </div>
 	            <div class="msg-body">
 	                <p>Please check your email to activate your account</p>
@@ -31,7 +31,7 @@ This is super handy as you can have all your messages setup in the form result, 
 	    <div class="form-result">
 	        <div class="msg msg-success" aria-hidden="true">
 	            <div class="msg-icon">
-	                <span class="glyph-icon glyph-icon-checkmark icon"></span>
+	                <span class="fa fa-check icon"></span>
 	            </div>
 	            <div class="msg-body">
 	                <p>Hooorayy! Your message was successfully sent!</p>
@@ -43,7 +43,7 @@ This is super handy as you can have all your messages setup in the form result, 
 	    <div class="form-result">
 	        <div class="msg msg-warning" aria-hidden="true">
 	            <div class="msg-icon">
-	                <span class="glyph-icon glyph-icon-power icon"></span>
+	                <span class="fa fa-triangle-exclamation icon"></span>
 	            </div>
 	            <div class="msg-body">
 	                <p>There was an unknown error. Please try again later or contact support.</p>
@@ -55,7 +55,7 @@ This is super handy as you can have all your messages setup in the form result, 
 	    <div class="form-result">
 	        <div class="msg msg-danger" aria-hidden="true">
 	            <div class="msg-icon">
-	                <span class="glyph-icon glyph-icon-cross icon"></span>
+	                <span class="fa fa-xmark icon"></span>
 	            </div>
 	            <div class="msg-body">
 	                <p>You have been banned from creating an account with us.</p>
@@ -70,7 +70,7 @@ This is super handy as you can have all your messages setup in the form result, 
     <div class="form-result">
         <div class="msg msg-info" aria-hidden="true">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-bell icon"></span>
+                <span class="fa fa-bell icon"></span>
             </div>
             <div class="msg-body">
                 <p>Did you know you can use this for Ajax?</p>
@@ -82,7 +82,7 @@ This is super handy as you can have all your messages setup in the form result, 
     <div class="form-result">
         <div class="msg msg-success" aria-hidden="true">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-checkmark icon"></span>
+                <span class="fa fa-check icon"></span>
             </div>
             <div class="msg-body">
                 <p>Did you know you can use this for Ajax?</p>
@@ -94,7 +94,7 @@ This is super handy as you can have all your messages setup in the form result, 
     <div class="form-result">
         <div class="msg msg-warning" aria-hidden="true">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-power icon"></span>
+                <span class="fa fa-triangle-exclamation icon"></span>
             </div>
             <div class="msg-body">
                 <p>Did you know you can use this for Ajax?</p>
@@ -106,7 +106,7 @@ This is super handy as you can have all your messages setup in the form result, 
     <div class="form-result">
         <div class="msg msg-danger" aria-hidden="true">
             <div class="msg-icon">
-                <span class="glyph-icon glyph-icon-cross icon"></span>
+                <span class="fa fa-xmark icon"></span>
             </div>
             <div class="msg-body">
                 <p>There was an error processing your request. Please try again later.</p>

@@ -18,6 +18,7 @@
 		@import 'array/array_merge.js';
 		@import 'array/array_set.js';
 		@import 'array/array_unique.js';
+		@import 'array/is_array_last.js';
 		@import 'array/each.js';
 		@import 'array/in_array.js';
 		@import 'array/map.js';
@@ -61,6 +62,7 @@
 		@import 'dom/show_aria.js';
 		@import 'dom/toggle_class.js';
 		@import 'dom/trigger_event.js';
+		@import 'dom/traverse.js';
 		@import 'dom/width.js';
 		@import 'dom/height.js';
 		@import 'events/addEventListener.js';

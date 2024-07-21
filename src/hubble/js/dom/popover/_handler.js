@@ -56,6 +56,7 @@
         buildPopEl()
         {
             var pop = document.createElement('div');
+            
             pop.className = this.options.classes;
 
             if (typeof this.options.template === 'string')

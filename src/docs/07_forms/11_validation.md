@@ -180,7 +180,7 @@ Below is an example form using the validator. In a real request, you would use H
 		<div class="form-result">
 			<div class="msg msg-info" aria-hidden="true">
 	            <div class="msg-icon">
-	                <span class="glyph-icon glyph-icon-bell icon"></span>
+	                <span class="fa fa-bell icon"></span>
 	            </div>
 	            <div class="msg-body">
 	                <p>Please check your email to activate your account</p>
@@ -188,7 +188,7 @@ Below is an example form using the validator. In a real request, you would use H
 	        </div>
 	        <div class="msg msg-success" aria-hidden="true">
 	            <div class="msg-icon">
-	                <span class="glyph-icon glyph-icon-checkmark icon"></span>
+	                <span class="fa fa-check icon"></span>
 	            </div>
 	            <div class="msg-body">
 	                <p>Hooorayy! Your message was successfully sent!</p>
@@ -196,7 +196,7 @@ Below is an example form using the validator. In a real request, you would use H
 	        </div>
 	        <div class="msg msg-warning" aria-hidden="true">
 	            <div class="msg-icon">
-	                <span class="glyph-icon glyph-icon-power icon"></span>
+	                <span class="fa fa-triangle-exclamation icon"></span>
 	            </div>
 	            <div class="msg-body">
 	                <p>There was an unknown error. Please try again later or contact support.</p>
@@ -204,7 +204,7 @@ Below is an example form using the validator. In a real request, you would use H
 	        </div>
 	        <div class="msg msg-danger" aria-hidden="true">
 	            <div class="msg-icon">
-	                <span class="glyph-icon glyph-icon-cross icon"></span>
+	                <span class="fa fa-xmark icon"></span>
 	            </div>
 	            <div class="msg-body">
 	                <p>You have been banned from creating an account with us.</p>

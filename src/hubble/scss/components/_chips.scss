@@ -1,215 +1,58 @@
-.chip
+@use "sass:math";
+// Base
+.btn-chip
 {
-    --hb-chip-height: #{$chip-height};
-    --hb-chip-font-size: #{$chip-font-size};
-    --hb-chip-ln-height: #{$chip-ln-height};
-    --hb-chip-icon-size: #{$chip-icon-size};
-    --hb-chip-radius: #{$chip-radius};
-    --hb-chip-pad-x: #{$chip-pad-x};
+	--hb-btn-transition: none;
 
-    --hb-chip-color: #{$chip-color};
-    --hb-chip-color-hover: #{$chip-color-hover};
-
-    --hb-chip-bg: #{$chip-bg};
-    --hb-chip-bg-hover: #{$chip-bg-hover};
-
-    --hb-chip-border: #{$chip-border};
-    --hb-chip-border-hover: #{$chip-border-hover};
-
-    --hb-chip-bg-selected: #{$chip-selected-bg};
-    --hb-chip-color-selected: #{$chip-selected-color};
-
-    --hb-chip-transition: #{$chip-transition};
-
-    position: relative;
-    text-align: center;
-    display: inline-block;
-    white-space: nowrap;
-    vertical-align: baseline;
-    cursor: pointer;
-    box-shadow: none;
-    transition: var(--hb-chip-transition);
-    border-radius: var(--hb-chip-radius);
-    font-size: var(--hb-chip-font-size);
-    line-height: var(--hb-chip-ln-height);
-    padding: 0 var(--hb-chip-pad-x);
-    color: var(--hb-chip-color);
-    background-color: var(--hb-chip-bg);
-    border: var(--hb-chip-border);
-    height: var(--hb-chip-height); 
-
-    &.chip-on-primary
+    &:before
     {
-        --hb-chip-color: var(--hb-white);
-        --hb-chip-color-hover: var(--hb-white);
-
-        --hb-chip-bg: var(--hb-on-primary-900);
-        --hb-chip-bg-hover: var(--hb-on-primary-700);
-
-        --hb-chip-border: var(--hb-on-primary-900);
-        --hb-chip-border-hover: var(--hb-on-primary-700);
-
-        --hb-chip-bg-selected: var(--hb-white);
-        --hb-chip-color-selected: var(--hb-brand-primary);
-    }
-
-    .chip-text,
-    > .glyph-icon,
-    > .remove-icon
-    {
-        display: inline-block;
-        font-size: var(--hb-chip-icon-size);
-        line-height: var(--hb-chip-ln-height);
-        height: var(--hb-chip-height);
-    }
-    
-    > .glyph-icon:before,
-    > .remove-icon:before
-    {
-        vertical-align: middle;
-    }
-    // Remove
-    .remove-icon
-    {
-        margin-left: -8px;
-        padding-left: var(--hb-chip-pad-x);
-        &:before
-        {
-            content: "\ed6d";
-            @include glyph-icon;
-        }
-    }
-
-    // States
-    &:hover,
-    &.hover
-    {
-        --hb-chip-color: var(--hb-chip-color-hover);
-        --hb-chip-bg: var(--hb-chip-bg-hover);
-        --hb-chip-border: var(--hb-chip-border-hover);
+    	content: "\f00c";
+        position: absolute;
+        left: var(--hb-btn-padding-x);
+        top: 50%;
+        transform: translateY(-50%);
+        @include glyph-icon;
+        overflow: hidden;
+	    display: block;
+	    max-width: 0;
+	    font-size: var(--hb-btn-icon-size);
     }
     // Selected
-    &.selected,
     &.checked
     {
-        --hb-chip-color: var(--hb-chip-color-selected);
-        --hb-chip-bg: var(--hb-chip-bg-selected);
-    }
+    	padding-left: calc(var(--hb-btn-padding-x) * 2.5);
 
-    &.disabled,
-    &.disabled:focus,&.disabled:active,&.disabled:hover
-    {
-        cursor: not-allowed;
-        opacity: 0.5;
-        background-color: var(--hb-gray-300);
-        border-color: var(--hb-gray-300);
-        box-shadow: none;
+    	&:before
+	    {
+	        max-width: 30px;
+	        transition: max-width .5s ease;
+	    }
+	    > .fa:first-child
+	    {
+	        display: none !important;
+	    }
     }
-    
-    // Outline base
-    &.chip-outline
+    .remove-btn
     {
-        --hb-chip-bg: transparent;
-        --hb-chip-bg-hover: var(--hb-gray-100);
-        --hb-chip-border: 1px solid var(--hb-chip-color);
-        --hb-chip-border-hover: 1px solid var(--hb-chip-color);
-        &.selected,
-        &.checked
-        {
-            --hb-chip-bg: var(--hb-chip-bg-selected);
-        }
+    	font-size: var(--hb-btn-icon-size);
+    	line-height: 0;
+    	vertical-align: middle;
+    	cursor: pointer;
     }
 }
 
-.filter-chips
-{
-    .chip
-    {
-        padding-left: 13px;
-
-        > .glyph-icon,
-        > .glyph-icon + .chip-text:before
-        {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            margin-top: -1px;
-            transition: none;
-            left: var(--hb-chip-pad-x);
-        }
-        .chip-text:before
-        {
-            content: "\ed71";
-            display: inline-block;
-            line-height: var(--hb-chip-icon-size);
-            vertical-align: text-top;
-            max-width: 0;
-            overflow: hidden;
-            transition: padding 0.1s $base-easing;
-            padding-right: 0;
-            color: $brand-primary;
-            @include glyph-icon;
-        }
-        &.checked
-        {
-            .chip-text:before
-            {
-                max-width: 20px;
-                transition: padding 0.1s $base-easing;
-                padding-right: 5px;
-            }
-            >.glyph-icon
-            {
-                display: none;
-            }
-        }
-        > .glyph-icon + .chip-text
-        {
-            padding-left: 2rem;
-        }
-        
-    }
-}
-
+// Styled input
 .chips-input
 {
-    display: inline-block;
-    vertical-align: middle;
-    max-width: 100%;
-    line-height: 28px;
-    cursor: text;
-    .chip
-    {
-        margin-right: 5px;
-    }
-    input
-    {
-        border: none;
-        box-shadow: none;
-        outline: none;
-        background-color: transparent;
-        padding: 0 6px;
-        margin: 0;
-        width: auto;
-        max-width: inherit;
-    }
-}
+    display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	column-gap: 5px;
 
-// Chip suggestions
-.chip-suggestions
-{
-    .chip
-    {
-        cursor: pointer;
-        
-    }
-}
-
-// Styled chips in
-.chips-input.form-field
-{
-    border: 1px solid $input-border-color;
-    border-radius: 4px;
+	border: 1px solid $input-border-color;
+    border-radius: $input-radius;
+    padding: 0 $input-pad-x 0 $input-pad-x;
 
     &:focus,
     &:focus-within
@@ -217,14 +60,9 @@
         box-shadow: inset 0 0 0 1px $input-focus-theme;
         border-color: $input-focus-theme;
     }
-    .chip
+    .btn-chip
     {
-        margin-top: 12px;
-        float: left;
-        &:first-child
-        {
-            margin-left: 10px;
-        }
+        margin: math.div($input-pad-y, 2) 0;
     }
     .form-field
     {
@@ -235,11 +73,47 @@
             border-bottom-left-radius: 0;
             border: none;
             box-shadow: none;
+
+            flex: 1 0 0%;
+	    	width: 100%;
+	    	min-width: 100px;
+
             &:focus,
             &.focus
             {
                 box-shadow: none;
+                border: none;
+                outline: none;
             }
         }
     }
 }
+
+// Unstyled input
+.chips-input-unstyled
+{
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	row-gap: 10px;
+	column-gap: 5px;
+
+	.btn-chip
+	{
+		display: inline-table;
+	}
+
+	label
+	{
+		margin-right: 10px;
+	}
+	input
+	{
+		flex: 1 0 0%;
+    	width: 100%;
+    	min-width: 100px;
+    	margin-left: 10px;
+	}
+}
+

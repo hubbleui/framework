@@ -1,6 +1,6 @@
 (function()
 {
-    const [$, $All, addEventListener, animate_css, bool, has_class, is_node_type, removeEventListener, toggle_class, trigger_event] = Container.import(['$','$All','addEventListener','animate_css','bool','has_class','is_node_type','removeEventListener','toggle_class','trigger_event']).from('Helper');
+    const [$, $All, addEventListener, animate, bool, has_class, is_node_type, removeEventListener, toggle_class, trigger_event] = Container.import(['$','$All','addEventListener','animate','bool','has_class','is_node_type','removeEventListener','toggle_class','trigger_event']).from('Helper');
 
     /**
      * Toggle height on click
@@ -97,7 +97,7 @@
                 callback: () => { trigger_event(targetEl, 'collapse:toggled', closing ? 'close' : 'open'); }
             };
 
-            animate_css(targetEl, options);
+            animate(targetEl, options);
             toggle_class(clicked, 'active');
         }
     }

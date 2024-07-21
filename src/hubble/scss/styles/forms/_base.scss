@@ -1,6 +1,28 @@
 @use "sass:math";
 $select-pos-y : _minusPercent($input-pad-y, 10);
 
+input.unstyled
+{
+    border: none;
+    box-shadow: none;
+    outline: none;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    width: auto;
+    max-width: inherit;
+    font-size: #{$input-font-size};
+    line-height: #{$input-line-height};
+    color: #{$input-color};
+
+    &:focus
+    {
+        border: none;
+        box-shadow: none;
+        outline: none;
+    }
+}
+
 .form-field
 {
     --hb-input-font-size: #{$input-font-size};
@@ -71,7 +93,7 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
     }
 
     // Label Setup
-    input:not([type="radio"]):not([type="checkbox"]) + label,
+    input:not([type="radio"]):not([type="checkbox"]):not([type="range"]) + label,
     textarea + label,
     select + label
     {
@@ -102,7 +124,7 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
     }
 
     // Placeholder basics
-    input:not([type="radio"]):not([type="checkbox"]),
+    input:not([type="radio"]):not([type="checkbox"]):not([type="range"]),
     textarea
     {
         @include placeholder
@@ -155,7 +177,7 @@ $select-pos-y : _minusPercent($input-pad-y, 10);
     input[type="datetime-local"]:before
     {
         @include glyph-icon;
-        content: "\ea60";
+        content: "\f133";
         display: inline-block;
         position: absolute;
         cursor: pointer;

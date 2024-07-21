@@ -8,6 +8,7 @@
         <script src="../../../build/js/lazyload.js"></script>
         <link rel="stylesheet" href="../../../build/css/lazyload.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../build/css/hubble-icons.css">
         <link rel="stylesheet" href="../../../build/css/hubble.css">
         <link rel="stylesheet" href="../../../build/css/docs.css">
     </head>
@@ -168,6 +169,8 @@
             <li class="menu-item"><a  href="../../forms/checkbox/index.html">Checkbox</a></li>
             <li class="menu-item"><a  href="../../forms/radio/index.html">Radio</a></li>
             <li class="menu-item"><a  href="../../forms/switch/index.html">Switch</a></li>
+            <li class="menu-item"><a  href="../../forms/chips/index.html">Chips</a></li>
+            <li class="menu-item"><a  href="../../forms/range/index.html">Range</a></li>
             <li class="menu-item"><a  href="../../forms/progress/index.html">Progress</a></li>
             <li class="menu-item"><a  href="../../forms/input-mask/index.html">Input Mask</a></li>
             <li class="menu-item"><a class="active" href="../../forms/results/index.html">Results</a></li>
@@ -230,7 +233,7 @@
                         <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger"> Documentation Menu </button>
                     </div>
                     <article class="docs-body">
-                        <h1 id="switch">Switch</h1>
+                        <h1 id="results">Results</h1>
 <hr />
 <p>Form results can be displayed as a message by simply adding a contextual class to the <code>&lt;form&gt;</code> element. </p>
 <p>This is super handy as you can have all your messages setup in the form result, and simply add the contextual class depending on the form validation. The contextual classes are <code>.info</code>, <code>.success</code>, <code>.warning</code>, <code>.danger</code>. This can be automated using the form validation component.</p>
@@ -245,7 +248,7 @@
         <div class="form-result">
             <div class="msg msg-info" aria-hidden="true">
                 <div class="msg-icon">
-                    <span class="glyph-icon glyph-icon-bell icon"></span>
+                    <span class="fa fa-bell icon"></span>
                 </div>
                 <div class="msg-body">
                     <p>Please check your email to activate your account</p>
@@ -257,7 +260,7 @@
         <div class="form-result">
             <div class="msg msg-success" aria-hidden="true">
                 <div class="msg-icon">
-                    <span class="glyph-icon glyph-icon-checkmark icon"></span>
+                    <span class="fa fa-check icon"></span>
                 </div>
                 <div class="msg-body">
                     <p>Hooorayy! Your message was successfully sent!</p>
@@ -269,7 +272,7 @@
         <div class="form-result">
             <div class="msg msg-warning" aria-hidden="true">
                 <div class="msg-icon">
-                    <span class="glyph-icon glyph-icon-power icon"></span>
+                    <span class="fa fa-triangle-exclamation icon"></span>
                 </div>
                 <div class="msg-body">
                     <p>There was an unknown error. Please try again later or contact support.</p>
@@ -281,7 +284,7 @@
         <div class="form-result">
             <div class="msg msg-danger" aria-hidden="true">
                 <div class="msg-icon">
-                    <span class="glyph-icon glyph-icon-cross icon"></span>
+                    <span class="fa fa-xmark icon"></span>
                 </div>
                 <div class="msg-body">
                     <p>You have been banned from creating an account with us.</p>
@@ -294,7 +297,7 @@
     &lt;div class="form-result"&gt;
         &lt;div class="msg msg-info" aria-hidden="true"&gt;
             &lt;div class="msg-icon"&gt;
-                &lt;span class="glyph-icon glyph-icon-bell icon"&gt;&lt;/span&gt;
+                &lt;span class="fa fa-bell icon"&gt;&lt;/span&gt;
             &lt;/div&gt;
             &lt;div class="msg-body"&gt;
                 &lt;p&gt;Did you know you can use this for Ajax?&lt;/p&gt;
@@ -306,7 +309,7 @@
     &lt;div class="form-result"&gt;
         &lt;div class="msg msg-success" aria-hidden="true"&gt;
             &lt;div class="msg-icon"&gt;
-                &lt;span class="glyph-icon glyph-icon-checkmark icon"&gt;&lt;/span&gt;
+                &lt;span class="fa fa-check icon"&gt;&lt;/span&gt;
             &lt;/div&gt;
             &lt;div class="msg-body"&gt;
                 &lt;p&gt;Did you know you can use this for Ajax?&lt;/p&gt;
@@ -318,7 +321,7 @@
     &lt;div class="form-result"&gt;
         &lt;div class="msg msg-warning" aria-hidden="true"&gt;
             &lt;div class="msg-icon"&gt;
-                &lt;span class="glyph-icon glyph-icon-power icon"&gt;&lt;/span&gt;
+                &lt;span class="fa fa-triangle-exclamation icon"&gt;&lt;/span&gt;
             &lt;/div&gt;
             &lt;div class="msg-body"&gt;
                 &lt;p&gt;Did you know you can use this for Ajax?&lt;/p&gt;
@@ -330,7 +333,7 @@
     &lt;div class="form-result"&gt;
         &lt;div class="msg msg-danger" aria-hidden="true"&gt;
             &lt;div class="msg-icon"&gt;
-                &lt;span class="glyph-icon glyph-icon-cross icon"&gt;&lt;/span&gt;
+                &lt;span class="fa fa-xmark icon"&gt;&lt;/span&gt;
             &lt;/div&gt;
             &lt;div class="msg-body"&gt;
                 &lt;p&gt;There was an error processing your request. Please try again later.&lt;/p&gt;
@@ -372,17 +375,17 @@
                     <ul class="list-inline social-links">
                         <li>
                             <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/index.html">
-                                <span class="icon icon-social glyph-icon glyph-icon-github"></span>
+                                <span class="icon icon-social fa fa-github"></span>
                             </a>
                         </li>
                         <li>
                             <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
-                                <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
+                                <span class="icon icon-social fa fa-twitter"></span>
                             </a>
                         </li>
                         <li>
                             <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
-                                <span class="icon glyph-icon glyph-icon-arrow-up"></span>
+                                <span class="icon fa fa-arrow-up"></span>
                             </a>
                         </li>
                     </ul>

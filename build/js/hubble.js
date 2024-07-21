@@ -976,17 +976,6 @@ var Chain = function()
         }
 
         /**
-         * Get the Container component
-         *
-         * @access {public}
-         * @return {object}
-         */
-        container()
-        {
-            return Container;
-        }
-
-        /**
          * Get the DOM component
          *
          * @access {public}
@@ -995,29 +984,6 @@ var Chain = function()
         dom()
         {
             return Container.get('HubbleDom');
-        }
-
-        /**
-         * Get the Helper component
-         *
-         * @access {public}
-         * @return {object}
-         */
-        helper()
-        {
-            return Container.Helper();
-        }
-
-        /**
-         * Require a module and/or key/value
-         *
-         * @access {public}
-         * @param  {string} key The name of the key
-         * @return {mixed}
-         */
-        require()
-        {
-            return Container.get(...arguments);
         }
     }
 
@@ -1218,7 +1184,7 @@ var Chain = function()
          * @access {private}
          */
         _bindModule(key)
-        {            
+        {
             Container.singleton(key, this._modules[key], true);
         }
 
@@ -1506,6 +1472,13 @@ const ANIMATION_ALLOWED_OPTIONS = ['property', 'from', 'to', 'duration', 'easing
  * @var {array}
  */
 const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ...ANIMATION_ALLOWED_OPTIONS];
+
+/**
+ * Currently animating animations.
+ * 
+ * @var {array}
+ */
+const ANIMATING = [];
 	/**
  * Math Contstansts.
  * 
@@ -1861,11 +1834,53 @@ __animate_js(DOMElement, options)
 
         this.isTransform = this.CSSProperty.toLowerCase().includes('transform');
 
+        this.isScroll = this.CSSProperty.toLowerCase() === 'scrollto' && DOMElement === window;
+
         this.isColor = options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb');
+
+        this.clearAnimating();
 
         this.parseOptions();
 
         this.generateKeyframes();
+
+        return this;
+    }
+
+    AnimateJS.prototype.clearAnimating = function()
+    {
+        let CSSprop = this.CSSProperty;
+
+        let _this = this;
+
+        _helper.each(ANIMATING, function(i, animation)
+        {
+            if (animation.CSSProperty === CSSprop)
+            {
+                animation.stop(true);
+
+                ANIMATING.splice(i, 1);
+
+                return false;
+            }
+        });
+
+        const _complete = function()
+        {
+            _helper.each(ANIMATING, function(i, animation)
+            {
+                if (animation === _this)
+                {
+                    ANIMATING.splice(i, 1);
+
+                    return false;
+                }
+            });
+        };
+
+        ANIMATING.push(this);
+
+        this.callbacks.push(_complete);
     }
 
     AnimateJS.prototype.start = function()
@@ -1874,7 +1889,7 @@ __animate_js(DOMElement, options)
 
         clearInterval(this.intervalTimer);
 
-        this.clearTransitions();
+        if (!this.isScroll) this.clearTransitions();
 
         var _this = this;
 
@@ -1892,7 +1907,7 @@ __animate_js(DOMElement, options)
         const keyframe = this.keyframes.shift();
         const prop     = Object.keys(keyframe)[0];
 
-        _helper.css(this.DOMElement, prop, keyframe[prop]);
+        this.isScroll ? window.scrollTo(keyframe[0], keyframe[1]) : _helper.css(this.DOMElement, prop, keyframe[prop]);
 
         this.currentKeyframe++;
 
@@ -1907,20 +1922,25 @@ __animate_js(DOMElement, options)
 
             this.keyframes = [];
 
+            const DOMElement = this.DOMElement;
+
             _helper.each(this.callbacks, function(i, callback)
-            {
+            {                
                 if (_helper.is_function(callback))
                 {
-                    callback(this.DOMElement);
+                    callback(DOMElement);
                 }
-                
-            }, this);
+            });
         }
     }
 
     AnimateJS.prototype.parseOptions = function()
     {
-        if (this.isTransform)
+        if (this.isScroll)
+        {
+            this.parseScrollOptions();
+        }
+        else if (this.isTransform)
         {
             this.parseTransformOptions();
         }
@@ -1932,6 +1952,28 @@ __animate_js(DOMElement, options)
         {
             this.parseDefaultOptions();
         }
+    }
+
+    AnimateJS.prototype.parseScrollOptions = function()
+    {
+        if (!this.options.to.includes(','))
+        {
+            throw new Error('Invalid scroll value. Animating scroll should be provided as [Y, X].');
+        }
+
+        // We ignore 'from'
+        let startY = window.scrollY;
+        let startX = window.scrollX;
+        let endX   = parseInt(this.options.to.split(',').shift().trim());
+        let endY   = parseInt(this.options.to.split(',').pop().trim());
+        let distX  = Math.abs(endX < startX ? (startX - endX) : (endX - startX))
+        let distY  = Math.abs(endY < startY ? (startY - endY) : (endY - startY))
+
+        this.startValue    = [startX, startY];
+        this.endValue      = [endX, endY];
+        this.backAnimation = [endX < startX, endY < startY];
+        this.distance      = [distX, distY] ;
+        this.CSSunits      = '';
     }
 
     AnimateJS.prototype.parseDefaultOptions = function()
@@ -1983,7 +2025,6 @@ __animate_js(DOMElement, options)
         this.backAnimation = endVal < startVal;
         this.distance      = Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal));
         this.CSSunits      = endUnit;
-
     }
 
     AnimateJS.prototype.parseTransformOptions = function()
@@ -2083,6 +2124,25 @@ __animate_js(DOMElement, options)
         {
             this.keyFrameCount = 0;
 
+            this.stop();
+
+            return;
+        }
+
+        if (this.isScroll)
+        {
+            _helper.for(this.keyFrameCount, function(index)
+            {
+                let x = this.generateKeyframe(index, 0);
+                let y = this.generateKeyframe(index, 1);
+
+                this.keyframes.push([x, y]);
+                                
+            }, this);
+
+            // Fallback
+            this.keyframes.push([this.endValue[0], this.endValue[1]]);
+
             return;
         }
 
@@ -2108,9 +2168,9 @@ __animate_js(DOMElement, options)
         }, this);
 
         // Failsafe
-        if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== this.endValue)
+        if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== `${this.endValue}${this.CSSunits}`)
         {
-            this.keyframes.push({[this.CSSProperty]: this.endValue});
+            this.keyframes.push({[this.CSSProperty]: `${this.endValue}${this.CSSunits}`});
         }
     }
 
@@ -2123,11 +2183,11 @@ __animate_js(DOMElement, options)
             return { [this.CSSProperty]: this.mixColors(this.startValue, this.endValue, change) };
         }
         
-        const backAnimation = this.isTransform ? this.backAnimation[transformIndex] : this.backAnimation;
+        const backAnimation = this.isTransform || this.isScroll ? this.backAnimation[transformIndex] : this.backAnimation;
 
-        const startValue = this.isTransform ? this.startValue[transformIndex] : this.startValue;
+        const startValue = this.isTransform || this.isScroll ? this.startValue[transformIndex] : this.startValue;
 
-        const distance = this.isTransform ? this.distance[transformIndex] : this.distance;
+        const distance = this.isTransform || this.isScroll ? this.distance[transformIndex] : this.distance;
 
         const change = (distance * this.tween(this.easing, (index / this.keyFrameCount)));
 
@@ -2141,6 +2201,11 @@ __animate_js(DOMElement, options)
         
         var keyframe = { [property]:  `${prefix}${keyVal}${suffix}` };
         
+        if (this.isScroll)
+        {
+            return keyVal;
+        }
+
         if (this.isTransform && _helper.is_undefined(this.keyframes[index]))
         {
             keyframe[property] = `${this.baseTransforms} ${keyframe[property]}`.trim();
@@ -2223,7 +2288,6 @@ __animate_js(DOMElement, options)
     }
 
     return (new AnimateJS(DOMElement, options)).start();
-    
 }
 		/**
  * CSS Animation.
@@ -2496,7 +2560,7 @@ __animate_css(DOMElement, options)
  */
 animate(DOMElement, options)
 {
-    const animations = [];
+    const animationSet = [];
 
     const Animation = function()
     {
@@ -2505,20 +2569,20 @@ animate(DOMElement, options)
 
     Animation.prototype.stop = function()
     {
-        for (var i = 0; i < animations.length; i++)
+        for (var i = 0; i < animationSet.length; i++)
         {
-            animations[i].stop(true);
+            animationSet[i].stop(true);
         }
     };
 
     Animation.prototype.destory = function()
     {
-        for (var i = 0; i < animations.length; i++)
+        for (var i = 0; i < animationSet.length; i++)
         {
-            animations[i].destory();
+            animationSet[i].destory();
         }
 
-        animations = [];
+        animationSet = [];
     };
 
     const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
@@ -2527,7 +2591,7 @@ animate(DOMElement, options)
 
     this.each(factoryOptions, function(i, opts)
     {
-        animations.push(this.__animate_js(DOMElement, opts));
+        animationSet.push(this.__animate_js(DOMElement, opts));
 
     }, this);
 
@@ -2824,6 +2888,24 @@ array_unique(arr)
     return arr.filter(uniq);
 }
 		/**
+ * Checks if element is last element in array or object.
+ *
+ * @access {public}
+ * @param  {string} needle    The value to search for
+ * @param  {array}  haystack  The target array to index
+ * @param  {bool}   strict    Strict comparison (optional) (default false)
+ * @return {bool}
+ * 
+ */
+is_array_last(needle, haystack, strict)
+{
+    strict = this.is_undefined(strict) ? false : strict;
+
+    let last = TO_STR.call(haystack) === '[object Array]' ? haystack[haystack.length -1] : haystack[Object.keys(haystack).pop()];
+    
+    return this.is_equal(needle, last, strict);
+}
+		/**
  * Foreach loop
  * 
  * @access {public}
@@ -3056,21 +3138,36 @@ attr(DOMElement, name, value)
     {
         // innerHTML
         case 'innerHTML':
-            DOMElement.innerHTML = value;
+            DOMElement.innerHTML = !value ? '' : value;
             break;
 
         // Children
         case 'children':
+
+            this.each(DOMElement.children, function(node)
+            {
+                this.remove_from_dom(node);
+            
+            }, this);
+
             this.each(value, function(node)
             {
                 DOMElement.appendChild(node);
             });
+
             break;
 
         // Class
         case 'class':
         case 'className':
+
+            if (!value)
+            {
+                DOMElement.removeAttribute('class');
+            }
+
             DOMElement.className = value;
+
             break;
 
         // Style
@@ -3148,6 +3245,11 @@ attr(DOMElement, name, value)
                         break;
                     } catch (e) {}
                 }
+
+                let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
+                let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
+
+                console.log(camelName, hyphenName);
 
                 // ARIA-attributes have a different notion of boolean values.
                 // The value `false` is different from the attribute not
@@ -3254,6 +3356,24 @@ css(el, property, value)
         }
         else
         {
+            if (value.includes('important'))
+            {
+                let styles = el.getAttribute('style');
+
+                if (styles && styles.includes(property))
+                {
+                    let re = new RegExp(`${property}\s?:[^;]+;?`, 'g');
+
+                    styles = styles.replace(re, '').trim();
+                }
+                
+                styles = !styles ? `${property}:${value}` : `${this.rtrim(styles, ';')};${property}:${value}`;
+
+                el.setAttribute('style', styles);
+
+                return;
+            }
+
             el.style[property] = value;
         }
     }
@@ -4187,7 +4307,6 @@ coordinates(DOMElement)
         this.css(DOMElement, 'display', false);
     }
     
-
     return {
         top: top,
         left: left,
@@ -4724,7 +4843,28 @@ scroll_pos()
 $All(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
-    return TO_ARR.call(context.querySelectorAll(selector));
+
+    let fchild = selector.trim().substring(0, 1) === '>';
+    let multi  = selector.includes(',');
+
+    // Fast
+    if (!fchild && !multi) return TO_ARR.call(context.querySelectorAll(selector));
+
+    // Easier to just split and loop here
+    if (multi)
+    {
+        let ret = [];
+
+        this.each(selector.split(','), (i, s) =>
+        {
+            ret = [...ret, ...this.$All(s, context)];
+        
+        }, this);
+
+        return ret;
+    }
+
+    return TO_ARR.call(context.querySelectorAll(`:scope ${selector}`));
 }
 
 /**
@@ -4835,6 +4975,43 @@ trigger_event(DOMElement, eventName, data)
         }
     }
 }
+		/**
+ * Closest parent node by type/class or array of either
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} type Node type to find
+ * @return {node\null}
+ */
+traverse_up(DOMElement, callback, origional)
+{    
+    origional = typeof origional === "undefined" ? DOMElement : origional;
+
+    // Stop on document
+    if (DOMElement === document || typeof DOMElement === "undefined" || DOMElement === null) return;
+
+    if (callback(DOMElement))
+    {
+        return origional;
+    }
+
+    var parent = DOMElement.parentNode;
+
+    return this.traverse_up(parent, callback, origional);
+}
+
+traverse_down(DOMElement, callback)
+{
+}
+
+traverse_next(DOMElement, callback)
+{
+}
+
+traverse_prev(DOMElement, callback)
+{
+}
+
 		/**
  * Get an element's actual width in px
  *
@@ -6384,17 +6561,21 @@ in_dom(element)
         return true;
     }
 
-    while (element)
+    let ret = false;
+
+    this.traverse_up(element, function(node)
     {
-        if (element === document.documentElement)
+        if (node === document.body || node === document.documentElement)
         {
+            ret = true;
+
             return true;
         }
 
-        element = element.parentNode;
-    }
+        return false;
+    });
 
-    return false;
+    return ret;
 }
 		/**
  * Is args array.
@@ -7169,604 +7350,6 @@ console.log(Container.get('Helper'));
 
 }());
 
-/**
- * Smoothscroll
- *
- * This is a utility class used internally to scroll to elements on a page.
- * It can still be invoked directly via the IOC container if you want to use it.
- * @example {Container.get('SmoothScroll').animateScroll('#'} + id, null, options);
- * @see     {https://github.com/cferdinandi/smooth-scroll}
- * @see     {waypoints.js}
- */
-(function()
-{
-
-    (function(root, factory)
-    {
-        if (typeof define === 'function' && define.amd)
-        {
-            define([], factory(root));
-        }
-        else if (typeof exports === 'object')
-        {
-            module.exports = factory(root);
-        }
-        else
-        {
-            root.smoothScroll = factory(root);
-        }
-    })(typeof global !== 'undefined' ? global : this.window || this.global, function(root)
-    {
-
-        'use strict';
-
-        //
-        // Variables
-        //
-
-        var smoothScroll = {}; // Object for public APIs
-        var supports = 'querySelector' in document && 'addEventListener' in root; // Feature test
-        var settings, eventTimeout, fixedHeader, headerHeight, animationInterval;
-
-        // Default settings
-        var defaults = {
-            selector: '[data-scroll]',
-            selectorHeader: '[data-scroll-header]',
-            speed: 500,
-            easing: 'easeInOutCubic',
-            offset: 0,
-            updateURL: true,
-            callback: function() {}
-        };
-
-
-        //
-        // Methods
-        //
-
-        /**
-         * Merge two or more objects. Returns a new object.
-         * @private
-         * @param {Boolean}  deep     If true, do a deep (or recursive) merge [optional]
-         * @param {Object}   objects  The objects to merge together
-         * @returns {Object}          Merged values of defaults and options
-         */
-        var extend = function()
-        {
-
-            // Variables
-            var extended = {};
-            var deep = false;
-            var i = 0;
-            var length = arguments.length;
-
-            // Check if a deep merge
-            if (Object.prototype.toString.call(arguments[0]) === '[object Boolean]')
-            {
-                deep = arguments[0];
-                i++;
-            }
-
-            // Merge the object into the extended object
-            var merge = function(obj)
-            {
-                for (var prop in obj)
-                {
-                    if (Object.prototype.hasOwnProperty.call(obj, prop))
-                    {
-                        // If deep merge and property is an object, merge properties
-                        if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]')
-                        {
-                            extended[prop] = extend(true, extended[prop], obj[prop]);
-                        }
-                        else
-                        {
-                            extended[prop] = obj[prop];
-                        }
-                    }
-                }
-            };
-
-            // Loop through each object and conduct a merge
-            for (; i < length; i++)
-            {
-                var obj = arguments[i];
-                merge(obj);
-            }
-
-            return extended;
-
-        };
-
-        /**
-         * Get the height of an element.
-         * @private
-         * @param  {DOMElement}   elem The element to get the height of
-         * @return {Number}      The element's height in pixels
-         */
-        var getHeight = function(elem)
-        {
-            return Math.max(elem.scrollHeight, elem.offsetHeight, elem.clientHeight);
-        };
-
-        /**
-         * Get the closest matching element up the DOM tree.
-         * @private
-         * @param  {Element} elem     Starting element
-         * @param  {String}  selector Selector to match against (class, ID, data attribute, or tag)
-         * @return {Boolean|Element}  Returns null if not match found
-         */
-        var getClosest = function(elem, selector)
-        {
-
-            // Variables
-            var firstChar = selector.charAt(0);
-            var supports = 'classList' in document.documentElement;
-            var attribute, value;
-
-            // If selector is a data attribute, split attribute from value
-            if (firstChar === '[')
-            {
-                selector = selector.substr(1, selector.length - 2);
-                attribute = selector.split('=');
-
-                if (attribute.length > 1)
-                {
-                    value = true;
-                    attribute[1] = attribute[1].replace(/"/g, '').replace(/'/g, '');
-                }
-            }
-
-            // Get closest match
-            for (; elem && elem !== document; elem = elem.parentNode)
-            {
-
-                // If selector is a class
-                if (firstChar === '.')
-                {
-                    if (supports)
-                    {
-                        if (elem.classList.contains(selector.substr(1)))
-                        {
-                            return elem;
-                        }
-                    }
-                    else
-                    {
-                        if (new RegExp('(^|\\s)' + selector.substr(1) + '(\\s|$)').test(elem.className))
-                        {
-                            return elem;
-                        }
-                    }
-                }
-
-                // If selector is an ID
-                if (firstChar === '#')
-                {
-                    if (elem.id === selector.substr(1))
-                    {
-                        return elem;
-                    }
-                }
-
-                // If selector is a data attribute
-                if (firstChar === '[')
-                {
-                    if (elem.hasAttribute(attribute[0]))
-                    {
-                        if (value)
-                        {
-                            if (elem.getAttribute(attribute[0]) === attribute[1])
-                            {
-                                return elem;
-                            }
-                        }
-                        else
-                        {
-                            return elem;
-                        }
-                    }
-                }
-
-                // If selector is a tag
-                if (elem.tagName.toLowerCase() === selector)
-                {
-                    return elem;
-                }
-
-            }
-
-            return null;
-
-        };
-
-        /**
-         * Escape special characters for use with querySelector
-         * @public
-         * @param {String} id The anchor ID to escape
-         * @author {Mathias} Bynens}
-         * @link {https://github.com/mathiasbynens/CSS.escape}
-         */
-        smoothScroll.escapeCharacters = function(id)
-        {
-
-            // Remove leading hash
-            if (id.charAt(0) === '#')
-            {
-                id = id.substr(1);
-            }
-
-            var string = String(id);
-            var length = string.length;
-            var index = -1;
-            var codeUnit;
-            var result = '';
-            var firstCodeUnit = string.charCodeAt(0);
-            while (++index < length)
-            {
-                codeUnit = string.charCodeAt(index);
-                // Note: there’s no need to special-case astral symbols, surrogate
-                // pairs, or lone surrogates.
-
-                // If the character is NULL (U+0000), then throw an
-                // `InvalidCharacterError` exception and terminate these steps.
-                if (codeUnit === 0x0000)
-                {
-                    throw new InvalidCharacterError(
-                        'Invalid character: the input contains U+0000.'
-                    );
-                }
-
-                if (
-                    // If the character is in the range [\1-\1F] (U+0001 to U+001F) or is
-                    // U+007F, […]
-                    (codeUnit >= 0x0001 && codeUnit <= 0x001F) || codeUnit == 0x007F ||
-                    // If the character is the first character and is in the range [0-9]
-                    // (U+0030 to U+0039), […]
-                    (index === 0 && codeUnit >= 0x0030 && codeUnit <= 0x0039) ||
-                    // If the character is the second character and is in the range [0-9]
-                    // (U+0030 to U+0039) and the first character is a `-` (U+002D), […]
-                    (
-                        index === 1 &&
-                        codeUnit >= 0x0030 && codeUnit <= 0x0039 &&
-                        firstCodeUnit === 0x002D
-                    )
-                )
-                {
-                    // http://dev.w3.org/csswg/cssom/#escape-a-character-as-code-point
-                    result += '\\' + codeUnit.toString(16) + ' ';
-                    continue;
-                }
-
-                // If the character is not handled by one of the above rules and is
-                // greater than or equal to U+0080, is `-` (U+002D) or `_` (U+005F), or
-                // is in one of the ranges [0-9] (U+0030 to U+0039), [A-Z] (U+0041 to
-                // U+005A), or [a-z] (U+0061 to U+007A), […]
-                if (
-                    codeUnit >= 0x0080 ||
-                    codeUnit === 0x002D ||
-                    codeUnit === 0x005F ||
-                    codeUnit >= 0x0030 && codeUnit <= 0x0039 ||
-                    codeUnit >= 0x0041 && codeUnit <= 0x005A ||
-                    codeUnit >= 0x0061 && codeUnit <= 0x007A
-                )
-                {
-                    // the character itself
-                    result += string.charAt(index);
-                    continue;
-                }
-
-                // Otherwise, the escaped character.
-                // http://dev.w3.org/csswg/cssom/#escape-a-character
-                result += '\\' + string.charAt(index);
-
-            }
-
-            return '#' + result;
-
-        };
-
-        /**
-         * Calculate the easing pattern
-         * @private
-         {*} @link https://gist.github.com/gre/1650294
-         * @param {String} type Easing pattern
-         * @param {Number} time Time animation should take to complete
-         * @returns {Number}
-         */
-        var easingPattern = function(type, time)
-        {
-            var pattern;
-            if (type === 'easeInQuad') pattern = time * time; // accelerating from zero velocity
-            if (type === 'easeOutQuad') pattern = time * (2 - time); // decelerating to zero velocity
-            if (type === 'easeInOutQuad') pattern = time < 0.5 ? 2 * time * time : -1 + (4 - 2 * time) * time; // acceleration until halfway, then deceleration
-            if (type === 'easeInCubic') pattern = time * time * time; // accelerating from zero velocity
-            if (type === 'easeOutCubic') pattern = (--time) * time * time + 1; // decelerating to zero velocity
-            if (type === 'easeInOutCubic') pattern = time < 0.5 ? 4 * time * time * time : (time - 1) * (2 * time - 2) * (2 * time - 2) + 1; // acceleration until halfway, then deceleration
-            if (type === 'easeInQuart') pattern = time * time * time * time; // accelerating from zero velocity
-            if (type === 'easeOutQuart') pattern = 1 - (--time) * time * time * time; // decelerating to zero velocity
-            if (type === 'easeInOutQuart') pattern = time < 0.5 ? 8 * time * time * time * time : 1 - 8 * (--time) * time * time * time; // acceleration until halfway, then deceleration
-            if (type === 'easeInQuint') pattern = time * time * time * time * time; // accelerating from zero velocity
-            if (type === 'easeOutQuint') pattern = 1 + (--time) * time * time * time * time; // decelerating to zero velocity
-            if (type === 'easeInOutQuint') pattern = time < 0.5 ? 16 * time * time * time * time * time : 1 + 16 * (--time) * time * time * time * time; // acceleration until halfway, then deceleration
-            return pattern || time; // no easing, no acceleration
-        };
-
-        /**
-         * Calculate how far to scroll
-         * @private
-         * @param {Element} anchor The anchor element to scroll to
-         * @param {Number} headerHeight Height of a fixed header, if any
-         * @param {Number} offset Number of pixels by which to offset scroll
-         * @returns {Number}
-         */
-        var getEndLocation = function(anchor, headerHeight, offset)
-        {
-            var location = 0;
-            if (anchor.offsetParent)
-            {
-                do {
-                    location += anchor.offsetTop;
-                    anchor = anchor.offsetParent;
-                } while (anchor);
-            }
-            location = location - headerHeight - offset;
-            return location >= 0 ? location : 0;
-        };
-
-        /**
-         * Determine the document's height
-         * @private
-         {*} @returns {Number}
-         */
-        var getDocumentHeight = function()
-        {
-            return Math.max(
-                root.document.body.scrollHeight, root.document.documentElement.scrollHeight,
-                root.document.body.offsetHeight, root.document.documentElement.offsetHeight,
-                root.document.body.clientHeight, root.document.documentElement.clientHeight
-            );
-        };
-
-        /**
-         * Convert data-options attribute into an object of key/value pairs
-         * @private
-         * @param {String} options Link-specific options as a data attribute string
-         * @returns {Object}
-         */
-        var getDataOptions = function(options)
-        {
-            return !options || !(typeof JSON === 'object' && typeof JSON.parse === 'function') ?
-            {} : JSON.parse(options);
-        };
-
-        /**
-         * Update the URL
-         * @private
-         * @param {Element} anchor The element to scroll to
-         * @param {Boolean} url Whether or not to update the URL history
-         */
-        var updateUrl = function(anchor, url)
-        {
-            if (root.history.pushState && (url || url === 'true') && root.location.protocol !== 'file:')
-            {
-                root.history.pushState(null, null, [root.location.protocol, '//', root.location.host, root.location.pathname, root.location.search, anchor].join(''));
-            }
-        };
-
-        var getHeaderHeight = function(header)
-        {
-            return header === null ? 0 : (getHeight(header) + header.offsetTop);
-        };
-
-        /**
-         * Start/stop the scrolling animation
-         * @public
-         * @param {Element} anchor The element to scroll to
-         * @param {Element} toggle The element that toggled the scroll event
-         * @param {Object} options
-         */
-        smoothScroll.animateScroll = function(anchor, toggle, options)
-        {
-
-            // Options and overrides
-            var overrides = getDataOptions(toggle ? toggle.getAttribute('data-options') : null);
-            var animateSettings = extend(settings || defaults, options ||
-            {}, overrides); // Merge user options with defaults
-
-            // Selectors and variables
-            var isNum = Object.prototype.toString.call(anchor) === '[object Number]' ? true : false;
-            var anchorElem = isNum ? null : (anchor === '#' ? root.document.documentElement : root.document.querySelector(anchor));
-            if (!isNum && !anchorElem) return;
-            var startLocation = root.pageYOffset; // Current location on the page
-            if (!fixedHeader)
-            {
-                fixedHeader = root.document.querySelector(animateSettings.selectorHeader);
-            } // Get the fixed header if not already set
-            if (!headerHeight)
-            {
-                headerHeight = getHeaderHeight(fixedHeader);
-            } // Get the height of a fixed header if one exists and not already set
-            var endLocation = isNum ? anchor : getEndLocation(anchorElem, headerHeight, parseInt(animateSettings.offset, 10)); // Location to scroll to
-            var distance = endLocation - startLocation; // distance to travel
-            var documentHeight = getDocumentHeight();
-            var timeLapsed = 0;
-            var percentage, position;
-
-            // Update URL
-            if (!isNum)
-            {
-                updateUrl(anchor, animateSettings.updateURL);
-            }
-
-            /**
-             * Stop the scroll animation when it reaches its target (or the bottom/top of page)
-             * @private
-             * @param {Number} position Current position on the page
-             * @param {Number} endLocation Scroll to location
-             * @param {Number} animationInterval How much to scroll on this loop
-             */
-            var stopAnimateScroll = function(position, endLocation, animationInterval)
-            {
-                var currentLocation = root.pageYOffset;
-                if (position == endLocation || currentLocation == endLocation || ((root.innerHeight + currentLocation) >= documentHeight))
-                {
-                    clearInterval(animationInterval);
-                    if (!isNum)
-                    {
-                        anchorElem.focus();
-                    }
-                    animateSettings.callback(anchor, toggle); // Run callbacks after animation complete
-                }
-            };
-
-            /**
-             * Loop scrolling animation
-             * @private
-             */
-            var loopAnimateScroll = function()
-            {
-                timeLapsed += 16;
-                percentage = (timeLapsed / parseInt(animateSettings.speed, 10));
-                percentage = (percentage > 1) ? 1 : percentage;
-                position = startLocation + (distance * easingPattern(animateSettings.easing, percentage));
-                root.scrollTo(0, Math.floor(position));
-                stopAnimateScroll(position, endLocation, animationInterval);
-            };
-
-            /**
-             * Set interval timer
-             * @private
-             */
-            var startAnimateScroll = function()
-            {
-                clearInterval(animationInterval);
-                animationInterval = setInterval(loopAnimateScroll, 16);
-            };
-
-            /**
-             * Reset position to fix weird iOS bug
-             * @link {https://github.com/cferdinandi/smooth-scroll/issues/45}
-             */
-            if (root.pageYOffset === 0)
-            {
-                root.scrollTo(0, 0);
-            }
-
-            // Start scrolling animation
-            startAnimateScroll();
-
-        };
-
-        /**
-         * If smooth scroll element clicked, animate scroll
-         * @private
-         */
-        var eventHandler = function(e)
-        {
-            e = e || window.event;
-
-            // Don't run if right-click or command/control + click
-            if (e.button !== 0 || e.metaKey || e.ctrlKey) return;
-
-            // If a smooth scroll link, animate it
-            var toggle = getClosest(e.target, settings.selector);
-            if (toggle && toggle.tagName.toLowerCase() === 'a')
-            {
-                e.preventDefault(); // Prevent default click event
-                var hash = smoothScroll.escapeCharacters(toggle.hash); // Escape hash characters
-                smoothScroll.animateScroll(hash, toggle, settings); // Animate scroll
-            }
-
-        };
-
-        /**
-         * On window scroll and resize, only run events at a rate of 15fps for better performance
-         * @private
-         * @param  {Function} eventTimeout Timeout function
-         * @param  {Object} settings
-         */
-        var eventThrottler = function(e)
-        {
-            if (!eventTimeout)
-            {
-                eventTimeout = setTimeout(function()
-                {
-                    eventTimeout = null; // Reset timeout
-                    headerHeight = getHeaderHeight(fixedHeader); // Get the height of a fixed header if one exists
-                }, 66);
-            }
-        };
-
-        /**
-         * Destroy the current initialization.
-         * @public
-         */
-        smoothScroll.destroy = function()
-        {
-
-            // If plugin isn't already initialized, stop
-            if (!settings) return;
-
-            // Remove event listeners
-            root.document.removeEventListener('click', eventHandler, false);
-            root.removeEventListener('resize', eventThrottler, false);
-
-            // Reset varaibles
-            settings = null;
-            eventTimeout = null;
-            fixedHeader = null;
-            headerHeight = null;
-            animationInterval = null;
-        };
-
-        /**
-         * Initialize Smooth Scroll
-         * @public
-         * @param {Object} options User settings
-         */
-        smoothScroll.init = function(options)
-        {
-
-            // feature test
-            if (!supports) return;
-
-            // Destroy any existing initializations
-            smoothScroll.destroy();
-
-            // Selectors and variables
-            settings = extend(defaults, options ||
-            {}); // Merge user options with defaults
-            fixedHeader = root.document.querySelector(settings.selectorHeader); // Get the fixed header
-            headerHeight = getHeaderHeight(fixedHeader);
-
-            // When a toggle is clicked, run the click handler
-            root.document.addEventListener('click', eventHandler, false);
-            if (fixedHeader)
-            {
-                root.addEventListener('resize', eventThrottler, false);
-            }
-
-        };
-
-
-        //
-        // Public APIs
-        //
-
-        return smoothScroll;
-
-    });
-
-    var scrl = smoothScroll;
-
-    window.smoothScroll = null;
-
-    // Load into container
-    Container.set('SmoothScroll', scrl);
-
-}());
-
 (function()
 {
     /* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
@@ -8468,6 +8051,106 @@ console.log(Container.get('Helper'));
 
 
 // Utility
+(function()
+{
+    /**
+     * Helper instance
+     * 
+     * @var {object}
+     */
+    const Helper = Container.Helper();
+
+    /**
+     * Default options
+     * 
+     * @var {object}
+     */
+    const DEFAULT_OPTIONS =
+    {
+        'speed'     : 500,
+        'easing'    : 'easeInOutCubic',
+        'updateURL' : true,
+    };
+
+    /**
+     * Normalises a url
+     *
+     * @access {private}
+     * @param  {string}  url The url to normalise
+     * @return {string}
+     */
+    function _normaliseUrl(url)
+    {
+        // If the url was set as local
+
+        // e.g www.foobar.com/foobar
+        // foobar.com/foobar
+        if (url.indexOf('http') < 0)
+        {
+            // Get the path
+            var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;
+
+            // e.g www.foobar.com/foobar
+            if (url[0] === 'w')
+            {
+                var host = url.split('.com');
+
+                url = window.location.protocol + '//' + host[0] + '.com/' + path;
+            }
+            else
+            {
+                // foobar.com/foobar
+                if (url.indexOf('.com') !== -1)
+                {
+                    var host = url.split('.com');
+                    url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
+                }
+                // /foobar/bar/
+                else
+                {
+                    url = window.location.origin + '/' + path;
+                }
+
+            }
+        }
+
+        return url;
+    }
+
+    /**
+     * Smooth scroll to an element or id
+     *
+     * @access {private}
+     */
+    function SmoothScroll(nodeOrId, options)
+    {
+        options = {...DEFAULT_OPTIONS, ...options};
+
+        let DOMElement = Helper.is_string(nodeOrId) ? Helper.$(nodeOrId) : nodeOrId;
+
+        if (!Helper.in_dom(DOMElement)) return;
+
+        let pos = Helper.coordinates(DOMElement).top;
+
+        let url = _normaliseUrl(window.location.href);
+
+        let isHashable = Helper.is_string(nodeOrId);
+
+        const complete = function()
+        {
+            window.location.hash = nodeOrId;
+        }
+
+        Helper.animate(window, { property : 'scrollTo', to: `0, ${pos}`,  easing: options.easing, duration: options.speed, callback: isHashable && options.updateURL ? complete : null});
+
+    };
+
+
+    // Load into Hubble DOM core
+    Container.set('SmoothScroll', SmoothScroll);
+
+}());
+
 /**
  * Cookie manager
  *
@@ -10915,7 +10598,7 @@ function abort()
     /**
      * @var {Helper} obj
      */
-    const [$, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css] = Container.import(['$','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css']).from('Helper');
+    const [$, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, in_dom, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css, is_array_last] = Container.import(['$','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','in_dom','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css', 'is_array_last']).from('Helper');
 
     /**
      * Wrappers that need "position:relative" to hide overflow.
@@ -10937,6 +10620,7 @@ function abort()
         width: null,
         variant: 'block',
         aspectratio: '',
+
     };
 
     /**
@@ -10998,20 +10682,8 @@ function abort()
             return this;
         }
 
-
-        loadMulti(content, callback)
-        {
-            each(content, (selector, content) => 
-            {
-                this.load(content, null, $(selector, this._DOMElement));
-
-                // last has callback
-
-            }, this);
-        }
-
         /**
-         * Gracefully load content
+         * Gracefully individual content
          * 
          * @param  {DOMElement|String} content
          * @param  {function|null}     callback
@@ -11021,7 +10693,13 @@ function abort()
         {
             if (is_object(content))
             {
-                this.loadMulti(content, callback);
+                each(content, (selector, node) => 
+                {
+                    let cb = is_array_last(node, content) ? callback : null;
+
+                    this.load(node, cb, $(selector, this._DOMElement));
+
+                }, this);
 
                 return;
             }
@@ -11069,12 +10747,6 @@ function abort()
                     callback();
                 }
 
-                // Remove skeletons
-                each(_this._nodes, function(i, node)
-                {
-                    node.parentNode.removeChild(node);
-                });
-
                 // If we wrapped 'content' we need to remove the outer '.swapping-content-wrapper'
                 if (!isHTML)
                 {
@@ -11091,6 +10763,12 @@ function abort()
                 {
                     remove_class(content, 'swapping-content-wrapper');
                 }
+
+                // Remove skeletons
+                each(_this._nodes, function(i, node)
+                {
+                    if (in_dom(node)) node.parentNode.removeChild(node);                    
+                });
 
                 // Set inline styles back to original
                 css(wrapper, InlStyles);
@@ -11119,7 +10797,8 @@ function abort()
         /**
          * Remove and destroy
          *
-         * @params {callback} node
+         * @params {function} callback (optional)
+         * @params {boolean}  destroy  (optional default true)
          * @access {private}
          */
         fade_out(callback, destroy)
@@ -11297,6 +10976,297 @@ function abort()
 (function()
 {
     /**
+     * Ripple animation time.
+     * 
+     * Note 1. this is set in CSS
+     * Note 2. This value is actually half of total animation time as the the ripple scales (2.5)
+     * 
+     * @var {int}
+     */
+    const RPL_AN_TIME = 400;
+
+    /**
+     * Wrappers that need "position:relative" to hide overflow.
+     * 
+     * @var {array}
+     */
+    const STATIC_POSITIONS = ['static', 'unset', 'initial'];
+
+    /**
+     * JS Helper reference
+     * 
+     * @var {object}
+     */
+    const Helper = Container.Helper();
+
+    /**
+     * Original inline styles
+     * 
+     * @var {Map}
+     */
+    const INLINESTYLES = new Map();
+
+    /**
+     * Currently rippling
+     * 
+     * @var {Map}
+     */
+    const RIPPLING = new Map();
+    
+    /**
+     * Ripple click animation
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    class Ripple
+    {
+        /**
+         * Module constructor
+         *
+         * @access {public}
+         * @constructor
+         */
+        constructor()
+        {
+            this._classes =
+            [
+                '.btn',
+                '.list > li',
+                '.pagination li a',
+                '.tab-nav li a',
+                '.card.primary-action',
+                '.card .primary-action',
+                '.card-media',
+                '.js-ripple'
+            ];
+
+            this._nodes = Helper.$All(this._classes.join(','));
+
+            this._bind();
+
+            return this;
+        };
+
+        /**
+         * Module destructor - removes event listeners
+         *
+         * @access {public}
+         */
+        destruct()
+        {
+            this._unbind();
+
+            this._nodes = [];
+        }
+
+        /**
+         * Insert ripples
+         *
+         * @access {private}
+         */
+        _bind()
+        {
+            Helper.each(this._nodes, function(i, node)
+            {
+                // No ripples inside primary actions
+                if (!Helper.has_class(node, 'primary-action') && Helper.closest(node, '.primary-action') && !Helper.has_class(node, 'card'))
+                {
+                    return;
+                }
+
+                this._bindWrapper(node);
+
+            }, this);
+        }
+
+        /**
+         * Remove ripples
+         *
+         * @access {private}
+         */
+        _unbind()
+        {
+            Helper.removeEventListener(this._nodes, 'mousedown, touchstart', this._startRipple, false);
+        }
+
+        /**
+         * Insert ripple
+         *
+         * @access {private}
+         * @param  {DOMElement}    wrapper
+         */
+        _bindWrapper(wrapper)
+        {
+            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple, false);
+        }
+
+        /**
+         * Ripple handler
+         *
+         * @access {private}
+         * @param  {event|null} e
+         */
+        _startRipple(e)
+        {
+            e = e || window.event;
+
+            var wrapper = this;
+
+            // Ignore disabled
+            if (wrapper.disabled || Helper.has_class(wrapper, 'disabled')) return;
+
+            // Single finger "clicks" only
+            if (e.touches && e.touches.length > 1) return;
+
+            // Left click only on mouse
+            if ('button' in e && e.button !== 0) return;
+
+            // Store the event used to generate this ripple on the holder: don't allow
+            // further events of different types until we're done.
+            // Prevents double-ripples from mousedown/touchstart.
+            var prev = wrapper.getAttribute('data-event');
+            if (prev && prev !== e.type) return;
+
+            // Clear restorer
+            clearTimeout(RIPPLING.get(wrapper));
+
+            // Add the data-attribute to identify ripple event type
+            wrapper.setAttribute('data-event', e.type);
+
+            // Add class to parent do identify mousedown/touchstart
+            Helper.add_class(wrapper, 'ripple-down');
+
+            // Create ripple and append immediately
+            var ripple = document.createElement('div');
+            wrapper.appendChild(ripple);
+
+            // Figure out where to place ripple inside parent
+            var c = Helper.coordinates(wrapper);
+            var s = Math.max(Helper.height(wrapper), Helper.width(wrapper));
+            var x = (e.pageX - c.left) - (s / 2);
+            var y = (e.pageY - c.top) - (s / 2);
+
+            // Apply styles to ripple
+            Helper.css(ripple, 
+            {
+                width:  `${s}px`,
+                height: `${s}px`,
+                left:   `${x}px`,
+                top:    `${y}px`
+            });
+
+            // Issue here is that if ripple is clicked multiple times in quick succession
+            // the original inline overflow and position styles are overwritten by the next
+            // click
+
+            // Cache 'overflow' and 'position' inline styles
+            // to revert back to after complete
+            // If these are empty they will be removed
+            if (!INLINESTYLES.has(wrapper))
+            {
+                let CSSoverflow = Helper.inline_style(wrapper, 'overflow') || false;
+                
+                let CSSposition = Helper.inline_style(wrapper, 'position') || false;
+
+                INLINESTYLES.set(wrapper, [CSSoverflow, CSSposition]);
+            }
+
+            // Ensure parent hides overflow
+            Helper.css(wrapper, 'overflow', 'hidden !important');
+
+            // Ensure position relative if needed
+            if (Helper.in_array(Helper.rendered_style(wrapper, 'position'), STATIC_POSITIONS))
+            {
+                Helper.css(wrapper, 'position', 'relative');
+            }
+
+            // Start ripple animation
+            ripple.classList.add('ripple');
+
+            // Animation started
+            const t0 = performance.now();
+
+            // Figure out release event type
+            var releaseEvent = (e.type === 'mousedown' ? 'mouseup' : 'touchend');
+
+            // Remove handler
+            const remove = function()
+            {                
+                if (Helper.in_dom(ripple) && Helper.in_dom(wrapper))
+                {
+                    wrapper.removeChild(ripple); 
+                }
+            }
+
+            // Restore handler
+            const restore = function()
+            {
+                if (Helper.in_dom(wrapper))
+                {
+                    wrapper.offsetHeight;
+
+                    wrapper.removeAttribute('data-event');
+                
+                    Helper.remove_class(wrapper, 'ripple-down');
+
+                    let styles = INLINESTYLES.get(wrapper);
+
+                    Helper.css(wrapper, 'overflow', styles[0]);
+
+                    Helper.css(wrapper, 'position', styles[1]);
+                }
+            }
+
+            // Cached timer for release
+            var timer;
+
+            // Release event
+            const release = function(ev)
+            {
+                // Clear timer
+                clearTimeout(timer);
+
+                // Remove release listener
+                document.removeEventListener(releaseEvent, release);
+
+                // Check if release happened before ripple finished animating
+                const held = (performance.now() - t0);
+
+                // Release occurs before initial scale animation finishes with buffer
+                if (held < RPL_AN_TIME)
+                {
+                    let diff = parseInt(RPL_AN_TIME - held);
+
+                    if (diff > 150)
+                    {
+                        timer = setTimeout(release, diff);
+
+                        return;
+                    }
+                }
+
+                Helper.animate_css(ripple, {'opacity': 0, duration: 350, callback: remove });
+
+                let restoreTimer = setTimeout(restore, 500);
+
+                RIPPLING.set(wrapper, restoreTimer);
+            };
+
+            // Release listener
+            document.addEventListener(releaseEvent, release);
+        }
+    }
+    
+    // Load into Hubble DOM core
+    Hubble.dom().register('Ripple', Ripple);
+
+})();
+
+(function()
+{
+    /**
      * JS Helper
      * 
      * @var {obj}
@@ -11308,7 +11278,7 @@ function abort()
      * 
      * @var {obj}
      */
-    var Ajax = Hubble.require('Ajax');
+    var Ajax = Container.Ajax();
 
     /**
      * AJAX URL to list paginated reviews
@@ -11388,7 +11358,7 @@ function abort()
             _invoked = false;
             _listening = false;
 
-            window.removeEventListener('popstate', this._popStateHandler, false);
+            window.removeEventListener('popstate', this._popStateHandler);
         }
 
         /**
@@ -11401,7 +11371,7 @@ function abort()
             _invoked   = true;
             _listening = true;
 
-            window.addEventListener('popstate', this._popStateHandler, false);
+            window.addEventListener('popstate', this._popStateHandler);
         }
 
         /**
@@ -11862,7 +11832,7 @@ function abort()
          */
         _bind()
         {
-            Helper.addEventListener(this._nodes, 'click', this._eventHandler, false);
+            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -11872,7 +11842,7 @@ function abort()
          */
         _unbind()
         {
-            Helper.removeEventListener(this._nodes, 'click', this._eventHandler, false);
+            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -11894,7 +11864,7 @@ function abort()
             var stateChange = Helper.bool(trigger.dataset.pjaxStateChange);
             var singleRequest = Helper.bool(trigger.dataset.pjaxSingleRequest);
 
-            Hubble.require('Pjax').invoke(href, target, title, stateChange, singleRequest);
+            Container.Pjax().invoke(href, target, title, stateChange, singleRequest);
         }
     }
 
@@ -12615,7 +12585,7 @@ function abort()
 
 (function()
 {
-    const [$, $All, addEventListener, animate_css, bool, has_class, is_node_type, removeEventListener, toggle_class, trigger_event] = Container.import(['$','$All','addEventListener','animate_css','bool','has_class','is_node_type','removeEventListener','toggle_class','trigger_event']).from('Helper');
+    const [$, $All, addEventListener, animate, bool, has_class, is_node_type, removeEventListener, toggle_class, trigger_event] = Container.import(['$','$All','addEventListener','animate','bool','has_class','is_node_type','removeEventListener','toggle_class','trigger_event']).from('Helper');
 
     /**
      * Toggle height on click
@@ -12712,7 +12682,7 @@ function abort()
                 callback: () => { trigger_event(targetEl, 'collapse:toggled', closing ? 'close' : 'open'); }
             };
 
-            animate_css(targetEl, options);
+            animate(targetEl, options);
             toggle_class(clicked, 'active');
         }
     }
@@ -12741,7 +12711,7 @@ function abort()
          * @access {public}
          * @constructor
          */
-    	constructor()
+    	constructor(context)
         {
             /**
              * Array of click-triggers
@@ -12760,7 +12730,7 @@ function abort()
          *
          * @access {public}
          */
-        destruct()
+        destruct(context)
         {
             this._unbind();
 
@@ -13056,7 +13026,7 @@ function abort()
          */
         _bindDOMListeners(navWrap)
         {
-            var links  = Helper.$All('li > *', navWrap);
+            var links = Helper.$All('> li > *, > *:not(li)', navWrap);
             
             Helper.addEventListener(links, 'click', this._eventHandler);
         }
@@ -13069,7 +13039,7 @@ function abort()
          */
         _unbindDOMListeners(navWrap)
         {
-            var links = Helper.$All('li > *', navWrap);
+            var links = Helper.$All('> li > *, > *:not(li)', navWrap);
             
             Helper.removeEventListener(links, 'click', this._eventHandler);
         }
@@ -13092,10 +13062,10 @@ function abort()
             if (Helper.has_class(node, 'active')) return;
             
             var tab           = node.dataset.tab;
-            var tabNav        = Helper.closest(node, 'ul');
+            var tabNav        = Helper.closest(node, '.js-tab-nav');
 
             var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-            var tabPanel      = Helper.closest_class(tabPane, 'js-tab-panels-wrap');
+            var tabPanel      = Helper.closest_class(tabPane, '.js-tab-panels-wrap');
             var activePanel   = Helper.$('.tab-panel.active', tabPanel);
 
             var navWrap       = Helper.closest_class(node, 'js-tab-nav');
@@ -13398,6 +13368,7 @@ function abort()
         buildPopEl()
         {
             var pop = document.createElement('div');
+            
             pop.className = this.options.classes;
 
             if (typeof this.options.template === 'string')
@@ -13490,6 +13461,7 @@ function abort()
     	constructor()
         {
             this._pops = [];
+
             this._nodes = [];
 
             // Find nodes
@@ -13572,7 +13544,6 @@ function abort()
             var closeBtn = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="glyph-icon glyph-icon-cross3"></span></button>' : '';
             var pop = '<div class="popover-content"><p>' + content + '</p></div>';
 
-
             if (title)
             {
                 pop = closeBtn + '<h5 class="popover-title">' + title + '</h5>' + pop;
@@ -13598,11 +13569,11 @@ function abort()
             if (evnt === 'click')
             {
                 addEventListener(trigger, 'click', this._clickHandler);
+
                 window.addEventListener('resize', this._windowResize);
             }
             else
-            {
-                var _this = this;
+            {                
                 addEventListener(trigger, 'mouseenter', this._hoverOver);
                 addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
             }
@@ -13616,9 +13587,11 @@ function abort()
         _hoverLeavTimeout(e)
         {
             e = e || window.event;
+
             setTimeout(function()
             {
                 Container.get('Popovers')._hoverLeave(e);
+                
             }, 300);
         }
 
@@ -13784,255 +13757,6 @@ function abort()
     Hubble.dom().register('Popovers', Popovers);
 
 }());
-
-(function()
-{
-    /**
-     * Ripple animation time.
-     * 
-     * Note 1. this is set in CSS
-     * Note 2. This value is actually half of total animation time as the the ripple scales (2.5)
-     * 
-     * @var {int}
-     */
-    const RPL_AN_TIME = 400;
-
-    /**
-     * Wrappers that need "position:relative" to hide overflow.
-     * 
-     * @var {array}
-     */
-    const STATIC_POSITIONS = ['static', 'unset', 'initial'];
-
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
-    
-    /**
-     * Ripple click animation
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class Ripple
-    {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-        constructor()
-        {
-            this._classes =
-            [
-                '.btn',
-                '.chip',
-                '.list > li',
-                '.pagination li a',
-                '.tab-nav li a',
-                '.card.primary-action',
-                '.card .primary-action',
-                '.card-media',
-                '.js-ripple'
-            ];
-
-            this._nodes = Helper.$All(this._classes.join(','));
-
-            this._bind();
-
-            return this;
-        };
-
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
-
-            this._nodes = [];
-        }
-
-        /**
-         * Insert ripples
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.each(this._nodes, function(i, node)
-            {
-                // No ripples inside primary actions
-                if (!Helper.has_class(node, 'primary-action') && Helper.closest(node, '.primary-action') && !Helper.has_class(node, 'card'))
-                {
-                    return;
-                }
-
-                this._bindWrapper(node);
-
-            }, this);
-        }
-
-        /**
-         * Remove ripples
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.each(this._nodes, function(i, node)
-            {
-                Helper.removeEventListener(node, 'mousedown, touchstart', this._startRipple, true);
-
-            }, this);
-        }
-
-        /**
-         * Insert ripple
-         *
-         * @access {private}
-         * @param  {DOMElement}    wrapper
-         */
-        _bindWrapper(wrapper)
-        {
-            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple, true);
-        }
-
-        /**
-         * Ripple handler
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _startRipple(e)
-        {
-            e = e || window.event;
-
-            var wrapper = this;
-
-            // Single finger "clicks" only
-            if (e.touches && e.touches.length > 1) return;
-
-            // Left click only on mouse
-            if ('button' in e && e.button !== 0) return;
-
-            // Store the event used to generate this ripple on the holder: don't allow
-            // further events of different types until we're done.
-            // Prevents double-ripples from mousedown/touchstart.
-            var prev = wrapper.getAttribute('data-event');
-            if (prev && prev !== e.type) return;
-            
-            // Add the data-attribute to identify ripple event type
-            wrapper.setAttribute('data-event', e.type);
-
-            // Add class to parent do identify mousedown/touchstart
-            Helper.add_class(wrapper, 'ripple-down');
-
-            // Create ripple and append immediately
-            var ripple = document.createElement('div');
-            wrapper.appendChild(ripple);
-
-            // Figure out where to place ripple inside parent
-            var c = Helper.coordinates(wrapper);
-            var s = Math.max(Helper.height(wrapper), Helper.width(wrapper));
-            var x = (e.pageX - c.left) - (s / 2);
-            var y = (e.pageY - c.top) - (s / 2);
-
-            // Apply styles to ripple
-            Helper.css(ripple, 
-            {
-                width:  `${s}px`,
-                height: `${s}px`,
-                left:   `${x}px`,
-                top:    `${y}px`
-            });
-            
-            // Cache 'overflow' and 'position' inline styles
-            // to revert back to after complete
-            // If these are empty they will be removed
-            const CSSoverflow = Helper.inline_style(wrapper, 'overflow') || false;
-            const CSSposition = Helper.inline_style(wrapper, 'position') || false; 
-
-            // Ensure parent hides overflow
-            Helper.css(wrapper, 'overflow', 'hidden');
-
-            // Ensure position relative if needed
-            if (Helper.in_array(Helper.rendered_style(wrapper, 'position'), STATIC_POSITIONS))
-            {
-                Helper.css(wrapper, 'position', 'relative');
-            }
-
-            // Start ripple animation
-            ripple.classList.add('ripple');
-
-            // Animation started
-            const t0 = performance.now();
-
-            // Figure out release event type
-            var releaseEvent = (e.type === 'mousedown' ? 'mouseup' : 'touchend');          
-            
-            // Cached timer for release
-            var timer;
-
-            // Remove handler
-            const remove = function()
-            {
-                wrapper.removeChild(ripple);
-                
-                Helper.remove_class(wrapper, 'ripple-down');
-
-                /*Helper.css(wrapper, 'overflow', CSSoverflow);
-
-                Helper.css(wrapper, 'position', CSSposition);*/
-            }
-
-            // Release event
-            const release = function(ev)
-            {
-                // Clear timer
-                clearTimeout(timer);
-
-                // Remove release listener
-                document.removeEventListener(releaseEvent, release);
-
-                // Check if release happened before ripple finished animating
-                const held = (performance.now() - t0);
-
-                // Release occurs before initial scale animation finishes with buffer
-                if (held < RPL_AN_TIME)
-                {
-                    let diff = parseInt(RPL_AN_TIME - held);
-
-                    if (diff > 150)
-                    {
-                        setTimeout(release, diff);
-
-                        return;
-                    }
-                }
-
-                // Cleanup and remove element
-                wrapper.removeAttribute('data-event');
-
-                Helper.animate_css(ripple, {'opacity': 0, duration: 350, callback: remove });
-            };
-
-            // Release listener
-            document.addEventListener(releaseEvent, release);
-        }
-    }
-    
-    // Load into Hubble DOM core
-    Hubble.dom().register('Ripple', Ripple);
-
-})();
 
 (function()
 {
@@ -14255,23 +13979,20 @@ function abort()
          {*} @access public
          */
     	constructor()
-        {    // Load nodes
+        {
+            // Load nodes
             this._nodes = Helper.$All('.js-waypoint-trigger');
 
             // bind listeners
-            if (!Helper.is_empty(this._nodes))
-            {
-                for (var i = 0; i < this._nodes.length; i++)
-                {
-                    this._bind(this._nodes[i]);
-                }
-            }
+            this._bind();
 
             // Invoke pageload
             if (!pageLoaded)
             {
                 this._invokePageLoad();
             }
+
+            pageLoaded = true;
 
             return this;
         }
@@ -14283,11 +14004,7 @@ function abort()
          */
         destruct()
         {
-            // Unbind listeners
-            for (var i = 0; i < this._nodes.length; i++)
-            {
-                this._unbind(this._nodes[i]);
-            }
+            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
 
             // Clear Nodes
             this._nodes = [];
@@ -14296,23 +14013,11 @@ function abort()
         /**
          * Event binder
          *
-         * @params {trigger} node
          * @access {private}
          */
-        _bind(trigger)
+        _bind()
         {
-            Helper.addEventListener(trigger, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event unbinder
-         *
-         * @params {trigger} node
-         * @access {private}
-         */
-        _unbind(trigger)
-        {
-            Helper.removeEventListener(trigger, 'click', this._eventHandler);
+            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -14324,25 +14029,16 @@ function abort()
         _eventHandler(e)
         {
             e = e || window.event;
+            
             e.preventDefault();
-            var trigger = this;
-            var waypoint = trigger.dataset.waypointTarget;
-            var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
 
-            if (Helper.in_dom(targetEl))
-            {
-                var id = waypoint;
-                var speed = typeof trigger.dataset.waypointSpeed !== "undefined" ? trigger.dataset.waypointSpeed : 500;
-                var easing = typeof trigger.dataset.waypointEasing !== "undefined" ? trigger.dataset.waypointEasing : 'easeInOutCubic';
-                targetEl.id = id;
+            let trigger   = this;
+            let id        = trigger.dataset.waypointTarget;
+            let speed     = parseInt(trigger.dataset.waypointSpeed) || 500;
+            let easing    = trigger.dataset.waypointEasing || 'easeInOutCubic';
+            let updateUrl = trigger.dataset.updateUrl === 'false' ? false : true;
 
-                var options = {
-                    easing: easing,
-                    speed: speed,
-                };
-
-                Container.get('SmoothScroll').animateScroll('#' + id, trigger, options);
-            }
+            Container.SmoothScroll('#' + id, { easing: easing, speed: speed, updateUrl: updateUrl });
         }
 
         /**
@@ -14354,24 +14050,23 @@ function abort()
         {
             var url = Helper.parse_url(window.location.href);
 
-            if (url.hash && url.hash !== '')
-            {
-                var waypoint = Helper.trim(url.hash, '/');
-                var options = {
-                    speed: 100,
-                    easing: 'Linear'
-                };
-                var targetEl = Helper.$('[data-waypoint="' + waypoint + '"]');
+            let targetEl = url.hash && url.hash !== '' ? Helper.$(url.hash) : false;
 
-                if (Helper.in_dom(targetEl))
-                {
-                    var id = waypoint;
-                    targetEl.id = id;
-                    Container.get('SmoothScroll').animateScroll('#' + id, null, options);
-                }
+            if (!Helper.in_dom(targetEl) || !Helper.has_class(targetEl, '.js-waypoint')) return;
+           
+            let speed  = parseInt(targetEl.dataset.waypointSpeed) || 500;
+            let easing = targetEl.dataset.waypointEasing || 'easeInOutCubic';
+
+            const scroll = function()
+            {
+                Container.SmoothScroll(url.hash, { easing: easing, speed: speed, updateUrl: false });
+
+                window.removeEventListener('HubbleReady', scroll);
             }
 
-            pageLoaded = true;
+            window.scrollTo(0, 0);
+
+            window.addEventListener('HubbleReady', scroll);
         }
     }
 
@@ -14407,7 +14102,7 @@ function abort()
          */
     	constructor()
         {
-            this._inputs = Helper.$All('.form-field input, .form-field select, .form-field textarea');
+            this._inputs = Helper.$All('.form-field input:not([type="radio"]):not([type="checkbox"]):not([type="range"]), .form-field select, .form-field textarea');
             this._labels = Helper.$All('.form-field label');
 
             if (!Helper.is_empty(this._inputs))
@@ -14675,6 +14370,74 @@ function abort()
     const Helper = Container.Helper();
 
     /**
+     * Creates a chip
+     *
+     */
+    function createChip(options)
+    {
+        let chip = document.createElement(options.removeable || options.input ? 'SPAN' : 'BUTTON');
+
+        if (options.removeable || options.input) chip.type = 'button';
+
+        chip.className = options.variant ? `btn btn-chip ${options.variant}` : 'btn btn-chip';
+        chip.innerText = options.posticon || options.removeable ? `${options.text} ` : options.text;
+
+        if (options.preicon)
+        {
+            let icon1 = document.createElement('SPAN');
+            icon1.className = `fa fa-${options.preicon}`;
+            chip.appendChild(icon1);
+        }
+
+        if (options.removeable)
+        {
+            let removeBtn = document.createElement('BUTTON');
+            removeBtn.className = 'remove-btn btn-unstyled js-remove-btn';
+            removeBtn.ariaLabel = 'remove';
+            removeBtn.type = 'button';
+
+            let x = document.createElement('SPAN');
+            x.className = 'fa fa-xmark';
+            removeBtn.appendChild(x);
+
+            chip.appendChild(removeBtn);
+        }
+        else if (options.posticon)
+        {
+            let icon2 = document.createElement('SPAN');
+            icon2.className = `fa fa-${options.posticon}`;
+            chip.appendChild(icon2);
+        }
+        
+        if (options.input)
+        {
+            let input = document.createElement('INPUT');
+            input.hidden = true;
+            input.name   = options.input;
+            input.value  = options.text;
+            input.setAttribute('value', options.text);
+
+            chip.appendChild(input);
+        }
+
+        return chip;
+    }
+
+    // Load into Hubble DOM core
+    Container.set('Chip', createChip);
+
+}());
+
+(function()
+{
+    /**
+     * JS Helper reference
+     * 
+     * @var {object}
+     */
+    const Helper = Container.Helper();
+
+    /**
      * Chip inputs
      *
      * @author    {Joe J. Howard}
@@ -14744,10 +14507,9 @@ function abort()
          */
         _initInput(_wrapper)
         {
-            var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
-            var _input = Helper.$('.js-chip-input', _wrapper);
+            let _input = Helper.$('.js-chip-input', _wrapper);
 
-            Helper.addEventListener(_removeBtns, 'click', this._removeChip);
+            Helper.addEventListener(Helper.$All('.js-remove-btn', _wrapper), 'click', this._removeChip);
 
             Helper.addEventListener(_input, 'keyup', this._onKeyUp);
 
@@ -14765,7 +14527,7 @@ function abort()
          */
         _destroy(_wrapper)
         {
-            var _removeBtns = Helper.$All('.chip .remove-icon', _wrapper);
+            var _removeBtns = Helper.$All('.btn-chip .js-remove-btn', _wrapper);
             var _input = Helper.$('.js-chip-input', _wrapper);
 
             Helper.removeEventListener(_removeBtns, 'click', this._removeChip);
@@ -14846,7 +14608,7 @@ function abort()
          */
         _removeLastChip(_wrapper)
         {
-            var _chips = Helper.$All('.chip', _wrapper);
+            var _chips = Helper.$All('.btn-chip', _wrapper);
 
             if (!Helper.is_empty(_chips))
             {
@@ -14864,29 +14626,16 @@ function abort()
          */
         addChip(_value, _wrapper, _icon)
         {
-            _icon = typeof _icon === 'undefined' ? false : _icon;
-            var _name = _wrapper.dataset.inputName;
-            var _chip = document.createElement('span');
-            var _children = Helper.first_children(_wrapper);
-            var _classes = _wrapper.dataset.chipClass;
-            var _iconStr = '';
+            let chip = Container.Chip({
+                text       : _value.trim(),
+                removeable : true,
+                input      : _wrapper.dataset.inputName,
+                variant    : _wrapper.dataset.chipClass,
+            });
 
-            if (_classes)
-            {
-                _chip.className += ' ' + _classes;
-            }
+            _wrapper.insertBefore(chip, Helper.first_children(_wrapper).pop());
 
-            if (_icon)
-            {
-                _iconStr = '<span class="chip-icon"><span class="glyph-icon glyph-icon-' + _iconclass + '"></span></span>';
-            }
-
-            _chip.className = 'chip';
-            _chip.innerHTML = _iconStr + '<span class="chip-text">' + _value + '</span><span class="remove-icon"></span><input type="hidden" value="' + _value + '" name="' + _name + '">';
-
-            _wrapper.insertBefore(_chip, _children.pop());
-
-            Helper.addEventListener(_chip.querySelector('.remove-icon'), 'click', this._removeChip);
+            Helper.addEventListener(Helper.$('.js-remove-btn', chip), 'click', this._removeChip);
         }
 
         /**
@@ -14899,7 +14648,9 @@ function abort()
         {
             e = e || window.event;
 
-            Helper.remove_from_dom(Helper.closest(this, '.chip'));
+            e.preventDefault();
+
+            Helper.remove_from_dom(Helper.closest(this, '.btn-chip'));
         }
 
         /**
@@ -14913,7 +14664,7 @@ function abort()
         {
             var _result = [];
 
-            var _chips = Helper.$All('.chip input', _wrapper);
+            var _chips = Helper.$All('.btn-chip input', _wrapper);
 
             for (var i = 0; i < _chips.length; i++)
             {
@@ -14955,7 +14706,7 @@ function abort()
          */
     	constructor()
         {
-            this._chips = Helper.$All('.js-chip-suggestions .chip');
+            this._chips = Helper.$All('.js-chip-suggestions .btn-chip');
 
             this._bind();
 
@@ -15004,10 +14755,11 @@ function abort()
         {
             e = e || window.event;
 
+            e.preventDefault();
+
             var _wrapper = Helper.closest(this, '.js-chip-suggestions');
-            var _id = _wrapper.dataset.inputTarget;
-            var _input = Helper.$('#' + _id);
-            var _text = this.innerText.trim();
+            var _input   = Helper.$('#' + _wrapper.dataset.inputTarget);
+            var _text    = this.innerText.trim();
 
             if (!_input || !Helper.in_dom(_input))
             {
@@ -15017,7 +14769,7 @@ function abort()
             }
 
             // Chips input
-            if (Helper.has_class(_input, 'js-chips-input'))
+            if (Helper.has_class(_input, '.js-chips-input'))
             {
                 Container.ChipInputs().addChip(_text, _input);
 
@@ -15026,23 +14778,11 @@ function abort()
                 return;
             }
 
+            let val = Helper.attr(_input, 'value');
 
-            var _chip = document.createElement('span');
-            var _classes = _wrapper.dataset.chipClass;
-            var _space = '';
-            _chip.className = 'chip';
+            Helper.attr(_input, 'value',  val === '' ? _text : `${val} ${_text}`);
 
-            if (_classes)
-            {
-                _chip.className += _classes;
-            }
-
-            if (_input.value !== '')
-            {
-                _space = ' ';
-            }
-
-            _input.value += _space + _text;
+            Helper.trigger_event(_input, 'change');
 
             Helper.remove_from_dom(this);
         }
@@ -15055,7 +14795,7 @@ function abort()
 
 (function()
 {
-    const [$, $All, add_class, addEventListener, closest, has_class, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'remove_class', 'removeEventListener']).from('Helper');
+    const [$, $All, add_class, addEventListener, closest, has_class, remove_class, removeEventListener, trigger_event] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'remove_class', 'removeEventListener', 'trigger_event']).from('Helper');
 
     /**
      * Choice chips
@@ -15074,7 +14814,7 @@ function abort()
          */
         constructor()
         {
-            this._chips = $All('.js-choice-chips .chip');
+            this._chips = $All('.js-choice-chips .btn-chip');
 
             this._bind();
 
@@ -15124,19 +14864,21 @@ function abort()
             e = e || window.event;
 
             var _wrapper = closest(this, '.js-choice-chips');
+
             var _input = $('.js-choice-input', _wrapper);
 
             if (!has_class(this, 'selected'))
             {                
-                remove_class($('.chip.selected', _wrapper), 'selected');
+                remove_class($('.btn-chip.selected', _wrapper), 'selected');
 
                 add_class(this, 'selected');
 
                 if (_input)
                 {
-                    _input.value = this.dataset.value;
+                    _input.value = this.dataset.value || this.innerText.trim();
 
-                    Container.Events().fire('Chips:selected', [this.dataset.value, !has_class(this, 'selected')]);
+                    trigger_event(_input, 'input');
+                    trigger_event(_input, 'change');
                 }
             }
         }
@@ -15173,7 +14915,7 @@ function abort()
          */
     	constructor()
         {
-            this._chips = Helper.$All('.js-filter-chips .chip');
+            this._chips = Helper.$All('.js-filter-chips .btn-chip');
 
             this._bind();
 
@@ -15222,7 +14964,9 @@ function abort()
         {
             e = e || window.event;
 
-            Container.Events().fire('Chips:selected', [this.dataset.value, !Helper.has_class(this, 'checked')]);
+            e.preventDefault();
+
+            console.log('clicked');
 
             Helper.toggle_class(this, 'checked');
         }
@@ -15383,7 +15127,6 @@ function abort()
 
     class Backdrop
     {
-        
         /**
          * Module constructor
          *
@@ -15774,6 +15517,7 @@ function abort()
     Hubble.dom().register('ImageZoom', ImageZoom);
 
 }());
+
 
 
 // Boot Hubble

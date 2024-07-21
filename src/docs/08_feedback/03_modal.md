@@ -112,7 +112,7 @@ Here's another example using options
                 confirmClass     : 'btn btn-pure btn-primary',
                 overlay          : 'dark',
                 extras           : '<img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />',
-                callbackRender   : () => Container.Hubble().dom().refresh('LazyLoad')
+                callbackRender   : () => Hubble.dom().refresh('LazyLoad')
             }));
         });
     </script>
@@ -128,7 +128,7 @@ Container.Modal( {
     confirmClass     : 'btn btn-pure btn-primary',
     overlay          : 'dark',
     extras           : '<img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />',
-    callbackRender   : () => Container.Hubble().dom().refresh('LazyLoad')
+    callbackRender   : () => Hubble.dom().refresh('LazyLoad')
 });
 ```
 

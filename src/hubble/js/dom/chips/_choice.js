@@ -1,6 +1,6 @@
 (function()
 {
-    const [$, $All, add_class, addEventListener, closest, has_class, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'remove_class', 'removeEventListener']).from('Helper');
+    const [$, $All, add_class, addEventListener, closest, has_class, remove_class, removeEventListener, trigger_event] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'remove_class', 'removeEventListener', 'trigger_event']).from('Helper');
 
     /**
      * Choice chips
@@ -19,7 +19,7 @@
          */
         constructor()
         {
-            this._chips = $All('.js-choice-chips .chip');
+            this._chips = $All('.js-choice-chips .btn-chip');
 
             this._bind();
 
@@ -69,19 +69,21 @@
             e = e || window.event;
 
             var _wrapper = closest(this, '.js-choice-chips');
+
             var _input = $('.js-choice-input', _wrapper);
 
             if (!has_class(this, 'selected'))
             {                
-                remove_class($('.chip.selected', _wrapper), 'selected');
+                remove_class($('.btn-chip.selected', _wrapper), 'selected');
 
                 add_class(this, 'selected');
 
                 if (_input)
                 {
-                    _input.value = this.dataset.value;
+                    _input.value = this.dataset.value || this.innerText.trim();
 
-                    Container.Events().fire('Chips:selected', [this.dataset.value, !has_class(this, 'selected')]);
+                    trigger_event(_input, 'input');
+                    trigger_event(_input, 'change');
                 }
             }
         }

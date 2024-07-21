@@ -25,6 +25,7 @@
     	constructor()
         {
             this._pops = [];
+
             this._nodes = [];
 
             // Find nodes
@@ -107,7 +108,6 @@
             var closeBtn = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="glyph-icon glyph-icon-cross3"></span></button>' : '';
             var pop = '<div class="popover-content"><p>' + content + '</p></div>';
 
-
             if (title)
             {
                 pop = closeBtn + '<h5 class="popover-title">' + title + '</h5>' + pop;
@@ -133,11 +133,11 @@
             if (evnt === 'click')
             {
                 addEventListener(trigger, 'click', this._clickHandler);
+
                 window.addEventListener('resize', this._windowResize);
             }
             else
-            {
-                var _this = this;
+            {                
                 addEventListener(trigger, 'mouseenter', this._hoverOver);
                 addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
             }
@@ -151,9 +151,11 @@
         _hoverLeavTimeout(e)
         {
             e = e || window.event;
+
             setTimeout(function()
             {
                 Container.get('Popovers')._hoverLeave(e);
+                
             }, 300);
         }
 

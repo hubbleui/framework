@@ -8,6 +8,7 @@
         <script src="../../../build/js/lazyload.js"></script>
         <link rel="stylesheet" href="../../../build/css/lazyload.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../build/css/hubble-icons.css">
         <link rel="stylesheet" href="../../../build/css/hubble.css">
         <link rel="stylesheet" href="../../../build/css/docs.css">
     </head>
@@ -168,6 +169,8 @@
             <li class="menu-item"><a  href="../../forms/checkbox/index.html">Checkbox</a></li>
             <li class="menu-item"><a  href="../../forms/radio/index.html">Radio</a></li>
             <li class="menu-item"><a  href="../../forms/switch/index.html">Switch</a></li>
+            <li class="menu-item"><a  href="../../forms/chips/index.html">Chips</a></li>
+            <li class="menu-item"><a  href="../../forms/range/index.html">Range</a></li>
             <li class="menu-item"><a  href="../../forms/progress/index.html">Progress</a></li>
             <li class="menu-item"><a  href="../../forms/input-mask/index.html">Input Mask</a></li>
             <li class="menu-item"><a  href="../../forms/results/index.html">Results</a></li>
@@ -230,7 +233,129 @@
                         <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger"> Documentation Menu </button>
                     </div>
                     <article class="docs-body">
-                        
+                        <h1 id="popover">Popover</h1>
+<p>Similar to tooltip, popover allows you to display helper content and information to the user without taking up space in layouts. Popover are like tooltips but allow more customization and are typically used to larger blocks of information. </p>
+<hr />
+<ul>
+<li><a href="#markup">Markup</a></li>
+<li><a href="#markup">Options</a></li>
+<li><a href="#javascript-instantiation">JavaScript Instantiation</a></li>
+<li><a href="#css-customization">CSS Customization</a></li>
+</ul>
+<hr />
+<h3 id="markup">Markup</h3>
+<p>Popovers can be instantiated automatically via HTML through a combination of classes and data-attributes. Below is an example of a basic hover popover.</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center">
+        <button class="btn js-popover"data-popover-title="Popover Title" data-popover-content="Aliqua commodo fugiat pariatur fugiat est dolor ut cillum dolore esse aliquip voluptate dolore labore." data-popover-direction="top" data-popover-event="click">Click me!</button>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;button 
+    class="btn js-popover"
+    data-popover-title="Popover Title"
+    data-popover-content="Aliqua commodo..."
+    data-popover-direction="top"
+    data-popover-event="click"&gt;Click me!&lt;/button&gt;</code></pre>
+<hr />
+<h3 id="data-attributes">Data attributes</h3>
+<p>Data attributes placed on the target element define various behavior of the popover. The <code>data-popover-direction</code>, <code>data-popover-content</code>, <code>data-popover-title</code> must be used for the popover to be displayed correctly - All other <code>data-attributes</code> are optional.</p>
+<table>
+<thead>
+<tr>
+<th id="attribute">Attribute</th>
+<th id="possible_values">Possible Values</th>
+<th id="behavior">Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data-popover-theme</code></td>
+<td><code>dark</code> <code>light</code></td>
+<td>Changes the theme of the popover.</td>
+</tr>
+<tr>
+<td><code>data-popover-direction</code></td>
+<td><code>top</code> <code>bottom</code> <code>left</code> <code>right</code></td>
+<td>Changes the direction of the popover.</td>
+</tr>
+<tr>
+<td><code>data-popover-title</code></td>
+<td><code>string</code></td>
+<td>The string to placed as the popover title.</td>
+</tr>
+<tr>
+<td><code>data-popover-content</code></td>
+<td><code>string</code></td>
+<td>The string to placed as the popover text content.</td>
+</tr>
+<tr>
+<td><code>data-popover-type</code></td>
+<td><code>popover-primary</code> <code>popover-info</code> <code>popover-success</code> <code>popover-warning</code> <code>popover-danger</code></td>
+<td>The contextual classname. Changes the background color of the popover title.</td>
+</tr>
+<tr>
+<td><code>data-popover-event</code></td>
+<td><code>click</code> <code>hover</code></td>
+<td>Defines whether the popover is displayed on <code>:hover</code>, or toggled with a click.</td>
+</tr>
+<tr>
+<td><code>data-popover-animate</code></td>
+<td><code>pop</code> <code>fade</code></td>
+<td>Changes the popover animation when it is displayed.</td>
+</tr>
+<tr>
+<td><code>data-popover-target</code></td>
+<td><code>string (node id)</code></td>
+<td>Optional node id to clone and copy into the popover</td>
+</tr>
+</tbody>
+</table>
+<div class="code-content-example">
+    <div class="container-fuid">
+        <button class="btn btn-default js-popover" data-popover-title="Popover Title" data-popover-content="Laborum qui aute nulla reprehenderit culpa dolore non eu proident do ut tempor aliqua magna." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="click" data-popover-animate="pop"> Click Me! </button>
+        <button class="btn btn-default js-popover" data-popover-title="Popover Title" data-popover-content="Ullamco laborum velit dolore do minim cillum minim labore sint excepteur sint laboris cupidatat proident dolor." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="hover" data-popover-animate="fade"> Hover Me! </button>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;button class="btn btn-default js-popover"
+    data-popover-title="Popover Title" 
+    data-popover-content="Anim dolor..."  
+    data-popover-direction="top" 
+    data-popover-type="popover-primary" 
+    data-popover-event="click" 
+    data-popover-animate="pop"&gt;Click Me!&lt;/button&gt;
+
+&lt;button class="btn btn-default js-popover"
+    data-popover-title="Popover Title" 
+    data-popover-content="Consequat ad..."  
+    data-popover-direction="top" 
+    data-popover-type="popover-primary" 
+    data-popover-event="hover" 
+    data-popover-animate="fade"&gt;Hover Me!&lt;/button&gt;</code></pre>
+<hr />
+<h3 id="templates">Templates</h3>
+<p>If you would prefer to customize the popover markup further, you can specify a DOM node by <code>id</code> in the <code>data-popover-target</code>.<br />
+The library will clone the target node and insert the copy into the popover's contents.</p>
+<blockquote>
+  <p>Use the <em>.hidden</em> class on the target element to hide it so that it's not visible on the page.</p>
+</blockquote>
+<div class="code-content-example">
+    <div class="container-fuid">
+        <button class="btn btn-default js-popover" data-popover-target="target-node" data-popover-event="click" data-popover-animate="pop" data-popover-direction="top"> Click Me! </button>
+        <div id="target-node" class="hidden pad-20">
+            <p>This node is cloned and inserted into the popover!</p>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;button class="btn btn-default js-popover"
+    data-popover-target="target-node" 
+    data-popover-event="click" 
+    data-popover-animate="pop"
+    data-popover-direction="top" 
+&gt;Click Me!
+&lt;/button&gt;
+&lt;div id="target-node" class="hidden pad-20"&gt;
+    &lt;p&gt;This node is cloned and inserted into the popover!&lt;/p&gt;
+&lt;/div&gt;</code></pre>
                     </article>
                 </div>
             </div>
@@ -265,17 +390,17 @@
                     <ul class="list-inline social-links">
                         <li>
                             <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/index.html">
-                                <span class="icon icon-social glyph-icon glyph-icon-github"></span>
+                                <span class="icon icon-social fa fa-github"></span>
                             </a>
                         </li>
                         <li>
                             <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
-                                <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
+                                <span class="icon icon-social fa fa-twitter"></span>
                             </a>
                         </li>
                         <li>
                             <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
-                                <span class="icon glyph-icon glyph-icon-arrow-up"></span>
+                                <span class="icon fa fa-arrow-up"></span>
                             </a>
                         </li>
                     </ul>

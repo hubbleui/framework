@@ -41,11 +41,53 @@ __animate_js(DOMElement, options)
 
         this.isTransform = this.CSSProperty.toLowerCase().includes('transform');
 
+        this.isScroll = this.CSSProperty.toLowerCase() === 'scrollto' && DOMElement === window;
+
         this.isColor = options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb');
+
+        this.clearAnimating();
 
         this.parseOptions();
 
         this.generateKeyframes();
+
+        return this;
+    }
+
+    AnimateJS.prototype.clearAnimating = function()
+    {
+        let CSSprop = this.CSSProperty;
+
+        let _this = this;
+
+        _helper.each(ANIMATING, function(i, animation)
+        {
+            if (animation.CSSProperty === CSSprop)
+            {
+                animation.stop(true);
+
+                ANIMATING.splice(i, 1);
+
+                return false;
+            }
+        });
+
+        const _complete = function()
+        {
+            _helper.each(ANIMATING, function(i, animation)
+            {
+                if (animation === _this)
+                {
+                    ANIMATING.splice(i, 1);
+
+                    return false;
+                }
+            });
+        };
+
+        ANIMATING.push(this);
+
+        this.callbacks.push(_complete);
     }
 
     AnimateJS.prototype.start = function()
@@ -54,7 +96,7 @@ __animate_js(DOMElement, options)
 
         clearInterval(this.intervalTimer);
 
-        this.clearTransitions();
+        if (!this.isScroll) this.clearTransitions();
 
         var _this = this;
 
@@ -72,7 +114,7 @@ __animate_js(DOMElement, options)
         const keyframe = this.keyframes.shift();
         const prop     = Object.keys(keyframe)[0];
 
-        _helper.css(this.DOMElement, prop, keyframe[prop]);
+        this.isScroll ? window.scrollTo(keyframe[0], keyframe[1]) : _helper.css(this.DOMElement, prop, keyframe[prop]);
 
         this.currentKeyframe++;
 
@@ -87,20 +129,25 @@ __animate_js(DOMElement, options)
 
             this.keyframes = [];
 
+            const DOMElement = this.DOMElement;
+
             _helper.each(this.callbacks, function(i, callback)
-            {
+            {                
                 if (_helper.is_function(callback))
                 {
-                    callback(this.DOMElement);
+                    callback(DOMElement);
                 }
-                
-            }, this);
+            });
         }
     }
 
     AnimateJS.prototype.parseOptions = function()
     {
-        if (this.isTransform)
+        if (this.isScroll)
+        {
+            this.parseScrollOptions();
+        }
+        else if (this.isTransform)
         {
             this.parseTransformOptions();
         }
@@ -112,6 +159,28 @@ __animate_js(DOMElement, options)
         {
             this.parseDefaultOptions();
         }
+    }
+
+    AnimateJS.prototype.parseScrollOptions = function()
+    {
+        if (!this.options.to.includes(','))
+        {
+            throw new Error('Invalid scroll value. Animating scroll should be provided as [Y, X].');
+        }
+
+        // We ignore 'from'
+        let startY = window.scrollY;
+        let startX = window.scrollX;
+        let endX   = parseInt(this.options.to.split(',').shift().trim());
+        let endY   = parseInt(this.options.to.split(',').pop().trim());
+        let distX  = Math.abs(endX < startX ? (startX - endX) : (endX - startX))
+        let distY  = Math.abs(endY < startY ? (startY - endY) : (endY - startY))
+
+        this.startValue    = [startX, startY];
+        this.endValue      = [endX, endY];
+        this.backAnimation = [endX < startX, endY < startY];
+        this.distance      = [distX, distY] ;
+        this.CSSunits      = '';
     }
 
     AnimateJS.prototype.parseDefaultOptions = function()
@@ -163,7 +232,6 @@ __animate_js(DOMElement, options)
         this.backAnimation = endVal < startVal;
         this.distance      = Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal));
         this.CSSunits      = endUnit;
-
     }
 
     AnimateJS.prototype.parseTransformOptions = function()
@@ -263,6 +331,25 @@ __animate_js(DOMElement, options)
         {
             this.keyFrameCount = 0;
 
+            this.stop();
+
+            return;
+        }
+
+        if (this.isScroll)
+        {
+            _helper.for(this.keyFrameCount, function(index)
+            {
+                let x = this.generateKeyframe(index, 0);
+                let y = this.generateKeyframe(index, 1);
+
+                this.keyframes.push([x, y]);
+                                
+            }, this);
+
+            // Fallback
+            this.keyframes.push([this.endValue[0], this.endValue[1]]);
+
             return;
         }
 
@@ -288,9 +375,9 @@ __animate_js(DOMElement, options)
         }, this);
 
         // Failsafe
-        if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== this.endValue)
+        if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== `${this.endValue}${this.CSSunits}`)
         {
-            this.keyframes.push({[this.CSSProperty]: this.endValue});
+            this.keyframes.push({[this.CSSProperty]: `${this.endValue}${this.CSSunits}`});
         }
     }
 
@@ -303,11 +390,11 @@ __animate_js(DOMElement, options)
             return { [this.CSSProperty]: this.mixColors(this.startValue, this.endValue, change) };
         }
         
-        const backAnimation = this.isTransform ? this.backAnimation[transformIndex] : this.backAnimation;
+        const backAnimation = this.isTransform || this.isScroll ? this.backAnimation[transformIndex] : this.backAnimation;
 
-        const startValue = this.isTransform ? this.startValue[transformIndex] : this.startValue;
+        const startValue = this.isTransform || this.isScroll ? this.startValue[transformIndex] : this.startValue;
 
-        const distance = this.isTransform ? this.distance[transformIndex] : this.distance;
+        const distance = this.isTransform || this.isScroll ? this.distance[transformIndex] : this.distance;
 
         const change = (distance * this.tween(this.easing, (index / this.keyFrameCount)));
 
@@ -321,6 +408,11 @@ __animate_js(DOMElement, options)
         
         var keyframe = { [property]:  `${prefix}${keyVal}${suffix}` };
         
+        if (this.isScroll)
+        {
+            return keyVal;
+        }
+
         if (this.isTransform && _helper.is_undefined(this.keyframes[index]))
         {
             keyframe[property] = `${this.baseTransforms} ${keyframe[property]}`.trim();
@@ -403,5 +495,4 @@ __animate_js(DOMElement, options)
     }
 
     return (new AnimateJS(DOMElement, options)).start();
-    
 }

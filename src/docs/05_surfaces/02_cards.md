@@ -370,7 +370,7 @@ Add an optional header within a card by using `.card-header`, remember to wrap a
                 <div class="card-header-right">
                     <div class="drop-container">
                         <button type="button" class="btn btn-pure btn-circle btn-sm btn-dropdown js-drop-trigger">
-                            <span class="glyph-icon glyph-icon-flickr"></span>
+                            <span class="fa fa-flickr"></span>
                         </button>
                         <div class="drop-menu drop-sw raised">
                             <div class="drop">
@@ -487,7 +487,7 @@ Add an optional footer within a card by using `.card-footer`, remember to wrap a
             </div>
             <div class="card-footer">
                 <div class="card-footer-left">
-                    <span class="glyph-icon glyph-icon-github icon-lg"></span>
+                    <span class="fa fa-github icon-lg"></span>
                 </div>
                 <div class="card-footer-content">
                     <button class="btn btn-pure btn-primary">Action</button>
@@ -495,7 +495,7 @@ Add an optional footer within a card by using `.card-footer`, remember to wrap a
                 <div class="card-footer-right">
                     <div class="drop-container">
                         <button type="button" class="btn btn-pure btn-circle btn-sm btn-dropdown js-drop-trigger">
-                            <span class="glyph-icon glyph-icon-flickr"></span>
+                            <span class="fa fa-flickr"></span>
                         </button>
                         <div class="drop-menu drop-nw raised">
                             <div class="drop">

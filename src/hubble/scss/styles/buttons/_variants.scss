@@ -1,29 +1,36 @@
 // Standard buttons
 @mixin button($color, $background)
 {
-    $colorName : _color-name-from-var($background);
+    $basename : _color-name-from-var($background);
     
     // Base
     --hb-btn-color: #{$color};
     --hb-btn-bg-color: #{$background};
 
     // Hover
-    --hb-btn-bg-color-hover: var(--hb-#{$colorName}-500);
+    --hb-btn-bg-color-hover: var(--hb-#{$basename}-500);
 
     // Active
     --hb-btn-color-active: #{$color};
-    --hb-btn-bg-color-active: var(--hb-#{$colorName}-600);
+    --hb-btn-bg-color-active: var(--hb-#{$basename}-600);
     --hb-btn-box-shadow-active: none;
 
     // Loader / Icon
     --hb-btn-loader-color: #{$color};
     --hb-btn-color-hover: #{$color};
+
+    &.selected,
+    &.checked
+    {
+        color: #{$color};
+        background-color: var(--hb-#{$basename}-600);
+    }
 }
 
 // Outline buttons
 @mixin button-outline($color)
 {
-    $rgb: _color-name-from-var($color) + '-rgb';
+    $basename : _color-name-from-var($color);
 
     // Base
     --hb-btn-color: #{$color};
@@ -33,20 +40,26 @@
 
     // Hover
     --hb-btn-color-hover: #{$color};
-    --hb-btn-bg-color-hover: rgba(var(--hb-#{$rgb}), 0.04);
+    --hb-btn-bg-color-hover: var(--hb-#{$basename}-100);
 
     // Active
     --hb-btn-color-active: #{$color};
-    --hb-btn-bg-color-active: rgba(var(--hb-#{$rgb}), 0.15);
+    --hb-btn-bg-color-active: var(--hb-#{$basename}-200);
 
     // Icon / Loader
     --hb-btn-loader-color: #{$color};
+
+    &.selected,
+    &.checked
+    {
+        --hb-btn-border:  1px solid var(--hb-#{$basename}-600);
+    }
 }
 
 // Pure buttons
 @mixin button-pure($color)
 {
-    $rgb: _color-name-from-var($color) + '-rgb';
+    $basename : _color-name-from-var($color);
 
     // Base
     --hb-btn-color: #{$color};
@@ -55,11 +68,11 @@
 
     // Hover
     --hb-btn-color-hover: #{$color};
-    --hb-btn-bg-color-hover: rgba(var(--hb-#{$rgb}), 0.04);
+    --hb-btn-bg-color-hover: var(--hb-#{$basename}-100);
     
     // Active
     --hb-btn-color-active: #{$color};
-    --hb-btn-bg-color-active: rgba(var(--hb-#{$rgb}), 0.15);
+    --hb-btn-bg-color-active: var(--hb-#{$basename}-200);
 
     // Icon / Loader
     --hb-btn-loader-color: #{$color};
@@ -78,6 +91,12 @@
 .btn.btn-outline
 {
     @include button-outline( var(--hb-gray) );
+
+    &.selected,
+    &.checked
+    {
+        --hb-btn-border:  1px solid var(--hb-brand-primary);
+    }
 }
 @each $context, $colors in $contexts
 {    

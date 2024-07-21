@@ -48,7 +48,7 @@ blockquote
     {    
         &.bq-#{$context}
         {
-            --hb-bq-bg: #{map-get($colors, "color")};
+            --hb-bq-bg: var(--hb-#{_color-name-from-var(map-get($colors, "color"))-400});
         }
     }
 }

@@ -52,7 +52,6 @@ coordinates(DOMElement)
         this.css(DOMElement, 'display', false);
     }
     
-
     return {
         top: top,
         left: left,

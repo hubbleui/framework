@@ -20,7 +20,7 @@
      * 
      * @var {obj}
      */
-    var Ajax = Hubble.require('Ajax');
+    var Ajax = Container.Ajax();
 
     /**
      * AJAX URL to list paginated reviews
@@ -184,8 +184,8 @@
 
         window.removeEventListener('popstate', this._stateChange, false);
 
-        Hubble.require('Events').off('pjax:start', this._onStart);
-        Hubble.require('Events').off('pjax:complete', this._onComplete);
+        //Hubble.require('Events').off('pjax:start', this._onStart);
+        //Hubble.require('Events').off('pjax:complete', this._onComplete);
     }
 
     /**
@@ -199,8 +199,8 @@
 
         _requestedUrls.push(this._normaliseUrl(window.location.href));
 
-        Hubble.require('Events').on('pjax:start', this._onStart);
-        Hubble.require('Events').on('pjax:complete', this._onComplete);
+        //Hubble.require('Events').on('pjax:start', this._onStart);
+        //Hubble.require('Events').on('pjax:complete', this._onComplete);
     }
 
     /**
@@ -269,7 +269,7 @@
      */
     Pjax.prototype._onStart = function()
     {
-        Hubble.require('NProgress').start();
+        Container.NProgress().start();
     }
 
     /**
@@ -279,7 +279,7 @@
      */
     Pjax.prototype._onComplete = function()
     {
-        Hubble.require('NProgress').done();
+        Container.NProgress().done();
         Hubble.dom().refresh();
     }
 
@@ -384,13 +384,13 @@
         _requestedUrls.push(locationObj['location']);
 
         // Fire the start event
-        Hubble.require('Events').fire('pjax:start', locationObj);
+        //Hubble.require('Events').fire('pjax:start', locationObj);
 
         // Send GET request
         this._ajax = Ajax.get(locationObj['location'], null, function(HTML)
         {
             // Fire the success event
-            Hubble.require('Events').fire('pjax:success', locationObj);
+            //Hubble.require('Events').fire('pjax:success', locationObj);
 
             // Handle the response
             _this._handleSuccess(locationObj, HTML, stateChange);
@@ -400,7 +400,7 @@
         function(error)
         {
             // Fire the error event
-            Hubble.require('Events').fire('pjax:error', locationObj);
+            //Hubble.require('Events').fire('pjax:error', locationObj);
 
             // Handle the error
             _this._handleError(locationObj, error);

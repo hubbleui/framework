@@ -136,22 +136,22 @@ Add the `.raised-1`, `.raised-2`, or `.raised-3` classes to any button elevate i
 
 ### On-Primary buttons
 
-Add the contextual `.btn-on-primary` class for buttons that are on a primary background.</p>
+Add the contextual `.btn-white` class for buttons that are on a primary background.</p>
 
 <div class="code-content-example">
     <div class="container-fuid bg-primary pad-20">
-        <button class="btn btn-on-primary" type="button">.btn-on-primary</button>
-        <button class="btn btn-on-primary btn-outline" type="button">.btn-outline</button>
-        <button class="btn btn-on-primary btn-pure" type="button">.btn-pure</button>
-        <button class="btn btn-on-primary with-loading active" type="button"><span class="loader loader-3"></span> Spin! </button>
+        <button class="btn btn-white" type="button">.btn-white</button>
+        <button class="btn btn-white btn-outline" type="button">.btn-outline</button>
+        <button class="btn btn-white btn-pure" type="button">.btn-pure</button>
+        <button class="btn btn-white with-loading active" type="button"><span class="loader loader-3"></span> Spin! </button>
     </div>
 </div>
 
 ```html
-<button class="btn btn-on-primary" type="button">.btn-on-primary</button>
-<button class="btn btn-on-primary btn-outline" type="button">.btn-outline</button>
-<button class="btn btn-on-primary btn-pure" type="button">.btn-pure</button>
-<button class="btn btn-on-primary with-loading active" type="button"><svg>...</svg></button>
+<button class="btn btn-white" type="button">.btn-white</button>
+<button class="btn btn-white btn-outline" type="button">.btn-outline</button>
+<button class="btn btn-white btn-pure" type="button">.btn-pure</button>
+<button class="btn btn-white with-loading active" type="button"><svg>...</svg></button>
 ```
 
 ---
@@ -163,26 +163,26 @@ Add the `.btn-circle` class to any button to change the style to a circled type.
 <div class="code-content-example">
     <div class="container-fuid">
         <button class="btn btn-primary btn-circle btn-xs" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>
+            <span class="fa fa-headphones"></span>
         </button>
         <button class="btn btn-info btn-circle btn-sm" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>
+            <span class="fa fa-headphones"></span>
         </button>
         <button class="btn btn-success btn-circle" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>
+            <span class="fa fa-headphones"></span>
         </button>
         <button class="btn btn-warning btn-circle btn-lg" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>
+            <span class="fa fa-headphones"></span>
         </button>
         <button class="btn btn-danger btn-circle btn-xl" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>
+            <span class="fa fa-headphones"></span>
         </button>
     </div>
 </div>
 
 ```html
 <button class="btn btn-primary btn-circle" type="button">
-    <span class="glyph-icon glyph-icon-headphones"></span>
+    <span class="fa fa-headphones"></span>
 </button>
 ```
 
@@ -195,35 +195,35 @@ You can add icons to buttons using the font awesome icon library. No special mar
 <div class="code-content-example">
     <div class="container-fuid">
         <button class="btn" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>&nbsp;&nbsp;.btn
+            <span class="fa fa-headphones"></span>&nbsp;&nbsp;.btn
         </button>
         <button class="btn btn-outline" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>&nbsp;&nbsp;.btn-outline
+            <span class="fa fa-headphones"></span>&nbsp;&nbsp;.btn-outline
         </button>
         <button class="btn btn-pure" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>&nbsp;&nbsp;.btn-pure
+            <span class="fa fa-headphones"></span>&nbsp;&nbsp;.btn-pure
         </button>
         <button class="btn" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>
+            <span class="fa fa-headphones"></span>
         </button>
         <button class="btn btn-outline" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>
+            <span class="fa fa-headphones"></span>
         </button>
         <button class="btn btn-pure" type="button">
-            <span class="glyph-icon glyph-icon-headphones"></span>
+            <span class="fa fa-headphones"></span>
         </button>
     </div>
 </div>
 
 ```html
 <button class="btn" type="button">
-    <span class="glyph-icon glyph-icon-headphones"></span>&nbsp;&nbsp;.btn
+    <span class="fa fa-headphones"></span>&nbsp;&nbsp;.btn
 </button>
 <button class="btn btn-outline" type="button">
-    <span class="glyph-icon glyph-icon-headphones"></span>&nbsp;&nbsp;.btn-outline
+    <span class="fa fa-headphones"></span>&nbsp;&nbsp;.btn-outline
 </button>
 <button class="btn btn-pure" type="button">
-    <span class="glyph-icon glyph-icon-headphones"></span>&nbsp;&nbsp;.btn-pure
+    <span class="fa fa-headphones"></span>&nbsp;&nbsp;.btn-pure
 </button>
 ```
 
@@ -235,11 +235,11 @@ Buttons can be sized using 4 different sizing classes `.btn-xs`, `.btn-sm`, `.bt
 
 <div class="code-content-example">
     <div class="container-fuid">
-        <button class="btn btn-xs" type="button">.btn-xs</button>
-        <button class="btn btn-sm" type="button">.btn-sm</button>
-        <button class="btn" type="button">.btn</button>
-        <button class="btn btn-lg" type="button">.btn-lg</button>
-        <button class="btn btn-xl" type="button">.btn-xl</button>
+        <button class="btn btn-xs" type="button"><span class="fa fa-heart"></span>.btn-xs</button>
+        <button class="btn btn-sm" type="button"><span class="fa fa-heart"></span>.btn-sm</button>
+        <button class="btn" type="button"><span class="fa fa-heart"></span>.btn</button>
+        <button class="btn btn-lg" type="button"><span class="fa fa-heart"></span>.btn-lg</button>
+        <button class="btn btn-xl" type="button"><span class="fa fa-heart"></span>.btn-xl</button>
     </div>
 </div>
 
@@ -305,44 +305,44 @@ Create groups by wrapping a set of buttons in a `.btn-group` classed element.
     <div class="container-fuid">
         <div class="btn-group floor-xs">
             <button class="btn btn-icon" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
             <button class="btn btn-icon" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
             <button class="btn btn-icon" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
             <button class="btn btn-icon" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
         </div>
         <div class="btn-group btn-pill floor-xs">
             <button class="btn btn-outline" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
             <button class="btn btn-outline" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
             <button class="btn btn-outline" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
             <button class="btn btn-outline" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
         </div>
         <div class="btn-group">
             <button class="btn btn-pure" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
             <button class="btn btn-pure" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
             <button class="btn btn-pure" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
             <button class="btn btn-pure" type="button">
-                <span class="glyph-icon glyph-icon-headphones icon-md"></span>
+                <span class="fa fa-headphones icon-md"></span>
             </button>
         </div>
     </div>
@@ -393,34 +393,34 @@ Button states are native, but work also with a class to use `.active`, `.hover`,
 <button class="btn disabled" type="button">Disabled</button>
 ```
 
-States for `btn-on-primary` will also work
+States for `btn-white` will also work
 
 <div class="code-content-example">
     <div class="bg-primary pad-20">
-        <button class="btn btn-on-primary" type="button">Normal</button>
-        <button class="btn btn-on-primary hover" type="button">Hover</button>
-        <button class="btn btn-on-primary active" type="button">Active</button>
-        <button class="btn btn-on-primary disabled" type="button">Disabled</button>
+        <button class="btn btn-white" type="button">Normal</button>
+        <button class="btn btn-white hover" type="button">Hover</button>
+        <button class="btn btn-white active" type="button">Active</button>
+        <button class="btn btn-white disabled" type="button">Disabled</button>
         <div class="row roof-xs floor-xs"></div>
         
-        <button class="btn btn-on-primary" type="button">Normal</button>
-        <button class="btn btn-on-primary hover" type="button">Hover</button>
-        <button class="btn btn-on-primary active" type="button">Active</button>
-        <button class="btn btn-on-primary disabled" type="button">Disabled</button>
-        
-        <div class="row roof-xs floor-xs"></div>
-        
-        <button class="btn btn-on-primary btn-outline" type="button">Normal</button>
-        <button class="btn btn-on-primary btn-outline hover" type="button">Hover</button>
-        <button class="btn btn-on-primary btn-outline active" type="button">Active</button>
-        <button class="btn btn-on-primary btn-outline disabled" type="button">Disabled</button>
+        <button class="btn btn-white" type="button">Normal</button>
+        <button class="btn btn-white hover" type="button">Hover</button>
+        <button class="btn btn-white active" type="button">Active</button>
+        <button class="btn btn-white disabled" type="button">Disabled</button>
         
         <div class="row roof-xs floor-xs"></div>
         
-        <button class="btn btn-on-primary btn-pure" type="button">Normal</button>
-        <button class="btn btn-on-primary btn-pure hover" type="button">Hover</button>
-        <button class="btn btn-on-primary btn-pure active" type="button">Active</button>
-        <button class="btn btn-on-primary btn-pure disabled" type="button">Disabled</button>
+        <button class="btn btn-white btn-outline" type="button">Normal</button>
+        <button class="btn btn-white btn-outline hover" type="button">Hover</button>
+        <button class="btn btn-white btn-outline active" type="button">Active</button>
+        <button class="btn btn-white btn-outline disabled" type="button">Disabled</button>
+        
+        <div class="row roof-xs floor-xs"></div>
+        
+        <button class="btn btn-white btn-pure" type="button">Normal</button>
+        <button class="btn btn-white btn-pure hover" type="button">Hover</button>
+        <button class="btn btn-white btn-pure active" type="button">Active</button>
+        <button class="btn btn-white btn-pure disabled" type="button">Disabled</button>
     </div>
 </div>
 

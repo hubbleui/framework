@@ -2,8 +2,8 @@
 {
     @if $curr-grid == null
     {
-        .flex-row > .col[class*="gutter-"],
-        .flex-row > .col[class*="-gutter"]
+        .flex-row > *[class*="gutter-"],
+        .flex-row > *[class*="-gutter"]
         {
             //width: calc( (var(--hb-col-width) - var(--hb-gutter-l)) - var(--hb-gutter-r));
             //flex: 1 0 calc( (var(--hb-col-width) - var(--hb-gutter-l)) - var(--hb-gutter-r));

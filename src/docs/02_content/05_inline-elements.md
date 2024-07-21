@@ -19,26 +19,26 @@ Hubble comes with a number of common  inline utility elements pre-styled to help
 
 Hubble comes with a complete icon library thanks to [IcoMoon](https://icomoon.io/). The library is free and comes with 675 individual icons.
 
-To create an icon, use a `<span>` element with the class `.glyph-icon` in addition to `.glyph-icon-[name]` with the icon name as per IcoMoon documentation.
+To create an icon, use a `<span>` element with the class `.glyph-icon` in addition to `.fa-[name]` with the icon name as per IcoMoon documentation.
 
 Icons can be sized using the `.icon-xs`, `.icon-md`, `.icon-lg`, `.icon-xl`, `.icon-xxl` modifier classes which are setup in `scss/_config.scss`.
 
 <div class="code-content-example">
     <div class="flex-row align-cols-center text-center col-gaps-xs">
-        <span class="glyph-icon glyph-icon-headphones icon-xs"></span>
-        <span class="glyph-icon glyph-icon-headphones icon-md"></span>
-        <span class="glyph-icon glyph-icon-headphones icon-lg"></span>
-        <span class="glyph-icon glyph-icon-headphones icon-xl"></span>
-        <span class="glyph-icon glyph-icon-headphones icon-xxl"></span>
+        <span class="fa fa-headphones icon-xs"></span>
+        <span class="fa fa-headphones icon-md"></span>
+        <span class="fa fa-headphones icon-lg"></span>
+        <span class="fa fa-headphones icon-xl"></span>
+        <span class="fa fa-headphones icon-xxl"></span>
     </div>
 </div>
 
 ```html
-<span class="glyph-icon glyph-icon-headphones icon-xs"></span>
-<span class="glyph-icon glyph-icon-headphones icon-md"></span>
-<span class="glyph-icon glyph-icon-headphones icon-lg"></span>
-<span class="glyph-icon glyph-icon-headphones icon-xl"></span>
-<span class="glyph-icon glyph-icon-headphones icon-xxl"></span>
+<span class="fa fa-headphones icon-xs"></span>
+<span class="fa fa-headphones icon-md"></span>
+<span class="fa fa-headphones icon-lg"></span>
+<span class="fa fa-headphones icon-xl"></span>
+<span class="fa fa-headphones icon-xxl"></span>
 ```
 
 ---
@@ -252,7 +252,7 @@ Hubble comes with 5 basic loading animators. Use the base class `.loader` with `
             <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
         </div>
         <div class="avatar">
-            <span class="glyph-icon glyph-icon-heart3 color-danger"></span>
+            <span class="fa fa-heart3 color-danger"></span>
         </div>
         <div class="avatar">
             <span class="initials">DT</span>
@@ -265,7 +265,7 @@ Hubble comes with 5 basic loading animators. Use the base class `.loader` with `
     <img ... />
 </div>
 <div class="avatar">
-    <span class="glyph-icon glyph-icon-heart3 color-danger"></span>
+    <span class="fa fa-heart3 color-danger"></span>
 </div>
 <div class="avatar">
     <span class="initials">DT</span>
@@ -280,10 +280,10 @@ Adjust sizing and backgrounds using the available sizing modifiers `.avatar-xs` 
             <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
         </div>
         <div class="avatar avatar-sm">
-            <span class="glyph-icon glyph-icon-heart3 color-danger"></span>
+            <span class="fa fa-heart3 color-danger"></span>
         </div>
         <div class="avatar avatar-md">
-            <span class="glyph-icon glyph-icon-heart3 color-danger"></span>
+            <span class="fa fa-heart3 color-danger"></span>
         </div>
         <div class="avatar avatar-lg">
             <span class="initials">DT</span>
@@ -300,11 +300,11 @@ Adjust sizing and backgrounds using the available sizing modifiers `.avatar-xs` 
 </div>
 
 <div class="avatar avatar-sm">
-    <span class="glyph-icon glyph-icon-heart3 color-danger"></span>
+    <span class="fa fa-heart3 color-danger"></span>
 </div>
 
 <div class="avatar avatar-md">
-    <span class="glyph-icon glyph-icon-heart3 color-danger"></span>
+    <span class="fa fa-heart3 color-danger"></span>
 </div>
 
 <div class="avatar avatar-lg">

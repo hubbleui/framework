@@ -45,7 +45,6 @@
 
     class Backdrop
     {
-        
         /**
          * Module constructor
          *

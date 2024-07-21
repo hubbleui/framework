@@ -116,7 +116,7 @@ You can add icons inside the `.form-field` wrapper as addons. Unlike input group
         <form>
             <div class="row floor-xs">
                 <div class="form-field row">
-                    <span class="glyph-icon glyph-icon-heart3"></span>
+                    <span class="fa fa-heart3"></span>
                     <input name="text" id="example_6" type="text" placeholder="Enter some text...">
                     <label for="example_6">Text Input</label>
                 </div>
@@ -125,15 +125,15 @@ You can add icons inside the `.form-field` wrapper as addons. Unlike input group
                 <div class="form-field row">
                     <input name="text" id="example_7" type="text" placeholder="Enter some text...">
                     <label for="example_7">Text Input</label>
-                    <span class="glyph-icon glyph-icon-heart3"></span>
+                    <span class="fa fa-heart3"></span>
                 </div>
             </div>
             <div class="row floor-xs">
                 <div class="form-field row">
-                    <span class="glyph-icon glyph-icon-heart3"></span>
+                    <span class="fa fa-heart3"></span>
                     <input name="text" id="example_8" type="text" placeholder="Enter some text...">
                     <label for="example_8">Text Input</label>
-                    <span class="glyph-icon glyph-icon-heart3"></span>
+                    <span class="fa fa-heart3"></span>
                 </div>
             </div>
         </form>
@@ -143,24 +143,24 @@ You can add icons inside the `.form-field` wrapper as addons. Unlike input group
 ```html
 <!-- Icon before input -->
  <div class="form-field row">
-    <span class="glyph-icon glyph-icon-heart3"></span>
+    <span class="fa fa-heart3"></span>
     <input name="text" id="text" type="text" placeholder="Enter some text...">
     <label>Text Input</label>
 </div>
 
 <!-- Icon after input -->
  <div class="form-field row">
-    <span class="glyph-icon glyph-icon-heart3"></span>
+    <span class="fa fa-heart3"></span>
     <input name="text" id="text" type="text" placeholder="Enter some text...">
     <label>Text Input</label>
 </div>
 
 <!-- Icon before & after input -->
 <div class="form-field row">
-    <span class="glyph-icon glyph-icon-heart3"></span>
+    <span class="fa fa-heart3"></span>
     <input name="text" id="text" type="text" placeholder="Enter some text...">
     <label>Text Input</label>
-    <span class="glyph-icon glyph-icon-heart3"></span>
+    <span class="fa fa-heart3"></span>
 </div>
 ```
 
@@ -443,7 +443,7 @@ Hubble's forms and form elements come pre-styled out of the box. Below is a list
 <span class="upload-cover">
 <input type="file" class="js-file-input" name="file_input">
 </span>
-<span class="glyph-icon glyph-icon-upload"></span>
+<span class="fa fa-upload"></span>
 </button>
 </div>
 </div>

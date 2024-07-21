@@ -13,11 +13,11 @@
 
 // Vendors
 @import 'vendor/_promise.js';
-@import 'vendor/_smoothScroll.js';
 @import 'vendor/_nprogress.js';
 @import 'vendor/_pluralize.js';
 
 // Utility
+@import 'utility/_smoothScroll.js';
 @import 'utility/_cookie.js';
 @import 'utility/_inputMasker.js';
 @import 'utility/_modal.js';
@@ -28,6 +28,7 @@
 @import 'utility/_skeleton.js';
 
 // DOM Module
+@import 'dom/_ripple.js';
 @import "dom/pjax/_pjax.js";
 @import "dom/pjax/_links.js";
 @import 'dom/scrollbar/_handler.js';
@@ -40,12 +41,12 @@
 @import 'dom/_drawer.js';
 @import 'dom/popover/_handler.js';
 @import 'dom/popover/_popovers.js';
-@import 'dom/_ripple.js';
 @import 'dom/_inputMasks.js';
 @import 'dom/_messages.js';
 @import 'dom/_waypoint.js';
 @import 'dom/_inputs.js';
 @import 'dom/_fileInput.js';
+@import 'dom/chips/_chip.js'
 @import 'dom/chips/_input.js';
 @import 'dom/chips/_suggestion.js';
 @import 'dom/chips/_choice.js';
@@ -53,6 +54,7 @@
 @import 'dom/_clickTriggers.js';
 @import 'dom/_backdrop.js';
 @import 'dom/_imgZoom.js';
+
 
 // Boot Hubble
 @import 'application/_boot.js';

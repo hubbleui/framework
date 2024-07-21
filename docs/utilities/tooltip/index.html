@@ -8,6 +8,7 @@
         <script src="../../../build/js/lazyload.js"></script>
         <link rel="stylesheet" href="../../../build/css/lazyload.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../build/css/hubble-icons.css">
         <link rel="stylesheet" href="../../../build/css/hubble.css">
         <link rel="stylesheet" href="../../../build/css/docs.css">
     </head>
@@ -168,6 +169,8 @@
             <li class="menu-item"><a  href="../../forms/checkbox/index.html">Checkbox</a></li>
             <li class="menu-item"><a  href="../../forms/radio/index.html">Radio</a></li>
             <li class="menu-item"><a  href="../../forms/switch/index.html">Switch</a></li>
+            <li class="menu-item"><a  href="../../forms/chips/index.html">Chips</a></li>
+            <li class="menu-item"><a  href="../../forms/range/index.html">Range</a></li>
             <li class="menu-item"><a  href="../../forms/progress/index.html">Progress</a></li>
             <li class="menu-item"><a  href="../../forms/input-mask/index.html">Input Mask</a></li>
             <li class="menu-item"><a  href="../../forms/results/index.html">Results</a></li>
@@ -230,7 +233,117 @@
                         <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger"> Documentation Menu </button>
                     </div>
                     <article class="docs-body">
-                        
+                        <h1 id="tooltip">Tooltip</h1>
+<hr />
+<ul>
+<li><a href="#markup">Markup</a></li>
+<li><a href="#direction">Direction</a></li>
+<li><a href="#css-customization">CSS Customization</a></li>
+</ul>
+<hr />
+<h3 id="markup">Markup</h3>
+<p>Hubble comes with a simple CSS tooltip that's easy to use. Simple add the <code>.tooltipped</code> class with the direction <code>.tooltipped-[direction]</code> you want the toooltip to be displayed.</p>
+<p>Then add the content you want displayed as the <code>data-tooltip</code> attribute.</p>
+<div class="code-content-example">
+    <div class="container-fuid text-center">
+        <button class="btn btn-default tooltipped tooltipped-n" data-tooltip="Hello World!">.tooltipped</button>
+    </div>
+</div>
+<pre><code class="html language-html">    &lt;button class="tooltipped tooltipped-n" data-tooltip="Hello World!"&gt;...&lt;/button&gt;</code></pre>
+<hr />
+<h3 id="direction">Direction</h3>
+<p>Use the directional classes <code>.tooltipped-[direction]</code> to change the direction of tooltip.</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center col-gaps-xs row-gaps-xs">
+        <button class="btn btn-default tooltipped tooltipped-ne" data-tooltip="Hello World!">NE </button>
+        <button class="btn btn-default tooltipped tooltipped-n" data-tooltip="Hello World!">N</button>
+        <button class="btn btn-default tooltipped tooltipped-nw" data-tooltip="Hello World!">NW</button>
+        <div class="clearfix floor-xs"></div>
+        <button class="btn btn-default tooltipped tooltipped-se" data-tooltip="Hello World!">SE </button>
+        <button class="btn btn-default tooltipped tooltipped-s" data-tooltip="Hello World!">S</button>
+        <button class="btn btn-default tooltipped tooltipped-sw" data-tooltip="Hello World!">SW</button>
+        <div class="clearfix floor-xs"></div>
+        <button class="btn btn-default tooltipped tooltipped-e" data-tooltip="Hello World!">E</button>
+        <button class="btn btn-default tooltipped tooltipped-w" data-tooltip="Hello World!">W</button>
+    </div>
+</div>
+<pre><code class="html language-html">    &lt;button class="btn btn-default tooltipped tooltipped-ne" data-tooltip="Hello World!"&gt;
+        .tooltipped-ne
+    &lt;/button&gt; 
+    &lt;button class="btn btn-default tooltipped tooltipped-n" data-tooltip="Hello World!"&gt;
+        .tooltipped-n
+    &lt;/button&gt;
+    &lt;button class="btn btn-default tooltipped tooltipped-nw" data-tooltip="Hello World!"&gt;
+        .tooltipped-nw
+    &lt;/button&gt;
+    &lt;div class="clearfix floor-xs"&gt;&lt;/div&gt;
+    &lt;button class="btn btn-default tooltipped tooltipped-se" data-tooltip="Hello World!"&gt;
+        .tooltipped-se
+    &lt;/button&gt; 
+    &lt;button class="btn btn-default tooltipped tooltipped-s" data-tooltip="Hello World!"&gt;
+        .tooltipped-s
+    &lt;/button&gt;
+    &lt;button class="btn btn-default tooltipped tooltipped-sw" data-tooltip="Hello World!"&gt;
+        .tooltipped-sw
+    &lt;/button&gt;
+    &lt;div class="clearfix floor-xs"&gt;&lt;/div&gt;
+    &lt;button class="btn btn-default tooltipped tooltipped-e" data-tooltip="Hello World!"&gt;
+        .tooltipped-e
+    &lt;/button&gt;
+    &lt;button class="btn btn-default tooltipped tooltipped-w" data-tooltip="Hello World!"&gt;
+        .tooltipped-w
+    &lt;/button&gt;</code></pre>
+<hr />
+<h3 id="css-customization">CSS Customization</h3>
+<p>The grid system uses a combination of both local CSS variables on all components for enhanced component customization and styling. The base values are used by the UI to create all the sizing. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported, too.</p>
+<p>Customization via Sass can be made in the <code>src/scss/_config.scss</code> file in Hubble's source.</p>
+<div class="code-content-example">
+    <div class="container-fuid text-center">
+         <style scoped>
+            .tooltipped-custom
+            {
+                --hb-tooltip-bg: var(--hb-color-hotpink);
+                --hb-tooltip-font-size: 13px;
+                --hb-tooltip-font-weight: 600;
+            }
+        </style>
+        <button class="btn btn-default tooltipped tooltipped-n tooltipped-custom" data-tooltip="Hello World!">
+            Custom
+        </button>
+    </div>
+</div>
+<pre><code class="css language-css">.tooltipped
+{
+    --hb-tooltip-bg: var(--hb-color-hotpink);
+    --hb-tooltip-font-size: 13px;
+}</code></pre>
+<pre><code class="file-path language-file-path">`src/scss/_config.scss`</code></pre>
+<pre><code class="sass language-sass">$tooltip-bg:                    var(--hb-gray-900) !default;
+$tooltip-color:                 var(--hb-white) !default;
+$tooltip-font-size:             11px !default;
+$tooltip-font-weight:           $text-light !default;
+$tooltip-line-height:           20px !default;
+$tooltip-radius:                var(--hb-border-radius) !default;
+$tooltip-pad-y:                 2px !default;
+$tooltip-pad-x:                 8px !default;
+$tooltop-target-space:          5px !default;
+$tooltop-target-space-neg:      -5px !default;```</code></pre>
+<pre><code class="file-path language-file-path">src/scss/components/_tooltip.scss</code></pre>
+<pre><code class="css language-css">.tooltipped
+{
+    --hb-tooltip-bg: var(--hb-gray-900);
+    --hb-tooltip-color: var(--hb-white);
+    --hb-tooltip-font-size: 11px;
+    --hb-tooltip-font-weight: 300;
+    --hb-tooltip-line-height: 20px;
+    --hb-tooltip-radius: var(--hb-border-radius);
+    --hb-tooltip-pad-y: 2px;
+    --hb-tooltip-pad-x: 8px;
+    --hb-tooltop-target-space: 5px;
+    --hb-tooltop-target-space-neg: -5px;
+    position: relative;
+    overflow: visible !important;
+}</code></pre>
                     </article>
                 </div>
             </div>
@@ -265,17 +378,17 @@
                     <ul class="list-inline social-links">
                         <li>
                             <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/index.html">
-                                <span class="icon icon-social glyph-icon glyph-icon-github"></span>
+                                <span class="icon icon-social fa fa-github"></span>
                             </a>
                         </li>
                         <li>
                             <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
-                                <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
+                                <span class="icon icon-social fa fa-twitter"></span>
                             </a>
                         </li>
                         <li>
                             <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
-                                <span class="icon glyph-icon glyph-icon-arrow-up"></span>
+                                <span class="icon fa fa-arrow-up"></span>
                             </a>
                         </li>
                     </ul>

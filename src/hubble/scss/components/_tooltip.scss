@@ -18,6 +18,7 @@
 
     position: relative;
     overflow: visible!important;
+    
     // Body
     &:after
     {
@@ -28,7 +29,6 @@
         padding: var(--hb-tooltip-pad-y) var(--hb-tooltip-pad-x);
         font-size: var(--hb-tooltip-font-size) !important;
         z-index: var(--hb-zindex-tooltip);
-        
         font-weight: var(--hb-tooltip-font-weight);
         line-height: var(--hb-tooltip-line-height);
         text-align: center;
@@ -41,7 +41,7 @@
         pointer-events: none;
         background-color: var(--hb-tooltip-bg);
         zoom:101%;
-        -webkit-font-smoothing: subpixel-antialiased;
+        @include _font-smooth();
     }
     // Trianlge
     &:before
@@ -134,7 +134,7 @@
     &.tooltipped-ne:after,
     &.tooltipped-nw:after
     {
-        bottom: 100%;
+        bottom: 99.9%;
         margin-bottom: var(--hb-tooltop-target-space);
     }
 

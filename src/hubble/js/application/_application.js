@@ -20,17 +20,6 @@
         }
 
         /**
-         * Get the Container component
-         *
-         * @access {public}
-         * @return {object}
-         */
-        container()
-        {
-            return Container;
-        }
-
-        /**
          * Get the DOM component
          *
          * @access {public}
@@ -39,29 +28,6 @@
         dom()
         {
             return Container.get('HubbleDom');
-        }
-
-        /**
-         * Get the Helper component
-         *
-         * @access {public}
-         * @return {object}
-         */
-        helper()
-        {
-            return Container.Helper();
-        }
-
-        /**
-         * Require a module and/or key/value
-         *
-         * @access {public}
-         * @param  {string} key The name of the key
-         * @return {mixed}
-         */
-        require()
-        {
-            return Container.get(...arguments);
         }
     }
 

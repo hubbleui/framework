@@ -16,15 +16,19 @@ in_dom(element)
         return true;
     }
 
-    while (element)
+    let ret = false;
+
+    this.traverse_up(element, function(node)
     {
-        if (element === document.documentElement)
+        if (node === document.body || node === document.documentElement)
         {
+            ret = true;
+
             return true;
         }
 
-        element = element.parentNode;
-    }
+        return false;
+    });
 
-    return false;
+    return ret;
 }

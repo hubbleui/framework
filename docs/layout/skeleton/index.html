@@ -8,6 +8,7 @@
         <script src="../../../build/js/lazyload.js"></script>
         <link rel="stylesheet" href="../../../build/css/lazyload.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../build/css/hubble-icons.css">
         <link rel="stylesheet" href="../../../build/css/hubble.css">
         <link rel="stylesheet" href="../../../build/css/docs.css">
     </head>
@@ -168,6 +169,8 @@
             <li class="menu-item"><a  href="../../forms/checkbox/index.html">Checkbox</a></li>
             <li class="menu-item"><a  href="../../forms/radio/index.html">Radio</a></li>
             <li class="menu-item"><a  href="../../forms/switch/index.html">Switch</a></li>
+            <li class="menu-item"><a  href="../../forms/chips/index.html">Chips</a></li>
+            <li class="menu-item"><a  href="../../forms/range/index.html">Range</a></li>
             <li class="menu-item"><a  href="../../forms/progress/index.html">Progress</a></li>
             <li class="menu-item"><a  href="../../forms/input-mask/index.html">Input Mask</a></li>
             <li class="menu-item"><a  href="../../forms/results/index.html">Results</a></li>
@@ -300,11 +303,11 @@
     <div class="row pole-xs pole-s">
         <div class="col col-12 col-md-4 center-horizontal">
             <div class="skeleton skeleton-text"></div>
-            <div class="skeleton skeleton-circle"></div>
-            <div class="skeleton skeleton-wave" style="height: 130px;"></div>
-            <div class="skeleton skeleton-rounded" style="height: 130px;"></div>
-            <div class="skeleton skeleton-input"></div>
-            <div class="skeleton skeleton-btn"></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-circle"></div></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-wave" style="height: 130px;"></div></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-rounded" style="height: 130px;"></div></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-input"></div></div>
+            <div class="pole-xs pole-s"><div class="skeleton skeleton-btn"></div></div>
         </div>
     </div>
 </div>
@@ -376,11 +379,11 @@
 &lt;div class="skeleton skeleton-h6"&gt;&lt;/div&gt;</code></pre>
 <hr />
 <h3 id="text-blocks">Text Blocks</h3>
-<p>For multi-line text blocks, you can wrap skeletons in a <code>.skeleton-text-block</code> element.</p>
+<p>For multi-line text blocks, wrap skeletons in a <code>.skeleton-text-block</code> element.</p>
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block text-right">
+            <div class="skeleton-text-block">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
@@ -398,13 +401,14 @@
 </div>
 <pre><code class="html language-html">&lt;div class="skeleton-text-block"&gt;
     &lt;div class="skeleton"&gt;&lt;/div&gt;
+    &lt;div class="skeleton"&gt;&lt;/div&gt;
     ...
 &lt;/div&gt;</code></pre>
-<p>For multi-line heading blocks use the same <code>.skeleton-text-block</code> and with the appropriate heading modifier <code>.skeleton-text-block-h*</code>:</p>
+<p>For multi-line heading use the same <code>.skeleton-text-block</code> wrapper with the appropriate heading modifier <code>.skeleton-text-block-h[num]</code>:</p>
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h1 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h1">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -421,7 +425,7 @@
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h2 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h2">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -438,7 +442,7 @@
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h3 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h3">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -455,7 +459,7 @@
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h4 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h4">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -472,7 +476,7 @@
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h5 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h5">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -489,7 +493,7 @@
 <div class="code-content-example">
     <div class="row">
         <div class="col col-6 gutter-xxs gutter-r">
-            <div class="skeleton-text-block skeleton-text-block-h6 text-right">
+            <div class="skeleton-text-block skeleton-text-block-h6">
                  <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
@@ -501,6 +505,46 @@
 </div>
 <pre><code class="html language-html">&lt;div class="skeleton-text-block skeleton-text-block-h6"&gt;
     &lt;div class="skeleton"&gt;&lt;/div&gt;
+    &lt;div class="skeleton"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>To align skeleton text to the right, add the <code>text-right</code> modifier to the wrapping element</p>
+<div class="code-content-example">
+    <div class="row">
+        <div class="col col-6 gutter-xxs gutter-r">
+            <div class="skeleton-text-block skeleton-text-block-h3 text-right">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+            <div class="skeleton-text-block text-right">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+            <div class="skeleton-text-block skeleton-text-block-h4 text-right">
+                <div class="skeleton"></div>
+            </div>
+            <div class="skeleton-text-block text-right">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+        </div>
+        <div class="col col-6 gutter-xxs gutter-l">
+            <h3>In culpa voluptate laboris adipisicing.</h3>
+            <p>In sed do incididunt labore magna elit ut consectetur do laborum ullamco do adipisicing mollit occaecat ad.</p>
+            <h4>Enim veniam voluptate sunt non.</h4>
+            <p>Incididunt amet nostrud in dolor aliquip in officia do ut duis incididunt ex ut.</p>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;div class="skeleton-text-block skeleton-text-block-h3 text-right"&gt;
+    &lt;div class="skeleton"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="skeleton-text-block text-right"&gt;
+    &lt;div class="skeleton"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="skeleton-text-block skeleton-text-block-h4 text-right"&gt;
+    &lt;div class="skeleton"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="skeleton-text-block text-right"&gt;
     &lt;div class="skeleton"&gt;&lt;/div&gt;
 &lt;/div&gt;</code></pre>
 <hr />
@@ -716,13 +760,13 @@ window.addEventListener('DOMContentLoaded', function()
 <td><code>count</code></td>
 <td><code>integer</code></td>
 <td><code>1</code></td>
-<td>Any integer</td>
+<td>Number of skeletons to generate.</td>
 </tr>
 <tr>
 <td><code>lines</code></td>
 <td><code>integer</code></td>
 <td><code>1</code></td>
-<td>Optional value for <strong>Text Block</strong> variants.</td>
+<td>Optional value number of lines for <strong>Text Block</strong> variants.</td>
 </tr>
 <tr>
 <td><code>variant</code></td>
@@ -750,7 +794,7 @@ window.addEventListener('DOMContentLoaded', function()
 </tr>
 </tbody>
 </table>
-<p>Multi-variant values should be supplied as a single string separated by spaces. e.g for a wave block skeleton with rounded corners you would supply <code>block wave rounded</code>.</p>
+<p>Multi-variant values should be supplied as a single string separated by spaces. e.g for a wave block skeleton with rounded corners you would supply <code>block wave rounded</code> as the <code>variant</code> value.</p>
 <pre><code class="javascript language-javascript">const options  = {
     count: 5,
     variant: 'block wave rounded',
@@ -759,9 +803,10 @@ window.addEventListener('DOMContentLoaded', function()
 };
 
 const skeleton = Container.Skeleton(DOMElement, options);</code></pre>
-<p>When creating a multi-line text-block variant (<code>text-block</code> <code>block-h1</code> <code>block-h2</code> <code>block-h3</code> <code>block-h4</code> <code>block-h5</code> <code>block-h6</code>), any other options apart from <code>count</code> or <code>lines</code> will be ignored. There are no modifier options for these skeletons. Additionally, the JS component will set a random width on each skeleton to give a natural text paragraph look.</p>
+<p>When creating a multi-line text-block variant (<code>text-block</code> <code>block-h1</code> <code>block-h2</code> <code>block-h3</code> <code>block-h4</code> <code>block-h5</code> <code>block-h6</code>), any other options apart from <code>count</code> or <code>lines</code> will be ignored.</p>
+<p>There are no modifier options for these skeletons. Additionally, the JS component will set a random width on each skeleton to give a natural text paragraph look.</p>
 <pre><code class="javascript language-javascript">const options  = {
-    count: 3,
+    lines: 3,
     variant: 'text-block',
 };
 
@@ -773,12 +818,12 @@ const skeleton = Container.Skeleton(DOMElement, options);</code></pre>
 ];
 
 const skeleton = Container.Skeleton(DOMElement, options);</code></pre>
-<p>For multi-instance layouts you can also provide an optional child <code>selector</code> key for each variant-set. The skeleton will get inserted into the the selector element rather than the parent wrapper element.</p>
+<p>Or if you need more control to a layout you can provide an optional child <code>selector</code> key for each variant-set. The skeleton will get inserted into the the selector element rather than the parent wrapper element.</p>
 <pre><code class="javascript language-javascript">const options = [
     { selector: '.js-heading', lines: 2, variant: 'h3-block'},
     { selector: '.js-text', lines: 6, variant: 'text-block' },
 ];
-const text = Container.Skeleton(DOMElement, options);</code></pre>
+const skeleton = Container.Skeleton(DOMElement, options);</code></pre>
 <h4 id="loading-content">Loading Content</h4>
 <p>Once you have reference to a <code>Skeleton</code> instance, you can gracefully load your own content in via the <code>load</code> method.</p>
 <p>The method accepts both html as a <code>string</code> or an <code>HTMLDomElement</code> node with an optional callback when the animation completes.</p>
@@ -850,7 +895,7 @@ skeleton.load(content);</code></pre>
         var skeleton;
 
         const makeSkeletons = () =>
-        {
+        {            
             each(options, (i, option) => $(option.selector, cardWrapper).innerHTML = '' );
 
             skeleton = Container.Skeleton($('.js-skeleton-loader-card'), options);
@@ -862,7 +907,9 @@ skeleton.load(content);</code></pre>
 
             skeleton.load(contents);
 
-            Container.Hubble().dom().refresh('LazyLoad');
+            Hubble.dom().refresh('LazyLoad');
+
+            loaded = true;
         });
 
         triggerReset.addEventListener('click', () =>
@@ -961,17 +1008,17 @@ margin: var(--hb-skeleton-margin);</code></pre>
                     <ul class="list-inline social-links">
                         <li>
                             <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/index.html">
-                                <span class="icon icon-social glyph-icon glyph-icon-github"></span>
+                                <span class="icon icon-social fa fa-github"></span>
                             </a>
                         </li>
                         <li>
                             <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
-                                <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
+                                <span class="icon icon-social fa fa-twitter"></span>
                             </a>
                         </li>
                         <li>
                             <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
-                                <span class="icon glyph-icon glyph-icon-arrow-up"></span>
+                                <span class="icon fa fa-arrow-up"></span>
                             </a>
                         </li>
                     </ul>

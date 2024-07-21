@@ -80,7 +80,24 @@
 }
 @function _color-name-from-var($colorVar)
 {
-    @return _str-replace(_str-replace(_str-replace($colorVar, ')', ''),  'var(--', ''), 'hb-', '');
+    @return 
+    _str-replace(
+        _str-replace(
+            _str-replace(
+                _str-replace(
+                    _str-replace(
+                        _str-replace(
+                            _str-replace(
+                                _str-replace(
+                                    _str-replace($colorVar, ')', ''),
+                                'var(--', ''),
+                            'hb-', ''),
+                        '-rgb', ''),
+                    '--', ''),
+                'color-', ''),
+            '(', ''),
+        ',', ''),
+   ' ', '');
 }
 
 // Array object helpers

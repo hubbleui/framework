@@ -1,7 +1,7 @@
 .form-field
 {
 	// Icons
-	> .glyph-icon
+	> .fa
 	{
 		position: absolute;
 	    width: 20px;
@@ -13,25 +13,25 @@
 	}
 
 	// Left icon
-	> .glyph-icon + input,
-	> .glyph-icon + select,
-	> .glyph-icon + textarea
+	> .fa + input,
+	> .fa + select,
+	> .fa + textarea
 	{
 		padding-left: 45px !important;
 	}
-	> .glyph-icon:first-child
+	> .fa:first-child
 	{
 		left: 15px;
 	}
-	> .glyph-icon + input + label,
-	> .glyph-icon + input + label,
-	> .glyph-icon + input + label
+	> .fa + input + label,
+	> .fa + input + label,
+	> .fa + input + label
 	{
 		left: 45px !important;
 	}
 
 	// Right
-	> .glyph-icon:last-child
+	> .fa:last-child
 	{
 		left: initial;
 		right: 15px;

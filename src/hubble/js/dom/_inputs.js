@@ -24,7 +24,7 @@
          */
     	constructor()
         {
-            this._inputs = Helper.$All('.form-field input, .form-field select, .form-field textarea');
+            this._inputs = Helper.$All('.form-field input:not([type="radio"]):not([type="checkbox"]):not([type="range"]), .form-field select, .form-field textarea');
             this._labels = Helper.$All('.form-field label');
 
             if (!Helper.is_empty(this._inputs))

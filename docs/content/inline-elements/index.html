@@ -8,6 +8,7 @@
         <script src="../../../build/js/lazyload.js"></script>
         <link rel="stylesheet" href="../../../build/css/lazyload.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../build/css/hubble-icons.css">
         <link rel="stylesheet" href="../../../build/css/hubble.css">
         <link rel="stylesheet" href="../../../build/css/docs.css">
     </head>
@@ -168,6 +169,8 @@
             <li class="menu-item"><a  href="../../forms/checkbox/index.html">Checkbox</a></li>
             <li class="menu-item"><a  href="../../forms/radio/index.html">Radio</a></li>
             <li class="menu-item"><a  href="../../forms/switch/index.html">Switch</a></li>
+            <li class="menu-item"><a  href="../../forms/chips/index.html">Chips</a></li>
+            <li class="menu-item"><a  href="../../forms/range/index.html">Range</a></li>
             <li class="menu-item"><a  href="../../forms/progress/index.html">Progress</a></li>
             <li class="menu-item"><a  href="../../forms/input-mask/index.html">Input Mask</a></li>
             <li class="menu-item"><a  href="../../forms/results/index.html">Results</a></li>
@@ -246,22 +249,22 @@
 <hr />
 <h3 id="icon">Icon</h3>
 <p>Hubble comes with a complete icon library thanks to <a href="https://icomoon.io/">IcoMoon</a>. The library is free and comes with 675 individual icons.</p>
-<p>To create an icon, use a <code>&lt;span&gt;</code> element with the class <code>.glyph-icon</code> in addition to <code>.glyph-icon-[name]</code> with the icon name as per IcoMoon documentation.</p>
+<p>To create an icon, use a <code>&lt;span&gt;</code> element with the class <code>.glyph-icon</code> in addition to <code>.fa-[name]</code> with the icon name as per IcoMoon documentation.</p>
 <p>Icons can be sized using the <code>.icon-xs</code>, <code>.icon-md</code>, <code>.icon-lg</code>, <code>.icon-xl</code>, <code>.icon-xxl</code> modifier classes which are setup in <code>scss/_config.scss</code>.</p>
 <div class="code-content-example">
     <div class="flex-row align-cols-center text-center col-gaps-xs">
-        <span class="glyph-icon glyph-icon-headphones icon-xs"></span>
-        <span class="glyph-icon glyph-icon-headphones icon-md"></span>
-        <span class="glyph-icon glyph-icon-headphones icon-lg"></span>
-        <span class="glyph-icon glyph-icon-headphones icon-xl"></span>
-        <span class="glyph-icon glyph-icon-headphones icon-xxl"></span>
+        <span class="fa fa-headphones icon-xs"></span>
+        <span class="fa fa-headphones icon-md"></span>
+        <span class="fa fa-headphones icon-lg"></span>
+        <span class="fa fa-headphones icon-xl"></span>
+        <span class="fa fa-headphones icon-xxl"></span>
     </div>
 </div>
-<pre><code class="html language-html">&lt;span class="glyph-icon glyph-icon-headphones icon-xs"&gt;&lt;/span&gt;
-&lt;span class="glyph-icon glyph-icon-headphones icon-md"&gt;&lt;/span&gt;
-&lt;span class="glyph-icon glyph-icon-headphones icon-lg"&gt;&lt;/span&gt;
-&lt;span class="glyph-icon glyph-icon-headphones icon-xl"&gt;&lt;/span&gt;
-&lt;span class="glyph-icon glyph-icon-headphones icon-xxl"&gt;&lt;/span&gt;</code></pre>
+<pre><code class="html language-html">&lt;span class="fa fa-headphones icon-xs"&gt;&lt;/span&gt;
+&lt;span class="fa fa-headphones icon-md"&gt;&lt;/span&gt;
+&lt;span class="fa fa-headphones icon-lg"&gt;&lt;/span&gt;
+&lt;span class="fa fa-headphones icon-xl"&gt;&lt;/span&gt;
+&lt;span class="fa fa-headphones icon-xxl"&gt;&lt;/span&gt;</code></pre>
 <hr />
 <h3 id="link">Link</h3>
 <p>The <code>.fancy-link</code> class creates a simple hover effect on any link.</p>
@@ -415,7 +418,7 @@
             <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
         </div>
         <div class="avatar">
-            <span class="glyph-icon glyph-icon-heart3 color-danger"></span>
+            <span class="fa fa-heart3 color-danger"></span>
         </div>
         <div class="avatar">
             <span class="initials">DT</span>
@@ -426,7 +429,7 @@
     &lt;img ... /&gt;
 &lt;/div&gt;
 &lt;div class="avatar"&gt;
-    &lt;span class="glyph-icon glyph-icon-heart3 color-danger"&gt;&lt;/span&gt;
+    &lt;span class="fa fa-heart3 color-danger"&gt;&lt;/span&gt;
 &lt;/div&gt;
 &lt;div class="avatar"&gt;
     &lt;span class="initials"&gt;DT&lt;/span&gt;
@@ -438,10 +441,10 @@
             <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
         </div>
         <div class="avatar avatar-sm">
-            <span class="glyph-icon glyph-icon-heart3 color-danger"></span>
+            <span class="fa fa-heart3 color-danger"></span>
         </div>
         <div class="avatar avatar-md">
-            <span class="glyph-icon glyph-icon-heart3 color-danger"></span>
+            <span class="fa fa-heart3 color-danger"></span>
         </div>
         <div class="avatar avatar-lg">
             <span class="initials">DT</span>
@@ -456,11 +459,11 @@
 &lt;/div&gt;
 
 &lt;div class="avatar avatar-sm"&gt;
-    &lt;span class="glyph-icon glyph-icon-heart3 color-danger"&gt;&lt;/span&gt;
+    &lt;span class="fa fa-heart3 color-danger"&gt;&lt;/span&gt;
 &lt;/div&gt;
 
 &lt;div class="avatar avatar-md"&gt;
-    &lt;span class="glyph-icon glyph-icon-heart3 color-danger"&gt;&lt;/span&gt;
+    &lt;span class="fa fa-heart3 color-danger"&gt;&lt;/span&gt;
 &lt;/div&gt;
 
 &lt;div class="avatar avatar-lg"&gt;
@@ -529,17 +532,17 @@
                     <ul class="list-inline social-links">
                         <li>
                             <a class="icon-wrap social-share github" target="_blank" href="https://github.com/hubbleui/framework/index.html">
-                                <span class="icon icon-social glyph-icon glyph-icon-github"></span>
+                                <span class="icon icon-social fa fa-github"></span>
                             </a>
                         </li>
                         <li>
                             <a class="icon-wrap social-share twitter js-tweet-pop-up" href="#">
-                                <span class="icon icon-social glyph-icon glyph-icon-twitter"></span>
+                                <span class="icon icon-social fa fa-twitter"></span>
                             </a>
                         </li>
                         <li>
                             <a class="js-waypoint-trigger to-top icon-wrap social-share" href="#" data-waypoint-target="header" data-waypoint-speed="500" title="Go to top of page">
-                                <span class="icon glyph-icon glyph-icon-arrow-up"></span>
+                                <span class="icon fa fa-arrow-up"></span>
                             </a>
                         </li>
                     </ul>

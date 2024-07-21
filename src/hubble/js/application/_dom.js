@@ -189,7 +189,7 @@
          * @access {private}
          */
         _bindModule(key)
-        {            
+        {
             Container.singleton(key, this._modules[key], true);
         }
 

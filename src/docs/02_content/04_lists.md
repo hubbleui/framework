@@ -57,7 +57,7 @@ List items hold 3 elements `.item-left`, `.item-body` and `.item-right`. They al
                     </span>
                     <span class="item-right">
                         <button class="btn btn-pure btn-sm btn-circle">
-                            <span class="glyph-icon glyph-icon-phone"></span>
+                            <span class="fa fa-phone"></span>
                         </button>
                     </span>
                 </li>
@@ -68,7 +68,7 @@ List items hold 3 elements `.item-left`, `.item-body` and `.item-right`. They al
                     </span>
                     <span class="item-right">
                         <button class="btn btn-pure btn-sm btn-circle">
-                            <span class="glyph-icon glyph-icon-phone"></span>
+                            <span class="fa fa-phone"></span>
                         </button>
                     </span>
                 </li>
@@ -79,7 +79,7 @@ List items hold 3 elements `.item-left`, `.item-body` and `.item-right`. They al
                     </span>
                     <span class="item-right">
                         <button class="btn btn-pure btn-sm btn-circle">
-                            <span class="glyph-icon glyph-icon-phone"></span>
+                            <span class="fa fa-phone"></span>
                         </button>
                     </span>
                 </li>
@@ -94,20 +94,20 @@ List items hold 3 elements `.item-left`, `.item-body` and `.item-right`. They al
             <ul class="list">
                 <li>
                     <span class="item-left">
-                        <span class="glyph-icon glyph-icon-heart"></span>
+                        <span class="fa fa-heart"></span>
                     </span>
                     <span class="item-body">
                         <div class="item-title">List Item</div>
                     </span>
                     <span class="item-right">
                         <button class="btn btn-pure btn-sm btn-circle">
-                            <span class="glyph-icon glyph-icon-phone"></span>
+                            <span class="fa fa-phone"></span>
                         </button>
                     </span>
                 </li>
                 <li>
                     <span class="item-left">
-                        <span class="glyph-icon glyph-icon-heart"></span>
+                        <span class="fa fa-heart"></span>
                     </span>
                     <span class="item-body">
                         <div class="item-title">List Item</div>
@@ -124,7 +124,7 @@ List items hold 3 elements `.item-left`, `.item-body` and `.item-right`. They al
                 </li>
                 <li>
                     <span class="item-left">
-                        <span class="glyph-icon glyph-icon-heart"></span>
+                        <span class="fa fa-heart"></span>
                     </span>
                     <span class="item-body">
                         <div class="item-title">List Item</div>
@@ -132,7 +132,7 @@ List items hold 3 elements `.item-left`, `.item-body` and `.item-right`. They al
                     </span>
                     <span class="item-right">
                         <button class="btn btn-pure btn-sm btn-circle">
-                            <span class="glyph-icon glyph-icon-phone"></span>
+                            <span class="fa fa-phone"></span>
                         </button>
                     </span>
                 </li>
@@ -153,20 +153,20 @@ Add the `.js-select-list` class to any list to enable clickable selection.
             <ul class="list js-select-list">
                 <li class="selected">
                     <span class="item-left">
-                        <span class="glyph-icon glyph-icon-heart"></span>
+                        <span class="fa fa-heart"></span>
                     </span>
                     <span class="item-body">
                         <div class="item-title">List Item</div>
                     </span>
                     <span class="item-right">
                         <button class="btn btn-pure btn-sm btn-circle">
-                            <span class="glyph-icon glyph-icon-phone"></span>
+                            <span class="fa fa-phone"></span>
                         </button>
                     </span>
                 </li>
                 <li>
                     <span class="item-left">
-                        <span class="glyph-icon glyph-icon-heart"></span>
+                        <span class="fa fa-heart"></span>
                     </span>
                     <span class="item-body">
                         <div class="item-title">List Item</div>
@@ -183,7 +183,7 @@ Add the `.js-select-list` class to any list to enable clickable selection.
                 </li>
                 <li>
                     <span class="item-left">
-                        <span class="glyph-icon glyph-icon-heart"></span>
+                        <span class="fa fa-heart"></span>
                     </span>
                     <span class="item-body">
                         <div class="item-title">List Item</div>
@@ -191,7 +191,7 @@ Add the `.js-select-list` class to any list to enable clickable selection.
                     </span>
                     <span class="item-right">
                         <button class="btn btn-pure btn-sm btn-circle">
-                            <span class="glyph-icon glyph-icon-phone"></span>
+                            <span class="fa fa-phone"></span>
                         </button>
                     </span>
                 </li>

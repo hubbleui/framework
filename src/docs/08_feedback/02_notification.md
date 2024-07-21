@@ -47,7 +47,7 @@ There are a number of options for a notification depending on a given purpose. T
 |------------------|------------|------------------------------------------------------------------------------------|----------|
 | text             | `string`   | Text to be displayed inside the notification.                                      | `yes`    |
 | timeout          | `int`      | Time in milliseconds when notification will be auto-dismissed. Defaults to `6000`. | `no`     |
-| icon             | `string`   | Optional icon name. Gets set as `glyph-icon-[name]` if provided                    | `no`     |
+| icon             | `string`   | Optional icon name. Gets set as `fa-[name]` if provided                    | `no`     |
 | btn              | `string`   | Text to be displayed in a confirmation button.                                     | `no`     |
 | variant          | `string`   | Optional message variant, gets set as `msg-[name]` if provided                     | `no`     |
 | btnVariant       | `string`   | Btn variant/context class. Gets set as `btn-[name]` if provided.                   | `no`     |

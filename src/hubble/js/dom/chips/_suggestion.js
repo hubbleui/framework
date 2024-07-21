@@ -24,7 +24,7 @@
          */
     	constructor()
         {
-            this._chips = Helper.$All('.js-chip-suggestions .chip');
+            this._chips = Helper.$All('.js-chip-suggestions .btn-chip');
 
             this._bind();
 
@@ -73,10 +73,11 @@
         {
             e = e || window.event;
 
+            e.preventDefault();
+
             var _wrapper = Helper.closest(this, '.js-chip-suggestions');
-            var _id = _wrapper.dataset.inputTarget;
-            var _input = Helper.$('#' + _id);
-            var _text = this.innerText.trim();
+            var _input   = Helper.$('#' + _wrapper.dataset.inputTarget);
+            var _text    = this.innerText.trim();
 
             if (!_input || !Helper.in_dom(_input))
             {
@@ -86,7 +87,7 @@
             }
 
             // Chips input
-            if (Helper.has_class(_input, 'js-chips-input'))
+            if (Helper.has_class(_input, '.js-chips-input'))
             {
                 Container.ChipInputs().addChip(_text, _input);
 
@@ -95,23 +96,11 @@
                 return;
             }
 
+            let val = Helper.attr(_input, 'value');
 
-            var _chip = document.createElement('span');
-            var _classes = _wrapper.dataset.chipClass;
-            var _space = '';
-            _chip.className = 'chip';
+            Helper.attr(_input, 'value',  val === '' ? _text : `${val} ${_text}`);
 
-            if (_classes)
-            {
-                _chip.className += _classes;
-            }
-
-            if (_input.value !== '')
-            {
-                _space = ' ';
-            }
-
-            _input.value += _space + _text;
+            Helper.trigger_event(_input, 'change');
 
             Helper.remove_from_dom(this);
         }
