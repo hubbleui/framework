@@ -13,13 +13,25 @@
 eventListeners(DOMElement, eventName)
 {
     var args = TO_ARR.call(arguments);
-    var events = this._events;
+    var ret  = [];
 
     // No args, return all events
     if (args.length === 0)
     {
-        return events;
+        this.each(this._events, function(guid, types)
+        {
+            this.each(types, function(type, callbacks)
+            {
+                let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
+
+                ret = [...ret, ...summary];
+            });
+
+        }, this);
+
+        return ret;
     }
+    
     // eventListeners(node) or
     // eventListeners('click')
     else if (args.length === 1)
@@ -27,46 +39,49 @@ eventListeners(DOMElement, eventName)
         // eventListeners('click')
         if (this.is_string(DOMElement))
         {   
-            return events[DOMElement] || [];
+            this.each(this._events, function(guid, types)
+            {
+                this.each(types, function(type, callbacks)
+                {
+                    if (type === DOMElement)
+                    {
+                        let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
+
+                        ret = [...ret, ...summary];
+                    }
+                });
+
+            }, this);
+
+            return ret;
         }
         
-        var ret = [];
-
         // eventListeners(node)
-        for (var evt in events)
+        let guid = DOMElement.guid;
+
+        if (!guid || !this._events[guid]) return ret;
+
+        this.each(this._events[guid], function(type, callbacks)
         {
-            var eventArr = events[evt];
+            let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
 
-            for (var i = 0; i < eventArr.length; i++)
-            {
-                var eventObj = eventArr[i];
+            ret = [...ret, ...summary];
 
-                if (eventObj.element === DOMElement)
-                {
-                    ret.push(eventObj);
-                }
-            }
-        }
+        }, this);
 
         return ret;
     }
-    // eventListeners(node, 'click')
-    var ret = [];
 
-    if (events[eventName])
+    // eventListeners(node)
+    let guid = DOMElement.guid;
+
+    if (!guid || !this._events[guid] || !this._events[guid][eventName]) return ret;
+
+    this.each(this._events[guid][eventName], function(i, details)
     {
-        var _evts = events[eventName];
+        ret.push({ el: details.element, callback: details.callback, type: eventName });
 
-        for (var i = 0; i < _evts.length; i++)
-        {
-            var eventObj = _evts[i];
-
-            if (eventObj.element === DOMElement)
-            {
-                ret.push(eventObj);
-            }
-        }
-    }
+    }, this);
 
     return ret;
 }

@@ -1791,6 +1791,13 @@ class HelperJS
     browser = false;
 
     _events = {};
+
+    _guid = 1;
+
+    _guidgen()
+    {
+        return `__${this._guid++}`;
+    }
 		/**
  * JS Aniamation Core
  *
@@ -5043,36 +5050,23 @@ height(DOMElement)
  *
  * @access {public}
  * @param  {DOMElement}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-addEventListener(element, eventName, handler, useCapture)
+addEventListener(DOMElement, eventName, handler)
 {
-    // Boolean use capture defaults to false
-    useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
-
-    // Class event storage
-    var events = this._events;
-
-    // Make sure events are set
-    if (!events)
-    {
-        this._events = events = {};
-    }
-
-    // Make sure an array for the event type exists
-    if (!events[eventName])
-    {
-        events[eventName] = [];
-    }
+    var args = TO_ARR.call(arguments);
 
     // Arrays
-    if (this.is_array(element))
+    if (this.is_array(DOMElement))
     {
-        this.each(element, function(i, el)
-        {
-            this.addEventListener(el, eventName, handler, useCapture);
+        var baseArgs = args.slice(1);
+
+        this.each(DOMElement, function(i, el)
+        {            
+            this.addEventListener.apply(this, [el, ...baseArgs]);
 
         }, this);
     }
@@ -5085,23 +5079,48 @@ addEventListener(element, eventName, handler, useCapture)
 
             this.each(eventsArr, function(i, event)
             {
-                this.addEventListener(element, event, handler, useCapture);
+                args[1] = event;
+
+                this.addEventListener.apply(this, args);
                 
             }, this);
 
             return;
         }
 
-        // Push the details to the events object
-        events[eventName].push(
-        {
-            element: element,
-            handler: handler,
-            useCapture: useCapture,
-        });
+        // If array of arguements is provided, "this" will always be the first
+        // argument provided
+        // However the first and second argument passed to the callback will always the event object and the element
+        // e.g. addEventListener(el, 'click', callback, ['baz', 'foo', 'bar']) -> callback(e, el, foo, bar) this = 'baz'
 
-        this.__addListener(element, eventName, handler, useCapture);
+        // Remove element, eventName, handler from args
+        let argsNormal = this.__normaliseListenerArgs(DOMElement, args);
+
+        this.__addListener(DOMElement, eventName, handler, argsNormal.thisArg, argsNormal.args, argsNormal.pushFirst);
     }
+}
+
+/**
+ * Nomralize event listener args
+ * 
+ * @param  {DOMElement}    DOMElement    The target DOM node
+ * @param  {array}         args       Args passed to addEventListener or removeEventListener
+ */
+__normaliseListenerArgs(DOMElement, args)
+{
+    args = args.slice(3);
+
+    let thisArg   = DOMElement;
+    let pushFirst = false;
+
+    // Push first
+    if (!this.is_empty(args))
+    {
+        thisArg   = args.shift();
+        pushFirst = this.bool(args.shift());
+    }
+
+    return {args, thisArg, pushFirst};
 }
 
 /**
@@ -5111,19 +5130,86 @@ addEventListener(element, eventName, handler, useCapture)
  * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param  {bool}    data Use capture (optional) (defaul false)
  */
-__addListener(el, eventName, handler, useCapture)
+__addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
 {
-    if (el.addEventListener)
+    // Apply GUID to element and callback
+    DOMElement.guid = DOMElement.guid || (DOMElement.guid = this._guidgen());
+    handler.guid    = handler.guid || (handler.guid = this._guidgen());
+
+    let hasHandler = true;
+    let guid       = DOMElement.guid;
+
+    // Make sure an array for event type exists
+    if (!this._events[DOMElement.guid])
     {
-        el.addEventListener(eventName, handler, useCapture);
+        hasHandler = false;
+
+        this._events[guid] = {};
     }
-    else
+
+    if (!this._events[guid][eventName])
     {
-        el.attachEvent('on' + eventName, handler, useCapture);
+        hasHandler = false;
+
+        this._events[guid][eventName] = [];
+    }
+
+    // Push the details to the events object
+    const handlerObj = {
+        callback : handler,
+        thisArg  : thisArg,
+        args     : args,
+        element  : DOMElement,
+    };
+    
+    pushFirst ? this._events[guid][eventName].unshift(handlerObj) : this._events[guid][eventName].push(handlerObj);
+
+    if (!hasHandler)
+    {
+        if (DOMElement.addEventListener)
+        {
+            DOMElement.addEventListener(eventName, this.__eventDispatcher);
+        }
+        else
+        {
+            DOMElement.attachEvent('on' + eventName, this.__eventDispatcher);
+        }
     }
 }
+
+/**
+ * Event dispatcher
+ *
+ * @access {private}
+ * @param  {eventObject}  e  
+ */
+__eventDispatcher(e)
+{
+    e = e || window.event;
+
+    let DOMElement = this;
+
+    let guid = DOMElement.guid;
+
+    if (!guid) return;
+
+    let _this = Container.Helper();
+
+    let callbacks = _this.array_get(`${guid}.${e.type}`, _this._events) || [];
+
+    _this.each(callbacks, function(i, handler)
+    {        
+        if (handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]) === false)
+        {
+            e.preventDefault();
+
+            e.stopPropagation();
+        }
+    });
+}
+
 		/**
  * Removes all event listeners registered by the library
  *
@@ -5133,16 +5219,19 @@ clearEventListeners()
 {
     var events = this._events;
 
-    for (var eventName in events)
+    let _this = this;
+
+    _this.each(this._events, (guid, types) =>
     {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
+        _this.each(types, (type, callbacks) =>
         {
-            this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-            this._events[eventName].splice(i, 1);
-        }
-    }
+            let DOMElement = callbacks[0].element;
+            
+            _this.__removeListener(DOMElement, type);
+        });
+    });
+
+    this._events = {};
 }
 		/**
  * Removes all event listeners registered by the library on nodes
@@ -5152,22 +5241,26 @@ clearEventListeners()
  */
 collectGarbage()
 {
-    var events = this._events;
-    for (var eventName in events)
+    let _this = this;
+
+    _this.each(this._events, (guid, types) =>
     {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
+        var cleared = false;
+
+        _this.each(types, (type, callbacks) =>
         {
-            var el = eventObj[i]['element'];
-            if (el == window || el == document || el == document.body) continue;
+            let DOMElement = callbacks[0].element;
+
             if (!this.in_dom(el))
             {
-                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-                this._events[eventName].splice(i, 1);
+                cleared = true;
+
+                _this.__removeListener(DOMElement, type);
             }
-        }
-    }
+        });
+
+        if (cleared) delete this._events[guid];
+    });
 }
 		/**
  * Removes event listeners on a DOM node
@@ -5184,13 +5277,25 @@ collectGarbage()
 eventListeners(DOMElement, eventName)
 {
     var args = TO_ARR.call(arguments);
-    var events = this._events;
+    var ret  = [];
 
     // No args, return all events
     if (args.length === 0)
     {
-        return events;
+        this.each(this._events, function(guid, types)
+        {
+            this.each(types, function(type, callbacks)
+            {
+                let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
+
+                ret = [...ret, ...summary];
+            });
+
+        }, this);
+
+        return ret;
     }
+    
     // eventListeners(node) or
     // eventListeners('click')
     else if (args.length === 1)
@@ -5198,69 +5303,73 @@ eventListeners(DOMElement, eventName)
         // eventListeners('click')
         if (this.is_string(DOMElement))
         {   
-            return events[DOMElement] || [];
+            this.each(this._events, function(guid, types)
+            {
+                this.each(types, function(type, callbacks)
+                {
+                    if (type === DOMElement)
+                    {
+                        let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
+
+                        ret = [...ret, ...summary];
+                    }
+                });
+
+            }, this);
+
+            return ret;
         }
         
-        var ret = [];
-
         // eventListeners(node)
-        for (var evt in events)
+        let guid = DOMElement.guid;
+
+        if (!guid || !this._events[guid]) return ret;
+
+        this.each(this._events[guid], function(type, callbacks)
         {
-            var eventArr = events[evt];
+            let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
 
-            for (var i = 0; i < eventArr.length; i++)
-            {
-                var eventObj = eventArr[i];
+            ret = [...ret, ...summary];
 
-                if (eventObj.element === DOMElement)
-                {
-                    ret.push(eventObj);
-                }
-            }
-        }
+        }, this);
 
         return ret;
     }
-    // eventListeners(node, 'click')
-    var ret = [];
 
-    if (events[eventName])
+    // eventListeners(node)
+    let guid = DOMElement.guid;
+
+    if (!guid || !this._events[guid] || !this._events[guid][eventName]) return ret;
+
+    this.each(this._events[guid][eventName], function(i, details)
     {
-        var _evts = events[eventName];
+        ret.push({ el: details.element, callback: details.callback, type: eventName });
 
-        for (var i = 0; i < _evts.length; i++)
-        {
-            var eventObj = _evts[i];
-
-            if (eventObj.element === DOMElement)
-            {
-                ret.push(eventObj);
-            }
-        }
-    }
+    }, this);
 
     return ret;
 }
 		/**
- * Removes event listeners on a DOM node
+ * Remove an event listener
  *
- * If no event name is given, all attached event listeners are removed.
- * If no callback is given, all callbacks for the event type will be removed.
- * This function can still remove "annonymous" functions that are given a name as they are declared.
- * 
  * @access {public}
  * @param  {DOMElement}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-removeEventListener(DOMElement, eventName, callback, usecapture)
+removeEventListener(DOMElement, eventName, handler)
 {
+    var args = TO_ARR.call(arguments);
+
     if (this.is_array(DOMElement))
     {
+        var baseArgs = args.slice(1);
+
         this.each(DOMElement, function(i, el)
-        {
-            this.removeEventListener(el, eventName, callback, usecapture);
+        {            
+            this.removeEventListener.apply(this, [el, ...baseArgs]);
         
         }, this);
     }
@@ -5279,112 +5388,119 @@ removeEventListener(DOMElement, eventName, callback, usecapture)
 
             this.each(eventsArr, function(i, event)
             {
-                this.removeEventListener(DOMElement, event, callback, usecapture);
+                args[1] = event;
 
+                this.removeEventListener.apply(this, args);
+                
             }, this);
 
             return;
         }
 
         // If the callback was not provided - remove all events of the type on the element
-        if (!callback)
+        if (!handler)
         {
             return this.__removeElementTypeListeners(DOMElement, eventName);
         }
+        
+        let guid = DOMElement.guid;
 
-        // Default use capture
-        usecapture = typeof usecapture === 'undefined' ? false : Boolean(usecapture);
+        // Nothing to remove
+        if (!guid) return;
 
-        // No events to remove
-        if (!this._events[eventName])
-        {
-            return;
-        }
+        let handlers = this.array_get(`${guid}.${eventName}`, this._events);
+
+        // Nothing to remove
+        if (!handlers) return;
 
         // Loop stored events and match node, event name, handler, use capture
-        this.each(this._events[eventName], function(i, event)
+        this.each(handlers, function(i, _handler)
         {
-            if (event.handler === callback && event.useCapture === usecapture && event.element === DOMElement)
+            if (_handler.callback.guid === handler.guid || this.is_equial(_handler.callback, handler))
             {
-                this.__removeListener(DOMElement, eventName, callback, usecapture);
+                this._events[guid][eventName].splice(i, 1);
 
-                this._events[eventName].splice(i, 1);
+                if (this.is_empty(this._events[guid][eventName]))
+                {
+                    delete this._events[guid][eventName];
+
+                    this.__removeListener(DOMElement, eventName);
+                }
                 
                 // Break only remove first
                 return false;
-            }
+            } 
         
         }, this);
+
+        
     }
 }
 
 /**
- * Removes all registered event listners on an element
+ * Removes all registered event listeners on an element
  *
  * @access {private}
- * @param  {DOMElement}    element Target node element
+ * @param  {DOMElement} DOMElement Target node element
  */
 __removeElementListeners(DOMElement)
 {
-    this.each(this._events, function(type, events)
+    let guid = DOMElement.guid;
+
+    if (!guid) return;
+
+    if (this._events[guid])
     {
-        this._events[type] = this.map(events, function(i, event)
+        this.each(this._events[guid], function(type, callbacks)
         {
-            if (event.element === DOMElement)
-            {
-                this.__removeListener(DOMElement, type, event.handler, event.useCapture);
-                
-                return false;
-            }
-
-            return event;
-        
+            this.__removeListener(DOMElement, type);
+            
         }, this);
+    }
 
-    }, this);
+    delete this._events[guid];
 }
 
 /**
- * Removes all registered event listners of a specific type on an element
+ * Removes all registered event listeners of a specific type on an element
  *
  * @access {private}
- * @param  {DOMElement}    element Target node element
- * @param  {string}  type    Event listener type
+ * @param  {DOMElement} DOMElement Target node element
+ * @param  {string}     type       Event listener type
  */
 __removeElementTypeListeners(DOMElement, type)
 {
-    this._events[type] = this.map(this._events[type], function(i, event)
-    {
-        if (event.element === DOMElement)
-        {
-            this.__removeListener(DOMElement, type, event.handler, event.useCapture);
-            
-            return false;
-        }
+    let guid = DOMElement.guid;
 
-        return event;
-    
-    }, this);
+    if (!guid) return;
+
+    // Make sure an array for event type exists
+    if (this._events[guid] && this._events[guid][type])
+    {
+        delete this._events[guid][type];
+
+        this.__removeListener(DOMElement, type);
+    }
 }
 
 /**
  * Removes a listener from the element
  *
  * @access {private}
- * @param  {DOMElement}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param  {DOMElement} DOMElement The target DOM node
+ * @param  {string}     eventType  Event type
+ * @param  {closure}    handler    Callback event
+ * @param  {bool}       useCapture Use capture (optional) (defaul false)
  */
-__removeListener(el, eventName, handler, useCapture)
-{
-    if (el.removeEventListener)
+__removeListener(DOMElement, eventType)
+{    
+    if (DOMElement.addEventListener)
     {
-        el.removeEventListener(eventName, handler, useCapture);
+        DOMElement.removeEventListener(eventType, this.__eventDispatcher);
     }
     else
     {
-        el.detachEvent('on' + eventName, handler, useCapture);
+        DOMElement.removeEventListener('on' + eventType, this.__eventDispatcher);
     }
 }
 
@@ -11088,7 +11204,7 @@ function abort()
          */
         _unbind()
         {
-            Helper.removeEventListener(this._nodes, 'mousedown, touchstart', this._startRipple, false);
+            Helper.removeEventListener(this._nodes, 'mousedown, touchstart', this._startRipple);
         }
 
         /**
@@ -11099,7 +11215,7 @@ function abort()
          */
         _bindWrapper(wrapper)
         {
-            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple, false);
+            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple);
         }
 
         /**
@@ -11140,7 +11256,7 @@ function abort()
 
             // Create ripple and append immediately
             var ripple = document.createElement('div');
-            wrapper.appendChild(ripple);
+            Helper.preapend(ripple, wrapper);
 
             // Figure out where to place ripple inside parent
             var c = Helper.coordinates(wrapper);
@@ -11222,6 +11338,22 @@ function abort()
             // Cached timer for release
             var timer;
 
+            // Blocking click target
+            var blockedClick = e.target !== wrapper;
+            var loopedClicks = false;
+
+            const triggerClicks = function(node)
+            {
+                if (node === wrapper)
+                {
+                    Helper.trigger_event(node, 'click');
+
+                    return true;
+                }
+
+                Helper.trigger_event(node, 'click');
+            }
+
             // Release event
             const release = function(ev)
             {
@@ -11230,6 +11362,13 @@ function abort()
 
                 // Remove release listener
                 document.removeEventListener(releaseEvent, release);
+
+                if (blockedClick && !loopedClicks)
+                {
+                    Helper.traverse_up(e.target, triggerClicks);
+
+                    loopedClicks = true;
+                }
 
                 // Check if release happened before ripple finished animating
                 const held = (performance.now() - t0);
@@ -13189,7 +13328,7 @@ function abort()
 
             Helper.addEventListener(this._closeTriggers, 'click', this.close);
 
-            Helper.addEventListener(this._overlayEl, 'click', this.close);
+            //Helper.addEventListener(this._overlayEl, 'click', this.close);
         }
 
         /**
@@ -13203,7 +13342,7 @@ function abort()
 
             Helper.removeEventListener(this._closeTriggers, 'click', this.close);
 
-            Helper.removeEventListener(this._overlayEl, 'click', this.close);
+            //Helper.removeEventListener(this._overlayEl, 'click', this.close);
         }
 
         /**

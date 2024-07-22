@@ -6,20 +6,24 @@
  */
 collectGarbage()
 {
-    var events = this._events;
-    for (var eventName in events)
+    let _this = this;
+
+    _this.each(this._events, (guid, types) =>
     {
-        var eventObj = events[eventName];
-        var i = eventObj.length;
-        while (i--)
+        var cleared = false;
+
+        _this.each(types, (type, callbacks) =>
         {
-            var el = eventObj[i]['element'];
-            if (el == window || el == document || el == document.body) continue;
+            let DOMElement = callbacks[0].element;
+
             if (!this.in_dom(el))
             {
-                this.__removeListener(eventObj[i]['element'], eventName, eventObj[i]['handler'], eventObj[i]['useCapture']);
-                this._events[eventName].splice(i, 1);
+                cleared = true;
+
+                _this.__removeListener(DOMElement, type);
             }
-        }
-    }
+        });
+
+        if (cleared) delete this._events[guid];
+    });
 }

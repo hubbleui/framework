@@ -79,7 +79,7 @@
 
             Helper.addEventListener(this._closeTriggers, 'click', this.close);
 
-            Helper.addEventListener(this._overlayEl, 'click', this.close);
+            //Helper.addEventListener(this._overlayEl, 'click', this.close);
         }
 
         /**
@@ -93,7 +93,7 @@
 
             Helper.removeEventListener(this._closeTriggers, 'click', this.close);
 
-            Helper.removeEventListener(this._overlayEl, 'click', this.close);
+            //Helper.removeEventListener(this._overlayEl, 'click', this.close);
         }
 
         /**

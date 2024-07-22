@@ -3,36 +3,23 @@
  *
  * @access {public}
  * @param  {DOMElement}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-addEventListener(element, eventName, handler, useCapture)
+addEventListener(DOMElement, eventName, handler)
 {
-    // Boolean use capture defaults to false
-    useCapture = typeof useCapture === 'undefined' ? false : Boolean(useCapture);
-
-    // Class event storage
-    var events = this._events;
-
-    // Make sure events are set
-    if (!events)
-    {
-        this._events = events = {};
-    }
-
-    // Make sure an array for the event type exists
-    if (!events[eventName])
-    {
-        events[eventName] = [];
-    }
+    var args = TO_ARR.call(arguments);
 
     // Arrays
-    if (this.is_array(element))
+    if (this.is_array(DOMElement))
     {
-        this.each(element, function(i, el)
-        {
-            this.addEventListener(el, eventName, handler, useCapture);
+        var baseArgs = args.slice(1);
+
+        this.each(DOMElement, function(i, el)
+        {            
+            this.addEventListener.apply(this, [el, ...baseArgs]);
 
         }, this);
     }
@@ -45,23 +32,48 @@ addEventListener(element, eventName, handler, useCapture)
 
             this.each(eventsArr, function(i, event)
             {
-                this.addEventListener(element, event, handler, useCapture);
+                args[1] = event;
+
+                this.addEventListener.apply(this, args);
                 
             }, this);
 
             return;
         }
 
-        // Push the details to the events object
-        events[eventName].push(
-        {
-            element: element,
-            handler: handler,
-            useCapture: useCapture,
-        });
+        // If array of arguements is provided, "this" will always be the first
+        // argument provided
+        // However the first and second argument passed to the callback will always the event object and the element
+        // e.g. addEventListener(el, 'click', callback, ['baz', 'foo', 'bar']) -> callback(e, el, foo, bar) this = 'baz'
 
-        this.__addListener(element, eventName, handler, useCapture);
+        // Remove element, eventName, handler from args
+        let argsNormal = this.__normaliseListenerArgs(DOMElement, args);
+
+        this.__addListener(DOMElement, eventName, handler, argsNormal.thisArg, argsNormal.args, argsNormal.pushFirst);
     }
+}
+
+/**
+ * Nomralize event listener args
+ * 
+ * @param  {DOMElement}    DOMElement    The target DOM node
+ * @param  {array}         args       Args passed to addEventListener or removeEventListener
+ */
+__normaliseListenerArgs(DOMElement, args)
+{
+    args = args.slice(3);
+
+    let thisArg   = DOMElement;
+    let pushFirst = false;
+
+    // Push first
+    if (!this.is_empty(args))
+    {
+        thisArg   = args.shift();
+        pushFirst = this.bool(args.shift());
+    }
+
+    return {args, thisArg, pushFirst};
 }
 
 /**
@@ -71,16 +83,82 @@ addEventListener(element, eventName, handler, useCapture)
  * @param  {DOMElement}    element    The target DOM node
  * @param  {string}  eventName  Event type
  * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param  {bool}    data Use capture (optional) (defaul false)
  */
-__addListener(el, eventName, handler, useCapture)
+__addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
 {
-    if (el.addEventListener)
+    // Apply GUID to element and callback
+    DOMElement.guid = DOMElement.guid || (DOMElement.guid = this._guidgen());
+    handler.guid    = handler.guid || (handler.guid = this._guidgen());
+
+    let hasHandler = true;
+    let guid       = DOMElement.guid;
+
+    // Make sure an array for event type exists
+    if (!this._events[DOMElement.guid])
     {
-        el.addEventListener(eventName, handler, useCapture);
+        hasHandler = false;
+
+        this._events[guid] = {};
     }
-    else
+
+    if (!this._events[guid][eventName])
     {
-        el.attachEvent('on' + eventName, handler, useCapture);
+        hasHandler = false;
+
+        this._events[guid][eventName] = [];
     }
+
+    // Push the details to the events object
+    const handlerObj = {
+        callback : handler,
+        thisArg  : thisArg,
+        args     : args,
+        element  : DOMElement,
+    };
+    
+    pushFirst ? this._events[guid][eventName].unshift(handlerObj) : this._events[guid][eventName].push(handlerObj);
+
+    if (!hasHandler)
+    {
+        if (DOMElement.addEventListener)
+        {
+            DOMElement.addEventListener(eventName, this.__eventDispatcher);
+        }
+        else
+        {
+            DOMElement.attachEvent('on' + eventName, this.__eventDispatcher);
+        }
+    }
+}
+
+/**
+ * Event dispatcher
+ *
+ * @access {private}
+ * @param  {eventObject}  e  
+ */
+__eventDispatcher(e)
+{
+    e = e || window.event;
+
+    let DOMElement = this;
+
+    let guid = DOMElement.guid;
+
+    if (!guid) return;
+
+    let _this = Container.Helper();
+
+    let callbacks = _this.array_get(`${guid}.${e.type}`, _this._events) || [];
+
+    _this.each(callbacks, function(i, handler)
+    {        
+        if (handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]) === false)
+        {
+            e.preventDefault();
+
+            e.stopPropagation();
+        }
+    });
 }

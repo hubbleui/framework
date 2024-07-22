@@ -113,7 +113,7 @@
          */
         _unbind()
         {
-            Helper.removeEventListener(this._nodes, 'mousedown, touchstart', this._startRipple, false);
+            Helper.removeEventListener(this._nodes, 'mousedown, touchstart', this._startRipple);
         }
 
         /**
@@ -124,7 +124,7 @@
          */
         _bindWrapper(wrapper)
         {
-            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple, false);
+            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple);
         }
 
         /**
@@ -165,7 +165,7 @@
 
             // Create ripple and append immediately
             var ripple = document.createElement('div');
-            wrapper.appendChild(ripple);
+            Helper.preapend(ripple, wrapper);
 
             // Figure out where to place ripple inside parent
             var c = Helper.coordinates(wrapper);
@@ -247,6 +247,22 @@
             // Cached timer for release
             var timer;
 
+            // Blocking click target
+            var blockedClick = e.target !== wrapper;
+            var loopedClicks = false;
+
+            const triggerClicks = function(node)
+            {
+                if (node === wrapper)
+                {
+                    Helper.trigger_event(node, 'click');
+
+                    return true;
+                }
+
+                Helper.trigger_event(node, 'click');
+            }
+
             // Release event
             const release = function(ev)
             {
@@ -255,6 +271,13 @@
 
                 // Remove release listener
                 document.removeEventListener(releaseEvent, release);
+
+                if (blockedClick && !loopedClicks)
+                {
+                    Helper.traverse_up(e.target, triggerClicks);
+
+                    loopedClicks = true;
+                }
 
                 // Check if release happened before ripple finished animating
                 const held = (performance.now() - t0);

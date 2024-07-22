@@ -14,3 +14,10 @@ class HelperJS
     browser = false;
 
     _events = {};
+
+    _guid = 1;
+
+    _guidgen()
+    {
+        return `__${this._guid++}`;
+    }

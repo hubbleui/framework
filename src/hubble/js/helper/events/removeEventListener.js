@@ -1,23 +1,24 @@
 /**
- * Removes event listeners on a DOM node
+ * Remove an event listener
  *
- * If no event name is given, all attached event listeners are removed.
- * If no callback is given, all callbacks for the event type will be removed.
- * This function can still remove "annonymous" functions that are given a name as they are declared.
- * 
  * @access {public}
  * @param  {DOMElement}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-removeEventListener(DOMElement, eventName, callback, usecapture)
+removeEventListener(DOMElement, eventName, handler)
 {
+    var args = TO_ARR.call(arguments);
+
     if (this.is_array(DOMElement))
     {
+        var baseArgs = args.slice(1);
+
         this.each(DOMElement, function(i, el)
-        {
-            this.removeEventListener(el, eventName, callback, usecapture);
+        {            
+            this.removeEventListener.apply(this, [el, ...baseArgs]);
         
         }, this);
     }
@@ -36,111 +37,118 @@ removeEventListener(DOMElement, eventName, callback, usecapture)
 
             this.each(eventsArr, function(i, event)
             {
-                this.removeEventListener(DOMElement, event, callback, usecapture);
+                args[1] = event;
 
+                this.removeEventListener.apply(this, args);
+                
             }, this);
 
             return;
         }
 
         // If the callback was not provided - remove all events of the type on the element
-        if (!callback)
+        if (!handler)
         {
             return this.__removeElementTypeListeners(DOMElement, eventName);
         }
+        
+        let guid = DOMElement.guid;
 
-        // Default use capture
-        usecapture = typeof usecapture === 'undefined' ? false : Boolean(usecapture);
+        // Nothing to remove
+        if (!guid) return;
 
-        // No events to remove
-        if (!this._events[eventName])
-        {
-            return;
-        }
+        let handlers = this.array_get(`${guid}.${eventName}`, this._events);
+
+        // Nothing to remove
+        if (!handlers) return;
 
         // Loop stored events and match node, event name, handler, use capture
-        this.each(this._events[eventName], function(i, event)
+        this.each(handlers, function(i, _handler)
         {
-            if (event.handler === callback && event.useCapture === usecapture && event.element === DOMElement)
+            if (_handler.callback.guid === handler.guid || this.is_equial(_handler.callback, handler))
             {
-                this.__removeListener(DOMElement, eventName, callback, usecapture);
+                this._events[guid][eventName].splice(i, 1);
 
-                this._events[eventName].splice(i, 1);
+                if (this.is_empty(this._events[guid][eventName]))
+                {
+                    delete this._events[guid][eventName];
+
+                    this.__removeListener(DOMElement, eventName);
+                }
                 
                 // Break only remove first
                 return false;
-            }
+            } 
         
         }, this);
+
+        
     }
 }
 
 /**
- * Removes all registered event listners on an element
+ * Removes all registered event listeners on an element
  *
  * @access {private}
- * @param  {DOMElement}    element Target node element
+ * @param  {DOMElement} DOMElement Target node element
  */
 __removeElementListeners(DOMElement)
 {
-    this.each(this._events, function(type, events)
+    let guid = DOMElement.guid;
+
+    if (!guid) return;
+
+    if (this._events[guid])
     {
-        this._events[type] = this.map(events, function(i, event)
+        this.each(this._events[guid], function(type, callbacks)
         {
-            if (event.element === DOMElement)
-            {
-                this.__removeListener(DOMElement, type, event.handler, event.useCapture);
-                
-                return false;
-            }
-
-            return event;
-        
+            this.__removeListener(DOMElement, type);
+            
         }, this);
+    }
 
-    }, this);
+    delete this._events[guid];
 }
 
 /**
- * Removes all registered event listners of a specific type on an element
+ * Removes all registered event listeners of a specific type on an element
  *
  * @access {private}
- * @param  {DOMElement}    element Target node element
- * @param  {string}  type    Event listener type
+ * @param  {DOMElement} DOMElement Target node element
+ * @param  {string}     type       Event listener type
  */
 __removeElementTypeListeners(DOMElement, type)
 {
-    this._events[type] = this.map(this._events[type], function(i, event)
-    {
-        if (event.element === DOMElement)
-        {
-            this.__removeListener(DOMElement, type, event.handler, event.useCapture);
-            
-            return false;
-        }
+    let guid = DOMElement.guid;
 
-        return event;
-    
-    }, this);
+    if (!guid) return;
+
+    // Make sure an array for event type exists
+    if (this._events[guid] && this._events[guid][type])
+    {
+        delete this._events[guid][type];
+
+        this.__removeListener(DOMElement, type);
+    }
 }
 
 /**
  * Removes a listener from the element
  *
  * @access {private}
- * @param  {DOMElement}    element    The target DOM node
- * @param  {string}  eventName  Event type
- * @param  {closure} handler    Callback event
- * @param  {bool}    useCapture Use capture (optional) (defaul false)
+ * @param  {DOMElement} DOMElement The target DOM node
+ * @param  {string}     eventType  Event type
+ * @param  {closure}    handler    Callback event
+ * @param  {bool}       useCapture Use capture (optional) (defaul false)
  */
-__removeListener(el, eventName, handler, useCapture)
-{
-    if (el.removeEventListener)
+__removeListener(DOMElement, eventType)
+{    
+    if (DOMElement.addEventListener)
     {
-        el.removeEventListener(eventName, handler, useCapture);
+        DOMElement.removeEventListener(eventType, this.__eventDispatcher);
     }
     else
     {
-        el.detachEvent('on' + eventName, handler, useCapture);
+        DOMElement.removeEventListener('on' + eventType, this.__eventDispatcher);
     }
 }
