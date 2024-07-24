@@ -1,5 +1,10 @@
 (function()
 {
+    /**
+     * Lazyload fallback
+     * 
+     * @var {string}
+     */
     var LAZY_FALLBACK_IMAGE = typeof LAZY_FALLBACK_IMAGE === 'undefined' ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSJ3aGl0ZSI+CiAgPHBhdGggZD0iTTAgNCBMMCAyOCBMMzIgMjggTDMyIDQgeiBNNCAyNCBMMTAgMTAgTDE1IDE4IEwxOCAxNCBMMjQgMjR6IE0yNSA3IEE0IDQgMCAwIDEgMjUgMTUgQTQgNCAwIDAgMSAyNSA3Ij48L3BhdGg+Cjwvc3ZnPg==" : LAZY_FALLBACK_IMAGE;
 
     /**
@@ -286,15 +291,15 @@
     // Invoke and start loading images
     var lazy = new LazyLoad();
 
-    // Listen for HubbleReady and register into dom
+    // Listen for Hubble:ready and register into dom
     // Will no be invoked unless dom().refresh() is called
     const AddModule = function()
     {
         Hubble.dom().register('LazyLoad', LazyLoad, false);
 
-        window.removeEventListener('HubbleReady', AddModule);
+        window.removeEventListener('Hubble:ready', AddModule);
     }
 
-    window.addEventListener('HubbleReady', AddModule);
+    window.addEventListener('Hubble:ready', AddModule);
 
 })();

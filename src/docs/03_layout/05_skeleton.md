@@ -757,7 +757,7 @@ The example below shows swapping out the contents of card component. Click the `
         makeSkeletons();
     }
 
-    window.addEventListener('HubbleReady', loader);
+    window.addEventListener('Hubble:ready', loader);
 })();
 
 </script>

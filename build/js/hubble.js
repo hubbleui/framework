@@ -523,7 +523,6 @@ var Chain = function()
          * Constructor
          *
          * @class
-         {*} @constructor
          * @access {public}
          */
         constructor()
@@ -567,7 +566,7 @@ var Chain = function()
 
             if (invoke)
             {
-                this.get(key);
+                return this.get(key);
             }
         }
 
@@ -706,21 +705,6 @@ var Chain = function()
 
             return bound;
         }
-
-
-        /*import(['foo', 'member2','alias2']).from('Helper');
-        import('*').from('Helper');
-        
-        export_default(fooFunction)
-        {
-
-        }
-
-        export('{ funct1, func2 }')
-        {
-
-        }*/
-
 
         /**
          * Sets the key as a prototype method
@@ -954,259 +938,6 @@ var Chain = function()
     }
 
 })(window);
-(function()
-{
-    /**
-     * Application core
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class Application
-    {
-        /**
-         * Called when the application is first initialized
-         *
-         * @access {public}
-         */
-        boot()
-        {        
-            this.dom().boot();
-        }
-
-        /**
-         * Get the DOM component
-         *
-         * @access {public}
-         * @return {object}
-         */
-        dom()
-        {
-            return Container.get('HubbleDom');
-        }
-    }
-
-    // Loads into container
-    Container.singleton('Hubble', Application);
-
-    window.Hubble = Container.get('Hubble');
-
-})();
-(function()
-{    
-    /**
-     * DOM Manager
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class Dom
-    {
-        _modules = {};
-
-        _ready = false;
-
-        /**
-         * Module constructor
-         *
-         * @class
-         {*} @constructor
-         * @access {public}
-         */
-        constructor()
-        {
-            window.hbDOMReady = false;
-
-            return this;
-        }
-
-        /**
-         * Boot Dom
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         */
-        boot()
-        {
-            this._bindModules();
-
-            this._dispatchReady();
-        }
-
-         /**
-         * Boot Dom
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         */
-        _dispatchReady()
-        {
-            if (!this._ready)
-            {
-                const event = document.createEvent('Event');
-
-                event.initEvent('DOMReady', true, true);
-
-                this._ready = event;
-            }
-
-            window.dispatchEvent(this._ready);
-            
-            window.hbDOMReady = true;
-        }
-
-        /**
-         * Register a DOM module (singleton)
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         * @param {bool}   invoke Invoke the module immediately (optional) (default false)
-         */
-        register(name, module, invoke)
-        {
-            invoke = (typeof invoke === 'undefined' ? false : true);
-
-            this._modules[name] = module;
-
-            if (invoke && window.hbDOMReady)
-            {
-                this._bindModule(name);
-            }
-        }
-
-        /**
-         * Refresh the DOM modiules or a string module
-         *
-         * @access {public}
-         * @param {string} name Name of the module (optional) (default false)
-         */
-        refresh(_module)
-        {
-            _module = (typeof _module === 'undefined' ? false : _module);
-
-            if (_module)
-            {
-                for (var key in this._modules)
-                {
-                    if (!this._modules.hasOwnProperty(key))
-                    {
-                        continue;
-                    }
-
-                    if (_module === key)
-                    {
-                        this._unbindModule(key);
-
-                        this._bindModule(key);
-
-                        Container.Helper().collectGarbage();
-                    }
-                }
-            }
-            else
-            {
-                window.hbDOMReady = false;
-
-                this._unbindModules();
-
-                Container.Helper().collectGarbage();
-
-                this._bindModules();
-
-                this._dispatchReady();
-            }
-        }
-
-        /**
-         * Unbind listener to containers
-         *
-         * @param {null}
-         * @access {private}
-         */
-        _unbindModules()
-        {
-            for (var key in this._modules)
-            {
-                if (!this._modules.hasOwnProperty(key))
-                {
-                    continue;
-                }
-
-                this._unbindModule(key);
-            }
-        }
-
-        /**
-         * Unbind a single module
-         *
-         * @param  {string}  key Name of module to unbind
-         * @access {private}
-         */
-        _unbindModule(key)
-        {            
-            var _module = Container.get(key);
-
-            if (this._hasMethod(_module, 'destruct'))
-            {
-                _module.destruct();
-            }
-
-            Container.delete(key);
-        }
-
-        /**
-         * Unbind listener to containers
-         *
-         * @access {private}
-         */
-        _bindModules()
-        {            
-            for (var key in this._modules)
-            {
-                if (!this._modules.hasOwnProperty(key))
-                {
-                    continue;
-                }
-
-                this._bindModule(key);
-            }
-        }
-
-        /**
-         * Bind a single module
-         *
-         * @param {string} key Name of module to bind
-         * @access {private}
-         */
-        _bindModule(key)
-        {
-            Container.singleton(key, this._modules[key], true);
-        }
-
-        /**
-         * Checks if a class object has a method by name
-         *
-         * @access {private}
-         * @param  {mixed}  classObj The object instance or reference
-         * @param  {string} method   The name of the method to check for
-         * @return {bool}
-         */
-        _hasMethod(classObj, method)
-        {
-            return typeof classObj === 'object' && typeof classObj[method] === 'function';
-        }
-    }
-
-    // Load into container and invoke
-    Container.singleton('HubbleDom', Dom);
-
-})();
-
 
 // Helper
 (function()
@@ -4162,6 +3893,26 @@ closest(el, type)
         return null;
     }
 
+    // Type is class
+    if (this.is_htmlElement(type))
+    {
+        if (el === type) return true;
+        
+        let ret = false;
+
+        this.traverse_up(el, (parent) =>
+        {
+            if (parent === type)
+            {
+                ret = true;
+
+                return true;
+            }
+        });
+
+        return ret;
+    }
+
     if (type[0] === '.')
     {
         return this.closest_class(el, type);
@@ -4812,14 +4563,20 @@ remove_from_dom(el)
     {
         el.parentNode.removeChild(el);
 
-        var children = this.$All('*', el);
+        var children = this.$All('*', el).reverse();
 
         for (var i = 0, len = children.length; i < len; i++)
         {
             this.removeEventListener(children[i]);
+
+            this.trigger_event(children[i], `Hubble:dom:remove`);
         }
 
         this.removeEventListener(el);
+
+        this.trigger_event(el, `Hubble:dom:remove`);
+
+        this.trigger_event(window, `Hubble:dom:remove`, { DOMElement: el });
     }
 }
 		/**
@@ -4948,11 +4705,12 @@ trigger_event(DOMElement, eventName, data)
     }
     else
     {
-        if (this.is_object(data))
+        // Actual object
+        if (!this.is_constructed(data) && this.is_object(data))
         {
-            data = this.array_merge(data, { DOMElement: DOMElement, name: eventName });
+            data = { ...{ DOMElement: DOMElement, name: eventName }, ...data};
         }
-        else if (!this.is_undefined(data))
+        else
         {
             data = { DOMElement: DOMElement, name: eventName, state: data };
         }
@@ -4965,11 +4723,11 @@ trigger_event(DOMElement, eventName, data)
         {
             var events = eventName.split(':').slice(0, -1);
             var base   = events.shift();
-            var conut  = events.length + 1;
+            var count  = events.length + 1;
 
-            this.for(conut, function(i)
+            this.for(count, function(i)
             {
-                let subevent = i === (conut -1) ? base : `${base}:${events.join(':')}`;
+                let subevent = i === (count -1) ? base : `${base}:${events.join(':')}`;
 
                 data.name = eventName;
 
@@ -5142,7 +4900,7 @@ __addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
     let guid       = DOMElement.guid;
 
     // Make sure an array for event type exists
-    if (!this._events[DOMElement.guid])
+    if (!this._events[guid])
     {
         hasHandler = false;
 
@@ -5239,7 +4997,7 @@ clearEventListeners()
  *
  * @access {public}
  */
-collectGarbage()
+collect_garbage()
 {
     let _this = this;
 
@@ -5251,7 +5009,7 @@ collectGarbage()
         {
             let DOMElement = callbacks[0].element;
 
-            if (!this.in_dom(el))
+            if (!this.in_dom(DOMElement))
             {
                 cleared = true;
 
@@ -6354,11 +6112,11 @@ obj_clone(src)
  * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
  * @returns {array}
  */
-object_props(mixed_var, withMethods)
+object_props(mixed_var, withMethods, onlyMethods)
 {
     withMethods = typeof withMethods === 'undefined' ? true : false;
 
-    let keys = Object.keys(mixed_var);
+    let keys = onlyMethods ? [] : Object.keys(mixed_var);
 
     if (withMethods)
     {
@@ -6851,6 +6609,26 @@ is_constructable(mixed_var)
     return props.length >= 1;
 }
 		/**
+ * Checks if variable is constructed object function.
+ *
+ * @param   {mixed}  mixed_var  Variable to evaluate
+ * @returns {boolean}
+ */
+is_constructed(mixed_var)
+{
+    if (typeof mixedVar === 'object' && mixedVar.constructor && typeof mixedVar.constructor === 'function')
+    {
+        var constr = mixedVar.constructor.toString().trim();
+        
+        if (constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class '))
+        {
+            return constr.toLowerCase().includes('native code') ? this.object_props(mixed_var, true, true).length > 1 : true;
+        }
+    }
+
+    return false;
+}
+		/**
  * Is dataView obj.
  * 
  * @param   {mixed}  mixed_var  Variable to test
@@ -6924,7 +6702,7 @@ is_equal(a, b, strict)
     {
         return false;
     }
-    else if (this.is_string(a) || this.is_number(a) || this.is_bool(a) || this.is_null(a))
+    else if (this.is_string(a) || this.is_number(a) || this.is_bool(a) || this.is_null(a) || this.is_htmlElement(a))
     {
         return a === b;
     }
@@ -7266,7 +7044,334 @@ var_type(value)
 
 Container.singleton('Helper', HelperJS);
 
-console.log(Container.get('Helper'));
+})();
+
+
+// Hubble core
+(function()
+{
+    /**
+     * Application core
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    class Application
+    {
+        /**
+         * Called when the application is first initialized
+         *
+         * @access {public}
+         */
+        boot()
+        {        
+            this.dom().boot();
+
+            Container.Helper().trigger_event(window, 'Hubble:ready', this);
+        }
+
+        /**
+         * Get the DOM component
+         *
+         * @access {public}
+         * @return {object}
+         */
+        dom()
+        {
+            return Container.get('HubbleDom');
+        }
+    }
+
+    // Loads into container
+    Container.singleton('Hubble', Application);
+
+    window.Hubble = Container.get('Hubble');
+
+})();
+(function()
+{    
+    const [each, trigger_event, collect_garbage] = Container.import(['each', 'trigger_event', 'collect_garbage']).from('Helper');
+
+    /**
+     * DOM Manager
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    class Dom
+    {
+        /**
+         * Module constructor
+         *
+         * @class
+         * @access {public}
+         */
+        constructor()
+        {
+            this._isReady = false;
+
+            this.components = [];
+
+            return this;
+        }
+
+        /**
+         * Boot Dom
+         *
+         * @access {public}
+         * @param {string} name   Name of the module
+         * @param {object} module Uninvoked module object
+         */
+        boot()
+        {
+            each(this.components, function(i, name)
+            {
+                const component = Container.get(`HB_DOM:${name}`);
+
+                this._dispatchComponent(name, 'bind', component, document);
+
+            }, this);
+
+            this._dispatchReady();
+
+            this._isReady = true;
+        }
+
+        /**
+         * Register a DOM component
+         *
+         * @access {public}
+         * @param {string} name   Name of the module
+         * @param {object} module Uninvoked module object
+         * @param {bool}   invoke Invoke the module immediately (optional) (default false)
+         */
+        register(name, component, invoke)
+        {
+            invoke = (typeof invoke === 'undefined' ? false : this._isReady);
+
+            this.components.push(name);
+
+            Container.singleton(`HB_DOM:${name}`, component);
+
+            if (invoke)
+            {
+                this._bindComponent(name, document);
+            }
+        }
+
+        /**
+         * Boot Dom
+         *
+         * @access {public}
+         * @param {string} name   Name of the module
+         * @param {object} module Uninvoked module object
+         */
+        _dispatchReady()
+        {
+            trigger_event(window, 'Hubble:dom:ready', this);
+        }
+
+        /**
+         * Boot Dom
+         *
+         * @access {public}
+         * @param {string} name   Name of the module
+         * @param {object} module Uninvoked module object
+         */
+        _dispatchComponent(name, event, component, context)
+        {
+            trigger_event(window, `Hubble:dom:refresh:${name}:${event}`, { component: component, context: context});
+        }
+
+        /**
+         * Bind a single module
+         *
+         * @param {string} key Name of module to bind
+         * @access {private}
+         */
+        _bindComponent(name, context)
+        {
+            let component = Container.get(`HB_DOM:${name}`);
+
+            if (this._hasMethod(component, 'construct'))
+            {
+                component.construct(context);
+            }
+
+            this._dispatchComponent(name, 'bind', component, context);
+        }
+
+        /**
+         * Unbind a single module
+         *
+         * @param  {string}  key Name of module to unbind
+         * @access {private}
+         */
+        _unbindComponent(name, context)
+        {            
+            let component = Container.get(`HB_DOM:${name}`);
+
+            if (this._hasMethod(component, 'destruct'))
+            {
+                component.destruct(context);
+            }
+
+            this._dispatchComponent(name, 'unbind', component, context);
+
+        }
+        
+        /**
+         * Refresh the DOM modiules or a string module
+         *
+         * @access {public}
+         * @param {string} name Name of the module (optional) (default false)
+         */
+        refresh(component, context)
+        {
+            component = (typeof component === 'undefined' ? false : component);
+
+            // refresh(DOMElement)
+            if (component instanceof Element || component instanceof HTMLDocument)
+            {
+                context = component;
+                component  = null;
+            }
+            // refresh('module')
+            // refresh('module', DOMElement)
+            else if (typeof component === 'string')
+            {
+                context = (context instanceof Element || context instanceof HTMLDocument) ? context : document;
+            }
+
+            each(this.components, function(i, name)
+            {
+                if (!component || component === name)
+                {
+                    this._unbindComponent(name, context);
+
+                    collect_garbage();
+
+                    this._bindComponent(name, context);
+                }
+            }, this);
+        }
+
+        /**
+         * Checks if a class object has a method by name
+         *
+         * @access {private}
+         * @param  {mixed}  classObj The object instance or reference
+         * @param  {string} method   The name of the method to check for
+         * @return {bool}
+         */
+        _hasMethod(classObj, method)
+        {
+            return typeof classObj === 'object' && typeof classObj[method] === 'function';
+        }
+    }
+
+    // Load into container and invoke
+    Container.singleton('HubbleDom', Dom);
+
+})();
+
+(function()
+{
+    const [$All, each, closest] = Container.import(['$All','each','closest']).from('Helper');
+
+    /**
+     * Component base class
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    class Component
+    {
+        /**
+         * Constructor.
+         *
+         * @access {public}
+         * @param  {string} selector DOM Elements selector
+         */
+        constructor(selector)
+        {
+            this._DOMElements = [];
+
+            this._selector = selector;
+            
+            this.construct(document);
+        }
+
+        /**
+         * Module destructor - removes event listeners
+         *
+         * @access {public}
+         */
+        construct(context)
+        {
+            let nodes = $All(this._selector, context);
+
+            if (context !== document) nodes.unshift(context);
+
+            this._DOMElements = [...this._DOMElements, ...nodes];
+
+            each(nodes, (i, node) => this.bind(node), this);
+        }
+
+        /**
+         * Module destructor - removes event listeners
+         *
+         * @access {public}
+         */
+        destruct(context)
+        {            
+            if (!context || context === document)
+            {
+                each(this._DOMElements, (i, node) => this.unbind(node), this);
+                
+                this._DOMElements = [];
+
+                return;
+            }
+
+            const _this = this;
+
+            each(this._DOMElements, function(i, DOMElement)
+            {                
+                if (closest(DOMElement, context))
+                {
+                    _this.unbind(DOMElement);
+
+                    _this._DOMElements.splice(i, 1);
+                }
+            });
+        }
+
+        /**
+         * Insert ripples
+         *
+         * @access {private}
+         */
+        bind(node)
+        {
+        }
+
+        /**
+         * Insert ripples
+         *
+         * @access {private}
+         */
+        unbind(node)
+        {
+        }
+    }
+    
+    // Register
+    Container.set('Component', [Component]);
+
 })();
 
 
@@ -11092,6 +11197,13 @@ function abort()
 (function()
 {
     /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
      * Ripple animation time.
      * 
      * Note 1. this is set in CSS
@@ -11128,6 +11240,23 @@ function abort()
      * @var {Map}
      */
     const RIPPLING = new Map();
+
+    /**
+     * Selectors
+     * 
+     * @var {Map}
+     */
+    const SELECTORS =
+    [
+        '.btn',
+        '.list > li',
+        '.pagination li a',
+        '.tab-nav li a',
+        '.card.primary-action',
+        '.card .primary-action',
+        '.card-media',
+        '.js-ripple'
+    ];
     
     /**
      * Ripple click animation
@@ -11136,7 +11265,7 @@ function abort()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Ripple
+    class Ripple extends Component
     {
         /**
          * Module constructor
@@ -11146,35 +11275,23 @@ function abort()
          */
         constructor()
         {
-            this._classes =
-            [
-                '.btn',
-                '.list > li',
-                '.pagination li a',
-                '.tab-nav li a',
-                '.card.primary-action',
-                '.card .primary-action',
-                '.card-media',
-                '.js-ripple'
-            ];
-
-            this._nodes = Helper.$All(this._classes.join(','));
-
-            this._bind();
-
-            return this;
-        };
-
+            super(SELECTORS.join(','));
+        }
+        
         /**
-         * Module destructor - removes event listeners
+         * Insert ripples
          *
-         * @access {public}
+         * @access {private}
          */
-        destruct()
+        bind(node)
         {
-            this._unbind();
+            // No ripples inside primary actions
+            if (!Helper.has_class(node, 'primary-action') && Helper.closest(node, '.primary-action') && !Helper.has_class(node, 'card'))
+            {
+                return;
+            }
 
-            this._nodes = [];
+            Helper.addEventListener(node, 'mousedown, touchstart', this._startRipple);
         }
 
         /**
@@ -11182,40 +11299,9 @@ function abort()
          *
          * @access {private}
          */
-        _bind()
+        unbind(node)
         {
-            Helper.each(this._nodes, function(i, node)
-            {
-                // No ripples inside primary actions
-                if (!Helper.has_class(node, 'primary-action') && Helper.closest(node, '.primary-action') && !Helper.has_class(node, 'card'))
-                {
-                    return;
-                }
-
-                this._bindWrapper(node);
-
-            }, this);
-        }
-
-        /**
-         * Remove ripples
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._nodes, 'mousedown, touchstart', this._startRipple);
-        }
-
-        /**
-         * Insert ripple
-         *
-         * @access {private}
-         * @param  {DOMElement}    wrapper
-         */
-        _bindWrapper(wrapper)
-        {
-            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple);
+            Helper.removeEventListener(node, 'mousedown, touchstart', this._startRipple);
         }
 
         /**
@@ -13104,6 +13190,21 @@ function abort()
 (function()
 {
     /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+
+    var foo = function(){
+
+        return this;
+    };
+
+    console.log(Container.Helper().extend(foo, Component));
+
+    /**
      * Helper instance
      * 
      * @var {object}
@@ -14200,12 +14301,12 @@ function abort()
             {
                 Container.SmoothScroll(url.hash, { easing: easing, speed: speed, updateUrl: false });
 
-                window.removeEventListener('HubbleReady', scroll);
+                window.removeEventListener('Hubble:ready', scroll);
             }
 
             window.scrollTo(0, 0);
 
-            window.addEventListener('HubbleReady', scroll);
+            window.addEventListener('Hubble:ready', scroll);
         }
     }
 
@@ -14775,6 +14876,8 @@ function abort()
             _wrapper.insertBefore(chip, Helper.first_children(_wrapper).pop());
 
             Helper.addEventListener(Helper.$('.js-remove-btn', chip), 'click', this._removeChip);
+
+            Container.Hubble().dom().refresh('Ripple', _wrapper);
         }
 
         /**
@@ -15670,12 +15773,5 @@ function abort()
 (function()
 {
     Container.get('Hubble').boot();
-
-    var hubbleReady = new CustomEvent('HubbleReady',
-    {
-        detail: Container.get('Hubble')
-    });
-
-    window.dispatchEvent(hubbleReady);
 })();
 

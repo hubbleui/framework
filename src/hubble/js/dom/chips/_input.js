@@ -206,6 +206,8 @@
             _wrapper.insertBefore(chip, Helper.first_children(_wrapper).pop());
 
             Helper.addEventListener(Helper.$('.js-remove-btn', chip), 'click', this._removeChip);
+
+            Container.Hubble().dom().refresh('Ripple', _wrapper);
         }
 
         /**

@@ -1,6 +1,13 @@
 (function()
 {
     /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
      * Ripple animation time.
      * 
      * Note 1. this is set in CSS
@@ -37,6 +44,23 @@
      * @var {Map}
      */
     const RIPPLING = new Map();
+
+    /**
+     * Selectors
+     * 
+     * @var {Map}
+     */
+    const SELECTORS =
+    [
+        '.btn',
+        '.list > li',
+        '.pagination li a',
+        '.tab-nav li a',
+        '.card.primary-action',
+        '.card .primary-action',
+        '.card-media',
+        '.js-ripple'
+    ];
     
     /**
      * Ripple click animation
@@ -45,7 +69,7 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Ripple
+    class Ripple extends Component
     {
         /**
          * Module constructor
@@ -55,35 +79,23 @@
          */
         constructor()
         {
-            this._classes =
-            [
-                '.btn',
-                '.list > li',
-                '.pagination li a',
-                '.tab-nav li a',
-                '.card.primary-action',
-                '.card .primary-action',
-                '.card-media',
-                '.js-ripple'
-            ];
-
-            this._nodes = Helper.$All(this._classes.join(','));
-
-            this._bind();
-
-            return this;
-        };
-
+            super(SELECTORS.join(','));
+        }
+        
         /**
-         * Module destructor - removes event listeners
+         * Insert ripples
          *
-         * @access {public}
+         * @access {private}
          */
-        destruct()
+        bind(node)
         {
-            this._unbind();
+            // No ripples inside primary actions
+            if (!Helper.has_class(node, 'primary-action') && Helper.closest(node, '.primary-action') && !Helper.has_class(node, 'card'))
+            {
+                return;
+            }
 
-            this._nodes = [];
+            Helper.addEventListener(node, 'mousedown, touchstart', this._startRipple);
         }
 
         /**
@@ -91,40 +103,9 @@
          *
          * @access {private}
          */
-        _bind()
+        unbind(node)
         {
-            Helper.each(this._nodes, function(i, node)
-            {
-                // No ripples inside primary actions
-                if (!Helper.has_class(node, 'primary-action') && Helper.closest(node, '.primary-action') && !Helper.has_class(node, 'card'))
-                {
-                    return;
-                }
-
-                this._bindWrapper(node);
-
-            }, this);
-        }
-
-        /**
-         * Remove ripples
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._nodes, 'mousedown, touchstart', this._startRipple);
-        }
-
-        /**
-         * Insert ripple
-         *
-         * @access {private}
-         * @param  {DOMElement}    wrapper
-         */
-        _bindWrapper(wrapper)
-        {
-            Helper.addEventListener(wrapper, 'mousedown, touchstart', this._startRipple);
+            Helper.removeEventListener(node, 'mousedown, touchstart', this._startRipple);
         }
 
         /**

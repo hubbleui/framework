@@ -1,5 +1,7 @@
 (function()
 {    
+    const [each, trigger_event, collect_garbage] = Container.import(['each', 'trigger_event', 'collect_garbage']).from('Helper');
+
     /**
      * DOM Manager
      *
@@ -9,20 +11,17 @@
      */
     class Dom
     {
-        _modules = {};
-
-        _ready = false;
-
         /**
          * Module constructor
          *
          * @class
-         {*} @constructor
          * @access {public}
          */
         constructor()
         {
-            window.hbDOMReady = false;
+            this._isReady = false;
+
+            this.components = [];
 
             return this;
         }
@@ -36,12 +35,42 @@
          */
         boot()
         {
-            this._bindModules();
+            each(this.components, function(i, name)
+            {
+                const component = Container.get(`HB_DOM:${name}`);
+
+                this._dispatchComponent(name, 'bind', component, document);
+
+            }, this);
 
             this._dispatchReady();
+
+            this._isReady = true;
         }
 
-         /**
+        /**
+         * Register a DOM component
+         *
+         * @access {public}
+         * @param {string} name   Name of the module
+         * @param {object} module Uninvoked module object
+         * @param {bool}   invoke Invoke the module immediately (optional) (default false)
+         */
+        register(name, component, invoke)
+        {
+            invoke = (typeof invoke === 'undefined' ? false : this._isReady);
+
+            this.components.push(name);
+
+            Container.singleton(`HB_DOM:${name}`, component);
+
+            if (invoke)
+            {
+                this._bindComponent(name, document);
+            }
+        }
+
+        /**
          * Boot Dom
          *
          * @access {public}
@@ -50,136 +79,19 @@
          */
         _dispatchReady()
         {
-            if (!this._ready)
-            {
-                const event = document.createEvent('Event');
-
-                event.initEvent('DOMReady', true, true);
-
-                this._ready = event;
-            }
-
-            window.dispatchEvent(this._ready);
-            
-            window.hbDOMReady = true;
+            trigger_event(window, 'Hubble:dom:ready', this);
         }
 
         /**
-         * Register a DOM module (singleton)
+         * Boot Dom
          *
          * @access {public}
          * @param {string} name   Name of the module
          * @param {object} module Uninvoked module object
-         * @param {bool}   invoke Invoke the module immediately (optional) (default false)
          */
-        register(name, module, invoke)
+        _dispatchComponent(name, event, component, context)
         {
-            invoke = (typeof invoke === 'undefined' ? false : true);
-
-            this._modules[name] = module;
-
-            if (invoke && window.hbDOMReady)
-            {
-                this._bindModule(name);
-            }
-        }
-
-        /**
-         * Refresh the DOM modiules or a string module
-         *
-         * @access {public}
-         * @param {string} name Name of the module (optional) (default false)
-         */
-        refresh(_module)
-        {
-            _module = (typeof _module === 'undefined' ? false : _module);
-
-            if (_module)
-            {
-                for (var key in this._modules)
-                {
-                    if (!this._modules.hasOwnProperty(key))
-                    {
-                        continue;
-                    }
-
-                    if (_module === key)
-                    {
-                        this._unbindModule(key);
-
-                        this._bindModule(key);
-
-                        Container.Helper().collectGarbage();
-                    }
-                }
-            }
-            else
-            {
-                window.hbDOMReady = false;
-
-                this._unbindModules();
-
-                Container.Helper().collectGarbage();
-
-                this._bindModules();
-
-                this._dispatchReady();
-            }
-        }
-
-        /**
-         * Unbind listener to containers
-         *
-         * @param {null}
-         * @access {private}
-         */
-        _unbindModules()
-        {
-            for (var key in this._modules)
-            {
-                if (!this._modules.hasOwnProperty(key))
-                {
-                    continue;
-                }
-
-                this._unbindModule(key);
-            }
-        }
-
-        /**
-         * Unbind a single module
-         *
-         * @param  {string}  key Name of module to unbind
-         * @access {private}
-         */
-        _unbindModule(key)
-        {            
-            var _module = Container.get(key);
-
-            if (this._hasMethod(_module, 'destruct'))
-            {
-                _module.destruct();
-            }
-
-            Container.delete(key);
-        }
-
-        /**
-         * Unbind listener to containers
-         *
-         * @access {private}
-         */
-        _bindModules()
-        {            
-            for (var key in this._modules)
-            {
-                if (!this._modules.hasOwnProperty(key))
-                {
-                    continue;
-                }
-
-                this._bindModule(key);
-            }
+            trigger_event(window, `Hubble:dom:refresh:${name}:${event}`, { component: component, context: context});
         }
 
         /**
@@ -188,9 +100,71 @@
          * @param {string} key Name of module to bind
          * @access {private}
          */
-        _bindModule(key)
+        _bindComponent(name, context)
         {
-            Container.singleton(key, this._modules[key], true);
+            let component = Container.get(`HB_DOM:${name}`);
+
+            if (this._hasMethod(component, 'construct'))
+            {
+                component.construct(context);
+            }
+
+            this._dispatchComponent(name, 'bind', component, context);
+        }
+
+        /**
+         * Unbind a single module
+         *
+         * @param  {string}  key Name of module to unbind
+         * @access {private}
+         */
+        _unbindComponent(name, context)
+        {            
+            let component = Container.get(`HB_DOM:${name}`);
+
+            if (this._hasMethod(component, 'destruct'))
+            {
+                component.destruct(context);
+            }
+
+            this._dispatchComponent(name, 'unbind', component, context);
+
+        }
+        
+        /**
+         * Refresh the DOM modiules or a string module
+         *
+         * @access {public}
+         * @param {string} name Name of the module (optional) (default false)
+         */
+        refresh(component, context)
+        {
+            component = (typeof component === 'undefined' ? false : component);
+
+            // refresh(DOMElement)
+            if (component instanceof Element || component instanceof HTMLDocument)
+            {
+                context = component;
+                component  = null;
+            }
+            // refresh('module')
+            // refresh('module', DOMElement)
+            else if (typeof component === 'string')
+            {
+                context = (context instanceof Element || context instanceof HTMLDocument) ? context : document;
+            }
+
+            each(this.components, function(i, name)
+            {
+                if (!component || component === name)
+                {
+                    this._unbindComponent(name, context);
+
+                    collect_garbage();
+
+                    this._bindComponent(name, context);
+                }
+            }, this);
         }
 
         /**

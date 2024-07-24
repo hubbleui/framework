@@ -17,6 +17,8 @@
         boot()
         {        
             this.dom().boot();
+
+            Container.Helper().trigger_event(window, 'Hubble:ready', this);
         }
 
         /**

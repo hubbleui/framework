@@ -25,11 +25,12 @@ trigger_event(DOMElement, eventName, data)
     }
     else
     {
-        if (this.is_object(data))
+        // Actual object
+        if (!this.is_constructed(data) && this.is_object(data))
         {
-            data = this.array_merge(data, { DOMElement: DOMElement, name: eventName });
+            data = { ...{ DOMElement: DOMElement, name: eventName }, ...data};
         }
-        else if (!this.is_undefined(data))
+        else
         {
             data = { DOMElement: DOMElement, name: eventName, state: data };
         }
@@ -42,11 +43,11 @@ trigger_event(DOMElement, eventName, data)
         {
             var events = eventName.split(':').slice(0, -1);
             var base   = events.shift();
-            var conut  = events.length + 1;
+            var count  = events.length + 1;
 
-            this.for(conut, function(i)
+            this.for(count, function(i)
             {
-                let subevent = i === (conut -1) ? base : `${base}:${events.join(':')}`;
+                let subevent = i === (count -1) ? base : `${base}:${events.join(':')}`;
 
                 data.name = eventName;
 

@@ -17,7 +17,7 @@ is_equal(a, b, strict)
     {
         return false;
     }
-    else if (this.is_string(a) || this.is_number(a) || this.is_bool(a) || this.is_null(a))
+    else if (this.is_string(a) || this.is_number(a) || this.is_bool(a) || this.is_null(a) || this.is_htmlElement(a))
     {
         return a === b;
     }

@@ -579,6 +579,12 @@
         &lt;input type="hidden" value="study" name="location[]"&gt;
     &lt;/button&gt;
 &lt;/div&gt;</code></pre>
+<script>
+    window.addEventListener('Hubble:dom:ready', function(e)
+    {
+        Container.Hubble().dom().refresh('Ripple', document.querySelectorAll('.btn')[1]);
+    });
+</script>
                     </article>
                 </div>
             </div>

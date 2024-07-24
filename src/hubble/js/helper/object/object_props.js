@@ -5,11 +5,11 @@
  * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
  * @returns {array}
  */
-object_props(mixed_var, withMethods)
+object_props(mixed_var, withMethods, onlyMethods)
 {
     withMethods = typeof withMethods === 'undefined' ? true : false;
 
-    let keys = Object.keys(mixed_var);
+    let keys = onlyMethods ? [] : Object.keys(mixed_var);
 
     if (withMethods)
     {

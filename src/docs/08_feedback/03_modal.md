@@ -17,7 +17,7 @@ To display a Modal, call the `Modal` module with your options via the `Container
 <div class="code-content-example">
     <button class="js-modal-trigger-1 btn btn-primary">Show Modal</button>
     <script type="text/javascript">
-	    window.addEventListener('HubbleReady', function()
+	    window.addEventListener('Hubble:ready', function()
 	    {
 	        document.querySelector('.js-modal-trigger-1').addEventListener('click', () => Container.Modal( {
                 title            : 'MAGA Country',
@@ -43,7 +43,7 @@ If you want a custom modal with your own content, provide your own HTML as strin
 <div class="code-content-example">
     <button class="js-modal-trigger-2 btn btn-primary">Show Modal</button>
     <script type="text/javascript">
-        window.addEventListener('HubbleReady', function()
+        window.addEventListener('Hubble:ready', function()
         {
             const card = `
                 <div class="card-header">
@@ -101,7 +101,7 @@ Here's another example using options
 <div class="code-content-example">
     <button class="js-modal-trigger-3 btn btn-primary">Show Modal</button>
     <script type="text/javascript">
-        window.addEventListener('HubbleReady', function()
+        window.addEventListener('Hubble:ready', function()
         {
             document.querySelector('.js-modal-trigger-3').addEventListener('click', () => Container.Modal( {
                 title            : 'MAGA Country',

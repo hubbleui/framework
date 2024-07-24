@@ -8,11 +8,4 @@
 (function()
 {
     Container.get('Hubble').boot();
-
-    var hubbleReady = new CustomEvent('HubbleReady',
-    {
-        detail: Container.get('Hubble')
-    });
-
-    window.dispatchEvent(hubbleReady);
 })();

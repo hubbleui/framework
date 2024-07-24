@@ -6,5 +6,3 @@
 }
 
 Container.singleton('Helper', HelperJS);
-
-console.log(Container.get('Helper'));

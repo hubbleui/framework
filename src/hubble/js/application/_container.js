@@ -15,7 +15,6 @@
          * Constructor
          *
          * @class
-         {*} @constructor
          * @access {public}
          */
         constructor()
@@ -59,7 +58,7 @@
 
             if (invoke)
             {
-                this.get(key);
+                return this.get(key);
             }
         }
 
@@ -198,21 +197,6 @@
 
             return bound;
         }
-
-
-        /*import(['foo', 'member2','alias2']).from('Helper');
-        import('*').from('Helper');
-        
-        export_default(fooFunction)
-        {
-
-        }
-
-        export('{ funct1, func2 }')
-        {
-
-        }*/
-
 
         /**
          * Sets the key as a prototype method

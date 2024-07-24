@@ -159,7 +159,7 @@ If your inserting elements into the DOM after the page has loaded, you refresh t
         <button class="btn js-trigger-image">Insert Image</button>
     </div>
     <script type="text/javascript">
-        window.addEventListener('HubbleReady', function()
+        window.addEventListener('Hubble:ready', function()
         {
             const wrapper = document.querySelector('.js-image-insert');
 

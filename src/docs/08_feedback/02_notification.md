@@ -17,7 +17,7 @@ To display a notification, call the `Notifications` module with your options via
 <div class="code-content-example">
     <button class="js-notif-trigger-1 btn btn-primary">Show Notification</button>
     <script type="text/javascript">
-	    window.addEventListener('HubbleReady', function()
+	    window.addEventListener('Hubble:ready', function()
 	    {
 	        document.querySelector('.js-notif-trigger-1').addEventListener('click', function()
 	        {
@@ -66,7 +66,7 @@ Try out a few of the different examples below:
     <button class="js-notif-trigger-4 btn btn-primary">Btn Variant</button>
     <button class="js-notif-trigger-5 btn btn-primary">Message Variant</button>
     <script type="text/javascript">
-        window.addEventListener('HubbleReady', function()
+        window.addEventListener('Hubble:ready', function()
         {
             document.querySelector('.js-notif-trigger-2').addEventListener('click', function()
             {

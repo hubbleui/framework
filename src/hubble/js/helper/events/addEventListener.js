@@ -95,7 +95,7 @@ __addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
     let guid       = DOMElement.guid;
 
     // Make sure an array for event type exists
-    if (!this._events[DOMElement.guid])
+    if (!this._events[guid])
     {
         hasHandler = false;
 

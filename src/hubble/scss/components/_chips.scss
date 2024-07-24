@@ -66,6 +66,11 @@
     }
     .form-field
     {
+    	display: flex;
+    	flex: 1 0 0%;
+    	width: 100%;
+    	min-width: 30%;
+
         input
         {
             border-left: none;
@@ -73,10 +78,6 @@
             border-bottom-left-radius: 0;
             border: none;
             box-shadow: none;
-
-            flex: 1 0 0%;
-	    	width: 100%;
-	    	min-width: 100px;
 
             &:focus,
             &.focus

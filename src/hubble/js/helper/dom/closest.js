@@ -24,6 +24,26 @@ closest(el, type)
         return null;
     }
 
+    // Type is class
+    if (this.is_htmlElement(type))
+    {
+        if (el === type) return true;
+        
+        let ret = false;
+
+        this.traverse_up(el, (parent) =>
+        {
+            if (parent === type)
+            {
+                ret = true;
+
+                return true;
+            }
+        });
+
+        return ret;
+    }
+
     if (type[0] === '.')
     {
         return this.closest_class(el, type);

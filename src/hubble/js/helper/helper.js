@@ -67,7 +67,7 @@
 		@import 'dom/height.js';
 		@import 'events/addEventListener.js';
 		@import 'events/clearEventListeners.js';
-		@import 'events/collectGarbage.js';
+		@import 'events/collect_garbage.js';
 		@import 'events/eventListeners.js';
 		@import 'events/removeEventListener.js';
 		@import 'misc/is_retina.js';
@@ -103,6 +103,7 @@
 		@import 'validation/is_callable.js';
 		@import 'validation/is_class.js';
 		@import 'validation/is_constructable.js';
+		@import 'validation/is_constructed.js';
 		@import 'validation/is_dataview.js';
 		@import 'validation/is_date.js';
 		@import 'validation/is_empty.js';

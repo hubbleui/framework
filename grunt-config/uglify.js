@@ -8,12 +8,16 @@ module.exports =
 	// Hubble Core + Theme
 	hubble :
 	{
-        files :
-        {
-            'build/js/hubble.min.js': ['build/js/hubble.js'],
-            'build/js/theme.min.js': ['build/js/theme.js'],
-            'build/js/gallery.min.js': ['build/js/gallery.js'],
-            'build/js/slider.min.js': ['build/js/slider.js']
-        }
+        files: [{
+            expand: true,
+            src: ['build/js/*.js', '!build/js/*.min.js'],
+            dest: '',
+            cwd: '.',
+            rename: function (dst, src)
+            {
+            
+                return src.replace('.js', '.min.js');
+            }
+        }]
     }
 };

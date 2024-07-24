@@ -1,6 +1,21 @@
 (function()
 {
     /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+
+    var foo = function(){
+
+        return this;
+    };
+
+    console.log(Container.Helper().extend(foo, Component));
+
+    /**
      * Helper instance
      * 
      * @var {object}

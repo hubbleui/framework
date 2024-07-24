@@ -5814,16 +5814,20 @@ form.success .msg-success {
 .chips-input .btn-chip {
   margin: 0.75rem 0;
 }
+.chips-input .form-field {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex: 1 0 0%;
+      flex: 1 0 0%;
+  width: 100%;
+  min-width: 30%;
+}
 .chips-input .form-field input {
   border-left: none;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border: none;
   box-shadow: none;
-  -ms-flex: 1 0 0%;
-      flex: 1 0 0%;
-  width: 100%;
-  min-width: 100px;
 }
 .chips-input .form-field input:focus, .chips-input .form-field input.focus {
   box-shadow: none;

@@ -112,12 +112,12 @@
             {
                 Container.SmoothScroll(url.hash, { easing: easing, speed: speed, updateUrl: false });
 
-                window.removeEventListener('HubbleReady', scroll);
+                window.removeEventListener('Hubble:ready', scroll);
             }
 
             window.scrollTo(0, 0);
 
-            window.addEventListener('HubbleReady', scroll);
+            window.addEventListener('Hubble:ready', scroll);
         }
     }
 

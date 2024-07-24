@@ -5,11 +5,14 @@
 
 // Container
 @import 'application/_container.js';
-@import 'application/_application.js';
-@import 'application/_dom.js';
 
 // Helper
 @import 'helper/helper.js';
+
+// Hubble core
+@import 'application/_application.js';
+@import 'application/_dom.js';
+@import 'application/_component.js';
 
 // Vendors
 @import 'vendor/_promise.js';

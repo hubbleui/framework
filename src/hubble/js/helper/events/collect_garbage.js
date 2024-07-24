@@ -4,7 +4,7 @@
  *
  * @access {public}
  */
-collectGarbage()
+collect_garbage()
 {
     let _this = this;
 
@@ -16,7 +16,7 @@ collectGarbage()
         {
             let DOMElement = callbacks[0].element;
 
-            if (!this.in_dom(el))
+            if (!this.in_dom(DOMElement))
             {
                 cleared = true;
 
