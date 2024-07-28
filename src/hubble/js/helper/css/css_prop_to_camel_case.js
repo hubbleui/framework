@@ -5,7 +5,7 @@
  * @param  {string} prop Property to convert
  * @retirm {string}
  */
-css_prop_to_camel_case(prop)
+_.prototype.css_prop_to_camel_case = function(prop)
 {
     if (!prop.includes('-')) return prop;
 

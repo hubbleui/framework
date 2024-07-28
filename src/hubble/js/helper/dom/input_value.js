@@ -5,7 +5,7 @@
  * @param  {DOMElement}   input Target element
  * @return {mixed}
  */
-input_value(input)
+_.prototype.input_value = function(input)
 {
     if (input.type == "number" || this.is_numeric(input.value))
     {

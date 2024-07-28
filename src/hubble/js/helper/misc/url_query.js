@@ -5,7 +5,7 @@
  * @param  {string}  name String query to get (optional)
  * @return {object|string}
  */
-url_query(name)
+_.prototype.url_query = function(name)
 {
     var results = {};
 

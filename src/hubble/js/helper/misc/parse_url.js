@@ -4,7 +4,7 @@
  * @param  {string}    str       The URL to parse. Invalid characters are replaced by _.
  * @return {object}
  */
-parse_url(str)
+_.prototype.parse_url = function(str)
 {
     var ret = {};
     var url = new URL(str);

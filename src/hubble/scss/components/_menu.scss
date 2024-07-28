@@ -1,0 +1,97 @@
+.menu
+{
+    --hb-menu-bg: #{$menu-bg};
+    --hb-menu-color: #{$menu-color};
+    --hb-menu-font-size: #{$menu-font-size};
+    --hb-menu-item-color-hover: #{$menu-item-color-hover};
+    --hb-menu-item-color-active: #{$menu-item-color-active};
+    --hb-menu-item-color-selected: #{$menu-item-color-selected};
+    --hb-menu-item-bg: #{$menu-item-bg};
+    --hb-menu-item-bg-hover: #{$menu-item-bg-hover};
+    --hb-menu-item-bg-active: #{$menu-item-bg-active};
+    --hb-menu-item-bg-selected: #{$menu-item-bg-selected};
+    --hb-menu-item-pad-y: #{$menu-item-pad-y};
+    --hb-menu-item-pad-x: #{$menu-item-pad-x};
+    --hb-menu-divider-color: #{$menu-divider-color};
+    --hb-menu-divider-space: #{$menu-divider-space};
+
+
+    list-style: none;
+    margin: 0;
+    background-color: var(--hb-menu-bg);
+    color: var(--hb-menu-color);
+    padding: var(--hb-menu-item-pad-y) 0px;
+    font-size: var(--hb-menu-font-size);
+
+    // Header
+    .card-header
+    {
+        
+
+    }
+
+    > *
+    {
+        margin: 0;
+        padding: var(--hb-menu-item-pad-y) var(--hb-menu-item-pad-x);
+        background-color: var(--hb-menu-item-bg);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        column-gap: var(--hb-menu-item-pad-x);
+        
+        .item-left,
+        .item-right
+        {
+            flex: 0 0 auto;
+            display: flex;
+        }
+        .item-content
+        {
+            flex: 1 1 auto;
+        }
+
+
+        &:hover
+        {
+            background-color: var(--hb-menu-item-bg-hover);
+            color: var(--hb-menu-item-color-hover);
+        }
+        &.active
+        {
+            background-color: var(--hb-menu-item-bg-active);
+            color: var(--hb-menu-item-color-active);
+        }
+        &.selected
+        {
+            background-color: var(--hb-menu-item-bg-selected);
+            color: var(--hb-menu-item-color-selected);
+        }
+
+        a
+        {
+            color: inherit;
+            text-decoration: none;
+        }
+
+
+    }
+    .menu-header
+    {
+        font-weight: $text-bold;
+        
+    }
+    .menu-divider
+    {
+        
+    }
+    .divider,
+    .drop-header + li,
+    .divider + li,
+    li:first-child
+    {
+        border-top-color: transparent;
+    }
+}

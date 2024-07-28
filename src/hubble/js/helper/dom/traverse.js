@@ -6,7 +6,7 @@
  * @param  {string} type Node type to find
  * @return {node\null}
  */
-traverse_up(DOMElement, callback, origional)
+_.prototype.traverse_up = function(DOMElement, callback, origional)
 {    
     origional = typeof origional === "undefined" ? DOMElement : origional;
 
@@ -23,14 +23,14 @@ traverse_up(DOMElement, callback, origional)
     return this.traverse_up(parent, callback, origional);
 }
 
-traverse_down(DOMElement, callback)
+_.prototype.traverse_down = function(DOMElement, callback)
 {
 }
 
-traverse_next(DOMElement, callback)
+_.prototype.traverse_next = function(DOMElement, callback)
 {
 }
 
-traverse_prev(DOMElement, callback)
+_.prototype.traverse_prev = function(DOMElement, callback)
 {
 }

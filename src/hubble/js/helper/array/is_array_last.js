@@ -8,7 +8,7 @@
  * @return {bool}
  * 
  */
-is_array_last(needle, haystack, strict)
+_.prototype.is_array_last = function(needle, haystack, strict)
 {
     strict = this.is_undefined(strict) ? false : strict;
 

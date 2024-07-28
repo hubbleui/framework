@@ -8,7 +8,7 @@
  * @param  {string}  CSS rules
  * @return {object}
  */
-css_to_shorthand(css)
+_.prototype.css_to_shorthand = function(css)
 {
     const needsFilling = ['margin', 'padding', 'transition', 'animation'];
     var ret            = {};

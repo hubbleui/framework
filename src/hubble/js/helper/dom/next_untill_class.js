@@ -6,7 +6,7 @@
  * @param  {string} className Target node classname
  * @return {node\null}
  */
-next_untill_class(el, className)
+_.prototype.next_untill_class = function(el, className)
 {
     if (className[0] === '.')
     {

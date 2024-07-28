@@ -6,7 +6,7 @@
  * @param  {string} clas Node class to find
  * @return {node\null}
  */
-closest_class(el, clas)
+_.prototype.closest_class = function(el, clas)
 {    
     // Type is class
     if (this.is_array(clas))

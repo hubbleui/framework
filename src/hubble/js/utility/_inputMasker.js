@@ -5,7 +5,7 @@
      * 
      * @var {functions}
      */
-    const [addEventListener, removeEventListener, _map, is_regexp] = Container.import(['addEventListener', 'removeEventListener', 'map', 'is_regexp']).from('Helper');
+    const [add_event_listener, remove_event_listener, _map, is_regexp] = Container.import(['add_event_listener', 'remove_event_listener', 'map', 'is_regexp']).from('_');
 
     /**
      * Regex masks
@@ -99,8 +99,8 @@
          */
         destroy()
         {
-            removeEventListener(this.DOMElement, 'input', this.handler);
-            removeEventListener(this.DOMElement, 'paste', this.handler);
+            remove_event_listener(this.DOMElement, 'input', this.handler);
+            remove_event_listener(this.DOMElement, 'paste', this.handler);
         }
 
         /**
@@ -125,8 +125,8 @@
 
             this.handler = _handler;
 
-            addEventListener(this.DOMElement, 'input', _handler);
-            addEventListener(this.DOMElement, 'paste', _handler);
+            add_event_listener(this.DOMElement, 'input', _handler);
+            add_event_listener(this.DOMElement, 'paste', _handler);
         }
 
         /**

@@ -4,7 +4,7 @@
  * @param   {mixed}  mixed_var  Variable to evaluate
  * @returns {boolean}
  */
-is_constructed(mixed_var)
+_.prototype.is_constructed = function(mixed_var)
 {
     if (typeof mixedVar === 'object' && mixedVar.constructor && typeof mixedVar.constructor === 'function')
     {
@@ -12,7 +12,7 @@ is_constructed(mixed_var)
         
         if (constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class '))
         {
-            return constr.toLowerCase().includes('native code') ? this.object_props(mixed_var, true, true).length > 1 : true;
+            return constr.toLowerCase().includes('native code') ? this.object_props(mixed_var, true).length > 0 : true;
         }
     }
 

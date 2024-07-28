@@ -8,9 +8,11 @@
 (function()
 {
     /**
-     * @var {obj}
+     * Helper functions
+     * 
+     * @var {Function}
      */
-    const Helper = Container.Helper();
+    const [add_class, add_event_listener, array_merge, closest, has_class, inner_HTML, remove_class, remove_from_dom] = Container.import(['add_class','add_event_listener','array_merge','closest','has_class','inner_HTML','remove_class','remove_from_dom']).from('_');
 
     /**
      * @var {obj}
@@ -51,7 +53,7 @@
     { 
         constructor(options)
         {
-            this._options = Helper.array_merge(DEFALT_OPTIONS, options);
+            this._options = array_merge(DEFALT_OPTIONS, options);
             this._modal = null;
             this._overlay = null;
 
@@ -69,15 +71,15 @@
         {
             const _this = this;
 
-            Helper.add_class(this._overlay, 'transition-off');
+            add_class(this._overlay, 'transition-off');
 
-            Helper.remove_class(document.body, 'no-scroll');
+            remove_class(document.body, 'no-scroll');
 
             setTimeout(function()
             {
-                Helper.remove_from_dom(_this._overlay);
-                Helper.remove_from_dom(_this._modal);
-                Helper.remove_class(document.body, 'no-scroll');
+                remove_from_dom(_this._overlay);
+                remove_from_dom(_this._modal);
+                remove_class(document.body, 'no-scroll');
             }, 600);
         }
 
@@ -124,7 +126,7 @@
                 let closeButton   = this._options.cancelBtn  ? `<button type="button" class="btn btn btn-pure ${this._options.cancelClass}  js-modal-cancel">${this._options.cancelBtn}</button>` : '';
                 let confirmButton = this._options.confirmBtn ? `<button type="button" class="btn btn btn-pure ${this._options.confirmClass} js-modal-confirm">${this._options.confirmBtn}</button>` : '';
 
-                Helper.inner_HTML(modal, [
+                inner_HTML(modal, [
                     '<div class="modal-dialog">',
                         '<div class="container-fluid">',
                             '<div class="card js-modal-inner">',
@@ -162,11 +164,11 @@
 
             this._modal.offsetHeight;
 
-            setTimeout(() => Helper.add_class(this._overlay, 'active'), 15);
+            setTimeout(() => add_class(this._overlay, 'active'), 15);
 
             this._fireRender();
 
-            Helper.add_class(document.body, 'no-scroll');
+            add_class(document.body, 'no-scroll');
         }
 
         /**
@@ -189,11 +191,11 @@
                 const clicked = e.target;
 
                 // Clicked cancel or confirm button
-                if (Helper.has_class(clicked, ['js-modal-confirm', 'js-modal-cancel']))
+                if (has_class(clicked, ['js-modal-confirm', 'js-modal-cancel']))
                 {
                     if (_this._fireConfirmValidator())
                     {
-                        if (Helper.has_class(clicked, 'js-modal-confirm'))
+                        if (has_class(clicked, 'js-modal-confirm'))
                         {
                             this._fireConfirm();
                         }
@@ -212,7 +214,7 @@
 
                 if (closeAnywhere)
                 {                       
-                    if (!Helper.closest(clicked, '.js-modal-inner'))
+                    if (!closest(clicked, '.js-modal-inner'))
                     {
                         _this.close();
 
@@ -221,8 +223,8 @@
                 }
             }
 
-            Helper.addEventListener(this._modal, 'click', closeValidator);
-            Helper.addEventListener(this._overlay, 'click', closeValidator);
+            add_event_listener(this._modal, 'click', closeValidator);
+            add_event_listener(this._overlay, 'click', closeValidator);
             
         }
 

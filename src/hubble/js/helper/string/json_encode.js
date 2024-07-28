@@ -4,7 +4,7 @@
  * @param  {mixed} str String JSON
  * @return {object|false}
  */
-json_encode(str)
+_.prototype.json_encode = function(str)
 {
     var obj;
     try

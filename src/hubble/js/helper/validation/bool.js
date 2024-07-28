@@ -4,7 +4,7 @@
  * @param   {mixed} mixed_var  Variable to test
  * @returns {boolean}
  */
-bool(mixed_var)
+_.prototype.bool = function(mixed_var)
 {
     mixed_var = (typeof mixed_var === 'undefined' ? false : mixed_var);
 

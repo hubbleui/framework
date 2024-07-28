@@ -7,7 +7,7 @@
  * @param   {object|array}  object Object to check on
  * @returns {boolean}
  */
-array_has(path, object)
+_.prototype.array_has = function(path, object)
 {
     return !this.is_undefined(this.array_get(path, object));
 }

@@ -5,7 +5,7 @@
  * @param  {DOMElement}   el   Target element
  * @param  {string} prop CSS property to removes
  */
-remove_style(el, prop)
+_.prototype.remove_style = function(el, prop)
 {
     if (typeof prop === 'undefined')
     {

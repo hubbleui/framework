@@ -5,7 +5,7 @@
  * @param  {DOMElement}   form Target element
  * @return {array}
  */
-form_values(form)
+_.prototype.form_values = function(form)
 {
     var inputs = this.form_inputs(form);
     var ret    = {};

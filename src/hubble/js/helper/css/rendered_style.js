@@ -6,7 +6,7 @@
  * @param  {string} prop CSS property to check (in camelCase) (optional)
  * @return {mixed}
  */
-rendered_style(DOMElement, property)
+_.prototype.rendered_style = function(DOMElement, property)
 {
     if (property.includes('ransform'))
     {
@@ -24,7 +24,7 @@ rendered_style(DOMElement, property)
  * @param  {string}        prop CSS property to check (in camelCase) (optional)
  * @return {string|object}
  */
-__computed_style(DOMElement, property)
+_.prototype.__computed_style = function(DOMElement, property)
 {
     if (window.getComputedStyle)
     {

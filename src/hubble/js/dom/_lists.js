@@ -1,6 +1,18 @@
 (function()
 {
-    const [$, $All, addEventListener, removeEventListener, has_class, add_class, remove_class, closest, trigger_event] = Container.import(['$', '$All', 'addEventListener', 'removeEventListener', 'has_class', 'add_class', 'remove_class', 'closest', 'trigger_event']).from('Helper');
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, add_event_listener, remove_event_listener, has_class, add_class, remove_class, closest, trigger_event, extend] = Container.import(['$','add_event_listener','remove_event_listener','has_class','add_class','remove_class','closest','trigger_event','extend']).from('_');
 
     /**
      * Toggle active on lists
@@ -9,83 +21,51 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Lists
+    const Lists = function()
+    { 
+        this.super('.js-select-list > li');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Lists.prototype.bind = function(node)
+    {            
+        add_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Lists.prototype.unbind = function(node)
     {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor(context)
-        {
-            /**
-             * Array of click-triggers
-             * 
-             * @var {array}
-             */
-            this._nodes = $All('.js-select-list > li');
+        remove_event_listener(node, 'click', this._eventHandler);
+    }
 
-            this._bind();
+    /**
+     * Handle the click event
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    Lists.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+        
+        if (has_class(this, 'selected')) return;
 
-            return this;
-        }
+        var list = closest(this, '.js-select-list');
 
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         */
-        destruct(context)
-        {
-            this._unbind();
+        remove_class($('li.selected', list), 'selected');
+        
+        add_class(this, 'selected');
 
-            this._nodes = [];
-        }
-
-        /**
-         * Event binder - Binds all events on button click
-         *
-         * @access {private}
-         */
-        _bind()
-        {            
-            addEventListener(this._nodes, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event unbinder - Removes all events on button click
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            removeEventListener(this._nodes, 'click', this._eventHandler);
-        }
-
-        /**
-         * Handle the click event
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-            
-            if (has_class(this, 'selected')) return;
-
-            var list = closest(this, '.js-select-list');
-
-            remove_class($('li.selected', list), 'selected');
-            
-            add_class(this, 'selected');
-
-            trigger_event(list, 'list:selected', {item: this});
-        }
+        trigger_event(list, 'list:selected', {item: this});
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('Lists', Lists);
+    Hubble.dom().register('Lists', extend(Component, Lists));
 
 }());

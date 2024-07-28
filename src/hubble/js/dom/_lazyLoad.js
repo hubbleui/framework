@@ -62,13 +62,11 @@
      * @constructor
      * @return this
      */
-    var LazyLoad = function()
+    const LazyLoad = function()
     {
-        this._queue = new Queue(15);
+        this._DOMElements = [];
 
-        this._images = Array.prototype.slice.call(document.querySelectorAll('.js-lazyload'));
-        
-        this._bind();
+        this.construct(document);       
 
         return this;
     }
@@ -78,45 +76,57 @@
      *
      * @access public
      */
-    LazyLoad.prototype.destruct = function()
+    LazyLoad.prototype.construct = function(context)
     {       
-        this._images = [];
-    }
-
-    /**
-     * Refresh
-     *
-     * @access public
-     */
-    LazyLoad.prototype.refresh = function()
-    {
         this._queue = new Queue(15);
-        
-        this._images = Array.prototype.slice.call(document.querySelectorAll('.lazyload'));
 
-        this._bind();
-    }
+        let nodes = Array.prototype.slice.call(document.querySelectorAll('.js-lazyload'));
 
-    /**
-     * Bind and load images
-     *
-     * @access private
-     */
-    LazyLoad.prototype._bind = function()
-    {
-        for (var i = 0; i < this._images.length; i++)
+        if (context !== document) nodes.unshift(context);
+
+        if (nodes.length >= 1)
         {
-            this._handleImage(this._images[i]);
+            for (var i = 0; i < nodes.length; i++)
+            {
+                this.bind(nodes[i]);
+            }
+
+            this._DOMElements = [...this._DOMElements, ...nodes];
         }
     }
 
     /**
+     * Destroy
+     *
+     * @access public
+     */
+    LazyLoad.prototype.destruct = function(context)
+    {       
+        if (!context || context === document)
+        {            
+            this._DOMElements = [];
+
+            return;
+        }
+
+        const [each, closest] = Container.import(['each', 'closest']).from('_');
+
+        each(this._DOMElements, function(i, DOMElement)
+        {                
+            if (closest(DOMElement, context))
+            {
+                this._DOMElements.splice(i, 1);
+            }
+
+        }, this);
+    }
+
+    /**
      * Bind and load images
      *
      * @access private
-     * @param  node    img Image node element
      */
-    LazyLoad.prototype._handleImage = function(node)
+    LazyLoad.prototype.bind = function(node)
     {
         var url = this._getSrc(node);
 
@@ -288,14 +298,23 @@
         return node.nodeName.toLowerCase() === 'img';
     }
 
+    var lazy;
+
+    const invoke = function()
+    {
+        lazy = new LazyLoad();
+
+        window.removeEventListener('Hubble:loading', invoke);
+    }
+
     // Invoke and start loading images
-    var lazy = new LazyLoad();
+    window.addEventListener('Hubble:loading', invoke);
 
     // Listen for Hubble:ready and register into dom
     // Will no be invoked unless dom().refresh() is called
     const AddModule = function()
     {
-        Hubble.dom().register('LazyLoad', LazyLoad, false);
+        Hubble.dom().register('LazyLoad', lazy, false);
 
         window.removeEventListener('Hubble:ready', AddModule);
     }

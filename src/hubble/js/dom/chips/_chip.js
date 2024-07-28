@@ -1,13 +1,6 @@
 (function()
 {
     /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
-
-    /**
      * Creates a chip
      *
      */

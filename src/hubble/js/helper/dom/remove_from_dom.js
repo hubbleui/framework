@@ -6,7 +6,7 @@
  * @access {public}
  * @param  {DOMElement}   el Target element
  */
-remove_from_dom(el)
+_.prototype.remove_from_dom = function(el)
 {
     if (this.in_dom(el))
     {
@@ -16,12 +16,12 @@ remove_from_dom(el)
 
         for (var i = 0, len = children.length; i < len; i++)
         {
-            this.removeEventListener(children[i]);
+            this.remove_event_listener(children[i]);
 
             this.trigger_event(children[i], `Hubble:dom:remove`);
         }
 
-        this.removeEventListener(el);
+        this.remove_event_listener(el);
 
         this.trigger_event(el, `Hubble:dom:remove`);
 

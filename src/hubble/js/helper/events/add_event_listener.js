@@ -8,7 +8,7 @@
  * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
  * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-addEventListener(DOMElement, eventName, handler)
+_.prototype.add_event_listener = function(DOMElement, eventName, handler)
 {
     var args = TO_ARR.call(arguments);
 
@@ -19,7 +19,7 @@ addEventListener(DOMElement, eventName, handler)
 
         this.each(DOMElement, function(i, el)
         {            
-            this.addEventListener.apply(this, [el, ...baseArgs]);
+            this.add_event_listener.apply(this, [el, ...baseArgs]);
 
         }, this);
     }
@@ -34,7 +34,7 @@ addEventListener(DOMElement, eventName, handler)
             {
                 args[1] = event;
 
-                this.addEventListener.apply(this, args);
+                this.add_event_listener.apply(this, args);
                 
             }, this);
 
@@ -44,7 +44,7 @@ addEventListener(DOMElement, eventName, handler)
         // If array of arguements is provided, "this" will always be the first
         // argument provided
         // However the first and second argument passed to the callback will always the event object and the element
-        // e.g. addEventListener(el, 'click', callback, ['baz', 'foo', 'bar']) -> callback(e, el, foo, bar) this = 'baz'
+        // e.g. add_event_listener(el, 'click', callback, ['baz', 'foo', 'bar']) -> callback(e, el, foo, bar) this = 'baz'
 
         // Remove element, eventName, handler from args
         let argsNormal = this.__normaliseListenerArgs(DOMElement, args);
@@ -57,9 +57,9 @@ addEventListener(DOMElement, eventName, handler)
  * Nomralize event listener args
  * 
  * @param  {DOMElement}    DOMElement    The target DOM node
- * @param  {array}         args       Args passed to addEventListener or removeEventListener
+ * @param  {array}         args       Args passed to add_event_listener or remove_event_listener
  */
-__normaliseListenerArgs(DOMElement, args)
+_.prototype.__normaliseListenerArgs = function(DOMElement, args)
 {
     args = args.slice(3);
 
@@ -85,7 +85,7 @@ __normaliseListenerArgs(DOMElement, args)
  * @param  {closure} handler    Callback event
  * @param  {bool}    data Use capture (optional) (defaul false)
  */
-__addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
+_.prototype.__addListener = function(DOMElement, eventName, handler, thisArg, args, pushFirst)
 {
     // Apply GUID to element and callback
     DOMElement.guid = DOMElement.guid || (DOMElement.guid = this._guidgen());
@@ -121,14 +121,7 @@ __addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
 
     if (!hasHandler)
     {
-        if (DOMElement.addEventListener)
-        {
-            DOMElement.addEventListener(eventName, this.__eventDispatcher);
-        }
-        else
-        {
-            DOMElement.attachEvent('on' + eventName, this.__eventDispatcher);
-        }
+        DOMElement.addEventListener(eventName, this.__event_dispatcher);
     }
 }
 
@@ -138,7 +131,7 @@ __addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
  * @access {private}
  * @param  {eventObject}  e  
  */
-__eventDispatcher(e)
+_.prototype.__event_dispatcher = function(e)
 {
     e = e || window.event;
 
@@ -148,7 +141,7 @@ __eventDispatcher(e)
 
     if (!guid) return;
 
-    let _this = Container.Helper();
+    let _this = Container._();
 
     let callbacks = _this.array_get(`${guid}.${e.type}`, _this._events) || [];
 

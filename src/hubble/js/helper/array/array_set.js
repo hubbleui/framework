@@ -6,9 +6,9 @@
  * @param   {object|array} object Object to set into
  * @returns {object|array}
  */
-array_set(path, value, object)
+_.prototype.array_set = function(path, value, object)
 {
-    this.__arraySetRecursive(this.__arrayKeySegment(path), value, object);
+    this.__array_set_recursive(this.__array_key_segment(path), value, object);
 
     return object;
 }

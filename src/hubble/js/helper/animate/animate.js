@@ -11,7 +11,7 @@
  * @param  {string}     options.easing      Easing function in camelCase
  * @param  {function}   options.callback    Callback to apply when animation ends (optional)
  */
-__animate_js(DOMElement, options)
+_.prototype.__animate_js = function(DOMElement, options)
 {
     const _helper = this;
 
@@ -56,13 +56,13 @@ __animate_js(DOMElement, options)
 
     AnimateJS.prototype.clearAnimating = function()
     {
-        let CSSprop = this.CSSProperty;
+        const CSSprop = this.CSSProperty;
 
-        let _this = this;
+        const _this = this;
 
         _helper.each(ANIMATING, function(i, animation)
         {
-            if (animation.CSSProperty === CSSprop)
+            if (animation.CSSProperty === CSSprop && animation.DOMElement === DOMElement)
             {
                 animation.stop(true);
 

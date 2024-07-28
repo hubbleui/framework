@@ -7,20 +7,12 @@
      */
     const [Component] = Container.get('Component');
 
-
-    var foo = function(){
-
-        return this;
-    };
-
-    console.log(Container.Helper().extend(foo, Component));
-
     /**
-     * Helper instance
+     * Helper functions
      * 
-     * @var {object}
+     * @var {Function}
      */
-    const Helper = Container.Helper();
+    const [$, add_class, add_event_listener, closest, closest_class, has_class, is_empty, remove_class, remove_event_listener, extend] = Container.import(['$','add_class','add_event_listener','closest','closest_class','has_class','is_empty','remove_class','remove_event_listener','extend']).from('_');
 
     /**
      * Tab Nav
@@ -29,116 +21,75 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class TabNav
+    const TabNav = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
+        this.super('.js-tab-nav > li > *, .js-tab-nav > *:not(li)');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    TabNav.prototype.bind = function(node)
+    {            
+        add_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Unbind click events on all <a> tags in a .js-tab-nav
+     *
+     * @params {navWrap} node
+     * @access {private}
+     */
+    TabNav.prototype.unbind = function(node)
+    {            
+        remove_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    TabNav.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        e.preventDefault();
+
+        var _this = Container.get('TabNav');
+        
+        var node = this;
+
+        if (has_class(node, 'active')) return;
+        
+        var tab           = node.dataset.tab;
+        var tabNav        = closest(node, '.js-tab-nav');
+
+        var tabPane       = $('[data-tab-panel="' + tab + '"]');
+        var tabPanel      = closest_class(tabPane, '.js-tab-panels-wrap');
+        var activePanel   = $('.tab-panel.active', tabPanel);
+
+        var navWrap       = closest_class(node, 'js-tab-nav');
+        var activeNav     = $('.active', navWrap);
+        var activeClass   = navWrap.dataset.activeClass;
+        var activeClasses = ['active'];
+
+        if (!is_empty(activeClass))
         {
-            // Find nodes
-            this._nodes = Helper.$All('.js-tab-nav');
-
-            // If nothing to do destruct straight away
-            if (!Helper.is_empty(this._nodes))
-            {
-                for (var i = 0; i < this._nodes.length; i++)
-                {
-                    this._bindDOMListeners(this._nodes[i]);
-                }
-            }
-
-            return this;
-        };
-
-        /**
-         * Module destructor - unbinds click events
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            for (var i = 0; i < this._nodes.length; i++)
-            {
-                this._unbindDOMListeners(this._nodes[i]);
-            }
-
-            this._nodes = [];
+            activeClasses.push(activeClass);
         }
 
-        /**
-         * Bind click events on all <a> tags in a .js-tab-nav
-         *
-         * @params {navWrap} node
-         * @access {private}
-         */
-        _bindDOMListeners(navWrap)
-        {
-            var links = Helper.$All('> li > *, > *:not(li)', navWrap);
-            
-            Helper.addEventListener(links, 'click', this._eventHandler);
-        }
+        remove_class(activeNav, activeClasses);
+        remove_class(activePanel, activeClasses);
 
-        /**
-         * Unbind click events on all <a> tags in a .js-tab-nav
-         *
-         * @params {navWrap} node
-         * @access {private}
-         */
-        _unbindDOMListeners(navWrap)
-        {
-            var links = Helper.$All('> li > *, > *:not(li)', navWrap);
-            
-            Helper.removeEventListener(links, 'click', this._eventHandler);
-        }
-
-        /**
-         * Click event handler
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-            e.preventDefault();
-
-            var _this = Container.get('TabNav');
-            
-            var node = this;
-
-            if (Helper.has_class(node, 'active')) return;
-            
-            var tab           = node.dataset.tab;
-            var tabNav        = Helper.closest(node, '.js-tab-nav');
-
-            var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-            var tabPanel      = Helper.closest_class(tabPane, '.js-tab-panels-wrap');
-            var activePanel   = Helper.$('.tab-panel.active', tabPanel);
-
-            var navWrap       = Helper.closest_class(node, 'js-tab-nav');
-            var activeNav     = Helper.$('.active', navWrap);
-            var activeClass   = navWrap.dataset.activeClass;
-            var activeClasses = ['active'];
-
-            if (!Helper.is_empty(activeClass))
-            {
-                activeClasses.push(activeClass);
-            }
-
-            Helper.remove_class(activeNav, activeClasses);
-            Helper.remove_class(activePanel, activeClasses);
-
-            Helper.add_class(node, activeClasses);
-            Helper.add_class(tabPane, activeClasses);
-            
-        }
+        add_class(node, activeClasses);
+        add_class(tabPane, activeClasses);
+        
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('TabNav', TabNav);
+    Hubble.dom().register('TabNav', extend(Component, TabNav));
 
 })();

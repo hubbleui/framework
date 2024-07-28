@@ -1,136 +1,114 @@
 (function()
 {
     /**
-     * JS Helper reference
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
 
-    
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, add_event_listener, css, parse_url, remove_event_listener, rendered_style, extend] = Container.import(['$','add_event_listener','css','parse_url','remove_event_listener','rendered_style','extend']).from('_');
+
     /**
      * Image zoom hover
      * 
      */
-    class ImageZoom
+    const ImageZoom = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
+        this.super('.js-img-hover-zoom')
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access {public}
+     */
+    ImageZoom.prototype.bind = function(node)
+    {
+        css(node, 'background-image', 'url(' + node.dataset.zoomSrc + ')');
+
+        add_event_listener(node, 'mousemove', this._onHover);
+
+        $('img', node).alt = '';
+
+        $('img', node).title = '';
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access {public}
+     */
+    ImageZoom.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'mousemove', this._onHover);
+    }
+
+    /**
+     * On hover event
+     *
+     * @param  {e} event|null "mousemove" event
+     * @access {private}
+     */
+    ImageZoom.prototype._onHover = function(e)
+    {
+        e = e || window.event;
+
+        if (!e || !e.currentTarget)
         {
-            this._nodes = Helper.$All('.js-img-hover-zoom');
-
-            this._bind();
-
-            return this;
+            return false;
         }
 
-        /**
-         * Module destructor remove event handlers
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
+        var _wrapper = e.currentTarget;
+        var _zoomSrc = parse_url(rendered_style(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
+        var _dataZoomSrc = parse_url(_wrapper.dataset.zoomSrc);
 
-            this._nodes = [];
+        if (_zoomSrc.path !== _dataZoomSrc.path)
+        {
+            css(_wrapper, 'background-image', 'url(' + _wrapper.dataset.zoomSrc + ')');
         }
 
-        /**
-         * Bind DOM listeners
-         *
-         * @access {public}
-         */
-        _bind()
+        var offsetX = 0;
+        var offsetY = 0;
+        if (e.offsetX)
         {
-            for (var i = 0; i < this._nodes.length; i++)
-            {
-                Helper.css(this._nodes[i], 'background-image', 'url(' + this._nodes[i].dataset.zoomSrc + ')');
-
-                Helper.addEventListener(this._nodes[i], 'mousemove', this._onHover);
-
-                Helper.$('img', this._nodes[i]).alt = '';
-
-                Helper.$('img', this._nodes[i]).title = '';
-            }
+            offsetX = e.offsetX;
+        }
+        else if (e.touches && e.touches[0] && e.touches[0].pageX)
+        {
+            offsetX = e.touches[0].pageX;
+        }
+        else
+        {
+            return false;
         }
 
-        /**
-         * Unbind DOM listeners
-         *
-         * @access {public}
-         */
-        _unbind()
+        if (e.offsetY)
         {
-            Helper.removeEventListener(this._nodes, 'mousemove', this._onHover);
+            offsetY = e.offsetY;
+        }
+        else if (e.touches && e.touches[0] && e.touches[0].pageY)
+        {
+            offsetY = e.touches[0].pageY;
+        }
+        else
+        {
+            return false;
         }
 
-        /**
-         * On hover event
-         *
-         * @param  {e} event|null "mousemove" event
-         * @access {private}
-         */
-        _onHover(e)
-        {
-            e = e || window.event;
-
-            if (!e || !e.currentTarget)
-            {
-                return false;
-            }
-
-            var _wrapper = e.currentTarget;
-            var _zoomSrc = Helper.parse_url(Helper.rendered_style(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
-            var _dataZoomSrc = Helper.parse_url(_wrapper.dataset.zoomSrc);
-
-            if (_zoomSrc.path !== _dataZoomSrc.path)
-            {
-                Helper.css(_wrapper, 'background-image', 'url(' + _wrapper.dataset.zoomSrc + ')');
-            }
-
-            var offsetX = 0;
-            var offsetY = 0;
-            if (e.offsetX)
-            {
-                offsetX = e.offsetX;
-            }
-            else if (e.touches && e.touches[0] && e.touches[0].pageX)
-            {
-                offsetX = e.touches[0].pageX;
-            }
-            else
-            {
-                return false;
-            }
-
-            if (e.offsetY)
-            {
-                offsetY = e.offsetY;
-            }
-            else if (e.touches && e.touches[0] && e.touches[0].pageY)
-            {
-                offsetY = e.touches[0].pageY;
-            }
-            else
-            {
-                return false;
-            }
-
-            x = offsetX / _wrapper.offsetWidth * 100;
-            y = offsetY / _wrapper.offsetHeight * 100;
+        x = offsetX / _wrapper.offsetWidth * 100;
+        y = offsetY / _wrapper.offsetHeight * 100;
 
 
-            Helper.css(_wrapper, 'background-position', x + '% ' + y + '%');
-        }
+        css(_wrapper, 'background-position', x + '% ' + y + '%');
     }
 
     // Register as DOM Module and invoke
-    Hubble.dom().register('ImageZoom', ImageZoom);
+    Hubble.dom().register('ImageZoom', extend(Component, ImageZoom));
 
 }());

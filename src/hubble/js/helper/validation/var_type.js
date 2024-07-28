@@ -5,7 +5,7 @@
  * @param {*} value The value to query.
  * @returns {string} Returns the `toStringTag`.
  */
-var_type(value)
+_.prototype.var_type = function(value)
 {
     if (value == null)
     {

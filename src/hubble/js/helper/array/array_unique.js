@@ -4,7 +4,7 @@
  * @param   {array} arr Array to run
  * @returns {array}
  */
-array_unique(arr)
+_.prototype.array_unique = function(arr)
 {
     let uniq = function(value, index, self)
     {

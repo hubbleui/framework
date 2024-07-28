@@ -10,7 +10,7 @@
  * @example {Helper.css(node,} { display : 'none' });
  * @example {Helper.css(node,} 'display', 'none');
  */
-css(el, property, value)
+_.prototype.css = function(el, property, value)
 {
     // If their is no value and property is an object
     if (this.is_object(property))

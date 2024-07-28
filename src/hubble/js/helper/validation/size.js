@@ -4,7 +4,7 @@
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {number}
  */
-size(mixed_var)
+_.prototype.size = function(mixed_var)
 {
     if (this.is_string(mixed_var) || this.is_array(mixed_var))
     {

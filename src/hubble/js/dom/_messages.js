@@ -1,11 +1,18 @@
 (function()
 {
     /**
-     * Helper instance
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {function}
+     */
+    const [add_event_listener, animate_css, closest, has_class, remove_from_dom, remove_event_listener, trigger_event, extend] = Container.import(['add_event_listener','animate_css','closest','has_class','remove_from_dom','remove_event_listener','trigger_event','extend']).from('_');
 
     /**
      * Message closers
@@ -14,91 +21,60 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class MessageClosers
+    const MessageClosers = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-        constructor()
+        this.super('.js-close-msg');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    MessageClosers.prototype.bind = function(node)
+    {
+        add_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    MessageClosers.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Event handler - handles removing the message
+     *
+     * @param  {event}   e JavaScript click event
+     * @access {private}
+     */
+    MessageClosers.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        e.preventDefault();
+
+        let msg      = closest(this, '.msg');
+        let toRemove = msg;
+
+        trigger_event(msg, 'message:close');
+
+        if (has_class(this, 'js-rmv-parent'))
         {
-            this._triggers = Helper.$All('.js-close-msg');
-
-            if (!Helper.is_empty(this._triggers))
-            {
-                this._bind();
-            }
-
-            return this;
+            toRemove = toRemove.parentNode;
         }
 
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @constructor
-         {*} @access public
-         */
-        destruct()
+        animate_css(toRemove, { opacity: 0, duration: 500, easing: 'easeInOutCubic', callback: function()
         {
-            this._unbind();
+            trigger_event(msg, 'message:closed');
 
-            this._triggers = [];
-        }
-
-        /**
-         * Event binder - Binds all events on button click
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._triggers, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event ubinder - Binds all event handlers on button click
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._triggers, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event handler - handles removing the message
-         *
-         * @param  {event}   e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-
-            e.preventDefault();
-
-            let msg      = Helper.closest(this, '.msg');
-            let toRemove = msg;
-
-            Helper.trigger_event(msg, 'message:close');
-
-            if (Helper.has_class(this, 'js-rmv-parent'))
-            {
-                toRemove = toRemove.parentNode;
-            }
-
-            Helper.animate_css(toRemove, { opacity: 0, duration: 500, easing: 'easeInOutCubic', callback: function()
-            {
-                Helper.trigger_event(msg, 'message:closed');
-
-                Helper.remove_from_dom(toRemove);
-            }});
-        }
+            remove_from_dom(toRemove);
+        }});
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('MessageClosers', MessageClosers);
+    Hubble.dom().register('MessageClosers', extend(Component, MessageClosers));
 
 })();

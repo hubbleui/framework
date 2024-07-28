@@ -5,7 +5,7 @@
  * @param  {DOMElement}   DOMElement Target element
  * @return {object}
  */
-width(DOMElement)
+_.prototype.width = function(DOMElement)
 {
 	if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement ) return Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 

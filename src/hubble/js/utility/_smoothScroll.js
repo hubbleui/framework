@@ -5,7 +5,7 @@
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * Default options

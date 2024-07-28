@@ -1,6 +1,8 @@
 (function()
 {    
-    const [each, trigger_event, collect_garbage] = Container.import(['each', 'trigger_event', 'collect_garbage']).from('Helper');
+    const [each, trigger_event, collect_garbage, is_undefined, is_string, is_htmlElement] = Container.import(['each', 'trigger_event', 'collect_garbage', 'is_undefined', 'is_string', 'is_htmlElement']).from('_');
+
+    const KEYPREFIX = 'HB_DOM:';
 
     /**
      * DOM Manager
@@ -9,176 +11,196 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Dom
+    const Dom = function()
     {
-        /**
-         * Module constructor
-         *
-         * @class
-         * @access {public}
-         */
-        constructor()
+        this._isReady = false;
+
+        this.components = [];
+    }
+    
+    /**
+     * Boot Dom
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     */
+    Dom.prototype.boot = function()
+    {
+        each(this.components, function(i, name)
         {
-            this._isReady = false;
+            this._bindComponent(name, document);
 
-            this.components = [];
+        }, this);
 
-            return this;
+        this._dispatchReady();
+
+        this._isReady = true;
+    }
+
+    /**
+     * Register a DOM component
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     * @param {bool}   invoke Invoke the module immediately (optional) (default false)
+     */
+    Dom.prototype.register = function(name, component, invoke)
+    {
+        invoke = (typeof invoke === 'undefined' ? false : invoke);
+
+        this.components.push(name);
+
+        Container.singleton(this._normaliseKey(name), component);
+
+        if (invoke && this._isReady)
+        {
+            this._bindComponent(name, document);
+        }
+    }
+
+    /**
+     * Returns a component.
+     *
+     * @access {public}
+     */
+    Dom.prototype.component = function(name)
+    {
+        return Container.get(this._normaliseKey(name));
+    }
+
+    /**
+     * Boot Dom
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     */
+    Dom.prototype._dispatchReady = function()
+    {
+        trigger_event(window, 'Hubble:dom:ready', this);
+    }
+
+    /**
+     * Boot Dom
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     */
+    Dom.prototype._dispatchComponent = function(name, event, component, context)
+    {
+        trigger_event(window, `Hubble:dom:${event}:${name}`, { component: component, context: context});
+    }
+
+    /**
+     * Bind a single module
+     *
+     * @param {string} key Name of module to bind
+     * @access {private}
+     */
+    Dom.prototype._bindComponent = function(name, context, isRefresh)
+    {                
+        let component = Container.get(this._normaliseKey(name));
+
+        if (this._hasMethod(component, 'construct') && isRefresh)
+        {
+            this._dispatchComponent(name, 'refresh', component, context);
+
+            component.construct(context);
         }
 
-        /**
-         * Boot Dom
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         */
-        boot()
+        this._dispatchComponent(name, 'bind', component, context);
+    }
+
+    /**
+     * Unbind a single module
+     *
+     * @param  {string}  key Name of module to unbind
+     * @access {private}
+     */
+    Dom.prototype._unbindComponent = function(name, context)
+    {            
+        let component = Container.get(this._normaliseKey(name));
+
+        if (this._hasMethod(component, 'destruct'))
         {
-            each(this.components, function(i, name)
-            {
-                const component = Container.get(`HB_DOM:${name}`);
-
-                this._dispatchComponent(name, 'bind', component, document);
-
-            }, this);
-
-            this._dispatchReady();
-
-            this._isReady = true;
+            component.destruct(context);
         }
 
-        /**
-         * Register a DOM component
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         * @param {bool}   invoke Invoke the module immediately (optional) (default false)
-         */
-        register(name, component, invoke)
+        this._dispatchComponent(name, 'unbind', component, context);
+    }
+    
+    /**
+     * Refresh the DOM modiules or a string module
+     *
+     * @access {public}
+     * @param {string} name Name of the module (optional) (default false)
+     */
+    Dom.prototype.refresh = function(component, context)
+    {
+        // refresh()
+        if (arguments.length === 0)
         {
-            invoke = (typeof invoke === 'undefined' ? false : this._isReady);
+            component = false;
 
-            this.components.push(name);
-
-            Container.singleton(`HB_DOM:${name}`, component);
-
-            if (invoke)
-            {
-                this._bindComponent(name, document);
-            }
+            context = document;
         }
-
-        /**
-         * Boot Dom
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         */
-        _dispatchReady()
+        else
         {
-            trigger_event(window, 'Hubble:dom:ready', this);
-        }
-
-        /**
-         * Boot Dom
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         */
-        _dispatchComponent(name, event, component, context)
-        {
-            trigger_event(window, `Hubble:dom:refresh:${name}:${event}`, { component: component, context: context});
-        }
-
-        /**
-         * Bind a single module
-         *
-         * @param {string} key Name of module to bind
-         * @access {private}
-         */
-        _bindComponent(name, context)
-        {
-            let component = Container.get(`HB_DOM:${name}`);
-
-            if (this._hasMethod(component, 'construct'))
-            {
-                component.construct(context);
-            }
-
-            this._dispatchComponent(name, 'bind', component, context);
-        }
-
-        /**
-         * Unbind a single module
-         *
-         * @param  {string}  key Name of module to unbind
-         * @access {private}
-         */
-        _unbindComponent(name, context)
-        {            
-            let component = Container.get(`HB_DOM:${name}`);
-
-            if (this._hasMethod(component, 'destruct'))
-            {
-                component.destruct(context);
-            }
-
-            this._dispatchComponent(name, 'unbind', component, context);
-
-        }
-        
-        /**
-         * Refresh the DOM modiules or a string module
-         *
-         * @access {public}
-         * @param {string} name Name of the module (optional) (default false)
-         */
-        refresh(component, context)
-        {
-            component = (typeof component === 'undefined' ? false : component);
-
             // refresh(DOMElement)
-            if (component instanceof Element || component instanceof HTMLDocument)
+            if (is_htmlElement(component))
             {
-                context = component;
-                component  = null;
+                context  = component;
+                
+                component = false;
             }
+
             // refresh('module')
             // refresh('module', DOMElement)
-            else if (typeof component === 'string')
+            else if (is_string(component))
             {
-                context = (context instanceof Element || context instanceof HTMLDocument) ? context : document;
+                context = is_undefined(context) ? document : context;
             }
-
-            each(this.components, function(i, name)
-            {
-                if (!component || component === name)
-                {
-                    this._unbindComponent(name, context);
-
-                    collect_garbage();
-
-                    this._bindComponent(name, context);
-                }
-            }, this);
         }
 
-        /**
-         * Checks if a class object has a method by name
-         *
-         * @access {private}
-         * @param  {mixed}  classObj The object instance or reference
-         * @param  {string} method   The name of the method to check for
-         * @return {bool}
-         */
-        _hasMethod(classObj, method)
+        each(this.components, function(i, name)
         {
-            return typeof classObj === 'object' && typeof classObj[method] === 'function';
-        }
+            if (!component || component === name)
+            {
+                this._unbindComponent(name, context);
+
+                collect_garbage();
+
+                this._bindComponent(name, context, true);
+            }
+        }, this);
+    }
+
+    /**
+     * Checks if a class object has a method by name
+     *
+     * @access {private}
+     * @param  {mixed}  classObj The object instance or reference
+     * @param  {string} method   The name of the method to check for
+     * @return {bool}
+     */
+    Dom.prototype._hasMethod = function(classObj, method)
+    {
+        return typeof classObj === 'object' && typeof classObj[method] === 'function';
+    }
+
+    /**
+     * Normalize key
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     */
+    Dom.prototype._normaliseKey = function(key)
+    {
+        return `${KEYPREFIX}${key}`;
     }
 
     // Load into container and invoke

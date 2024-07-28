@@ -183,20 +183,25 @@ $list-color-active:             inherit !default;
 
 // Dropdown
 $dropdown-border-radius:        var(--hb-border-radius) !default;
-$dropdown-bg:                   var(--hb-white) !default;
-$dropdown-color:                var(--hb-body-color) !default;
-$dropdown-link-color:           var(--hb-body-color) !default;
-$dropdown-link-bg-active:       var(--hb-gray-300) !default;
-$dropdown-width:                16rem !default;
-$dropdown-height:               30rem !default;
-$dropdown-font-size:            1.2rem !default;
-$dropdown-divider-size:         1px !default;
-$dropdown-divider-color:        var(--hb-gray-300) !default;
-$dropdown-divider-space:        0.3rem !default;
-$dropdown-header-divider-color: var(--hb-gray-300) !default;
-$dropdown-link-spacer-y:        0.8rem !default;
-$dropdown-link-spacer-x:        1.2rem !default;
+$dropdown-width:                160px !default;
+$dropdown-height:               300px !default;
 $dropdown-shadow-level:         2 !default;
+
+// Menu
+$menu-bg:						var(--hb-white) !default;
+$menu-color:					var(--hb-gray-700) !default;
+$menu-font-size:				1.3rem !default;
+$menu-item-bg:                  transparent !default;
+$menu-item-color-hover:         var(--hb-gray-700) !default;
+$menu-item-color-active:        var(--hb-gray-700) !default;
+$menu-item-color-selected:      var(--hb-white) !default;
+$menu-item-bg-hover:            var(--hb-gray-200) !default;
+$menu-item-bg-active:           var(--hb-brand-info-100) !default;
+$menu-item-bg-selected:         var(--hb-brand-info) !default;
+$menu-item-pad-y:               10px !default;
+$menu-item-pad-x:               12px !default;
+$menu-divider-color:            var(--hb-gray-300) !default;
+$menu-divider-space:            20px;
 
 // Inline elements
 $badge-size:                    7px !default;
@@ -388,14 +393,14 @@ $popover-title-border-dark:     1px solid var(--hb-gray-400) !default;
 $label-font-size:               1.1rem !default;
 $label-font-weight:             $text-bolder !default;
 $label-color:                   var(--hb-white) !default;
-$label-bg:                      var(--hb-gray) !default;
-$label-pad-y:                   5px !default;
-$label-pad-x:                   9px !default;
+$label-bg:                      var(--hb-gray-300) !default;
+$label-pad-y:                   4px !default;
+$label-pad-x:                   6px !default;
 $label-radius:                  var(--hb-border-radius) !default;
 
 // Status
 $status-size:                   14px !default;
-$status-color:                  var(--hb-gray) !default;
+$status-color:                  var(--hb-gray-300) !default;
 
 // Blockquotes
 $bq-bg:                         var(--hb-gray-200) !default;

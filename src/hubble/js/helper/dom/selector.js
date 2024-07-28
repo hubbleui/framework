@@ -1,4 +1,19 @@
 /**
+ * Select single node by selector
+ *
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {DOMElement}   context (optional) (default document)
+ * @return {DOMElement}
+ */
+_.prototype.$ = function(selector, context)
+{
+    context = (typeof context === 'undefined' ? document : context);
+    
+    return context.querySelector(selector)
+}
+
+/**
  * Select and return all nodes by selector
  *
  * @access {public}
@@ -6,7 +21,7 @@
  * @param  {DOMElement}   context (optional) (default document)
  * @return {DOMElement}
  */
-$All(selector, context)
+_.prototype.$All = function(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
 
@@ -33,16 +48,3 @@ $All(selector, context)
     return TO_ARR.call(context.querySelectorAll(`:scope ${selector}`));
 }
 
-/**
- * Select single node by selector
- *
- * @access {public}
- * @param  {string} selector CSS selector
- * @param  {DOMElement}   context (optional) (default document)
- * @return {DOMElement}
- */
-$(selector, context)
-{
-    context = (typeof context === 'undefined' ? document : context);
-    return context.querySelector(selector)
-}

@@ -8,7 +8,7 @@
  * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
  * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-removeEventListener(DOMElement, eventName, handler)
+_.prototype.remove_event_listener = function(DOMElement, eventName, handler)
 {
     var args = TO_ARR.call(arguments);
 
@@ -18,7 +18,7 @@ removeEventListener(DOMElement, eventName, handler)
 
         this.each(DOMElement, function(i, el)
         {            
-            this.removeEventListener.apply(this, [el, ...baseArgs]);
+            this.remove_event_listener.apply(this, [el, ...baseArgs]);
         
         }, this);
     }
@@ -27,7 +27,7 @@ removeEventListener(DOMElement, eventName, handler)
         // If the eventName name was not provided - remove all event handlers on element
         if (!eventName)
         {
-            return this.__removeElementListeners(DOMElement);
+            return this.__remove_element_listeners(DOMElement);
         }
 
         // If event has a comma or is an array we're doing multiple events
@@ -39,7 +39,7 @@ removeEventListener(DOMElement, eventName, handler)
             {
                 args[1] = event;
 
-                this.removeEventListener.apply(this, args);
+                this.remove_event_listener.apply(this, args);
                 
             }, this);
 
@@ -49,7 +49,7 @@ removeEventListener(DOMElement, eventName, handler)
         // If the callback was not provided - remove all events of the type on the element
         if (!handler)
         {
-            return this.__removeElementTypeListeners(DOMElement, eventName);
+            return this.__remove_element_type_listeners(DOMElement, eventName);
         }
         
         let guid = DOMElement.guid;
@@ -64,8 +64,8 @@ removeEventListener(DOMElement, eventName, handler)
 
         // Loop stored events and match node, event name, handler, use capture
         this.each(handlers, function(i, _handler)
-        {
-            if (_handler.callback.guid === handler.guid || this.is_equial(_handler.callback, handler))
+        {            
+            if (_handler.callback.guid === handler.guid || this.is_equal(_handler.callback, handler))
             {
                 this._events[guid][eventName].splice(i, 1);
 
@@ -73,7 +73,12 @@ removeEventListener(DOMElement, eventName, handler)
                 {
                     delete this._events[guid][eventName];
 
-                    this.__removeListener(DOMElement, eventName);
+                    this.__remove_listener(DOMElement, eventName);
+                }
+
+                if (this.is_empty(this._events[guid]))
+                {
+                    delete this._events[guid];
                 }
                 
                 // Break only remove first
@@ -81,8 +86,6 @@ removeEventListener(DOMElement, eventName, handler)
             } 
         
         }, this);
-
-        
     }
 }
 
@@ -92,7 +95,7 @@ removeEventListener(DOMElement, eventName, handler)
  * @access {private}
  * @param  {DOMElement} DOMElement Target node element
  */
-__removeElementListeners(DOMElement)
+_.prototype.__remove_element_listeners = function(DOMElement)
 {
     let guid = DOMElement.guid;
 
@@ -102,7 +105,7 @@ __removeElementListeners(DOMElement)
     {
         this.each(this._events[guid], function(type, callbacks)
         {
-            this.__removeListener(DOMElement, type);
+            this.__remove_listener(DOMElement, type);
             
         }, this);
     }
@@ -117,7 +120,7 @@ __removeElementListeners(DOMElement)
  * @param  {DOMElement} DOMElement Target node element
  * @param  {string}     type       Event listener type
  */
-__removeElementTypeListeners(DOMElement, type)
+_.prototype.__remove_element_type_listeners = function(DOMElement, type)
 {
     let guid = DOMElement.guid;
 
@@ -128,7 +131,12 @@ __removeElementTypeListeners(DOMElement, type)
     {
         delete this._events[guid][type];
 
-        this.__removeListener(DOMElement, type);
+        this.__remove_listener(DOMElement, type);
+
+        if (this.is_empty(this._events[guid]))
+        {
+            delete this._events[guid];
+        }
     }
 }
 
@@ -141,14 +149,7 @@ __removeElementTypeListeners(DOMElement, type)
  * @param  {closure}    handler    Callback event
  * @param  {bool}       useCapture Use capture (optional) (defaul false)
  */
-__removeListener(DOMElement, eventType)
+_.prototype.__remove_listener = function(DOMElement, eventType)
 {    
-    if (DOMElement.addEventListener)
-    {
-        DOMElement.removeEventListener(eventType, this.__eventDispatcher);
-    }
-    else
-    {
-        DOMElement.removeEventListener('on' + eventType, this.__eventDispatcher);
-    }
+    DOMElement.removeEventListener(eventType, this.__event_dispatcher);
 }

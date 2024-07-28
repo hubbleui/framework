@@ -4,7 +4,7 @@
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_array(mixed_var, strict)
+_.prototype.is_array = function(mixed_var, strict)
 {
     strict = typeof strict === 'undefined' ? false : strict;
 

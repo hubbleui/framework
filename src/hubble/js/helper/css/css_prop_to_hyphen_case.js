@@ -5,7 +5,7 @@
  * @param  {string} prop Property to convert
  * @retirm {string}
  */
-css_prop_to_hyphen_case(prop)
+_.prototype.css_prop_to_hyphen_case = function(prop)
 {
     if (!/[A-Z]/.test(prop)) return prop;
     

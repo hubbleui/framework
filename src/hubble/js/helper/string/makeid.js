@@ -4,7 +4,7 @@
  * @param  {int}    length String length
  * @return {string}
  */
-makeid(length)
+_.prototype.makeid = function(length)
 {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

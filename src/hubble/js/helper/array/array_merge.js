@@ -4,7 +4,7 @@
  * @param   {object|array} First array then any number of array or objects to merge into
  * @returns {object|array}
  */
-array_merge()
+_.prototype.array_merge = function()
 {
     let args = TO_ARR.call(arguments);
 

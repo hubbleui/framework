@@ -5,7 +5,7 @@
  * @param  {string}  CSS rules
  * @return {object}
  */
-css_to_longhand(css)
+_.prototype.css_to_longhand = function(css)
 {
     var ret    = {};
     var values = this.css_to_object(css);

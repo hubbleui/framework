@@ -5,7 +5,7 @@
  * @param  {DOMElement}   form Target element
  * @return {array}
  */
-form_inputs(form)
+_.prototype.form_inputs = function(form)
 {
     return this.$All('input, textarea, select', form);
 }

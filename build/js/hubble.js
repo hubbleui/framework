@@ -12,49 +12,12 @@ if (!window.location.origin)
 }
 
 /*
- * domready (c) Dustin Diaz 2014 - License MIT
- *
- */
-! function(name, definition)
-{
-
-    if (typeof module != 'undefined') module.exports = definition()
-    else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
-    else this[name] = definition()
-
-}('domready', function()
-{
-
-    var fns = [],
-        listener, doc = typeof document === 'object' && document,
-        hack = doc && doc.documentElement.doScroll,
-        domContentLoaded = 'DOMContentLoaded',
-        loaded = doc && (hack ? /^loaded|^c/ : /^loaded|^i|^c/).test(doc.readyState)
-
-
-    if (!loaded && doc)
-        doc.addEventListener(domContentLoaded, listener = function()
-        {
-            doc.removeEventListener(domContentLoaded, listener)
-            loaded = 1
-            while (listener = fns.shift()) listener()
-        })
-
-    return function(fn)
-    {
-        loaded ? setTimeout(fn, 0) : fns.push(fn)
-    }
-
-});
-
-/*
  * Custom events 
  *
  * @see {https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill}
  */
 (function()
 {
-
     if (typeof window.CustomEvent === "function") return false;
 
     function CustomEvent(event, params)
@@ -237,183 +200,6 @@ if (!window.location.origin)
 }());
 
 /**
- * String includes
- * 
- * @see {https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes}
- */
-if (!String.prototype.includes)
-{
-    String.prototype.includes = function(search, start)
-    {
-        'use strict';
-
-        if (search instanceof RegExp)
-        {
-            throw TypeError('first argument must not be a RegExp');
-        }
-
-        if (start === undefined)
-        {
-            start = 0;
-        }
-
-        return this.indexOf(search, start) !== -1;
-    };
-}
-
-/**
- * String.prototype.replaceAll() polyfill
- * https://gomakethings.com/how-to-replace-a-section-of-a-string-with-another-one-with-vanilla-js/
- * @author {Chris} Ferdinandi}
- * @license {MIT}
- */
-if (!String.prototype.replaceAll)
-{
-    String.prototype.replaceAll = function(str, newStr)
-    {
-        // If a regex pattern
-        if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]')
-        {
-            return this.replace(str, newStr);
-        }
-
-        // If a string
-        return this.replace(new RegExp(str, 'g'), newStr);
-    };
-}
-
-/**
- * DOM parser pollyfill (legacy support)
- * 
- * @var {obj}
- * @source {https://gist.github.com/1129031}
- */
-(function(DOMParser)
-{
-    var DOMParser_proto = DOMParser.prototype,
-        real_parseFromString = DOMParser_proto.parseFromString;
-    try
-    {
-        if ((new DOMParser).parseFromString("", "text/html"))
-        {
-            return;
-        }
-    }
-    catch (ex)
-    {}
-    DOMParser_proto.parseFromString = function(markup, type)
-    {
-        if (/^\s*text\/html\s*(?:;|$)/i.test(type))
-        {
-            var doc = document.implementation.createHTMLDocument(""),
-                doc_elt = doc.documentElement,
-                first_elt;
-            doc_elt.innerHTML = markup;
-            first_elt = doc_elt.firstElementChild;
-            if (doc_elt.childElementCount === 1 && first_elt.localName.toLowerCase() === "html")
-            {
-                doc.replaceChild(first_elt, doc_elt);
-            }
-            return doc;
-        }
-        else
-        {
-            return real_parseFromString.apply(this, arguments);
-        }
-    };
-}(DOMParser));
-
-// Production steps of ECMA-262, Edition 5, 15.4.4.19
-// Reference: https://es5.github.io/#x15.4.4.19
-if (!Array.prototype.map) {
-
-  Array.prototype.map = function(callback/*, thisArg*/) {
-
-    var T, A, k;
-
-    if (this == null) {
-      throw new TypeError('this is null or not defined');
-    }
-
-    // 1. Let O be the result of calling ToObject passing the |this|
-    //    value as the argument.
-    var O = Object(this);
-
-    // 2. Let lenValue be the result of calling the Get internal
-    //    method of O with the argument "length".
-    // 3. Let len be ToUint32(lenValue).
-    var len = O.length >>> 0;
-
-    // 4. If IsCallable(callback) is false, throw a TypeError exception.
-    // See: https://es5.github.com/#x9.11
-    if (typeof callback !== 'function') {
-      throw new TypeError(callback + ' is not a function');
-    }
-
-    // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
-    if (arguments.length > 1) {
-      T = arguments[1];
-    }
-
-    // 6. Let A be a new array created as if by the expression new Array(len)
-    //    where Array is the standard built-in constructor with that name and
-    //    len is the value of len.
-    A = new Array(len);
-
-    // 7. Let k be 0
-    k = 0;
-
-    // 8. Repeat, while k < len
-    while (k < len) {
-
-      var kValue, mappedValue;
-
-      // a. Let Pk be ToString(k).
-      //   This is implicit for LHS operands of the in operator
-      // b. Let kPresent be the result of calling the HasProperty internal
-      //    method of O with argument Pk.
-      //   This step can be combined with c
-      // c. If kPresent is true, then
-      if (k in O) {
-
-        // i. Let kValue be the result of calling the Get internal
-        //    method of O with argument Pk.
-        kValue = O[k];
-
-        // ii. Let mappedValue be the result of calling the Call internal
-        //     method of callback with T as the this value and argument
-        //     list containing kValue, k, and O.
-        mappedValue = callback.call(T, kValue, k, O);
-
-        // iii. Call the DefineOwnProperty internal method of A with arguments
-        // Pk, Property Descriptor
-        // { Value: mappedValue,
-        //   Writable: true,
-        //   Enumerable: true,
-        //   Configurable: true },
-        // and false.
-
-        // In browsers that support Object.defineProperty, use the following:
-        // Object.defineProperty(A, k, {
-        //   value: mappedValue,
-        //   writable: true,
-        //   enumerable: true,
-        //   configurable: true
-        // });
-
-        // For best browser support, use the following:
-        A[k] = mappedValue;
-      }
-      // d. Increase k by 1.
-      k++;
-    }
-
-    // 9. return A
-    return A;
-  };
-}
-
-/**
  * Very simple chain library
  * 
  * @var {obj}
@@ -508,8 +294,6 @@ var Chain = function()
 // Container
 (function(window)
 {
-    const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
-
     /**
      * JS IoC Container
      *
@@ -517,413 +301,343 @@ var Chain = function()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Inverse
+    const Inverse = function()
     {
-        /**
-         * Constructor
-         *
-         * @class
-         * @access {public}
-         */
-        constructor()
-        {
-            this._store = {};
+        this._store = {};
+    }
 
-            return this;
+    /**
+     * Set data key to value
+     *
+     * @access {public}
+     * @param {string} key   The data key
+     * @param {mixed}  value The data value
+     */
+    Inverse.prototype.set = function(key, value, singleton)
+    {
+        key = this._normalizeKey(key);
+
+        value = this._storeObj(value, singleton);
+
+        this._store[key] = value;
+
+        this._setProto(key);
+    }
+
+    /**
+     * Stores a globally unique singleton
+     *
+     * @access {public}
+     * @param  {string} key      The value or object name
+     * @param  {object} classObj The closure that defines the object
+     * @return {this}
+     */
+    Inverse.prototype.singleton = function(key, classObj, invoke)
+    {
+        invoke = typeof invoke === 'undefined' ? false : invoke;
+
+        this.set(key, classObj, true);
+
+        if (invoke)
+        {
+            return this.get(key);
         }
+    }
 
-        /**
-         * Set data key to value
-         *
-         * @access {public}
-         * @param {string} key   The data key
-         * @param {mixed}  value The data value
-         */
-        set(key, value, singleton)
+    /**
+     * Does this set contain a key?
+     *
+     * @access {public}
+     * @param  {string}  key The data key
+     * @return {boolean}
+     */
+    Inverse.prototype.has = function(key)
+    {
+        key = this._normalizeKey(key);
+
+        for (var k in this._store)
         {
-            key = this._normalizeKey(key);
-
-            value = this._storeObj(value, singleton);
-
-            this._store[key] = value;
-
-            this._setProto(key);
-        }
-
-        /**
-         * Stores a globally unique singleton
-         *
-         * @access {public}
-         * @param  {string} key      The value or object name
-         * @param  {object} classObj The closure that defines the object
-         * @return {this}
-         */
-        singleton(key, classObj, invoke)
-        {
-            invoke = typeof invoke === 'undefined' ? false : invoke;
-
-            this.set(key, classObj, true);
-
-            if (invoke)
-            {
-                return this.get(key);
-            }
-        }
-
-        /**
-         * Does this set contain a key?
-         *
-         * @access {public}
-         * @param  {string}  key The data key
-         * @return {boolean}
-         */
-        has(key)
-        {
-            key = this._normalizeKey(key);
-
-            for (var k in this._store)
-            {
-                if (k === key)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /**
-         * Remove a key/value
-         *
-         * @access {public}
-         * @param {string} key   The data key
-         */
-        delete(key)
-        {
-            key = this._normalizeKey(key);
-
-            delete this._store[key];
-
-            var _proto = Object.getPrototypeOf(this);
-
-            if (typeof _proto[key] !== 'undefined')
-            {
-                _proto[key] = undefined;
-            }
-        }
-
-        /**
-         * Get data value with key
-         *
-         * @access {public}
-         * @param  {string} key The data key
-         * @param  {mixed}  ... Any additional parameters to pass to the constructor (optional) (default null)
-         * @return {mixed}      The data value
-         */
-        get(key)
-        {
-            key = this._normalizeKey(key);
-
-            let args = Array.prototype.slice.call(arguments).slice(1);
-
-            let valObj = this._store[key];
-
-            if (this.has(key))
-            {
-                // Singletons
-                if (valObj.singleton)
-                {
-                    if (!valObj.instance)
-                    {
-                        return valObj.singleton.apply(this, [key, ...args]);
-                    }
-
-                    return valObj.instance;
-                }
-                // Constructorables
-                if (valObj.invokable)
-                {
-                    return this._newInstance(valObj.value, args);
-                }
-                // Functions
-                if (valObj.funcn)
-                {
-                    return valObj.value.apply(this, args);
-                }
-                // Intances and all other var types
-                return valObj.value;
-            }
-        }
-
-        /**
-         * Get data value with key
-         *
-         * @access {public}
-         * @param  {string} key The data key
-         * @param  {mixed}  ... Any additional parameters to pass to the constructor (optional) (default null)
-         * @return {mixed}      The data value
-         */
-        import(names)
-        {
-            const _this   = this;
-            const _import = {};
-
-            _import.from = function(module)
-            {
-                const _rets = [];
-
-                const _context = _this.get(module);
-
-                for (var i = 0; i < names.length; i++)
-                {
-                    const mixedVar = _context[names[i]];
-
-                    _rets.push(_this._is_func(mixedVar) ? _this.bind(_context[names[i]], _context) : mixedVar);
-
-                }
-
-                return _rets;
-            };
-
-            return _import;
-        }
-
-        bind(callback, context)
-        {
-            context = typeof context === 'undefined' ? window : context;
-
-            const bound = function()
-            {
-                return callback.apply(context, arguments);
-            }
-
-            Object.defineProperty(bound, 'name', { value: callback.name });
-
-            bound.__isBound      = true;
-            bound.__boundContext = context;
-            bound.__origional    = callback;
-
-            return bound;
-        }
-
-        /**
-         * Sets the key as a prototype method
-         *
-         * @access {public}
-         * @param  {string} key   The data key
-         * @return {mixed}
-         */
-        _setProto(key)
-        {
-            var _this = this;
-
-            var _proto = Object.getPrototypeOf(this);
-
-            _proto[key] = function()
-            {
-                var args = Array.prototype.slice.call(arguments);
-
-                args.unshift(key);
-
-                return _this.get.apply(_this, args);
-            };
-        }
-
-        /**
-         * Stores a globally unique singleton
-         *
-         * @access {public}
-         * @param  {string} key      The value or object name
-         * @param  {object} classObj The closure that defines the object
-         * @return {this}
-         */
-        _singletonFunc(key)
-        {
-            var valObj   = this._store[key];
-            var instance = valObj.invoked ? valObj.instance : null;
-            var args     = Array.prototype.slice.call(arguments).slice(1);
-
-            if (!instance)
-            {
-                instance         = this._newInstance(valObj.value, args);
-                valObj.function  = false;
-                valObj.invokable = false;
-                valObj.invoked   = true;
-                valObj.value     = null;
-                valObj.instance  = instance;
-                valObj.singleton = true;
-            }
-
-            return instance;
-        }
-
-        _isInvokable(mixed_var)
-        {
-            // Not a function
-            if (typeof mixed_var !== 'function' || mixed_var === null)
-            {
-                return false;
-            }
-
-            // Strict ES6 class
-            if (/^\s*class\s+\w+/.test(mixed_var.toString()))
+            if (k === key)
             {
                 return true;
             }
-
-            // Native arrow functions
-            if (!mixed_var.prototype || !mixed_var.prototype.constructor)
-            {
-                return false;
-            }
-
-            // If prototype is empty 
-            let props = this._object_props(mixed_var.prototype);
-
-            return props.length >= 1;
         }
 
-        /**
-         * Checks if a class object has been invoked
-         *
-         * @access {private}
-         * @param  {mixed} mixedVar The object instance or reference
-         * @return {bool}
-         */
-        _isInvoked(mixedVar)
+        return false;
+    }
+
+    /**
+     * Remove a key/value
+     *
+     * @access {public}
+     * @param {string} key   The data key
+     */
+    Inverse.prototype.delete = function(key)
+    {
+        key = this._normalizeKey(key);
+
+        delete this._store[key];
+
+        var _proto = Object.getPrototypeOf(this);
+
+        if (typeof _proto[key] !== 'undefined')
         {
-            if (typeof mixedVar === 'object' && mixedVar.constructor && typeof mixedVar.constructor === 'function')
+            _proto[key] = undefined;
+        }
+    }
+
+    /**
+     * Get data value with key
+     *
+     * @access {public}
+     * @param  {string} key The data key
+     * @param  {mixed}  ... Any additional parameters to pass to the constructor (optional) (default null)
+     * @return {mixed}      The data value
+     */
+    Inverse.prototype.get = function(key)
+    {
+        key = this._normalizeKey(key);
+
+        let args = Array.prototype.slice.call(arguments).slice(1);
+
+        let valObj = this._store[key];
+
+        if (this.has(key))
+        {
+            // Singletons
+            if (valObj.singleton)
             {
-                var constr = mixedVar.constructor.toString().trim();
-                
-                return constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class ') ;
+                if (!valObj.instance)
+                {
+                    return valObj.singleton.apply(this, [key, ...args]);
+                }
+
+                return valObj.instance;
+            }
+            // Constructorables
+            if (valObj.invokable)
+            {
+                return this._newInstance(valObj.value, args);
+            }
+            // Functions
+            if (valObj.funcn)
+            {
+                return valObj.value.apply(this, args);
+            }
+            // Intances and all other var types
+            return valObj.value;
+        }
+    }
+
+    /**
+     * Get data value with key
+     *
+     * @access {public}
+     * @param  {string} key The data key
+     * @param  {mixed}  ... Any additional parameters to pass to the constructor (optional) (default null)
+     * @return {mixed}      The data value
+     */
+    Inverse.prototype.import = function(names)
+    {
+        const _this   = this;
+        const _import = {};
+
+        _import.from = function(module)
+        {
+            const _rets = [];
+
+            const _context = _this.get(module);
+
+            for (var i = 0; i < names.length; i++)
+            {
+                const mixedVar = _context[names[i]];
+
+                _rets.push(_this._is_func(mixedVar) ? _this.bind(_context[names[i]], _context) : mixedVar);
+
             }
 
+            return _rets;
+        };
+
+        return _import;
+    }
+
+    Inverse.prototype.bind = function(callback, context)
+    {
+        context = typeof context === 'undefined' ? window : context;
+
+        const bound = function()
+        {
+            return callback.apply(context, arguments);
+        }
+
+        Object.defineProperty(bound, 'name', { value: callback.name });
+
+        bound.__isBound      = true;
+        bound.__boundContext = context;
+        bound.__origional    = callback;
+
+        return bound;
+    }
+
+    /**
+     * Sets the key as a prototype method
+     *
+     * @access {public}
+     * @param  {string} key   The data key
+     * @return {mixed}
+     */
+    Inverse.prototype._setProto = function(key)
+    {
+        var _this = this;
+
+        var _proto = Object.getPrototypeOf(this);
+
+        _proto[key] = function()
+        {
+            var args = Array.prototype.slice.call(arguments);
+
+            args.unshift(key);
+
+            return _this.get.apply(_this, args);
+        };
+    }
+
+    /**
+     * Stores a globally unique singleton
+     *
+     * @access {public}
+     * @param  {string} key      The value or object name
+     * @param  {object} classObj The closure that defines the object
+     * @return {this}
+     */
+    Inverse.prototype._singletonFunc = function(key)
+    {
+        var valObj   = this._store[key];
+        var instance = valObj.invoked ? valObj.instance : null;
+        var args     = Array.prototype.slice.call(arguments).slice(1);
+
+        if (!instance)
+        {
+            instance         = this._newInstance(valObj.value, args);
+            valObj.function  = false;
+            valObj.invokable = false;
+            valObj.invoked   = true;
+            valObj.value     = null;
+            valObj.instance  = instance;
+            valObj.singleton = true;
+        }
+
+        return instance;
+    }
+
+    Inverse.prototype._isInvokable = function(mixed_var)
+    {
+        // Not a function
+        if (typeof mixed_var !== 'function' || mixed_var === null)
+        {
             return false;
         }
 
-        /**
-         * Invokes and returns a new class instance
-         *
-         * @access {private}
-         * @param  {mixed} classObj The object instance or reference
-         * @param  {array} args     Arguements to pass to class constructor (optional) (default null)
-         * @return {object}
-         */
-        _newInstance(reference, args)
+        // Strict ES6 class
+        if (/^\s*class\s+\w+/.test(mixed_var.toString()))
         {
-            return new reference(...args);
-            //return new(Function.prototype.bind.apply(reference, args));
+            return true;
         }
 
-        /**
-         * Invokes and returns a new class instance
-         *
-         * @access {private}
-         * @param  {mixed} classObj The object instance or reference
-         * @param  {array} args     Arguements to pass to class constructor (optional) (default null)
-         * @return {object}
-         */
-        _storeObj(mixedVar, isSingleton)
+        // Native arrow functions
+        if (!mixed_var.prototype || !mixed_var.prototype.constructor)
         {
-            isSingleton = typeof isSingleton === 'undefined' ? false : isSingleton;
-
-            var invokable   = this._isInvokable(mixedVar);
-            var invoked     = this._isInvoked(mixedVar);
-            var instance    = invoked && isSingleton ? mixedVar : null;
-            var isFunc      = this._is_func(mixedVar) && !invokable && !invoked && !isSingleton;
-            var singleton   = isSingleton ? this._singletonFunc : false;
-
-            return {
-                funcn     : isFunc,
-                invokable : invokable,
-                invoked   : invoked,
-                value     : mixedVar,
-                instance  : instance,
-                singleton : singleton,
-            };
+            return false;
         }
 
-        /**
-         * Normalizes key for prototypes
-         *
-         * @access {private}
-         * @param  {string} key Key to normalize
-         * @return {string}
-         */
-        _normalizeKey(key)
+        return true;
+    }
+
+    /**
+     * Checks if a class object has been invoked
+     *
+     * @access {private}
+     * @param  {mixed} mixedVar The object instance or reference
+     * @return {bool}
+     */
+    Inverse.prototype._isInvoked = function(mixedVar)
+    {
+        if (typeof mixedVar === 'object' && mixedVar.constructor && typeof mixedVar.constructor === 'function')
         {
-            key = key.replace(/['"]/g, '').replace(/\W+/g, ' ')
-                .replace(/ (.)/g, function($1)
-                {
-                    return $1.toUpperCase();
-                })
-                .replace(/ /g, '');
-
-            key = key.charAt(0).toUpperCase() + key.slice(1);
-
-            return key;
+            var constr = mixedVar.constructor.toString().trim();
+            
+            return constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class ') ;
         }
 
-        /**
-         * Returns object properties and methods as array of keys.
-         * 
-         * @param   {mixed}    mixed_var    Variable to test
-         * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
-         * @returns {array}
-         */
-        _object_props(mixed_var, withMethods)
-        {
-            var array_unique = function(arr)
+        return false;
+    }
+
+    /**
+     * Invokes and returns a new class instance
+     *
+     * @access {private}
+     * @param  {mixed} classObj The object instance or reference
+     * @param  {array} args     Arguements to pass to class constructor (optional) (default null)
+     * @return {object}
+     */
+    Inverse.prototype._newInstance = function(reference, args)
+    {
+        return new reference(...args);
+    }
+
+    /**
+     * Invokes and returns a new class instance
+     *
+     * @access {private}
+     * @param  {mixed} classObj The object instance or reference
+     * @param  {array} args     Arguements to pass to class constructor (optional) (default null)
+     * @return {object}
+     */
+    Inverse.prototype._storeObj = function(mixedVar, isSingleton)
+    {
+        isSingleton = typeof isSingleton === 'undefined' ? false : isSingleton;
+
+        var invokable   = this._isInvokable(mixedVar);
+        var invoked     = this._isInvoked(mixedVar);
+        var instance    = invoked && isSingleton ? mixedVar : null;
+        var isFunc      = this._is_func(mixedVar) && !invokable && !invoked && !isSingleton;
+        var singleton   = isSingleton ? this._singletonFunc : false;
+
+        return {
+            funcn     : isFunc,
+            invokable : invokable,
+            invoked   : invoked,
+            value     : mixedVar,
+            instance  : instance,
+            singleton : singleton,
+        };
+    }
+
+    /**
+     * Normalizes key for prototypes
+     *
+     * @access {private}
+     * @param  {string} key Key to normalize
+     * @return {string}
+     */
+    Inverse.prototype._normalizeKey = function(key)
+    {
+        key = key.replace(/['"]/g, '').replace(/\W+/g, ' ')
+            .replace(/ (.)/g, function($1)
             {
-                let uniq = function(value, index, self)
-                {
-                    return self.indexOf(value) === index;
-                }
+                return $1.toUpperCase();
+            })
+            .replace(/ /g, '');
 
-                return arr.filter(uniq);
-            }
+        key = key.charAt(0).toUpperCase() + key.slice(1);
 
-            withMethods = typeof withMethods === 'undefined' ? true : false;
+        return key;
+    }
 
-            let keys = Object.keys(mixed_var);
-
-            if (withMethods)
-            {
-                let protos = [];
-                let funcs = Object.getOwnPropertyNames(mixed_var);
-                let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
-
-                while (proto)
-                {
-                    // recursive stopper
-                    if (protos.includes.proto)
-                    {
-                        break;
-                    }
-
-                    protos.push(proto);
-
-                    let protoFuncs = Object.getOwnPropertyNames(proto);
-
-                    funcs = [...funcs, ...protoFuncs];
-
-                    proto = proto.prototype || Object.getPrototypeOf(proto);
-                }
-
-                keys = [...keys, ...funcs];
-            }
-
-            return array_unique(keys.filter(function(key)
-            {
-                return !PROTO_EXCLUDES.includes(key);
-            }));
-        }
-
-        _is_func(mixedVar)
-        {
-            return Object.prototype.toString.call(mixedVar) === '[object Function]';
-        }
+    Inverse.prototype._is_func = function(mixedVar)
+    {
+        return Object.prototype.toString.call(mixedVar) === '[object Function]';
     }
 
     /**
@@ -989,6 +703,11 @@ const TO_ARR = Array.prototype.slice;
 
 // Regex for HTMLElement types
 const HTML_REGXP = /^\[object HTML\w*Element\]$/;
+
+// Empty object
+const EMPTY_OBJ_KEYS = Object.getOwnPropertyNames(Object.getPrototypeOf({}));
+
+
 	/**
  * List of shorthand properties and their longhand equivalents
  *
@@ -1170,11 +889,8 @@ const CSS_ABSOLUTE_UNITS =
  */
 const CSS_PROP_TO_HYPHEN_CASES = {};
 const CSS_PROP_TO_CAMEL_CASES  = {};
-	// Excludes
-const PROTO_EXCLUDES = ['constructor', '__proto__', '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf', 'length', 'name', 'arguments', 'caller', 'prototype', 'apply', 'bind', 'call'];
+	// Current clone map (stops recursive cloning between array/objects)
 
-// Current clone map (stops recursive cloning between array/objects)
-let CURR_CLONES = new WeakMap();
 	/**
  * Default options.
  * 
@@ -1512,23 +1228,29 @@ const DOC_EVENTS = Object.getOwnPropertyNames(document).concat(Object.getOwnProp
  * @author    {Joe J. Howard}
  * @copyright {Joe J. Howard}
  * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
- */      
-class HelperJS
+ */
+
+var _THIS = null;
+
+const _ = function()
 {
-    version = "1.0.0";
+    this.version = "1.0.0";
 
-    author = "Joe Howard";
+    this.author = "Joe Howard";
 
-    browser = false;
+    this.browser = false;
 
-    _events = {};
+    this._events = {};
 
-    _guid = 1;
+    this._guid = 1;
 
-    _guidgen()
-    {
-        return `__${this._guid++}`;
-    }
+    _THIS = this;
+}
+
+_.prototype._guidgen = function()
+{
+    return `__${this._guid++}`;
+}
 		/**
  * JS Aniamation Core
  *
@@ -1542,7 +1264,7 @@ class HelperJS
  * @param  {string}     options.easing      Easing function in camelCase
  * @param  {function}   options.callback    Callback to apply when animation ends (optional)
  */
-__animate_js(DOMElement, options)
+_.prototype.__animate_js = function(DOMElement, options)
 {
     const _helper = this;
 
@@ -1587,13 +1309,13 @@ __animate_js(DOMElement, options)
 
     AnimateJS.prototype.clearAnimating = function()
     {
-        let CSSprop = this.CSSProperty;
+        const CSSprop = this.CSSProperty;
 
-        let _this = this;
+        const _this = this;
 
         _helper.each(ANIMATING, function(i, animation)
         {
-            if (animation.CSSProperty === CSSprop)
+            if (animation.CSSProperty === CSSprop && animation.DOMElement === DOMElement)
             {
                 animation.stop(true);
 
@@ -2027,7 +1749,214 @@ __animate_js(DOMElement, options)
 
     return (new AnimateJS(DOMElement, options)).start();
 }
-		/**
+		const AnimateCss = function(DOMElement, options)
+{        
+    this.DOMElement = DOMElement;
+
+    this.options = options;
+
+    this.animatedProps = {};
+
+    this.animatedTransitions = {};
+
+    this.preAnimatedTransitions = {};
+
+    this.callback = null;
+
+    this.preProcessStartEndValues();
+
+    return this;
+};
+
+/**
+ * Start animation.
+ *
+ */
+AnimateCss.prototype.start = function()
+{
+    this.applyStartValues();
+
+    this.applyTransitions();
+
+    _THIS.add_event_listener(this.DOMElement, 'transitionend', this.on_complete, this);
+
+    this.applyEndValues();
+
+    return this;
+}
+
+/**
+ * Stop animation.
+ *
+ */
+AnimateCss.prototype.stop = function()
+{
+    _THIS.remove_event_listener(this.DOMElement, 'transitionend', this.on_complete, this);
+
+    _THIS.css(this.DOMElement, 'transition', this.preAnimatedTransitions);
+}
+
+/**
+ * Stop animation and destroy.
+ *
+ */
+AnimateCss.prototype.destory = function()
+{
+    this.stop();
+
+    this.animatedProps = {};
+
+    this.animatedTransitions = {};
+
+    this.preAnimatedTransitions = {};
+
+    this.callback = null;
+}
+
+/**
+ * On transition end.
+ * 
+ * Note if a multiple animation properties wer supplied
+ * we only want to call the callback once when all transitions
+ * have completed.
+ *
+ * @param  {Event} e transitionEnd event
+ */
+AnimateCss.prototype.on_complete = function(e)
+{        
+    e = e || window.event;
+
+    var prop = _THIS.css_prop_to_hyphen_case(e.propertyName);
+
+    if (prop === 'background-color') prop = 'background';
+
+    // Change inline style back to auto
+    let endVal = this.animatedProps[prop];
+    if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset') _THIS.css(this.DOMElement, prop, endVal);
+
+    delete this.animatedTransitions[prop];
+
+    delete this.animatedProps[prop];
+    
+    var completed = _THIS.is_empty(this.animatedProps);
+
+    var transition = completed ? this.preAnimatedTransitions : _THIS.join_obj(this.animatedTransitions, ' ', ', ');
+
+    _THIS.css(this.DOMElement, 'transition', this.preAnimatedTransitions);
+
+    if (completed)
+    {
+        _THIS.remove_event_listener(this.DOMElement, 'transitionend', this.on_complete, this);
+        
+        if (_THIS.is_function(this.callback))
+        {
+            this.callback(this.DOMElement);
+        }
+    }
+}
+
+/**
+ * Checks for "auto" transtions.
+ * 
+ */
+AnimateCss.prototype.preProcessStartEndValues = function()
+{
+    var DOMElement = this.DOMElement;
+    
+    // We need to set the end value explicitly as these values will not
+    // transition with CSS
+    _THIS.each(this.options, function(i, option)
+    {
+        let startValue  = option.from;
+        let endValue    = option.to;
+        let CSSProperty = option.property;
+
+        if (startValue === 'auto' || startValue === 'initial' || startValue === 'unset' || !startValue)
+        {
+            this.options[i].from = _THIS.rendered_style(DOMElement, CSSProperty);
+        }
+
+        if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
+        {
+            var inlineStyle = _THIS.inline_style(DOMElement, CSSProperty);
+
+            _THIS.css(DOMElement, CSSProperty, endValue);
+
+            this.options[i].to = _THIS.rendered_style(DOMElement, CSSProperty);
+
+            _THIS.css(DOMElement, CSSProperty, inlineStyle ? inlineStyle : false);
+        }
+
+        this.animatedProps[CSSProperty] = endValue;
+    
+    }, this);
+}
+
+/**
+ * Apply start values.
+ * 
+ */
+AnimateCss.prototype.applyStartValues = function()
+{
+    var styles = {};
+
+    _THIS.each(this.options, function(i, option)
+    {
+        if (option.from)
+        {
+            styles[option.property] = option.from;
+        }
+    });
+
+    if (!_THIS.is_empty(styles)) _THIS.css(this.DOMElement, styles);
+}
+
+/**
+ * Apply animation transitions.
+ * 
+ */
+AnimateCss.prototype.applyTransitions = function()
+{
+    this.preAnimatedTransitions  = _THIS.inline_style(this.DOMElement, 'transition');
+    this.preAnimatedTransitions  = !this.preAnimatedTransitions ? false : this.preAnimatedTransitions;
+    this.animatedTransitions     = _THIS.css_transition_props(this.DOMElement);
+
+    _THIS.each(this.options, function(i, option)
+    {
+        // Setup and convert duration from MS to seconds
+        let property = option.property;
+        let duration = (option.duration / 1000);
+        let easing   = CSS_EASINGS[option.easing] || 'ease';
+
+        // Set the transition for the property
+        // in our merged obj
+        this.animatedTransitions[property] = `${duration}s ${easing}`;
+
+    }, this);
+
+    _THIS.css(this.DOMElement, 'transition', _THIS.join_obj(this.animatedTransitions, ' ', ', '));
+}
+
+/**
+ * Apply animation end values.
+ * 
+ */
+AnimateCss.prototype.applyEndValues = function()
+{
+    var styles = {};
+
+    _THIS.each(this.options, function(i, option)
+    {
+        styles[option.property] = option.to;
+
+        this.callback = option.callback;
+
+    }, this);
+
+    _THIS.css(this.DOMElement, styles);
+}
+
+/**
  * CSS Animation.
  *
  * @access {private}
@@ -2052,221 +1981,8 @@ __animate_js(DOMElement, options)
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-__animate_css(DOMElement, options)
+_.prototype.__animate_css = function(DOMElement, options)
 {    
-    const _helper = this;
-
-    var _this;
-
-    const AnimateCss = function(DOMElement, options)
-    {        
-        _this = this;
-
-        this.DOMElement = DOMElement;
-
-        this.options = options;
-
-        this.animatedProps = {};
-
-        this.animatedTransitions = {};
-
-        this.preAnimatedTransitions = {};
-
-        this.callback = null;
-
-        this.preProcessStartEndValues();
-
-        return this;
-    };
-
-    /**
-     * Start animation.
-     *
-     */
-    AnimateCss.prototype.start = function()
-    {
-        this.applyStartValues();
-
-        this.applyTransitions();
-
-        DOMElement.addEventListener('transitionend', this.on_complete, true);
-
-        this.applyEndValues();
-
-        return this;
-    }
-
-    /**
-     * Stop animation.
-     *
-     */
-    AnimateCss.prototype.stop = function()
-    {
-        DOMElement.removeEventListener('transitionend', _this.on_complete, true);
-
-        _helper.css(DOMElement, 'transition', this.preAnimatedTransitions);
-    }
-
-    /**
-     * Stop animation and destroy.
-     *
-     */
-    AnimateCss.prototype.destory = function()
-    {
-        this.stop();
-
-        this.animatedProps = {};
-
-        this.animatedTransitions = {};
-
-        this.preAnimatedTransitions = {};
-
-        this.callback = null;
-    }
-
-    /**
-     * On transition end.
-     * 
-     * Note if a multiple animation properties wer supplied
-     * we only want to call the callback once when all transitions
-     * have completed.
-     *
-     * @param  {Event} e transitionEnd event
-     */
-    AnimateCss.prototype.on_complete = function(e)
-    {        
-        e = e || window.event;
-
-        var prop = _helper.css_prop_to_hyphen_case(e.propertyName);
-
-        if (prop === 'background-color') prop = 'background';
-
-        // Change inline style back to auto
-        let endVal = _this.animatedProps[prop];
-        if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset') _helper.css(DOMElement, prop, endVal);
-
-        delete _this.animatedTransitions[prop];
-
-        delete _this.animatedProps[prop];
-        
-        var completed = _helper.is_empty(_this.animatedProps);
-
-        var transition = completed ? _this.preAnimatedTransitions : _helper.join_obj(_this.animatedTransitions, ' ', ', ');
-
-        _helper.css(DOMElement, 'transition', _this.preAnimatedTransitions);
-
-        if (completed)
-        {
-            DOMElement.removeEventListener('transitionend', _this.on_complete, true);
-            
-            if (_helper.is_function(_this.callback))
-            {
-                _this.callback(_this.DOMElement);
-            }
-        }
-    }
-
-    /**
-     * Checks for "auto" transtions.
-     * 
-     */
-    AnimateCss.prototype.preProcessStartEndValues = function()
-    {
-        var DOMElement = this.DOMElement;
-        
-        // We need to set the end value explicitly as these values will not
-        // transition with CSS
-        _helper.each(this.options, function(i, option)
-        {
-            let startValue  = option.from;
-            let endValue    = option.to;
-            let CSSProperty = option.property;
-
-            if (startValue === 'auto' || startValue === 'initial' || startValue === 'unset' || !startValue)
-            {
-                this.options[i].from = _helper.rendered_style(DOMElement, CSSProperty);
-            }
-
-            if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
-            {
-                var inlineStyle = _helper.inline_style(DOMElement, CSSProperty);
-
-                _helper.css(DOMElement, CSSProperty, endValue);
-
-                this.options[i].to = _helper.rendered_style(DOMElement, CSSProperty);
-
-                _helper.css(DOMElement, CSSProperty, inlineStyle ? inlineStyle : false);
-            }
-
-            this.animatedProps[CSSProperty] = endValue;
-        
-        }, this);
-    }
-
-    /**
-     * Apply start values.
-     * 
-     */
-    AnimateCss.prototype.applyStartValues = function()
-    {
-        var styles = {};
-
-        _helper.each(this.options, function(i, option)
-        {
-            if (option.from)
-            {
-                styles[option.property] = option.from;
-            }
-        });
-
-        if (!_helper.is_empty(styles)) _helper.css(this.DOMElement, styles);
-    }
-
-    /**
-     * Apply animation transitions.
-     * 
-     */
-    AnimateCss.prototype.applyTransitions = function()
-    {
-        this.preAnimatedTransitions  = _helper.inline_style(this.DOMElement, 'transition');
-        this.preAnimatedTransitions  = !this.preAnimatedTransitions ? false : this.preAnimatedTransitions;
-        this.animatedTransitions     = _helper.css_transition_props(this.DOMElement);
-
-        _helper.each(this.options, function(i, option)
-        {
-            // Setup and convert duration from MS to seconds
-            let property = option.property;
-            let duration = (option.duration / 1000);
-            let easing   = CSS_EASINGS[option.easing] || 'ease';
-
-            // Set the transition for the property
-            // in our merged obj
-            this.animatedTransitions[property] = `${duration}s ${easing}`;
-
-        }, this);
-
-        _helper.css(this.DOMElement, 'transition', _helper.join_obj(this.animatedTransitions, ' ', ', '));
-    }
-
-    /**
-     * Apply animation end values.
-     * 
-     */
-    AnimateCss.prototype.applyEndValues = function()
-    {
-        var styles = {};
-
-        _helper.each(options, function(i, option)
-        {
-            styles[option.property] = option.to;
-
-            this.callback = option.callback;
-
-        }, this);
-
-        _helper.css(DOMElement, styles);
-    }
-
     return new AnimateCss(DOMElement, options).start();
 }
 
@@ -2296,8 +2012,8 @@ __animate_css(DOMElement, options)
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-animate(DOMElement, options)
-{
+_.prototype.animate = function(DOMElement, options)
+{    
     const animationSet = [];
 
     const Animation = function()
@@ -2362,7 +2078,7 @@ animate(DOMElement, options)
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-animate_css(DOMElement, options)
+_.prototype.animate_css = function(DOMElement, options)
 {
     var cssAnimation;
 
@@ -2414,7 +2130,7 @@ animate_css(DOMElement, options)
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-__animation_factory(DOMElement, opts)
+_.prototype.__animation_factory = function(DOMElement, opts)
 {
     var optionSets = [];
 
@@ -2488,15 +2204,198 @@ __animation_factory(DOMElement, opts)
     return optionSets;
 }
 		/**
+ * Recursively delete from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+_.prototype.__array_delete_recursive = function(keys, object)
+{
+    var key = keys.shift();
+
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        if (TO_STR.call(object) === '[object Array]')
+        {
+            object.splice(key, 1);
+        }
+        else
+        {
+            delete object[key];
+        }
+    }
+
+    if (!object[key])
+    {
+        return false;
+    }
+
+    return this.__array_delete_recursive(keys, object[key]);
+}
+
+/**
+ * Recursively search from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+_.prototype.__array_get_recursive = function(keys, object)
+{
+    var key = keys.shift();
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        return object[key];
+    }
+
+    if (!object[key])
+    {
+        return undefined;
+    }
+
+    return this.__array_get_recursive(keys, object[key]);
+}
+
+/**
+ * Recursively set array/object.
+ *
+ * @param {array}          keys     Keys in search order
+ * @param {mixed}          value    Value to set
+ * @param {object|array}   object   Object to get from
+ * @param {string|number}  nextKey  Next key to set
+ */
+_.prototype.__array_set_recursive = function(keys, value, object, nextKey)
+{
+    var key = keys.shift();
+    var islast = keys.length === 0;
+    var lastObj = object;
+    object = !nextKey ? object : object[nextKey];
+
+    // Trying to set a value on nested array that doesn't exist
+    if (!['object', 'function'].includes(typeof object))
+    {
+        throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
+    }
+
+    if (!object[key])
+    {
+        // Trying to put object key into an array
+        if (TO_STR.call(object) === '[object Array]' && typeof key === 'string')
+        {
+            var converted = Object.assign({}, object);
+
+            lastObj[nextKey] = converted;
+
+            object = converted;
+        }
+
+        if (keys[0] && typeof keys[0] === 'string')
+        {
+            object[key] = {};
+        }
+        else
+        {
+            object[key] = [];
+        }
+    }
+
+    if (islast)
+    {
+        object[key] = value;
+
+        return;
+    }
+
+    this.__array_set_recursive(keys, value, object, key);
+}
+
+/**
+ * Segments an array/object path using from "dot.notation" into an array of keys in order.
+ *
+ * @param   {string}  path Path to parse
+ * @returns {array}
+ */
+_.prototype.__array_key_segment = function(path)
+{
+    var result = [];
+    var segments = path.split('.');
+
+    for (var i = 0; i < segments.length; i++)
+    {
+        var segment = segments[i];
+
+        if (!segment.includes('['))
+        {
+            result.push(segment);
+
+            continue;
+        }
+
+        var subSegments = segment.split('[');
+
+        for (var j = 0; j < subSegments.length; j++)
+        {
+            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
+            {
+                result.push(parseInt(subSegments[j].replace(']')));
+            }
+            else if (subSegments[j] !== '')
+            {
+                result.push(subSegments[j])
+            }
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Recursively delete from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+_.prototype.__array_delete_recursive = function(keys, object)
+{
+    var key = keys.shift();
+
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        if (TO_STR.call(object) === '[object Array]')
+        {
+            object.splice(key, 1);
+        }
+        else
+        {
+            delete object[key];
+        }
+    }
+
+    if (!object[key])
+    {
+        return false;
+    }
+
+    return this.__array_delete_recursive(keys, object[key]);
+}
+		/**
  * Deletes from an array/object using dot/bracket notation.
  *
  * @param   {string}        path   Path to delete
  * @param   {object|array}  object Object to delete from
  * @returns {object|array}
  */
-array_delete(path, object)
+_.prototype.array_delete = function(path, object)
 {
-    this.__arrayDeleteRecursive(this.__arrayKeySegment(path), object);
+    this.__array_delete_recursive(this.__array_key_segment(path), object);
 
     return object;
 }
@@ -2506,7 +2405,7 @@ array_delete(path, object)
  * @param   {object|array}  object Object to delete from
  * @returns {object|array}
  */
-array_filter(arr)
+_.prototype.array_filter = function(arr)
 {
     let isArr = this.is_array(arr);
 
@@ -2529,9 +2428,9 @@ array_filter(arr)
  * @param   {object|array}  object  Object to get from
  * @returns {mixed}
  */
-array_get(path, object)
+_.prototype.array_get = function(path, object)
 {
-    return this.__arrayGetRecursive(this.__arrayKeySegment(path), object);
+    return this.__array_get_recursive(this.__array_key_segment(path), object);
 }
 
 
@@ -2544,7 +2443,7 @@ array_get(path, object)
  * @param   {object|array}  object Object to check on
  * @returns {boolean}
  */
-array_has(path, object)
+_.prototype.array_has = function(path, object)
 {
     return !this.is_undefined(this.array_get(path, object));
 }
@@ -2554,7 +2453,7 @@ array_has(path, object)
  * @param   {object|array} First array then any number of array or objects to merge into
  * @returns {object|array}
  */
-array_merge()
+_.prototype.array_merge = function()
 {
     let args = TO_ARR.call(arguments);
 
@@ -2604,9 +2503,9 @@ array_merge()
  * @param   {object|array} object Object to set into
  * @returns {object|array}
  */
-array_set(path, value, object)
+_.prototype.array_set = function(path, value, object)
 {
-    this.__arraySetRecursive(this.__arrayKeySegment(path), value, object);
+    this.__array_set_recursive(this.__array_key_segment(path), value, object);
 
     return object;
 }
@@ -2616,7 +2515,7 @@ array_set(path, value, object)
  * @param   {array} arr Array to run
  * @returns {array}
  */
-array_unique(arr)
+_.prototype.array_unique = function(arr)
 {
     let uniq = function(value, index, self)
     {
@@ -2635,7 +2534,7 @@ array_unique(arr)
  * @return {bool}
  * 
  */
-is_array_last(needle, haystack, strict)
+_.prototype.is_array_last = function(needle, haystack, strict)
 {
     strict = this.is_undefined(strict) ? false : strict;
 
@@ -2651,7 +2550,7 @@ is_array_last(needle, haystack, strict)
  * @param  {closure} callback  Callback to apply to each iteration
  * @param  {array}   args      Array of params to apply to callback (optional) (default null)
  */
-each(obj, callback)
+_.prototype.each = function(obj, callback)
 {
     if (typeof obj !== 'object' || obj === null) return;
 
@@ -2709,7 +2608,7 @@ each(obj, callback)
     return obj;
 }
 
-foreach()
+_.prototype.foreach = function()
 {
     return this.each.apply(this, arguments);
 }
@@ -2722,7 +2621,7 @@ foreach()
  * @param  {closure} callback  Callback to apply to each iteration
  * @param  {array}   args      Array of params to apply to callback (optional) (default null)
  */
-for(count, callback)
+_.prototype.for = function(count, callback)
 {
     var args = TO_ARR.call(arguments);
 
@@ -2742,10 +2641,12 @@ for(count, callback)
  * @return {bool}
  * 
  */
-in_array(needle, haystack, strict)
+_.prototype.in_array = function(needle, haystack, strict)
 {
     strict = this.is_undefined(strict) ? false : strict;
     
+    if (!strict) return haystack.includes(needle);
+
     let ret = false;
 
     this.each(haystack, function(k, v)
@@ -2768,7 +2669,7 @@ in_array(needle, haystack, strict)
  * @param   {array|mixed}   args      If single arg provided gets apllied as this to callback, otherwise args apllied to callback
  * @returns {array|object}
  */
-map(obj, callback)
+_.prototype.map = function(obj, callback)
 {
     if (typeof obj !== 'object' || obj === null) return;
 
@@ -2850,13 +2751,13 @@ map(obj, callback)
  * @param {string}       name        Property name
  * @apram {mixed}        value       Property value
  */
-attr(DOMElement, name, value)
+_.prototype.attr = function(DOMElement, name, value)
 {
     // Get attribute
     // e.g attr(node, style)
     if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
     {
-        return this.__getAttribute(DOMElement, name);
+        return this.__get_attribute(DOMElement, name);
     }
 
     // attr(node, {foo : 'bar', baz: 'bar'})
@@ -2954,12 +2855,12 @@ attr(DOMElement, name, value)
                 var evt = name.slice(2).toLowerCase();
 
                 // Remove old listeners
-                this.removeEventListener(DOMElement, evt);
+                this.remove_event_listener(DOMElement, evt);
 
                 // Add new listener if one provided
                 if (value)
                 {
-                    this.addEventListener(DOMElement, evt, value);
+                    this.add_event_listener(DOMElement, evt, value);
                 }
             }
             // All other node attributes
@@ -2987,7 +2888,6 @@ attr(DOMElement, name, value)
                 let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
                 let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
 
-                console.log(camelName, hyphenName);
 
                 // ARIA-attributes have a different notion of boolean values.
                 // The value `false` is different from the attribute not
@@ -3024,7 +2924,7 @@ attr(DOMElement, name, value)
  * @param  {string}           name        Property name
  * @return {string|undefined}
  */
-__getAttribute(DOMElement, name)
+_.prototype.__get_attribute = function(DOMElement, name)
 {
     if (name.startsWith('data'))
     {
@@ -3062,7 +2962,7 @@ __getAttribute(DOMElement, name)
  * @example {Helper.css(node,} { display : 'none' });
  * @example {Helper.css(node,} 'display', 'none');
  */
-css(el, property, value)
+_.prototype.css = function(el, property, value)
 {
     // If their is no value and property is an object
     if (this.is_object(property))
@@ -3123,7 +3023,7 @@ css(el, property, value)
  * @param  {string} prop Property to convert
  * @retirm {string}
  */
-css_prop_to_camel_case(prop)
+_.prototype.css_prop_to_camel_case = function(prop)
 {
     if (!prop.includes('-')) return prop;
 
@@ -3148,7 +3048,7 @@ css_prop_to_camel_case(prop)
  * @param  {string} prop Property to convert
  * @retirm {string}
  */
-css_prop_to_hyphen_case(prop)
+_.prototype.css_prop_to_hyphen_case = function(prop)
 {
     if (!/[A-Z]/.test(prop)) return prop;
     
@@ -3175,7 +3075,7 @@ css_prop_to_hyphen_case(prop)
  * @param  {string}  CSS rules
  * @return {object}
  */
-css_to_longhand(css)
+_.prototype.css_to_longhand = function(css)
 {
     var ret    = {};
     var values = this.css_to_object(css);
@@ -3219,7 +3119,7 @@ css_to_longhand(css)
  * @param  {string}  CSS rules
  * @return {object}
  */
-css_to_shorthand(css)
+_.prototype.css_to_shorthand = function(css)
 {
     const needsFilling = ['margin', 'padding', 'transition', 'animation'];
     var ret            = {};
@@ -3277,7 +3177,7 @@ css_to_shorthand(css)
  * @param  {string} styles CSS
  * @return {object}
  */
-css_to_object(styles)
+_.prototype.css_to_object = function(styles)
 {
     var ret = {};
 
@@ -3288,8 +3188,6 @@ css_to_object(styles)
     if (styles.includes('{'))
     {
         var nestedStyles = [...css.matchAll(nested_regex)];
-
-
     }
 
     this.each(styles.split(';'), function(i, rule)
@@ -3313,7 +3211,7 @@ css_to_object(styles)
  * @param  {string} value CSS value (e.g "12px")
  * @return {Number}
  */
-css_unit_value(value)
+_.prototype.css_unit_value = function(value)
 {
     value = value + '';
 
@@ -3336,7 +3234,7 @@ css_unit_value(value)
  * @param  {string} value CSS value (e.g "12px")
  * @return {string}
  */
-css_value_unit(value)
+_.prototype.css_value_unit = function(value)
 {
     value = value + '';
 
@@ -3351,7 +3249,7 @@ css_value_unit(value)
  * @param  {String}     property   CSS property (optional) (used for % unit)
  * @return {Number}
  */
-css_to_px(valueStr, DOMElement, property)
+_.prototype.css_to_px = function(valueStr, DOMElement, property)
 {
     valueStr = valueStr + '';
     
@@ -3421,7 +3319,7 @@ css_to_px(valueStr, DOMElement, property)
  * @param  {string} prop CSS property to check
  * @return {string}
  */
-inline_style(element, prop)
+_.prototype.inline_style = function(element, prop)
 {
     const elementStyle = element.style;
 
@@ -3441,7 +3339,7 @@ inline_style(element, prop)
  * @param  {DOMElement}   el   Target element
  * @param  {string} prop CSS property to removes
  */
-remove_style(el, prop)
+_.prototype.remove_style = function(el, prop)
 {
     if (typeof prop === 'undefined')
     {
@@ -3460,7 +3358,7 @@ remove_style(el, prop)
  * @param  {string} prop CSS property to check (in camelCase) (optional)
  * @return {mixed}
  */
-rendered_style(DOMElement, property)
+_.prototype.rendered_style = function(DOMElement, property)
 {
     if (property.includes('ransform'))
     {
@@ -3478,7 +3376,7 @@ rendered_style(DOMElement, property)
  * @param  {string}        prop CSS property to check (in camelCase) (optional)
  * @return {string|object}
  */
-__computed_style(DOMElement, property)
+_.prototype.__computed_style = function(DOMElement, property)
 {
     if (window.getComputedStyle)
     {
@@ -3518,7 +3416,7 @@ __computed_style(DOMElement, property)
  * @param  {node|string} DOMElement  Target element or transition value string
  * @return {object}
  */
-css_transition_props(DOMElement)
+_.prototype.css_transition_props = function(DOMElement)
 {
     if (!DOMElement) return {};
     var transitions   = {};
@@ -3590,7 +3488,7 @@ css_transition_props(DOMElement)
  * @param  {bool}        returnAsString Returns transforms as string (optional) (default true)
  * @return {object}
  */
-css_transform_props(DOMElement, returnAsString)
+_.prototype.css_transform_props = function(DOMElement, returnAsString)
 {
     if (this.is_string(DOMElement))
     {
@@ -3658,7 +3556,7 @@ css_transform_props(DOMElement, returnAsString)
  * @param  {bool}   returnAsString Returns string
  * @return {string|object}
  */
-__un_css_matrix(DOMElement, returnAsString)
+_.prototype.__un_css_matrix = function(DOMElement, returnAsString)
 {
     if (!this.is_string(DOMElement))
     {
@@ -3742,7 +3640,7 @@ __un_css_matrix(DOMElement, returnAsString)
  * @param  {string} transforms A CSS transform value e.g translateY(300px) 
  * @return {object}
  */
-css_to_3d_transform(transformsStr)
+_.prototype.css_to_3d_transform = function(transformsStr)
 {        
     var transforms = {};
 
@@ -3836,7 +3734,7 @@ css_to_3d_transform(transformsStr)
  * @param  {DOMElement}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to add
  */
-add_class(DOMElement, className)
+_.prototype.add_class = function(DOMElement, className)
 {
     if (this.is_array(DOMElement))
     {
@@ -3875,7 +3773,7 @@ add_class(DOMElement, className)
  * @param  {string} type Node type to find
  * @return {node\null}
  */
-closest(el, type)
+_.prototype.closest = function(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -3959,7 +3857,7 @@ closest(el, type)
  * @param  {string} clas Node class to find
  * @return {node\null}
  */
-closest_class(el, clas)
+_.prototype.closest_class = function(el, clas)
 {    
     // Type is class
     if (this.is_array(clas))
@@ -4018,7 +3916,7 @@ closest_class(el, clas)
  * @param  {DOMElement}   el Target element
  * @return {object}
  */
-coordinates(DOMElement)
+_.prototype.coordinates = function(DOMElement)
 {
     // If element is hiddien we need to display it quickly
     var inlineDisplay = this.inline_style(DOMElement, 'display');
@@ -4081,7 +3979,7 @@ coordinates(DOMElement)
  * @param  {DOMElement}   el   Target element
  * @return {node\null}
  */
-first_children(el)
+_.prototype.first_children = function(el)
 {
     var children = [];
 
@@ -4104,7 +4002,7 @@ first_children(el)
  * @param  {DOMElement}   form Target element
  * @return {array}
  */
-form_inputs(form)
+_.prototype.form_inputs = function(form)
 {
     return this.$All('input, textarea, select', form);
 }
@@ -4115,7 +4013,7 @@ form_inputs(form)
  * @param  {DOMElement}   form Target element
  * @return {array}
  */
-form_values(form)
+_.prototype.form_values = function(form)
 {
     var inputs = this.form_inputs(form);
     var ret    = {};
@@ -4158,7 +4056,7 @@ form_values(form)
  * @param  {string|array} className  Class name(s) to check for
  * @return {bool}
  */
-has_class(el, className)
+_.prototype.has_class = function(el, className)
 {
     if (!this.in_dom(el))
     {
@@ -4209,7 +4107,7 @@ has_class(el, className)
  * @access {public}
  * @param  {DOMElement}   el Target DOM node
  */
-hide_aria(el)
+_.prototype.hide_aria = function(el)
 {
     el.setAttribute("aria-hidden", 'true');
 }
@@ -4220,7 +4118,7 @@ hide_aria(el)
  * @param  {DOMElement}   el Target DOM node
  * @return {bool}
  */
-in_viewport(el)
+_.prototype.in_viewport = function(el)
 {
     var rect = el.getBoundingClientRect();
 
@@ -4239,7 +4137,7 @@ in_viewport(el)
  * @param  {string} content     Target content
  * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
  */
-inner_HTML(DOMElement, content, append)
+_.prototype.inner_HTML = function(DOMElement, content, append)
 {
     content = this.is_array(content) ? content.join("\n") : content;
 
@@ -4259,7 +4157,7 @@ inner_HTML(DOMElement, content, append)
  * @param  {DOMElement}   el   Target element
  * @param  {string} text Text to replace
  */
-inner_Text(el, text)
+_.prototype.inner_Text = function(el, text)
 {
     if (el.childNodes[0])
     {
@@ -4273,7 +4171,7 @@ inner_Text(el, text)
  * @param  {DOMElement}   input Target element
  * @return {mixed}
  */
-input_value(input)
+_.prototype.input_value = function(input)
 {
     if (input.type == "number" || this.is_numeric(input.value))
     {
@@ -4298,35 +4196,17 @@ input_value(input)
 		/**
  * Create and insert a new node
  *
- * @access {public}
- * @param  {string} type    New node type
- * @param  {string} classes New node class names (optional) (default '')
- * @param  {string} classes New node ID (optional) (default '')
- * @param  {string} content New node innerHTML (optional) (default '')
- * @param  {DOMElement}   target  Parent to append new node into
- * @return {DOMElement}
+ * @param {object} options
  */
-new_node(type, classes, ID, content, target)
+_.prototype.dom_element = function(options)
 {
-    var node = document.createElement(type);
-    classes = (typeof classes === "undefined" ? null : classes);
-    ID = (typeof ID === "undefined" ? null : ID);
-    content = (typeof content === "undefined" ? null : content);
+    if (!options.type) throw new Error('Element type not provided.');
 
-    if (classes !== null)
-    {
-        node.className = classes
-    }
-    if (ID !== null)
-    {
-        node.id = ID
-    }
-    if (content !== null)
-    {
-        node.innerHTML = content
-    }
+    let node = document.createElement(options.type);
 
-    target.appendChild(node);
+    delete options.type;
+
+    this.attr(node, options);
 
     return node;
 }
@@ -4338,7 +4218,7 @@ new_node(type, classes, ID, content, target)
  * @param  {string} type Target node type
  * @return {node\null}
  */
-next(el, type)
+_.prototype.next = function(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -4389,7 +4269,7 @@ next(el, type)
  * @param  {string} className Target node classname
  * @return {node\null}
  */
-next_untill_class(el, className)
+_.prototype.next_untill_class = function(el, className)
 {
     if (className[0] === '.')
     {
@@ -4424,7 +4304,7 @@ next_untill_class(el, className)
  * @param  {DOMElement} wrapper  Parent to preappend new node into
  * @return {DOMElement}
  */
-preapend(node, wrapper)
+_.prototype.preapend = function(node, wrapper)
 {
     wrapper.insertBefore(node, wrapper.firstChild);
 
@@ -4438,7 +4318,7 @@ preapend(node, wrapper)
  * @param  {string} type Target node type
  * @return {node\null}
  */
-previous(el, type)
+_.prototype.previous = function(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -4461,7 +4341,6 @@ previous(el, type)
         return this.previous_untill_class(el, type);
     }
 
-
     type = type.toLowerCase();
     if (el.previousSibling && el.previousSibling.nodeName.toLowerCase() === type) return el.previousSibling;
     var prev = el.previousSibling;
@@ -4483,7 +4362,7 @@ previous(el, type)
  * @param  {string} className Target node classname
  * @return {node\null}
  */
-previous_untill_class(el, className)
+_.prototype.previous_untill_class = function(el, className)
 {
     if (className[0] === '.')
     {
@@ -4516,7 +4395,7 @@ previous_untill_class(el, className)
  * @param  {DOMElement}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to remove
  */
-remove_class(DOMElement, className)
+_.prototype.remove_class = function(DOMElement, className)
 {
     if (this.is_array(DOMElement))
     {
@@ -4557,7 +4436,7 @@ remove_class(DOMElement, className)
  * @access {public}
  * @param  {DOMElement}   el Target element
  */
-remove_from_dom(el)
+_.prototype.remove_from_dom = function(el)
 {
     if (this.in_dom(el))
     {
@@ -4567,12 +4446,12 @@ remove_from_dom(el)
 
         for (var i = 0, len = children.length; i < len; i++)
         {
-            this.removeEventListener(children[i]);
+            this.remove_event_listener(children[i]);
 
             this.trigger_event(children[i], `Hubble:dom:remove`);
         }
 
-        this.removeEventListener(el);
+        this.remove_event_listener(el);
 
         this.trigger_event(el, `Hubble:dom:remove`);
 
@@ -4585,7 +4464,7 @@ remove_from_dom(el)
  * @access {private}
  * @return {obj}
  */
-scroll_pos()
+_.prototype.scroll_pos = function()
 {
     var doc  = document.documentElement;
     var top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
@@ -4597,6 +4476,21 @@ scroll_pos()
     };
 }
 		/**
+ * Select single node by selector
+ *
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {DOMElement}   context (optional) (default document)
+ * @return {DOMElement}
+ */
+_.prototype.$ = function(selector, context)
+{
+    context = (typeof context === 'undefined' ? document : context);
+    
+    return context.querySelector(selector)
+}
+
+/**
  * Select and return all nodes by selector
  *
  * @access {public}
@@ -4604,7 +4498,7 @@ scroll_pos()
  * @param  {DOMElement}   context (optional) (default document)
  * @return {DOMElement}
  */
-$All(selector, context)
+_.prototype.$All = function(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
 
@@ -4631,28 +4525,16 @@ $All(selector, context)
     return TO_ARR.call(context.querySelectorAll(`:scope ${selector}`));
 }
 
-/**
- * Select single node by selector
- *
- * @access {public}
- * @param  {string} selector CSS selector
- * @param  {DOMElement}   context (optional) (default document)
- * @return {DOMElement}
- */
-$(selector, context)
-{
-    context = (typeof context === 'undefined' ? document : context);
-    return context.querySelector(selector)
-}
+
 		/**
  * Aria show an element
  *
  * @access {public}
  * @param  {DOMElement}   el Target DOM node
  */
-show_aria(el)
+_.prototype.show_aria = function(el)
 {
-    el.setAttribute("aria-hidden", 'false');
+    el.setAttribute('aria-hidden', 'false');
 }
 
 		/**
@@ -4662,7 +4544,7 @@ show_aria(el)
  * @param  {DOMElement}         el         Target element
  * @param  {string}       className  Class name to toggle
  */
-toggle_class(el, className)
+_.prototype.toggle_class = function(el, className)
 {
     if (!this.in_dom(el))
     {
@@ -4686,7 +4568,7 @@ toggle_class(el, className)
  * @param  {string}       eventName    Event name
  * @param  {mixed}        data         Extra data to pass to custom events 
  */
-trigger_event(DOMElement, eventName, data)
+_.prototype.trigger_event = function(DOMElement, eventName, data)
 {
     if (this.in_array(eventName.toLowerCase(), DOC_EVENTS))
     {
@@ -4748,7 +4630,7 @@ trigger_event(DOMElement, eventName, data)
  * @param  {string} type Node type to find
  * @return {node\null}
  */
-traverse_up(DOMElement, callback, origional)
+_.prototype.traverse_up = function(DOMElement, callback, origional)
 {    
     origional = typeof origional === "undefined" ? DOMElement : origional;
 
@@ -4765,15 +4647,15 @@ traverse_up(DOMElement, callback, origional)
     return this.traverse_up(parent, callback, origional);
 }
 
-traverse_down(DOMElement, callback)
+_.prototype.traverse_down = function(DOMElement, callback)
 {
 }
 
-traverse_next(DOMElement, callback)
+_.prototype.traverse_next = function(DOMElement, callback)
 {
 }
 
-traverse_prev(DOMElement, callback)
+_.prototype.traverse_prev = function(DOMElement, callback)
 {
 }
 
@@ -4784,7 +4666,7 @@ traverse_prev(DOMElement, callback)
  * @param  {DOMElement}   DOMElement Target element
  * @return {object}
  */
-width(DOMElement)
+_.prototype.width = function(DOMElement)
 {
 	if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement ) return Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 
@@ -4797,7 +4679,7 @@ width(DOMElement)
  * @param  {DOMElement}   DOMElement Target element
  * @return {object}
  */
-height(DOMElement)
+_.prototype.height = function(DOMElement)
 {
     if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement) return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
@@ -4813,7 +4695,7 @@ height(DOMElement)
  * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
  * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-addEventListener(DOMElement, eventName, handler)
+_.prototype.add_event_listener = function(DOMElement, eventName, handler)
 {
     var args = TO_ARR.call(arguments);
 
@@ -4824,7 +4706,7 @@ addEventListener(DOMElement, eventName, handler)
 
         this.each(DOMElement, function(i, el)
         {            
-            this.addEventListener.apply(this, [el, ...baseArgs]);
+            this.add_event_listener.apply(this, [el, ...baseArgs]);
 
         }, this);
     }
@@ -4839,7 +4721,7 @@ addEventListener(DOMElement, eventName, handler)
             {
                 args[1] = event;
 
-                this.addEventListener.apply(this, args);
+                this.add_event_listener.apply(this, args);
                 
             }, this);
 
@@ -4849,7 +4731,7 @@ addEventListener(DOMElement, eventName, handler)
         // If array of arguements is provided, "this" will always be the first
         // argument provided
         // However the first and second argument passed to the callback will always the event object and the element
-        // e.g. addEventListener(el, 'click', callback, ['baz', 'foo', 'bar']) -> callback(e, el, foo, bar) this = 'baz'
+        // e.g. add_event_listener(el, 'click', callback, ['baz', 'foo', 'bar']) -> callback(e, el, foo, bar) this = 'baz'
 
         // Remove element, eventName, handler from args
         let argsNormal = this.__normaliseListenerArgs(DOMElement, args);
@@ -4862,9 +4744,9 @@ addEventListener(DOMElement, eventName, handler)
  * Nomralize event listener args
  * 
  * @param  {DOMElement}    DOMElement    The target DOM node
- * @param  {array}         args       Args passed to addEventListener or removeEventListener
+ * @param  {array}         args       Args passed to add_event_listener or remove_event_listener
  */
-__normaliseListenerArgs(DOMElement, args)
+_.prototype.__normaliseListenerArgs = function(DOMElement, args)
 {
     args = args.slice(3);
 
@@ -4890,7 +4772,7 @@ __normaliseListenerArgs(DOMElement, args)
  * @param  {closure} handler    Callback event
  * @param  {bool}    data Use capture (optional) (defaul false)
  */
-__addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
+_.prototype.__addListener = function(DOMElement, eventName, handler, thisArg, args, pushFirst)
 {
     // Apply GUID to element and callback
     DOMElement.guid = DOMElement.guid || (DOMElement.guid = this._guidgen());
@@ -4926,14 +4808,7 @@ __addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
 
     if (!hasHandler)
     {
-        if (DOMElement.addEventListener)
-        {
-            DOMElement.addEventListener(eventName, this.__eventDispatcher);
-        }
-        else
-        {
-            DOMElement.attachEvent('on' + eventName, this.__eventDispatcher);
-        }
+        DOMElement.addEventListener(eventName, this.__event_dispatcher);
     }
 }
 
@@ -4943,7 +4818,7 @@ __addListener(DOMElement, eventName, handler, thisArg, args, pushFirst)
  * @access {private}
  * @param  {eventObject}  e  
  */
-__eventDispatcher(e)
+_.prototype.__event_dispatcher = function(e)
 {
     e = e || window.event;
 
@@ -4953,7 +4828,7 @@ __eventDispatcher(e)
 
     if (!guid) return;
 
-    let _this = Container.Helper();
+    let _this = Container._();
 
     let callbacks = _this.array_get(`${guid}.${e.type}`, _this._events) || [];
 
@@ -4973,7 +4848,7 @@ __eventDispatcher(e)
  *
  * @access {public}
  */
-clearEventListeners()
+_.prototype.clear_event_listeners = function()
 {
     var events = this._events;
 
@@ -4985,7 +4860,7 @@ clearEventListeners()
         {
             let DOMElement = callbacks[0].element;
             
-            _this.__removeListener(DOMElement, type);
+            _this.__remove_listener(DOMElement, type);
         });
     });
 
@@ -4997,7 +4872,7 @@ clearEventListeners()
  *
  * @access {public}
  */
-collect_garbage()
+_.prototype.collect_garbage = function()
 {
     let _this = this;
 
@@ -5013,7 +4888,7 @@ collect_garbage()
             {
                 cleared = true;
 
-                _this.__removeListener(DOMElement, type);
+                _this.__remove_listener(DOMElement, type);
             }
         });
 
@@ -5032,7 +4907,7 @@ collect_garbage()
  * @param  {string}  eventName  Event type
  * @return {array}
  */
-eventListeners(DOMElement, eventName)
+_.prototype.event_listeners = function(DOMElement, eventName)
 {
     var args = TO_ARR.call(arguments);
     var ret  = [];
@@ -5117,7 +4992,7 @@ eventListeners(DOMElement, eventName)
  * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
  * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-removeEventListener(DOMElement, eventName, handler)
+_.prototype.remove_event_listener = function(DOMElement, eventName, handler)
 {
     var args = TO_ARR.call(arguments);
 
@@ -5127,7 +5002,7 @@ removeEventListener(DOMElement, eventName, handler)
 
         this.each(DOMElement, function(i, el)
         {            
-            this.removeEventListener.apply(this, [el, ...baseArgs]);
+            this.remove_event_listener.apply(this, [el, ...baseArgs]);
         
         }, this);
     }
@@ -5136,7 +5011,7 @@ removeEventListener(DOMElement, eventName, handler)
         // If the eventName name was not provided - remove all event handlers on element
         if (!eventName)
         {
-            return this.__removeElementListeners(DOMElement);
+            return this.__remove_element_listeners(DOMElement);
         }
 
         // If event has a comma or is an array we're doing multiple events
@@ -5148,7 +5023,7 @@ removeEventListener(DOMElement, eventName, handler)
             {
                 args[1] = event;
 
-                this.removeEventListener.apply(this, args);
+                this.remove_event_listener.apply(this, args);
                 
             }, this);
 
@@ -5158,7 +5033,7 @@ removeEventListener(DOMElement, eventName, handler)
         // If the callback was not provided - remove all events of the type on the element
         if (!handler)
         {
-            return this.__removeElementTypeListeners(DOMElement, eventName);
+            return this.__remove_element_type_listeners(DOMElement, eventName);
         }
         
         let guid = DOMElement.guid;
@@ -5173,8 +5048,8 @@ removeEventListener(DOMElement, eventName, handler)
 
         // Loop stored events and match node, event name, handler, use capture
         this.each(handlers, function(i, _handler)
-        {
-            if (_handler.callback.guid === handler.guid || this.is_equial(_handler.callback, handler))
+        {            
+            if (_handler.callback.guid === handler.guid || this.is_equal(_handler.callback, handler))
             {
                 this._events[guid][eventName].splice(i, 1);
 
@@ -5182,7 +5057,12 @@ removeEventListener(DOMElement, eventName, handler)
                 {
                     delete this._events[guid][eventName];
 
-                    this.__removeListener(DOMElement, eventName);
+                    this.__remove_listener(DOMElement, eventName);
+                }
+
+                if (this.is_empty(this._events[guid]))
+                {
+                    delete this._events[guid];
                 }
                 
                 // Break only remove first
@@ -5190,8 +5070,6 @@ removeEventListener(DOMElement, eventName, handler)
             } 
         
         }, this);
-
-        
     }
 }
 
@@ -5201,7 +5079,7 @@ removeEventListener(DOMElement, eventName, handler)
  * @access {private}
  * @param  {DOMElement} DOMElement Target node element
  */
-__removeElementListeners(DOMElement)
+_.prototype.__remove_element_listeners = function(DOMElement)
 {
     let guid = DOMElement.guid;
 
@@ -5211,7 +5089,7 @@ __removeElementListeners(DOMElement)
     {
         this.each(this._events[guid], function(type, callbacks)
         {
-            this.__removeListener(DOMElement, type);
+            this.__remove_listener(DOMElement, type);
             
         }, this);
     }
@@ -5226,7 +5104,7 @@ __removeElementListeners(DOMElement)
  * @param  {DOMElement} DOMElement Target node element
  * @param  {string}     type       Event listener type
  */
-__removeElementTypeListeners(DOMElement, type)
+_.prototype.__remove_element_type_listeners = function(DOMElement, type)
 {
     let guid = DOMElement.guid;
 
@@ -5237,7 +5115,12 @@ __removeElementTypeListeners(DOMElement, type)
     {
         delete this._events[guid][type];
 
-        this.__removeListener(DOMElement, type);
+        this.__remove_listener(DOMElement, type);
+
+        if (this.is_empty(this._events[guid]))
+        {
+            delete this._events[guid];
+        }
     }
 }
 
@@ -5250,16 +5133,9 @@ __removeElementTypeListeners(DOMElement, type)
  * @param  {closure}    handler    Callback event
  * @param  {bool}       useCapture Use capture (optional) (defaul false)
  */
-__removeListener(DOMElement, eventType)
+_.prototype.__remove_listener = function(DOMElement, eventType)
 {    
-    if (DOMElement.addEventListener)
-    {
-        DOMElement.removeEventListener(eventType, this.__eventDispatcher);
-    }
-    else
-    {
-        DOMElement.removeEventListener('on' + eventType, this.__eventDispatcher);
-    }
+    DOMElement.removeEventListener(eventType, this.__event_dispatcher);
 }
 
 		/**
@@ -5267,7 +5143,7 @@ __removeListener(DOMElement, eventType)
  *
  * @return {bool}
  */
-is_retina()
+_.prototype.is_retina = function()
 {
     var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
                       (min--moz-device-pixel-ratio: 1.5),\
@@ -5293,7 +5169,7 @@ is_retina()
  * @param  {string}    str       The URL to parse. Invalid characters are replaced by _.
  * @return {object}
  */
-parse_url(str)
+_.prototype.parse_url = function(str)
 {
     var ret = {};
     var url = new URL(str);
@@ -5338,7 +5214,7 @@ parse_url(str)
  * @param  {string}  name String query to get (optional)
  * @return {object|string}
  */
-url_query(name)
+_.prototype.url_query = function(name)
 {
     var results = {};
 
@@ -5381,13 +5257,9 @@ url_query(name)
  * @param   {mixed}  context   Context to bind functions
  * @returns {mixed}
  */
-clone_deep(mixed_var, context)
+_.prototype.clone_deep = function(mixed_var, context)
 {
-    let ret = this.__cloneVar(mixed_var, context, false);
-
-    CURR_CLONES = new WeakMap();
-
-    return ret;
+    return this.__clone_var(mixed_var, this.is_undefined(context) ? mixed_var : context);
 }
 
 /**
@@ -5397,24 +5269,22 @@ clone_deep(mixed_var, context)
  * @param   {mixed}  context    Context when cloning recursive objects and arrays.
  * @returns {mixed}
  */
-__cloneVar(mixed_var, context, isDeep)
+_.prototype.__clone_var = function(mixed_var, context)
 {
-    isDeep = this.is_undefined(isDeep) ? true : isDeep;
-
     let tag = this.var_type(mixed_var);
 
     switch (tag)
     {
         case OBJECT_TAG:
-            return this.__cloneObj(mixed_var, context, isDeep);
+            return this.__clone_obj(mixed_var, context);
 
         case ARRAY_TAG:
         case NODELST_TAG:
         case ARGS_TAG:
-            return this.__cloneArray(mixed_var, context, isDeep);
+            return this.__clone_array(mixed_var, context);
 
         case FUNC_TAG:
-            return this.__cloneFunc(mixed_var, context);
+            return this.__clone_func(mixed_var, context);
 
         case NULL_TAG:
             return null;
@@ -5433,28 +5303,28 @@ __cloneVar(mixed_var, context, isDeep)
             return n;
 
         case REGEXP_TAG:
-            return this.__cloneRegExp(mixed_var, context);
+            return this.__clone_RegExp(mixed_var, context);
 
         case SYMBOL_TAG:
-            return this.__cloneSymbol(mixed_var);
+            return this.__clone_symbol(mixed_var);
 
         case DATE_TAG:
-            return this.__cloneDate(mixed_var);
+            return this.__clone_date(mixed_var);
 
         case SET_TAG:
-            return this.__cloneSet(mixed_var, context);
+            return this.__clone_set(mixed_var, context);
 
         case MAP_TAG:
-            return this.__cloneMap(mixed_var, context);
+            return this.__clone_map(mixed_var, context);
 
         case ARRAY_BUFFER_TAG:
-            return this.__cloneArrayBuffer(mixed_var);
+            return this.__clone_array_buffer(mixed_var);
 
         case DATAVIEW_TAG:
-            return this.__cloneDataView(mixed_var);
+            return this.__clone_data_view(mixed_var);
 
         case ARRAY_BUFFER_TAG:
-            return this.__cloneBuffer(mixed_var);
+            return this.__clone_buffer(mixed_var);
 
         case FLOAT32_TAG:
         case FLOAT64_TAG:
@@ -5465,7 +5335,7 @@ __cloneVar(mixed_var, context, isDeep)
         case UINT8CLAMPED_TAG:
         case UINT16_TAG:
         case UINT32_TAG:
-            return this.__cloneTypedArray(object);
+            return this.__clone_typed_array(object);
 
         case ERROR_TAG:
         case WEAKMAP_TAG:
@@ -5481,39 +5351,42 @@ __cloneVar(mixed_var, context, isDeep)
  * @param   {object}  obj
  * @returns {object}
  */
-__cloneObj(obj, context, isDeep)
+_.prototype.__clone_obj = function(obj, context)
 {
-    // Handle date objects
-    if (obj instanceof Date)
-    {
-        let r = new Date();
-
-        r.setTime(obj.getTime());
-
-        return r;
-    }
-
-    // Loop keys and functions
+    // Shallow keys
     let keys = this.object_props(obj);
-    let ret = {};
+    let ret  = {};
 
-    if (keys.length === 0)
+    // Empty object
+    if (keys.length === 0 || this.is_empty(obj))
     {
         return ret;
     }
 
-    if (CURR_CLONES.has(obj))
-    {
-        return CURR_CLONES.get(obj);
-    }
-
-    CURR_CLONES.set(obj, ret);
-
     this.each(keys, function(i, key)
     {
-        ret[key] = this.__cloneVar(obj[key], typeof context === 'undefined' ? ret : context);
+        ret[key] = this.clone_deep(obj[key], context);
 
     }, this);
+
+    // Clone prototypes
+    let protos = this.prototypes(obj);
+
+    if (protos.length >= 1)
+    {
+        let curr = ret;
+
+        while(protos.length > 0)
+        {
+            let proto        = protos.shift();
+            let clone        = this.clone_deep(proto, context);
+            clone.constrctor = this.clone_deep(proto.constructor, context);
+            
+            Object.setPrototypeOf(curr, clone);
+            
+            curr = clone;
+        }
+    }
 
     return ret;
 }
@@ -5525,9 +5398,9 @@ __cloneObj(obj, context, isDeep)
  * @param   {mixed}     context   Context to bind function
  * @returns {function}
  */
-__cloneFunc(func, context)
+_.prototype.__clone_func = function(func, context)
 {
-    return this.__bind(func, context);
+    return this.bind(func, context);
 }
 
 /**
@@ -5536,29 +5409,20 @@ __cloneFunc(func, context)
  * @param   {array}  arr
  * @returns {array}
  */
-__cloneArray(arr, context)
+_.prototype.__clone_array = function(arr, context)
 {
     let ret = [];
 
-    let cacheKey = { array: arr };
-
-    if (CURR_CLONES.has(cacheKey))
-    {
-        return CURR_CLONES.get(cacheKey);
-    }
-
-    CURR_CLONES.set(cacheKey, ret);
-
     this.each(arr, function(i, val)
     {
-        ret[i] = this.__cloneVar(val, context);
+        ret[i] = this.clone_deep(val, context);
     
     }, this);
 
     return ret;
 }
 
-__cloneDate(d)
+_.prototype.__clone_date = function(d)
 {
     let r = new Date();
 
@@ -5567,12 +5431,12 @@ __cloneDate(d)
     return r;
 }
 
-__cloneSymbol(symbol)
+_.prototype.__clone_symbol = function(symbol)
 {
     return Object(Symbol.prototype.valueOf.call(symbol));
 }
 
-__cloneRegExp(regexp)
+_.prototype.__clone_RegExp = function(regexp)
 {
     let reFlags = /\w*$/;
 
@@ -5583,33 +5447,33 @@ __cloneRegExp(regexp)
     return result;
 }
 
-__cloneMap(m, context)
+_.prototype.__clone_map = function(m, context)
 {
     const ret = new Map();
 
     m.this.each((v, k) =>
     {
-        ret.set(k, this.__cloneVar(v, context));
+        ret.set(k, this.clone_deep(v, context));
     
     }, this);
 
     return ret;
 }
 
-__cloneSet(s, context)
+_.prototype.__clone_set = function(s, context)
 {
     const ret = new Set();
 
     s.this.each((val, k) =>
     {
-        ret.add(k, this.__cloneVar(v, context));
+        ret.add(k, this.clone_deep(v, context));
     
     }, this);
 
     return ret;
 }
 
-__cloneArrayBuffer(arrayBuffer)
+_.prototype.__clone_array_buffer = function(arrayBuffer)
 {
     const result = new arrayBuffer.constructor(arrayBuffer.byteLength)
 
@@ -5618,9 +5482,9 @@ __cloneArrayBuffer(arrayBuffer)
     return result;
 }
 
-__cloneDataView(dataView)
+_.prototype.__clone_data_view = function(dataView)
 {
-    const buffer = this.__cloneArrayBuffer(dataView.buffer);
+    const buffer = this.__clone_array_buffer(dataView.buffer);
 
     return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
 }
@@ -5632,7 +5496,7 @@ __cloneDataView(dataView)
  * @param   {boolean} [isDeep]  Specify a deep clone.
  * @returns {Buffer}   Returns  the cloned buffer.
  */
-__cloneBuffer(buffer)
+_.prototype.__clone_buffer = function(buffer)
 {
     const length = buffer.length;
 
@@ -5651,20 +5515,44 @@ __cloneBuffer(buffer)
  * @param {boolean} [isDeep] Specify a deep clone.
  * @returns {Object} Returns the cloned typed array.
  */
-__cloneTypedArray(typedArray)
+_.prototype.__clone_typed_array = function(typedArray)
 {
-    const buffer = this.__cloneArrayBuffer(typedArray.buffer);
+    const buffer = this.__clone_array_buffer(typedArray.buffer);
 
     return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
 }
 
+		/**
+ * Binds a function so that it can be identified.
+ * 
+ * @param   {function}  func    Function to bind
+ * @param   {mixed}     context Context to bind "this"
+ * @returns {function}
+ */
+_.prototype.bind = function(func, context)
+{
+    context = typeof context === 'undefined' ? window : context;
+
+    const bound = function()
+    {
+        return func.apply(context, arguments);
+    }
+
+    Object.defineProperty(bound, 'name', { value: func.name });
+
+    bound.__isBound      = true;
+    bound.__boundContext = context;
+    bound.__origional    = func;
+
+    return bound;
+}
 		/**
  * Creates a new object in 'dot.notation'
  * 
  * @param   {Object} obj Object
  * @returns {Object} 
  */
-dotify(obj)
+_.prototype.dotify = function(obj)
 {
     var res = {};
 
@@ -5693,115 +5581,92 @@ dotify(obj)
 		/**
  * Extends a function with prototype inheritance.
  *
- * @param   {function}           baseFunc    Base function to extend
- * @param   {function}           extendFunc  Function to get extended.
- * @param   {undefined|boolean}  callSuper   If true "extendFunc" is treated as a constructor and the BaseFunc / any nested prototypes will get instantiated. (default true)
+ * @param   {function}           superType    Base function to extend
+ * @param   {function}           subType  Function to get extended.
+ * @param   {undefined|boolean}  callSuper   If true "subType" is treated as a constructor and the superType / any nested prototypes will get instantiated. (default true)
  * @returns {function}
  */
-extend(baseFunc, extendFunc, callSuper)
+_.prototype.extend = function(baseFunc, extendFunc)
 {
-    callSuper = this.is_undefined(callSuper) ? true : callSuper;
+    const _this = this;
 
-    const oldConstructor = extendFunc.prototype.constructor;
-    const constructors = [...this.__protoConstructors(baseFunc), oldConstructor];
-    const newProto = function() {};
-    const oldProto = extendFunc.prototype;
-    const fncName = extendFunc.name;
-
-    newProto.prototype = oldProto;
-
-    Object.setPrototypeOf(oldProto, baseFunc.prototype);
-
-    Object.setPrototypeOf(extendFunc, newProto);
-
-    if (callSuper)
+    function proxySuper(superFn, fn)
     {
-        extendFunc = function()
+        return function()
         {
-            let args = TO_ARR.call(arguments);
+            var tmp = this.super;
+            
+            this.super = superFn;
+            
+            var ret = fn.apply(this, arguments);
+            
+            this.super = tmp;
 
-            let _this = this;
-
-            this.each(constructors, function(i, constr)
-            {
-                if (constr.name !== 'Object')
-                {
-                    this.__bind(constr, _this).apply(_this, args);
-                }
-                
-            }, this);
-        };
+            return ret;
+        }
     }
 
-    extendFunc.prototype = oldProto;
+    function Class() {}
 
-    this.__applyStatics(constructors, extendFunc);
-
-    extendFunc.prototype.constructor = extendFunc;
-
-    Object.defineProperty(extendFunc, 'name', { value: fncName, writable: false });
-
-    return extendFunc;
-}
-
-/**
- * Returns an array of prototype constructors nested inside a function.
- *
- * @private
- * @param   {function}  func  Function to loop
- * @returns {array}
- */
-__protoConstructors(func)
-{
-    let protos = [];
-    let proto = func.prototype || Object.getPrototypeOf(func);
-
-    while (proto && proto.constructor)
+    Class.extend = function(protoProps)
     {
-        // recursive stopper
-        if (protos.includes.proto)
+        var parent = this, _super = parent.prototype, child;
+
+        if (protoProps && protoProps.hasOwnProperty('constructor'))
         {
-            break;
+            child = proxySuper(parent, protoProps.constructor);
+            
+            delete protoProps.constructor; // remove constructor
         }
-
-        protos.push(proto.constructor);
-
-        proto = proto.prototype || Object.getPrototypeOf(proto);
-    }
-
-    return protos.reverse();
-}
-
-/**
- * Apply static properties to extended function.
- *
- * @private
- * @param  {array}     constructors  Array of prototype chain constructors
- * @param  {function}  func          Function to apply props to
- */
-__applyStatics(constructors, func)
-{
-    this.each(constructors, function(i, constructor)
-    {
-        let props = Object.keys(constructor).filter(key => !PROTO_EXCLUDES.includes(key));
-
-        if (props.length)
+        else
         {
-            this.each(props, function(i, key)
+            child = function()
             {
-                let prop = constructor[key];
-
-                if (this.is_function(prop))
-                {
-                    prop = this.__bind(prop, func);
-                }
-
-                func[key] = prop;
-
-            }, this);
+                parent.apply(this, arguments);
+            };
         }
-    }, this);
+
+        var prototype = Object.create(parent.prototype,
+        {
+            constructor:
+            {
+                value: child,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+
+        for (var name in protoProps)
+        {
+            prototype[name] = _this.is_function(protoProps[name]) && _this.is_function(_super[name]) && /\bsuper\b/.test(protoProps[name])
+            ? proxySuper(_super[name], protoProps[name]) : protoProps[name];
+        }
+
+        child.prototype = prototype;
+        child.extend = Class.extend;
+
+        return child;
+    };
+
+
+    const baseProto = baseFunc.prototype;
+
+    const extendProto = extendFunc.prototype;
+
+    if (!baseProto.hasOwnProperty('constructor')) baseProto['constructor'] = baseFunc;
+   
+    if (!extendProto.hasOwnProperty('constructor')) extendProto['constructor'] = extendFunc;
+    
+    var b = Class.extend(baseProto);
+
+    var e = b.extend(extendProto);
+
+    Object.defineProperty(e, 'name', { value: extendFunc.name, writable: false });
+
+    return e;
 }
+
 
 		/**
  * Joins an object into a string
@@ -5811,7 +5676,7 @@ __applyStatics(constructors, func)
  * @param   {string} glue      Glue between value and next key
  * @returns {string} 
  */
-join_obj(obj, seperator, glue, recursive, trimLast)
+_.prototype.join_obj = function(obj, seperator, glue, recursive, trimLast)
 {
     seperator = this.is_undefined(seperator) ? '' : seperator;
     glue      = this.is_undefined(glue) ? '' : glue;
@@ -5850,7 +5715,7 @@ join_obj(obj, seperator, glue, recursive, trimLast)
  * @param   {object} ...sources
  * @returns {object}
  */
-merge_deep()
+_.prototype.merge_deep = function()
 {
     let args = TO_ARR.call(arguments);
 
@@ -5892,219 +5757,8 @@ merge_deep()
 
     return first;
 }
-		/**
- * Returns an immutable object with set,get,isset,delete methods that accept dot.notation.
- *
- * @returns {object}
- */
-obj()
-{
-    return new __MAP;
-}
 
-/**
- * Recursively delete from array/object.
- *
- * @param   {array}        keys    Keys in search order
- * @param   {object|array} object  Object to get from
- * @returns {mixed}
- */
-__arrayDeleteRecursive(keys, object)
-{
-    var key = keys.shift();
 
-    var islast = keys.length === 0;
-
-    if (islast)
-    {
-        if (TO_STR.call(object) === '[object Array]')
-        {
-            object.splice(key, 1);
-        }
-        else
-        {
-            delete object[key];
-        }
-    }
-
-    if (!object[key])
-    {
-        return false;
-    }
-
-    return this.__arrayDeleteRecursive(keys, object[key]);
-}
-
-/**
- * Recursively search from array/object.
- *
- * @param   {array}        keys    Keys in search order
- * @param   {object|array} object  Object to get from
- * @returns {mixed}
- */
-__arrayGetRecursive(keys, object)
-{
-    var key = keys.shift();
-    var islast = keys.length === 0;
-
-    if (islast)
-    {
-        return object[key];
-    }
-
-    if (!object[key])
-    {
-        return undefined;
-    }
-
-    return this.__arrayGetRecursive(keys, object[key]);
-}
-
-/**
- * Recursively set array/object.
- *
- * @param {array}          keys     Keys in search order
- * @param {mixed}          value    Value to set
- * @param {object|array}   object   Object to get from
- * @param {string|number}  nextKey  Next key to set
- */
-__arraySetRecursive(keys, value, object, nextKey)
-{
-    var key = keys.shift();
-    var islast = keys.length === 0;
-    var lastObj = object;
-    object = !nextKey ? object : object[nextKey];
-
-    // Trying to set a value on nested array that doesn't exist
-    if (!['object', 'function'].includes(typeof object))
-    {
-        throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
-    }
-
-    if (!object[key])
-    {
-        // Trying to put object key into an array
-        if (TO_STR.call(object) === '[object Array]' && typeof key === 'string')
-        {
-            var converted = Object.assign({}, object);
-
-            lastObj[nextKey] = converted;
-
-            object = converted;
-        }
-
-        if (keys[0] && typeof keys[0] === 'string')
-        {
-            object[key] = {};
-        }
-        else
-        {
-            object[key] = [];
-        }
-    }
-
-    if (islast)
-    {
-        object[key] = value;
-
-        return;
-    }
-
-    this.__arraySetRecursive(keys, value, object, key);
-}
-
-/**
- * Segments an array/object path using from "dot.notation" into an array of keys in order.
- *
- * @param   {string}  path Path to parse
- * @returns {array}
- */
-__arrayKeySegment(path)
-{
-    var result = [];
-    var segments = path.split('.');
-
-    for (var i = 0; i < segments.length; i++)
-    {
-        var segment = segments[i];
-
-        if (!segment.includes('['))
-        {
-            result.push(segment);
-
-            continue;
-        }
-
-        var subSegments = segment.split('[');
-
-        for (var j = 0; j < subSegments.length; j++)
-        {
-            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
-            {
-                result.push(parseInt(subSegments[j].replace(']')));
-            }
-            else if (subSegments[j] !== '')
-            {
-                result.push(subSegments[j])
-            }
-        }
-    }
-
-    return result;
-}
-
-/**
- * Recursively delete from array/object.
- *
- * @param   {array}        keys    Keys in search order
- * @param   {object|array} object  Object to get from
- * @returns {mixed}
- */
-__arrayDeleteRecursive(keys, object)
-{
-    var key = keys.shift();
-
-    var islast = keys.length === 0;
-
-    if (islast)
-    {
-        if (TO_STR.call(object) === '[object Array]')
-        {
-            object.splice(key, 1);
-        }
-        else
-        {
-            delete object[key];
-        }
-    }
-
-    if (!object[key])
-    {
-        return false;
-    }
-
-    return this.__arrayDeleteRecursive(keys, object[key]);
-}
-		/**
- * Clone an object
- * 
- * @access {public}
- * @param  {object}  src       The object to clone
- * @return {object}
- */
-obj_clone(src)
-{
-    var clone = {};
-
-    for (var prop in src)
-    {
-        if (src.hasOwnProperty(prop))
-        {
-            clone[prop] = src[prop];
-        }
-    }
-    return clone;
-}
 		/**
  * Returns object properties and methods as array of keys.
  * 
@@ -6112,45 +5766,91 @@ obj_clone(src)
  * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
  * @returns {array}
  */
-object_props(mixed_var, withMethods, onlyMethods)
+_.prototype.object_props = function(mixed_var, deep)
 {
-    withMethods = typeof withMethods === 'undefined' ? true : false;
+    if (!mixed_var) return [];
 
-    let keys = onlyMethods ? [] : Object.keys(mixed_var);
+    deep = typeof deep === 'undefined' ? false : deep;
 
-    if (withMethods)
+    let keys = Object.keys(mixed_var);
+
+    let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+
+    if (deep)
     {
-        let protos = [];
-        let funcs = Object.getOwnPropertyNames(mixed_var);
-        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+        keys = [...keys, ...this.object_props(proto, true)];
+    }
+    
+    return this.array_unique(keys);
+}
 
-        while (proto)
-        {
-            // recursive stopper
-            if (protos.includes.proto)
-            {
-                break;
-            }
 
-            protos.push(proto);
+		/**
+ * Returns an array of prototypes
+ * 
+ * @param   {mixed}    mixed_var    Variable to test
+ * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+ * @returns {array}
+ */
+_.prototype.prototypes = function(mixed_var)
+{
+    let ret = [];
 
-            let protoFuncs = Object.getOwnPropertyNames(proto);
+    if (!mixed_var) return ret;
 
-            funcs = [...funcs, ...protoFuncs];
+    const _this = this;
 
-            proto = proto.prototype || Object.getPrototypeOf(proto);
-        }
+    const recursive = function(obj)
+    {
+        let proto = obj.prototype || Object.getPrototypeOf(obj);
 
-        keys = [...keys, ...funcs];
+        // No prototype
+        if (!proto) return;
+
+        // Prototype is native object
+        let protokeys = Object.getOwnPropertyNames(proto);
+
+        if (protokeys.filter(x => !EMPTY_OBJ_KEYS.includes(x)).length === 0) return;
+
+        ret.push(proto);
+
+        recursive(proto);
     }
 
-    return this.array_unique(keys.filter(function(key)
-    {
-        return !PROTO_EXCLUDES.includes(key);
-    }));
+    recursive(mixed_var);
+
+    return ret;
 }
-		camel_case_to_hyphen(str)
+
+
+		/**
+ * Returns object properties and methods as array of keys.
+ * 
+ * @param   {mixed}    mixed_var    Variable to test
+ * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+ * @returns {array}
+ */
+_.prototype.flatten_obj = function(obj, deep)
 {
+    deep = typeof deep === 'undefined' ? false : deep;
+
+    var ret = {};
+
+    this.each(obj, (k,v) => ret[k] = v);
+   
+    if (deep)
+    {
+        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+
+        ret = {...ret, ...this.flatten_obj(proto, true)};
+    }
+    
+    return ret;
+}
+		_.prototype.camel_case_to_hyphen = function(str)
+{
+    if (str === str.toLowerCase()) return str;
+    
     return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1-$2$3').toLowerCase();
 }
 		/**
@@ -6159,7 +5859,7 @@ object_props(mixed_var, withMethods, onlyMethods)
  * @param  {mixed} str String JSON
  * @return {object|false}
  */
-json_decode(str)
+_.prototype.json_decode = function(str)
 {
     var obj;
     try
@@ -6178,7 +5878,7 @@ json_decode(str)
  * @param  {mixed} str String JSON
  * @return {object|false}
  */
-json_encode(str)
+_.prototype.json_encode = function(str)
 {
     var obj;
     try
@@ -6197,7 +5897,7 @@ json_encode(str)
  * @param  {str}           str
  * @return {array|string} charlist (optional)
  */
-ltrim(str, charlist)
+_.prototype.ltrim = function(str, charlist)
 {
     // Special fast cases
     if (!charlist) return str.trimStart();
@@ -6231,7 +5931,7 @@ ltrim(str, charlist)
  * @param  {int}    length String length
  * @return {string}
  */
-makeid(length)
+_.prototype.makeid = function(length)
 {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -6249,7 +5949,7 @@ makeid(length)
  * @param  {str}           str
  * @return {array|string} charlist (optional)
  */
-rtrim(str, charlist)
+_.prototype.rtrim = function(str, charlist)
 {
     if (!charlist) return str.trimEnd();
 
@@ -6277,8 +5977,9 @@ rtrim(str, charlist)
 
     return ret;
 }
-		to_camel_case(str)
+		_.prototype.to_camel_case = function(str)
 {
+    
     str = str.trim();
 
     // Shouldn't be changed
@@ -6299,26 +6000,26 @@ rtrim(str, charlist)
  * @param  {str}           str
  * @return {array|string} charlist (optional)
  */
-trim(str, charlist)
+_.prototype.trim = function(str, charlist)
 {
     if (!charlist) return str.trim();
 
     return this.rtrim(this.ltrim(str, charlist), charlist);
 }
 		/* Capatalize first letter */
-uc_first(string)
+_.prototype.uc_first = function(string)
 {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 		/* Capatalize first letter of all words */
-ucwords(str)
+_.prototype.ucwords = function(str)
 {
     return (str + '').replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1)
     {
         return $1.toUpperCase();
     });
 }
-		lc_first(string)
+		_.prototype.lc_first = function(string)
 {
     return string.charAt(0).toLowerCase() + string.slice(1);
 }
@@ -6328,7 +6029,7 @@ ucwords(str)
  * @param   {mixed} mixed_var  Variable to test
  * @returns {boolean}
  */
-bool(mixed_var)
+_.prototype.bool = function(mixed_var)
 {
     mixed_var = (typeof mixed_var === 'undefined' ? false : mixed_var);
 
@@ -6395,7 +6096,7 @@ bool(mixed_var)
  * @param   {mixed}  mixed_var Variable to evaluate
  * @returns {string}
  */
-callable_name(mixed_var)
+_.prototype.callable_name = function(mixed_var)
 {
     if (this.is_callable(mixed_var))
     {
@@ -6413,7 +6114,7 @@ callable_name(mixed_var)
  * @param  {mixed}  mixed_var Variable to count
  * @return {int}
  */
-count(mixed_var)
+_.prototype.count = function(mixed_var)
 {
     return this.size(mixed_var);
 }
@@ -6423,16 +6124,16 @@ count(mixed_var)
  * @param   {HTMLElement}  element  Element to check
  * @returns {boolean}
  */
-in_dom(element)
+_.prototype.in_dom = function(element)
 {
+    if (element === window || element === document || element === document.body || element === document.documentElement)
+    {
+        return true;
+    }
+
     if (!this.is_htmlElement(element))
     {
         return false;
-    }
-
-    if (element === document.body || element === document.documentElement)
-    {
-        return true;
     }
 
     let ret = false;
@@ -6457,7 +6158,7 @@ in_dom(element)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_args(mixed_var)
+_.prototype.is_args = function(mixed_var)
 {
     return this.var_type(mixed_var) === ARGS_TAG;
 }
@@ -6467,7 +6168,7 @@ is_args(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_array(mixed_var, strict)
+_.prototype.is_array = function(mixed_var, strict)
 {
     strict = typeof strict === 'undefined' ? false : strict;
 
@@ -6481,7 +6182,7 @@ is_array(mixed_var, strict)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_bool(mixed_var)
+_.prototype.is_bool = function(mixed_var)
 {
     return this.var_type(mixed_var) === BOOL_TAG;
 }
@@ -6491,7 +6192,7 @@ is_bool(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_buffer(mixed_var)
+_.prototype.is_buffer = function(mixed_var)
 {
     return this.var_type(mixed_var) === ARRAY_BUFFER_TAG;
 }
@@ -6501,7 +6202,7 @@ is_buffer(mixed_var)
  * @param   {mixed}  mixed_var  Variable to check
  * @returns {boolean}
  */
-is_callable(mixed_var)
+_.prototype.is_callable = function(mixed_var)
 {
     return this.is_function(mixed_var);
 }
@@ -6513,7 +6214,7 @@ is_callable(mixed_var)
  * @param   {boolean}                      strict     If "true" only returns true on ES6 classes (default "false")
  * @returns {boolean}
  */
-is_class(mixed_var, classname, strict)
+_.prototype.is_class = function(mixed_var, classname, strict)
 {
     // this.is_class(foo, true)
     if (classname === true || classname === false)
@@ -6583,7 +6284,7 @@ is_class(mixed_var, classname, strict)
  * @param   {mixed}  mixed_var  Variable to evaluate
  * @returns {boolean}
  */
-is_constructable(mixed_var)
+_.prototype.is_constructable = function(mixed_var)
 {
     // Not a function
     if (typeof mixed_var !== 'function' || mixed_var === null)
@@ -6604,9 +6305,7 @@ is_constructable(mixed_var)
     }
 
     // If prototype is empty 
-    let props = this.object_props(mixed_var.prototype);
-
-    return props.length >= 1;
+    return this.object_props(mixed_var, true).length > 0;
 }
 		/**
  * Checks if variable is constructed object function.
@@ -6614,7 +6313,7 @@ is_constructable(mixed_var)
  * @param   {mixed}  mixed_var  Variable to evaluate
  * @returns {boolean}
  */
-is_constructed(mixed_var)
+_.prototype.is_constructed = function(mixed_var)
 {
     if (typeof mixedVar === 'object' && mixedVar.constructor && typeof mixedVar.constructor === 'function')
     {
@@ -6622,7 +6321,7 @@ is_constructed(mixed_var)
         
         if (constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class '))
         {
-            return constr.toLowerCase().includes('native code') ? this.object_props(mixed_var, true, true).length > 1 : true;
+            return constr.toLowerCase().includes('native code') ? this.object_props(mixed_var, true).length > 0 : true;
         }
     }
 
@@ -6634,7 +6333,7 @@ is_constructed(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_dataview(mixed_var)
+_.prototype.is_dataview = function(mixed_var)
 {
     return this.var_type(mixed_var) === DATAVIEW_TAG;
 }
@@ -6644,7 +6343,7 @@ is_dataview(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_date(mixed_var)
+_.prototype.is_date = function(mixed_var)
 {
     return this.var_type(mixed_var) === DATE_TAG;
 }
@@ -6654,7 +6353,7 @@ is_date(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_empty(mixed_var)
+_.prototype.is_empty = function(mixed_var)
 {
     if (mixed_var === false || mixed_var === null || (typeof mixed_var === 'undefined'))
     {
@@ -6666,7 +6365,11 @@ is_empty(mixed_var)
     }
     else if (this.is_object(mixed_var))
     {
-        return Object.keys(mixed_var).length === 0;
+        if (Object.keys(mixed_var).length > 0) return false;
+
+        if (this.prototypes(mixed_var).length > 0) return false;
+
+        return true;
     }
     else if (this.is_string(mixed_var))
     {
@@ -6694,8 +6397,8 @@ is_empty(mixed_var)
  *  * Note that strict set to true would return false in the following:
  *  is_equal ({ foo : 'bar'}, { foo : 'bar'});
  */
-is_equal(a, b, strict)
-{
+_.prototype.is_equal = function(a, b, strict)
+{    
     strict = this.is_undefined(strict) ? false : strict;
 
     if ((typeof a) !== (typeof b))
@@ -6707,8 +6410,8 @@ is_equal(a, b, strict)
         return a === b;
     }
     else if (this.is_function(a))
-    {
-        return this.___equalFunction(a, b);
+    {        
+        return strict ? a === b : this.__is_equal_func(a, b);
     }
     else if (this.is_array(a) || this.is_object(b))
     {
@@ -6722,7 +6425,7 @@ is_equal(a, b, strict)
             return true;
         }
         
-        return this.__equalTraverseable(a, b);
+        return this.__is_equal_traverseable(a, b);
     }
 
     return true;
@@ -6735,51 +6438,64 @@ is_equal(a, b, strict)
  * @param   {function}  b
  * @returns {boolean}
  */
-___equalFunction(a, b)
+_.prototype.__is_equal_func = function(a, b)
 {
-    // They're not technically equal
-    if (a !== b)
+    // Functions have the same name
+    if (a.name === b.name)
     {
-        // Functions have the same name
-        if (a.name === b.name)
+        // If the functions were bound or cloned by the library they can technically still be equal
+        if (a.__isBound)
         {
-            // If the functions were bound or cloned by the library they can technically still be equal
-            if ( a.name.includes('bound '))
-            {
-                return a.this.__isBound === b.this.__isBound && a.this.__boundContext === b.this.__boundContext && a.this.__origional === b.this.__origional;
-            }
+            if (!b.__isBound) return false;
 
-            // Native arrow functions
-            if (!a.prototype || !a.prototype.constructor)
-            {
-                return false;
-            }
-
-            // Check the prototypes
-            let aProps = object_props(a.prototype);
-            let bProps = object_props(b.prototype);
-
-            if (aProps.length === 0 && bProps.length === 0) return true;
-
-            let ret = true;
-
-            this.each(aProps, function(i, key)
-            {                
-                if (!this.is_equal(a.prototype[key], b.prototype[key]))
-                {
-                    ret = false;
-
-                    return false;
-                }
-            }, this);
-
-            return ret;
+            if (!this.is_equal(a.__boundContext, b.__boundContext)) return false;
+            
+            if (!this.is_equal(a.__origional, b.__origional)) return false;
         }
 
-        return false;
+        // Check string
+        if (a.toString() !== b.toString()) return false;
+
+        // Prototypes are different
+        if (!this.__is_equal_protos(a, b)) return false;
+
+        return true;
     }
 
-    return true;
+    return false;
+}
+
+/**
+ * Checks if object prototypes are equal
+ * 
+ * @param   {array} | object}  a
+ * @param   {array} | object}  b
+ * @returns {boolean}
+ */
+_.prototype.__is_equal_protos = function(a, b)
+{
+    // Check the prototypes
+    let aProtos = this.prototypes(a);
+    let bProtos = this.prototypes(b);
+
+    if (aProtos.length !== bProtos.length) return false;
+
+    if (aProtos.length === 0 && bProtos.length === 0) return true;
+
+    let ret = true;
+
+    this.each(aProtos, (i, proto) =>
+    {                
+        if (!this.is_equal(proto, bProtos[i]))
+        {
+            ret = false;
+
+            return false;
+        }
+
+    }, this);
+
+    return ret;
 }
 
 
@@ -6790,7 +6506,7 @@ ___equalFunction(a, b)
  * @param   {array} | object}  b
  * @returns {boolean}
  */
-__equalTraverseable(a, b)
+_.prototype.__is_equal_traverseable = function(a, b)
 {
     if (this.size(a) !== this.size(b))
     {
@@ -6809,6 +6525,10 @@ __equalTraverseable(a, b)
         }
     }, this);
 
+    if (!ret) return false;
+
+    if (this.is_object(a)) return this.__is_equal_protos(a, b);
+
     return ret;
 }
 
@@ -6818,7 +6538,7 @@ __equalTraverseable(a, b)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_function(mixed_var)
+_.prototype.is_function = function(mixed_var)
 {
     return this.var_type(mixed_var) === FUNC_TAG;
 }
@@ -6828,7 +6548,7 @@ is_function(mixed_var)
  * @param   {mixed}  mixed_var  Variable to evaluate
  * @returns {boolean}
  */
-is_htmlElement(mixed_var)
+_.prototype.is_htmlElement = function(mixed_var)
 {
     if (mixed_var && mixed_var.nodeType)
     {
@@ -6845,7 +6565,7 @@ is_htmlElement(mixed_var)
  * @param  {mixed} str String JSON
  * @return {object|false}
  */
-is_json(str)
+_.prototype.is_json = function(str)
 {
     var obj;
     try
@@ -6866,7 +6586,7 @@ is_json(str)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_map(mixed_var)
+_.prototype.is_map = function(mixed_var)
 {
     return this.var_type(mixed_var) === MAP_TAG;
 }
@@ -6877,7 +6597,7 @@ is_map(mixed_var)
  * @param   {string} tag        Tag to compare
  * @returns {boolean}
  */
-is_node_type(mixed_var, tag)
+_.prototype.is_node_type = function(mixed_var, tag)
 {
     return mixed_var.tagName.toUpperCase() === tag.toUpperCase();
 }
@@ -6888,7 +6608,7 @@ is_node_type(mixed_var, tag)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_nodelist(mixed_var)
+_.prototype.is_nodelist = function(mixed_var)
 {
     return this.var_type(mixed_var) === NODELST_TAG;
 }
@@ -6898,7 +6618,7 @@ is_nodelist(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_null(mixed_var)
+_.prototype.is_null = function(mixed_var)
 {
     return this.var_type(mixed_var) === NULL_TAG;
 }
@@ -6908,7 +6628,7 @@ is_null(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_number(mixed_var)
+_.prototype.is_number = function(mixed_var)
 {
     return !isNaN(mixed_var) && this.var_type(mixed_var) === NUMBER_TAG;
 }
@@ -6918,7 +6638,7 @@ is_number(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_numeric(mixed_var)
+_.prototype.is_numeric = function(mixed_var)
 {
     if (this.is_number(mixed_var))
     {
@@ -6937,7 +6657,7 @@ is_numeric(mixed_var)
  * @param   {mixed}  mixed_var Variable to evaluate
  * @returns {boolean}
  */
-is_object(mixed_var)
+_.prototype.is_object = function(mixed_var)
 {
     return mixed_var !== null && this.var_type(mixed_var) === OBJECT_TAG;
 }
@@ -6947,7 +6667,7 @@ is_object(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_regexp(mixed_var)
+_.prototype.is_regexp = function(mixed_var)
 {
     return this.var_type(mixed_var) === REGEXP_TAG;
 }
@@ -6957,7 +6677,7 @@ is_regexp(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_set(mixed_var)
+_.prototype.is_set = function(mixed_var)
 {
     return this.var_type(mixed_var) === SET_TAG;
 }
@@ -6967,7 +6687,7 @@ is_set(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_string(mixed_var)
+_.prototype.is_string = function(mixed_var)
 {
     return this.var_type(mixed_var) === STRING_TAG;
 }
@@ -6977,7 +6697,7 @@ is_string(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_symbol(mixed_var)
+_.prototype.is_symbol = function(mixed_var)
 {
     return this.var_type(mixed_var) === SYMBOL_TAG;
 }
@@ -6987,7 +6707,7 @@ is_symbol(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_undefined(mixed_var)
+_.prototype.is_undefined = function(mixed_var)
 {
     return this.var_type(mixed_var) === UNDEF_TAG;
 }
@@ -6997,7 +6717,7 @@ is_undefined(mixed_var)
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {number}
  */
-size(mixed_var)
+_.prototype.size = function(mixed_var)
 {
     if (this.is_string(mixed_var) || this.is_array(mixed_var))
     {
@@ -7026,7 +6746,7 @@ size(mixed_var)
  * @param {*} value The value to query.
  * @returns {string} Returns the `toStringTag`.
  */
-var_type(value)
+_.prototype.var_type = function(value)
 {
     if (value == null)
     {
@@ -7035,21 +6755,21 @@ var_type(value)
 
     return TO_STR.call(value);
 }
-		 // Destructor
-    destruct()
-    {
-        this.clearEventListeners();
-    }
+	// Destructor
+_.prototype.destruct = function()
+{
+    this.clear_event_listeners();
 }
 
-Container.singleton('Helper', HelperJS);
-
+Container.singleton('_', _);
 })();
 
 
 // Hubble core
 (function()
 {
+    Container._().trigger_event(window, 'Hubble:loading', this);
+
     /**
      * Application core
      *
@@ -7057,41 +6777,52 @@ Container.singleton('Helper', HelperJS);
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Application
+    const Application = function()
     {
-        /**
-         * Called when the application is first initialized
-         *
-         * @access {public}
-         */
-        boot()
-        {        
-            this.dom().boot();
+        this.version_major = '1';
 
-            Container.Helper().trigger_event(window, 'Hubble:ready', this);
-        }
+        this.version_minor = '0';
 
-        /**
-         * Get the DOM component
-         *
-         * @access {public}
-         * @return {object}
-         */
-        dom()
-        {
-            return Container.get('HubbleDom');
-        }
+        this.version_patch = '0';
+
+        this.version = `${this.version_major}.${this.version_minor}.${this.version_patch }`;
+    };
+
+    /**
+     * Called when the application is first initialized
+     *
+     * @access {public}
+     */
+    Application.prototype.boot = function()
+    {        
+        this.dom().boot();
+
+        Container._().trigger_event(window, 'Hubble:ready', this);
     }
 
-    // Loads into container
+    /**
+     * Get the DOM component
+     *
+     * @access {public}
+     * @return {object}
+     */
+    Application.prototype.dom = function()
+    {
+        return Container.get('HubbleDom');
+    }
+
+    // Load into container
     Container.singleton('Hubble', Application);
 
+    // Set global
     window.Hubble = Container.get('Hubble');
 
 })();
 (function()
 {    
-    const [each, trigger_event, collect_garbage] = Container.import(['each', 'trigger_event', 'collect_garbage']).from('Helper');
+    const [each, trigger_event, collect_garbage, is_undefined, is_string, is_htmlElement] = Container.import(['each', 'trigger_event', 'collect_garbage', 'is_undefined', 'is_string', 'is_htmlElement']).from('_');
+
+    const KEYPREFIX = 'HB_DOM:';
 
     /**
      * DOM Manager
@@ -7100,176 +6831,196 @@ Container.singleton('Helper', HelperJS);
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Dom
+    const Dom = function()
     {
-        /**
-         * Module constructor
-         *
-         * @class
-         * @access {public}
-         */
-        constructor()
+        this._isReady = false;
+
+        this.components = [];
+    }
+    
+    /**
+     * Boot Dom
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     */
+    Dom.prototype.boot = function()
+    {
+        each(this.components, function(i, name)
         {
-            this._isReady = false;
+            this._bindComponent(name, document);
 
-            this.components = [];
+        }, this);
 
-            return this;
+        this._dispatchReady();
+
+        this._isReady = true;
+    }
+
+    /**
+     * Register a DOM component
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     * @param {bool}   invoke Invoke the module immediately (optional) (default false)
+     */
+    Dom.prototype.register = function(name, component, invoke)
+    {
+        invoke = (typeof invoke === 'undefined' ? false : invoke);
+
+        this.components.push(name);
+
+        Container.singleton(this._normaliseKey(name), component);
+
+        if (invoke && this._isReady)
+        {
+            this._bindComponent(name, document);
+        }
+    }
+
+    /**
+     * Returns a component.
+     *
+     * @access {public}
+     */
+    Dom.prototype.component = function(name)
+    {
+        return Container.get(this._normaliseKey(name));
+    }
+
+    /**
+     * Boot Dom
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     */
+    Dom.prototype._dispatchReady = function()
+    {
+        trigger_event(window, 'Hubble:dom:ready', this);
+    }
+
+    /**
+     * Boot Dom
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     */
+    Dom.prototype._dispatchComponent = function(name, event, component, context)
+    {
+        trigger_event(window, `Hubble:dom:${event}:${name}`, { component: component, context: context});
+    }
+
+    /**
+     * Bind a single module
+     *
+     * @param {string} key Name of module to bind
+     * @access {private}
+     */
+    Dom.prototype._bindComponent = function(name, context, isRefresh)
+    {                
+        let component = Container.get(this._normaliseKey(name));
+
+        if (this._hasMethod(component, 'construct') && isRefresh)
+        {
+            this._dispatchComponent(name, 'refresh', component, context);
+
+            component.construct(context);
         }
 
-        /**
-         * Boot Dom
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         */
-        boot()
+        this._dispatchComponent(name, 'bind', component, context);
+    }
+
+    /**
+     * Unbind a single module
+     *
+     * @param  {string}  key Name of module to unbind
+     * @access {private}
+     */
+    Dom.prototype._unbindComponent = function(name, context)
+    {            
+        let component = Container.get(this._normaliseKey(name));
+
+        if (this._hasMethod(component, 'destruct'))
         {
-            each(this.components, function(i, name)
-            {
-                const component = Container.get(`HB_DOM:${name}`);
-
-                this._dispatchComponent(name, 'bind', component, document);
-
-            }, this);
-
-            this._dispatchReady();
-
-            this._isReady = true;
+            component.destruct(context);
         }
 
-        /**
-         * Register a DOM component
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         * @param {bool}   invoke Invoke the module immediately (optional) (default false)
-         */
-        register(name, component, invoke)
+        this._dispatchComponent(name, 'unbind', component, context);
+    }
+    
+    /**
+     * Refresh the DOM modiules or a string module
+     *
+     * @access {public}
+     * @param {string} name Name of the module (optional) (default false)
+     */
+    Dom.prototype.refresh = function(component, context)
+    {
+        // refresh()
+        if (arguments.length === 0)
         {
-            invoke = (typeof invoke === 'undefined' ? false : this._isReady);
+            component = false;
 
-            this.components.push(name);
-
-            Container.singleton(`HB_DOM:${name}`, component);
-
-            if (invoke)
-            {
-                this._bindComponent(name, document);
-            }
+            context = document;
         }
-
-        /**
-         * Boot Dom
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         */
-        _dispatchReady()
+        else
         {
-            trigger_event(window, 'Hubble:dom:ready', this);
-        }
-
-        /**
-         * Boot Dom
-         *
-         * @access {public}
-         * @param {string} name   Name of the module
-         * @param {object} module Uninvoked module object
-         */
-        _dispatchComponent(name, event, component, context)
-        {
-            trigger_event(window, `Hubble:dom:refresh:${name}:${event}`, { component: component, context: context});
-        }
-
-        /**
-         * Bind a single module
-         *
-         * @param {string} key Name of module to bind
-         * @access {private}
-         */
-        _bindComponent(name, context)
-        {
-            let component = Container.get(`HB_DOM:${name}`);
-
-            if (this._hasMethod(component, 'construct'))
-            {
-                component.construct(context);
-            }
-
-            this._dispatchComponent(name, 'bind', component, context);
-        }
-
-        /**
-         * Unbind a single module
-         *
-         * @param  {string}  key Name of module to unbind
-         * @access {private}
-         */
-        _unbindComponent(name, context)
-        {            
-            let component = Container.get(`HB_DOM:${name}`);
-
-            if (this._hasMethod(component, 'destruct'))
-            {
-                component.destruct(context);
-            }
-
-            this._dispatchComponent(name, 'unbind', component, context);
-
-        }
-        
-        /**
-         * Refresh the DOM modiules or a string module
-         *
-         * @access {public}
-         * @param {string} name Name of the module (optional) (default false)
-         */
-        refresh(component, context)
-        {
-            component = (typeof component === 'undefined' ? false : component);
-
             // refresh(DOMElement)
-            if (component instanceof Element || component instanceof HTMLDocument)
+            if (is_htmlElement(component))
             {
-                context = component;
-                component  = null;
+                context  = component;
+                
+                component = false;
             }
+
             // refresh('module')
             // refresh('module', DOMElement)
-            else if (typeof component === 'string')
+            else if (is_string(component))
             {
-                context = (context instanceof Element || context instanceof HTMLDocument) ? context : document;
+                context = is_undefined(context) ? document : context;
             }
-
-            each(this.components, function(i, name)
-            {
-                if (!component || component === name)
-                {
-                    this._unbindComponent(name, context);
-
-                    collect_garbage();
-
-                    this._bindComponent(name, context);
-                }
-            }, this);
         }
 
-        /**
-         * Checks if a class object has a method by name
-         *
-         * @access {private}
-         * @param  {mixed}  classObj The object instance or reference
-         * @param  {string} method   The name of the method to check for
-         * @return {bool}
-         */
-        _hasMethod(classObj, method)
+        each(this.components, function(i, name)
         {
-            return typeof classObj === 'object' && typeof classObj[method] === 'function';
-        }
+            if (!component || component === name)
+            {
+                this._unbindComponent(name, context);
+
+                collect_garbage();
+
+                this._bindComponent(name, context, true);
+            }
+        }, this);
+    }
+
+    /**
+     * Checks if a class object has a method by name
+     *
+     * @access {private}
+     * @param  {mixed}  classObj The object instance or reference
+     * @param  {string} method   The name of the method to check for
+     * @return {bool}
+     */
+    Dom.prototype._hasMethod = function(classObj, method)
+    {
+        return typeof classObj === 'object' && typeof classObj[method] === 'function';
+    }
+
+    /**
+     * Normalize key
+     *
+     * @access {public}
+     * @param {string} name   Name of the module
+     * @param {object} module Uninvoked module object
+     */
+    Dom.prototype._normaliseKey = function(key)
+    {
+        return `${KEYPREFIX}${key}`;
     }
 
     // Load into container and invoke
@@ -7279,7 +7030,7 @@ Container.singleton('Helper', HelperJS);
 
 (function()
 {
-    const [$All, each, closest] = Container.import(['$All','each','closest']).from('Helper');
+    const [$All, each, closest, is_empty] = Container.import(['$All','each','closest','is_empty']).from('_');
 
     /**
      * Component base class
@@ -7288,85 +7039,83 @@ Container.singleton('Helper', HelperJS);
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Component
+    const Component = function(selector)
     {
-        /**
-         * Constructor.
-         *
-         * @access {public}
-         * @param  {string} selector DOM Elements selector
-         */
-        constructor(selector)
+        this._DOMElements = [];
+
+        this._selector = selector;
+
+        this.construct(document);
+
+        return this;
+    }
+
+    /**
+     * Module constructor
+     *
+     * @access {public}
+     */
+    Component.prototype.construct = function(context)
+    {        
+        let nodes = $All(this._selector, context);
+
+        if (context !== document) nodes.unshift(context);
+
+        if (!is_empty(nodes))
         {
-            this._DOMElements = [];
-
-            this._selector = selector;
-            
-            this.construct(document);
-        }
-
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @access {public}
-         */
-        construct(context)
-        {
-            let nodes = $All(this._selector, context);
-
-            if (context !== document) nodes.unshift(context);
-
             this._DOMElements = [...this._DOMElements, ...nodes];
 
             each(nodes, (i, node) => this.bind(node), this);
         }
+    }
 
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @access {public}
-         */
-        destruct(context)
-        {            
-            if (!context || context === document)
+    /**
+     * Module destructor
+     *
+     * @access {public}
+     */
+    Component.prototype.destruct = function(context)
+    {
+        if (!context || context === document)
+        {
+            each(this._DOMElements, (i, node) => this.unbind(node), this);
+            
+            this._DOMElements = [];
+
+            return;
+        }
+
+        const _this = this;
+
+        each(this._DOMElements, function(i, DOMElement)
+        {                
+            if (closest(DOMElement, context))
             {
-                each(this._DOMElements, (i, node) => this.unbind(node), this);
-                
-                this._DOMElements = [];
+                _this.unbind(DOMElement);
 
-                return;
+                _this._DOMElements.splice(i, 1);
             }
+        });
+    }
 
-            const _this = this;
+    /**
+     * Bind abstract method
+     *
+     * @access {public}
+     */
+    Component.prototype.bind = function(context)
+    {
+        throw new Error('[bind] method must be implemented.');
+    }
 
-            each(this._DOMElements, function(i, DOMElement)
-            {                
-                if (closest(DOMElement, context))
-                {
-                    _this.unbind(DOMElement);
-
-                    _this._DOMElements.splice(i, 1);
-                }
-            });
-        }
-
-        /**
-         * Insert ripples
-         *
-         * @access {private}
-         */
-        bind(node)
-        {
-        }
-
-        /**
-         * Insert ripples
-         *
-         * @access {private}
-         */
-        unbind(node)
-        {
-        }
+    /**
+     * Unbind abstract method
+     *
+     * @access {public}
+     */
+    Component.prototype.unbind = function(context)
+    {
+        throw new Error('[unbind] method must be implemented.');
     }
     
     // Register
@@ -7810,7 +7559,7 @@ Container.singleton('Helper', HelperJS);
  * Pluralize
  * @see {https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations}
  * 
- * @example {Container.Helper().pluralize('tomato',} 5);
+ * @example {Container._().pluralize('tomato',} 5);
  * 
  */
 (function()
@@ -8279,7 +8028,7 @@ Container.singleton('Helper', HelperJS);
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * Default options
@@ -8657,7 +8406,7 @@ Container.singleton('Helper', HelperJS);
      * 
      * @var {functions}
      */
-    const [addEventListener, removeEventListener, _map, is_regexp] = Container.import(['addEventListener', 'removeEventListener', 'map', 'is_regexp']).from('Helper');
+    const [add_event_listener, remove_event_listener, _map, is_regexp] = Container.import(['add_event_listener', 'remove_event_listener', 'map', 'is_regexp']).from('_');
 
     /**
      * Regex masks
@@ -8751,8 +8500,8 @@ Container.singleton('Helper', HelperJS);
          */
         destroy()
         {
-            removeEventListener(this.DOMElement, 'input', this.handler);
-            removeEventListener(this.DOMElement, 'paste', this.handler);
+            remove_event_listener(this.DOMElement, 'input', this.handler);
+            remove_event_listener(this.DOMElement, 'paste', this.handler);
         }
 
         /**
@@ -8777,8 +8526,8 @@ Container.singleton('Helper', HelperJS);
 
             this.handler = _handler;
 
-            addEventListener(this.DOMElement, 'input', _handler);
-            addEventListener(this.DOMElement, 'paste', _handler);
+            add_event_listener(this.DOMElement, 'input', _handler);
+            add_event_listener(this.DOMElement, 'paste', _handler);
         }
 
         /**
@@ -8925,9 +8674,11 @@ Container.singleton('Helper', HelperJS);
 (function()
 {
     /**
-     * @var {obj}
+     * Helper functions
+     * 
+     * @var {Function}
      */
-    const Helper = Container.Helper();
+    const [add_class, add_event_listener, array_merge, closest, has_class, inner_HTML, remove_class, remove_from_dom] = Container.import(['add_class','add_event_listener','array_merge','closest','has_class','inner_HTML','remove_class','remove_from_dom']).from('_');
 
     /**
      * @var {obj}
@@ -8968,7 +8719,7 @@ Container.singleton('Helper', HelperJS);
     { 
         constructor(options)
         {
-            this._options = Helper.array_merge(DEFALT_OPTIONS, options);
+            this._options = array_merge(DEFALT_OPTIONS, options);
             this._modal = null;
             this._overlay = null;
 
@@ -8986,15 +8737,15 @@ Container.singleton('Helper', HelperJS);
         {
             const _this = this;
 
-            Helper.add_class(this._overlay, 'transition-off');
+            add_class(this._overlay, 'transition-off');
 
-            Helper.remove_class(document.body, 'no-scroll');
+            remove_class(document.body, 'no-scroll');
 
             setTimeout(function()
             {
-                Helper.remove_from_dom(_this._overlay);
-                Helper.remove_from_dom(_this._modal);
-                Helper.remove_class(document.body, 'no-scroll');
+                remove_from_dom(_this._overlay);
+                remove_from_dom(_this._modal);
+                remove_class(document.body, 'no-scroll');
             }, 600);
         }
 
@@ -9041,7 +8792,7 @@ Container.singleton('Helper', HelperJS);
                 let closeButton   = this._options.cancelBtn  ? `<button type="button" class="btn btn btn-pure ${this._options.cancelClass}  js-modal-cancel">${this._options.cancelBtn}</button>` : '';
                 let confirmButton = this._options.confirmBtn ? `<button type="button" class="btn btn btn-pure ${this._options.confirmClass} js-modal-confirm">${this._options.confirmBtn}</button>` : '';
 
-                Helper.inner_HTML(modal, [
+                inner_HTML(modal, [
                     '<div class="modal-dialog">',
                         '<div class="container-fluid">',
                             '<div class="card js-modal-inner">',
@@ -9079,11 +8830,11 @@ Container.singleton('Helper', HelperJS);
 
             this._modal.offsetHeight;
 
-            setTimeout(() => Helper.add_class(this._overlay, 'active'), 15);
+            setTimeout(() => add_class(this._overlay, 'active'), 15);
 
             this._fireRender();
 
-            Helper.add_class(document.body, 'no-scroll');
+            add_class(document.body, 'no-scroll');
         }
 
         /**
@@ -9106,11 +8857,11 @@ Container.singleton('Helper', HelperJS);
                 const clicked = e.target;
 
                 // Clicked cancel or confirm button
-                if (Helper.has_class(clicked, ['js-modal-confirm', 'js-modal-cancel']))
+                if (has_class(clicked, ['js-modal-confirm', 'js-modal-cancel']))
                 {
                     if (_this._fireConfirmValidator())
                     {
-                        if (Helper.has_class(clicked, 'js-modal-confirm'))
+                        if (has_class(clicked, 'js-modal-confirm'))
                         {
                             this._fireConfirm();
                         }
@@ -9129,7 +8880,7 @@ Container.singleton('Helper', HelperJS);
 
                 if (closeAnywhere)
                 {                       
-                    if (!Helper.closest(clicked, '.js-modal-inner'))
+                    if (!closest(clicked, '.js-modal-inner'))
                     {
                         _this.close();
 
@@ -9138,8 +8889,8 @@ Container.singleton('Helper', HelperJS);
                 }
             }
 
-            Helper.addEventListener(this._modal, 'click', closeValidator);
-            Helper.addEventListener(this._overlay, 'click', closeValidator);
+            add_event_listener(this._modal, 'click', closeValidator);
+            add_event_listener(this._overlay, 'click', closeValidator);
             
         }
 
@@ -9221,7 +8972,7 @@ Container.singleton('Helper', HelperJS);
     /**
      * @var {obj}
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * @var {obj}
@@ -9448,13 +9199,13 @@ Container.singleton('Helper', HelperJS);
 
             if (this._options.closeAnywhere === true)
             {
-                Helper.addEventListener(this._modal, 'click', closeModal, false);
+                Helper.add_event_listener(this._modal, 'click', closeModal, false);
             }
 
             var modalCloses = Helper.$All('.js-frontdrop-close', this._modal);
             if (!Helper.is_empty(modalCloses))
             {
-                Helper.addEventListener(modalCloses, 'click', closeModal, false);
+                Helper.add_event_listener(modalCloses, 'click', closeModal, false);
             }
         }
 
@@ -9548,7 +9299,7 @@ Container.singleton('Helper', HelperJS);
     /**
      * @var {Helper} obj
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * Default options
@@ -9676,12 +9427,12 @@ Container.singleton('Helper', HelperJS);
                 }
             };
 
-            Helper.addEventListener(notif, 'click', removefunction);
+            Helper.add_event_listener(notif, 'click', removefunction);
 
             if (options.btn)
             {
-                Helper.addEventListener(Helper.$('.js-notif-btn', notif), 'click', options.callbackBtn);
-                Helper.addEventListener(Helper.$('.js-notif-btn', notif), 'click', removefunction);
+                Helper.add_event_listener(Helper.$('.js-notif-btn', notif), 'click', options.callbackBtn);
+                Helper.add_event_listener(Helper.$('.js-notif-btn', notif), 'click', removefunction);
             }
         }
 
@@ -10485,7 +10236,7 @@ function abort()
     /**
      * @var {Helper} obj
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * Validator functions
@@ -10819,7 +10570,7 @@ function abort()
     /**
      * @var {Helper} obj
      */
-    const [$, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, in_dom, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css, is_array_last] = Container.import(['$','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','in_dom','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css', 'is_array_last']).from('Helper');
+    const [$, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, in_dom, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css, is_array_last] = Container.import(['$','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','in_dom','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css', 'is_array_last']).from('_');
 
     /**
      * Wrappers that need "position:relative" to hide overflow.
@@ -11197,6 +10948,119 @@ function abort()
 (function()
 {
     /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [in_dom, coordinates] = Container.import(['in_dom','coordinates']).from('_');
+    
+    /**
+     * Popover Handler
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const PopHandler = function(options)
+    {
+        this.trigger = options.target;
+        this.options = options;
+        this.el = this.buildPopEl();
+        this.el.className = options.classes;
+        this.animation = false;
+
+        if (options.animation === 'pop')
+        {
+            this.animation = 'popover-pop';
+        }
+        else if (options.animation === 'fade')
+        {
+            this.animation = 'popover-fade';
+        }
+
+        this.render = function()
+        {
+            document.body.appendChild(this.el);
+            this.stylePop();
+            this.el.classList.add(this.animation);
+        }
+    }
+
+    /**
+     * Build the popover
+     *
+     * @access {private}
+     */
+    PopHandler.prototype.buildPopEl = function()
+    {
+        var pop = document.createElement('div');
+        
+        pop.className = this.options.classes;
+
+        if (typeof this.options.template === 'string')
+        {
+            pop.innerHTML = this.options.template;
+        }
+        else
+        {
+            pop.appendChild(this.options.template);
+        }
+        return pop;
+    }
+
+    /**
+     * Remove the popover
+     *
+     * @access {public}
+     */
+    PopHandler.prototype.remove = function()
+    {
+        if (in_dom(this.el)) this.el.parentNode.removeChild(this.el);
+    }
+
+    /**
+     * Position the popover
+     *
+     * @access {public}
+     */
+    PopHandler.prototype.stylePop = function()
+    {
+        var tarcoordinates = coordinates(this.options.target);
+
+        if (this.options.direction === 'top')
+        {
+            this.el.style.top = tarcoordinates.top - this.el.scrollHeight + 'px';
+            this.el.style.left = tarcoordinates.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
+            return;
+        }
+        else if (this.options.direction === 'bottom')
+        {
+            this.el.style.top = tarcoordinates.top + this.options.target.offsetHeight + 10 + 'px';
+            this.el.style.left = tarcoordinates.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
+            return;
+        }
+        else if (this.options.direction === 'left')
+        {
+            this.el.style.top = tarcoordinates.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
+            this.el.style.left = tarcoordinates.left - this.el.offsetWidth - 10 + 'px';
+            return;
+        }
+        else if (this.options.direction === 'right')
+        {
+            this.el.style.top = tarcoordinates.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
+            this.el.style.left = tarcoordinates.left + this.options.target.offsetWidth + 10 + 'px';
+            return;
+        }
+    }
+
+    // Set into container for private use
+    Container.set('PopHandler', PopHandler);
+
+}());
+
+(function()
+{
+    /**
      * Component base
      * 
      * @var {class}
@@ -11204,290 +11068,811 @@ function abort()
     const [Component] = Container.get('Component');
 
     /**
-     * Ripple animation time.
-     * 
-     * Note 1. this is set in CSS
-     * Note 2. This value is actually half of total animation time as the the ripple scales (2.5)
-     * 
-     * @var {int}
-     */
-    const RPL_AN_TIME = 400;
-
-    /**
-     * Wrappers that need "position:relative" to hide overflow.
-     * 
-     * @var {array}
-     */
-    const STATIC_POSITIONS = ['static', 'unset', 'initial'];
-
-    /**
      * JS Helper reference
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
+    const [$, $All, add_class, add_event_listener, closest, has_class, is_empty, remove_class, remove_event_listener, extend] = Container.import(['$', '$All', 'add_class', 'add_event_listener', 'closest', 'has_class', 'is_empty', 'remove_class', 'remove_event_listener', 'extend']).from('_');
 
     /**
-     * Original inline styles
-     * 
-     * @var {Map}
-     */
-    const INLINESTYLES = new Map();
-
-    /**
-     * Currently rippling
-     * 
-     * @var {Map}
-     */
-    const RIPPLING = new Map();
-
-    /**
-     * Selectors
-     * 
-     * @var {Map}
-     */
-    const SELECTORS =
-    [
-        '.btn',
-        '.list > li',
-        '.pagination li a',
-        '.tab-nav li a',
-        '.card.primary-action',
-        '.card .primary-action',
-        '.card-media',
-        '.js-ripple'
-    ];
-    
-    /**
-     * Ripple click animation
+     * Popovers
      *
      * @author    {Joe J. Howard}
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Ripple extends Component
+    const Popovers = function()
     {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-        constructor()
-        {
-            super(SELECTORS.join(','));
-        }
-        
-        /**
-         * Insert ripples
-         *
-         * @access {private}
-         */
-        bind(node)
-        {
-            // No ripples inside primary actions
-            if (!Helper.has_class(node, 'primary-action') && Helper.closest(node, '.primary-action') && !Helper.has_class(node, 'card'))
-            {
-                return;
-            }
+        this.super('.js-popover');
 
-            Helper.addEventListener(node, 'mousedown, touchstart', this._startRipple);
+        this._pops = [];
+
+        this._windowClick = false;
+    }
+
+    /**
+     * Initialize the handlers on a trigger
+     *
+     * @access {private}
+     * @param  {DOMElement} trigger Click/hover trigger
+     */
+    Popovers.prototype.bind = function(trigger)
+    {
+        if (!this._windowClick)
+        {
+            add_event_listener(window, 'click', this._windowClickHandler, this);
+
+            this._windowClick = true;
         }
 
-        /**
-         * Insert ripples
-         *
-         * @access {private}
-         */
-        unbind(node)
+        var direction = trigger.dataset.popoverDirection;
+        var title     = trigger.dataset.popoverTitle;
+        var theme     = trigger.dataset.popoverTheme || 'dark';
+        var content   = trigger.dataset.popoverContent;
+        var evnt      = trigger.dataset.popoverEvent;
+        var animation = trigger.dataset.popoverAnimate || 'pop';
+        var target    = trigger.dataset.popoverTarget;
+        var closeBtn  = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="glyph-icon glyph-icon-cross3"></span></button>' : '';
+        var pop       = '<div class="popover-content"><p>' + content + '</p></div>';
+
+        if (title)
         {
-            Helper.removeEventListener(node, 'mousedown, touchstart', this._startRipple);
+            pop = closeBtn + '<h5 class="popover-title">' + title + '</h5>' + pop;
         }
 
-        /**
-         * Ripple handler
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _startRipple(e)
+        if (target)
         {
-            e = e || window.event;
+            pop = $('#' + target).cloneNode(true);
+            pop.classList.remove('hidden');
+        }
 
-            var wrapper = this;
+        var popHandler = Container.get('PopHandler',
+        {
+            target: trigger,
+            direction: direction,
+            template: pop,
+            animation: animation,
+            classes: 'popover ' + direction + ' ' + theme,
+        });
 
-            // Ignore disabled
-            if (wrapper.disabled || Helper.has_class(wrapper, 'disabled')) return;
+        this._pops.push(popHandler);
 
-            // Single finger "clicks" only
-            if (e.touches && e.touches.length > 1) return;
-
-            // Left click only on mouse
-            if ('button' in e && e.button !== 0) return;
-
-            // Store the event used to generate this ripple on the holder: don't allow
-            // further events of different types until we're done.
-            // Prevents double-ripples from mousedown/touchstart.
-            var prev = wrapper.getAttribute('data-event');
-            if (prev && prev !== e.type) return;
-
-            // Clear restorer
-            clearTimeout(RIPPLING.get(wrapper));
-
-            // Add the data-attribute to identify ripple event type
-            wrapper.setAttribute('data-event', e.type);
-
-            // Add class to parent do identify mousedown/touchstart
-            Helper.add_class(wrapper, 'ripple-down');
-
-            // Create ripple and append immediately
-            var ripple = document.createElement('div');
-            Helper.preapend(ripple, wrapper);
-
-            // Figure out where to place ripple inside parent
-            var c = Helper.coordinates(wrapper);
-            var s = Math.max(Helper.height(wrapper), Helper.width(wrapper));
-            var x = (e.pageX - c.left) - (s / 2);
-            var y = (e.pageY - c.top) - (s / 2);
-
-            // Apply styles to ripple
-            Helper.css(ripple, 
-            {
-                width:  `${s}px`,
-                height: `${s}px`,
-                left:   `${x}px`,
-                top:    `${y}px`
-            });
-
-            // Issue here is that if ripple is clicked multiple times in quick succession
-            // the original inline overflow and position styles are overwritten by the next
-            // click
-
-            // Cache 'overflow' and 'position' inline styles
-            // to revert back to after complete
-            // If these are empty they will be removed
-            if (!INLINESTYLES.has(wrapper))
-            {
-                let CSSoverflow = Helper.inline_style(wrapper, 'overflow') || false;
-                
-                let CSSposition = Helper.inline_style(wrapper, 'position') || false;
-
-                INLINESTYLES.set(wrapper, [CSSoverflow, CSSposition]);
-            }
-
-            // Ensure parent hides overflow
-            Helper.css(wrapper, 'overflow', 'hidden !important');
-
-            // Ensure position relative if needed
-            if (Helper.in_array(Helper.rendered_style(wrapper, 'position'), STATIC_POSITIONS))
-            {
-                Helper.css(wrapper, 'position', 'relative');
-            }
-
-            // Start ripple animation
-            ripple.classList.add('ripple');
-
-            // Animation started
-            const t0 = performance.now();
-
-            // Figure out release event type
-            var releaseEvent = (e.type === 'mousedown' ? 'mouseup' : 'touchend');
-
-            // Remove handler
-            const remove = function()
-            {                
-                if (Helper.in_dom(ripple) && Helper.in_dom(wrapper))
-                {
-                    wrapper.removeChild(ripple); 
-                }
-            }
-
-            // Restore handler
-            const restore = function()
-            {
-                if (Helper.in_dom(wrapper))
-                {
-                    wrapper.offsetHeight;
-
-                    wrapper.removeAttribute('data-event');
-                
-                    Helper.remove_class(wrapper, 'ripple-down');
-
-                    let styles = INLINESTYLES.get(wrapper);
-
-                    Helper.css(wrapper, 'overflow', styles[0]);
-
-                    Helper.css(wrapper, 'position', styles[1]);
-                }
-            }
-
-            // Cached timer for release
-            var timer;
-
-            // Blocking click target
-            var blockedClick = e.target !== wrapper;
-            var loopedClicks = false;
-
-            const triggerClicks = function(node)
-            {
-                if (node === wrapper)
-                {
-                    Helper.trigger_event(node, 'click');
-
-                    return true;
-                }
-
-                Helper.trigger_event(node, 'click');
-            }
-
-            // Release event
-            const release = function(ev)
-            {
-                // Clear timer
-                clearTimeout(timer);
-
-                // Remove release listener
-                document.removeEventListener(releaseEvent, release);
-
-                if (blockedClick && !loopedClicks)
-                {
-                    Helper.traverse_up(e.target, triggerClicks);
-
-                    loopedClicks = true;
-                }
-
-                // Check if release happened before ripple finished animating
-                const held = (performance.now() - t0);
-
-                // Release occurs before initial scale animation finishes with buffer
-                if (held < RPL_AN_TIME)
-                {
-                    let diff = parseInt(RPL_AN_TIME - held);
-
-                    if (diff > 150)
-                    {
-                        timer = setTimeout(release, diff);
-
-                        return;
-                    }
-                }
-
-                Helper.animate_css(ripple, {'opacity': 0, duration: 350, callback: remove });
-
-                let restoreTimer = setTimeout(restore, 500);
-
-                RIPPLING.set(wrapper, restoreTimer);
-            };
-
-            // Release listener
-            document.addEventListener(releaseEvent, release);
+        if (evnt === 'click')
+        {
+            add_event_listener(trigger, 'click', this._clickHandler, this);
+            add_event_listener(window, 'resize', this._windowResize, this);
+        }
+        else
+        {                
+            add_event_listener(trigger, 'mouseenter', this._hoverOver, this);
+            add_event_listener(trigger, 'mouseleave', this._hoverLeavTimeout, this);
         }
     }
-    
-    // Load into Hubble DOM core
-    Hubble.dom().register('Ripple', Ripple);
 
-})();
+    /**
+     * Unbind event listeners on a trigger
+     *
+     * @param {trigger} node
+     * @access {private}
+     */
+    Popovers.prototype.unbind = function(trigger)
+    {
+        if (this._windowClick)
+        {
+            remove_event_listener(window, 'click', this._windowClickHandler, this);
+
+            this._windowClick = false;
+        }
+
+        var evnt = trigger.dataset.popoverEvent;
+
+        if (evnt === 'click')
+        {
+            remove_event_listener(trigger, 'click', this._clickHandler, this);
+            remove_event_listener(window, 'resize', this._windowResize, this);
+        }
+        else
+        {
+            remove_event_listener(trigger, 'mouseenter', this._hoverOver, this);
+            remove_event_listener(trigger, 'mouseleave', this._hoverLeavTimeout, this);
+        }
+    }
+
+    /**
+     * Timeout handler for hoverleave
+     *
+     * @access {private}
+     */
+    Popovers.prototype._hoverLeavTimeout = function(e)
+    {
+        e = e || window.event;
+
+        const _this = this;
+
+        setTimeout(() => _this._hoverLeave(e), 300);
+    }
+
+    /**
+     * Hover over event handler
+     *
+     * @access {private}
+     */
+    Popovers.prototype._hoverOver = function(e, trigger)
+    {
+        var popHandler = this._getHandler(trigger);
+
+        if (has_class(trigger, 'popped')) return;
+        
+        popHandler.render();
+        
+        add_class(trigger, 'popped');
+    }
+
+    /**
+     * Hover leave event handler
+     *
+     * @access {private}
+     */
+    Popovers.prototype._hoverLeave = function(e)
+    {
+        var hovers = $All(':hover');
+
+        const _this = this;
+
+        each(hovers, (i, hover) =>
+        {
+            if (has_class(hover, 'popover'))
+            {
+                remove_event_listener(hover, 'mouseleave', _this._hoverLeave, _this)
+            }
+        });
+    }
+
+    /**
+     * Window resize event handler
+     *
+     * @access {private}
+     */
+    Popovers.prototype._windowResize = function()
+    {
+        each(this._DOMElements, (i, node) =>
+        {
+            if (has_class(node, 'popped'))
+            {
+                var popHandler = this._getHandler(node);
+                
+                popHandler.stylePop();
+            }
+
+        }, this);
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    Popovers.prototype._clickHandler = function(e, trigger)
+    {
+        e = e || window.event;
+
+        e.preventDefault();
+        
+        var popHandler = this._getHandler(trigger);
+
+        if (has_class(trigger, 'popped'))
+        {
+            this._removeAll();
+            
+            popHandler.remove();
+            
+            remove_class(trigger, 'popped');
+        }
+        else
+        {
+            this._removeAll();
+            
+            popHandler.render();
+            
+            add_class(trigger, 'popped');
+        }
+    }
+
+    /**
+     * Remove all popovers when anything is clicked
+     *
+     * @access {private}
+     */
+    Popovers.prototype._windowClickHandler = function(e, clicked)
+    {
+        e = e || window.event;
+        
+        var clicked = e.target;
+
+        // Clicked the close button
+        if (has_class(clicked, 'js-remove-pop') || closest(clicked, '.js-remove-pop'))
+        {
+            _this._removeAll();
+
+            return;
+        }
+
+        // Clicked inside the popover
+        if (has_class(clicked, 'popover') || closest(clicked, '.popover'))
+        {
+            return;
+        }
+
+        // Clicked a popover trigger
+        if (has_class(clicked, 'js-popover') || closest(clicked, '.js-popover'))
+        {
+            return;
+        }
+
+        this._removeAll();
+    }
+
+    /**
+     * Get the handler for the trigger
+     * 
+     * @access {private}
+     * @param  {DOMElement}    trigger DOM node that triggered event
+     * @return {object|false}
+     */
+    Popovers.prototype._getHandler = function(trigger)
+    {
+        var ret = false;
+
+        each(this._pops, (i, pop) =>
+        {
+            if (pop['trigger'] === trigger)
+            {
+                ret = pop;
+
+                return false;
+            }
+        });
+
+        return ret;
+    }
+
+    /**
+     * Remove all the popovers currently being displayed
+     *
+     * @access {private}
+     */
+    Popovers.prototype._removeAll = function()
+    {
+        each(this._pops, (i, pop) =>
+        {
+            pop.remove();
+
+            remove_class(pop.options.target, 'popped');
+        });
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Popovers', extend(Component, Popovers));
+
+}());
+
+(function()
+{
+    /**
+     * Creates a chip
+     *
+     */
+    function createChip(options)
+    {
+        let chip = document.createElement(options.removeable || options.input ? 'SPAN' : 'BUTTON');
+
+        if (options.removeable || options.input) chip.type = 'button';
+
+        chip.className = options.variant ? `btn btn-chip ${options.variant}` : 'btn btn-chip';
+        chip.innerText = options.posticon || options.removeable ? `${options.text} ` : options.text;
+
+        if (options.preicon)
+        {
+            let icon1 = document.createElement('SPAN');
+            icon1.className = `fa fa-${options.preicon}`;
+            chip.appendChild(icon1);
+        }
+
+        if (options.removeable)
+        {
+            let removeBtn = document.createElement('BUTTON');
+            removeBtn.className = 'remove-btn btn-unstyled js-remove-btn';
+            removeBtn.ariaLabel = 'remove';
+            removeBtn.type = 'button';
+
+            let x = document.createElement('SPAN');
+            x.className = 'fa fa-xmark';
+            removeBtn.appendChild(x);
+
+            chip.appendChild(removeBtn);
+        }
+        else if (options.posticon)
+        {
+            let icon2 = document.createElement('SPAN');
+            icon2.className = `fa fa-${options.posticon}`;
+            chip.appendChild(icon2);
+        }
+        
+        if (options.input)
+        {
+            let input = document.createElement('INPUT');
+            input.hidden = true;
+            input.name   = options.input;
+            input.value  = options.text;
+            input.setAttribute('value', options.text);
+
+            chip.appendChild(input);
+        }
+
+        return chip;
+    }
+
+    // Load into Hubble DOM core
+    Container.set('Chip', createChip);
+
+}());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, $All, add_event_listener, closest, first_children, in_array, input_value, is_empty, remove_event_listener, remove_from_dom, extend] = Container.import(['$','$All','add_event_listener','closest','first_children','in_array','input_value','is_empty','remove_event_listener','remove_from_dom','extend']).from('_');
+
+    /**
+     * Chip inputs
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const ChipInputs = function()
+    {
+        this.super('.js-chips-input');
+    }
+   
+    /**
+     * Init a chips input
+     *
+     * @access {private}
+     * @param  {DOMElement}    _wrapper
+     */
+    ChipInputs.prototype.bind = function(_wrapper)
+    {
+        let _input = $('.js-chip-input', _wrapper);
+
+        add_event_listener($All('.js-remove-btn', _wrapper), 'click', this._removeChip);
+
+        add_event_listener(_input, 'keyup', this._onKeyUp);
+
+        if (closest(_input, 'form'))
+        {
+            add_event_listener(_input, 'keydown', this._preventSubmit);
+        }
+    }
+
+    /**
+     * Destroy chip listeners
+     *
+     * @access {private}
+     * @param  {DOMElement}    _wrapper
+     */
+    ChipInputs.prototype.unbind = function(_wrapper)
+    {
+        var _removeBtns = $All('.btn-chip .js-remove-btn', _wrapper);
+        var _input = $('.js-chip-input', _wrapper);
+
+        remove_event_listener(_removeBtns, 'click', this._removeChip);
+
+        remove_event_listener(_input, 'keyup', this._onKeyUp);
+
+        if (closest(_input, 'form'))
+        {
+            remove_event_listener(_input, 'keydown', this._preventSubmit);
+        }
+    }
+
+    /**
+     * Prevent the form from submitting if it's part of a form
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    ChipInputs.prototype._preventSubmit = function(e)
+    {
+        e = e || window.event;
+
+        var _key = e.code || e.key || e.keyCode || e.charCode;
+
+        if (_key == 'Enter' || _key === 13)
+        {
+            e.preventDefault();
+
+            return false;
+        }
+        // Backspace
+        else if (_key == 'Delete' || _key == 'Backspace' || _key == 8 || _key == 46)
+        {
+            if (this.value === '')
+            {
+                var _wrapper = closest(this, '.js-chips-input');
+
+                Container.ChipInputs()._removeLastChip(_wrapper);
+            }
+        }
+    }
+
+    /**
+     * Handle pressing enter to insert the chip
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    ChipInputs.prototype._onKeyUp = function(e)
+    {
+        e = e || window.event;
+
+        var _key = e.code || e.key || e.keyCode || e.charCode;
+
+        // Enter
+        if (_key == 'Enter' || _key === 13)
+        {
+            var _this = Container.ChipInputs();
+
+            var _wrapper = closest(this, '.js-chips-input');
+
+            var _value = input_value(this).trim();
+
+            if (!in_array(_value, _this._getChipsValues(_wrapper)) && _value !== '')
+            {
+                _this.addChip(_value, _wrapper);
+
+                this.value = '';
+            }
+        }
+    }
+
+    /**
+     * Remove last chip
+     *
+     * @access {private}
+     * @param  {DOMElement}    _wrapper
+     */
+    ChipInputs.prototype._removeLastChip = function(_wrapper)
+    {
+        var _chips = $All('.btn-chip', _wrapper);
+
+        if (!is_empty(_chips))
+        {
+            remove_from_dom(_chips.pop());
+        }
+    }
+
+    /**
+     * Insert new chip
+     *
+     * @access {public}
+     * @param  {string}      _value
+     * @param  {DOMElement}        _wrapper
+     * @param  {string|bool} _icon
+     */
+    ChipInputs.prototype.addChip = function(_value, _wrapper, _icon)
+    {
+        let chip = Container.Chip({
+            text       : _value.trim(),
+            removeable : true,
+            input      : _wrapper.dataset.inputName,
+            variant    : _wrapper.dataset.chipClass,
+        });
+
+        _wrapper.insertBefore(chip, first_children(_wrapper).pop());
+
+        add_event_listener($('.js-remove-btn', chip), 'click', this._removeChip);
+
+        Container.Hubble().dom().refresh('Ripple', _wrapper);
+    }
+
+    /**
+     * Remove an existing chip
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    ChipInputs.prototype._removeChip = function(e)
+    {
+        e = e || window.event;
+
+        e.preventDefault();
+
+        remove_from_dom(closest(this, '.btn-chip'));
+    }
+
+    /**
+     * Get all values from chip input
+     *
+     * @access {private}
+     * @param  {DOMElement}    _wrapper
+     * @return {array}
+     */
+    ChipInputs.prototype._getChipsValues = function(_wrapper)
+    {
+        var _result = [];
+
+        var _chips = $All('.btn-chip input', _wrapper);
+
+        for (var i = 0; i < _chips.length; i++)
+        {
+            _result.push(input_value(_chips[i]));
+        }
+
+        return _result;
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('ChipInputs', extend(Component, ChipInputs));
+
+}());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, add_event_listener, attr, closest, has_class, in_dom, remove_event_listener, remove_from_dom, trigger_event, extend] = Container.import(['$','add_event_listener','attr','closest','has_class','in_dom','remove_event_listener','remove_from_dom','trigger_event','extend']).from('_');
+
+    /**
+     * Chip suggestions.
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const ChipSuggestions = function()
+    {
+        this.super('.js-chip-suggestions .btn-chip');
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access {private}
+     */
+    ChipSuggestions.prototype.bind = function(node)
+    {
+        add_event_listener(node, 'click', this._clickHandler);
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access {private}
+     */
+    ChipSuggestions.prototype.unbind = function()
+    {
+        remove_event_listener(node, 'click', this._clickHandler);
+    }
+
+    /**
+     * Chip click handler
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    ChipSuggestions.prototype._clickHandler = function(e)
+    {
+        e = e || window.event;
+
+        e.preventDefault();
+
+        var _wrapper = closest(this, '.js-chip-suggestions');
+        var _input   = $('#' + _wrapper.dataset.inputTarget);
+        var _text    = this.innerText.trim();
+
+        if (!_input || !in_dom(_input))
+        {
+            throw new Error('Target node does not exist.');
+
+            return false;
+        }
+
+        // Chips input
+        if (has_class(_input, '.js-chips-input'))
+        {
+            Container.ChipInputs().addChip(_text, _input);
+
+            remove_from_dom(this);
+
+            return;
+        }
+
+        let val = attr(_input, 'value');
+
+        attr(_input, 'value',  val === '' ? _text : `${val} ${_text}`);
+
+        trigger_event(_input, 'change');
+
+        remove_from_dom(this);
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('ChipSuggestions', extend(Component, ChipSuggestions));
+
+}());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, add_class, add_event_listener, closest, has_class, remove_class, remove_event_listener, trigger_event, extend] = Container.import(['$','add_class','add_event_listener','closest','has_class','remove_class','remove_event_listener','trigger_event','extend']).from('_');
+
+    /**
+     * Choice chips
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const ChoiceChips = function()
+    {
+        this.super('.js-choice-chips .btn-chip');
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access {private}
+     */
+    ChoiceChips.prototype.bind = function(node)
+    {
+        add_event_listener(node, 'click', this._clickHandler);
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access {private}
+     */
+    ChoiceChips.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'click', this._clickHandler);
+    }
+
+    /**
+     * Handle click event on chip
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    ChoiceChips.prototype._clickHandler = function(e)
+    {
+        e = e || window.event;
+
+        var _wrapper = closest(this, '.js-choice-chips');
+
+        var _input = $('.js-choice-input', _wrapper);
+
+        if (!has_class(this, 'selected'))
+        {                
+            remove_class($('.btn-chip.selected', _wrapper), 'selected');
+
+            add_class(this, 'selected');
+
+            if (_input)
+            {
+                _input.value = this.dataset.value || this.innerText.trim();
+
+                trigger_event(_input, 'input');
+                trigger_event(_input, 'change');
+            }
+        }
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('ChoiceChips', extend(Component, ChoiceChips));
+
+}());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [add_event_listener, remove_event_listener, toggle_class, extend] = Container.import(['add_event_listener','remove_event_listener','toggle_class', 'extend']).from('_');
+
+    /**
+     * Filter chips
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const FilterChips = function()
+    {
+        this.super('.js-filter-chips .btn-chip');
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access {private}
+     */
+    FilterChips.prototype.bind = function(node)
+    {
+        add_event_listener(node, 'click', this._clickHandler);
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access {private}
+     */
+    FilterChips.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'click', this._clickHandler);
+    }
+
+    /**
+     * Handle click event on chip
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    FilterChips.prototype._clickHandler = function(e)
+    {
+        e = e || window.event;
+
+        e.preventDefault();
+
+        toggle_class(this, 'checked');
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('FilterChips', extend(Component, FilterChips));
+
+}());
 
 (function()
 {
@@ -11496,7 +11881,7 @@ function abort()
      * 
      * @var {obj}
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * AJAX Module
@@ -11583,7 +11968,7 @@ function abort()
             _invoked = false;
             _listening = false;
 
-            window.removeEventListener('popstate', this._popStateHandler);
+            window.remove_event_listener('popstate', this._popStateHandler);
         }
 
         /**
@@ -11596,7 +11981,7 @@ function abort()
             _invoked   = true;
             _listening = true;
 
-            window.addEventListener('popstate', this._popStateHandler);
+            window.add_event_listener('popstate', this._popStateHandler);
         }
 
         /**
@@ -11766,7 +12151,7 @@ function abort()
         {
             if (!_listening)
             {
-                window.addEventListener('popstate', this._popStateHandler);
+                window.add_event_listener('popstate', this._popStateHandler);
 
                 _listening = true;
             }
@@ -11851,7 +12236,7 @@ function abort()
             else
             {
                 script.src = scriptObj.content;
-                script.addEventListener('load', function()
+                script.add_event_listener('load', function()
                 {
                     chain.next();
                 });
@@ -12011,7 +12396,7 @@ function abort()
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
     
     /**
      * Pjax Links Module
@@ -12057,7 +12442,7 @@ function abort()
          */
         _bind()
         {
-            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
+            Helper.add_event_listener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -12067,7 +12452,7 @@ function abort()
          */
         _unbind()
         {
-            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
+            Helper.remove_event_listener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -12098,719 +12483,21 @@ function abort()
 
 }());
 
-/**
- * Scrollbars
- *
- * This is a utility class used internally to add custom vertical scrollbars to an element.
- * This class handles the events of the scrollbars.
- * This should not be used at all outside of the framework.
- * @see {https://github.com/noraesae/perfect-scrollbar}
- */
-(function()
-{
-    var defaults =
-    {
-        elements:
-        {
-            area: '.scrollbar-area',
-            wrapper: '.scrollbar-wrapper',
-            track: '.scrollbar-track',
-            handle: '.scrollbar-handle'
-        },
-        stateClasses:
-        {
-            dragging: 'scrollbar-dragging',
-            hover: 'scrollbar-hover'
-        }
-    };
-
-    // SCROLLBAR HANDLER
-    /*****************************************/
-    class _ScrollbarHandler
-    {
-        constructor(element, opts)
-        {
-
-            // handle constructor call without `new` keyword
-            if (!(this instanceof _ScrollbarHandler)) return new _ScrollbarHandler(element, opts);
-
-            // is plugin already initialized?
-            if (this.el)
-            {
-                return;
-            }
-
-            this.el = element;
-            this.opts = extend({}, defaults, opts || {});
-
-            this._setupElements();
-
-            // check if browser has physical scrollbars (usually desktop)
-            if (this.scrollbarWidth = getScrollbarWidth())
-            {
-                this._enableTrack();
-
-                this._observeHover(this.area);
-                this._observeHover(this.track);
-                this._enableScroll();
-                this._enableDragging();
-
-                this.refresh();
-            }
-            else
-            {
-                this._allowNativeScroll();
-            }
-
-            return this;
-        }
-
-        // PUBLIC API
-        /*****************************************/
-        /**
-         * Destroys plugin instance.
-         */
-        destroy()
-        {
-            var stateClasses = this.opts.stateClasses;
-
-            this._removeAllListeners();
-
-            this.wrapper.style.overflowY = '';
-            this.wrapper.style.marginRight = '';
-            this.track.style.display = '';
-
-            remove_class(document.body, stateClasses.dragging);
-            remove_class(this.area, stateClasses.dragging);
-            remove_class(this.area, stateClasses.hover);
-            remove_class(this.track, stateClasses.hover);
-
-            delete this.el;
-        }
-
-        /**
-         * Refreshes scrollbar by adjusting its handle's height and position.
-         */
-        refresh()
-        {
-            var newRatio;
-
-            if (!this.el || this.isNative())
-            {
-                return;
-            }
-
-            if (this.wrapper.scrollHeight > this.wrapper.offsetHeight)
-            {
-                this.track.style.display = 'block';
-
-                newRatio = this.track.offsetHeight / this.wrapper.scrollHeight;
-
-                if (newRatio !== this.ratio)
-                {
-                    this.ratio = newRatio;
-
-                    this._resizeHandle();
-                    this._positionHandle();
-                }
-            }
-            else
-            {
-                this.track.style.display = 'none';
-            }
-        }
-
-        /**
-         * Checks if native scroll is enabled.
-         *
-         * @returns {Boolean}
-         */
-        isNative()
-        {
-            return !this.scrollbarWidth;
-        }
-
-        // PRIVATE API
-        /*****************************************/
-        /**
-         * Sets up elements.
-         *
-         * @private
-         */
-        _setupElements()
-        {
-            var elements = this.opts.elements;
-
-            this.area = this.el.querySelector(elements.area);
-            this.wrapper = this.el.querySelector(elements.wrapper);
-            this.handle = this.el.querySelector(elements.handle);
-            this.track = this.el.querySelector(elements.track);
-        }
-
-        /**
-         * Observes when element is hovered and toggles corresponding class.
-         *
-         * @param {HTMLElement} element
-         * @private
-         */
-        _observeHover(element)
-        {
-            var cls = this.opts.stateClasses.hover;
-
-            this._addListener(element, 'mouseenter', function()
-            {
-                add_class(element, cls);
-            });
-            this._addListener(element, 'mouseleave', function()
-            {
-                remove_class(element, cls);
-            });
-        }
-
-        /**
-         * Enables scroll by overflowing native scrollbar and starting to listen to `scroll` event.
-         *
-         * @private
-         */
-        _enableScroll()
-        {
-            this._addListener(this.wrapper, 'scroll', bind(this._positionHandle, this));
-        }
-
-        /**
-         * Enables handle's dragging along the track.
-         *
-         * @private
-         */
-        _enableDragging()
-        {
-            var cls = this.opts.stateClasses.dragging,
-                initialPosition = null,
-                initialTop = null,
-                startDragging,
-                stopDragging;
-
-            this._addListener(this.handle, 'mousedown', bind(function(e)
-            {
-                initialPosition = this.wrapper.scrollTop;
-                initialTop = e.clientY;
-
-                this._addListener(document, 'mousemove', startDragging);
-                this._addListener(document, 'mouseup', stopDragging);
-            }, this));
-
-            startDragging = bind(function(e)
-            {
-                var newPosition,
-                    wrapperHeight,
-                    wrapperInnerHeight;
-
-                if (initialTop !== null)
-                {
-                    newPosition = Math.round(initialPosition + (e.clientY - initialTop) / this.ratio);
-
-                    wrapperHeight = this.wrapper.offsetHeight;
-                    wrapperInnerHeight = this.wrapper.scrollHeight;
-
-                    if (newPosition + wrapperHeight > wrapperInnerHeight)
-                    {
-                        newPosition = wrapperInnerHeight - wrapperHeight;
-                    }
-
-                    this.wrapper.scrollTop = newPosition;
-                    this._positionHandle();
-
-                    add_class(document.body, cls);
-                    add_class(this.area, cls);
-                }
-            }, this);
-
-            stopDragging = bind(function()
-            {
-                initialTop = null;
-                initialPosition = null;
-
-                remove_class(document.body, cls);
-                remove_class(this.area, cls);
-
-                this._removeListener(document, 'mousemove', startDragging);
-                this._removeListener(document, 'mouseup', stopDragging);
-            }, this);
-        }
-
-        /**
-         * Enables track.
-         *
-         * @private
-         */
-        _enableTrack()
-        {
-            this.wrapper.style.overflowY = 'scroll';
-            this.wrapper.style.marginRight = -1 * this.scrollbarWidth + 'px';
-        }
-
-        /**
-         * Allows native scrolling by making sure that div is scrollable.
-         *
-         * @private
-         */
-        _allowNativeScroll()
-        {
-            this.wrapper.style.overflowY = 'auto';
-        }
-
-        /**
-         * Resizes handle by adjusting its `height`.
-         *
-         * @private
-         */
-        _resizeHandle()
-        {
-            this.handle.style.height = Math.ceil(this.ratio * this.track.offsetHeight) + 'px';
-        }
-
-        /**
-         * Positions handle by adjusting its `top` position.
-         *
-         * @private
-         */
-        _positionHandle()
-        {
-            var wrapperTop = this.wrapper.scrollTop,
-                top;
-
-            if (wrapperTop + this.wrapper.offsetHeight < this.wrapper.scrollHeight)
-            {
-                top = Math.ceil(this.ratio * this.wrapper.scrollTop);
-            }
-            else
-            {
-                // if scroll position has reached the end, force scrollbar to track's end
-                top = this.track.offsetHeight - this.handle.offsetHeight;
-            }
-
-            this.handle.style.top = top + 'px';
-        }
-
-        /**
-         * Adds event listener and keeps track of it.
-         *
-         * @param {HTMLElement} element
-         * @param {String}      eventName
-         * @param {Function}    handler
-         * @private
-         */
-        _addListener(element, eventName, handler)
-        {
-            var events = this._events;
-
-            if (!events)
-            {
-                this._events = events = {};
-            }
-            if (!events[eventName])
-            {
-                events[eventName] = [];
-            }
-
-            events[eventName].push(
-            {
-                element: element,
-                handler: handler
-            });
-
-            addEventListener.apply(null, arguments);
-        }
-
-        /**
-         * Removes event listener.
-         *
-         * @param {HTMLElement} element
-         * @param {String}      eventName
-         * @param {Function}    handler
-         * @private
-         */
-        _removeListener(element, eventName, handler)
-        {
-            var event = this._events[eventName],
-                index,
-                total;
-
-            for (index = 0, total = event.length; index < total; index++)
-            {
-                if (event[index].handler === handler)
-                {
-                    event.splice(index, 1);
-                    removeEventListener.apply(null, arguments);
-                    break;
-                }
-            }
-        }
-
-        /**
-         * Removes all event listeners.
-         *
-         * @private
-         */
-        _removeAllListeners()
-        {
-            var events = this._events,
-                eventName,
-                event,
-                iter,
-                total;
-
-            for (eventName in events)
-            {
-                event = events[eventName];
-
-                for (iter = 0, total = event.length; iter < total; iter++)
-                {
-                    removeEventListener(event[iter].element, eventName, event[iter].handler);
-                }
-            }
-
-            delete this._events;
-        }
-    }
-
-    // HELPER FUNCTIONS
-    /*****************************************/
-    function bind(fn, context)
-    {
-        return function()
-        {
-            fn.apply(context, arguments);
-        };
-    }
-
-    function extend()
-    {
-        var iter;
-        for (iter = 1; iter < arguments.length; iter++)
-        {
-            var key;
-            for (key in arguments[iter])
-            {
-                if (arguments[iter].hasOwnProperty(key))
-                {
-                    arguments[0][key] = arguments[iter][key];
-                }
-            }
-        }
-        return arguments[0];
-    }
-
-    function addEventListener(el, eventName, handler)
-    {
-        if (el.addEventListener)
-        {
-            el.addEventListener(eventName, handler);
-        }
-        else
-        {
-            el.attachEvent("on" + eventName, handler);
-        }
-    }
-
-    function removeEventListener(el, eventName, handler)
-    {
-        if (el.removeEventListener)
-        {
-            el.removeEventListener(eventName, handler);
-        }
-        else
-        {
-            el.detachEvent("on" + eventName, handler);
-        }
-    }
-
-    function add_class(el, className)
-    {
-        if (el.classList)
-        {
-            el.classList.add(className);
-        }
-        else
-        {
-            el.className += " " + className;
-        }
-    }
-
-    function remove_class(el, className)
-    {
-        if (el.classList)
-        {
-            el.classList.remove(className);
-        }
-        else
-        {
-            el.className = el.className.replace(new RegExp("(^|\\b)" + className.split(" ").join("|") + "(\\b|$)", "gi"), " ");
-        }
-    }
-
-    function getScrollbarWidth()
-    {
-        var wrapper = document.createElement("div"),
-            content = document.createElement("div"),
-            width;
-        wrapper.style.position = "absolute";
-        wrapper.style.top = "-50px";
-        wrapper.style.height = "50px";
-        wrapper.style.overflow = "scroll";
-        wrapper.appendChild(content);
-        document.body.appendChild(wrapper);
-        width = wrapper.offsetWidth - content.offsetWidth;
-        document.body.removeChild(wrapper);
-        return width;
-    }
-
-    Container.set('_ScrollbarHandler', _ScrollbarHandler);
-
-})();
-
 (function()
 {
     /**
-     * Helper instance
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
 
     /**
-     * Custom Scrollbars
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     * Helper functions
+     * 
+     * @var {Function}
      */
-    class ScrollBars
-    {
-
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
-        {
-            this._nodes = [];
-            this._handlers = [];
-
-            // Find nodes
-            this._nodes = Helper.$All('.js-custom-scroll');
-
-            // Bind DOM listeners
-            if (!Helper.is_empty(this._nodes))
-            {
-                for (var i = 0; i < this._nodes.length; i++)
-                {
-                    this._invoke(this._nodes[i]);
-                }
-            }
-
-            return this;
-        }
-
-        /**
-         * Module destructor - removes handler
-         *
-         * @access {public}
-         */
-        desctruct()
-        {
-            for (var i = 0; i < this._handlers.length; i++)
-            {
-                this._handlers[i].destroy();
-            }
-
-            this._nodes = [];
-            this._handlers = [];
-        }
-
-        /**
-         * Create the necessary nodes for the scroller to work.
-         * Also check if the element has overflow
-         *
-         * @params {el} node
-         * @access {private}
-         */
-        _invoke(el)
-        {
-            if (Helper.has_class(el, 'js-auto-scroll-invoked'))
-            {
-                var handler = Container.get('_ScrollbarHandler', el);
-                this._handlers.push(handler);
-                return;
-            }
-
-            var needsScroller = this._needsScroller(el);
-            if (!needsScroller) return;
-
-            var insertAfter = false;
-            var parent = el.parentNode;
-            var children = Helper.first_children(el);
-            if (el.nextSibling) insertAfter = el.nextSibling;
-
-            var scrollArea = document.createElement('DIV');
-            var scrollWrap = document.createElement('DIV');
-            var scrollTrack = document.createElement('DIV');
-            var scrollHandle = document.createElement('DIV');
-
-            scrollArea.className = 'scrollbar-area';
-            scrollWrap.className = 'scrollbar-wrapper';
-            scrollTrack.className = 'scrollbar-track';
-            scrollHandle.className = 'scrollbar-handle';
-
-            scrollArea.appendChild(scrollWrap);
-            for (var i = 0; i < children.length; i++)
-            {
-                scrollWrap.appendChild(children[i]);
-            }
-            scrollWrap.appendChild(scrollTrack);
-            scrollTrack.appendChild(scrollHandle);
-            el.appendChild(scrollArea);
-            var handler = Container.get('_ScrollbarHandler', el);
-            this._handlers.push(handler);
-            Helper.add_class(el, 'js-auto-scroll-invoked');
-        }
-
-        /**
-         * Check if an element needs to be scrolled or not.
-         *
-         * @params {el} node
-         * @access {private}
-         * @return {boolean}
-         */
-        _needsScroller(el)
-        {
-            var computedStyle = window.getComputedStyle(el);
-
-            // Is the element hidden?
-            var isHidden = el.offsetParent === null;
-            var hiddenEl = false;
-            var inlineDisplay = false;
-            var needsScroller = false;
-
-            if (isHidden)
-            {
-                if (computedStyle.display === 'none')
-                {
-                    hiddenEl = el;
-                }
-                else
-                {
-                    var parent = el;
-                    while (parent !== document.body)
-                    {
-                        parent = parent.parentNode;
-                        var parentStyle = window.getComputedStyle(parent);
-
-                        if (parentStyle.display === 'none')
-                        {
-                            hiddenEl = parent
-
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Make visible
-            if (hiddenEl)
-            {
-                inlineDisplay = hiddenEl.style.display;
-                hiddenEl.style.display = 'block';
-            }
-            var endHeight = el.scrollHeight - parseInt(computedStyle.paddingTop) - parseInt(computedStyle.paddingBottom) + parseInt(computedStyle.borderTop) + parseInt(computedStyle.borderBottom);
-            endHeight = parseInt(endHeight);
-            if (endHeight > el.offsetHeight)
-            {
-                needsScroller = true;
-                el.style.height = el.offsetHeight + 'px';
-            }
-            // Make invisible
-            if (hiddenEl)
-            {
-                if (inlineDisplay)
-                {
-                    hiddenEl.style.display = inlineDisplay;
-                }
-                else
-                {
-                    hiddenEl.style.removeProperty('display');
-                }
-            }
-
-            return needsScroller;
-        }
-
-        /**
-         * Refresh the scroll position
-         *
-         * This can be usefull if you have custom scrollbars
-         * on an element but change it's height (e.g responsive or add/remove children)
-         *
-         * @params {elem} node
-         * @access {public}
-         * @example {Container.get('ScrollBars').refresh(node)} // Node = $.('.js-custom-scroll');
-         */
-        refresh(elem)
-        {
-            for (var i = 0; i < this._handlers.length; i++)
-            {
-                var handler = this._handlers[i];
-
-                if (handler.el === elem) handler.refresh();
-            }
-        }
-
-        /**
-         * Destroy a handler by dom node .js-custom-scroll
-         *
-         * @params {elem} node
-         * @access {public}
-         */
-        destroy(elem)
-        {
-            var i = this._handlers.length;
-
-            while (i--)
-            {
-                var handler = this._handlers[i];
-                if (handler.el === elem) handler.destroy();
-                this._handlers.splice(i, 1);
-            }
-        }
-
-        /**
-         * Get a handler by dom node .js-custom-scroll
-         *
-         * @params {elem} node
-         * @access {public}
-         * @return {mixed}
-         */
-        getHandler(elem)
-        {
-            for (var i = 0; i < this._handlers.length; i++)
-            {
-                var handler = this._handlers[i];
-
-                if (handler.el === elem) return handler;
-            }
-        }
-    }
-
-    // Load into Hubble DOM core
-    Hubble.dom().register('Scrollbars', ScrollBars);
-
-})();
-
-(function()
-{
-    const [$, $All, addEventListener, animate, bool, has_class, is_node_type, removeEventListener, toggle_class, trigger_event] = Container.import(['$','$All','addEventListener','animate','bool','has_class','is_node_type','removeEventListener','toggle_class','trigger_event']).from('Helper');
+    const [$, add_event_listener, animate, bool, has_class, is_node_type, remove_event_listener, toggle_class, trigger_event, extend] = Container.import(['$','add_event_listener','animate','bool','has_class','is_node_type','remove_event_listener','toggle_class','trigger_event','extend']).from('_');
 
     /**
      * Toggle height on click
@@ -12819,107 +12506,89 @@ function abort()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Collapse
+    const Collapse = function()
+    {        
+        this.super('.js-collapse');
+    }
+
+    /**
+     * Event binder - Binds all events on button click
+     *
+     * @access {private}
+     */
+    Collapse.prototype.bind = function(node)
     {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor()
+        add_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Event unbinder - Removes all events on button click
+     *
+     * @access {private}
+     */
+    Collapse.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Handle the click event
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    Collapse.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        if (is_node_type(this, 'a'))
         {
-            /**
-             * Array of click-triggers
-             * 
-             * @var {array}
-             */
-            this._nodes = $All('.js-collapse');
-
-            this._bind();
-
-            return this;
+            e.preventDefault();
         }
 
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         */
-        destruct()
+        var clicked  = this;
+        var targetEl = $('#' + clicked.dataset.collapseTarget);
+        var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
+        var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
+        var opacity  = bool(clicked.dataset.withOpacity);
+        var closing  = has_class(clicked, 'active');
+
+        trigger_event(targetEl, 'collapse:toggle', closing ? 'close' : 'open');
+
+        var options  = 
         {
-            this._unbind();
+            property: 'height',
+            to: closing ? '0px' : 'auto',
+            from: closing ? 'auto' : '0px',
+            duration: duration, 
+            easing: easing,
+            callback: () => { trigger_event(targetEl, 'collapse:toggled', closing ? 'close' : 'open'); }
+        };
 
-            this._nodes = [];
-        }
-
-        /**
-         * Event binder - Binds all events on button click
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            addEventListener(this._nodes, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event unbinder - Removes all events on button click
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            removeEventListener(this._nodes, 'click', this._eventHandler);
-        }
-
-        /**
-         * Handle the click event
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-
-            if (is_node_type(this, 'a'))
-            {
-                e.preventDefault();
-            }
-
-            var clicked  = this;
-            var targetEl = $('#' + clicked.dataset.collapseTarget);
-            var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
-            var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
-            var opacity  = bool(clicked.dataset.withOpacity);
-            var closing  = has_class(clicked, 'active');
-
-            trigger_event(targetEl, 'collapse:toggle', closing ? 'close' : 'open');
-
-            var options  = 
-            {
-                property: 'height',
-                to: closing ? '0px' : 'auto',
-                from: closing ? 'auto' : '0px',
-                duration: duration, 
-                easing: easing,
-                callback: () => { trigger_event(targetEl, 'collapse:toggled', closing ? 'close' : 'open'); }
-            };
-
-            animate(targetEl, options);
-            toggle_class(clicked, 'active');
-        }
+        animate(targetEl, options);
+        toggle_class(clicked, 'active');
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('Collapse', Collapse);
+    Hubble.dom().register('Collapse', extend(Component, Collapse));
 
 }());
 
 (function()
 {
-    const [$, $All, addEventListener, removeEventListener, has_class, add_class, remove_class, closest, trigger_event] = Container.import(['$', '$All', 'addEventListener', 'removeEventListener', 'has_class', 'add_class', 'remove_class', 'closest', 'trigger_event']).from('Helper');
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, add_event_listener, remove_event_listener, has_class, add_class, remove_class, closest, trigger_event, extend] = Container.import(['$','add_event_listener','remove_event_listener','has_class','add_class','remove_class','closest','trigger_event','extend']).from('_');
 
     /**
      * Toggle active on lists
@@ -12928,95 +12597,70 @@ function abort()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Lists
+    const Lists = function()
+    { 
+        this.super('.js-select-list > li');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Lists.prototype.bind = function(node)
+    {            
+        add_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Lists.prototype.unbind = function(node)
     {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor(context)
-        {
-            /**
-             * Array of click-triggers
-             * 
-             * @var {array}
-             */
-            this._nodes = $All('.js-select-list > li');
+        remove_event_listener(node, 'click', this._eventHandler);
+    }
 
-            this._bind();
+    /**
+     * Handle the click event
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    Lists.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+        
+        if (has_class(this, 'selected')) return;
 
-            return this;
-        }
+        var list = closest(this, '.js-select-list');
 
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         */
-        destruct(context)
-        {
-            this._unbind();
+        remove_class($('li.selected', list), 'selected');
+        
+        add_class(this, 'selected');
 
-            this._nodes = [];
-        }
-
-        /**
-         * Event binder - Binds all events on button click
-         *
-         * @access {private}
-         */
-        _bind()
-        {            
-            addEventListener(this._nodes, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event unbinder - Removes all events on button click
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            removeEventListener(this._nodes, 'click', this._eventHandler);
-        }
-
-        /**
-         * Handle the click event
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-            
-            if (has_class(this, 'selected')) return;
-
-            var list = closest(this, '.js-select-list');
-
-            remove_class($('li.selected', list), 'selected');
-            
-            add_class(this, 'selected');
-
-            trigger_event(list, 'list:selected', {item: this});
-        }
+        trigger_event(list, 'list:selected', {item: this});
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('Lists', Lists);
+    Hubble.dom().register('Lists', extend(Component, Lists));
 
 }());
 
 (function()
 {
     /**
-     * JS Helper reference
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, $All, each, add_class, add_event_listener, closest, has_class, hide_aria, remove_class, remove_event_listener, show_aria, extend] = Container.import(['$','$All','each','add_class','add_event_listener','closest','has_class','hide_aria','remove_class','remove_event_listener','show_aria','extend']).from('_');
 
     /**
      * Dropdown Buttons
@@ -13025,165 +12669,128 @@ function abort()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class DropDowns
+    const DropDowns = function()
     {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         */
-        constructor()
-        {            
-            this._triggers = Helper.$All('.js-drop-trigger');
+        this.super('.js-drop-trigger');
 
-            if (!Helper.is_empty(this._triggers))
-            {
-                this._bind();
-            }
-        }
+        this.boundWindow = false;
+    }
  
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         */
-        destruct()
+    /**
+     * Bind click listener to containers
+     *
+     * @access {private}
+     */
+    DropDowns.prototype.bind = function(node)
+    {
+        add_event_listener(node, 'click', this._clickHandler, this);
+
+        if (!this.boundWindow)
         {
-            this._unbind();
-            
-            this._triggers = [];
-        }
+            add_event_listener(window, 'click', this._windowClick, this);
 
-        /**
-         * Bind click listener to containers
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._triggers, 'click', this._clickHandler);
-
-            Helper.addEventListener(window, 'click', this._windowClick);
-        }
-
-        /**
-         * Unbind listener to containers
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._triggers, 'click', this._clickHandler);
-
-            Helper.removeEventListener(window, 'click', this._windowClick);
-        }
-
-        /**
-         * Click event handler
-         *
-         * @param  {event|null} e JavaScript Click event
-         * @access {private}
-         */
-        _clickHandler(e)
-        {
-            e = e || window.event;
-            e.preventDefault();
-
-            var button = this;
-            var _this = Container.get('DropDowns');
-
-            // Hide all dropdowns except this
-            _this._hideDropDowns(button);
-
-            // Remove active and return
-            if (Helper.has_class(button, 'active'))
-            {
-                _this._hideDrop(button);
-            }
-            else
-            {
-                _this._showDrop(button);
-            }
-        }
-
-        /**
-         * Click event handler
-         *
-         * @param  {event|null} e JavaScript Click event
-         * @access {private}
-         */
-        _hideDrop(button)
-        {
-            var drop = Helper.$('.drop-menu', button.parentNode);
-            Helper.remove_class(button, 'active');
-            button.setAttribute('aria-pressed', 'false');
-            Helper.hide_aria(drop);
-            drop.blur();
-        }
-
-        /**
-         * Click event handler
-         *
-         * @param  {event|null} e JavaScript Click event
-         * @access {private}
-         */
-        _showDrop(button)
-        {
-            var drop = Helper.$('.drop-menu', button.parentNode);
-            Helper.add_class(button, 'active');
-            button.setAttribute('aria-pressed', 'true');
-            Helper.show_aria(drop);
-            drop.focus();
-        }
-
-        /**
-         * Window click event
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _windowClick(e)
-        {
-            e = e || window.event;
-            if (Helper.closest(e.target, '.js-drop-trigger'))
-            {
-                return;
-            }
-            if (!Helper.has_class(e.target, 'js-drop-trigger'))
-            {
-                var _this = Container.get('DropDowns');
-
-                _this._hideDropDowns();
-            }
-        }
-
-        /**
-         * Hide all dropdowns
-         *
-         * @param {exception} (optional) Button to skip
-         * @access {private}
-         */
-        _hideDropDowns(exception)
-        {
-            var dropTriggers = Helper.$All('.js-drop-trigger');
-            var exception = (typeof exception === 'undefined' ? false : exception);
-
-            for (var i = 0; i < dropTriggers.length; i++)
-            {
-                var node = dropTriggers[i];
-
-                if (node === exception)
-                {
-                    continue;
-                }
-
-                this._hideDrop(node);
-            }
+            this.boundWindow = true;
         }
     }
 
+    /**
+     * Unbind listener to containers
+     *
+     * @access {private}
+     */
+    DropDowns.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'click', this._clickHandler, this);
+
+        if (this.boundWindow)
+        {
+            remove_event_listener(window, 'click', this._windowClick, this);
+
+            this.boundWindow = false;
+        }
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param  {event|null} e JavaScript Click event
+     * @access {private}
+     */
+    DropDowns.prototype._clickHandler = function(e, button)
+    {
+        e = e || window.event;
+
+        var active = $('.js-drop-trigger.drop-active');
+
+        if (active) this._hideDrop(active);
+
+        // Remove active and return
+        if (active !== button)
+        {
+            this._showDrop(button);
+        }
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param  {event|null} e JavaScript Click event
+     * @access {private}
+     */
+    DropDowns.prototype._hideDrop = function(button)
+    {
+        var drop = $('.drop-menu', button.parentNode);
+        
+        remove_class(button, ['active', 'drop-active']);
+        
+        button.setAttribute('aria-pressed', 'false');
+        
+        hide_aria(drop);
+        
+        drop.blur();
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param  {event|null} e JavaScript Click event
+     * @access {private}
+     */
+    DropDowns.prototype._showDrop = function(button)
+    {
+        var drop = $('.drop-menu', button.parentNode);
+        
+        add_class(button, ['active', 'drop-active']);
+        
+        button.setAttribute('aria-pressed', 'true');
+        
+        show_aria(drop);
+        
+        drop.focus();
+    }
+
+    /**
+     * Window click event
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    DropDowns.prototype._windowClick = function(e)
+    {
+        e = e || window.event;
+
+        if (closest(e.target, '.js-drop-trigger'))
+        {
+            return;
+        }
+
+        var active = $('.js-drop-trigger.drop-active');
+
+        if (active) this._hideDrop(active);
+    }
+
     // Load into Hubble DOM core
-    Hubble.dom().register('DropDowns', DropDowns);
+    Hubble.dom().register('DropDowns', extend(Component, DropDowns));
 
 })();
 
@@ -13196,20 +12803,12 @@ function abort()
      */
     const [Component] = Container.get('Component');
 
-
-    var foo = function(){
-
-        return this;
-    };
-
-    console.log(Container.Helper().extend(foo, Component));
-
     /**
-     * Helper instance
+     * Helper functions
      * 
-     * @var {object}
+     * @var {Function}
      */
-    const Helper = Container.Helper();
+    const [$, add_class, add_event_listener, closest, closest_class, has_class, is_empty, remove_class, remove_event_listener, extend] = Container.import(['$','add_class','add_event_listener','closest','closest_class','has_class','is_empty','remove_class','remove_event_listener','extend']).from('_');
 
     /**
      * Tab Nav
@@ -13218,338 +12817,78 @@ function abort()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class TabNav
+    const TabNav = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
+        this.super('.js-tab-nav > li > *, .js-tab-nav > *:not(li)');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    TabNav.prototype.bind = function(node)
+    {            
+        add_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Unbind click events on all <a> tags in a .js-tab-nav
+     *
+     * @params {navWrap} node
+     * @access {private}
+     */
+    TabNav.prototype.unbind = function(node)
+    {            
+        remove_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    TabNav.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        e.preventDefault();
+
+        var _this = Container.get('TabNav');
+        
+        var node = this;
+
+        if (has_class(node, 'active')) return;
+        
+        var tab           = node.dataset.tab;
+        var tabNav        = closest(node, '.js-tab-nav');
+
+        var tabPane       = $('[data-tab-panel="' + tab + '"]');
+        var tabPanel      = closest_class(tabPane, '.js-tab-panels-wrap');
+        var activePanel   = $('.tab-panel.active', tabPanel);
+
+        var navWrap       = closest_class(node, 'js-tab-nav');
+        var activeNav     = $('.active', navWrap);
+        var activeClass   = navWrap.dataset.activeClass;
+        var activeClasses = ['active'];
+
+        if (!is_empty(activeClass))
         {
-            // Find nodes
-            this._nodes = Helper.$All('.js-tab-nav');
-
-            // If nothing to do destruct straight away
-            if (!Helper.is_empty(this._nodes))
-            {
-                for (var i = 0; i < this._nodes.length; i++)
-                {
-                    this._bindDOMListeners(this._nodes[i]);
-                }
-            }
-
-            return this;
-        };
-
-        /**
-         * Module destructor - unbinds click events
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            for (var i = 0; i < this._nodes.length; i++)
-            {
-                this._unbindDOMListeners(this._nodes[i]);
-            }
-
-            this._nodes = [];
+            activeClasses.push(activeClass);
         }
 
-        /**
-         * Bind click events on all <a> tags in a .js-tab-nav
-         *
-         * @params {navWrap} node
-         * @access {private}
-         */
-        _bindDOMListeners(navWrap)
-        {
-            var links = Helper.$All('> li > *, > *:not(li)', navWrap);
-            
-            Helper.addEventListener(links, 'click', this._eventHandler);
-        }
+        remove_class(activeNav, activeClasses);
+        remove_class(activePanel, activeClasses);
 
-        /**
-         * Unbind click events on all <a> tags in a .js-tab-nav
-         *
-         * @params {navWrap} node
-         * @access {private}
-         */
-        _unbindDOMListeners(navWrap)
-        {
-            var links = Helper.$All('> li > *, > *:not(li)', navWrap);
-            
-            Helper.removeEventListener(links, 'click', this._eventHandler);
-        }
-
-        /**
-         * Click event handler
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-            e.preventDefault();
-
-            var _this = Container.get('TabNav');
-            
-            var node = this;
-
-            if (Helper.has_class(node, 'active')) return;
-            
-            var tab           = node.dataset.tab;
-            var tabNav        = Helper.closest(node, '.js-tab-nav');
-
-            var tabPane       = Helper.$('[data-tab-panel="' + tab + '"]');
-            var tabPanel      = Helper.closest_class(tabPane, '.js-tab-panels-wrap');
-            var activePanel   = Helper.$('.tab-panel.active', tabPanel);
-
-            var navWrap       = Helper.closest_class(node, 'js-tab-nav');
-            var activeNav     = Helper.$('.active', navWrap);
-            var activeClass   = navWrap.dataset.activeClass;
-            var activeClasses = ['active'];
-
-            if (!Helper.is_empty(activeClass))
-            {
-                activeClasses.push(activeClass);
-            }
-
-            Helper.remove_class(activeNav, activeClasses);
-            Helper.remove_class(activePanel, activeClasses);
-
-            Helper.add_class(node, activeClasses);
-            Helper.add_class(tabPane, activeClasses);
-            
-        }
+        add_class(node, activeClasses);
+        add_class(tabPane, activeClasses);
+        
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('TabNav', TabNav);
+    Hubble.dom().register('TabNav', extend(Component, TabNav));
 
 })();
-/**
- * Modal
- *
- * The Modal class is a utility class used to
- * display a Backdrop.
- *
- */
-(function()
-{
-    /**
-     * @var {obj}
-     */
-    const _ = Container.Helper();
-    
-
-})();
-
-(function()
-{
-    /**
-     * JS Helper
-     * 
-     * @var {obj}
-     */
-    const Helper = Container.Helper();
-
-    /**
-     * Show/hide sidebar overlay timer
-     * 
-     * @var {setTimeout}
-     */
-    var overleyTimer;
-
-    /**
-     * Show/hide sidebar el timer
-     * 
-     * @var {setTimeout}
-     */
-    var toggleTimer;
-
-    /**
-     * Last scroll y on page
-     * 
-     * @var {int}
-     */
-    var lastScrollY;
-
-    /**
-     * Drawer
-     * 
-     */
-    class Drawer
-    {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         {*} @return this
-         */
-    	constructor()
-        {
-            this._openTriggers = Helper.$All('.js-open-drawer-trigger');
-            this._closeTriggers = Helper.$All('.js-close-drawer-trigger');
-            this._drawerEl = Helper.$('.js-drawer');
-            this._overlayEl = Helper.$('.js-drawer-overlay');
-
-            if (Helper.in_dom(this._drawerEl))
-            {
-                this._bind();
-            }
-
-            return this;
-        }
-
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
-        }
-
-        /**
-         * Bind event listeners
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            this._drawerWidth = Helper.rendered_style(this._drawerEl, 'max-width');
-
-            Helper.addEventListener(this._openTriggers, 'click', this.open);
-
-            Helper.addEventListener(this._closeTriggers, 'click', this.close);
-
-            //Helper.addEventListener(this._overlayEl, 'click', this.close);
-        }
-
-        /**
-         * Unbind event listeners
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._openTriggers, 'click', this.open);
-
-            Helper.removeEventListener(this._closeTriggers, 'click', this.close);
-
-            //Helper.removeEventListener(this._overlayEl, 'click', this.close);
-        }
-
-        /**
-         * Handle show sidebar
-         *
-         * @access {private}
-         * @param  {event|null} e Button click even
-         */
-        open(e)
-        {
-            e = e || window.event;
-
-            if (e && e.target && Helper.is_node_type(e.target, 'a'))
-            {
-                e.preventDefault();
-            }
-
-            lastScrollY = document.documentElement.scrollTop || document.body.scrollTop;
-
-            clearTimeout(overleyTimer);
-            clearTimeout(toggleTimer);
-
-            var _this = Container.Drawer();
-
-            // Overlay
-            Helper.css(_this._overlayEl, 'visibility', 'visible');
-            Helper.animate(_this._overlayEl, 'opacity', 0, 1, 200, 'easeOutCubic');
-            Helper.show_aria(_this._overlayEl);
-
-            // Sidebar
-            Helper.css(_this._drawerEl, 'visibility', 'visible');
-            if (Helper.has_class(_this._drawerEl, 'drawer-right'))
-            {
-                Helper.animate(_this._drawerEl, 'transform', 'translateX('+ _this._drawerWidth + ')', 'translateX(0)', 200, 'easeOutCubic');
-            }
-            else
-            {
-                Helper.animate(_this._drawerEl, 'transform', 'translateX(-' + _this._drawerWidth +')', 'translateX(0)', 200, 'easeOutCubic');
-            }
-
-            Helper.add_class(document.body, 'no-scroll');
-            Helper.show_aria(_this._drawerEl);
-            Helper.add_class(_this._drawerEl, 'active');
-            _this._drawerEl.focus();
-        }
-
-        /**
-         * Handle hide sidebar
-         *
-         * @access {public}
-         * @param  {event|null} e Button click even
-         */
-        close(e)
-        {
-            e = e || window.event;
-
-            if (e && e.target && Helper.is_node_type(e.target, 'a'))
-            {
-                e.preventDefault();
-            }
-
-            clearTimeout(overleyTimer);
-            clearTimeout(toggleTimer);
-
-            var _this = Container.Drawer();
-
-            // Overlay
-            Helper.animate(_this._overlayEl, 'opacity', 1, 0, 200, 'easeOutCubic');
-            overleyTimer = setTimeout(function()
-            {
-                Helper.css(_this._overlayEl, 'visibility', 'hidden');
-
-            }, 250);
-            Helper.hide_aria(_this._overlayEl);
-
-            // Sidebar
-            if (Helper.has_class(_this._drawerEl, 'drawer-right'))
-            {
-                Helper.animate(_this._drawerEl, 'transform', 'translateX(0)', 'translateX(' + _this._drawerWidth + ')', 200, 'easeOutCubic');
-            }
-            else
-            {
-                Helper.animate(_this._drawerEl, 'transform', 'translateX(0)', 'translateX(-' + _this._drawerWidth + ')', 200, 'easeOutCubic');
-            }
-
-            toggleTimer = setTimeout(function()
-            {
-                Helper.css(_this._drawerEl, 'visibility', 'hidden');
-                
-            }, 250);
-
-            Helper.remove_class(document.body, 'no-scroll');
-            Helper.hide_aria(_this._drawerEl);
-            _this._drawerEl.blur();
-
-            if (lastScrollY)
-            {
-                window.scrollTo(0, lastScrollY);
-            }
-        }
-    }
-
-    // Register as DOM Module and invoke
-    Hubble.dom().register('Drawer', Drawer, true);
-
-}());
 (function()
 {
     /**
@@ -13557,455 +12896,7 @@ function abort()
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
-
-    /**
-     * Popover Handler
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class _popHandler
-    {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor(options)
-        {
-            this.trigger = options.target;
-            this.options = options;
-            this.el = this.buildPopEl();
-            this.el.className = options.classes;
-            this.animation = false;
-
-            if (options.animation === 'pop')
-            {
-                this.animation = 'popover-pop';
-            }
-            else if (options.animation === 'fade')
-            {
-                this.animation = 'popover-fade';
-            }
-
-            this.render = function()
-            {
-                document.body.appendChild(this.el);
-                this.stylePop();
-                this.el.classList.add(this.animation);
-            }
-            return this;
-        }
-
-        /**
-         * Build the popover
-         *
-         * @access {private}
-         */
-        buildPopEl()
-        {
-            var pop = document.createElement('div');
-            
-            pop.className = this.options.classes;
-
-            if (typeof this.options.template === 'string')
-            {
-                pop.innerHTML = this.options.template;
-            }
-            else
-            {
-                pop.appendChild(this.options.template);
-            }
-            return pop;
-        }
-
-        /**
-         * Remove the popover
-         *
-         * @access {public}
-         */
-        remove()
-        {
-            if (Helper.in_dom(this.el)) this.el.parentNode.removeChild(this.el);
-        }
-
-        /**
-         * Position the popover
-         *
-         * @access {public}
-         */
-        stylePop()
-        {
-
-            var tarcoordinates = Helper.coordinates(this.options.target);
-
-            if (this.options.direction === 'top')
-            {
-                this.el.style.top = tarcoordinates.top - this.el.scrollHeight + 'px';
-                this.el.style.left = tarcoordinates.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
-                return;
-            }
-            else if (this.options.direction === 'bottom')
-            {
-                this.el.style.top = tarcoordinates.top + this.options.target.offsetHeight + 10 + 'px';
-                this.el.style.left = tarcoordinates.left - (this.el.offsetWidth / 2) + (this.options.target.offsetWidth / 2) + 'px';
-                return;
-            }
-            else if (this.options.direction === 'left')
-            {
-                this.el.style.top = tarcoordinates.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
-                this.el.style.left = tarcoordinates.left - this.el.offsetWidth - 10 + 'px';
-                return;
-            }
-            else if (this.options.direction === 'right')
-            {
-                this.el.style.top = tarcoordinates.top - (this.el.offsetHeight / 2) + (this.options.target.offsetHeight / 2) + 'px';
-                this.el.style.left = tarcoordinates.left + this.options.target.offsetWidth + 10 + 'px';
-                return;
-            }
-        }
-    }
-
-    // Set into container for private use
-    Container.set('_popHandler', _popHandler);
-
-}());
-
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const [$, $All, add_class, addEventListener, closest, has_class, is_empty, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'is_empty', 'remove_class', 'removeEventListener']).from('Helper');
-
-    /**
-     * Popovers
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class Popovers
-    {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor()
-        {
-            this._pops = [];
-
-            this._nodes = [];
-
-            // Find nodes
-            this._nodes = $All('.js-popover');
-
-            // Bind events
-            if (!is_empty(this._nodes))
-            {
-                for (var i = 0; i < this._nodes.length; i++)
-                {
-                    this._bind(this._nodes[i]);
-                }
-
-                this._addWindowClickEvent();
-            }
-
-            return this;
-        }
-
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         * @return {this}
-         */
-        destruct()
-        {
-            if (!is_empty(this._nodes))
-            {
-                for (var i = 0; i < this._nodes.length; i++)
-                {
-                    this._unbind(this._nodes[i]);
-                }
-            }
-
-            this._removeAll();
-
-            this._nodes = [];
-
-            this._pops = [];
-        }
-
-        /**
-         * Unbind event listeners on a trigger
-         *
-         * @param {trigger} node
-         * @access {private}
-         */
-        _unbind(trigger)
-        {
-            var evnt = trigger.dataset.popoverEvent;
-
-            if (evnt === 'click')
-            {
-                removeEventListener(trigger, 'click', this._clickHandler);
-                window.removeEventListener('resize', this._windowResize);
-            }
-            else
-            {
-                removeEventListener(trigger, 'mouseenter', this._hoverOver);
-                removeEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
-            }
-        }
-
-        /**
-         * Initialize the handlers on a trigger
-         *
-         * @access {private}
-         * @param  {DOMElement} trigger Click/hover trigger
-         */
-        _bind(trigger)
-        {
-            var direction = trigger.dataset.popoverDirection;
-            var title = trigger.dataset.popoverTitle;
-            var theme = trigger.dataset.popoverTheme || 'dark';
-            var content = trigger.dataset.popoverContent;
-            var evnt = trigger.dataset.popoverEvent;
-            var animation = trigger.dataset.popoverAnimate || 'pop';
-            var target = trigger.dataset.popoverTarget;
-            var closeBtn = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="glyph-icon glyph-icon-cross3"></span></button>' : '';
-            var pop = '<div class="popover-content"><p>' + content + '</p></div>';
-
-            if (title)
-            {
-                pop = closeBtn + '<h5 class="popover-title">' + title + '</h5>' + pop;
-            }
-
-            if (target)
-            {
-                pop = $('#' + target).cloneNode(true);
-                pop.classList.remove('hidden');
-            }
-
-            var popHandler = Container.get('_popHandler',
-            {
-                target: trigger,
-                direction: direction,
-                template: pop,
-                animation: animation,
-                classes: 'popover ' + direction + ' ' + theme,
-            });
-
-            this._pops.push(popHandler);
-
-            if (evnt === 'click')
-            {
-                addEventListener(trigger, 'click', this._clickHandler);
-
-                window.addEventListener('resize', this._windowResize);
-            }
-            else
-            {                
-                addEventListener(trigger, 'mouseenter', this._hoverOver);
-                addEventListener(trigger, 'mouseleave', this._hoverLeavTimeout);
-            }
-        }
-
-        /**
-         * Timeout handler for hoverleave
-         *
-         * @access {private}
-         */
-        _hoverLeavTimeout(e)
-        {
-            e = e || window.event;
-
-            setTimeout(function()
-            {
-                Container.get('Popovers')._hoverLeave(e);
-                
-            }, 300);
-        }
-
-        /**
-         * Hover over event handler
-         *
-         * @access {private}
-         */
-        _hoverOver()
-        {
-            var trigger = this;
-            var _this = Container.get('Popovers');
-            var popHandler = _this._getHandler(trigger);
-            if (has_class(trigger, 'popped')) return;
-            popHandler.render();
-            add_class(trigger, 'popped');
-        }
-
-        /**
-         * Hover leave event handler
-         *
-         * @access {private}
-         */
-        _hoverLeave(e)
-        {
-            var _this = Container.get('Popovers');
-            var hovers = $All(':hover');
-            for (var i = 0; i < hovers.length; i++)
-            {
-                if (has_class(hovers[i], 'popover'))
-                {
-                    hovers[i].addEventListener('mouseleave', function(_e)
-                    {
-                        _e = _e || window.event;
-                        _this._hoverLeave(_e);
-                    });
-                    return;
-                }
-            }
-
-            _this._removeAll();
-        }
-
-        /**
-         * Window resize event handler
-         *
-         * @access {private}
-         */
-        _windowResize()
-        {
-            var _this = Container.get('Popovers');
-
-            for (var i = 0; i < _this._nodes.length; i++)
-            {
-                if (has_class(_this._nodes[i], 'popped'))
-                {
-                    var popHandler = _this._getHandler(_this._nodes[i]);
-                    popHandler.stylePop();
-                }
-            }
-        }
-
-        /**
-         * Click event handler
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _clickHandler(e)
-        {
-            e = e || window.event;
-            e.preventDefault();
-            var trigger = this;
-            var _this = Container.get('Popovers');
-            var popHandler = _this._getHandler(trigger);
-
-            if (has_class(trigger, 'popped'))
-            {
-                _this._removeAll();
-                popHandler.remove();
-                remove_class(trigger, 'popped');
-            }
-            else
-            {
-                _this._removeAll();
-                popHandler.render();
-                add_class(trigger, 'popped');
-            }
-        }
-
-        /**
-         * Remove all popovers when anything is clicked
-         *
-         * @access {private}
-         */
-        _addWindowClickEvent()
-        {
-            var _this = this;
-
-            window.addEventListener('click', function(e)
-            {
-                e = e || window.event;
-                var clicked = e.target;
-
-                // Clicked the close button
-                if (has_class(clicked, 'js-remove-pop') || closest(clicked, '.js-remove-pop'))
-                {
-                    _this._removeAll();
-
-                    return;
-                }
-
-                // Clicked inside the popover
-                if (has_class(clicked, 'popover') || closest(clicked, '.popover'))
-                {
-                    return;
-                }
-
-                // Clicked a popover trigger
-                if (has_class(clicked, 'js-popover') || closest(clicked, '.js-popover'))
-                {
-                    return;
-                }
-
-                _this._removeAll();
-            });
-        }
-
-        /**
-         * Get the handler for the trigger
-         * 
-         * @access {private}
-         * @param  {DOMElement}    trigger DOM node that triggered event
-         * @return {object|false}
-         */
-        _getHandler(trigger)
-        {
-            for (var i = 0; i < this._pops.length; i++)
-            {
-                if (this._pops[i]['trigger'] === trigger) return this._pops[i];
-            }
-
-            return false;
-        }
-
-        /**
-         * Remove all the popovers currently being displayed
-         *
-         * @access {private}
-         */
-        _removeAll()
-        {
-            for (var i = 0; i < this._pops.length; i++)
-            {
-                this._pops[i].remove();
-
-                remove_class(this._pops[i].options.target, 'popped');
-            }
-        }
-    }
-
-    // Load into Hubble DOM core
-    Hubble.dom().register('Popovers', Popovers);
-
-}());
-
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * Input masker
@@ -14014,67 +12905,59 @@ function abort()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class InputMasks
+    const InputMasks = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         */
-    	constructor()
+        this._nodes = Helper.$All('.js-mask');
+        
+        this._masks = [];
+
+        this._bind();
+
+        return this;
+    }
+
+    /**
+     * Public destructor remove all masks
+     *
+     * @access {public}
+     */
+    InputMasks.prototype.destruct = function()
+    {
+        Helper.each(this._masks, function(i, mask)
         {
-            this._nodes = Helper.$All('.js-mask');
-            
-            this._masks = [];
+            mask.destroy();
+        });
+        
+        this._nodes = [];
 
-            this._bind();
+        this._masks = [];
+    }
 
-            return this;
-        }
-
-        /**
-         * Public destructor remove all masks
-         *
-         * @access {public}
-         */
-        destruct()
+    /**
+     * Find all the nodes and apply any masks
+     *
+     * @access {private}
+     */
+    InputMasks.prototype._bind = function()
+    {
+        // Find all the nodes
+        Helper.each(this._nodes, function(i, input)
         {
-            Helper.each(this._masks, function(i, mask)
+            let mask = Helper.attr(input, 'data-mask');
+
+            let format = Helper.attr(input, 'data-format');
+
+            if (mask && mask.startsWith('regex('))
             {
-                mask.destroy();
-            });
-            
-            this._nodes = [];
+                mask = mask.trim().replace('regex(', '').slice(0, -1);
+            }
 
-            this._masks = [];
-        }
-
-        /**
-         * Find all the nodes and apply any masks
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            // Find all the nodes
-            Helper.each(this._nodes, function(i, input)
+            if (mask)
             {
-                let mask = Helper.attr(input, 'data-mask');
+                this._masks.push(Container.InputMasker(input, mask, format));
+            }
 
-                let format = Helper.attr(input, 'data-format');
-
-                if (mask && mask.startsWith('regex('))
-                {
-                    mask = mask.trim().replace('regex(', '').slice(0, -1);
-                }
-
-                if (mask)
-                {
-                    this._masks.push(Container.InputMasker(input, mask, format));
-                }
-
-            }, this);
-        }
+        }, this);
     }
 
     // Load into Hubble DOM core
@@ -14085,11 +12968,18 @@ function abort()
 (function()
 {
     /**
-     * Helper instance
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {function}
+     */
+    const [add_event_listener, animate_css, closest, has_class, remove_from_dom, remove_event_listener, trigger_event, extend] = Container.import(['add_event_listener','animate_css','closest','has_class','remove_from_dom','remove_event_listener','trigger_event','extend']).from('_');
 
     /**
      * Message closers
@@ -14098,103 +12988,79 @@ function abort()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class MessageClosers
+    const MessageClosers = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-        constructor()
+        this.super('.js-close-msg');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    MessageClosers.prototype.bind = function(node)
+    {
+        add_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    MessageClosers.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Event handler - handles removing the message
+     *
+     * @param  {event}   e JavaScript click event
+     * @access {private}
+     */
+    MessageClosers.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        e.preventDefault();
+
+        let msg      = closest(this, '.msg');
+        let toRemove = msg;
+
+        trigger_event(msg, 'message:close');
+
+        if (has_class(this, 'js-rmv-parent'))
         {
-            this._triggers = Helper.$All('.js-close-msg');
-
-            if (!Helper.is_empty(this._triggers))
-            {
-                this._bind();
-            }
-
-            return this;
+            toRemove = toRemove.parentNode;
         }
 
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @constructor
-         {*} @access public
-         */
-        destruct()
+        animate_css(toRemove, { opacity: 0, duration: 500, easing: 'easeInOutCubic', callback: function()
         {
-            this._unbind();
+            trigger_event(msg, 'message:closed');
 
-            this._triggers = [];
-        }
-
-        /**
-         * Event binder - Binds all events on button click
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._triggers, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event ubinder - Binds all event handlers on button click
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._triggers, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event handler - handles removing the message
-         *
-         * @param  {event}   e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-
-            e.preventDefault();
-
-            let msg      = Helper.closest(this, '.msg');
-            let toRemove = msg;
-
-            Helper.trigger_event(msg, 'message:close');
-
-            if (Helper.has_class(this, 'js-rmv-parent'))
-            {
-                toRemove = toRemove.parentNode;
-            }
-
-            Helper.animate_css(toRemove, { opacity: 0, duration: 500, easing: 'easeInOutCubic', callback: function()
-            {
-                Helper.trigger_event(msg, 'message:closed');
-
-                Helper.remove_from_dom(toRemove);
-            }});
-        }
+            remove_from_dom(toRemove);
+        }});
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('MessageClosers', MessageClosers);
+    Hubble.dom().register('MessageClosers', extend(Component, MessageClosers));
 
 })();
 
 (function()
 {
     /**
-     * Helper instance
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
+    
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, add_event_listener, remove_event_listener, has_class, in_dom, parse_url, extend]  = Container.import(['$','add_event_listener','remove_event_listener','has_class','in_dom','parse_url','extend']).from('_');
 
     /**
      * Has the page loaded?
@@ -14210,120 +13076,106 @@ function abort()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class WayPoints
-    {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
+    const WayPoints = function()
+    {        
+        this.super('.js-waypoint-trigger');
+
+        // Invoke pageload
+        if (!pageLoaded)
         {
-            // Load nodes
-            this._nodes = Helper.$All('.js-waypoint-trigger');
-
-            // bind listeners
-            this._bind();
-
-            // Invoke pageload
-            if (!pageLoaded)
-            {
-                this._invokePageLoad();
-            }
-
-            pageLoaded = true;
-
-            return this;
+            this._invokePageLoad();
         }
 
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
-
-            // Clear Nodes
-            this._nodes = [];
-        }
-
-        /**
-         * Event binder
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event handler
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-            
-            e.preventDefault();
-
-            let trigger   = this;
-            let id        = trigger.dataset.waypointTarget;
-            let speed     = parseInt(trigger.dataset.waypointSpeed) || 500;
-            let easing    = trigger.dataset.waypointEasing || 'easeInOutCubic';
-            let updateUrl = trigger.dataset.updateUrl === 'false' ? false : true;
-
-            Container.SmoothScroll('#' + id, { easing: easing, speed: speed, updateUrl: updateUrl });
-        }
-
-        /**
-         * Scroll to a element with id when the page loads
-         *
-         * @access {private}
-         */
-        _invokePageLoad()
-        {
-            var url = Helper.parse_url(window.location.href);
-
-            let targetEl = url.hash && url.hash !== '' ? Helper.$(url.hash) : false;
-
-            if (!Helper.in_dom(targetEl) || !Helper.has_class(targetEl, '.js-waypoint')) return;
-           
-            let speed  = parseInt(targetEl.dataset.waypointSpeed) || 500;
-            let easing = targetEl.dataset.waypointEasing || 'easeInOutCubic';
-
-            const scroll = function()
-            {
-                Container.SmoothScroll(url.hash, { easing: easing, speed: speed, updateUrl: false });
-
-                window.removeEventListener('Hubble:ready', scroll);
-            }
-
-            window.scrollTo(0, 0);
-
-            window.addEventListener('Hubble:ready', scroll);
-        }
+        pageLoaded = true;
     }
 
+    /**
+     * @inheritdoc
+     * 
+     */
+    WayPoints.prototype.bind = function(node)
+    {
+        add_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    WayPoints.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Event handler
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    WayPoints.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+        
+        e.preventDefault();
+
+        let trigger   = this;
+        let id        = trigger.dataset.waypointTarget;
+        let speed     = parseInt(trigger.dataset.waypointSpeed) || 500;
+        let easing    = trigger.dataset.waypointEasing || 'easeInOutCubic';
+        let updateUrl = trigger.dataset.updateUrl === 'false' ? false : true;
+
+        Container.SmoothScroll('#' + id, { easing: easing, speed: speed, updateUrl: updateUrl });
+    }
+
+    /**
+     * Scroll to a element with id when the page loads
+     *
+     * @access {private}
+     */
+    WayPoints.prototype._invokePageLoad = function()
+    {
+        var url = parse_url(window.location.href);
+
+        let targetEl = url.hash && url.hash !== '' ? $(url.hash) : false;
+
+        if (!in_dom(targetEl) || !has_class(targetEl, '.js-waypoint')) return;
+       
+        let speed  = parseInt(targetEl.dataset.waypointSpeed) || 500;
+        let easing = targetEl.dataset.waypointEasing || 'easeInOutCubic';
+
+        const scroll = function()
+        {
+            Container.SmoothScroll(url.hash, { easing: easing, speed: speed, updateUrl: false });
+
+            remove_event_listener(window, 'Hubble:ready', scroll);
+        }
+
+        window.scrollTo(0, 0);
+
+        add_event_listener(window, 'Hubble:ready', scroll);
+    }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('WayPoints', WayPoints);
+    Hubble.dom().register('WayPoints', extend(Component, WayPoints));
 
 }());
 
 (function()
 {
     /**
-     * JS Helper reference
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {function}
+     */
+    const [$, add_class, add_event_listener, closest, in_dom, input_value, remove_class, remove_event_listener, extend] = Container.import(['$','add_class','add_event_listener','closest','in_dom','input_value','remove_class','remove_event_listener','extend']).from('_');
 
     /**
      * Adds classes to inputs
@@ -14332,1433 +13184,519 @@ function abort()
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Inputs
+    const Inputs = function()
     {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor()
+        this.super('.form-field input:not([type="radio"]):not([type="checkbox"]):not([type="range"]), .form-field select, .form-field textarea, .form-field label');
+
+        return this;
+    }
+
+    /**
+     * Event binder
+     *
+     * @access {private}
+     */
+    Inputs.prototype.bind = function(node)
+    {
+        if (node.tagName.toLowerCase() === 'label')
         {
-            this._inputs = Helper.$All('.form-field input:not([type="radio"]):not([type="checkbox"]):not([type="range"]), .form-field select, .form-field textarea');
-            this._labels = Helper.$All('.form-field label');
+            add_event_listener(node, 'click', this._onLabelClick);
+        }
+        else
+        {
+            add_event_listener(node, 'click, focus, blur, change, input', this._eventHandler);
 
-            if (!Helper.is_empty(this._inputs))
-            {
-                this._bind();
-            }
+            this._setClasses(node);
+        }
+    }
 
-            return this;
+    /**
+     * Event ubinder
+     *
+     * @access {private}
+     */
+    Inputs.prototype.unbind = function(node)
+    {
+        if (node.tagName.toLowerCase() === 'label')
+        {
+            remove_event_listener(node, 'click', this._onLabelClick);
+        }
+        else
+        {
+            remove_event_listener(node, 'click, focus, blur, change, input', this._eventHandler);
+        }
+    }
+
+    /**
+     * Event handler
+     *
+     * @access {private}
+     * @params {event|null} e Browser click event
+     */
+    Inputs.prototype._onLabelClick = function(e)
+    {
+        e = e || window.event;
+
+        var input = $('input', this.parentNode);
+
+        if (in_dom(input))
+        {
+            input.focus();
+
+            return;
         }
 
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
+        var input = $('select', this.parentNode);
 
-            this._inputs = [];
+        if (in_dom(input))
+        {
+            input.focus();
+
+            return;
         }
 
-        /**
-         * Event binder
-         *
-         * @access {private}
-         */
-        _bind()
-        {            
-            Helper.addEventListener(this._labels, 'click', this._onLabelClick);
-            Helper.addEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
+        var input = $('textarea', this.parentNode);
 
-            // Trigger change
-            let _this = this;
+        if (in_dom(input))
+        {
+            input.focus();
 
-            Helper.each(this._inputs, (i, input) => _this._setClasses(input));
+            return;
+        }
+    }
+
+    /**
+     * Event handler
+     *
+     * @access {private}
+     * @params {event|null} e Browser click event
+     */
+    Inputs.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        var wrapper = closest(this, '.form-field');
+
+        if (!wrapper) return;
+
+        if (e.type === 'click')
+        {
+            this.focus();
+        }
+        else if (e.type === 'focus')
+        {
+            add_class(wrapper, 'focus');
+        }
+        else if (e.type === 'blur')
+        {
+            remove_class(wrapper, 'focus');
         }
 
-        /**
-         * Event ubinder
-         *
-         * @access {private}
-         */
-        _unbind()
+        if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
         {
-            Helper.removeEventListener(this._labels, 'click',  this._onLabelClick);
-            Helper.removeEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
-        }
-
-        /**
-         * Event handler
-         *
-         * @access {private}
-         * @params {event|null} e Browser click event
-         */
-        _onLabelClick(e)
-        {
-            e = e || window.event;
-
-            var input = Helper.$('input', this.parentNode);
-
-            if (Helper.in_dom(input))
-            {
-                input.focus();
-
-                return;
-            }
-
-            var input = Helper.$('select', this.parentNode);
-
-            if (Helper.in_dom(input))
-            {
-                input.focus();
-
-                return;
-            }
-
-            var input = Helper.$('textarea', this.parentNode);
-
-            if (Helper.in_dom(input))
-            {
-                input.focus();
-
-                return;
-            }
-        }
-
-        /**
-         * Event handler
-         *
-         * @access {private}
-         * @params {event|null} e Browser click event
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-
-            var wrapper = Helper.closest(this, '.form-field');
-
-            if (!wrapper) return;
-
-            if (e.type === 'click')
-            {
-                this.focus();
-            }
-            else if (e.type === 'focus')
-            {
-                Helper.add_class(wrapper, 'focus');
-            }
-            else if (e.type === 'blur')
-            {
-                Helper.remove_class(wrapper, 'focus');
-            }
-
-            if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
-            {
-                var _value = Helper.input_value(this);
-
-                if (_value === '')
-                {
-                    Helper.remove_class(wrapper, 'not-empty');
-                    Helper.add_class(wrapper, 'empty');
-                }
-                else
-                {
-                    Helper.remove_class(wrapper, 'empty');
-                    Helper.add_class(wrapper, 'not-empty');
-                }
-            }
-        }
-
-        /**
-         * Sets initial classes on load.
-         *
-         * @access {private}
-         * @params {DOMElement} input 
-         */
-        _setClasses(input)
-        {
-            var wrapper = Helper.closest(input, '.form-field');
-
-            if (!wrapper) return;
-
-            var _value = Helper.input_value(input);
+            var _value = input_value(this);
 
             if (_value === '')
             {
-                Helper.remove_class(wrapper, 'not-empty');
-                Helper.add_class(wrapper, 'empty');
+                remove_class(wrapper, 'not-empty');
+                add_class(wrapper, 'empty');
             }
             else
             {
-                Helper.remove_class(wrapper, 'empty');
-                Helper.add_class(wrapper, 'not-empty');
+                remove_class(wrapper, 'empty');
+                add_class(wrapper, 'not-empty');
             }
         }
     }
 
+    /**
+     * Sets initial classes on load.
+     *
+     * @access {private}
+     * @params {DOMElement} input 
+     */
+    Inputs.prototype._setClasses = function(input)
+    {
+        var wrapper = closest(input, '.form-field');
+
+        if (!wrapper) return;
+
+        var _value = input_value(input);
+
+        if (_value === '')
+        {
+            remove_class(wrapper, 'not-empty');
+            add_class(wrapper, 'empty');
+        }
+        else
+        {
+            remove_class(wrapper, 'empty');
+            add_class(wrapper, 'not-empty');
+        }
+    }
+
     // Load into Hubble DOM core
-    Hubble.dom().register('Inputs', Inputs);
+    Hubble.dom().register('Inputs', extend(Component, Inputs));
 
 })();
 
 (function()
 {
     /**
-     * JS Helper reference
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
 
     /**
-     * File inputs
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class FileInput
-    {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
-        {
-            this._nodes = Helper.$All('.js-file-input');
-
-            this._bind();
-
-            return this;
-        }
-
-        /**
-         * Module destructor remove event handlers
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
-
-            this._nodes = [];
-        }
-
-        /**
-         * Bind DOM listeners
-         *
-         * @access {public}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._nodes, 'change', this._eventHandler);
-        }
-
-        /**
-         * Unbind DOM listeners
-         *
-         * @access {public}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._nodes, 'change', this._eventHandler);
-        }
-
-        /**
-         * Handle the change event
-         *
-         * @access {private}
-         */
-        _eventHandler()
-        {
-            var fileInput = this;
-            var wrap = Helper.closest(fileInput, '.js-file-field');
-            var showInput = Helper.$('.js-file-text', wrap);
-            var fullPath = fileInput.value;
-            if (fullPath)
-            {
-                var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-                var filename = fullPath.substring(startIndex);
-                if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0)
-                {
-                    filename = filename.substring(1);
-                }
-                showInput.value = filename;
-            }
-        }
-    }
-
-    // Load into Hubble DOM core
-    Hubble.dom().register('FileInput', FileInput);
-
-}());
-
-(function()
-{
-    /**
-     * JS Helper reference
+     * Helper functions
      * 
-     * @var {object}
+     * @var {Function}
      */
-    const Helper = Container.Helper();
+    const [$, add_event_listener, css, parse_url, remove_event_listener, rendered_style, extend] = Container.import(['$','add_event_listener','css','parse_url','remove_event_listener','rendered_style','extend']).from('_');
 
-    /**
-     * Creates a chip
-     *
-     */
-    function createChip(options)
-    {
-        let chip = document.createElement(options.removeable || options.input ? 'SPAN' : 'BUTTON');
-
-        if (options.removeable || options.input) chip.type = 'button';
-
-        chip.className = options.variant ? `btn btn-chip ${options.variant}` : 'btn btn-chip';
-        chip.innerText = options.posticon || options.removeable ? `${options.text} ` : options.text;
-
-        if (options.preicon)
-        {
-            let icon1 = document.createElement('SPAN');
-            icon1.className = `fa fa-${options.preicon}`;
-            chip.appendChild(icon1);
-        }
-
-        if (options.removeable)
-        {
-            let removeBtn = document.createElement('BUTTON');
-            removeBtn.className = 'remove-btn btn-unstyled js-remove-btn';
-            removeBtn.ariaLabel = 'remove';
-            removeBtn.type = 'button';
-
-            let x = document.createElement('SPAN');
-            x.className = 'fa fa-xmark';
-            removeBtn.appendChild(x);
-
-            chip.appendChild(removeBtn);
-        }
-        else if (options.posticon)
-        {
-            let icon2 = document.createElement('SPAN');
-            icon2.className = `fa fa-${options.posticon}`;
-            chip.appendChild(icon2);
-        }
-        
-        if (options.input)
-        {
-            let input = document.createElement('INPUT');
-            input.hidden = true;
-            input.name   = options.input;
-            input.value  = options.text;
-            input.setAttribute('value', options.text);
-
-            chip.appendChild(input);
-        }
-
-        return chip;
-    }
-
-    // Load into Hubble DOM core
-    Container.set('Chip', createChip);
-
-}());
-
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
-
-    /**
-     * Chip inputs
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class ChipInputs
-    {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
-        {
-            this._wrappers = Helper.$All('.js-chips-input');
-
-            this._bind();
-
-            return this;
-        }
-
-        /**
-         * Module destructor remove event handlers
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
-
-            this._wrappers = [];
-        }
-
-        /**
-         * Bind DOM listeners
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            for (var i = 0; i < this._wrappers.length; i++)
-            {
-                this._initInput(this._wrappers[i]);
-            }
-        }
-
-        /**
-         * Unbind DOM listeners
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            for (var i = 0; i < this._wrappers.length; i++)
-            {
-                this._destroy(this._wrappers[i]);
-            }
-        }
-
-        /**
-         * Init a chips input
-         *
-         * @access {private}
-         * @param  {DOMElement}    _wrapper
-         */
-        _initInput(_wrapper)
-        {
-            let _input = Helper.$('.js-chip-input', _wrapper);
-
-            Helper.addEventListener(Helper.$All('.js-remove-btn', _wrapper), 'click', this._removeChip);
-
-            Helper.addEventListener(_input, 'keyup', this._onKeyUp);
-
-            if (Helper.closest(_input, 'form'))
-            {
-                Helper.addEventListener(_input, 'keydown', this._preventSubmit);
-            }
-        }
-
-        /**
-         * Destroy chip listeners
-         *
-         * @access {private}
-         * @param  {DOMElement}    _wrapper
-         */
-        _destroy(_wrapper)
-        {
-            var _removeBtns = Helper.$All('.btn-chip .js-remove-btn', _wrapper);
-            var _input = Helper.$('.js-chip-input', _wrapper);
-
-            Helper.removeEventListener(_removeBtns, 'click', this._removeChip);
-
-            Helper.removeEventListener(_input, 'keyup', this._onKeyUp);
-
-            if (Helper.closest(_input, 'form'))
-            {
-                Helper.removeEventListener(_input, 'keydown', this._preventSubmit);
-            }
-        }
-
-        /**
-         * Prevent the form from submitting if it's part of a form
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _preventSubmit(e)
-        {
-            e = e || window.event;
-
-            var _key = e.code || e.key || e.keyCode || e.charCode;
-
-            if (_key == 'Enter' || _key === 13)
-            {
-                e.preventDefault();
-
-                return false;
-            }
-            // Backspace
-            else if (_key == 'Delete' || _key == 'Backspace' || _key == 8 || _key == 46)
-            {
-                if (this.value === '')
-                {
-                    var _wrapper = Helper.closest(this, '.js-chips-input');
-
-                    Container.ChipInputs()._removeLastChip(_wrapper);
-                }
-            }
-        }
-
-        /**
-         * Handle pressing enter to insert the chip
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _onKeyUp(e)
-        {
-            e = e || window.event;
-
-            var _key = e.code || e.key || e.keyCode || e.charCode;
-
-            // Enter
-            if (_key == 'Enter' || _key === 13)
-            {
-                var _this = Container.ChipInputs();
-
-                var _wrapper = Helper.closest(this, '.js-chips-input');
-
-                var _value = Helper.input_value(this).trim();
-
-                if (!Helper.in_array(_value, _this._getChipsValues(_wrapper)) && _value !== '')
-                {
-                    _this.addChip(_value, _wrapper);
-
-                    this.value = '';
-                }
-            }
-        }
-
-        /**
-         * Remove last chip
-         *
-         * @access {private}
-         * @param  {DOMElement}    _wrapper
-         */
-        _removeLastChip(_wrapper)
-        {
-            var _chips = Helper.$All('.btn-chip', _wrapper);
-
-            if (!Helper.is_empty(_chips))
-            {
-                Helper.remove_from_dom(_chips.pop());
-            }
-        }
-
-        /**
-         * Insert new chip
-         *
-         * @access {public}
-         * @param  {string}      _value
-         * @param  {DOMElement}        _wrapper
-         * @param  {string|bool} _icon
-         */
-        addChip(_value, _wrapper, _icon)
-        {
-            let chip = Container.Chip({
-                text       : _value.trim(),
-                removeable : true,
-                input      : _wrapper.dataset.inputName,
-                variant    : _wrapper.dataset.chipClass,
-            });
-
-            _wrapper.insertBefore(chip, Helper.first_children(_wrapper).pop());
-
-            Helper.addEventListener(Helper.$('.js-remove-btn', chip), 'click', this._removeChip);
-
-            Container.Hubble().dom().refresh('Ripple', _wrapper);
-        }
-
-        /**
-         * Remove an existing chip
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _removeChip(e)
-        {
-            e = e || window.event;
-
-            e.preventDefault();
-
-            Helper.remove_from_dom(Helper.closest(this, '.btn-chip'));
-        }
-
-        /**
-         * Get all values from chip input
-         *
-         * @access {private}
-         * @param  {DOMElement}    _wrapper
-         * @return {array}
-         */
-        _getChipsValues(_wrapper)
-        {
-            var _result = [];
-
-            var _chips = Helper.$All('.btn-chip input', _wrapper);
-
-            for (var i = 0; i < _chips.length; i++)
-            {
-                _result.push(Helper.input_value(_chips[i]));
-            }
-
-            return _result;
-        }
-    }
-
-    // Load into Hubble DOM core
-    Hubble.dom().register('ChipInputs', ChipInputs);
-
-}());
-
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
-
-    /**
-     * Chip suggestions.
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class ChipSuggestions
-    {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
-        {
-            this._chips = Helper.$All('.js-chip-suggestions .btn-chip');
-
-            this._bind();
-
-            return this;
-        }
-
-        /**
-         * Module destructor remove event handlers
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
-
-            this._chips = [];
-        }
-
-        /**
-         * Bind DOM listeners
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._chips, 'click', this._clickHandler);
-        }
-
-        /**
-         * Unbind DOM listeners
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._chips, 'click', this._clickHandler);
-        }
-
-        /**
-         * Chip click handler
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _clickHandler(e)
-        {
-            e = e || window.event;
-
-            e.preventDefault();
-
-            var _wrapper = Helper.closest(this, '.js-chip-suggestions');
-            var _input   = Helper.$('#' + _wrapper.dataset.inputTarget);
-            var _text    = this.innerText.trim();
-
-            if (!_input || !Helper.in_dom(_input))
-            {
-                throw new Error('Target node does not exist.');
-
-                return false;
-            }
-
-            // Chips input
-            if (Helper.has_class(_input, '.js-chips-input'))
-            {
-                Container.ChipInputs().addChip(_text, _input);
-
-                Helper.remove_from_dom(this);
-
-                return;
-            }
-
-            let val = Helper.attr(_input, 'value');
-
-            Helper.attr(_input, 'value',  val === '' ? _text : `${val} ${_text}`);
-
-            Helper.trigger_event(_input, 'change');
-
-            Helper.remove_from_dom(this);
-        }
-    }
-
-    // Load into Hubble DOM core
-    Hubble.dom().register('ChipSuggestions', ChipSuggestions);
-
-}());
-
-(function()
-{
-    const [$, $All, add_class, addEventListener, closest, has_class, remove_class, removeEventListener, trigger_event] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'closest', 'has_class', 'remove_class', 'removeEventListener', 'trigger_event']).from('Helper');
-
-    /**
-     * Choice chips
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class ChoiceChips
-    {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-        constructor()
-        {
-            this._chips = $All('.js-choice-chips .btn-chip');
-
-            this._bind();
-
-            return this;
-        }
-
-        /**
-         * Module destructor remove event handlers
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
-
-            this._chips = [];
-        }
-
-        /**
-         * Bind DOM listeners
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            addEventListener(this._chips, 'click', this._clickHandler);
-        }
-
-        /**
-         * Unbind DOM listeners
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            removeEventListener(this._chips, 'click', this._clickHandler);
-        }
-
-        /**
-         * Handle click event on chip
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _clickHandler(e)
-        {
-            e = e || window.event;
-
-            var _wrapper = closest(this, '.js-choice-chips');
-
-            var _input = $('.js-choice-input', _wrapper);
-
-            if (!has_class(this, 'selected'))
-            {                
-                remove_class($('.btn-chip.selected', _wrapper), 'selected');
-
-                add_class(this, 'selected');
-
-                if (_input)
-                {
-                    _input.value = this.dataset.value || this.innerText.trim();
-
-                    trigger_event(_input, 'input');
-                    trigger_event(_input, 'change');
-                }
-            }
-        }
-    }
-
-    // Load into Hubble DOM core
-    Hubble.dom().register('ChoiceChips', ChoiceChips);
-
-}());
-
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
-
-    /**
-     * Filter chips
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class FilterChips
-    {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
-        {
-            this._chips = Helper.$All('.js-filter-chips .btn-chip');
-
-            this._bind();
-
-            return this;
-        }
-
-        /**
-         * Module destructor remove event handlers
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
-
-            this._chips = [];
-        }
-
-        /**
-         * Bind DOM listeners
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._chips, 'click', this._clickHandler);
-        }
-
-        /**
-         * Unbind DOM listeners
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._chips, 'click', this._clickHandler);
-        }
-
-        /**
-         * Handle click event on chip
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _clickHandler(e)
-        {
-            e = e || window.event;
-
-            e.preventDefault();
-
-            console.log('clicked');
-
-            Helper.toggle_class(this, 'checked');
-        }
-    }
-
-    // Load into Hubble DOM core
-    Hubble.dom().register('FilterChips', FilterChips);
-
-}());
-
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
-
-    /**
-     * Clicking one element triggers a lick on another
-     *
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    class ClickTriggers
-    {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor()
-        {
-            /**
-             * List of click-triggers
-             * 
-             * @var {array}
-             */
-            this._containers = Helper.$All('.js-click-trigger');
-
-            if (!Helper.is_empty(this._containers))
-            {
-                this._bind();
-            }
-
-            return this;
-        }
-
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
-
-            this._containers = [];
-        }
-
-        /**
-         * Event binder - Binds all events on button click
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._containers, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event ubinder - Binds all event handlers on button click
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._containers, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event handler
-         *
-         * @access {private}
-         * @params {event|null} e Browser click event
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-
-            if (Helper.is_node_type(this, 'a'))
-            {
-                e.preventDefault();
-            }
-
-            var clicked = this;
-            var targetEl = Helper.$(clicked.dataset.clickTarget);
-
-            if (Helper.in_dom(targetEl))
-            {
-                Helper.trigger_event(targetEl, 'click');
-            }
-        }
-    }
-
-    // Load into Hubble DOM core
-    Hubble.dom().register('ClickTriggers', ClickTriggers);
-
-})();
-
-/**
- * Modal
- *
- * The Modal class is a utility class used to
- * display a Backdrop.
- *
- */
-(function()
-{
-    /**
-     * @var {obj}
-     */
-    const [$, $All, add_class, addEventListener, animate, array_merge, css, each, in_dom, is_empty, is_object, remove_class, removeEventListener] = Container.import(['$', '$All', 'add_class', 'addEventListener', 'animate', 'array_merge', 'css', 'each', 'in_dom', 'is_empty', 'is_object', 'remove_class', 'removeEventListener']).from('Helper');
-
-    /**
-     * Cached so we can throttle later.
-     * 
-     * @var {function}
-     */
-    const RESIZE_HANDLER = throttle(function() { Container.Backdrop().resize() }, 100);
-
-    /**
-     * @var {obj}
-     */
-    var BACKDROP_OPEN = false;
-
-    /**
-     * @var {obj}
-     */
-    const DEFAULTS =
-    {
-        noScroll:          true,
-        pushBody:          false,
-        direction:         'top',
-        height:            'auto',
-        width:             '100%',
-
-        onOpen:            () => { },
-        onOpenArgs:        null,
-        onClose:           () => { },
-        onCloseArgs:       null,
-        validateClose:     () => { return true; },
-        validateCloseArgs: null
-    };
-
-    class Backdrop
-    {
-        /**
-         * Module constructor
-         *
-         * @class
-         * @constructor
-         * @params {options} obj
-         * @access {public}
-         * @return {this}
-         */
-        constructor()
-        {
-            this._DOMElementopenBtns  = $All('.js-backdrop-open-trigger');
-            this._DOMElementCloseBtns = $All('.js-backdrop-close-trigger');
-            this._DOMElementBackdrop  = $('.js-backdrop-wrapper');
-            this._DOMElementPageWrap  = $('.js-backdrop-page-wrapper');
-            
-            if (!is_empty(this._DOMElementopenBtns))
-            {
-                this._bind();
-            }
-
-            this._setOptions();
-        }
-
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this.close();
-
-            this._unbind();
-
-            this._DOMElementopenBtns = [];
-
-            this._DOMElementCloseBtns = [];
-        }
-
-        /**
-         * Bind click listener to containers
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            addEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
-
-            addEventListener(this._DOMElementCloseBtns, 'click', this.close);
-        }
-
-        /**
-         * Unbind listener to containers
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            removeEventListener(this._DOMElementopenBtns, 'click', this._clickHandler);
-
-            removeEventListener(this._DOMElementCloseBtns, 'click', this.close);
-
-            removeEventListener(window, 'resize', RESIZE_HANDLER);
-
-            this._DOMElementopenBtns = [];
-
-            this._DOMElementCloseBtns = [];
-        }
-
-        /**
-         * Open the backdrop.
-         *
-         * @access {public}
-         * @param  {object} options Options (optional)
-         */
-        open(options)
-        {
-            const DOMElementBackdrop = this._DOMElementBackdrop;
-            const DOMElementPageWrap = this._DOMElementPageWrap;
-
-            if (!in_dom(this._DOMElementBackdrop))
-            {
-                console.error('Backdrop Error: The backdrop wrapper was not found in the DOM.');
-            }
-            else if (!in_dom(this._DOMElementPageWrap))
-            {
-                console.error('Backdrop Error: The backdrop page wrapper was not found in the DOM.');
-            }
-            else if (BACKDROP_OPEN)
-            {
-                return;
-            }
-
-            // Backdrop now open
-            BACKDROP_OPEN = true;
-
-            // Merge options if provided
-            if (options) this._setOptions(options);
-
-            // Set width and heights
-            css(DOMElementBackdrop, 'height', this.height);
-            css(DOMElementBackdrop, 'width', this.width);
-
-            // Push body down
-            /*if (this.pushBody)
-            {
-                add_class(this._DOMElementBackdrop, 'backdrop-open');
-                add_class(this._DOMElementBackdrop, 'backdrop-push-body');
-
-                animate_css(this._DOMElementBackdrop, { top: '0px', duration: 300 });
-                animate_css(this._DOMElementPageWrap, { transform: `translateY(${fromTop})`, duration: 300 });
-            }*/
-
-            // Set backdrop to position top, left, bottom, right
-
-            // Push backdrop in
-            animate(DOMElementBackdrop, { 
-                [this.direction]: { from: '-50px', to: '0px', duration: 350, easing: 'easeOutCirc'},
-                opacity:          { from: '0', to: '1', duration: 600, easing: 'easeOutCirc'}
-            });
-
-            // Make backdrop visible
-            setTimeout(function(){ add_class(DOMElementBackdrop, 'backdrop-open');}, 10);
-        
-            // No scrolling
-            if (this.noScroll)
-            {
-                add_class([document.documentElement, document.body], 'no-scroll');
-            }
-
-            /*
-           
-
-            // Open classes
-            add_class(this._DOMElementBackdrop, 'backdrop-open');
-            add_class(this._DOMElementPageWrap, 'backdrop-open');
-
-            // Resize handler
-            addEventListener(window, 'resize', RESIZE_HANDLER);*/
-            
-            this._fireOpen();
-        }
-
-        /**
-         * Close the backdrop.
-         *
-         * @access {public}
-         * @param  {object} options Options (optional)
-         */
-        close()
-        {
-            if (this.pushBody)
-            {
-                /*animate_css(this._DOMElementBackdrop, { transform: `translateY(0)`});
-                animate_css(this._DOMElementPageWrap, { transform: `translateY(0)`});*/
-            }
-            else
-            {
-
-            }
-
-            /*remove_class(this._DOMElementBackdrop, ['backdrop-push-body', 'backdrop-open']);
-            remove_class(this._DOMElementPageWrap, 'backdrop-open');
-            remove_class([document.documentElement, document.body], 'no-scroll');*/
-
-            if (this._fireValidateClose())
-            {
-                this._fireClose();
-
-                BACKDROP_OPEN = false;
-            }
-        }
-
-        /**
-         * Update the the sizing
-         *
-         */
-        resize()
-        {
-            if (this.pushBody)
-            {
-                //css(this._DOMElementPageWrap, 'transform', `translateY(${height(this._DOMElementBackdrop)}px)`);
-            }
-        }
-
-        /**
-         * Set options from open/close call.
-         *
-         * @access {private}
-         * @param  {object} options Options (optional)
-         */
-        _setOptions(options)
-        {
-            options = is_object(options) ? array_merge({}, DEFAULTS, options) : array_merge({}, DEFAULTS);
-
-            each(options, function(k, v)
-            {
-                this[k] = v;
-
-            }, this);
-
-        }
-
-        /**
-         * Fire render event
-         *
-         * @access {private}
-         */
-        _fireOpen()
-        {
-            this.onOpen.apply(this._DOMElementBackdrop, this.onOpenArgs);
-        }
-
-        /**
-         * Fire the closed event
-         *
-         * @access {private}
-         */
-        _fireClose()
-        {
-            this.onClose.apply(this._DOMElementBackdrop, this.onCloseArgs);
-        }
-
-        /**
-         * Fire the confirm validation
-         *
-         * @access {private}
-         */
-        _fireValidateClose()
-        {
-            return this.validateClose.apply(this._DOMElementBackdrop, this.validateCloseArgs);
-        }
-    }
-
-    // Load into container 
-    Hubble.dom().register('Backdrop', Backdrop);
-
-    /*window.addEventListener('DOMReady', function()
-    {
-        setTimeout(function()
-        {
-            Container.Backdrop().open();
-
-        }, 1000);
-    });*/
-
-   /* setTimeout(function()
-    {
-        Container.Backdrop().close();
-    }, 5000);*/
-
-})();
-
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Container.Helper();
-
-    
     /**
      * Image zoom hover
      * 
      */
-    class ImageZoom
+    const ImageZoom = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
+        this.super('.js-img-hover-zoom')
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access {public}
+     */
+    ImageZoom.prototype.bind = function(node)
+    {
+        css(node, 'background-image', 'url(' + node.dataset.zoomSrc + ')');
+
+        add_event_listener(node, 'mousemove', this._onHover);
+
+        $('img', node).alt = '';
+
+        $('img', node).title = '';
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access {public}
+     */
+    ImageZoom.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'mousemove', this._onHover);
+    }
+
+    /**
+     * On hover event
+     *
+     * @param  {e} event|null "mousemove" event
+     * @access {private}
+     */
+    ImageZoom.prototype._onHover = function(e)
+    {
+        e = e || window.event;
+
+        if (!e || !e.currentTarget)
         {
-            this._nodes = Helper.$All('.js-img-hover-zoom');
-
-            this._bind();
-
-            return this;
+            return false;
         }
 
-        /**
-         * Module destructor remove event handlers
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
+        var _wrapper = e.currentTarget;
+        var _zoomSrc = parse_url(rendered_style(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
+        var _dataZoomSrc = parse_url(_wrapper.dataset.zoomSrc);
 
-            this._nodes = [];
+        if (_zoomSrc.path !== _dataZoomSrc.path)
+        {
+            css(_wrapper, 'background-image', 'url(' + _wrapper.dataset.zoomSrc + ')');
         }
 
-        /**
-         * Bind DOM listeners
-         *
-         * @access {public}
-         */
-        _bind()
+        var offsetX = 0;
+        var offsetY = 0;
+        if (e.offsetX)
         {
-            for (var i = 0; i < this._nodes.length; i++)
-            {
-                Helper.css(this._nodes[i], 'background-image', 'url(' + this._nodes[i].dataset.zoomSrc + ')');
-
-                Helper.addEventListener(this._nodes[i], 'mousemove', this._onHover);
-
-                Helper.$('img', this._nodes[i]).alt = '';
-
-                Helper.$('img', this._nodes[i]).title = '';
-            }
+            offsetX = e.offsetX;
+        }
+        else if (e.touches && e.touches[0] && e.touches[0].pageX)
+        {
+            offsetX = e.touches[0].pageX;
+        }
+        else
+        {
+            return false;
         }
 
-        /**
-         * Unbind DOM listeners
-         *
-         * @access {public}
-         */
-        _unbind()
+        if (e.offsetY)
         {
-            Helper.removeEventListener(this._nodes, 'mousemove', this._onHover);
+            offsetY = e.offsetY;
+        }
+        else if (e.touches && e.touches[0] && e.touches[0].pageY)
+        {
+            offsetY = e.touches[0].pageY;
+        }
+        else
+        {
+            return false;
         }
 
-        /**
-         * On hover event
-         *
-         * @param  {e} event|null "mousemove" event
-         * @access {private}
-         */
-        _onHover(e)
-        {
-            e = e || window.event;
-
-            if (!e || !e.currentTarget)
-            {
-                return false;
-            }
-
-            var _wrapper = e.currentTarget;
-            var _zoomSrc = Helper.parse_url(Helper.rendered_style(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
-            var _dataZoomSrc = Helper.parse_url(_wrapper.dataset.zoomSrc);
-
-            if (_zoomSrc.path !== _dataZoomSrc.path)
-            {
-                Helper.css(_wrapper, 'background-image', 'url(' + _wrapper.dataset.zoomSrc + ')');
-            }
-
-            var offsetX = 0;
-            var offsetY = 0;
-            if (e.offsetX)
-            {
-                offsetX = e.offsetX;
-            }
-            else if (e.touches && e.touches[0] && e.touches[0].pageX)
-            {
-                offsetX = e.touches[0].pageX;
-            }
-            else
-            {
-                return false;
-            }
-
-            if (e.offsetY)
-            {
-                offsetY = e.offsetY;
-            }
-            else if (e.touches && e.touches[0] && e.touches[0].pageY)
-            {
-                offsetY = e.touches[0].pageY;
-            }
-            else
-            {
-                return false;
-            }
-
-            x = offsetX / _wrapper.offsetWidth * 100;
-            y = offsetY / _wrapper.offsetHeight * 100;
+        x = offsetX / _wrapper.offsetWidth * 100;
+        y = offsetY / _wrapper.offsetHeight * 100;
 
 
-            Helper.css(_wrapper, 'background-position', x + '% ' + y + '%');
-        }
+        css(_wrapper, 'background-position', x + '% ' + y + '%');
     }
 
     // Register as DOM Module and invoke
-    Hubble.dom().register('ImageZoom', ImageZoom);
+    Hubble.dom().register('ImageZoom', extend(Component, ImageZoom));
 
 }());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [add_class, add_event_listener, animate_css, closest, coordinates, css, has_class, height, in_array, in_dom, inline_style, preapend, remove_class, remove_event_listener, rendered_style, traverse_up, trigger_event, width, extend] = Container.import(['add_class','add_event_listener','animate_css','closest','coordinates','css','has_class','height','in_array','in_dom','inline_style','preapend','remove_class','remove_event_listener','rendered_style','traverse_up','trigger_event','width','extend']).from('_');
+
+    /**
+     * Ripple animation time.
+     * 
+     * Note 1. this is set in CSS
+     * Note 2. This value is actually half of total animation time as the the ripple scales (2.5)
+     * 
+     * @var {int}
+     */
+    const RPL_AN_TIME = 400;
+
+    /**
+     * Wrappers that need "position:relative" to hide overflow.
+     * 
+     * @var {array}
+     */
+    const STATIC_POSITIONS = ['static', 'unset', 'initial'];
+
+    /**
+     * Original inline styles
+     * 
+     * @var {Map}
+     */
+    const INLINESTYLES = new Map();
+
+    /**
+     * Currently rippling
+     * 
+     * @var {Map}
+     */
+    const RIPPLING = new Map();
+
+    /**
+     * Selectors
+     * 
+     * @var {Map}
+     */
+    const SELECTORS =
+    [
+        '.btn',
+        '.list > li',
+        '.pagination li a',
+        '.tab-nav li a',
+        '.card.primary-action',
+        '.card .primary-action',
+        '.card-media',
+        '.js-ripple'
+    ];
+    
+    /**
+     * Ripple click animation
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Ripple = function()
+    {
+        this.super(SELECTORS.join(','));
+    }
+    
+    /**
+     * @inheritdoc
+     * 
+     */
+    Ripple.prototype.bind = function(node)
+    {        
+        // No ripples inside primary actions
+        if (!has_class(node, 'primary-action') && closest(node, '.primary-action') && !has_class(node, 'card'))
+        {
+            return;
+        }
+
+        // Cache 'overflow' and 'position' inline styles
+        // to revert back to after complete
+        // If these are empty they will be removed
+        if (!INLINESTYLES.has(node))
+        {
+            let CSSoverflow = inline_style(node, 'overflow') || false;
+            
+            let CSSposition = inline_style(node, 'position') || false;
+
+            INLINESTYLES.set(node, [CSSoverflow, CSSposition]);
+        }
+
+        add_event_listener(node, 'mousedown, touchstart', this._startRipple, this);
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Ripple.prototype.unbind  = function(node)
+    {
+        remove_event_listener(node, 'mousedown, touchstart', this._startRipple, this);
+    }
+
+    /**
+     * Ripple handler
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    Ripple.prototype._restore  = function(wrapper)
+    {
+        if (in_dom(wrapper))
+        {
+            wrapper.offsetHeight;
+
+            wrapper.removeAttribute('data-event');
+        
+            remove_class(wrapper, 'ripple-down');
+
+            let styles = INLINESTYLES.get(wrapper);
+
+            css(wrapper, 'overflow', styles[0]);
+
+            css(wrapper, 'position', styles[1]);
+        }
+    }
+
+    /**
+     * Ripple handler
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    Ripple.prototype._startRipple  = function(e, wrapper)
+    {
+        e = e || window.event;
+
+        const _this = this;
+
+        // Ignore disabled
+        if (wrapper.disabled || has_class(wrapper, 'disabled')) return;
+
+        // Single finger "clicks" only
+        if (e.touches && e.touches.length > 1) return;
+
+        // Left click only on mouse
+        if ('button' in e && e.button !== 0) return;
+
+        // Store the event used to generate this ripple on the holder: don't allow
+        // further events of different types until we're done.
+        // Prevents double-ripples from mousedown/touchstart.
+        var prev = wrapper.getAttribute('data-event');
+        if (prev && prev !== e.type) return;
+
+        // Clear restorer
+        clearTimeout(RIPPLING.get(wrapper));
+
+        // Add the data-attribute to identify ripple event type
+        wrapper.setAttribute('data-event', e.type);
+
+        // Add class to parent do identify mousedown/touchstart
+        add_class(wrapper, 'ripple-down');
+
+        // Figure out release event type
+        var releaseEvent = (e.type === 'mousedown' ? 'mouseup' : 'touchend');
+
+        // Cached timer for release
+        var releaseTimer;
+        var released = false;
+
+        // Animation started
+        const t0 = performance.now();
+
+        // Create ripple and append immediately
+        var ripple = document.createElement('SPAN');
+        ripple.className = 'ripple';
+
+        // Release event
+        const release = function(ev)
+        {
+            // Clear timer
+            clearTimeout(releaseTimer);
+
+            // Remove release listener
+            document.removeEventListener(releaseEvent, release);
+
+            add_class(ripple, 'complete');
+
+            setTimeout(() => wrapper.removeChild(ripple), 400);
+
+            let restoreTimer = setTimeout(() => _this._restore(wrapper), 500);
+
+            RIPPLING.set(wrapper, restoreTimer);
+        };  
+
+        // Figure out where to place ripple inside parent
+        var c = coordinates(wrapper);
+        var s = Math.max(height(wrapper), width(wrapper));
+        var x = (e.pageX - c.left) - (s / 2);
+        var y = (e.pageY - c.top) - (s / 2);
+
+        // Apply styles to ripple
+        css(ripple, 
+        {
+            width:  `${s}px`,
+            height: `${s}px`,
+            left:   `${x}px`,
+            top:    `${y}px`
+        });
+
+        // Issue here is that if ripple is clicked multiple times in quick succession
+        // the original inline overflow and position styles are overwritten by the next
+        // click
+
+        // Ensure parent hides overflow
+        css(wrapper, 'overflow', 'hidden !important');
+
+        // Ensure position relative if needed
+        if (in_array(rendered_style(wrapper, 'position'), STATIC_POSITIONS))
+        {
+            css(wrapper, 'position', 'relative');
+        }
+
+        // Release listener
+        document.addEventListener(releaseEvent, release);
+
+        preapend(ripple, wrapper);
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Ripple', extend(Component, Ripple));
+
+})();
 
 
 

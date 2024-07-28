@@ -6,7 +6,7 @@
  * @param   {boolean}                      strict     If "true" only returns true on ES6 classes (default "false")
  * @returns {boolean}
  */
-is_class(mixed_var, classname, strict)
+_.prototype.is_class = function(mixed_var, classname, strict)
 {
     // this.is_class(foo, true)
     if (classname === true || classname === false)

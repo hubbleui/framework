@@ -6,7 +6,7 @@
  * @param  {closure} callback  Callback to apply to each iteration
  * @param  {array}   args      Array of params to apply to callback (optional) (default null)
  */
-each(obj, callback)
+_.prototype.each = function(obj, callback)
 {
     if (typeof obj !== 'object' || obj === null) return;
 
@@ -64,7 +64,7 @@ each(obj, callback)
     return obj;
 }
 
-foreach()
+_.prototype.foreach = function()
 {
     return this.each.apply(this, arguments);
 }
@@ -77,7 +77,7 @@ foreach()
  * @param  {closure} callback  Callback to apply to each iteration
  * @param  {array}   args      Array of params to apply to callback (optional) (default null)
  */
-for(count, callback)
+_.prototype.for = function(count, callback)
 {
     var args = TO_ARR.call(arguments);
 

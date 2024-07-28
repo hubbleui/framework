@@ -10,7 +10,7 @@
     /**
      * @var {obj}
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * @var {obj}
@@ -237,13 +237,13 @@
 
             if (this._options.closeAnywhere === true)
             {
-                Helper.addEventListener(this._modal, 'click', closeModal, false);
+                Helper.add_event_listener(this._modal, 'click', closeModal, false);
             }
 
             var modalCloses = Helper.$All('.js-frontdrop-close', this._modal);
             if (!Helper.is_empty(modalCloses))
             {
-                Helper.addEventListener(modalCloses, 'click', closeModal, false);
+                Helper.add_event_listener(modalCloses, 'click', closeModal, false);
             }
         }
 

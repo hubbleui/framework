@@ -5,7 +5,7 @@
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
     
     /**
      * Pjax Links Module
@@ -51,7 +51,7 @@
          */
         _bind()
         {
-            Helper.addEventListener(this._nodes, 'click', this._eventHandler);
+            Helper.add_event_listener(this._nodes, 'click', this._eventHandler);
         }
 
         /**
@@ -61,7 +61,7 @@
          */
         _unbind()
         {
-            Helper.removeEventListener(this._nodes, 'click', this._eventHandler);
+            Helper.remove_event_listener(this._nodes, 'click', this._eventHandler);
         }
 
         /**

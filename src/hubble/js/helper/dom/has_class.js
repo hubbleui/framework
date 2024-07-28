@@ -6,7 +6,7 @@
  * @param  {string|array} className  Class name(s) to check for
  * @return {bool}
  */
-has_class(el, className)
+_.prototype.has_class = function(el, className)
 {
     if (!this.in_dom(el))
     {

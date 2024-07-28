@@ -7,13 +7,13 @@
  * @param {string}       name        Property name
  * @apram {mixed}        value       Property value
  */
-attr(DOMElement, name, value)
+_.prototype.attr = function(DOMElement, name, value)
 {
     // Get attribute
     // e.g attr(node, style)
     if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
     {
-        return this.__getAttribute(DOMElement, name);
+        return this.__get_attribute(DOMElement, name);
     }
 
     // attr(node, {foo : 'bar', baz: 'bar'})
@@ -111,12 +111,12 @@ attr(DOMElement, name, value)
                 var evt = name.slice(2).toLowerCase();
 
                 // Remove old listeners
-                this.removeEventListener(DOMElement, evt);
+                this.remove_event_listener(DOMElement, evt);
 
                 // Add new listener if one provided
                 if (value)
                 {
-                    this.addEventListener(DOMElement, evt, value);
+                    this.add_event_listener(DOMElement, evt, value);
                 }
             }
             // All other node attributes
@@ -144,7 +144,6 @@ attr(DOMElement, name, value)
                 let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
                 let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
 
-                console.log(camelName, hyphenName);
 
                 // ARIA-attributes have a different notion of boolean values.
                 // The value `false` is different from the attribute not
@@ -181,7 +180,7 @@ attr(DOMElement, name, value)
  * @param  {string}           name        Property name
  * @return {string|undefined}
  */
-__getAttribute(DOMElement, name)
+_.prototype.__get_attribute = function(DOMElement, name)
 {
     if (name.startsWith('data'))
     {

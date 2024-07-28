@@ -4,7 +4,7 @@
  * @param  {mixed} str String JSON
  * @return {object|false}
  */
-json_decode(str)
+_.prototype.json_decode = function(str)
 {
     var obj;
     try

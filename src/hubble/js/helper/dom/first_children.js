@@ -5,7 +5,7 @@
  * @param  {DOMElement}   el   Target element
  * @return {node\null}
  */
-first_children(el)
+_.prototype.first_children = function(el)
 {
     var children = [];
 

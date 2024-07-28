@@ -4,7 +4,7 @@
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_numeric(mixed_var)
+_.prototype.is_numeric = function(mixed_var)
 {
     if (this.is_number(mixed_var))
     {

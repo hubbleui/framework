@@ -4,7 +4,7 @@
  * @param   {mixed}  mixed_var  Variable to evaluate
  * @returns {boolean}
  */
-is_constructable(mixed_var)
+_.prototype.is_constructable = function(mixed_var)
 {
     // Not a function
     if (typeof mixed_var !== 'function' || mixed_var === null)
@@ -25,7 +25,5 @@ is_constructable(mixed_var)
     }
 
     // If prototype is empty 
-    let props = this.object_props(mixed_var.prototype);
-
-    return props.length >= 1;
+    return this.object_props(mixed_var, true).length > 0;
 }

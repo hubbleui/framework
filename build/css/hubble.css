@@ -4986,7 +4986,18 @@ form.success .msg-success {
   border-radius: 50% !important;
   background: var(--hb-ripple-color);
   transform: scale(0);
-  animation: ripple 0.7s ease-out forwards;
+  animation: ripple 0.5s ease-out forwards;
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+.ripple.complete {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.btn .ripple {
+  z-index: unset;
 }
 
 .btn.btn-outline .ripple,
@@ -5864,19 +5875,8 @@ form.success .msg-success {
 /* ---------------------------- components/dropdown.scss ---------------------------- */
 .drop-container {
   --hb-dropdown-border-radius: var(--hb-border-radius);
-  --hb-dropdown-bg: var(--hb-white);
-  --hb-dropdown-color: var(--hb-body-color);
-  --hb-dropdown-link-color: var(--hb-body-color);
-  --hb-dropdown-link-bg-active: var(--hb-gray-300);
-  --hb-dropdown-width: 16rem;
-  --hb-dropdown-height: 30rem;
-  --hb-dropdown-font-size: 1.2rem;
-  --hb-dropdown-divider-size: 1px;
-  --hb-dropdown-divider-color: var(--hb-gray-300);
-  --hb-dropdown-divider-space: 0.3rem;
-  --hb-dropdown-header-divider-color: var(--hb-gray-300);
-  --hb-dropdown-link-spacer-y: 0.8rem;
-  --hb-dropdown-link-spacer-x: 1.2rem;
+  --hb-dropdown-width: 160px;
+  --hb-dropdown-height: 300px;
   position: relative;
   display: inline-block;
 }
@@ -5887,120 +5887,40 @@ form.success .msg-success {
   display: block;
 }
 .drop-container .drop-menu {
-  color: var(--hb-dropdown-color);
-  font-size: var(--hb-dropdown-font-size);
   position: absolute;
   width: 100%;
   left: 0;
   border-radius: var(--hb-dropdown-border-radius);
-  top: calc(var(--hb-btn-padding-y) * 2 + var(--hb-btn-font-size));
+  top: 5.04rem;
   min-width: var(--hb-dropdown-width);
   z-index: var(--hb-zindex-dropdown);
   width: auto;
 }
-.drop-container .drop-menu .drop {
+.drop-container .drop-menu .menu {
   border-radius: var(--hb-dropdown-border-radius);
-  background-color: var(--hb-dropdown-bg);
-  padding: var(--hb-dropdown-link-spacer-y) 0px;
-  box-shadow: var(--hb-dropdown-shadow);
   --hb-dropdown-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
 }
-.drop-container .drop ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: var(--hb-dropdown-height);
-  overflow-y: auto;
-}
-.drop-container .drop ul li {
-  padding: 0;
-  display: block;
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  margin: 0;
-}
-.drop-container .drop ul li a {
-  display: block;
-  position: relative;
-  background-color: transparent;
-  width: 100%;
-  color: var(--hb-dropdown-link-color);
-  padding: var(--hb-dropdown-link-spacer-x);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.drop-container .drop ul li a:hover, .drop-container .drop ul li a.selected {
-  text-decoration: none;
-  background-color: var(--hb-dropdown-link-bg-active);
-}
-.drop-container .drop ul li a.selected:after {
-  font-family: "IcoMoon";
-  content: "\ed71";
-  position: absolute;
-  color: var(--hb-brand-primary);
-  right: var(--hb-dropdown-link-spacer-x);
-}
-.drop-container .drop ul .drop-header {
-  font-weight: 500;
-  padding: 0px var(--hb-dropdown-link-spacer-x) var(--hb-dropdown-link-spacer-y) var(--hb-dropdown-link-spacer-x);
-  border-bottom: var(--hb-dropdown-divider-size) solid var(--hb-dropdown-header-divider-color);
-}
-.drop-container .drop ul .divider {
-  padding-top: var(--hb-dropdown-divider-space);
-  margin-bottom: var(--hb-dropdown-divider-space);
-  border-bottom: var(--hb-dropdown-divider-size) solid var(--hb-dropdown-divider-color);
-}
-.drop-container .drop ul .divider,
-.drop-container .drop ul .drop-header + li,
-.drop-container .drop ul .divider + li,
-.drop-container .drop ul li:first-child {
-  border-top-color: transparent;
-}
-
-.drop-s {
-  left: 50%;
-  right: 50%;
-  margin-left: -80px;
-}
-
-.drop-se {
+.drop-container .drop-se, .drop-container .drop-ne {
   right: 0;
   left: auto;
   left: initial;
 }
-
-.drop-sw {
+.drop-container .drop-sw, .drop-container .drop-nw {
   left: 0;
   right: auto;
   right: initial;
 }
-
-.drop-n {
-  top: auto;
-  bottom: 100%;
+.drop-container .drop-s {
   left: 50%;
-  right: 50%;
-  margin-left: -80px;
-  margin-bottom: 8px;
+  transform: translateX(-50%);
 }
-
-.drop-ne {
+.drop-container .drop-n {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.drop-container .drop-n, .drop-container .drop-ne, .drop-container .drop-nw {
   top: auto;
   bottom: 100%;
-  right: 0;
-  left: auto;
-  left: initial;
-  margin-bottom: 8px;
-}
-
-.drop-nw {
-  top: auto;
-  bottom: 100%;
-  left: 0;
-  right: auto;
-  right: initial;
   margin-bottom: 8px;
 }
 
@@ -6028,14 +5948,88 @@ form.success .msg-success {
   top: 7.1rem;
 }
 
+/* ---------------------------- components/menu.scss -------------------------------- */
+.menu {
+  --hb-menu-bg: var(--hb-white);
+  --hb-menu-color: var(--hb-gray-700);
+  --hb-menu-font-size: 1.3rem;
+  --hb-menu-item-color-hover: var(--hb-gray-700);
+  --hb-menu-item-color-active: var(--hb-gray-700);
+  --hb-menu-item-color-selected: var(--hb-white);
+  --hb-menu-item-bg: transparent;
+  --hb-menu-item-bg-hover: var(--hb-gray-200);
+  --hb-menu-item-bg-active: var(--hb-brand-info-100);
+  --hb-menu-item-bg-selected: var(--hb-brand-info);
+  --hb-menu-item-pad-y: 10px;
+  --hb-menu-item-pad-x: 12px;
+  --hb-menu-divider-color: var(--hb-gray-300);
+  --hb-menu-divider-space: 20px;
+  list-style: none;
+  margin: 0;
+  background-color: var(--hb-menu-bg);
+  color: var(--hb-menu-color);
+  padding: var(--hb-menu-item-pad-y) 0px;
+  font-size: var(--hb-menu-font-size);
+}
+.menu > * {
+  margin: 0;
+  padding: var(--hb-menu-item-pad-y) var(--hb-menu-item-pad-x);
+  background-color: var(--hb-menu-item-bg);
+  cursor: pointer;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+  position: relative;
+  column-gap: var(--hb-menu-item-pad-x);
+}
+.menu > * .item-left,
+.menu > * .item-right {
+  -ms-flex: 0 0 auto;
+      flex: 0 0 auto;
+  display: -ms-flexbox;
+  display: flex;
+}
+.menu > * .item-content {
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+}
+.menu > *:hover {
+  background-color: var(--hb-menu-item-bg-hover);
+  color: var(--hb-menu-item-color-hover);
+}
+.menu > *.active {
+  background-color: var(--hb-menu-item-bg-active);
+  color: var(--hb-menu-item-color-active);
+}
+.menu > *.selected {
+  background-color: var(--hb-menu-item-bg-selected);
+  color: var(--hb-menu-item-color-selected);
+}
+.menu > * a {
+  color: inherit;
+  text-decoration: none;
+}
+.menu .menu-header {
+  font-weight: 500;
+}
+.menu .divider,
+.menu .drop-header + li,
+.menu .divider + li,
+.menu li:first-child {
+  border-top-color: transparent;
+}
+
 /* ---------------------------- components/label.scss ------------------------------- */
 .label {
   --hb-label-font-size: 1.1rem;
   --hb-label-font-weight: 600;
   --hb-label-color: var(--hb-white);
-  --hb-label-bg: var(--hb-gray);
-  --hb-label-pad-y: 5px;
-  --hb-label-pad-x: 9px;
+  --hb-label-bg: var(--hb-gray-300);
+  --hb-label-pad-y: 4px;
+  --hb-label-pad-x: 6px;
   --hb-label-radius: var(--hb-border-radius);
   text-align: center;
   display: inline;
@@ -7294,7 +7288,7 @@ form.success .msg-success {
 
 /* ---------------------------- components/status.scss ------------------------------ */
 .status {
-  --hb-status-color: var(--hb-gray);
+  --hb-status-color: var(--hb-gray-300);
   --hb-status-size: 14px;
   width: var(--hb-status-size);
   height: var(--hb-status-size);
@@ -7325,6 +7319,18 @@ form.success .msg-success {
 }
 .status.status-black {
   --hb-status-color: var(--hb-black);
+}
+.status.status-xs {
+  --hb-status-size: 7px ;
+}
+.status.status-sm {
+  --hb-status-size: 9.8px ;
+}
+.status.status-lg {
+  --hb-status-size: 18.2px ;
+}
+.status.status-xl {
+  --hb-status-size: 21px ;
 }
 
 /* ---------------------------- components/lists.scss ------------------------------- */

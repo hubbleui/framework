@@ -4,7 +4,7 @@
  * @access {public}
  * @param  {DOMElement}   el Target DOM node
  */
-show_aria(el)
+_.prototype.show_aria = function(el)
 {
-    el.setAttribute("aria-hidden", 'false');
+    el.setAttribute('aria-hidden', 'false');
 }

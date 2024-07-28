@@ -4,7 +4,7 @@
  * @param   {object|array}  object Object to delete from
  * @returns {object|array}
  */
-array_filter(arr)
+_.prototype.array_filter = function(arr)
 {
     let isArr = this.is_array(arr);
 

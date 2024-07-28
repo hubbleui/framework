@@ -1,19 +1,8 @@
 .drop-container
 {
     --hb-dropdown-border-radius:  #{$dropdown-border-radius};
-    --hb-dropdown-bg:  #{$dropdown-bg};
-    --hb-dropdown-color:  #{$dropdown-color};
-    --hb-dropdown-link-color:  #{$dropdown-link-color};
-    --hb-dropdown-link-bg-active:  #{$dropdown-link-bg-active};
-    --hb-dropdown-width:  #{$dropdown-width};
-    --hb-dropdown-height:  #{$dropdown-height};
-    --hb-dropdown-font-size:  #{$dropdown-font-size};
-    --hb-dropdown-divider-size:  #{$dropdown-divider-size};
-    --hb-dropdown-divider-color:  #{$dropdown-divider-color};
-    --hb-dropdown-divider-space:  #{$dropdown-divider-space};
-    --hb-dropdown-header-divider-color:  #{$dropdown-header-divider-color};
-    --hb-dropdown-link-spacer-y:  #{$dropdown-link-spacer-y};
-    --hb-dropdown-link-spacer-x:  #{$dropdown-link-spacer-x};
+    --hb-dropdown-width: #{$dropdown-width};
+    --hb-dropdown-height: #{$dropdown-height};
 
     position: relative;
     display: inline-block;
@@ -28,141 +17,54 @@
     }
     .drop-menu
     {
-        color: var(--hb-dropdown-color);
-        font-size: var(--hb-dropdown-font-size);
         position: absolute;
         width: 100%;
         left: 0;
         border-radius: var(--hb-dropdown-border-radius);
-        top: calc( (var(--hb-btn-padding-y) * 2) + var(--hb-btn-font-size));
+        top: (($btn-pad-y * 2) + $btn-font-size) * 1.2 ;
         min-width: var(--hb-dropdown-width);
         z-index: var(--hb-zindex-dropdown);
         width: auto;
-        .drop
+
+        .menu
         {
             border-radius: var(--hb-dropdown-border-radius);
-            background-color: var(--hb-dropdown-bg);
-            padding: var(--hb-dropdown-link-spacer-y) 0px;
-            box-shadow: var(--hb-dropdown-shadow);
             @include raise(--hb-dropdown-shadow, $dropdown-shadow-level);
         }
     }
 
-    // Dropdown list
-    .drop ul
+    // POSITIONING
+    .drop-se, .drop-ne
     {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        max-height: var(--hb-dropdown-height);
-        overflow-y: auto;
-        li
-        {
-            padding: 0;
-            display: block;
-            width: 100%;
-            overflow: hidden;
-            position: relative;
-            margin: 0;
-            a
-            {
-                display: block;
-                position: relative;
-                background-color: transparent;
-                width: 100%;
-                color: var(--hb-dropdown-link-color);
-                padding: var(--hb-dropdown-link-spacer-x);
-                @include _ellipsis();
-                &:hover,
-                &.selected
-                {
-                    text-decoration: none;
-                    background-color: var(--hb-dropdown-link-bg-active);
-                }
-            }
-            // Show tick
-            a.selected:after
-            {
-                font-family: 'IcoMoon';
-                content:"\ed71";
-                position: absolute;
-                color: var(--hb-brand-primary);
-                right: var(--hb-dropdown-link-spacer-x);
-            }
+        right: 0;
+        left: auto;
+        left: initial;
+    }
 
-        }
-        .drop-header
-        {
-            font-weight: $text-bold;
-            padding: 0px var(--hb-dropdown-link-spacer-x) var(--hb-dropdown-link-spacer-y) var(--hb-dropdown-link-spacer-x);
-            border-bottom: var(--hb-dropdown-divider-size) solid var(--hb-dropdown-header-divider-color);
-        }
-        .divider
-        {
-            padding-top: var(--hb-dropdown-divider-space);
-            margin-bottom: var(--hb-dropdown-divider-space);
-            border-bottom: var(--hb-dropdown-divider-size) solid var(--hb-dropdown-divider-color);
-        }
-        .divider,
-        .drop-header + li,
-        .divider + li,
-        li:first-child
-        {
-            border-top-color: transparent;
-        }
+    .drop-sw, .drop-nw
+    {
+        left: 0;
+        right: auto;
+        right: initial;
+    }
+    .drop-s
+    {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .drop-n
+    {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .drop-n, .drop-ne, .drop-nw
+    {
+        top: auto;
+        bottom: 100%;
+        margin-bottom: 8px;
     }
 }
 
-
-// POSITIONING
-// South
-.drop-s
-{
-    left: 50%;
-    right: 50%;
-    margin-left: -80px;
-}
-.drop-se
-{
-    right: 0;
-    left: auto;
-    left: initial;
-}
-.drop-sw
-{
-    left: 0;
-    right: auto;
-    right: initial;
-}
-
-// North
-.drop-n
-{
-    top: auto;
-    bottom: 100%;
-    left: 50%;
-    right: 50%;
-    margin-left: -80px;
-    margin-bottom: 8px;
-}
-.drop-ne
-{
-    top: auto;
-    bottom: 100%;
-    right: 0;
-    left: auto;
-    left: initial;
-    margin-bottom: 8px;
-}
-.drop-nw
-{
-    top: auto;
-    bottom: 100%;
-    left: 0;
-    right: auto;
-    right: initial;
-    margin-bottom: 8px;
-}
 
 // Drops with arrows need to drop down/up more
 .drop-menu.arrow

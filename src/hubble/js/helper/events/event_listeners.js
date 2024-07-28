@@ -10,7 +10,7 @@
  * @param  {string}  eventName  Event type
  * @return {array}
  */
-eventListeners(DOMElement, eventName)
+_.prototype.event_listeners = function(DOMElement, eventName)
 {
     var args = TO_ARR.call(arguments);
     var ret  = [];

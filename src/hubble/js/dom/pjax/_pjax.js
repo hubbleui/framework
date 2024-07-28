@@ -5,7 +5,7 @@
      * 
      * @var {obj}
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * AJAX Module
@@ -92,7 +92,7 @@
             _invoked = false;
             _listening = false;
 
-            window.removeEventListener('popstate', this._popStateHandler);
+            window.remove_event_listener('popstate', this._popStateHandler);
         }
 
         /**
@@ -105,7 +105,7 @@
             _invoked   = true;
             _listening = true;
 
-            window.addEventListener('popstate', this._popStateHandler);
+            window.add_event_listener('popstate', this._popStateHandler);
         }
 
         /**
@@ -275,7 +275,7 @@
         {
             if (!_listening)
             {
-                window.addEventListener('popstate', this._popStateHandler);
+                window.add_event_listener('popstate', this._popStateHandler);
 
                 _listening = true;
             }
@@ -360,7 +360,7 @@
             else
             {
                 script.src = scriptObj.content;
-                script.addEventListener('load', function()
+                script.add_event_listener('load', function()
                 {
                     chain.next();
                 });

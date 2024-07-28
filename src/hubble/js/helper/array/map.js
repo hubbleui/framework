@@ -8,7 +8,7 @@
  * @param   {array|mixed}   args      If single arg provided gets apllied as this to callback, otherwise args apllied to callback
  * @returns {array|object}
  */
-map(obj, callback)
+_.prototype.map = function(obj, callback)
 {
     if (typeof obj !== 'object' || obj === null) return;
 

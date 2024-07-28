@@ -5,7 +5,7 @@
      * 
      * @var {object}
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * Input masker
@@ -14,67 +14,59 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class InputMasks
+    const InputMasks = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         */
-    	constructor()
+        this._nodes = Helper.$All('.js-mask');
+        
+        this._masks = [];
+
+        this._bind();
+
+        return this;
+    }
+
+    /**
+     * Public destructor remove all masks
+     *
+     * @access {public}
+     */
+    InputMasks.prototype.destruct = function()
+    {
+        Helper.each(this._masks, function(i, mask)
         {
-            this._nodes = Helper.$All('.js-mask');
-            
-            this._masks = [];
+            mask.destroy();
+        });
+        
+        this._nodes = [];
 
-            this._bind();
+        this._masks = [];
+    }
 
-            return this;
-        }
-
-        /**
-         * Public destructor remove all masks
-         *
-         * @access {public}
-         */
-        destruct()
+    /**
+     * Find all the nodes and apply any masks
+     *
+     * @access {private}
+     */
+    InputMasks.prototype._bind = function()
+    {
+        // Find all the nodes
+        Helper.each(this._nodes, function(i, input)
         {
-            Helper.each(this._masks, function(i, mask)
+            let mask = Helper.attr(input, 'data-mask');
+
+            let format = Helper.attr(input, 'data-format');
+
+            if (mask && mask.startsWith('regex('))
             {
-                mask.destroy();
-            });
-            
-            this._nodes = [];
+                mask = mask.trim().replace('regex(', '').slice(0, -1);
+            }
 
-            this._masks = [];
-        }
-
-        /**
-         * Find all the nodes and apply any masks
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            // Find all the nodes
-            Helper.each(this._nodes, function(i, input)
+            if (mask)
             {
-                let mask = Helper.attr(input, 'data-mask');
+                this._masks.push(Container.InputMasker(input, mask, format));
+            }
 
-                let format = Helper.attr(input, 'data-format');
-
-                if (mask && mask.startsWith('regex('))
-                {
-                    mask = mask.trim().replace('regex(', '').slice(0, -1);
-                }
-
-                if (mask)
-                {
-                    this._masks.push(Container.InputMasker(input, mask, format));
-                }
-
-            }, this);
-        }
+        }, this);
     }
 
     // Load into Hubble DOM core

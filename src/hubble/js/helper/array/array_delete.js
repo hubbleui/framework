@@ -5,9 +5,9 @@
  * @param   {object|array}  object Object to delete from
  * @returns {object|array}
  */
-array_delete(path, object)
+_.prototype.array_delete = function(path, object)
 {
-    this.__arrayDeleteRecursive(this.__arrayKeySegment(path), object);
+    this.__array_delete_recursive(this.__array_key_segment(path), object);
 
     return object;
 }

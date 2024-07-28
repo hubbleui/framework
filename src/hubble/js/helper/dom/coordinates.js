@@ -5,7 +5,7 @@
  * @param  {DOMElement}   el Target element
  * @return {object}
  */
-coordinates(DOMElement)
+_.prototype.coordinates = function(DOMElement)
 {
     // If element is hiddien we need to display it quickly
     var inlineDisplay = this.inline_style(DOMElement, 'display');

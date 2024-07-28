@@ -5,7 +5,7 @@
  * @param   {string} tag        Tag to compare
  * @returns {boolean}
  */
-is_node_type(mixed_var, tag)
+_.prototype.is_node_type = function(mixed_var, tag)
 {
     return mixed_var.tagName.toUpperCase() === tag.toUpperCase();
 }

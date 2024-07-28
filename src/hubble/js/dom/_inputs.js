@@ -1,11 +1,18 @@
 (function()
 {
     /**
-     * JS Helper reference
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {function}
+     */
+    const [$, add_class, add_event_listener, closest, in_dom, input_value, remove_class, remove_event_listener, extend] = Container.import(['$','add_class','add_event_listener','closest','in_dom','input_value','remove_class','remove_event_listener','extend']).from('_');
 
     /**
      * Adds classes to inputs
@@ -14,176 +21,158 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Inputs
+    const Inputs = function()
     {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor()
+        this.super('.form-field input:not([type="radio"]):not([type="checkbox"]):not([type="range"]), .form-field select, .form-field textarea, .form-field label');
+
+        return this;
+    }
+
+    /**
+     * Event binder
+     *
+     * @access {private}
+     */
+    Inputs.prototype.bind = function(node)
+    {
+        if (node.tagName.toLowerCase() === 'label')
         {
-            this._inputs = Helper.$All('.form-field input:not([type="radio"]):not([type="checkbox"]):not([type="range"]), .form-field select, .form-field textarea');
-            this._labels = Helper.$All('.form-field label');
+            add_event_listener(node, 'click', this._onLabelClick);
+        }
+        else
+        {
+            add_event_listener(node, 'click, focus, blur, change, input', this._eventHandler);
 
-            if (!Helper.is_empty(this._inputs))
-            {
-                this._bind();
-            }
+            this._setClasses(node);
+        }
+    }
 
-            return this;
+    /**
+     * Event ubinder
+     *
+     * @access {private}
+     */
+    Inputs.prototype.unbind = function(node)
+    {
+        if (node.tagName.toLowerCase() === 'label')
+        {
+            remove_event_listener(node, 'click', this._onLabelClick);
+        }
+        else
+        {
+            remove_event_listener(node, 'click, focus, blur, change, input', this._eventHandler);
+        }
+    }
+
+    /**
+     * Event handler
+     *
+     * @access {private}
+     * @params {event|null} e Browser click event
+     */
+    Inputs.prototype._onLabelClick = function(e)
+    {
+        e = e || window.event;
+
+        var input = $('input', this.parentNode);
+
+        if (in_dom(input))
+        {
+            input.focus();
+
+            return;
         }
 
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
+        var input = $('select', this.parentNode);
 
-            this._inputs = [];
+        if (in_dom(input))
+        {
+            input.focus();
+
+            return;
         }
 
-        /**
-         * Event binder
-         *
-         * @access {private}
-         */
-        _bind()
-        {            
-            Helper.addEventListener(this._labels, 'click', this._onLabelClick);
-            Helper.addEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
+        var input = $('textarea', this.parentNode);
 
-            // Trigger change
-            let _this = this;
+        if (in_dom(input))
+        {
+            input.focus();
 
-            Helper.each(this._inputs, (i, input) => _this._setClasses(input));
+            return;
+        }
+    }
+
+    /**
+     * Event handler
+     *
+     * @access {private}
+     * @params {event|null} e Browser click event
+     */
+    Inputs.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        var wrapper = closest(this, '.form-field');
+
+        if (!wrapper) return;
+
+        if (e.type === 'click')
+        {
+            this.focus();
+        }
+        else if (e.type === 'focus')
+        {
+            add_class(wrapper, 'focus');
+        }
+        else if (e.type === 'blur')
+        {
+            remove_class(wrapper, 'focus');
         }
 
-        /**
-         * Event ubinder
-         *
-         * @access {private}
-         */
-        _unbind()
+        if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
         {
-            Helper.removeEventListener(this._labels, 'click',  this._onLabelClick);
-            Helper.removeEventListener(this._inputs, 'click, focus, blur, change, input', this._eventHandler);
-        }
-
-        /**
-         * Event handler
-         *
-         * @access {private}
-         * @params {event|null} e Browser click event
-         */
-        _onLabelClick(e)
-        {
-            e = e || window.event;
-
-            var input = Helper.$('input', this.parentNode);
-
-            if (Helper.in_dom(input))
-            {
-                input.focus();
-
-                return;
-            }
-
-            var input = Helper.$('select', this.parentNode);
-
-            if (Helper.in_dom(input))
-            {
-                input.focus();
-
-                return;
-            }
-
-            var input = Helper.$('textarea', this.parentNode);
-
-            if (Helper.in_dom(input))
-            {
-                input.focus();
-
-                return;
-            }
-        }
-
-        /**
-         * Event handler
-         *
-         * @access {private}
-         * @params {event|null} e Browser click event
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-
-            var wrapper = Helper.closest(this, '.form-field');
-
-            if (!wrapper) return;
-
-            if (e.type === 'click')
-            {
-                this.focus();
-            }
-            else if (e.type === 'focus')
-            {
-                Helper.add_class(wrapper, 'focus');
-            }
-            else if (e.type === 'blur')
-            {
-                Helper.remove_class(wrapper, 'focus');
-            }
-
-            if (e.type === 'change' || e.type === 'input' || e.type === 'blur')
-            {
-                var _value = Helper.input_value(this);
-
-                if (_value === '')
-                {
-                    Helper.remove_class(wrapper, 'not-empty');
-                    Helper.add_class(wrapper, 'empty');
-                }
-                else
-                {
-                    Helper.remove_class(wrapper, 'empty');
-                    Helper.add_class(wrapper, 'not-empty');
-                }
-            }
-        }
-
-        /**
-         * Sets initial classes on load.
-         *
-         * @access {private}
-         * @params {DOMElement} input 
-         */
-        _setClasses(input)
-        {
-            var wrapper = Helper.closest(input, '.form-field');
-
-            if (!wrapper) return;
-
-            var _value = Helper.input_value(input);
+            var _value = input_value(this);
 
             if (_value === '')
             {
-                Helper.remove_class(wrapper, 'not-empty');
-                Helper.add_class(wrapper, 'empty');
+                remove_class(wrapper, 'not-empty');
+                add_class(wrapper, 'empty');
             }
             else
             {
-                Helper.remove_class(wrapper, 'empty');
-                Helper.add_class(wrapper, 'not-empty');
+                remove_class(wrapper, 'empty');
+                add_class(wrapper, 'not-empty');
             }
         }
     }
 
+    /**
+     * Sets initial classes on load.
+     *
+     * @access {private}
+     * @params {DOMElement} input 
+     */
+    Inputs.prototype._setClasses = function(input)
+    {
+        var wrapper = closest(input, '.form-field');
+
+        if (!wrapper) return;
+
+        var _value = input_value(input);
+
+        if (_value === '')
+        {
+            remove_class(wrapper, 'not-empty');
+            add_class(wrapper, 'empty');
+        }
+        else
+        {
+            remove_class(wrapper, 'empty');
+            add_class(wrapper, 'not-empty');
+        }
+    }
+
     // Load into Hubble DOM core
-    Hubble.dom().register('Inputs', Inputs);
+    Hubble.dom().register('Inputs', extend(Component, Inputs));
 
 })();

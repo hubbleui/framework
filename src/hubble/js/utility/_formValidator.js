@@ -4,7 +4,7 @@
     /**
      * @var {Helper} obj
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * Validator functions

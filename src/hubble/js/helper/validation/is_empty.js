@@ -4,7 +4,7 @@
  * @param   {mixed}  mixed_var  Variable to test
  * @returns {boolean}
  */
-is_empty(mixed_var)
+_.prototype.is_empty = function(mixed_var)
 {
     if (mixed_var === false || mixed_var === null || (typeof mixed_var === 'undefined'))
     {
@@ -16,7 +16,11 @@ is_empty(mixed_var)
     }
     else if (this.is_object(mixed_var))
     {
-        return Object.keys(mixed_var).length === 0;
+        if (Object.keys(mixed_var).length > 0) return false;
+
+        if (this.prototypes(mixed_var).length > 0) return false;
+
+        return true;
     }
     else if (this.is_string(mixed_var))
     {

@@ -31,32 +31,25 @@
 @import 'utility/_skeleton.js';
 
 // DOM Module
-@import 'dom/_ripple.js';
-@import "dom/pjax/_pjax.js";
-@import "dom/pjax/_links.js";
-@import 'dom/scrollbar/_handler.js';
-@import 'dom/scrollbar/_scrollbars.js';
-@import 'dom/_collapse.js';
-@import 'dom/_lists.js';
-@import 'dom/_dropdown.js';
-@import 'dom/_tabs.js';
-@import 'dom/_bottomNav.js';
-@import 'dom/_drawer.js';
 @import 'dom/popover/_handler.js';
 @import 'dom/popover/_popovers.js';
-@import 'dom/_inputMasks.js';
-@import 'dom/_messages.js';
-@import 'dom/_waypoint.js';
-@import 'dom/_inputs.js';
-@import 'dom/_fileInput.js';
 @import 'dom/chips/_chip.js'
 @import 'dom/chips/_input.js';
 @import 'dom/chips/_suggestion.js';
 @import 'dom/chips/_choice.js';
 @import 'dom/chips/_filter.js';
-@import 'dom/_clickTriggers.js';
-@import 'dom/_backdrop.js';
+@import "dom/pjax/_pjax.js";
+@import "dom/pjax/_links.js";
+@import 'dom/_collapse.js';
+@import 'dom/_lists.js';
+@import 'dom/_dropdown.js';
+@import 'dom/_tabs.js';
+@import 'dom/_inputMasks.js';
+@import 'dom/_messages.js';
+@import 'dom/_waypoint.js';
+@import 'dom/_inputs.js';
 @import 'dom/_imgZoom.js';
+@import 'dom/_ripple.js';
 
 
 // Boot Hubble

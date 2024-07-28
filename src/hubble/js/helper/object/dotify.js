@@ -4,7 +4,7 @@
  * @param   {Object} obj Object
  * @returns {Object} 
  */
-dotify(obj)
+_.prototype.dotify = function(obj)
 {
     var res = {};
 

@@ -1,8 +1,7 @@
-	 // Destructor
-    destruct()
-    {
-        this.clearEventListeners();
-    }
+// Destructor
+_.prototype.destruct = function()
+{
+    this.clear_event_listeners();
 }
 
-Container.singleton('Helper', HelperJS);
+Container.singleton('_', _);

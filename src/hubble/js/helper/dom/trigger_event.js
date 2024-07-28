@@ -6,7 +6,7 @@
  * @param  {string}       eventName    Event name
  * @param  {mixed}        data         Extra data to pass to custom events 
  */
-trigger_event(DOMElement, eventName, data)
+_.prototype.trigger_event = function(DOMElement, eventName, data)
 {
     if (this.in_array(eventName.toLowerCase(), DOC_EVENTS))
     {

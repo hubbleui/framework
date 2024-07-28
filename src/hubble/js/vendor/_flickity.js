@@ -313,7 +313,7 @@
         }, i.docReady = function(t)
         {
             var e = document.readyState;
-            "complete" == e || "interactive" == e ? setTimeout(t) : document.addEventListener("DOMContentLoaded", t)
+            "complete" == e || "interactive" == e ? setTimeout(t) : document.add_event_listener("DOMContentLoaded", t)
         }, i.toDashed = function(t)
         {
             return t.replace(/(.)([A-Z])/g, function(t, e, i)
@@ -606,7 +606,7 @@
         n.extend(p, e.prototype), p._create = function()
         {
             var e = this.guid = ++u;
-            this.element.flickityGUID = e, f[e] = this, this.selectedIndex = 0, this.restingFrames = 0, this.x = 0, this.velocity = 0, this.originSide = this.options.rightToLeft ? "right" : "left", this.viewport = document.createElement("div"), this.viewport.className = "flickity-viewport", this._createSlider(), (this.options.resize || this.options.watchCSS) && t.addEventListener("resize", this), l.createMethods.forEach(function(t)
+            this.element.flickityGUID = e, f[e] = this, this.selectedIndex = 0, this.restingFrames = 0, this.x = 0, this.velocity = 0, this.originSide = this.options.rightToLeft ? "right" : "left", this.viewport = document.createElement("div"), this.viewport.className = "flickity-viewport", this._createSlider(), (this.options.resize || this.options.watchCSS) && t.add_event_listener("resize", this), l.createMethods.forEach(function(t)
             {
                 this[t]()
             }, this), this.options.watchCSS ? this.watchCSS() : this.activate()
@@ -619,7 +619,7 @@
             {
                 this.isActive = !0, this.element.classList.add("flickity-enabled"), this.options.rightToLeft && this.element.classList.add("flickity-rtl"), this.getSize();
                 var t = this._filterFindCellElements(this.element.children);
-                a(t, this.slider), this.viewport.appendChild(this.slider), this.element.appendChild(this.viewport), this.reloadCells(), this.options.accessibility && (this.element.tabIndex = 0, this.element.addEventListener("keydown", this)), this.emitEvent("activate");
+                a(t, this.slider), this.viewport.appendChild(this.slider), this.element.appendChild(this.viewport), this.reloadCells(), this.options.accessibility && (this.element.tabIndex = 0, this.element.add_event_listener("keydown", this)), this.emitEvent("activate");
                 var e, i = this.options.initialIndex;
                 e = this.isInitActivated ? this.selectedIndex : void 0 !== i && this.cells[i] ? i : 0, this.select(e, !1, !0), this.isInitActivated = !0
             }
@@ -909,10 +909,10 @@
             this.isActive && (this.element.classList.remove("flickity-enabled"), this.element.classList.remove("flickity-rtl"), this.cells.forEach(function(t)
             {
                 t.destroy()
-            }), this.unselectSelectedSlide(), this.element.removeChild(this.viewport), a(this.slider.children, this.element), this.options.accessibility && (this.element.removeAttribute("tabIndex"), this.element.removeEventListener("keydown", this)), this.isActive = !1, this.emitEvent("deactivate"))
+            }), this.unselectSelectedSlide(), this.element.removeChild(this.viewport), a(this.slider.children, this.element), this.options.accessibility && (this.element.removeAttribute("tabIndex"), this.element.remove_event_listener("keydown", this)), this.isActive = !1, this.emitEvent("deactivate"))
         }, p.destroy = function()
         {
-            this.deactivate(), t.removeEventListener("resize", this), this.emitEvent("destroy"), h && this.$element && h.removeData(this.element, "flickity"), delete this.element.flickityGUID, delete f[this.guid]
+            this.deactivate(), t.remove_event_listener("resize", this), this.emitEvent("destroy"), h && this.$element && h.removeData(this.element, "flickity"), delete this.element.flickityGUID, delete f[this.guid]
         }, n.extend(p, r), l.data = function(t)
         {
             t = n.getQueryElement(t);
@@ -943,7 +943,7 @@
         }, s._bindStartEvent = function(e, i)
         {
             i = void 0 === i || !!i;
-            var n = i ? "addEventListener" : "removeEventListener";
+            var n = i ? "add_event_listener" : "remove_event_listener";
             t.navigator.pointerEnabled ? e[n]("pointerdown", this) : t.navigator.msPointerEnabled ? e[n]("MSPointerDown", this) : (e[n]("mousedown", this), e[n]("touchstart", this))
         }, s.handleEvent = function(t)
         {
@@ -986,14 +986,14 @@
                 var i = o[e.type];
                 i.forEach(function(e)
                 {
-                    t.addEventListener(e, this)
+                    t.add_event_listener(e, this)
                 }, this), this._boundPointerEvents = i
             }
         }, s._unbindPostStartEvents = function()
         {
             this._boundPointerEvents && (this._boundPointerEvents.forEach(function(e)
             {
-                t.removeEventListener(e, this)
+                t.remove_event_listener(e, this)
             }, this), delete this._boundPointerEvents)
         }, s.onmousemove = function(t)
         {
@@ -1084,7 +1084,7 @@
             {
                 e.style.msTouchAction = t ? "none" : ""
             } : i;
-            for (var n = t ? "addEventListener" : "removeEventListener", s = 0; s < this.handles.length; s++)
+            for (var n = t ? "add_event_listener" : "remove_event_listener", s = 0; s < this.handles.length; s++)
             {
                 var r = this.handles[s];
                 this._bindStartEvent(r, t), e(r), r[n]("click", this)
@@ -1189,7 +1189,7 @@
             a = !1;
         o._createDrag = function()
         {
-            this.on("activate", this.bindDrag), this.on("uiChange", this._uiChangeDrag), this.on("childUIPointerDown", this._childUIPointerDownDrag), this.on("deactivate", this.unbindDrag), r && !a && (t.addEventListener("touchmove", function() {}), a = !0)
+            this.on("activate", this.bindDrag), this.on("uiChange", this._uiChangeDrag), this.on("childUIPointerDown", this._childUIPointerDownDrag), this.on("deactivate", this.unbindDrag), r && !a && (t.add_event_listener("touchmove", function() {}), a = !0)
         }, o.bindDrag = function()
         {
             this.options.draggable && !this.isDragBound && (this.element.classList.add("is-draggable"), this.handles = [this.viewport], this.bindHandles(), this.isDragBound = !0)
@@ -1222,7 +1222,7 @@
             if (n) return this.isPointerDown = !1, void delete this.pointerIdentifier;
             this._dragPointerDown(e, i);
             var o = document.activeElement;
-            o && o.blur && o != this.element && o != document.body && o.blur(), this.pointerDownFocus(e), this.dragX = this.x, this.viewport.classList.add("is-pointer-down"), this._bindPostStartEvents(e), this.pointerDownScroll = s(), t.addEventListener("scroll", this), this.dispatchEvent("pointerDown", e, [i])
+            o && o.blur && o != this.element && o != document.body && o.blur(), this.pointerDownFocus(e), this.dragX = this.x, this.viewport.classList.add("is-pointer-down"), this._bindPostStartEvents(e), this.pointerDownScroll = s(), t.add_event_listener("scroll", this), this.dispatchEvent("pointerDown", e, [i])
         };
         var c = {
                 touchstart: !0,
@@ -1252,10 +1252,10 @@
             delete this.isTouchScrolling, this.viewport.classList.remove("is-pointer-down"), this.dispatchEvent("pointerUp", t, [e]), this._dragPointerUp(t, e)
         }, o.pointerDone = function()
         {
-            t.removeEventListener("scroll", this), delete this.pointerDownScroll
+            t.remove_event_listener("scroll", this), delete this.pointerDownScroll
         }, o.dragStart = function(e, i)
         {
-            this.dragStartPosition = this.x, this.startAnimation(), t.removeEventListener("scroll", this), this.dispatchEvent("dragStart", e, [i])
+            this.dragStartPosition = this.x, this.startAnimation(), t.remove_event_listener("scroll", this), this.dispatchEvent("dragStart", e, [i])
         }, o.pointerMove = function(t, e)
         {
             var i = this._dragPointerMove(t, e);
@@ -1408,10 +1408,10 @@
             e.appendChild(i), this.on("tap", this.onTap), this.parent.on("select", this.update.bind(this)), this.on("pointerDown", this.parent.childUIPointerDown.bind(this.parent))
         }, s.prototype.activate = function()
         {
-            this.bindTap(this.element), this.element.addEventListener("click", this), this.parent.element.appendChild(this.element)
+            this.bindTap(this.element), this.element.add_event_listener("click", this), this.parent.element.appendChild(this.element)
         }, s.prototype.deactivate = function()
         {
-            this.parent.element.removeChild(this.element), i.prototype.destroy.call(this), this.element.removeEventListener("click", this)
+            this.parent.element.removeChild(this.element), i.prototype.destroy.call(this), this.element.remove_event_listener("click", this)
         }, s.prototype.createSVG = function()
         {
             var t = document.createElementNS(r, "svg");
@@ -1574,8 +1574,8 @@
             if ("playing" != this.state)
             {
                 var t = document[s];
-                if (o && t) return void document.addEventListener(o, this.onVisibilityPlay);
-                this.state = "playing", o && document.addEventListener(o, this.onVisibilityChange), this.tick()
+                if (o && t) return void document.add_event_listener(o, this.onVisibilityPlay);
+                this.state = "playing", o && document.add_event_listener(o, this.onVisibilityChange), this.tick()
             }
         }, n.prototype.tick = function()
         {
@@ -1591,7 +1591,7 @@
             }
         }, n.prototype.stop = function()
         {
-            this.state = "stopped", this.clear(), o && document.removeEventListener(o, this.onVisibilityChange)
+            this.state = "stopped", this.clear(), o && document.remove_event_listener(o, this.onVisibilityChange)
         }, n.prototype.clear = function()
         {
             clearTimeout(this.timeout)
@@ -1607,7 +1607,7 @@
             this[t ? "pause" : "unpause"]()
         }, n.prototype.visibilityPlay = function()
         {
-            this.play(), document.removeEventListener(o, this.onVisibilityPlay)
+            this.play(), document.remove_event_listener(o, this.onVisibilityPlay)
         }, e.extend(i.defaults,
         {
             pauseAutoPlayOnHover: !0
@@ -1618,7 +1618,7 @@
             this.player = new n(this), this.on("activate", this.activatePlayer), this.on("uiChange", this.stopPlayer), this.on("pointerDown", this.stopPlayer), this.on("deactivate", this.deactivatePlayer)
         }, r.activatePlayer = function()
         {
-            this.options.autoPlay && (this.player.play(), this.element.addEventListener("mouseenter", this))
+            this.options.autoPlay && (this.player.play(), this.element.add_event_listener("mouseenter", this))
         }, r.playPlayer = function()
         {
             this.player.play()
@@ -1633,13 +1633,13 @@
             this.player.unpause()
         }, r.deactivatePlayer = function()
         {
-            this.player.stop(), this.element.removeEventListener("mouseenter", this)
+            this.player.stop(), this.element.remove_event_listener("mouseenter", this)
         }, r.onmouseenter = function()
         {
-            this.options.pauseAutoPlayOnHover && (this.player.pause(), this.element.addEventListener("mouseleave", this))
+            this.options.pauseAutoPlayOnHover && (this.player.pause(), this.element.add_event_listener("mouseleave", this))
         }, r.onmouseleave = function()
         {
-            this.player.unpause(), this.element.removeEventListener("mouseleave", this)
+            this.player.unpause(), this.element.remove_event_listener("mouseleave", this)
         }, i.Player = n, i
     }),
     function(t, e)
@@ -1772,7 +1772,7 @@
             }
         }, s.prototype.handleEvent = i.handleEvent, s.prototype.load = function()
         {
-            this.img.addEventListener("load", this), this.img.addEventListener("error", this), this.img.src = this.img.getAttribute("data-flickity-lazyload"), this.img.removeAttribute("data-flickity-lazyload")
+            this.img.add_event_listener("load", this), this.img.add_event_listener("error", this), this.img.src = this.img.getAttribute("data-flickity-lazyload"), this.img.removeAttribute("data-flickity-lazyload")
         }, s.prototype.onload = function(t)
         {
             this.complete(t, "flickity-lazyloaded")
@@ -1781,7 +1781,7 @@
             this.complete(t, "flickity-lazyerror")
         }, s.prototype.complete = function(t, e)
         {
-            this.img.removeEventListener("load", this), this.img.removeEventListener("error", this);
+            this.img.remove_event_listener("load", this), this.img.remove_event_listener("error", this);
             var i = this.flickity.getParentCell(this.img),
                 n = i && i.element;
             this.flickity.cellSizeChange(n), this.img.classList.add(e), this.flickity.dispatchEvent("lazyLoad", t, n)
@@ -1990,7 +1990,7 @@
         }, o.prototype = Object.create(e.prototype), o.prototype.check = function()
         {
             var t = this.getIsImageComplete();
-            return t ? void this.confirm(0 !== this.img.naturalWidth, "naturalWidth") : (this.proxyImage = new Image, this.proxyImage.addEventListener("load", this), this.proxyImage.addEventListener("error", this), this.img.addEventListener("load", this), this.img.addEventListener("error", this), void(this.proxyImage.src = this.img.src))
+            return t ? void this.confirm(0 !== this.img.naturalWidth, "naturalWidth") : (this.proxyImage = new Image, this.proxyImage.add_event_listener("load", this), this.proxyImage.add_event_listener("error", this), this.img.add_event_listener("load", this), this.img.add_event_listener("error", this), void(this.proxyImage.src = this.img.src))
         }, o.prototype.getIsImageComplete = function()
         {
             return this.img.complete && void 0 !== this.img.naturalWidth
@@ -2009,15 +2009,15 @@
             this.confirm(!1, "onerror"), this.unbindEvents()
         }, o.prototype.unbindEvents = function()
         {
-            this.proxyImage.removeEventListener("load", this), this.proxyImage.removeEventListener("error", this), this.img.removeEventListener("load", this), this.img.removeEventListener("error", this)
+            this.proxyImage.remove_event_listener("load", this), this.proxyImage.remove_event_listener("error", this), this.img.remove_event_listener("load", this), this.img.remove_event_listener("error", this)
         }, r.prototype = Object.create(o.prototype), r.prototype.check = function()
         {
-            this.img.addEventListener("load", this), this.img.addEventListener("error", this), this.img.src = this.url;
+            this.img.add_event_listener("load", this), this.img.add_event_listener("error", this), this.img.src = this.url;
             var t = this.getIsImageComplete();
             t && (this.confirm(0 !== this.img.naturalWidth, "naturalWidth"), this.unbindEvents())
         }, r.prototype.unbindEvents = function()
         {
-            this.img.removeEventListener("load", this), this.img.removeEventListener("error", this)
+            this.img.remove_event_listener("load", this), this.img.remove_event_listener("error", this)
         }, r.prototype.confirm = function(t, e)
         {
             this.isLoaded = t, this.emitEvent("progress", [this, this.element, e])

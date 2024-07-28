@@ -5,7 +5,7 @@
  * @param  {DOMElement}   DOMElement Target element
  * @return {object}
  */
-height(DOMElement)
+_.prototype.height = function(DOMElement)
 {
     if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement) return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 

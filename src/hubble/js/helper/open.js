@@ -4,20 +4,26 @@
  * @author    {Joe J. Howard}
  * @copyright {Joe J. Howard}
  * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
- */      
-class HelperJS
+ */
+
+var _THIS = null;
+
+const _ = function()
 {
-    version = "1.0.0";
+    this.version = "1.0.0";
 
-    author = "Joe Howard";
+    this.author = "Joe Howard";
 
-    browser = false;
+    this.browser = false;
 
-    _events = {};
+    this._events = {};
 
-    _guid = 1;
+    this._guid = 1;
 
-    _guidgen()
-    {
-        return `__${this._guid++}`;
-    }
+    _THIS = this;
+}
+
+_.prototype._guidgen = function()
+{
+    return `__${this._guid++}`;
+}

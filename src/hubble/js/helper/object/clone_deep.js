@@ -5,13 +5,9 @@
  * @param   {mixed}  context   Context to bind functions
  * @returns {mixed}
  */
-clone_deep(mixed_var, context)
+_.prototype.clone_deep = function(mixed_var, context)
 {
-    let ret = this.__cloneVar(mixed_var, context, false);
-
-    CURR_CLONES = new WeakMap();
-
-    return ret;
+    return this.__clone_var(mixed_var, this.is_undefined(context) ? mixed_var : context);
 }
 
 /**
@@ -21,24 +17,22 @@ clone_deep(mixed_var, context)
  * @param   {mixed}  context    Context when cloning recursive objects and arrays.
  * @returns {mixed}
  */
-__cloneVar(mixed_var, context, isDeep)
+_.prototype.__clone_var = function(mixed_var, context)
 {
-    isDeep = this.is_undefined(isDeep) ? true : isDeep;
-
     let tag = this.var_type(mixed_var);
 
     switch (tag)
     {
         case OBJECT_TAG:
-            return this.__cloneObj(mixed_var, context, isDeep);
+            return this.__clone_obj(mixed_var, context);
 
         case ARRAY_TAG:
         case NODELST_TAG:
         case ARGS_TAG:
-            return this.__cloneArray(mixed_var, context, isDeep);
+            return this.__clone_array(mixed_var, context);
 
         case FUNC_TAG:
-            return this.__cloneFunc(mixed_var, context);
+            return this.__clone_func(mixed_var, context);
 
         case NULL_TAG:
             return null;
@@ -57,28 +51,28 @@ __cloneVar(mixed_var, context, isDeep)
             return n;
 
         case REGEXP_TAG:
-            return this.__cloneRegExp(mixed_var, context);
+            return this.__clone_RegExp(mixed_var, context);
 
         case SYMBOL_TAG:
-            return this.__cloneSymbol(mixed_var);
+            return this.__clone_symbol(mixed_var);
 
         case DATE_TAG:
-            return this.__cloneDate(mixed_var);
+            return this.__clone_date(mixed_var);
 
         case SET_TAG:
-            return this.__cloneSet(mixed_var, context);
+            return this.__clone_set(mixed_var, context);
 
         case MAP_TAG:
-            return this.__cloneMap(mixed_var, context);
+            return this.__clone_map(mixed_var, context);
 
         case ARRAY_BUFFER_TAG:
-            return this.__cloneArrayBuffer(mixed_var);
+            return this.__clone_array_buffer(mixed_var);
 
         case DATAVIEW_TAG:
-            return this.__cloneDataView(mixed_var);
+            return this.__clone_data_view(mixed_var);
 
         case ARRAY_BUFFER_TAG:
-            return this.__cloneBuffer(mixed_var);
+            return this.__clone_buffer(mixed_var);
 
         case FLOAT32_TAG:
         case FLOAT64_TAG:
@@ -89,7 +83,7 @@ __cloneVar(mixed_var, context, isDeep)
         case UINT8CLAMPED_TAG:
         case UINT16_TAG:
         case UINT32_TAG:
-            return this.__cloneTypedArray(object);
+            return this.__clone_typed_array(object);
 
         case ERROR_TAG:
         case WEAKMAP_TAG:
@@ -105,39 +99,42 @@ __cloneVar(mixed_var, context, isDeep)
  * @param   {object}  obj
  * @returns {object}
  */
-__cloneObj(obj, context, isDeep)
+_.prototype.__clone_obj = function(obj, context)
 {
-    // Handle date objects
-    if (obj instanceof Date)
-    {
-        let r = new Date();
-
-        r.setTime(obj.getTime());
-
-        return r;
-    }
-
-    // Loop keys and functions
+    // Shallow keys
     let keys = this.object_props(obj);
-    let ret = {};
+    let ret  = {};
 
-    if (keys.length === 0)
+    // Empty object
+    if (keys.length === 0 || this.is_empty(obj))
     {
         return ret;
     }
 
-    if (CURR_CLONES.has(obj))
-    {
-        return CURR_CLONES.get(obj);
-    }
-
-    CURR_CLONES.set(obj, ret);
-
     this.each(keys, function(i, key)
     {
-        ret[key] = this.__cloneVar(obj[key], typeof context === 'undefined' ? ret : context);
+        ret[key] = this.clone_deep(obj[key], context);
 
     }, this);
+
+    // Clone prototypes
+    let protos = this.prototypes(obj);
+
+    if (protos.length >= 1)
+    {
+        let curr = ret;
+
+        while(protos.length > 0)
+        {
+            let proto        = protos.shift();
+            let clone        = this.clone_deep(proto, context);
+            clone.constrctor = this.clone_deep(proto.constructor, context);
+            
+            Object.setPrototypeOf(curr, clone);
+            
+            curr = clone;
+        }
+    }
 
     return ret;
 }
@@ -149,9 +146,9 @@ __cloneObj(obj, context, isDeep)
  * @param   {mixed}     context   Context to bind function
  * @returns {function}
  */
-__cloneFunc(func, context)
+_.prototype.__clone_func = function(func, context)
 {
-    return this.__bind(func, context);
+    return this.bind(func, context);
 }
 
 /**
@@ -160,29 +157,20 @@ __cloneFunc(func, context)
  * @param   {array}  arr
  * @returns {array}
  */
-__cloneArray(arr, context)
+_.prototype.__clone_array = function(arr, context)
 {
     let ret = [];
 
-    let cacheKey = { array: arr };
-
-    if (CURR_CLONES.has(cacheKey))
-    {
-        return CURR_CLONES.get(cacheKey);
-    }
-
-    CURR_CLONES.set(cacheKey, ret);
-
     this.each(arr, function(i, val)
     {
-        ret[i] = this.__cloneVar(val, context);
+        ret[i] = this.clone_deep(val, context);
     
     }, this);
 
     return ret;
 }
 
-__cloneDate(d)
+_.prototype.__clone_date = function(d)
 {
     let r = new Date();
 
@@ -191,12 +179,12 @@ __cloneDate(d)
     return r;
 }
 
-__cloneSymbol(symbol)
+_.prototype.__clone_symbol = function(symbol)
 {
     return Object(Symbol.prototype.valueOf.call(symbol));
 }
 
-__cloneRegExp(regexp)
+_.prototype.__clone_RegExp = function(regexp)
 {
     let reFlags = /\w*$/;
 
@@ -207,33 +195,33 @@ __cloneRegExp(regexp)
     return result;
 }
 
-__cloneMap(m, context)
+_.prototype.__clone_map = function(m, context)
 {
     const ret = new Map();
 
     m.this.each((v, k) =>
     {
-        ret.set(k, this.__cloneVar(v, context));
+        ret.set(k, this.clone_deep(v, context));
     
     }, this);
 
     return ret;
 }
 
-__cloneSet(s, context)
+_.prototype.__clone_set = function(s, context)
 {
     const ret = new Set();
 
     s.this.each((val, k) =>
     {
-        ret.add(k, this.__cloneVar(v, context));
+        ret.add(k, this.clone_deep(v, context));
     
     }, this);
 
     return ret;
 }
 
-__cloneArrayBuffer(arrayBuffer)
+_.prototype.__clone_array_buffer = function(arrayBuffer)
 {
     const result = new arrayBuffer.constructor(arrayBuffer.byteLength)
 
@@ -242,9 +230,9 @@ __cloneArrayBuffer(arrayBuffer)
     return result;
 }
 
-__cloneDataView(dataView)
+_.prototype.__clone_data_view = function(dataView)
 {
-    const buffer = this.__cloneArrayBuffer(dataView.buffer);
+    const buffer = this.__clone_array_buffer(dataView.buffer);
 
     return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
 }
@@ -256,7 +244,7 @@ __cloneDataView(dataView)
  * @param   {boolean} [isDeep]  Specify a deep clone.
  * @returns {Buffer}   Returns  the cloned buffer.
  */
-__cloneBuffer(buffer)
+_.prototype.__clone_buffer = function(buffer)
 {
     const length = buffer.length;
 
@@ -275,9 +263,9 @@ __cloneBuffer(buffer)
  * @param {boolean} [isDeep] Specify a deep clone.
  * @returns {Object} Returns the cloned typed array.
  */
-__cloneTypedArray(typedArray)
+_.prototype.__clone_typed_array = function(typedArray)
 {
-    const buffer = this.__cloneArrayBuffer(typedArray.buffer);
+    const buffer = this.__clone_array_buffer(typedArray.buffer);
 
     return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
 }

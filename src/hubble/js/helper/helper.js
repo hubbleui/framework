@@ -11,6 +11,7 @@
 		@import 'animate/animate.js';
 		@import 'animate/animate_css.js';
 		@import 'animate/animation_factory.js';
+		@import 'array/array.js';
 		@import 'array/array_delete.js';
 		@import 'array/array_filter.js';
 		@import 'array/array_get.js';
@@ -49,7 +50,7 @@
 		@import 'dom/inner_HTML.js';
 		@import 'dom/inner_Text.js';
 		@import 'dom/input_value.js';
-		@import 'dom/new_node.js';
+		@import 'dom/dom_element.js';
 		@import 'dom/next.js';
 		@import 'dom/next_untill_class.js';
 		@import 'dom/preapend.js';
@@ -65,15 +66,16 @@
 		@import 'dom/traverse.js';
 		@import 'dom/width.js';
 		@import 'dom/height.js';
-		@import 'events/addEventListener.js';
-		@import 'events/clearEventListeners.js';
+		@import 'events/add_event_listener.js';
+		@import 'events/clear_event_listeners.js';
 		@import 'events/collect_garbage.js';
-		@import 'events/eventListeners.js';
-		@import 'events/removeEventListener.js';
+		@import 'events/event_listeners.js';
+		@import 'events/remove_event_listener.js';
 		@import 'misc/is_retina.js';
 		@import 'misc/parse_url.js';
 		@import 'misc/url_query.js';
 		@import 'object/clone_deep.js';
+		@import 'object/bind.js';
 		@import 'object/dotify.js';
 		@import 'object/extend.js';
 		@import 'object/join_obj.js';
@@ -81,6 +83,8 @@
 		@import 'object/obj.js';
 		@import 'object/obj_clone.js';
 		@import 'object/object_props.js';
+		@import 'object/prototypes.js';
+		@import 'object/flatten_obj.js';
 		@import 'string/camel_case_to_hyphen.js';
 		@import 'string/json_decode.js';
 		@import 'string/json_encode.js';

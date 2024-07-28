@@ -150,12 +150,13 @@
     </li>
     <li  id="menu-navigation" class="menu-item menu-item-submenu">
         <ul>
-            <li class="menu-item"><a  href="../../navigation/waypoints/index.html">Waypoints</a></li>
-            <li class="menu-item"><a  href="../../navigation/menu/index.html">Menu</a></li>
+            <li class="menu-item"><a  href="../../navigation/navbar/index.html">Navbar</a></li>
+            <li class="menu-item"><a  href="../../navigation/bottom-nav/index.html">Bottom Nav</a></li>
             <li class="menu-item"><a  href="../../navigation/drawer/index.html">Drawer</a></li>
             <li class="menu-item"><a  href="../../navigation/tabs/index.html">Tabs</a></li>
             <li class="menu-item"><a  href="../../navigation/breadcrumbs/index.html">Breadcrumbs</a></li>
             <li class="menu-item"><a  href="../../navigation/pagination/index.html">Pagination</a></li>
+            <li class="menu-item"><a  href="../../navigation/waypoints/index.html">Waypoints</a></li>
         </ul>
     </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-forms">
@@ -165,6 +166,7 @@
     <li  id="menu-forms" class="menu-item menu-item-submenu">
         <ul>
             <li class="menu-item"><a  href="../../forms/buttons/index.html">Buttons</a></li>
+            <li class="menu-item"><a  href="../../forms/dropdown/index.html">Dropdown</a></li>
             <li class="menu-item"><a  href="../../forms/inputs/index.html">Inputs</a></li>
             <li class="menu-item"><a  href="../../forms/checkbox/index.html">Checkbox</a></li>
             <li class="menu-item"><a  href="../../forms/radio/index.html">Radio</a></li>
@@ -632,10 +634,10 @@
     </div>
 </div>
 <script type="text/javascript">
-window.addEventListener('DOMContentLoaded', function()
+const sandbox = function()
 {
     /* Helpers */
-    const [$, addEventListener, form_values, each, has_class, add_class, remove_class] = Container.import(['$', 'addEventListener', 'form_values', 'each', 'has_class', 'add_class', 'remove_class']).from('Helper');
+    const [$, add_event_listener, form_values, each, has_class, add_class, remove_class] = Container.import(['$', 'add_event_listener', 'form_values', 'each', 'has_class', 'add_class', 'remove_class']).from('_');
 
     // Instantiate validator and cache vars
     const DOMElementform    = $('.js-skeleton-form');
@@ -644,7 +646,7 @@ window.addEventListener('DOMContentLoaded', function()
     const DOMElementDestroy = $('.js-destroy-skeletons', DOMElementform);
     var skeletons           = [];
 
-    addEventListener(DOMElementInsert, 'click', function(e)
+    add_event_listener(DOMElementInsert, 'click', function(e)
     {
         // Stop the form from submitting via POST
         e = e || window.event;
@@ -660,7 +662,7 @@ window.addEventListener('DOMContentLoaded', function()
         skeletons.push(Container.Skeleton(DOMElementCard, options));
     });
 
-    addEventListener(DOMElementDestroy, 'click', function(e)
+    add_event_listener(DOMElementDestroy, 'click', function(e)
     {
         // Stop the form from submitting via POST
         e = e || window.event;
@@ -673,8 +675,9 @@ window.addEventListener('DOMContentLoaded', function()
 
         each(skeletons, (i, skeleton) => skeleton.fade_out(() => remove_class(DOMElementDestroy, 'active')));
     });
+};
 
-});
+window.addEventListener('Hubble:ready', sandbox);
 
 </script>
 <hr />
@@ -870,7 +873,7 @@ skeleton.load(content);</code></pre>
     const loader = function()
     {
         /* Helpers */
-        const [$, each] = Container.import(['$', 'each']).from('Helper');
+        const [$, each] = Container.import(['$', 'each']).from('_');
         const [cardWrapper, triggerLoad, triggerReset] = [$('.js-skeleton-loader-card'), $('.js-load-content'), $('.js-reset-skeletons')];
         const contents  = 
         {
@@ -898,7 +901,7 @@ skeleton.load(content);</code></pre>
         {            
             each(options, (i, option) => $(option.selector, cardWrapper).innerHTML = '' );
 
-            skeleton = Container.Skeleton($('.js-skeleton-loader-card'), options);
+            skeleton = Container.Skeleton(cardWrapper, options);
         };
 
         triggerLoad.addEventListener('click', () =>
@@ -907,7 +910,7 @@ skeleton.load(content);</code></pre>
 
             skeleton.load(contents);
 
-            Hubble.dom().refresh('LazyLoad');
+            Hubble.dom().refresh('LazyLoad', cardWrapper);
 
             loaded = true;
         });

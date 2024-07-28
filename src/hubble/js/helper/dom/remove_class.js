@@ -5,7 +5,7 @@
  * @param  {DOMElement}         DOMElement Target element
  * @param  {array|string} className  Class name(s) to remove
  */
-remove_class(DOMElement, className)
+_.prototype.remove_class = function(DOMElement, className)
 {
     if (this.is_array(DOMElement))
     {

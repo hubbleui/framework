@@ -5,7 +5,7 @@
  * @param  {DOMElement}   el   Target element
  * @param  {string} text Text to replace
  */
-inner_Text(el, text)
+_.prototype.inner_Text = function(el, text)
 {
     if (el.childNodes[0])
     {

@@ -6,7 +6,7 @@
  * @param  {string} type Target node type
  * @return {node\null}
  */
-previous(el, type)
+_.prototype.previous = function(el, type)
 {
     // Type is class
     if (this.is_array(type))
@@ -28,7 +28,6 @@ previous(el, type)
     {
         return this.previous_untill_class(el, type);
     }
-
 
     type = type.toLowerCase();
     if (el.previousSibling && el.previousSibling.nodeName.toLowerCase() === type) return el.previousSibling;

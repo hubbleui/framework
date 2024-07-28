@@ -4,7 +4,7 @@
  * @param   {mixed}  mixed_var  Variable to evaluate
  * @returns {boolean}
  */
-is_htmlElement(mixed_var)
+_.prototype.is_htmlElement = function(mixed_var)
 {
     if (mixed_var && mixed_var.nodeType)
     {

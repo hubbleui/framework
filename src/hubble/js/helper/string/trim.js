@@ -4,7 +4,7 @@
  * @param  {str}           str
  * @return {array|string} charlist (optional)
  */
-trim(str, charlist)
+_.prototype.trim = function(str, charlist)
 {
     if (!charlist) return str.trim();
 

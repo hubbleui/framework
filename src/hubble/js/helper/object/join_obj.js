@@ -6,7 +6,7 @@
  * @param   {string} glue      Glue between value and next key
  * @returns {string} 
  */
-join_obj(obj, seperator, glue, recursive, trimLast)
+_.prototype.join_obj = function(obj, seperator, glue, recursive, trimLast)
 {
     seperator = this.is_undefined(seperator) ? '' : seperator;
     glue      = this.is_undefined(glue) ? '' : glue;

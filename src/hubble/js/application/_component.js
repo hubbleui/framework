@@ -1,6 +1,6 @@
 (function()
 {
-    const [$All, each, closest] = Container.import(['$All','each','closest']).from('Helper');
+    const [$All, each, closest, is_empty] = Container.import(['$All','each','closest','is_empty']).from('_');
 
     /**
      * Component base class
@@ -9,85 +9,83 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Component
+    const Component = function(selector)
     {
-        /**
-         * Constructor.
-         *
-         * @access {public}
-         * @param  {string} selector DOM Elements selector
-         */
-        constructor(selector)
+        this._DOMElements = [];
+
+        this._selector = selector;
+
+        this.construct(document);
+
+        return this;
+    }
+
+    /**
+     * Module constructor
+     *
+     * @access {public}
+     */
+    Component.prototype.construct = function(context)
+    {        
+        let nodes = $All(this._selector, context);
+
+        if (context !== document) nodes.unshift(context);
+
+        if (!is_empty(nodes))
         {
-            this._DOMElements = [];
-
-            this._selector = selector;
-            
-            this.construct(document);
-        }
-
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @access {public}
-         */
-        construct(context)
-        {
-            let nodes = $All(this._selector, context);
-
-            if (context !== document) nodes.unshift(context);
-
             this._DOMElements = [...this._DOMElements, ...nodes];
 
             each(nodes, (i, node) => this.bind(node), this);
         }
+    }
 
-        /**
-         * Module destructor - removes event listeners
-         *
-         * @access {public}
-         */
-        destruct(context)
-        {            
-            if (!context || context === document)
+    /**
+     * Module destructor
+     *
+     * @access {public}
+     */
+    Component.prototype.destruct = function(context)
+    {
+        if (!context || context === document)
+        {
+            each(this._DOMElements, (i, node) => this.unbind(node), this);
+            
+            this._DOMElements = [];
+
+            return;
+        }
+
+        const _this = this;
+
+        each(this._DOMElements, function(i, DOMElement)
+        {                
+            if (closest(DOMElement, context))
             {
-                each(this._DOMElements, (i, node) => this.unbind(node), this);
-                
-                this._DOMElements = [];
+                _this.unbind(DOMElement);
 
-                return;
+                _this._DOMElements.splice(i, 1);
             }
+        });
+    }
 
-            const _this = this;
+    /**
+     * Bind abstract method
+     *
+     * @access {public}
+     */
+    Component.prototype.bind = function(context)
+    {
+        throw new Error('[bind] method must be implemented.');
+    }
 
-            each(this._DOMElements, function(i, DOMElement)
-            {                
-                if (closest(DOMElement, context))
-                {
-                    _this.unbind(DOMElement);
-
-                    _this._DOMElements.splice(i, 1);
-                }
-            });
-        }
-
-        /**
-         * Insert ripples
-         *
-         * @access {private}
-         */
-        bind(node)
-        {
-        }
-
-        /**
-         * Insert ripples
-         *
-         * @access {private}
-         */
-        unbind(node)
-        {
-        }
+    /**
+     * Unbind abstract method
+     *
+     * @access {public}
+     */
+    Component.prototype.unbind = function(context)
+    {
+        throw new Error('[unbind] method must be implemented.');
     }
     
     // Register

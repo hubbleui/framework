@@ -4,7 +4,7 @@
  *
  * @access {public}
  */
-collect_garbage()
+_.prototype.collect_garbage = function()
 {
     let _this = this;
 
@@ -20,7 +20,7 @@ collect_garbage()
             {
                 cleared = true;
 
-                _this.__removeListener(DOMElement, type);
+                _this.__remove_listener(DOMElement, type);
             }
         });
 

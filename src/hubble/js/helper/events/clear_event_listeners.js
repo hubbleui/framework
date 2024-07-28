@@ -3,7 +3,7 @@
  *
  * @access {public}
  */
-clearEventListeners()
+_.prototype.clear_event_listeners = function()
 {
     var events = this._events;
 
@@ -15,7 +15,7 @@ clearEventListeners()
         {
             let DOMElement = callbacks[0].element;
             
-            _this.__removeListener(DOMElement, type);
+            _this.__remove_listener(DOMElement, type);
         });
     });
 

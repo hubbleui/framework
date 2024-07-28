@@ -4,7 +4,7 @@
  * @param  {string} transforms A CSS transform value e.g translateY(300px) 
  * @return {object}
  */
-css_to_3d_transform(transformsStr)
+_.prototype.css_to_3d_transform = function(transformsStr)
 {        
     var transforms = {};
 

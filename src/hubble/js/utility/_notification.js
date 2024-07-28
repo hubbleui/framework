@@ -3,7 +3,7 @@
     /**
      * @var {Helper} obj
      */
-    const Helper = Container.Helper();
+    const Helper = Container._();
 
     /**
      * Default options
@@ -131,12 +131,12 @@
                 }
             };
 
-            Helper.addEventListener(notif, 'click', removefunction);
+            Helper.add_event_listener(notif, 'click', removefunction);
 
             if (options.btn)
             {
-                Helper.addEventListener(Helper.$('.js-notif-btn', notif), 'click', options.callbackBtn);
-                Helper.addEventListener(Helper.$('.js-notif-btn', notif), 'click', removefunction);
+                Helper.add_event_listener(Helper.$('.js-notif-btn', notif), 'click', options.callbackBtn);
+                Helper.add_event_listener(Helper.$('.js-notif-btn', notif), 'click', removefunction);
             }
         }
 

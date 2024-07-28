@@ -1,11 +1,18 @@
 (function()
 {
     /**
-     * JS Helper reference
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, add_event_listener, attr, closest, has_class, in_dom, remove_event_listener, remove_from_dom, trigger_event, extend] = Container.import(['$','add_event_listener','attr','closest','has_class','in_dom','remove_event_listener','remove_from_dom','trigger_event','extend']).from('_');
 
     /**
      * Chip suggestions.
@@ -14,99 +21,74 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class ChipSuggestions
+    const ChipSuggestions = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
+        this.super('.js-chip-suggestions .btn-chip');
+    }
+
+    /**
+     * Bind DOM listeners
+     *
+     * @access {private}
+     */
+    ChipSuggestions.prototype.bind = function(node)
+    {
+        add_event_listener(node, 'click', this._clickHandler);
+    }
+
+    /**
+     * Unbind DOM listeners
+     *
+     * @access {private}
+     */
+    ChipSuggestions.prototype.unbind = function()
+    {
+        remove_event_listener(node, 'click', this._clickHandler);
+    }
+
+    /**
+     * Chip click handler
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    ChipSuggestions.prototype._clickHandler = function(e)
+    {
+        e = e || window.event;
+
+        e.preventDefault();
+
+        var _wrapper = closest(this, '.js-chip-suggestions');
+        var _input   = $('#' + _wrapper.dataset.inputTarget);
+        var _text    = this.innerText.trim();
+
+        if (!_input || !in_dom(_input))
         {
-            this._chips = Helper.$All('.js-chip-suggestions .btn-chip');
+            throw new Error('Target node does not exist.');
 
-            this._bind();
-
-            return this;
+            return false;
         }
 
-        /**
-         * Module destructor remove event handlers
-         *
-         * @access {public}
-         */
-        destruct()
+        // Chips input
+        if (has_class(_input, '.js-chips-input'))
         {
-            this._unbind();
+            Container.ChipInputs().addChip(_text, _input);
 
-            this._chips = [];
+            remove_from_dom(this);
+
+            return;
         }
 
-        /**
-         * Bind DOM listeners
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._chips, 'click', this._clickHandler);
-        }
+        let val = attr(_input, 'value');
 
-        /**
-         * Unbind DOM listeners
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._chips, 'click', this._clickHandler);
-        }
+        attr(_input, 'value',  val === '' ? _text : `${val} ${_text}`);
 
-        /**
-         * Chip click handler
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _clickHandler(e)
-        {
-            e = e || window.event;
+        trigger_event(_input, 'change');
 
-            e.preventDefault();
-
-            var _wrapper = Helper.closest(this, '.js-chip-suggestions');
-            var _input   = Helper.$('#' + _wrapper.dataset.inputTarget);
-            var _text    = this.innerText.trim();
-
-            if (!_input || !Helper.in_dom(_input))
-            {
-                throw new Error('Target node does not exist.');
-
-                return false;
-            }
-
-            // Chips input
-            if (Helper.has_class(_input, '.js-chips-input'))
-            {
-                Container.ChipInputs().addChip(_text, _input);
-
-                Helper.remove_from_dom(this);
-
-                return;
-            }
-
-            let val = Helper.attr(_input, 'value');
-
-            Helper.attr(_input, 'value',  val === '' ? _text : `${val} ${_text}`);
-
-            Helper.trigger_event(_input, 'change');
-
-            Helper.remove_from_dom(this);
-        }
+        remove_from_dom(this);
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('ChipSuggestions', ChipSuggestions);
+    Hubble.dom().register('ChipSuggestions', extend(Component, ChipSuggestions));
 
 }());

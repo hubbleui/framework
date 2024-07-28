@@ -5,7 +5,7 @@
  * @param  {bool}        returnAsString Returns transforms as string (optional) (default true)
  * @return {object}
  */
-css_transform_props(DOMElement, returnAsString)
+_.prototype.css_transform_props = function(DOMElement, returnAsString)
 {
     if (this.is_string(DOMElement))
     {
@@ -73,7 +73,7 @@ css_transform_props(DOMElement, returnAsString)
  * @param  {bool}   returnAsString Returns string
  * @return {string|object}
  */
-__un_css_matrix(DOMElement, returnAsString)
+_.prototype.__un_css_matrix = function(DOMElement, returnAsString)
 {
     if (!this.is_string(DOMElement))
     {

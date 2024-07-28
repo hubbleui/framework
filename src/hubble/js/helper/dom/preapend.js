@@ -6,7 +6,7 @@
  * @param  {DOMElement} wrapper  Parent to preappend new node into
  * @return {DOMElement}
  */
-preapend(node, wrapper)
+_.prototype.preapend = function(node, wrapper)
 {
     wrapper.insertBefore(node, wrapper.firstChild);
 

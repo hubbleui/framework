@@ -5,7 +5,7 @@
  * @param  {DOMElement}   el Target DOM node
  * @return {bool}
  */
-in_viewport(el)
+_.prototype.in_viewport = function(el)
 {
     var rect = el.getBoundingClientRect();
 

@@ -4,16 +4,16 @@
  * @param   {HTMLElement}  element  Element to check
  * @returns {boolean}
  */
-in_dom(element)
+_.prototype.in_dom = function(element)
 {
+    if (element === window || element === document || element === document.body || element === document.documentElement)
+    {
+        return true;
+    }
+
     if (!this.is_htmlElement(element))
     {
         return false;
-    }
-
-    if (element === document.body || element === document.documentElement)
-    {
-        return true;
     }
 
     let ret = false;

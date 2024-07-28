@@ -4,7 +4,7 @@
  * @param   {mixed}  mixed_var  Variable to check
  * @returns {boolean}
  */
-is_callable(mixed_var)
+_.prototype.is_callable = function(mixed_var)
 {
     return this.is_function(mixed_var);
 }

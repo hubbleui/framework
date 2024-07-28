@@ -4,7 +4,7 @@
  * @param  {mixed} str String JSON
  * @return {object|false}
  */
-is_json(str)
+_.prototype.is_json = function(str)
 {
     var obj;
     try

@@ -3,7 +3,7 @@
  *
  * @return {bool}
  */
-is_retina()
+_.prototype.is_retina = function()
 {
     var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
                       (min--moz-device-pixel-ratio: 1.5),\

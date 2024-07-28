@@ -447,10 +447,10 @@ Try the example below create a few skeletons
 </div>
 
 <script type="text/javascript">
-window.addEventListener('DOMContentLoaded', function()
+const sandbox = function()
 {
     /* Helpers */
-    const [$, addEventListener, form_values, each, has_class, add_class, remove_class] = Container.import(['$', 'addEventListener', 'form_values', 'each', 'has_class', 'add_class', 'remove_class']).from('Helper');
+    const [$, add_event_listener, form_values, each, has_class, add_class, remove_class] = Container.import(['$', 'add_event_listener', 'form_values', 'each', 'has_class', 'add_class', 'remove_class']).from('_');
 
     // Instantiate validator and cache vars
     const DOMElementform    = $('.js-skeleton-form');
@@ -459,7 +459,7 @@ window.addEventListener('DOMContentLoaded', function()
     const DOMElementDestroy = $('.js-destroy-skeletons', DOMElementform);
     var skeletons           = [];
 
-    addEventListener(DOMElementInsert, 'click', function(e)
+    add_event_listener(DOMElementInsert, 'click', function(e)
     {
         // Stop the form from submitting via POST
         e = e || window.event;
@@ -475,7 +475,7 @@ window.addEventListener('DOMContentLoaded', function()
         skeletons.push(Container.Skeleton(DOMElementCard, options));
     });
 
-    addEventListener(DOMElementDestroy, 'click', function(e)
+    add_event_listener(DOMElementDestroy, 'click', function(e)
     {
         // Stop the form from submitting via POST
         e = e || window.event;
@@ -488,8 +488,9 @@ window.addEventListener('DOMContentLoaded', function()
 
         each(skeletons, (i, skeleton) => skeleton.fade_out(() => remove_class(DOMElementDestroy, 'active')));
     });
+};
 
-});
+window.addEventListener('Hubble:ready', sandbox);
 
 </script>
 
@@ -705,7 +706,7 @@ The example below shows swapping out the contents of card component. Click the `
     const loader = function()
     {
         /* Helpers */
-        const [$, each] = Container.import(['$', 'each']).from('Helper');
+        const [$, each] = Container.import(['$', 'each']).from('_');
         const [cardWrapper, triggerLoad, triggerReset] = [$('.js-skeleton-loader-card'), $('.js-load-content'), $('.js-reset-skeletons')];
         const contents  = 
         {
@@ -733,7 +734,7 @@ The example below shows swapping out the contents of card component. Click the `
         {            
             each(options, (i, option) => $(option.selector, cardWrapper).innerHTML = '' );
 
-            skeleton = Container.Skeleton($('.js-skeleton-loader-card'), options);
+            skeleton = Container.Skeleton(cardWrapper, options);
         };
 
         triggerLoad.addEventListener('click', () =>
@@ -742,7 +743,7 @@ The example below shows swapping out the contents of card component. Click the `
 
             skeleton.load(contents);
 
-            Hubble.dom().refresh('LazyLoad');
+            Hubble.dom().refresh('LazyLoad', cardWrapper);
 
             loaded = true;
         });

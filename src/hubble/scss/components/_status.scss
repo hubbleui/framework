@@ -15,4 +15,20 @@
             --hb-status-color: #{map-get($colors, "color")};
         }
     }
+    &.status-xs
+    {
+    	--hb-status-size: #{_minusPercent($status-size, 50)}
+    }
+    &.status-sm
+    {
+    	--hb-status-size: #{_minusPercent($status-size, 30)}
+    }
+    &.status-lg
+    {
+    	--hb-status-size: #{_addPercent($status-size, 30)}
+    }
+    &.status-xl
+    {
+    	--hb-status-size: #{_addPercent($status-size, 50)}
+    }
 }

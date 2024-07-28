@@ -24,8 +24,8 @@
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-animate(DOMElement, options)
-{
+_.prototype.animate = function(DOMElement, options)
+{    
     const animationSet = [];
 
     const Animation = function()
@@ -90,7 +90,7 @@ animate(DOMElement, options)
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-animate_css(DOMElement, options)
+_.prototype.animate_css = function(DOMElement, options)
 {
     var cssAnimation;
 
@@ -142,7 +142,7 @@ animate_css(DOMElement, options)
  *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
  * 
  */
-__animation_factory(DOMElement, opts)
+_.prototype.__animation_factory = function(DOMElement, opts)
 {
     var optionSets = [];
 

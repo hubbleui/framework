@@ -4,7 +4,7 @@
  * @param  {str}           str
  * @return {array|string} charlist (optional)
  */
-ltrim(str, charlist)
+_.prototype.ltrim = function(str, charlist)
 {
     // Special fast cases
     if (!charlist) return str.trimStart();

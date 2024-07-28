@@ -6,7 +6,7 @@
  * @param  {string} type Target node type
  * @return {node\null}
  */
-next(el, type)
+_.prototype.next = function(el, type)
 {
     // Type is class
     if (this.is_array(type))

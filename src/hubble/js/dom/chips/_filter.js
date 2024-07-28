@@ -1,11 +1,18 @@
 (function()
 {
     /**
-     * JS Helper reference
+     * Component base
      * 
-     * @var {object}
+     * @var {class}
      */
-    const Helper = Container.Helper();
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [add_event_listener, remove_event_listener, toggle_class, extend] = Container.import(['add_event_listener','remove_event_listener','toggle_class', 'extend']).from('_');
 
     /**
      * Filter chips
@@ -14,74 +21,47 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class FilterChips
+    const FilterChips = function()
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         {*} @access public
-         */
-    	constructor()
-        {
-            this._chips = Helper.$All('.js-filter-chips .btn-chip');
+        this.super('.js-filter-chips .btn-chip');
+    }
 
-            this._bind();
+    /**
+     * Bind DOM listeners
+     *
+     * @access {private}
+     */
+    FilterChips.prototype.bind = function(node)
+    {
+        add_event_listener(node, 'click', this._clickHandler);
+    }
 
-            return this;
-        }
+    /**
+     * Unbind DOM listeners
+     *
+     * @access {private}
+     */
+    FilterChips.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'click', this._clickHandler);
+    }
 
-        /**
-         * Module destructor remove event handlers
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
+    /**
+     * Handle click event on chip
+     *
+     * @access {private}
+     * @param  {event|null} e
+     */
+    FilterChips.prototype._clickHandler = function(e)
+    {
+        e = e || window.event;
 
-            this._chips = [];
-        }
+        e.preventDefault();
 
-        /**
-         * Bind DOM listeners
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.addEventListener(this._chips, 'click', this._clickHandler);
-        }
-
-        /**
-         * Unbind DOM listeners
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.removeEventListener(this._chips, 'click', this._clickHandler);
-        }
-
-        /**
-         * Handle click event on chip
-         *
-         * @access {private}
-         * @param  {event|null} e
-         */
-        _clickHandler(e)
-        {
-            e = e || window.event;
-
-            e.preventDefault();
-
-            console.log('clicked');
-
-            Helper.toggle_class(this, 'checked');
-        }
+        toggle_class(this, 'checked');
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('FilterChips', FilterChips);
+    Hubble.dom().register('FilterChips', extend(Component, FilterChips));
 
 }());

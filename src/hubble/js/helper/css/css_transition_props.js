@@ -4,7 +4,7 @@
  * @param  {node|string} DOMElement  Target element or transition value string
  * @return {object}
  */
-css_transition_props(DOMElement)
+_.prototype.css_transition_props = function(DOMElement)
 {
     if (!DOMElement) return {};
     var transitions   = {};

@@ -4,7 +4,7 @@
  * @param  {string} value CSS value (e.g "12px")
  * @return {Number}
  */
-css_unit_value(value)
+_.prototype.css_unit_value = function(value)
 {
     value = value + '';
 
@@ -27,7 +27,7 @@ css_unit_value(value)
  * @param  {string} value CSS value (e.g "12px")
  * @return {string}
  */
-css_value_unit(value)
+_.prototype.css_value_unit = function(value)
 {
     value = value + '';
 
@@ -42,7 +42,7 @@ css_value_unit(value)
  * @param  {String}     property   CSS property (optional) (used for % unit)
  * @return {Number}
  */
-css_to_px(valueStr, DOMElement, property)
+_.prototype.css_to_px = function(valueStr, DOMElement, property)
 {
     valueStr = valueStr + '';
     

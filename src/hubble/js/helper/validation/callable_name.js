@@ -4,7 +4,7 @@
  * @param   {mixed}  mixed_var Variable to evaluate
  * @returns {string}
  */
-callable_name(mixed_var)
+_.prototype.callable_name = function(mixed_var)
 {
     if (this.is_callable(mixed_var))
     {

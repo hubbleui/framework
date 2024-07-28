@@ -5,7 +5,7 @@
  * @param   {object} ...sources
  * @returns {object}
  */
-merge_deep()
+_.prototype.merge_deep = function()
 {
     let args = TO_ARR.call(arguments);
 

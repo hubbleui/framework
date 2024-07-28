@@ -5,7 +5,7 @@
  * @param   {mixed}     context Context to bind "this"
  * @returns {function}
  */
-bind(func, context)
+_.prototype.bind = function(func, context)
 {
     context = typeof context === 'undefined' ? window : context;
 

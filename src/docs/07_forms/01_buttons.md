@@ -265,13 +265,13 @@ Add one of hubble's loaders inside any button and give the button a `.with-loadi
         <button class="btn with-loading active" type="button">
             <span class="loader loader-1"></span> Loading...
         </button>
-        <button class="btn with-loading active" type="button">
+        <button class="btn with-loading btn-primary active" type="button">
             <span class="loader loader-2"></span> Loading...
         </button>
-        <button class="btn with-loading active" type="button">
+        <button class="btn with-loading btn-info active" type="button">
             <span class="loader loader-3"></span> Loading...
         </button>
-        <button class="btn with-loading active" type="button">
+        <button class="btn with-loading btn-info active" type="button">
             <span class="loader loader-4"></span> Loading...
         </button>
     </div>

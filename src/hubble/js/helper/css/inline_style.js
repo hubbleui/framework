@@ -6,7 +6,7 @@
  * @param  {string} prop CSS property to check
  * @return {string}
  */
-inline_style(element, prop)
+_.prototype.inline_style = function(element, prop)
 {
     const elementStyle = element.style;
 

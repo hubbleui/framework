@@ -12,7 +12,20 @@
     border-radius: 50% !important;
     background: var(--hb-ripple-color);
     transform: scale(0);
-    animation: ripple 0.7s ease-out forwards;
+    animation: ripple 0.5s ease-out forwards;
+    z-index: 1;
+    opacity: 1;
+    transition: opacity .5s ease;
+
+    &.complete
+    {
+        opacity: 0;
+        transition: opacity .5s ease;
+    }
+}
+.btn .ripple
+{
+    z-index: unset;
 }
 
 // Colors

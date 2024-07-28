@@ -8,10 +8,12 @@
  * @return {bool}
  * 
  */
-in_array(needle, haystack, strict)
+_.prototype.in_array = function(needle, haystack, strict)
 {
     strict = this.is_undefined(strict) ? false : strict;
     
+    if (!strict) return haystack.includes(needle);
+
     let ret = false;
 
     this.each(haystack, function(k, v)

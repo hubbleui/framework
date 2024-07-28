@@ -5,8 +5,8 @@
  * @param   {object|array}  object  Object to get from
  * @returns {mixed}
  */
-array_get(path, object)
+_.prototype.array_get = function(path, object)
 {
-    return this.__arrayGetRecursive(this.__arrayKeySegment(path), object);
+    return this.__array_get_recursive(this.__array_key_segment(path), object);
 }
 

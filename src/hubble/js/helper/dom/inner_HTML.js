@@ -6,7 +6,7 @@
  * @param  {string} content     Target content
  * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
  */
-inner_HTML(DOMElement, content, append)
+_.prototype.inner_HTML = function(DOMElement, content, append)
 {
     content = this.is_array(content) ? content.join("\n") : content;
 

@@ -1,5 +1,7 @@
 (function()
 {
+    Container._().trigger_event(window, 'Hubble:loading', this);
+
     /**
      * Application core
      *
@@ -7,35 +9,44 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Application
+    const Application = function()
     {
-        /**
-         * Called when the application is first initialized
-         *
-         * @access {public}
-         */
-        boot()
-        {        
-            this.dom().boot();
+        this.version_major = '1';
 
-            Container.Helper().trigger_event(window, 'Hubble:ready', this);
-        }
+        this.version_minor = '0';
 
-        /**
-         * Get the DOM component
-         *
-         * @access {public}
-         * @return {object}
-         */
-        dom()
-        {
-            return Container.get('HubbleDom');
-        }
+        this.version_patch = '0';
+
+        this.version = `${this.version_major}.${this.version_minor}.${this.version_patch }`;
+    };
+
+    /**
+     * Called when the application is first initialized
+     *
+     * @access {public}
+     */
+    Application.prototype.boot = function()
+    {        
+        this.dom().boot();
+
+        Container._().trigger_event(window, 'Hubble:ready', this);
     }
 
-    // Loads into container
+    /**
+     * Get the DOM component
+     *
+     * @access {public}
+     * @return {object}
+     */
+    Application.prototype.dom = function()
+    {
+        return Container.get('HubbleDom');
+    }
+
+    // Load into container
     Container.singleton('Hubble', Application);
 
+    // Set global
     window.Hubble = Container.get('Hubble');
 
 })();

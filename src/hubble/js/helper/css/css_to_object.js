@@ -4,7 +4,7 @@
  * @param  {string} styles CSS
  * @return {object}
  */
-css_to_object(styles)
+_.prototype.css_to_object = function(styles)
 {
     var ret = {};
 
@@ -15,8 +15,6 @@ css_to_object(styles)
     if (styles.includes('{'))
     {
         var nestedStyles = [...css.matchAll(nested_regex)];
-
-
     }
 
     this.each(styles.split(';'), function(i, rule)

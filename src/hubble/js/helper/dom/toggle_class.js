@@ -5,7 +5,7 @@
  * @param  {DOMElement}         el         Target element
  * @param  {string}       className  Class name to toggle
  */
-toggle_class(el, className)
+_.prototype.toggle_class = function(el, className)
 {
     if (!this.in_dom(el))
     {

@@ -1,21 +1,11 @@
 /**
- * Returns an immutable object with set,get,isset,delete methods that accept dot.notation.
- *
- * @returns {object}
- */
-obj()
-{
-    return new __MAP;
-}
-
-/**
  * Recursively delete from array/object.
  *
  * @param   {array}        keys    Keys in search order
  * @param   {object|array} object  Object to get from
  * @returns {mixed}
  */
-__arrayDeleteRecursive(keys, object)
+_.prototype.__array_delete_recursive = function(keys, object)
 {
     var key = keys.shift();
 
@@ -38,7 +28,7 @@ __arrayDeleteRecursive(keys, object)
         return false;
     }
 
-    return this.__arrayDeleteRecursive(keys, object[key]);
+    return this.__array_delete_recursive(keys, object[key]);
 }
 
 /**
@@ -48,7 +38,7 @@ __arrayDeleteRecursive(keys, object)
  * @param   {object|array} object  Object to get from
  * @returns {mixed}
  */
-__arrayGetRecursive(keys, object)
+_.prototype.__array_get_recursive = function(keys, object)
 {
     var key = keys.shift();
     var islast = keys.length === 0;
@@ -63,7 +53,7 @@ __arrayGetRecursive(keys, object)
         return undefined;
     }
 
-    return this.__arrayGetRecursive(keys, object[key]);
+    return this.__array_get_recursive(keys, object[key]);
 }
 
 /**
@@ -74,7 +64,7 @@ __arrayGetRecursive(keys, object)
  * @param {object|array}   object   Object to get from
  * @param {string|number}  nextKey  Next key to set
  */
-__arraySetRecursive(keys, value, object, nextKey)
+_.prototype.__array_set_recursive = function(keys, value, object, nextKey)
 {
     var key = keys.shift();
     var islast = keys.length === 0;
@@ -116,7 +106,7 @@ __arraySetRecursive(keys, value, object, nextKey)
         return;
     }
 
-    this.__arraySetRecursive(keys, value, object, key);
+    this.__array_set_recursive(keys, value, object, key);
 }
 
 /**
@@ -125,7 +115,7 @@ __arraySetRecursive(keys, value, object, nextKey)
  * @param   {string}  path Path to parse
  * @returns {array}
  */
-__arrayKeySegment(path)
+_.prototype.__array_key_segment = function(path)
 {
     var result = [];
     var segments = path.split('.');
@@ -166,7 +156,7 @@ __arrayKeySegment(path)
  * @param   {object|array} object  Object to get from
  * @returns {mixed}
  */
-__arrayDeleteRecursive(keys, object)
+_.prototype.__array_delete_recursive = function(keys, object)
 {
     var key = keys.shift();
 
@@ -189,5 +179,5 @@ __arrayDeleteRecursive(keys, object)
         return false;
     }
 
-    return this.__arrayDeleteRecursive(keys, object[key]);
+    return this.__array_delete_recursive(keys, object[key]);
 }

@@ -1,6 +1,18 @@
 (function()
 {
-    const [$, $All, addEventListener, animate, bool, has_class, is_node_type, removeEventListener, toggle_class, trigger_event] = Container.import(['$','$All','addEventListener','animate','bool','has_class','is_node_type','removeEventListener','toggle_class','trigger_event']).from('Helper');
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Container.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [$, add_event_listener, animate, bool, has_class, is_node_type, remove_event_listener, toggle_class, trigger_event, extend] = Container.import(['$','add_event_listener','animate','bool','has_class','is_node_type','remove_event_listener','toggle_class','trigger_event','extend']).from('_');
 
     /**
      * Toggle height on click
@@ -9,100 +21,70 @@
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class Collapse
+    const Collapse = function()
+    {        
+        this.super('.js-collapse');
+    }
+
+    /**
+     * Event binder - Binds all events on button click
+     *
+     * @access {private}
+     */
+    Collapse.prototype.bind = function(node)
     {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor()
+        add_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Event unbinder - Removes all events on button click
+     *
+     * @access {private}
+     */
+    Collapse.prototype.unbind = function(node)
+    {
+        remove_event_listener(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Handle the click event
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    Collapse.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+
+        if (is_node_type(this, 'a'))
         {
-            /**
-             * Array of click-triggers
-             * 
-             * @var {array}
-             */
-            this._nodes = $All('.js-collapse');
-
-            this._bind();
-
-            return this;
+            e.preventDefault();
         }
 
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         */
-        destruct()
+        var clicked  = this;
+        var targetEl = $('#' + clicked.dataset.collapseTarget);
+        var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
+        var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
+        var opacity  = bool(clicked.dataset.withOpacity);
+        var closing  = has_class(clicked, 'active');
+
+        trigger_event(targetEl, 'collapse:toggle', closing ? 'close' : 'open');
+
+        var options  = 
         {
-            this._unbind();
+            property: 'height',
+            to: closing ? '0px' : 'auto',
+            from: closing ? 'auto' : '0px',
+            duration: duration, 
+            easing: easing,
+            callback: () => { trigger_event(targetEl, 'collapse:toggled', closing ? 'close' : 'open'); }
+        };
 
-            this._nodes = [];
-        }
-
-        /**
-         * Event binder - Binds all events on button click
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            addEventListener(this._nodes, 'click', this._eventHandler);
-        }
-
-        /**
-         * Event unbinder - Removes all events on button click
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            removeEventListener(this._nodes, 'click', this._eventHandler);
-        }
-
-        /**
-         * Handle the click event
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
-
-            if (is_node_type(this, 'a'))
-            {
-                e.preventDefault();
-            }
-
-            var clicked  = this;
-            var targetEl = $('#' + clicked.dataset.collapseTarget);
-            var duration = parseInt(clicked.dataset.collapseSpeed) || 350;
-            var easing   = clicked.dataset.collapseEasing || 'easeOutExpo';
-            var opacity  = bool(clicked.dataset.withOpacity);
-            var closing  = has_class(clicked, 'active');
-
-            trigger_event(targetEl, 'collapse:toggle', closing ? 'close' : 'open');
-
-            var options  = 
-            {
-                property: 'height',
-                to: closing ? '0px' : 'auto',
-                from: closing ? 'auto' : '0px',
-                duration: duration, 
-                easing: easing,
-                callback: () => { trigger_event(targetEl, 'collapse:toggled', closing ? 'close' : 'open'); }
-            };
-
-            animate(targetEl, options);
-            toggle_class(clicked, 'active');
-        }
+        animate(targetEl, options);
+        toggle_class(clicked, 'active');
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('Collapse', Collapse);
+    Hubble.dom().register('Collapse', extend(Component, Collapse));
 
 }());
