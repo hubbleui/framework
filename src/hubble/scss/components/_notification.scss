@@ -20,10 +20,6 @@
 	{
 		--hb-msg-bg: #{$notif-bg};
 	    --hb-msg-color: #{$notif-color};
-	    --hb-msg-font-size: #{$notif-font-size};
-	    --hb-msg-spacer-y: #{$notif-spacer-y};
-	    --hb-msg-spacer-x: #{$notif-spacer-x};
-	    --hb-msg-border-radius: #{$notif-border-radius};
 		cursor: pointer;
 		margin-bottom: 15px;
 		@include raised($notif-shadow);

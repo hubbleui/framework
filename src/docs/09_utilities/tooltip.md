@@ -16,7 +16,7 @@ Then add the content you want displayed as the `data-tooltip` attribute.
 
 <div class="code-content-example">
     <div class="container-fuid text-center">
-        <button class="btn btn-default tooltipped tooltipped-n" data-tooltip="Hello World!">.tooltipped</button>
+        <button class="btn tooltipped tooltipped-n" data-tooltip="Hello World!">.tooltipped</button>
     </div>
 </div>
 
@@ -32,44 +32,42 @@ Use the directional classes `.tooltipped-[direction]` to change the direction of
 
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center col-gaps-xs row-gaps-xs">
-        <button class="btn btn-default tooltipped tooltipped-ne" data-tooltip="Hello World!">NE </button>
-        <button class="btn btn-default tooltipped tooltipped-n" data-tooltip="Hello World!">N</button>
-        <button class="btn btn-default tooltipped tooltipped-nw" data-tooltip="Hello World!">NW</button>
-        <div class="clearfix floor-xs"></div>
-        <button class="btn btn-default tooltipped tooltipped-se" data-tooltip="Hello World!">SE </button>
-        <button class="btn btn-default tooltipped tooltipped-s" data-tooltip="Hello World!">S</button>
-        <button class="btn btn-default tooltipped tooltipped-sw" data-tooltip="Hello World!">SW</button>
-        <div class="clearfix floor-xs"></div>
-        <button class="btn btn-default tooltipped tooltipped-e" data-tooltip="Hello World!">E</button>
-        <button class="btn btn-default tooltipped tooltipped-w" data-tooltip="Hello World!">W</button>
+        <button class="btn tooltipped tooltipped-ne" data-tooltip="Hello World!">NE </button>
+        <button class="btn tooltipped tooltipped-n" data-tooltip="Hello World!">N</button>
+        <button class="btn tooltipped tooltipped-nw" data-tooltip="Hello World!">NW</button>
+        <div class="col-12"></div>
+        <button class="btn tooltipped tooltipped-se" data-tooltip="Hello World!">SE </button>
+        <button class="btn tooltipped tooltipped-s" data-tooltip="Hello World!">S</button>
+        <button class="btn tooltipped tooltipped-sw" data-tooltip="Hello World!">SW</button>
+        <div class="col-12"></div>
+        <button class="btn tooltipped tooltipped-e" data-tooltip="Hello World!">E</button>
+        <button class="btn tooltipped tooltipped-w" data-tooltip="Hello World!">W</button>
     </div>
 </div> 
 
 ```html
-    <button class="btn btn-default tooltipped tooltipped-ne" data-tooltip="Hello World!">
+    <button class="btn tooltipped tooltipped-ne" data-tooltip="Hello World!">
         .tooltipped-ne
     </button> 
-    <button class="btn btn-default tooltipped tooltipped-n" data-tooltip="Hello World!">
+    <button class="btn tooltipped tooltipped-n" data-tooltip="Hello World!">
         .tooltipped-n
     </button>
-    <button class="btn btn-default tooltipped tooltipped-nw" data-tooltip="Hello World!">
+    <button class="btn tooltipped tooltipped-nw" data-tooltip="Hello World!">
         .tooltipped-nw
     </button>
-    <div class="clearfix floor-xs"></div>
-    <button class="btn btn-default tooltipped tooltipped-se" data-tooltip="Hello World!">
+    <button class="btn tooltipped tooltipped-se" data-tooltip="Hello World!">
         .tooltipped-se
     </button> 
-    <button class="btn btn-default tooltipped tooltipped-s" data-tooltip="Hello World!">
+    <button class="btn tooltipped tooltipped-s" data-tooltip="Hello World!">
         .tooltipped-s
     </button>
-    <button class="btn btn-default tooltipped tooltipped-sw" data-tooltip="Hello World!">
+    <button class="btn tooltipped tooltipped-sw" data-tooltip="Hello World!">
         .tooltipped-sw
     </button>
-    <div class="clearfix floor-xs"></div>
-    <button class="btn btn-default tooltipped tooltipped-e" data-tooltip="Hello World!">
+    <button class="btn tooltipped tooltipped-e" data-tooltip="Hello World!">
         .tooltipped-e
     </button>
-    <button class="btn btn-default tooltipped tooltipped-w" data-tooltip="Hello World!">
+    <button class="btn tooltipped tooltipped-w" data-tooltip="Hello World!">
         .tooltipped-w
     </button>
 ```
@@ -92,7 +90,7 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in Hubble
                 --hb-tooltip-font-weight: 600;
             }
         </style>
-        <button class="btn btn-default tooltipped tooltipped-n tooltipped-custom" data-tooltip="Hello World!">
+        <button class="btn tooltipped tooltipped-n tooltipped-custom" data-tooltip="Hello World!">
             Custom
         </button>
     </div>

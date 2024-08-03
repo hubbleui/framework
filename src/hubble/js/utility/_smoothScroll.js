@@ -5,7 +5,7 @@
      * 
      * @var {object}
      */
-    const Helper = Container._();
+    const Helper = Hubble._();
 
     /**
      * Default options
@@ -94,6 +94,6 @@
 
 
     // Load into Hubble DOM core
-    Container.set('SmoothScroll', SmoothScroll);
+    Hubble.set('SmoothScroll', SmoothScroll);
 
 }());

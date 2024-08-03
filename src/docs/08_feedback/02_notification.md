@@ -21,7 +21,7 @@ To display a notification, call the `Notifications` module with your options via
 	    {
 	        document.querySelector('.js-notif-trigger-1').addEventListener('click', function()
 	        {
-	            Container.Notification(
+	            Hubble.Notification(
 	            {
 	                text: 'Hello! I\'m a notification.',
 	            });
@@ -31,7 +31,7 @@ To display a notification, call the `Notifications` module with your options via
 </div>
 
 ```JavaScript
-Container.Notification(
+Hubble.Notification(
 {
 	text  : `Hello! I'm a notification.`,
 });
@@ -54,8 +54,7 @@ There are a number of options for a notification depending on a given purpose. T
 | callbackOpen     | `function` | Callback function to be called notification is ready and displayed.                | `no`     |
 | callbackBtn      | `function` | Callback function to be called when optional btn is clicked.                       | `no`     |
 | callbackDismiss  | `function` | Callback function to be called when notification is removed.                       | `no`     |
-| callbackValidate | `function` | Callback function validate if notification can be closed. Must return boolean      | `no`     |
-| callbackOpen     | `function` | Callback function to be called notification is ready and displayed.                | `no`     |
+| callbackValidate | `function` | Callback function to validate if notification can be closed. Must return `boolean` | `no`     |
 
 
 Try out a few of the different examples below:
@@ -70,7 +69,7 @@ Try out a few of the different examples below:
         {
             document.querySelector('.js-notif-trigger-2').addEventListener('click', function()
             {
-                Container.Notification(
+                Hubble.Notification(
                 {
                     btn  : `Dismiss`,
                     text : `Hello! I'm a notification.`,
@@ -78,7 +77,7 @@ Try out a few of the different examples below:
             });
             document.querySelector('.js-notif-trigger-3').addEventListener('click', function()
             {
-                Container.Notification(
+                Hubble.Notification(
                 {
                     icon : `bell`,
                     text : `Hello! I'm a notification.`,
@@ -86,7 +85,7 @@ Try out a few of the different examples below:
             });
             document.querySelector('.js-notif-trigger-4').addEventListener('click', function()
             {
-                Container.Notification(
+                Hubble.Notification(
                 {
                     btn        : `Danger`,
                     btnVariant : `danger`,
@@ -95,9 +94,9 @@ Try out a few of the different examples below:
             });
             document.querySelector('.js-notif-trigger-5').addEventListener('click', function()
             {
-                Container.Notification(
+                Hubble.Notification(
                 {
-                    icon    : `checkmark`,
+                    icon    : `check`,
                     variant : `success`, 
                     text    : `Hello! I'm a notification.`,
                 });
@@ -107,7 +106,7 @@ Try out a few of the different examples below:
 </div>
 
 ```JavaScript
-Container.Notification(
+Hubble.Notification(
 {
     icon    : 'success',
     variant : 'success', 

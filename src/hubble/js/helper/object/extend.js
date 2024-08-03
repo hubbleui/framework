@@ -6,7 +6,7 @@
  * @param   {undefined|boolean}  callSuper   If true "subType" is treated as a constructor and the superType / any nested prototypes will get instantiated. (default true)
  * @returns {function}
  */
-_.prototype.extend = function(baseFunc, extendFunc)
+_.prototype.extend = function(base, extension)
 {
     const _this = this;
 
@@ -69,21 +69,59 @@ _.prototype.extend = function(baseFunc, extendFunc)
         return child;
     };
 
+    if (this.var_type(base) !== this.var_type(extension)) throw new Error('Extended variables need to be the same type.');
 
-    const baseProto = baseFunc.prototype;
+    if (this.is_object(base)) return this.extend_obj(base, extension);
 
-    const extendProto = extendFunc.prototype;
+    const baseProto   = base.prototype;
+    const extendProto = extension.prototype;
 
-    if (!baseProto.hasOwnProperty('constructor')) baseProto['constructor'] = baseFunc;
+    if (!baseProto.hasOwnProperty('constructor')) baseProto['constructor'] = base;
    
-    if (!extendProto.hasOwnProperty('constructor')) extendProto['constructor'] = extendFunc;
+    if (!extendProto.hasOwnProperty('constructor')) extendProto['constructor'] = extension;
     
     var b = Class.extend(baseProto);
 
     var e = b.extend(extendProto);
 
-    Object.defineProperty(e, 'name', { value: extendFunc.name, writable: false });
+    Object.defineProperty(e, 'name', { value: extension.name, writable: false });
 
     return e;
+}
+
+/**
+ * Extends a function with prototype inheritance.
+ *
+ * @param   {function}           superType    Base function to extend
+ * @param   {function}           subType  Function to get extended.
+ * @param   {undefined|boolean}  callSuper   If true "subType" is treated as a constructor and the superType / any nested prototypes will get instantiated. (default true)
+ * @returns {function}
+ */
+_.prototype.extend_obj = function(base, extension)
+{
+    const extProto  = this.prototypes(extension);
+    const baseProto = this.prototypes(base);
+
+    // Plain objects
+    if (this.is_empty(extProto) && this.is_empty(baseProto)) return {...base, ...extension};
+
+    const newProto = new (function() {});
+    
+    Object.setPrototypeOf(newProto, base);
+
+    this.each(extProto, (i, proto) =>
+    {
+        this.each(proto, (k, v) =>
+        {
+            newProto[k] = v;
+        })
+
+    }, this);
+
+    Object.defineProperty(newProto, 'name', { value: 'Class', writable: false });
+
+    Object.setPrototypeOf(extension, newProto);
+
+    return extension;
 }
 

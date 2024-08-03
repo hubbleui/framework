@@ -52,7 +52,7 @@ module.exports =
             expand : true,
             cwd    : 'src/img/',
             src    : ['**/*.svg'],
-            dest   : 'build/img/'
+            dest   : 'dist/img/'
         }]
     }
 };

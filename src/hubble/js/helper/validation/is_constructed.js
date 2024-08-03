@@ -6,14 +6,11 @@
  */
 _.prototype.is_constructed = function(mixed_var)
 {
-    if (typeof mixedVar === 'object' && mixedVar.constructor && typeof mixedVar.constructor === 'function')
+    if (typeof mixed_var === 'object' && mixed_var.constructor && typeof mixed_var.constructor === 'function')
     {
-        var constr = mixedVar.constructor.toString().trim();
+        var constr = mixed_var.constructor.toString().trim();
         
-        if (constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class '))
-        {
-            return constr.toLowerCase().includes('native code') ? this.object_props(mixed_var, true).length > 0 : true;
-        }
+        return constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class ') ;
     }
 
     return false;

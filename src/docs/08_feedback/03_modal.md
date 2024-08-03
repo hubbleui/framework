@@ -19,7 +19,7 @@ To display a Modal, call the `Modal` module with your options via the `Container
     <script type="text/javascript">
 	    window.addEventListener('Hubble:ready', function()
 	    {
-	        document.querySelector('.js-modal-trigger-1').addEventListener('click', () => Container.Modal( {
+	        document.querySelector('.js-modal-trigger-1').addEventListener('click', () => Hubble.Modal( {
                 title            : 'MAGA Country',
                 message          : 'Do you want to make America great again?',
                 cancelBtn        : 'Cancel',
@@ -30,7 +30,7 @@ To display a Modal, call the `Modal` module with your options via the `Container
 </div>
 
 ```javascript
-Container.Modal( {
+Hubble.Modal( {
     title            : 'MAGA Country',
     message          : 'Do you want to make America great again?',
     cancelBtn        : 'Cancel',
@@ -65,7 +65,7 @@ If you want a custom modal with your own content, provide your own HTML as strin
                     <p>Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.</p>
                 </div>
             `;
-            document.querySelector('.js-modal-trigger-2').addEventListener('click', () => Container.Modal( {
+            document.querySelector('.js-modal-trigger-2').addEventListener('click', () => Hubble.Modal( {
                 customContent    : card,
             }));
         });
@@ -93,7 +93,7 @@ const card = `
         <p>Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.</p>
     </div>
 `;
-Container.Modal( { customContent : card });
+Hubble.Modal( { customContent : card });
 ```
 
 Here's another example using options
@@ -103,7 +103,7 @@ Here's another example using options
     <script type="text/javascript">
         window.addEventListener('Hubble:ready', function()
         {
-            document.querySelector('.js-modal-trigger-3').addEventListener('click', () => Container.Modal( {
+            document.querySelector('.js-modal-trigger-3').addEventListener('click', () => Hubble.Modal( {
                 title            : 'MAGA Country',
                 message          : 'Do you want to make America great again?',
                 cancelBtn        : 'Cancel',
@@ -119,7 +119,7 @@ Here's another example using options
 </div>
 
 ```javascript
-Container.Modal( {
+Hubble.Modal( {
     title            : 'MAGA Country',
     message          : 'Do you want to make America great again?',
     cancelBtn        : 'Cancel',

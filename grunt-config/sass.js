@@ -19,8 +19,8 @@ var _options =
  */
 module.exports =
 {
-	// Preminify icons, fonts, css reset
-    premin:
+	// icons
+    icons:
     {
         options:
         {
@@ -31,7 +31,7 @@ module.exports =
         },
         files:
         {
-            'src/hubble/scss/base/premin.min.css' : 'src/hubble/scss/base/premin.scss',
+            'dist/css/hubble-icons.css' : 'src/hubble/scss/icons.scss',
         }
     },
 
@@ -41,8 +41,8 @@ module.exports =
         options: _options,
         files:
         {
-           'build/css/hubble.css' : 'src/hubble/scss/hubble.scss',
-           'build/css/lazyload.css' : 'src/hubble/scss/lazyload.scss'
+           'dist/css/hubble.css' : 'src/hubble/scss/hubble.scss',
+           'dist/css/lazyload.css' : 'src/hubble/scss/lazyload.scss'
         }
     },
 
@@ -52,7 +52,7 @@ module.exports =
         options: _options,
         files:
         {
-           'build/css/theme.css' : 'src/theme/scss/theme.scss'
+           'dist/css/theme.css' : 'src/theme/scss/theme.scss'
         }
     }
 };

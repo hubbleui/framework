@@ -7,17 +7,5 @@
  */
 _.prototype.first_children = function(el)
 {
-    var children = [];
-
-    var childnodes = el.childNodes;
-
-    for (var i = 0; i < childnodes.length; i++)
-    {
-        if (childnodes[i].nodeType == 1)
-        {
-            children.push(childnodes[i]);
-        }
-    }
-
-    return children;
+    return this.$All('> *', el);
 }

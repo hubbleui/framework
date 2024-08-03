@@ -24,11 +24,11 @@ module.exports =
     {
         src :
         [
-            'src/hubble/scss/base/premin.min.css',
-            'build/css/hubble.css'
+            'dist/css/hubble-icons.css',
+            'dist/css/hubble.css'
         ],
 
-        dest: 'build/css/hubble.css',
+        dest: 'dist/css/hubble.bundle.css',
     },
 
     // Concat Hubble minified core
@@ -36,10 +36,9 @@ module.exports =
     {
         src :
         [
-            'src/hubble/scss/base/premin.min.css',
-            'build/css/hubble.min.css'
+            'dist/css/hubble.bundle.css',
         ],
         
-        dest: 'build/css/hubble.min.css',
+        dest: 'dist/css/hubble.bundle.min.css',
     },
 };

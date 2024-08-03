@@ -150,7 +150,7 @@ The fallback image is set via the JavaScript LazyLoad module from the variable `
 
 ### Dynamic content
 
-If your inserting elements into the DOM after the page has loaded, you refresh the `LazyLoad` module via the Hubble's `dom`.
+When inserting elements into the DOM after the page has loaded, for example using dynamic content via `Ajax`, you can refresh the `LazyLoad` module via the Hubble's `dom`.
 
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center col-gaps-xs js-image-insert">
@@ -167,16 +167,14 @@ If your inserting elements into the DOM after the page has loaded, you refresh t
             {
                 wrapper.innerHTML += '<div class="avatar avatar-xl"><img alt="Trump" data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" /></div>';
 
-                Hubble.dom().refresh('LazyLoad');
+                Hubble.dom().refresh('LazyLoad', wrapper);
             });
         });
     </script>
 </div>
 
 ```javascript
-
-Hubble.dom().refresh('LazyLoad');
-
+Hubble.dom().refresh('LazyLoad', wrapper);
 ```
 
 ---

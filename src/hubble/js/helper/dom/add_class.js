@@ -18,8 +18,13 @@ _.prototype.add_class = function(DOMElement, className)
         return this;
     }
 
-    if (!this.in_dom(DOMElement))
+    if (this.is_string(className) && className.includes(','))
     {
+        this.each(className.split(','), function(i, _className)
+        {
+            DOMElement.classList.add(_className.trim());
+        });
+
         return;
     }
 
@@ -28,7 +33,6 @@ _.prototype.add_class = function(DOMElement, className)
         this.each(className, function(i, _className)
         {
             DOMElement.classList.add(_className);
-
         });
 
         return;

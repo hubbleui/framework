@@ -23,38 +23,35 @@
     padding: var(--hb-menu-item-pad-y) 0px;
     font-size: var(--hb-menu-font-size);
 
-    // Header
-    .card-header
-    {
-        
-
-    }
-
     > *
     {
         margin: 0;
         padding: var(--hb-menu-item-pad-y) var(--hb-menu-item-pad-x);
         background-color: var(--hb-menu-item-bg);
+        column-gap: var(--hb-menu-item-pad-x);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: space-between;
         position: relative;
-        column-gap: var(--hb-menu-item-pad-x);
-        
         .item-left,
         .item-right
         {
             flex: 0 0 auto;
             display: flex;
         }
-        .item-content
+        .item-body
         {
             flex: 1 1 auto;
         }
+        a,a:hover
+        {
+            text-decoration: none;
+            color: inherit;
+        }
 
-
-        &:hover
+        &:hover,
+        &.hover
         {
             background-color: var(--hb-menu-item-bg-hover);
             color: var(--hb-menu-item-color-hover);
@@ -69,29 +66,57 @@
             background-color: var(--hb-menu-item-bg-selected);
             color: var(--hb-menu-item-color-selected);
         }
-
-        a
+        &.disabled,&.disabled:hover
         {
-            color: inherit;
-            text-decoration: none;
+            background-color: var(--hb-menu-item-bg);
+            color: var(--hb-menu-color);
+            opacity: 0.5;
+            cursor: not-allowed;
         }
-
-
     }
+
+    // Overflow
+    &.menu-ellipsis
+    {
+        > *
+        {
+            @include _ellipsis;
+            
+            .item-body
+            {
+                min-width: 0;
+                @include _ellipsis;
+            }
+        }
+    }
+    
+    // Header and divider
     .menu-header
     {
         font-weight: $text-bold;
-        
+        padding: 0px var(--hb-menu-item-pad-x) var(--hb-menu-item-pad-y) var(--hb-menu-item-pad-x);
+        border-bottom: 1px solid var(--hb-menu-divider-color);
     }
     .menu-divider
     {
-        
+        padding: var(--hb-menu-divider-space) 0 0 0;
+        margin: 0 0 var(--hb-menu-divider-space) 0;
+        border-bottom: 1px solid var(--hb-menu-divider-color);
     }
-    .divider,
-    .drop-header + li,
-    .divider + li,
-    li:first-child
+    .menu-header:hover,
+    .menu-divider:hover
     {
-        border-top-color: transparent;
+        background-color: var(--hb-menu-item-bg);
+        color: var(--hb-menu-color);
     }
+
+    // Dense
+    &.menu-dense
+    {
+        --hb-menu-font-size: #{_minusPercent($menu-font-size, 5)};
+        --hb-menu-item-pad-y: #{_minusPercent($menu-item-pad-y, 60)};
+        --hb-menu-item-pad-x: #{_minusPercent($menu-item-pad-x, 20)};
+        --hb-menu-divider-space: #{_minusPercent($menu-divider-space, 40)};
+    }
+
 }

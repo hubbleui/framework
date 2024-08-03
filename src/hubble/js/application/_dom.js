@@ -1,6 +1,6 @@
 (function()
 {    
-    const [each, trigger_event, collect_garbage, is_undefined, is_string, is_htmlElement] = Container.import(['each', 'trigger_event', 'collect_garbage', 'is_undefined', 'is_string', 'is_htmlElement']).from('_');
+    const [each, trigger_event, collect_garbage, is_undefined, is_string, is_htmlElement] = Hubble.import(['each', 'trigger_event', 'collect_garbage', 'is_undefined', 'is_string', 'is_htmlElement']).from('_');
 
     const KEYPREFIX = 'HB_DOM:';
 
@@ -52,9 +52,9 @@
 
         this.components.push(name);
 
-        Container.singleton(this._normaliseKey(name), component);
+        Hubble.singleton(this._normaliseKey(name), component);
 
-        if (invoke && this._isReady)
+        if (invoke || this._isReady)
         {
             this._bindComponent(name, document);
         }
@@ -67,7 +67,17 @@
      */
     Dom.prototype.component = function(name)
     {
-        return Container.get(this._normaliseKey(name));
+        return Hubble.get(this._normaliseKey(name));
+    }
+
+    /**
+     * Returns a component.
+     *
+     * @access {public}
+     */
+    Dom.prototype.create = function(name, options, appendTo)
+    {
+        return this.component(name).create(options, appendTo);
     }
 
     /**
@@ -79,7 +89,7 @@
      */
     Dom.prototype._dispatchReady = function()
     {
-        trigger_event(window, 'Hubble:dom:ready', this);
+        trigger_event(window, 'Hubble:dom:ready', {dom: this});
     }
 
     /**
@@ -102,13 +112,13 @@
      */
     Dom.prototype._bindComponent = function(name, context, isRefresh)
     {                
-        let component = Container.get(this._normaliseKey(name));
+        let component = Hubble.get(this._normaliseKey(name));
 
         if (this._hasMethod(component, 'construct') && isRefresh)
         {
-            this._dispatchComponent(name, 'refresh', component, context);
-
             component.construct(context);
+            
+            this._dispatchComponent(name, 'refresh', component, context);
         }
 
         this._dispatchComponent(name, 'bind', component, context);
@@ -122,7 +132,7 @@
      */
     Dom.prototype._unbindComponent = function(name, context)
     {            
-        let component = Container.get(this._normaliseKey(name));
+        let component = Hubble.get(this._normaliseKey(name));
 
         if (this._hasMethod(component, 'destruct'))
         {
@@ -140,12 +150,16 @@
      */
     Dom.prototype.refresh = function(component, context)
     {
+        let globalRefresh = false;
+
         // refresh()
         if (arguments.length === 0)
         {
             component = false;
 
             context = document;
+
+            globalRefresh = true;
         }
         else
         {
@@ -176,6 +190,8 @@
                 this._bindComponent(name, context, true);
             }
         }, this);
+
+        trigger_event(window, `Hubble:dom:refresh`, { context: context});
     }
 
     /**
@@ -204,6 +220,6 @@
     }
 
     // Load into container and invoke
-    Container.singleton('HubbleDom', Dom);
+    Hubble.singleton('Dom', Dom);
 
 })();

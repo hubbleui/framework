@@ -10,7 +10,7 @@ module.exports =
 	{
         files: [{
             expand: true,
-            src: ['build/js/*.js', '!build/js/*.min.js'],
+            src: ['dist/js/*.js', '!dist/js/*.min.js'],
             dest: '',
             cwd: '.',
             rename: function (dst, src)

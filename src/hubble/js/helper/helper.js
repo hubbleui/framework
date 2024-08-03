@@ -45,6 +45,7 @@
 		@import 'dom/form_inputs.js';
 		@import 'dom/form_values.js';
 		@import 'dom/has_class.js';
+		@import 'dom/has_selector.js';
 		@import 'dom/hide_aria.js';
 		@import 'dom/in_viewport.js';
 		@import 'dom/inner_HTML.js';
@@ -66,6 +67,8 @@
 		@import 'dom/traverse.js';
 		@import 'dom/width.js';
 		@import 'dom/height.js';
+		@import 'dom/nth_child.js';
+		@import 'dom/nth_siblings.js';
 		@import 'events/add_event_listener.js';
 		@import 'events/clear_event_listeners.js';
 		@import 'events/collect_garbage.js';
@@ -80,7 +83,6 @@
 		@import 'object/extend.js';
 		@import 'object/join_obj.js';
 		@import 'object/merge_deep.js';
-		@import 'object/obj.js';
 		@import 'object/obj_clone.js';
 		@import 'object/object_props.js';
 		@import 'object/prototypes.js';
@@ -96,6 +98,7 @@
 		@import 'string/uc_first.js';
 		@import 'string/uc_words.js';
 		@import 'string/lc_first.js';
+		@import 'string/replace.js';
 		@import 'validation/bool.js';
 		@import 'validation/callable_name.js';
 		@import 'validation/count.js';

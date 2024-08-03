@@ -23,10 +23,8 @@ module.exports =
     core:
     {
         files:
-        {
-            'src/hubble/scss/base/premin.min.css' : 'src/hubble/scss/base/premin.min.css',
-            
-            'build/css/hubble.css' : 'build/css/hubble.css',
+        {            
+            'dist/css/hubble.css' : 'dist/css/hubble.css',
         }
     },
     
@@ -35,7 +33,7 @@ module.exports =
     {
         files:
         {
-            'build/css/theme.css' : 'build/css/theme.css',
+            'dist/css/theme.css' : 'dist/css/theme.css',
         }
     }
 };

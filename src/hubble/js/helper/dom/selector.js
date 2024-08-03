@@ -10,7 +10,19 @@ _.prototype.$ = function(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
     
-    return context.querySelector(selector)
+    // Fast
+    if (!selector.trim().substring(0, 1) === '>') return context.querySelector(selector);
+
+    return context.querySelector(`:scope ${selector}`);
+}
+
+/**
+ * "$" Alias
+ *
+ */
+_.prototype.find = function(selector, context)
+{
+    return this.$(selector, context);
 }
 
 /**
@@ -38,13 +50,21 @@ _.prototype.$All = function(selector, context)
 
         this.each(selector.split(','), (i, s) =>
         {
-            ret = [...ret, ...this.$All(s, context)];
+            ret = [...ret, ...this.$All(s.trim(), context)];
         
         }, this);
 
-        return ret;
+        return this.array_unique(ret);
     }
 
     return TO_ARR.call(context.querySelectorAll(`:scope ${selector}`));
 }
 
+/**
+ * "$All" Alias
+ *
+ */
+_.prototype.find_all = function(selector, context)
+{
+    return this.$All(selector, context);
+}

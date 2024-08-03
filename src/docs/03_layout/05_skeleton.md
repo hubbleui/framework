@@ -450,7 +450,7 @@ Try the example below create a few skeletons
 const sandbox = function()
 {
     /* Helpers */
-    const [$, add_event_listener, form_values, each, has_class, add_class, remove_class] = Container.import(['$', 'add_event_listener', 'form_values', 'each', 'has_class', 'add_class', 'remove_class']).from('_');
+    const [$, add_event_listener, form_values, each, has_class, add_class, remove_class] = Hubble.import(['$', 'add_event_listener', 'form_values', 'each', 'has_class', 'add_class', 'remove_class']).from('_');
 
     // Instantiate validator and cache vars
     const DOMElementform    = $('.js-skeleton-form');
@@ -472,7 +472,7 @@ const sandbox = function()
         let height  = form.variant === 'block' ? '100px' : null;
         let options = { count: form.count, height: height, variant: `${form.style} ${form.variant} ${form.textblock}`.trim() };
         
-        skeletons.push(Container.Skeleton(DOMElementCard, options));
+        skeletons.push(Hubble.Skeleton(DOMElementCard, options));
     });
 
     add_event_listener(DOMElementDestroy, 'click', function(e)
@@ -565,7 +565,7 @@ Hubble comes with a handy JavaScript utility component for creating skeletons on
 #### Usage
 
 ```javascript
-const skeleton = Container.Skeleton(DOMElement, options);
+const skeleton = Hubble.Skeleton(DOMElement, options);
 ```
 
 The component will build the skeleton(s) with the supplied options and append them to the the `DOMElement`.
@@ -611,7 +611,7 @@ const options  = {
     height: '60px'
 };
 
-const skeleton = Container.Skeleton(DOMElement, options);
+const skeleton = Hubble.Skeleton(DOMElement, options);
 ```
 
 When creating a multi-line text-block variant (`text-block` `block-h1` `block-h2` `block-h3` `block-h4` `block-h5` `block-h6`), any other options apart from `count` or `lines` will be ignored.
@@ -624,7 +624,7 @@ const options  = {
     variant: 'text-block',
 };
 
-const skeleton = Container.Skeleton(DOMElement, options);
+const skeleton = Hubble.Skeleton(DOMElement, options);
 ```
 
 You can also provide options as an array to add multiple skeletons to single container element:
@@ -635,7 +635,7 @@ const options = [
     { lines: 6, variant: 'text-block' },
 ];
 
-const skeleton = Container.Skeleton(DOMElement, options);
+const skeleton = Hubble.Skeleton(DOMElement, options);
 ```
 
 Or if you need more control to a layout you can provide an optional child `selector` key for each variant-set. The skeleton will get inserted into the the selector element rather than the parent wrapper element.
@@ -645,7 +645,7 @@ const options = [
     { selector: '.js-heading', lines: 2, variant: 'h3-block'},
     { selector: '.js-text', lines: 6, variant: 'text-block' },
 ];
-const skeleton = Container.Skeleton(DOMElement, options);
+const skeleton = Hubble.Skeleton(DOMElement, options);
 ```
 
 #### Loading Content
@@ -706,7 +706,7 @@ The example below shows swapping out the contents of card component. Click the `
     const loader = function()
     {
         /* Helpers */
-        const [$, each] = Container.import(['$', 'each']).from('_');
+        const [$, each] = Hubble.import(['$', 'each']).from('_');
         const [cardWrapper, triggerLoad, triggerReset] = [$('.js-skeleton-loader-card'), $('.js-load-content'), $('.js-reset-skeletons')];
         const contents  = 
         {
@@ -734,7 +734,7 @@ The example below shows swapping out the contents of card component. Click the `
         {            
             each(options, (i, option) => $(option.selector, cardWrapper).innerHTML = '' );
 
-            skeleton = Container.Skeleton(cardWrapper, options);
+            skeleton = Hubble.Skeleton(cardWrapper, options);
         };
 
         triggerLoad.addEventListener('click', () =>

@@ -1,3 +1,5 @@
+@use "sass:map";
+
 // Standard buttons
 @mixin button($color, $background)
 {
@@ -30,8 +32,8 @@
 // Outline buttons
 @mixin button-outline($color)
 {
-    $basename : _color-name-from-var($color);
-
+    $basename : _var-to-str($color);
+    
     // Base
     --hb-btn-color: #{$color};
     --hb-btn-bg-color: transparent;
@@ -40,11 +42,11 @@
 
     // Hover
     --hb-btn-color-hover: #{$color};
-    --hb-btn-bg-color-hover: var(--hb-#{$basename}-100);
+    --hb-btn-bg-color-hover: #{rgba(var(--#{$basename}-rgb), 0.05)};
 
     // Active
     --hb-btn-color-active: #{$color};
-    --hb-btn-bg-color-active: var(--hb-#{$basename}-200);
+    --hb-btn-bg-color-active: #{rgba(var(--#{$basename}-rgb), 0.1)};
 
     // Icon / Loader
     --hb-btn-loader-color: #{$color};
@@ -52,14 +54,14 @@
     &.selected,
     &.checked
     {
-        --hb-btn-border:  1px solid var(--hb-#{$basename}-600);
+        --hb-btn-border:  1px solid #{rgba(var(--#{$basename}-rgb), 0.6)};
     }
 }
 
 // Pure buttons
 @mixin button-pure($color)
 {
-    $basename : _color-name-from-var($color);
+    $basename : _var-to-str($color);
 
     // Base
     --hb-btn-color: #{$color};
@@ -68,11 +70,11 @@
 
     // Hover
     --hb-btn-color-hover: #{$color};
-    --hb-btn-bg-color-hover: var(--hb-#{$basename}-100);
+    --hb-btn-bg-color-hover: #{rgba(var(--#{$basename}-rgb), 0.1)};
     
     // Active
     --hb-btn-color-active: #{$color};
-    --hb-btn-bg-color-active: var(--hb-#{$basename}-200);
+    --hb-btn-bg-color-active: #{rgba(var(--#{$basename}-rgb), 0.2)};
 
     // Icon / Loader
     --hb-btn-loader-color: #{$color};

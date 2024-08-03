@@ -154,8 +154,8 @@ _.prototype.__animation_factory = function(DOMElement, opts)
             var options = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, opts);
 
             options.FROM_FACTORY = true;
-            options.property = val;
-            options.el = DOMElement;
+            options.property     = this.css_prop_to_hyphen_case(val);
+            options.el           = DOMElement;
             optionSets.push(options);
 
             // break
@@ -163,7 +163,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
         }
         else if (!this.in_array(key, ANIMATION_ALLOWED_OPTIONS))
         {
-            // Only worth adding if the property is vavlid
+            // Only worth adding if the property is valid
             var camelProp = this.css_prop_to_camel_case(key);
             
             if (!this.is_undefined(document.body.style[camelProp]))
@@ -180,7 +180,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
 
                 // animation_factory('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
                 options.FROM_FACTORY = true;
-                options.property     = key;
+                options.property     = this.css_prop_to_hyphen_case(key);
                 options.el           = DOMElement;
                 optionSets.push(options);
             }

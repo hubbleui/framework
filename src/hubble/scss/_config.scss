@@ -183,9 +183,11 @@ $list-color-active:             inherit !default;
 
 // Dropdown
 $dropdown-border-radius:        var(--hb-border-radius) !default;
-$dropdown-width:                160px !default;
+$dropdown-min-width:            160px !default;
+$dropdown-max-width:            250px !default;
 $dropdown-height:               300px !default;
 $dropdown-shadow-level:         2 !default;
+$dropdown-bg:                   var(--hb-white) !default;
 
 // Menu
 $menu-bg:						var(--hb-white) !default;
@@ -200,8 +202,8 @@ $menu-item-bg-active:           var(--hb-brand-info-100) !default;
 $menu-item-bg-selected:         var(--hb-brand-info) !default;
 $menu-item-pad-y:               10px !default;
 $menu-item-pad-x:               12px !default;
-$menu-divider-color:            var(--hb-gray-300) !default;
-$menu-divider-space:            20px;
+$menu-divider-color:            var(--hb-gray-200) !default;
+$menu-divider-space:            5px;
 
 // Inline elements
 $badge-size:                    7px !default;
@@ -210,6 +212,7 @@ $badge-size:                    7px !default;
 $table-font-size:               1.3rem !default;
 $table-bg:                      transparent !default;
 $table-bg-hover:                rgba(0, 0, 0, 0.08) !default;
+$table-bg-alternate:            rgba(0, 0, 0, 0.08) !default;
 $table-color:                   inherit !default;
 $table-cell-pad-y:              1.2rem !default;
 $table-cell-pad-x:              1.8rem !default;
@@ -218,8 +221,7 @@ $table-head-bg:                 var(--hb-gray-200) !default;
 $table-head-color:              var(--hb-gray-900) !default;
 $table-head-weight:             $text-bold !default;
 $table-caption-color:           var(--hb-gray) !default;
-$table-plain-bg:                var(--hb-white) !default;
-$table-plain-color:             var(--hb-gray) !default;
+
 
 // Messages
 $msg-bg:                        var(--hb-black) !default;
@@ -228,7 +230,9 @@ $msg-icon-color:                var(--hb-brand-primary) !default;
 $msg-spacer-y:                  3rem !default;
 $msg-spacer-x:                  2rem !default;
 $msg-font-size:                 1.4rem !default;
+$msg-icon-font-size:			1.6rem !default;
 $msg-border-radius:             var(--hb-border-radius) !default;
+
 
 // Modals
 $modal-max-width:               680px !default;
@@ -411,10 +415,6 @@ $bq-pad-x:                      2rem !default;
 // Notifications
 $notif-bg:                      var(--hb-black) !default;
 $notif-color:                   var(--hb-white) !default;
-$notif-font-size:               1.2rem !default;
-$notif-spacer-y:                2rem !default;
-$notif-spacer-x:                2rem !default;
-$notif-border-radius:           var(--hb-border-radius) !default;
 $notif-shadow:                  3 !default;
 
 // Hamburger

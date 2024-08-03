@@ -1,16 +1,27 @@
 const AnimateCss = function(DOMElement, options)
-{        
+{     
+    // Domeleement   
     this.DOMElement = DOMElement;
 
+    // Options
     this.options = options;
 
+    // Props to animate
     this.animatedProps = {};
 
-    this.animatedTransitions = {};
-
+    // Pre animation transitions to restore
     this.preAnimatedTransitions = {};
 
-    this.callback = null;
+    // Fail timer
+    this._failTimer = null;
+    
+    // Max duration
+    this.duration  = 0;
+    
+    // Callbacks
+    this._callbackStart    = () => {};
+    this._callbackComplete = () => {};
+    this._callbackFail     = () => {};
 
     this.preProcessStartEndValues();
 
@@ -23,11 +34,23 @@ const AnimateCss = function(DOMElement, options)
  */
 AnimateCss.prototype.start = function()
 {
+    this._callbackStart(this.DOMElement);
+
     this.applyStartValues();
 
     this.applyTransitions();
 
-    _THIS.add_event_listener(this.DOMElement, 'transitionend', this.on_complete, this);
+    _THIS.add_event_listener(this.DOMElement, 'transitionend', this.transitionEnd, this);
+
+    let _this = this;
+
+    this._failTimer = setTimeout(() =>
+    {
+        _this._callbackFail(_this.DOMElement);
+
+        _this.resotoreElement();
+
+    }, this.duration + 50 );
 
     this.applyEndValues();
 
@@ -40,9 +63,9 @@ AnimateCss.prototype.start = function()
  */
 AnimateCss.prototype.stop = function()
 {
-    _THIS.remove_event_listener(this.DOMElement, 'transitionend', this.on_complete, this);
+    clearTimeout(this._failTimer);
 
-    _THIS.css(this.DOMElement, 'transition', this.preAnimatedTransitions);
+    this.resotoreElement();
 }
 
 /**
@@ -55,11 +78,7 @@ AnimateCss.prototype.destory = function()
 
     this.animatedProps = {};
 
-    this.animatedTransitions = {};
-
     this.preAnimatedTransitions = {};
-
-    this.callback = null;
 }
 
 /**
@@ -71,36 +90,45 @@ AnimateCss.prototype.destory = function()
  *
  * @param  {Event} e transitionEnd event
  */
-AnimateCss.prototype.on_complete = function(e)
-{        
+AnimateCss.prototype.resotoreElement = function()
+{
+    _THIS.css(this.DOMElement, 'transition', this.preAnimatedTransitions);
+
+    _THIS.remove_event_listener(this.DOMElement, 'transitionend', this.transitionEnd, this);
+}
+
+/**
+ * On transition end.
+ * 
+ * Note if a multiple animation properties wer supplied
+ * we only want to call the callback once when all transitions
+ * have completed.
+ *
+ * @param  {Event} e transitionEnd event
+ */
+AnimateCss.prototype.transitionEnd = function(e)
+{
     e = e || window.event;
 
-    var prop = _THIS.css_prop_to_hyphen_case(e.propertyName);
+    let prop = _THIS.css_prop_to_hyphen_case(e.propertyName);
 
-    if (prop === 'background-color') prop = 'background';
+    // "background" doesn't support transitionend
+    if (prop === 'background-color' && !this.animatedProps['background-color']) prop = 'background';
+
+    let endVal = this.animatedProps[prop];
 
     // Change inline style back to auto
-    let endVal = this.animatedProps[prop];
     if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset') _THIS.css(this.DOMElement, prop, endVal);
-
-    delete this.animatedTransitions[prop];
 
     delete this.animatedProps[prop];
     
-    var completed = _THIS.is_empty(this.animatedProps);
+    if (_THIS.is_empty(this.animatedProps))
+    {        
+        clearTimeout(this._failTimer);
 
-    var transition = completed ? this.preAnimatedTransitions : _THIS.join_obj(this.animatedTransitions, ' ', ', ');
+        this.resotoreElement();
 
-    _THIS.css(this.DOMElement, 'transition', this.preAnimatedTransitions);
-
-    if (completed)
-    {
-        _THIS.remove_event_listener(this.DOMElement, 'transitionend', this.on_complete, this);
-        
-        if (_THIS.is_function(this.callback))
-        {
-            this.callback(this.DOMElement);
-        }
+        this._callbackComplete(this.DOMElement);
     }
 }
 
@@ -116,10 +144,23 @@ AnimateCss.prototype.preProcessStartEndValues = function()
     // transition with CSS
     _THIS.each(this.options, function(i, option)
     {
+        // Cache start and fail callbacks
+        if (option.start) this._callbackStart = option.start;
+        if (option.fail) this._callbackFail = option.fail;
+
+        // Keep the longest callback
+        if (option.duration >= this.duration && (option.callback || option.complete))
+        {
+            this._callbackComplete = (option.callback || option.complete);
+        }
+
+        // Store the maximum duration
+        if (option.duration >= this.duration) this.duration = option.duration;
+
         let startValue  = option.from;
         let endValue    = option.to;
         let CSSProperty = option.property;
-
+        
         if (startValue === 'auto' || startValue === 'initial' || startValue === 'unset' || !startValue)
         {
             this.options[i].from = _THIS.rendered_style(DOMElement, CSSProperty);
@@ -151,10 +192,7 @@ AnimateCss.prototype.applyStartValues = function()
 
     _THIS.each(this.options, function(i, option)
     {
-        if (option.from)
-        {
-            styles[option.property] = option.from;
-        }
+        styles[option.property] = option.from;
     });
 
     if (!_THIS.is_empty(styles)) _THIS.css(this.DOMElement, styles);
@@ -166,9 +204,9 @@ AnimateCss.prototype.applyStartValues = function()
  */
 AnimateCss.prototype.applyTransitions = function()
 {
-    this.preAnimatedTransitions  = _THIS.inline_style(this.DOMElement, 'transition');
-    this.preAnimatedTransitions  = !this.preAnimatedTransitions ? false : this.preAnimatedTransitions;
-    this.animatedTransitions     = _THIS.css_transition_props(this.DOMElement);
+    let transitions = _THIS.css_transition_props(this.DOMElement);
+
+    this.preAnimatedTransitions  = _THIS.inline_style(this.DOMElement, 'transition') || false;
 
     _THIS.each(this.options, function(i, option)
     {
@@ -179,11 +217,11 @@ AnimateCss.prototype.applyTransitions = function()
 
         // Set the transition for the property
         // in our merged obj
-        this.animatedTransitions[property] = `${duration}s ${easing}`;
+        transitions[property] = `${duration}s ${easing}`;
 
     }, this);
 
-    _THIS.css(this.DOMElement, 'transition', _THIS.join_obj(this.animatedTransitions, ' ', ', '));
+    _THIS.css(this.DOMElement, 'transition', _THIS.join_obj(transitions, ' ', ', '));
 }
 
 /**
@@ -192,13 +230,11 @@ AnimateCss.prototype.applyTransitions = function()
  */
 AnimateCss.prototype.applyEndValues = function()
 {
-    var styles = {};
+    let styles = {};
 
     _THIS.each(this.options, function(i, option)
     {
         styles[option.property] = option.to;
-
-        this.callback = option.callback;
 
     }, this);
 

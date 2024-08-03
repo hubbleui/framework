@@ -8,6 +8,7 @@ Hubble comes with a few different basic table stylings ready to go. Because tabl
 
 *   [Basic table](#basic-table)
 *   [Bordered table](#bordered-table)
+*   [Alternate table](#alternate-table)
 *   [Raised Table](#raised-table)
 *   [Pure button](#pure-button)
 *   [Hover table](#hover-table)
@@ -102,6 +103,82 @@ To make a bordered table add the `.table-bordered` class to a `.table`:
 <div class="code-content-example">
     <div class="container-fuid">
         <table class="table table-bordered">
+            <caption>Optional table caption.</caption>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>John</td>
+                    <td>Foobar</td>
+                    <td>@fbar</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Joe</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>James</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+```html
+<table class="table table-bordered">
+    <caption>Optional table caption.</caption>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>John</td>
+            <td>Foobar</td>
+            <td>@fbar</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>Joe</td>
+            <td>Thornton</td>
+            <td>@fat</td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td>James</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+        </tr>
+    </tbody>
+</table>
+```
+
+---
+
+### Alternate table
+
+Add the `.table-alternate` class to a `.table` to add alternate background colors on rows:
+
+<div class="code-content-example">
+    <div class="container-fuid">
+        <table class="table table-alternate">
             <caption>Optional table caption.</caption>
             <thead>
                 <tr>

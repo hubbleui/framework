@@ -8,12 +8,16 @@
     --hb-msg-spacer-x: #{$msg-spacer-x};
     --hb-msg-border-radius: #{$msg-border-radius};
     --hb-msg-font-size: #{$msg-font-size};
-    position: relative;
-    overflow: hidden;
+    --hb-msg-icon-font-size: #{$msg-icon-font-size};
+
     border-radius: var(--hb-msg-border-radius);
     background-color: var(--hb-msg-bg);
-    border: none;
     color: var(--hb-msg-color);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
     
     .msg-icon .fa
     {
@@ -26,14 +30,16 @@
             opacity: 0.2;
         }
     }
-    
-    // Layout
+
     .msg-icon,
-    .msg-body,
     .msg-btn
     {
-        display: table-cell;
-        vertical-align: middle;
+        flex: 0 0 auto;
+        display: flex;
+    }
+    .msg-body
+    {
+        flex: 1 1 auto;
     }
 
     // Message Icon
@@ -44,7 +50,7 @@
         .fa
         {
             display: inline-block;
-            font-size: 16px;
+            font-size: var(--hb-msg-icon-font-size);
             width: 40px;
             height: 40px;
             line-height: 41px;
@@ -54,11 +60,10 @@
                 content: "";
                 position: absolute;
                 left: 0;
-                top: 0px;
-                width: 40px;
-                height: 40px;
+                top: 0;
+                width: 100%;
+                height: 100%;
                 border-radius: 50%;
-                
             }
         }
     }
@@ -66,7 +71,6 @@
     // Message Body
     .msg-body
     {
-        width: 10000px;
         padding: var(--hb-msg-spacer-y) var(--hb-msg-spacer-x);
 
         p
@@ -97,6 +101,23 @@
         padding-left: 0;
     }
 
+    // Dense
+    &.msg-dense
+    {
+        --hb-msg-spacer-y: #{_minusPercent($msg-spacer-y, 50)};
+        --hb-msg-spacer-x: #{_minusPercent($msg-spacer-x, 10)};
+        --hb-msg-font-size: #{_minusPercent($msg-font-size, 5)};
+        
+        .fa
+        {
+            display: inline-block;
+            font-size: 16px;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+        }
+    }
+
     // Variants
     @each $context, $colors in $contexts
     {    
@@ -105,4 +126,6 @@
             --hb-msg-icon-color: #{map-get($colors, "color")};
         }
     }
+
+    
 }

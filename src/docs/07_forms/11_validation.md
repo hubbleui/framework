@@ -18,7 +18,7 @@ Hubble's `FormValidator` provides a powerful module to validate and interact wit
 The `FormValidator` can be accessed through Hubble's `Container`, providing your target `<form>` DOMElement as a parameter.
 
 ```javascript
-const validator = Container.FormValidator(document.querySelector.$('#myform'));
+const validator = Hubble.FormValidator(document.querySelector.$('#myform'));
 ```
 
 ---
@@ -62,7 +62,7 @@ The `data-js-max-length` specifies the value must be `<=` a length in characters
 Instantiate a `FormValidator` via Hubble's `Container`, passing the target `<form>` DOMElement as the parameter.
 
 ```javascript
-const validator = Container.FormValidator(document.querySelector.$('#myform'));
+const validator = Hubble.FormValidator(document.querySelector.$('#myform'));
 ```
 
 The `isValid` method will check if the form is valid based on any validation input attributes:
@@ -172,7 +172,7 @@ Below is an example form using the validator. In a real request, you would use H
 	        </div>
 	    </div>
 	    <div class="row floor-xs">
-			<button type="submit" class="btn btn-default with-loading">
+			<button type="submit" class="btn with-loading">
 				<span class="loader loader-1"></span>
 				Submit
 			</button>
@@ -218,11 +218,11 @@ Below is an example form using the validator. In a real request, you would use H
 window.addEventListener('DOMContentLoaded', function()
 {
 	/* Helpers */
-	const [$, has_class, add_class, remove_class, addEventListener] = Container.import(['$', 'has_class', 'add_class', 'remove_class', 'addEventListener']).from('Helper');
+	const [$, has_class, add_class, remove_class, addEventListener] = Hubble.import(['$', 'has_class', 'add_class', 'remove_class', 'addEventListener']).from('Helper');
 
 	// Instantiate validator and cache vars
 	const DOMElementform = $('.js-form');
-	const validator = Container.FormValidator(DOMElementform);
+	const validator = Hubble.FormValidator(DOMElementform);
 	const submitBtn = $('button[type=submit]', DOMElementform);
 	let fakeAjax;
 
@@ -276,11 +276,11 @@ window.addEventListener('DOMContentLoaded', function()
 ```javascript
 
 /* Helpers */
-const [$, has_class, add_class, remove_class, addEventListener] = Container.import(['$', 'has_class', 'add_class', 'remove_class', 'addEventListener']).from('Helper');
+const [$, has_class, add_class, remove_class, addEventListener] = Hubble.import(['$', 'has_class', 'add_class', 'remove_class', 'addEventListener']).from('Helper');
 
 // Instantiate validator and cache vars
 const form      = $('.js-form');
-const validator = Container.FormValidator(form);
+const validator = Hubble.FormValidator(form);
 const submitBtn = $('button[type=submit]', form);
 let fakeAjax;
 

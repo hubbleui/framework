@@ -135,16 +135,21 @@ function createDocs()
         return titleCase(name.split('/').pop().replaceAll(/[0-9_]/g, '').replaceAll('-', ' ').split('.').shift());
     }
 
+    const prettyMenuName = function(name)
+    {
+        return titleCase(name.split('/').pop().replace(/\d+_/, '').replaceAll('-', ' ').split('.').shift());
+    }
+
     const buildMenuTree = function(dir)
     {
-        let title = prettyFileName(dir);
+        let title = prettyMenuName(dir);
         let dirs  = listDirs(dir);
         let files = listFolderFiles(dir);
         let menu  = {[title]: []};
 
         each(files, function(i, file)
         {
-            let name = prettyFileName(file);
+            let name = prettyMenuName(file);
 
             menu[title].push(name);
         });
@@ -168,18 +173,22 @@ function createDocs()
 
     const relativeLinkBack = function(to, from)
     {        
-        let toFromRoot   = to.split('/').length;
-        let fromFromRoot = from.toLowerCase().split(DOCS_DEST_DIR.toLowerCase()).pop().split('/').length;
-        let diff         = fromFromRoot > toFromRoot ? fromFromRoot - toFromRoot : toFromRoot - fromFromRoot;
+        let fromDirs = from.split('/').filter((x) => x !== '').slice(0, -1);
+        let toDirs   = to.split('/').filter((x) => x !== '').slice(0, -1);
+        let toRoot   = fromDirs.length;
+        let sameDir  = fromDirs.length === toDirs.length && fromDirs.slice(0, -1).pop() === toDirs.slice(0, -1).pop();
 
-        if (diff === 0 || toFromRoot === fromFromRoot)
+        if (sameDir) return BACK_DIR_CHAR.repeat(3).slice(0, -1);
+
+        fromDirs = fromDirs.reverse();
+        toDirs   = toDirs.reverse();
+
+        for (var i = 0; i < toDirs.length; i++)
         {
-            return BACK_DIR_CHAR.repeat(toFromRoot -2).slice(0, -1);
+            if (toDirs[i] === fromDirs[i]) return BACK_DIR_CHAR.repeat(i).slice(0, -1); 
         }
 
-        diff = diff + 2;
-
-        return BACK_DIR_CHAR.repeat(diff).slice(0, -1);
+        return BACK_DIR_CHAR.repeat(toRoot).slice(0, -1);
     }
 
     const buildHTMLMenu = function(menu, currFile, dir, tabIndex)
@@ -203,7 +212,7 @@ function createDocs()
                 let active = filepath.includes(item) ? 'class="active"' : '';
                 let name   = item.toLowerCase().replaceAll(' ', '-');
                 let slug   = `${dir}/${name}/index.html`;
-                let back   = relativeLinkBack(slug, currFile);
+                let back   = relativeLinkBack(slug, currFile.toLowerCase().split(DOCS_DEST_DIR.toLowerCase()).pop());
 
                 HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li class="menu-item"><a ${active} href="${back}${slug}">${item}</a></li>`;
             }
@@ -283,5 +292,5 @@ function createDocs()
 }
 
 module.exports = {
-  build: createDocs,
+  dist: createDocs,
 };

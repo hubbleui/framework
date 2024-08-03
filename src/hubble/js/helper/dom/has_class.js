@@ -13,7 +13,12 @@ _.prototype.has_class = function(el, className)
         return false;
     }
 
-    if (TO_STR.call(className) === '[object Array]')
+    if (!el.classList)
+    {
+        return false;
+    }
+
+    if (this.is_array(className))
     {
         for (var i = 0; i < className.length; i++)
         {
@@ -23,11 +28,6 @@ _.prototype.has_class = function(el, className)
             }
         }
 
-        return false;
-    }
-
-    if (!el.classList)
-    {
         return false;
     }
 

@@ -25,15 +25,17 @@
     margin: 0;
     list-style: none;
 
-    > li
+    > *
     {
-    	display: block;
-    	width: 100%;
-    	margin: 0;
     	padding: var(--hb-list-pad-y) var(--hb-list-pad-x);
     	background-color: var(--hb-list-bg);
     	font-size: var(--hb-list-font-size);
-    	position: relative;
+    	margin: 0;
+    	display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+    	
     	&:hover
     	{
     		background-color: var(--hb-list-bg-hover);
@@ -50,10 +52,17 @@
     	}
     }
 
+    .item-left,
+    .item-right
+    {
+        flex: 0 0 auto;
+        display: flex;
+    }
     .item-body
-	{
-	    width: 10000px;
-	}
+    {
+        flex: 1 1 auto;
+    }
+
 	.item-body, 
 	.item-left, 
 	.item-right

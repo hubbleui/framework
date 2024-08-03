@@ -5,14 +5,14 @@
      * 
      * @var {class}
      */
-    const [Component] = Container.get('Component');
+    const [Component] = Hubble.get('Component');
 
     /**
      * Helper functions
      * 
      * @var {Function}
      */
-    const [$, add_event_listener, css, parse_url, remove_event_listener, rendered_style, extend] = Container.import(['$','add_event_listener','css','parse_url','remove_event_listener','rendered_style','extend']).from('_');
+    const [$, add_event_listener, css, parse_url, remove_event_listener, rendered_style, extend] = Hubble.import(['$','add_event_listener','css','parse_url','remove_event_listener','rendered_style','extend']).from('_');
 
     /**
      * Image zoom hover

@@ -5,14 +5,14 @@
      * 
      * @var {class}
      */
-    const [Component] = Container.get('Component');
+    const [Component] = Hubble.get('Component');
 
     /**
      * Helper functions
      * 
      * @var {Function}
      */
-    const [$, add_event_listener, attr, closest, has_class, in_dom, remove_event_listener, remove_from_dom, trigger_event, extend] = Container.import(['$','add_event_listener','attr','closest','has_class','in_dom','remove_event_listener','remove_from_dom','trigger_event','extend']).from('_');
+    const [$, add_event_listener, attr, closest, has_class, in_dom, remove_event_listener, remove_from_dom, trigger_event, extend] = Hubble.import(['$','add_event_listener','attr','closest','has_class','in_dom','remove_event_listener','remove_from_dom','trigger_event','extend']).from('_');
 
     /**
      * Chip suggestions.
@@ -72,7 +72,7 @@
         // Chips input
         if (has_class(_input, '.js-chips-input'))
         {
-            Container.ChipInputs().addChip(_text, _input);
+            Hubble.ChipInputs().addChip(_text, _input);
 
             remove_from_dom(this);
 

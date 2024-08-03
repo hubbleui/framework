@@ -7,5 +7,5 @@
  */
 (function()
 {
-    Container.get('Hubble').boot();
+    Hubble.boot();
 })();

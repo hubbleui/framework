@@ -8,7 +8,7 @@
  * @apram {mixed}        value       Property value
  */
 _.prototype.attr = function(DOMElement, name, value)
-{
+{    
     // Get attribute
     // e.g attr(node, style)
     if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
@@ -36,6 +36,11 @@ _.prototype.attr = function(DOMElement, name, value)
             DOMElement.innerHTML = !value ? '' : value;
             break;
 
+        // innerText
+        case 'innerText':
+            DOMElement.innerText = !value ? '' : value;
+            break;
+
         // Children
         case 'children':
 
@@ -56,12 +61,17 @@ _.prototype.attr = function(DOMElement, name, value)
         case 'class':
         case 'className':
 
-            if (!value)
+            // Cleanup classname
+            value = this.is_string(value) ? this.replace(value, ['undefined', 'null', 'false', 'true'], '').replace(/\s\s+/g, ' ').trim() : value;
+
+            if (this.is_empty(value))
             {
                 DOMElement.removeAttribute('class');
             }
-
-            DOMElement.className = value;
+            else
+            {
+                DOMElement.className = value;
+            }
 
             break;
 
@@ -122,47 +132,58 @@ _.prototype.attr = function(DOMElement, name, value)
             // All other node attributes
             else
             {
-                if (
-                    name !== 'href' &&
-                    name !== 'list' &&
-                    name !== 'form' &&
-                    // Default value in browsers is `-1` and an empty string is
-                    // cast to `0` instead
-                    name !== 'tabIndex' &&
-                    name !== 'download' &&
-                    name in DOMElement
-                )
+                let isData     = name.startsWith('data');
+                let isAria     = name.startsWith('aria');
+                let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
+                let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
+                let isEmpty    = this.is_empty(value);
+
+                // Special data
+                if (isData)
+                {
+                    if (isEmpty)
+                    {
+                        DOMElement.removeAttribute(hyphenName);
+
+                        delete DOMElement.dataset[this.lc_first(this.ltrim(camelName, 'data'))];
+                    }
+                    else
+                    {
+                        DOMElement.setAttribute(hyphenName, value);
+
+                        DOMElement.dataset[this.lc_first(this.ltrim(camelName, 'data'))] = value;
+
+                    }
+
+                    break;
+                }
+
+                // Special booleans
+                if (this.in_array(name, BOOLEAN_ATTRS))
+                {
+                    DOMElement[name] = isEmpty ? '' : value;
+
+                    if (isEmpty) DOMElement.removeAttribute(name);
+
+                    break;
+                }
+
+                if (!PROP_ATTRIBUTES.includes(camelName))
                 {
                     try
-                    {
-                        DOMElement[name] = value == null ? '' : value;
-                        // labelled break is 1b smaller here than a return statement (sorry)
-                        break;
+                    {                        
+                        DOMElement[camelName] = isEmpty ? '' : value;
+
                     } catch (e) {}
                 }
 
-                let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
-                let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
-
-
-                // ARIA-attributes have a different notion of boolean values.
-                // The value `false` is different from the attribute not
-                // existing on the DOM, so we can't remove it. For non-boolean
-                // ARIA-attributes we could treat false as a removal, but the
-                // amount of exceptions would cost us too many bytes. On top of
-                // that other VDOM frameworks also always stringify `false`.
-
-                if (typeof value === 'function')
+                if (isEmpty)
                 {
-                    // never serialize functions as attribute values
-                }
-                else if (value != null && (value !== false || name.indexOf('-') != -1))
-                {
-                    DOMElement.setAttribute(name, value);
+                    DOMElement.removeAttribute(hyphenName);
                 }
                 else
                 {
-                    DOMElement.removeAttribute(name);
+                    DOMElement.setAttribute(hyphenName, value);
                 }
             }
 

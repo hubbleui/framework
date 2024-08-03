@@ -1,55 +1,43 @@
 # Introduction
 
-* * *
+---
 
 *   [Welcome](#)
 *   [How does it work?](#)
 *   [How to read this documentation](#)
 
-* * *
+---
 
-Welcome
--------
+### Welcome
 
-Hubble is modular `CSS` and `JavaScript` front-end framework built with `SCSS` and vanilla `JavaScript`. Hubble is designed so that you can use it as a starting point for any sized project from a tiny landing page to a giant web app.
+Hubble is modular `CSS` and `JavaScript` front-end framework built with `Sass` and vanilla `JavaScript`. Hubble is designed so that you can use it as a starting point for any sized project from a tiny landing page to a giant web app.
 
-One of the main purposes of Hubble is to save you time. Save you time writing `CSS(SCSS)` and `JavaScript` while building beautiful web pages with ease. Hubble is is a medium to large front-end framework. It has everything you need to start your next project.
+One of the main purposes of Hubble is to save you time while building beautiful web pages with ease. Hubble is is a medium to large front-end framework. It has everything you need to start your next project.
 
-> Hubble is 100% `JavaScript` Dependency free (no `jQuery`) - It's Vanilla JavaScript helping keep your project as slim as possible.
 
-* * *
+### How to read this documentation
 
-How does it work?
------------------
+If you are new to Hubble, it's recommended you read this documentation from start to finish. It's also highly advisable to spend some time reading through the **Getting Started** section to learn the library architecture and how to use it on a broad level, rather than jumping straight into a component.
 
-Hubble is really easy to setup and even easier to use. Hubble is written in `SCSS` and vanilla `JavaScript`. It's dependency free and doesn't use `jQuery` at all.
+### Quickstart
 
-There are a two different ways to use Hubble:
+Get started by including Hubble's production-ready CSS and JavaScript via CDN without the need for any build steps.
 
-**Basic Usage**  
-The most basic way would be to simply download the latest build, include `hubble.css` and `hubble.js` in your project.
+Create a new index.html file in your project root. Include the <meta name="viewport"> tag as well for proper responsive behavior in mobile devices.
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<link rel="stylesheet" href="hubble.css">
-</head>
-<body>
-<script src="hubble.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
 ```
 
-If you are wanting to use Hubble this way. You would simply include it in your project and build ontop of it with your own `CSS` and `JavaScript`. If you intend to use Hubble this way, you can simply skip the `Getting started` part of this documentation and start familiarizing yourself with the Hubble's `CSS`.
-
-**Recommended Usage**  
-The recommended way to use Hubble however is to build your project using `SCSS`, and integrate your own Hubble theme. You'll find out more information on how to do this correctly as you follow the documentation.
-
-* * *
-
-How to read this documentation
-------------------------------
-
-If you are new to Hubble, I recommend you read this documentation from start to finish. If you are already familiar with Hubble, you can instead jump straight to the appropriate section.
-
-This documentation begins by explaining Hubble's concepts and architecture before venturing into specific topics like components, modules and mixins.

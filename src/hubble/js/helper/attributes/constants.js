@@ -1,3 +1,8 @@
+/**
+ * Boolean attributes
+ *
+ * @var {array}
+ */
 const BOOLEAN_ATTRS = 
 [
 	'allowfullscreen',
@@ -25,3 +30,10 @@ const BOOLEAN_ATTRS =
 	'reversed',
 	'selected'
 ];
+
+/**
+ * Property attributes
+ *
+ * @var {array}
+ */
+const PROP_ATTRIBUTES = ['href', 'list', 'form', 'tabIndex', 'download'];

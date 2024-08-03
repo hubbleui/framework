@@ -5,14 +5,14 @@
      * 
      * @var {class}
      */
-    const [Component] = Container.get('Component');
+    const [Component] = Hubble.get('Component');
 
     /**
      * JS Helper reference
      * 
      * @var {object}
      */
-    const [$, $All, add_class, add_event_listener, closest, has_class, is_empty, remove_class, remove_event_listener, extend] = Container.import(['$', '$All', 'add_class', 'add_event_listener', 'closest', 'has_class', 'is_empty', 'remove_class', 'remove_event_listener', 'extend']).from('_');
+    const [$, $All, add_class, add_event_listener, closest, has_class, is_empty, remove_class, remove_event_listener, extend] = Hubble.import(['$', '$All', 'add_class', 'add_event_listener', 'closest', 'has_class', 'is_empty', 'remove_class', 'remove_event_listener', 'extend']).from('_');
 
     /**
      * Popovers
@@ -52,7 +52,7 @@
         var evnt      = trigger.dataset.popoverEvent;
         var animation = trigger.dataset.popoverAnimate || 'pop';
         var target    = trigger.dataset.popoverTarget;
-        var closeBtn  = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="glyph-icon glyph-icon-cross3"></span></button>' : '';
+        var closeBtn  = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="fa fa-xmark"></span></button>' : '';
         var pop       = '<div class="popover-content"><p>' + content + '</p></div>';
 
         if (title)
@@ -66,7 +66,7 @@
             pop.classList.remove('hidden');
         }
 
-        var popHandler = Container.get('PopHandler',
+        var popHandler = Hubble.get('PopHandler',
         {
             target: trigger,
             direction: direction,

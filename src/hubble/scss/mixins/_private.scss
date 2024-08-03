@@ -100,6 +100,23 @@
    ' ', '');
 }
 
+@function _color-base-name-from-var($colorVar)
+{
+    @return _str-replace(_color-name-from-var($colorVar) ,'brand-', '');
+}
+
+@function _var-to-str($cssVar)
+{
+    @return 
+    _str-replace(
+        _str-replace(
+            _str-replace(
+                _str-replace($cssVar, ')', ''),
+            'var(--', ''),  
+        ',', ''),
+    ' ', '');
+}
+
 // Array object helpers
 @function _map-keys($map)
 {

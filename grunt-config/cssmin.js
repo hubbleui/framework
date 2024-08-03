@@ -21,13 +21,13 @@ module.exports =
 	// Prefixer options
 	options: _options,
 
-    // Minify build files
-    build: {
+    // Minify dist files
+    dist: {
         files: [{
             expand : true,
-            cwd    : 'build/css',
+            cwd    : 'dist/css',
             src    : ['*.css', '!*.min.css'],
-            dest   : 'build/css',
+            dest   : 'dist/css',
             ext    : '.min.css'
         }]
     }

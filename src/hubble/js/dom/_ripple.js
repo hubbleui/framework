@@ -5,14 +5,14 @@
      * 
      * @var {class}
      */
-    const [Component] = Container.get('Component');
+    const [Component] = Hubble.get('Component');
 
     /**
      * Helper functions
      * 
      * @var {Function}
      */
-    const [add_class, add_event_listener, animate_css, closest, coordinates, css, has_class, height, in_array, in_dom, inline_style, preapend, remove_class, remove_event_listener, rendered_style, traverse_up, trigger_event, width, extend] = Container.import(['add_class','add_event_listener','animate_css','closest','coordinates','css','has_class','height','in_array','in_dom','inline_style','preapend','remove_class','remove_event_listener','rendered_style','traverse_up','trigger_event','width','extend']).from('_');
+    const [add_class, add_event_listener, animate_css, closest, coordinates, css, has_class, height, in_array, in_dom, inline_style, preapend, remove_class, remove_event_listener, rendered_style, traverse_up, trigger_event, width, extend] = Hubble.import(['add_class','add_event_listener','animate_css','closest','coordinates','css','has_class','height','in_array','in_dom','inline_style','preapend','remove_class','remove_event_listener','rendered_style','traverse_up','trigger_event','width','extend']).from('_');
 
     /**
      * Ripple animation time.
@@ -82,6 +82,12 @@
     {        
         // No ripples inside primary actions
         if (!has_class(node, 'primary-action') && closest(node, '.primary-action') && !has_class(node, 'card'))
+        {
+            return;
+        }
+
+        // No ripples inside list items
+        if (!has_class(node.parentNode, 'list') && closest(node, '.list'))
         {
             return;
         }

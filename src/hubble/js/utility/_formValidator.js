@@ -4,7 +4,7 @@
     /**
      * @var {Helper} obj
      */
-    const Helper = Container._();
+    const Helper = Hubble._();
 
     /**
      * Validator functions
@@ -329,6 +329,6 @@
     }
 
     // Load into container
-    Container.set('FormValidator', FormValidator);
+    Hubble.set('FormValidator', FormValidator);
 
 })();

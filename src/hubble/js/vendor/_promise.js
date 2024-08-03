@@ -186,7 +186,7 @@
 
     window.promise = null;
 
-    Container.set('Promise', function()
+    Hubble.set('Promise', function()
     {
         return new _promise.Promise();
     });

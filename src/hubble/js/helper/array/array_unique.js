@@ -6,10 +6,5 @@
  */
 _.prototype.array_unique = function(arr)
 {
-    let uniq = function(value, index, self)
-    {
-        return self.indexOf(value) === index;
-    }
-
-    return arr.filter(uniq);
+    return arr.filter((value, index, self) => self.indexOf(value) === index);
 }

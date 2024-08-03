@@ -5,14 +5,14 @@
      * 
      * @var {class}
      */
-    const [Component] = Container.get('Component');
+    const [Component] = Hubble.get('Component');
 
     /**
      * Helper functions
      * 
      * @var {Function}
      */
-    const [$, $All, add_event_listener, closest, first_children, in_array, input_value, is_empty, remove_event_listener, remove_from_dom, extend] = Container.import(['$','$All','add_event_listener','closest','first_children','in_array','input_value','is_empty','remove_event_listener','remove_from_dom','extend']).from('_');
+    const [$, $All, add_event_listener, closest, first_children, in_array, input_value, is_empty, remove_event_listener, remove_from_dom, extend] = Hubble.import(['$','$All','add_event_listener','closest','first_children','in_array','input_value','is_empty','remove_event_listener','remove_from_dom','extend']).from('_');
 
     /**
      * Chip inputs
@@ -92,7 +92,7 @@
             {
                 var _wrapper = closest(this, '.js-chips-input');
 
-                Container.ChipInputs()._removeLastChip(_wrapper);
+                Hubble.ChipInputs()._removeLastChip(_wrapper);
             }
         }
     }
@@ -112,7 +112,7 @@
         // Enter
         if (_key == 'Enter' || _key === 13)
         {
-            var _this = Container.ChipInputs();
+            var _this = Hubble.ChipInputs();
 
             var _wrapper = closest(this, '.js-chips-input');
 
@@ -153,7 +153,7 @@
      */
     ChipInputs.prototype.addChip = function(_value, _wrapper, _icon)
     {
-        let chip = Container.Chip({
+        let chip = Hubble.Chip({
             text       : _value.trim(),
             removeable : true,
             input      : _wrapper.dataset.inputName,
@@ -164,7 +164,7 @@
 
         add_event_listener($('.js-remove-btn', chip), 'click', this._removeChip);
 
-        Container.Hubble().dom().refresh('Ripple', _wrapper);
+        Hubble.Hubble().dom().refresh('Ripple', _wrapper);
     }
 
     /**

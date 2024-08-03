@@ -5,7 +5,7 @@
      * 
      * @var {Function}
      */
-    const [in_dom, coordinates] = Container.import(['in_dom','coordinates']).from('_');
+    const [in_dom, coordinates] = Hubble.import(['in_dom','coordinates']).from('_');
     
     /**
      * Popover Handler
@@ -107,6 +107,6 @@
     }
 
     // Set into container for private use
-    Container.set('PopHandler', PopHandler);
+    Hubble.set('PopHandler', PopHandler);
 
 }());

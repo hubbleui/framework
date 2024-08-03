@@ -5,14 +5,14 @@
      * 
      * @var {class}
      */
-    const [Component] = Container.get('Component');
+    const [Component] = Hubble.get('Component');
 
     /**
      * Helper functions
      * 
      * @var {Function}
      */
-    const [$, add_class, add_event_listener, closest, closest_class, has_class, is_empty, remove_class, remove_event_listener, extend] = Container.import(['$','add_class','add_event_listener','closest','closest_class','has_class','is_empty','remove_class','remove_event_listener','extend']).from('_');
+    const [$, add_class, add_event_listener, closest, closest_class, has_class, is_empty, remove_class, remove_event_listener, extend] = Hubble.import(['$','add_class','add_event_listener','closest','closest_class','has_class','is_empty','remove_class','remove_event_listener','extend']).from('_');
 
     /**
      * Tab Nav
@@ -58,7 +58,7 @@
 
         e.preventDefault();
 
-        var _this = Container.get('TabNav');
+        var _this = Hubble.get('TabNav');
         
         var node = this;
 

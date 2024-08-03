@@ -126,7 +126,7 @@ If you need to add a custom input mask using JavaScript, you can instantiate a m
 ```javascript
 const input = document.querySelector('#my-input');
 
-const mask = Container.InputMasker(input, '[A-z0-9-]',  'xxxx--xxxx--xxxx--xxxx');
+const mask = Hubble.InputMasker(input, '[A-z0-9-]',  'xxxx--xxxx--xxxx--xxxx');
 
 if (someEvent)
 {

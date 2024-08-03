@@ -345,7 +345,7 @@ Hubble's forms and form elements come pre-styled out of the box. Below is a list
                     <label for="textarea">Textarea Input</label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn">Submit</button>
         </form>
     </div>
 </div> 

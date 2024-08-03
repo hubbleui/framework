@@ -90,7 +90,7 @@ Add a class of `.msg-primary`, `.msg-info`, `.msg-success`, `.msg-warning` or `.
         </div>
         <div class="msg msg-success">
             <div class="msg-icon">
-                <span class="fa fa-checkmark"></span>
+                <span class="fa fa-check"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -98,7 +98,7 @@ Add a class of `.msg-primary`, `.msg-info`, `.msg-success`, `.msg-warning` or `.
         </div>
         <div class="msg msg-warning">
             <div class="msg-icon">
-                <span class="fa fa-power"></span>
+                <span class="fa fa-triangle-exclamation"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -106,7 +106,7 @@ Add a class of `.msg-primary`, `.msg-info`, `.msg-success`, `.msg-warning` or `.
         </div>
         <div class="msg msg-danger">
             <div class="msg-icon">
-                <span class="fa fa-cross"></span>
+                <span class="fa fa-xmark"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>
@@ -147,7 +147,7 @@ Adding a button to a message is easy, simply wrap it in a `.msg-btn` element aft
         </div>    
         <div class="msg msg-success">
             <div class="msg-icon">
-                <span class="fa fa-checkmark"></span>
+                <span class="fa fa-check"></span>
             </div>
             <div class="msg-body">
                 <p>This is an alert! Please read this carefully.</p>

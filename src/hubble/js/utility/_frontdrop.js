@@ -10,7 +10,7 @@
     /**
      * @var {obj}
      */
-    const Helper = Container._();
+    const Helper = Hubble._();
 
     /**
      * @var {obj}
@@ -328,6 +328,6 @@
     }
 
     // Load into container 
-    Container.set('Frontdrop', Frontdrop);
+    Hubble.set('Frontdrop', Frontdrop);
 
 })();

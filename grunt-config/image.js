@@ -22,7 +22,7 @@ var _options =
  */
 module.exports =
 {
-    build :
+    dist :
     {
         options : _options,
         
@@ -30,7 +30,7 @@ module.exports =
             expand : true,
             cwd    : 'src/img/',
             src    : ['**/*.{png,jpg,gif}'],
-            dest   : 'build/img/'
+            dest   : 'dist/img/'
         }]
     }
 };

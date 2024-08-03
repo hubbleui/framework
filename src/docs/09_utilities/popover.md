@@ -49,13 +49,13 @@ Data attributes placed on the target element define various behavior of the popo
 
 <div class="code-content-example">
     <div class="container-fuid">
-        <button class="btn btn-default js-popover" data-popover-title="Popover Title" data-popover-content="Laborum qui aute nulla reprehenderit culpa dolore non eu proident do ut tempor aliqua magna." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="click" data-popover-animate="pop"> Click Me! </button>
-        <button class="btn btn-default js-popover" data-popover-title="Popover Title" data-popover-content="Ullamco laborum velit dolore do minim cillum minim labore sint excepteur sint laboris cupidatat proident dolor." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="hover" data-popover-animate="fade"> Hover Me! </button>
+        <button class="btn js-popover" data-popover-title="Popover Title" data-popover-content="Laborum qui aute nulla reprehenderit culpa dolore non eu proident do ut tempor aliqua magna." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="click" data-popover-animate="pop"> Click Me! </button>
+        <button class="btn js-popover" data-popover-title="Popover Title" data-popover-content="Ullamco laborum velit dolore do minim cillum minim labore sint excepteur sint laboris cupidatat proident dolor." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="hover" data-popover-animate="fade"> Hover Me! </button>
     </div>
 </div>
 
 ```html
-<button class="btn btn-default js-popover"
+<button class="btn js-popover"
     data-popover-title="Popover Title" 
     data-popover-content="Anim dolor..."  
     data-popover-direction="top" 
@@ -63,7 +63,7 @@ Data attributes placed on the target element define various behavior of the popo
     data-popover-event="click" 
     data-popover-animate="pop">Click Me!</button>
 
-<button class="btn btn-default js-popover"
+<button class="btn js-popover"
     data-popover-title="Popover Title" 
     data-popover-content="Consequat ad..."  
     data-popover-direction="top" 
@@ -83,7 +83,7 @@ The library will clone the target node and insert the copy into the popover's co
 
 <div class="code-content-example">
     <div class="container-fuid">
-        <button class="btn btn-default js-popover" data-popover-target="target-node" data-popover-event="click" data-popover-animate="pop" data-popover-direction="top"> Click Me! </button>
+        <button class="btn js-popover" data-popover-target="target-node" data-popover-event="click" data-popover-animate="pop" data-popover-direction="top"> Click Me! </button>
         <div id="target-node" class="hidden pad-20">
             <p>This node is cloned and inserted into the popover!</p>
         </div>
@@ -91,7 +91,7 @@ The library will clone the target node and insert the copy into the popover's co
 </div>
 
 ```html
-<button class="btn btn-default js-popover"
+<button class="btn js-popover"
     data-popover-target="target-node" 
     data-popover-event="click" 
     data-popover-animate="pop"

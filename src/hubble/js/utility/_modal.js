@@ -12,7 +12,7 @@
      * 
      * @var {Function}
      */
-    const [add_class, add_event_listener, array_merge, closest, has_class, inner_HTML, remove_class, remove_from_dom] = Container.import(['add_class','add_event_listener','array_merge','closest','has_class','inner_HTML','remove_class','remove_from_dom']).from('_');
+    const [add_class, add_event_listener, array_merge, closest, has_class, inner_HTML, remove_class, remove_from_dom] = Hubble.import(['add_class','add_event_listener','array_merge','closest','has_class','inner_HTML','remove_class','remove_from_dom']).from('_');
 
     /**
      * @var {obj}
@@ -290,6 +290,6 @@
     }
 
     // Load into container 
-    Container.set('Modal', Modal);
+    Hubble.set('Modal', Modal);
 
 })();

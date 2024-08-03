@@ -24,7 +24,7 @@ To create an icon, use a `<span>` element with the class `.glyph-icon` in additi
 Icons can be sized using the `.icon-xs`, `.icon-md`, `.icon-lg`, `.icon-xl`, `.icon-xxl` modifier classes which are setup in `scss/_config.scss`.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center text-center col-gaps-xs">
+    <div class="flex-row-fluid align-cols-center text-center col-gaps-xs">
         <span class="fa fa-headphones icon-xs"></span>
         <span class="fa fa-headphones icon-md"></span>
         <span class="fa fa-headphones icon-lg"></span>
@@ -71,7 +71,7 @@ Badges can be customized using Hubble's contextual classes:
 `.badge` can be displayed in `.btn` by adding the `.with-badge` to class button.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center text-center col-gaps-xs pole-sm pole-s">
+    <div class="flex-row-fluid align-cols-center text-center col-gaps-xs pole-sm pole-s">
     	<div class="avatar">
             <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
         	<span class="badge badge-danger">9</span>
@@ -81,7 +81,7 @@ Badges can be customized using Hubble's contextual classes:
         	<span class="badge badge-info">4</span>
         </div>
    	</div>
-   	<div class="flex-row align-cols-center text-center col-gaps-xs">
+   	<div class="flex-row-fluid align-cols-center text-center col-gaps-xs">
         <button class="btn with-badge">
             Notifications
             <span class="badge badge-info">3</span>
@@ -129,7 +129,7 @@ Use the `.status` class to indicate a status:
 `.status-primary`, `.status-secondary`, `.status-info`, `.status-success`, `.status-warning`, `.status-danger`, `.status-white`, `.status-black`
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center text-center col-gaps-xs">
+    <div class="flex-row-fluid align-cols-center text-center col-gaps-xs">
     	<div class="avatar">
             <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
         	<span class="status status-warning"></span>
@@ -173,7 +173,7 @@ You can customize the size or color of any status using local CSS variables on `
 `.label-primary`, `.label-secondary`, `.label-info`, `.label-success`, `.label-warning`, `.label-danger`, `.label-white`, `.label-black`
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center text-center col-gaps-xs pole-sm pole-s">
+    <div class="flex-row-fluid align-cols-center text-center col-gaps-xs pole-sm pole-s">
         <span class="label">NEW</span>
         <span class="label label-primary">NEW</span>
         <span class="label label-info">NEW</span>
@@ -181,7 +181,7 @@ You can customize the size or color of any status using local CSS variables on `
         <span class="label label-warning">NEW</span>
         <span class="label label-danger">NEW</span>
     </div>
-    <div class="flex-row align-cols-center text-center col-gaps-xs">
+    <div class="flex-row-fluid align-cols-center text-center col-gaps-xs">
         <span class="label label-outline">NEW</span>
         <span class="label label-primary label-outline">NEW</span>
         <span class="label label-info label-outline">NEW</span>
@@ -205,7 +205,7 @@ Hubble comes with 5 basic loading animators. Use the base class `.loader` with `
 `.loader-primary`, `.loader-secondary`, `.loader-info`, `.loader-success`, `.loader-warning`, `.loader-danger`, `.loader-white`, `.loader-black`
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center text-center col-gaps-sm">
+    <div class="flex-row-fluid align-cols-center text-center col-gaps-sm">
         <span class="loader loader-1"></span>
         <span class="loader loader-2"></span>
         <span class="loader loader-3"></span>
@@ -223,7 +223,7 @@ Hubble comes with 5 basic loading animators. Use the base class `.loader` with `
 ```
 
 <div class="code-content-example">
-	<div class="flex-row align-cols-center text-center col-gaps-sm">
+	<div class="flex-row-fluid align-cols-center text-center col-gaps-sm">
 		<span class="loader loader-1 loader-primary"></span>
 		<span class="loader loader-2 loader-info"></span>
 		<span class="loader loader-3 loader-success"></span>
@@ -247,7 +247,7 @@ Hubble comes with 5 basic loading animators. Use the base class `.loader` with `
 `.avatar` can be used to to create a simple circular image avatar, an icon or initials.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center text-center col-gaps-sm">
+    <div class="flex-row-fluid align-cols-center text-center col-gaps-sm">
         <div class="avatar">
             <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
         </div>
@@ -275,7 +275,7 @@ Hubble comes with 5 basic loading animators. Use the base class `.loader` with `
 Adjust sizing and backgrounds using the available sizing modifiers `.avatar-xs` `.avatar-sm` `.avatar-md` `.avatar-lg` `.avatar-xl` and contextual classes `.avatar-primary`, `.avatar-secondary`, `.avatar-info`, `.avatar-success`, `.avatar-warning`, `.avatar-danger`, `.avatar-white`, `.avatar-black`.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center text-center col-gaps-sm">
+    <div class="flex-row-fluid align-cols-center text-center col-gaps-sm">
         <div class="avatar avatar-xs">
             <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
         </div>
@@ -323,7 +323,7 @@ Adjust sizing and backgrounds using the available sizing modifiers `.avatar-xs` 
 `.caret` can be used to show the user that a button or other content will either dropdown or dropup. You can use them wherever you like but here's an example in a button.
 
 <div class="code-content-example">
-    <div class="flex-row align-cols-center text-center col-gaps-sm">
+    <div class="flex-row-fluid align-cols-center text-center col-gaps-sm">
         <button class="btn"> Button
             <span class="caret-s"></span>
         </button>

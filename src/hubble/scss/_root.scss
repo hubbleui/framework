@@ -6,6 +6,12 @@
         --hb-color-#{$name}:               #{$color};
     }
 
+    /* Palette base RGB */
+    @each $name, $color in $palette
+    {
+        --hb-color-#{$name}-rgb:               #{_to-rgb-vals($color)};
+    }
+
     /* Context shades */
     /* gray */
     --hb-gray-100:                 #{_lighter($gray, 90%)};
@@ -41,6 +47,12 @@
     {
         /* #{$name} */
         --hb-brand-#{$name}:             #{$colorVar};
+    }
+    /* Contextual RGB assignments */
+    @each $name, $colorVar in $contextsCSSVar
+    {
+        /* #{$name} */
+        --hb-brand-#{$name}-rgb:         var(--#{_var-to-str($colorVar)}-rgb);
     }
 
     /* Base Colors */

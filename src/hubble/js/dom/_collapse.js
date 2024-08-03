@@ -5,18 +5,20 @@
      * 
      * @var {class}
      */
-    const [Component] = Container.get('Component');
+    const [Component] = Hubble.get('Component');
 
     /**
      * Helper functions
      * 
      * @var {Function}
      */
-    const [$, add_event_listener, animate, bool, has_class, is_node_type, remove_event_listener, toggle_class, trigger_event, extend] = Container.import(['$','add_event_listener','animate','bool','has_class','is_node_type','remove_event_listener','toggle_class','trigger_event','extend']).from('_');
+    const [$, add_event_listener, animate, bool, has_class, is_node_type, remove_event_listener, toggle_class, trigger_event, extend] = Hubble.import(['$','add_event_listener','animate','bool','has_class','is_node_type','remove_event_listener','toggle_class','trigger_event','extend']).from('_');
 
     /**
      * Toggle height on click
      *
+     * @class
+     * @extends {Component}
      * @author    {Joe J. Howard}
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}

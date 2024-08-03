@@ -1,7 +1,5 @@
 (function()
 {
-    Container._().trigger_event(window, 'Hubble:loading', this);
-
     /**
      * Application core
      *
@@ -27,9 +25,9 @@
      */
     Application.prototype.boot = function()
     {        
-        this.dom().boot();
+        this.Dom().boot();
 
-        Container._().trigger_event(window, 'Hubble:ready', this);
+        this._().trigger_event(window, 'Hubble:ready', this);
     }
 
     /**
@@ -40,13 +38,20 @@
      */
     Application.prototype.dom = function()
     {
-        return Container.get('HubbleDom');
+        return this.Dom();
     }
 
-    // Load into container
-    Container.singleton('Hubble', Application);
+    Container._().trigger_event(window, 'Hubble:loading', this);
+
+    const app = Container._().extend(Container, new Application);
+
+    window.Container = undefined;
+
+    delete window['Container'];
 
     // Set global
-    window.Hubble = Container.get('Hubble');
+    window.Hubble = app;
+
+    console.log(app);
 
 })();

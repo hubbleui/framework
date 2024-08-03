@@ -1,6 +1,6 @@
 (function()
 {
-    const [$All, each, closest, is_empty] = Container.import(['$All','each','closest','is_empty']).from('_');
+    const [$All, each, closest, is_empty, $_with_context] = Hubble.import(['$All','each','closest','is_empty','$_with_context']).from('_');
 
     /**
      * Component base class
@@ -11,11 +11,29 @@
      */
     const Component = function(selector)
     {
-        this._DOMElements = [];
+        /**
+         * Default props.
+         *
+         * @var {object}
+         */
+        this.defaultProps = !this.defaultProps ? {} : this.defaultProps;
 
+        /**
+         * Selector.
+         *
+         * @var {string}
+         */
         this._selector = selector;
 
-        this.construct(document);
+        /**
+         * Dom elements
+         *
+         * @var {array}
+         */
+        this._DOMElements = [];
+
+        // Init
+        if (selector) this.construct(document);
 
         return this;
     }
@@ -26,10 +44,8 @@
      * @access {public}
      */
     Component.prototype.construct = function(context)
-    {        
-        let nodes = $All(this._selector, context);
-
-        if (context !== document) nodes.unshift(context);
+    {
+        let nodes = context === document ? $All(this._selector, context) : $_with_context(this._selector, context);
 
         if (!is_empty(nodes))
         {
@@ -69,6 +85,36 @@
     }
 
     /**
+     * Create DOM elements and bind
+     * 
+     */
+    Component.prototype.create = function(props, appendTo)
+    {
+        props = !props ? {} : props;
+
+        props = {...this.defaultProps, ...props};
+
+        let node = this.template(props);
+
+        if (appendTo) appendTo.appendChild(node);
+
+        Hubble.Dom().refresh(node);
+
+        return node;
+    }
+
+    /**
+     * Template abstract method
+     *
+     * @access {public}
+     */
+    Component.prototype.template = function()
+    {
+        throw new Error('[template] method must be implemented.');
+    }
+
+
+    /**
      * Bind abstract method
      *
      * @access {public}
@@ -89,6 +135,6 @@
     }
     
     // Register
-    Container.set('Component', [Component]);
+    Hubble.set('Component', [Component]);
 
 })();

@@ -55,6 +55,6 @@
     }
 
     // Load into Hubble DOM core
-    Container.set('Chip', createChip);
+    Hubble.set('Chip', createChip);
 
 }());

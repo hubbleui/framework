@@ -5,7 +5,7 @@
      * 
      * @var {object}
      */
-    const Helper = Container._();
+    const Helper = Hubble._();
     
     /**
      * Pjax Links Module
@@ -83,7 +83,7 @@
             var stateChange = Helper.bool(trigger.dataset.pjaxStateChange);
             var singleRequest = Helper.bool(trigger.dataset.pjaxSingleRequest);
 
-            Container.Pjax().invoke(href, target, title, stateChange, singleRequest);
+            Hubble.Pjax().invoke(href, target, title, stateChange, singleRequest);
         }
     }
 

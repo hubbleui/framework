@@ -57,7 +57,7 @@ module.exports = function(grunt)
     grunt.registerTask('docs', 'Build docs from markdown.', function()
     {
         grunt.log.writeln('Creating docs....');
-        grunt.config.data.docs.build();
+        grunt.config.data.docs.dist();
         grunt.log.writeln('✓ Complete');
     });
 

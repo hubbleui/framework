@@ -5,7 +5,7 @@
      * 
      * @var {object}
      */
-    const Helper = Container._();
+    const Helper = Hubble._();
 
     /**
      * Input masker
@@ -63,7 +63,7 @@
 
             if (mask)
             {
-                this._masks.push(Container.InputMasker(input, mask, format));
+                this._masks.push(Hubble.InputMasker(input, mask, format));
             }
 
         }, this);

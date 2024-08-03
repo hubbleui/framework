@@ -10,13 +10,14 @@ _.prototype.array_filter = function(arr)
 
     let ret = isArr ? [] : {};
 
-    this.foreach(arr, function(i, val)
+    this.each(arr, function(i, val)
     {
         if (!this.is_empty(val))
         {
             isArr ? ret.push(val) : ret[i] = val;
         }
-    });
+        
+    }, this);
 
     return ret;
 }

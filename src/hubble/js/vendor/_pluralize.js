@@ -2,7 +2,7 @@
  * Pluralize
  * @see {https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations}
  * 
- * @example {Container._().pluralize('tomato',} 5);
+ * @example {Hubble._().pluralize('tomato',} 5);
  * 
  */
 (function()
@@ -458,6 +458,6 @@
         return word.split().reverse().join()[count];
     }
 
-    Container.set('pluralize', Pluralize);
+    Hubble.set('pluralize', Pluralize);
 
 }());

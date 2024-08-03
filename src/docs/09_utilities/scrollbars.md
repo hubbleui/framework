@@ -119,14 +119,14 @@
         {
             document.querySelector('.js-update-scroll').addEventListener('click', function()
             {
-                Container.Scrollbars().refresh(Hubble.helper().$('#scroll-example'));
+                Hubble.Scrollbars().refresh(Hubble.helper().$('#scroll-example'));
             });
         });
         </script>
     </div>
 </div> <pre class="highlight-wrap"><code class="js-highlight" data-syntax="js">
 <!--
-Container.Scrollbars().refresh( node );
+Hubble.Scrollbars().refresh( node );
 -->
 </code></pre> </div>
 <hr> 

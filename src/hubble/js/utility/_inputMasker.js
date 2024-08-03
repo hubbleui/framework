@@ -5,7 +5,7 @@
      * 
      * @var {functions}
      */
-    const [add_event_listener, remove_event_listener, _map, is_regexp] = Container.import(['add_event_listener', 'remove_event_listener', 'map', 'is_regexp']).from('_');
+    const [add_event_listener, remove_event_listener, _map, is_regexp] = Hubble.import(['add_event_listener', 'remove_event_listener', 'map', 'is_regexp']).from('_');
 
     /**
      * Regex masks
@@ -259,6 +259,6 @@
 
     // SET IN IOC
     /*****************************************/
-    Container.set('InputMasker', InputMasker);
+    Hubble.set('InputMasker', InputMasker);
 
 }());

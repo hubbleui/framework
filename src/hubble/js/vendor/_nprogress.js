@@ -229,6 +229,6 @@
     window.NProgress = null;
 
     // Load into container 
-    Container.set('NProgress', _NProgress);
+    Hubble.set('NProgress', _NProgress);
 
 })();

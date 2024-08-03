@@ -20,3 +20,5 @@
     .border-#{$context} { border-color: $color}
 }
 
+// Radius
+.border-radius           { border-radius: var(--hb-border-radius); }

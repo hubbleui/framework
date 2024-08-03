@@ -409,10 +409,3 @@ Filter chips use tags or descriptive words to filter content. Filter chips clear
     </button>
 </div>
 ```
-
-<script>
-    window.addEventListener('Hubble:dom:ready', function(e)
-    {
-        Container.Hubble().dom().refresh('Ripple', document.querySelectorAll('.btn')[1]);
-    });
-</script>

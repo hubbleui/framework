@@ -12,7 +12,7 @@ _.prototype.add_event_listener = function(DOMElement, eventName, handler)
 {
     var args = TO_ARR.call(arguments);
 
-    // Arrays
+    // Multiple elements
     if (this.is_array(DOMElement))
     {
         var baseArgs = args.slice(1);
@@ -41,7 +41,7 @@ _.prototype.add_event_listener = function(DOMElement, eventName, handler)
             return;
         }
 
-        // If array of arguements is provided, "this" will always be the first
+        // If array of arguments is provided, "this" will always be the first
         // argument provided
         // However the first and second argument passed to the callback will always the event object and the element
         // e.g. add_event_listener(el, 'click', callback, ['baz', 'foo', 'bar']) -> callback(e, el, foo, bar) this = 'baz'
@@ -56,13 +56,15 @@ _.prototype.add_event_listener = function(DOMElement, eventName, handler)
 /**
  * Nomralize event listener args
  * 
- * @param  {DOMElement}    DOMElement    The target DOM node
- * @param  {array}         args       Args passed to add_event_listener or remove_event_listener
+ * @param  {DOMElement}    DOMElement   The target DOM node
+ * @param  {array}         args         Args passed to add_event_listener or remove_event_listener
  */
 _.prototype.__normaliseListenerArgs = function(DOMElement, args)
 {
+    // Remove DOMElement, eventName, handler
     args = args.slice(3);
 
+    // Default "this" to the dom element
     let thisArg   = DOMElement;
     let pushFirst = false;
 
@@ -121,7 +123,7 @@ _.prototype.__addListener = function(DOMElement, eventName, handler, thisArg, ar
 
     if (!hasHandler)
     {
-        DOMElement.addEventListener(eventName, this.__event_dispatcher);
+        eventName === 'touchstart' || eventName === 'mousedown' ? DOMElement.addEventListener(eventName, this.__event_dispatcher, { passive: true }) : DOMElement.addEventListener(eventName, this.__event_dispatcher);
     }
 }
 
@@ -141,7 +143,7 @@ _.prototype.__event_dispatcher = function(e)
 
     if (!guid) return;
 
-    let _this = Container._();
+    let _this = Hubble._();
 
     let callbacks = _this.array_get(`${guid}.${e.type}`, _this._events) || [];
 

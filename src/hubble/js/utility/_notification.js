@@ -1,9 +1,11 @@
 (function()
 {
     /**
-     * @var {Helper} obj
+     * Helper functions
+     * 
+     * @var {Function}
      */
-    const Helper = Container._();
+    const [$, add_class, add_event_listener, in_dom, remove_class, remove_from_dom, dom_element] = Hubble.import(['$','add_class','add_event_listener','in_dom','remove_class','remove_from_dom','dom_element']).from('_');
 
     /**
      * Default options
@@ -42,9 +44,9 @@
          */
         constructor(options)
         {
-            this._DOMElementWrapper = Helper.$('.js-nofification-wrap');
+            this._DOMElementWrapper = $('.js-nofification-wrap');
 
-            if (!Helper.in_dom(this._DOMElementWrapper))
+            if (!in_dom(this._DOMElementWrapper))
             {
                 this._buildNotificationContainer();
             }
@@ -67,9 +69,8 @@
             
             document.body.appendChild(wrap);
             
-            this._DOMElementWrapper = Helper.$('.js-nofification-wrap');
+            this._DOMElementWrapper = $('.js-nofification-wrap');
         }
-
 
         /**
          * Display the notification
@@ -80,32 +81,22 @@
         _invoke(options)
         {
             options = {...DEFAULT_OPTIONS, ...options };
-            
-            var content = '';
 
+            let notif = dom_element({tag: 'div', class: options.variant ? `msg msg-dense msg-${options.variant} animate-in` : `msg msg-dense animate-in` });
+            
             if (options.icon)
             {
-                content += `<div class="msg-icon"><span class="glyph-icon glyph-icon-${options.icon}"></span></div>`;
+                dom_element({tag: 'div', class: 'msg-icon' }, notif, dom_element({tag: 'span', class: `fa fa-${options.icon}` }));
             }
 
-            content += `<div class="msg-body"><p>${options.text}</p></div>`;
+            dom_element({tag: 'div', class: 'msg-body'}, notif, dom_element({tag: 'p', innerText: options.text }))
 
             if (options.btn)
             {
-                content +=  `<div class="msg-btn"><button type="button" class="btn btn-pure btn-${options.btnVariant} btn-sm js-notif-btn">${options.btn}</button></div>`;
-            }     
-           
-            var notif       = document.createElement('DIV');
-            notif.className = 'msg animate-in';
-
-            if (options.variant)
-            {
-                notif.className += ` msg-${options.variant}`;
+                dom_element({tag: 'div', class: 'msg-btn' }, notif, dom_element({tag: 'button', class: `btn btn-pure btn-${options.btnVariant} btn-sm js-notif-btn`, innerText: options.btn }));
             }
-
-            notif.innerHTML = content;
-
-            Helper.add_class(this._DOMElementWrapper, 'active');
+            
+            add_class(this._DOMElementWrapper, 'active');
 
             this._DOMElementWrapper.appendChild(notif);
 
@@ -131,12 +122,12 @@
                 }
             };
 
-            Helper.add_event_listener(notif, 'click', removefunction);
+            add_event_listener(notif, 'click', removefunction);
 
             if (options.btn)
             {
-                Helper.add_event_listener(Helper.$('.js-notif-btn', notif), 'click', options.callbackBtn);
-                Helper.add_event_listener(Helper.$('.js-notif-btn', notif), 'click', removefunction);
+                add_event_listener($('.js-notif-btn', notif), 'click', options.callbackBtn);
+                add_event_listener($('.js-notif-btn', notif), 'click', removefunction);
             }
         }
 
@@ -152,22 +143,22 @@
 
             const removed = function()
             {
-                Helper.remove_from_dom(DOMElement);
+                remove_from_dom(DOMElement);
 
                 if (wrappper.children.length === 0)
                 {
-                    Helper.remove_class(wrappper, 'active');
+                    remove_class(wrappper, 'active');
                 }
             }
             
-            Helper.add_class(DOMElement, 'animate-out');
-            Helper.remove_class(DOMElement, 'animate-in');
+            add_class(DOMElement, 'animate-out');
+            remove_class(DOMElement, 'animate-in');
 
             setTimeout(removed, 300);
         }
     }
 
     // Add to container
-    Container.set('Notification', Notification);
+    Hubble.set('Notification', Notification);
 
 })();

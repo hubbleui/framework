@@ -5,14 +5,14 @@
      * 
      * @var {class}
      */
-    const [Component] = Container.get('Component');
+    const [Component] = Hubble.get('Component');
     
     /**
      * Helper functions
      * 
      * @var {Function}
      */
-    const [$, add_event_listener, remove_event_listener, has_class, in_dom, parse_url, extend]  = Container.import(['$','add_event_listener','remove_event_listener','has_class','in_dom','parse_url','extend']).from('_');
+    const [$, add_event_listener, remove_event_listener, has_class, in_dom, parse_url, extend]  = Hubble.import(['$','add_event_listener','remove_event_listener','has_class','in_dom','parse_url','extend']).from('_');
 
     /**
      * Has the page loaded?
@@ -77,7 +77,7 @@
         let easing    = trigger.dataset.waypointEasing || 'easeInOutCubic';
         let updateUrl = trigger.dataset.updateUrl === 'false' ? false : true;
 
-        Container.SmoothScroll('#' + id, { easing: easing, speed: speed, updateUrl: updateUrl });
+        Hubble.SmoothScroll('#' + id, { easing: easing, speed: speed, updateUrl: updateUrl });
     }
 
     /**
@@ -98,7 +98,7 @@
 
         const scroll = function()
         {
-            Container.SmoothScroll(url.hash, { easing: easing, speed: speed, updateUrl: false });
+            Hubble.SmoothScroll(url.hash, { easing: easing, speed: speed, updateUrl: false });
 
             remove_event_listener(window, 'Hubble:ready', scroll);
         }

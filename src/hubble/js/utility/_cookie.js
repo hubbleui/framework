@@ -272,6 +272,6 @@
     }
 
     // Register as DOM Module and invoke
-    Container.singleton('Cookies', Cookies);
+    Hubble.singleton('Cookies', Cookies);
 
 })();

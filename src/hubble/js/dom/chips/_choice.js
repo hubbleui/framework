@@ -5,14 +5,14 @@
      * 
      * @var {class}
      */
-    const [Component] = Container.get('Component');
+    const [Component] = Hubble.get('Component');
 
     /**
      * Helper functions
      * 
      * @var {Function}
      */
-    const [$, add_class, add_event_listener, closest, has_class, remove_class, remove_event_listener, trigger_event, extend] = Container.import(['$','add_class','add_event_listener','closest','has_class','remove_class','remove_event_listener','trigger_event','extend']).from('_');
+    const [$, add_class, add_event_listener, closest, has_class, remove_class, remove_event_listener, trigger_event, extend] = Hubble.import(['$','add_class','add_event_listener','closest','has_class','remove_class','remove_event_listener','trigger_event','extend']).from('_');
 
     /**
      * Choice chips
