@@ -21,6 +21,8 @@
     --hb-btn-loader-color: #{$color};
     --hb-btn-color-hover: #{$color};
 
+    @debug $basename;
+
     &.selected,
     &.checked
     {

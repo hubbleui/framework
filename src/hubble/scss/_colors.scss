@@ -348,6 +348,8 @@ $palette:
 
     // Gray
     'gray':                     $gray,
+    'black':                    $black,
+    'white':                    $white,
 
 ) !default;
 
@@ -362,8 +364,8 @@ $contexts:
     'success':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-success)),
     'warning':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-warning)),
     'danger':                   ('contrast' : var(--hb-white), 'color': var(--hb-brand-danger)),
-    'white':                    ('contrast' : var(--hb-brand-primary), 'color': var(--hb-white)),
-    'black':                    ('contrast' : var(--hb-white), 'color': var(--hb-black)),
+    'white':                    ('contrast' : var(--hb-brand-primary), 'color': var(--hb-color-white)),
+    'black':                    ('contrast' : var(--hb-color-white), 'color': var(--hb-color-black)),
 ) !default;
 
 // Contexts

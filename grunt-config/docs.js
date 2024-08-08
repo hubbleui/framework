@@ -178,14 +178,14 @@ function createDocs()
         let toRoot   = fromDirs.length;
         let sameDir  = fromDirs.length === toDirs.length && fromDirs.slice(0, -1).pop() === toDirs.slice(0, -1).pop();
 
-        if (sameDir) return BACK_DIR_CHAR.repeat(3).slice(0, -1);
-
-        fromDirs = fromDirs.reverse();
-        toDirs   = toDirs.reverse();
+        if (sameDir) return BACK_DIR_CHAR.repeat(2).slice(0, -1);
 
         for (var i = 0; i < toDirs.length; i++)
         {
-            if (toDirs[i] === fromDirs[i]) return BACK_DIR_CHAR.repeat(i).slice(0, -1); 
+            if (toDirs[i] === fromDirs[i])
+            {
+                return BACK_DIR_CHAR.repeat(i+1).slice(0, -1);
+            }
         }
 
         return BACK_DIR_CHAR.repeat(toRoot).slice(0, -1);

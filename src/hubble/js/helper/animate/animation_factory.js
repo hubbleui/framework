@@ -33,6 +33,14 @@ _.prototype.animate = function(DOMElement, options)
         return this;
     };
 
+    Animation.prototype.start = function()
+    {
+        for (var i = 0; i < animationSet.length; i++)
+        {
+            animationSet[i].start();
+        }
+    };
+
     Animation.prototype.stop = function()
     {
         for (var i = 0; i < animationSet.length; i++)
@@ -92,11 +100,16 @@ _.prototype.animate = function(DOMElement, options)
  */
 _.prototype.animate_css = function(DOMElement, options)
 {
-    var cssAnimation;
+    let cssAnimation;
 
     const Animation = function()
     {
         return this;
+    };
+
+    Animation.prototype.start = function()
+    {
+        cssAnimation.start();
     };
 
     Animation.prototype.stop = function()
@@ -151,7 +164,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
         // animation_factory('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
         if (key === 'property')
         {
-            var options = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, opts);
+            var options = { ...ANIMATION_DEFAULT_OPTIONS, ...opts};
 
             options.FROM_FACTORY = true;
             options.property     = this.css_prop_to_hyphen_case(val);
@@ -170,7 +183,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
             {
                 var isObjSet = this.is_object(val);
                 var toMerge  = isObjSet ? val : opts;
-                var options  = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, toMerge);
+                var options  = { ...ANIMATION_DEFAULT_OPTIONS, ...toMerge};
                 
                 // animation_factory('foo', { height: '100px', opacity: 0 } );
                 if (!isObjSet)
@@ -187,8 +200,48 @@ _.prototype.__animation_factory = function(DOMElement, opts)
         }
     }, this);
 
+    // Santize callbacks
+    let longest  = 0;
+    let longestI = 0;
+    let start    = () => {};
+    let fail     = () => {};
+    let complete = () => {};
+    let step     = () => {};
+
     this.each(optionSets, function(i, options)
     {
+        if (options.start)
+        {
+            start = options.start;
+
+            delete options.start;
+        }
+
+        if (options.fail)
+        {
+            fail = options.fail;
+
+            delete options.fail;
+        }
+
+        // Store the maximum duration
+        if (options.duration >= longest)
+        {
+            if ((options.callback || options.complete)) complete = (options.callback || options.complete);
+
+            if ((options.step)) step = options.step;
+
+            delete options.callback;
+
+            delete options.step;
+
+            delete options.complete;
+
+            longest = options.duration;
+
+            longestI = i;
+        }
+
         // Not nessaray, but sanitize out redundant options
         options = this.map(options, function(key, val)
         {
@@ -212,6 +265,11 @@ _.prototype.__animation_factory = function(DOMElement, opts)
     {
         console.error('Animation Error: Either no CSS property(s) was provided or the provided property(s) is unsupported.');
     }
+
+    optionSets[longestI].fail     = fail;
+    optionSets[longestI].start    = start;
+    optionSets[longestI].complete = complete;
+    optionSets[longestI].step     = step;
 
     return optionSets;
 }

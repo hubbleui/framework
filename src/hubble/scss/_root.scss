@@ -13,18 +13,6 @@
     }
 
     /* Context shades */
-    /* gray */
-    --hb-gray-100:                 #{_lighter($gray, 90%)};
-    --hb-gray-200:                 #{_lighter($gray, 80%)};
-    --hb-gray-300:                 #{_lighter($gray, 50%)};
-    --hb-gray-400:                 #{_lighter($gray, 35%)};
-    // Default is between 400 and 500 (i.e 450)
-    --hb-gray-500:                 #{_darker($gray, 5%)};
-    --hb-gray-600:                 #{_darker($gray, 20%)};
-    --hb-gray-700:                 #{_darker($gray, 25%)};
-    --hb-gray-800:                 #{_darker($gray, 30%)};
-    --hb-gray-900:                 #{_darker($gray, 40%)};
-
     @each $name, $colorVar in $contextsCSSVar
     {
         $color : map-get($palette, quote(_color-name-from-var($colorVar)));
@@ -41,6 +29,40 @@
         --hb-brand-#{$name}-800:                 #{_darker($color, 30%)};
         --hb-brand-#{$name}-900:                 #{_darker($color, 40%)};
     }
+    /* gray */
+    --hb-gray-100:                 #{_lighter($gray, 90%)};
+    --hb-gray-200:                 #{_lighter($gray, 80%)};
+    --hb-gray-300:                 #{_lighter($gray, 50%)};
+    --hb-gray-400:                 #{_lighter($gray, 35%)};
+    // Default is between 400 and 500 (i.e 450)
+    --hb-gray-500:                 #{_darker($gray, 5%)};
+    --hb-gray-600:                 #{_darker($gray, 20%)};
+    --hb-gray-700:                 #{_darker($gray, 25%)};
+    --hb-gray-800:                 #{_darker($gray, 30%)};
+    --hb-gray-900:                 #{_darker($gray, 40%)};
+    /* Black */
+    --hb-black-100:                 #{_lighter($black, 90%)};
+    --hb-black-200:                 #{_lighter($black, 80%)};
+    --hb-black-300:                 #{_lighter($black, 50%)};
+    --hb-black-400:                 #{_lighter($black, 35%)};
+    // Default is between 400 and 500 (i.e 450)
+    --hb-black-500:                 #{_darker($black, 5%)};
+    --hb-black-600:                 #{_darker($black, 20%)};
+    --hb-black-700:                 #{_darker($black, 25%)};
+    --hb-black-800:                 #{_darker($black, 30%)};
+    --hb-black-900:                 #{_darker($black, 40%)};
+    /* White */
+    --hb-white-100:                 #{_lighter($white, 90%)};
+    --hb-white-200:                 #{_lighter($white, 80%)};
+    --hb-white-300:                 #{_lighter($white, 50%)};
+    --hb-white-400:                 #{_lighter($white, 35%)};
+    // Default is between 400 and 500 (i.e 450)
+    --hb-white-500:                 #{_darker($white, 5%)};
+    --hb-white-600:                 #{_darker($white, 20%)};
+    --hb-white-700:                 #{_darker($white, 25%)};
+    --hb-white-800:                 #{_darker($white, 30%)};
+    --hb-white-900:                 #{_darker($white, 40%)};
+
 
     /* Contextual color assignments */
     @each $name, $colorVar in $contextsCSSVar

@@ -45,7 +45,6 @@ input.unstyled
     --hb-input-help-text-font-size: #{$input-font-size * 0.75};
 
     // Used internally for states
-    --hb-label-transform: translateY(-50%) scale(1);
     --hb-input-box-shadow: none;
     --hb-placeholder-opacity: 0;
     --hb-input-focus-theme: #{$input-focus-theme};
@@ -66,7 +65,7 @@ input.unstyled
         font-weight: $text-normal;
         border-style: solid;
         font-size: var(--hb-input-font-size);
-        padding: calc(var(--hb-input-pad-y) * 1.8) var(--hb-input-pad-x) calc(var(--hb-input-pad-y) * 0.75) var(--hb-input-pad-x);
+        padding: var(--hb-input-pad-y) var(--hb-input-pad-x);
         border-radius: var(--hb-input-radius);
         line-height: var(--hb-input-line-height);
         color: var(--hb-input-color);
@@ -88,7 +87,7 @@ input.unstyled
         background-position: right var(--hb-input-pad-x) center;
         background-size: 16px 12px;
         background-repeat: no-repeat;
-        padding: calc(var(--hb-input-pad-y) * 1.8) calc(var(--hb-input-pad-x) * 2) calc(var(--hb-input-pad-y) * 0.885) var(--hb-input-pad-x);
+        padding: calc(var(--hb-input-pad-y) * 1.225) var(--hb-input-pad-x);
         cursor: pointer;
     }
 
@@ -97,19 +96,21 @@ input.unstyled
     textarea + label,
     select + label
     {
+        font-size: var(--hb-input-font-size);
+        line-height: var(--hb-input-line-height);
+        color: var(--hb-input-color-label);
+        left: calc(var(--hb-input-pad-x) - 5px);
+        height: var(--hb-input-line-height);
+        background-color: var(--hb-input-bg);
+        top: 50%;
+        transform: translateY(-50%) scale(1);
+        padding: 0 5px;
         font-weight: $text-normal;
         text-align: left;
         position: absolute;
         transform-origin: left top;
         cursor: text;
-        top: 50%;
-        font-size: var(--hb-input-font-size);
-        line-height: var(--hb-input-line-height);
-        color: var(--hb-input-color-label);
-        left: var(--hb-input-pad-y);
-        height: var(--hb-input-line-height);
-        transition: transform .1s ease-in-out;
-        transform: var(--hb-label-transform);
+        transition: transform .1s ease-in-out, top .1s ease-in-out;
     }
 
     // textarea,
@@ -199,7 +200,13 @@ input.unstyled
     &.focus,
     &.not-empty
     {
-        --hb-label-transform: translateY(-110%) scale(0.8);
+        input:not([type="radio"]):not([type="checkbox"]):not([type="range"]) + label,
+        textarea + label,
+        select + label
+        {
+            top: 0;
+            transform: translateY(-50%) scale(0.85);
+        }
     }
 
     // Focus state
@@ -240,6 +247,65 @@ input.unstyled
         --hb-input-bg: rgba(0,0,0,0.1);
         opacity: 0.4;
         cursor: not-allowed;
+        label
+        {
+            background-color: transparent !important;
+        }
+    }
+
+    &.underlined
+    {
+        --hb-input-border-size-n: 0;
+        --hb-input-border-size-e: 0;
+        --hb-input-border-size-w: 0;
+        --hb-input-radius: 0;
+        --hb-input-pad-x: 0;
+
+        &:after
+        {
+            content:"";
+            width: 100%;
+            display: block;
+            height: 2px;
+            background-color: var(--hb-input-focus-theme);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 0;
+            transition: max-width .1s ease;
+        }
+
+        &.focus:after
+        {
+            max-width: 100%;
+        }
+
+        input:not([type="radio"]):not([type="checkbox"]):not([type="range"]) + label,
+        textarea + label,
+        select + label
+        {
+            padding-left: 0;
+        }
+
+        // Focus state
+        &.focus,&.danger,&.warning
+        {
+            --hb-input-box-shadow: none;
+        }
+
+        // Danger state
+        &.danger:after
+        {
+            background-color: var(--hb-brand-danger);
+        }
+        // Warning state
+        &.warning
+        {
+            background-color: var(--hb-brand-warning);
+        }
     }
 }
 

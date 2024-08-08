@@ -33,8 +33,6 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         this.intervalTimer = null;
 
-        this.callbacks = [options.callback];
-
         this.easing = options.easing;
 
         this.CSSProperty = options.property;
@@ -64,30 +62,13 @@ _.prototype.__animate_js = function(DOMElement, options)
         {
             if (animation.CSSProperty === CSSprop && animation.DOMElement === DOMElement)
             {
-                animation.stop(true);
+                animation.stop();
 
                 ANIMATING.splice(i, 1);
 
                 return false;
             }
         });
-
-        const _complete = function()
-        {
-            _helper.each(ANIMATING, function(i, animation)
-            {
-                if (animation === _this)
-                {
-                    ANIMATING.splice(i, 1);
-
-                    return false;
-                }
-            });
-        };
-
-        ANIMATING.push(this);
-
-        this.callbacks.push(_complete);
     }
 
     AnimateJS.prototype.start = function()
@@ -100,11 +81,40 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         var _this = this;
 
+        if (this.options.start) this.options.start(_this.DOMElement);
+
         this.intervalTimer = setInterval(function()
         {
             _this.loop();
 
         }, this.intervalDelay);
+
+        this._failTimer = setTimeout(() =>
+        {
+            if (this.options.fail) this.options.fail(_this.DOMElement);
+
+        }, this.duration + 50 );
+
+        this._completeTimer = setTimeout(() =>
+        {
+            _helper.each(ANIMATING, function(i, animation)
+            {
+                if (animation === _this)
+                {
+                    ANIMATING.splice(i, 1);
+
+                    return false;
+                }
+            });
+
+            if (this.options.complete) this.options.complete(_this.DOMElement);
+
+            if (this.options.callback) this.options.callback(_this.DOMElement);
+
+            
+        }, this.duration + 50 );
+
+        ANIMATING.push(this);
 
         return this;
     }
@@ -118,27 +128,31 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         this.currentKeyframe++;
 
-        this.stop();
+        this._complete();
     }
 
-    AnimateJS.prototype.stop = function(force)
+    AnimateJS.prototype._complete = function()
     {
-        if (this.keyframes.length === 0 || force === true)
-        {
-            clearInterval(this.intervalTimer);
+        if (this.keyframes.length > 0) return;
 
-            this.keyframes = [];
+        clearTimeout(this._failTimer);
 
-            const DOMElement = this.DOMElement;
+        clearInterval(this.intervalTimer);
 
-            _helper.each(this.callbacks, function(i, callback)
-            {                
-                if (_helper.is_function(callback))
-                {
-                    callback(DOMElement);
-                }
-            });
-        }
+        const DOMElement = this.DOMElement;
+
+        _helper.css(this.DOMElement, 'transition', this._pre_transition );
+    }
+
+    AnimateJS.prototype.stop = function()
+    {
+        clearTimeout(this._failTimer);
+
+        clearTimeout(this._completeTimer);
+
+        clearInterval(this.intervalTimer);
+
+        return this;
     }
 
     AnimateJS.prototype.parseOptions = function()
@@ -331,8 +345,6 @@ _.prototype.__animate_js = function(DOMElement, options)
         {
             this.keyFrameCount = 0;
 
-            this.stop();
-
             return;
         }
 
@@ -398,7 +410,7 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         const change = (distance * this.tween(this.easing, (index / this.keyFrameCount)));
 
-        const keyVal = this.roundNumber(backAnimation ? startValue - change : startValue + change, 5);
+        const keyVal = this.roundNumber(backAnimation ? startValue - change : startValue + change, this.CSSProperty === 'opacity' ? 5 : 1);
 
         var property = this.isTransform ? 'transform' : this.CSSProperty;
 
@@ -469,8 +481,7 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         _helper.css(this.DOMElement, 'transition', _helper.join_obj(transitions, ' ', ', '));
 
-        this.callbacks.push(() => { _helper.css(this.DOMElement, 'transition', !css_transition ? false : css_transition ); });
-
+        this._pre_transition = !css_transition ? false : css_transition;
     }
 
     AnimateJS.prototype.roundNumber = (n, dp) => 

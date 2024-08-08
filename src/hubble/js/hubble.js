@@ -31,6 +31,8 @@
 @import 'utility/_skeleton.js';
 
 // DOM Module
+@import 'dom/slider/Slider.js';
+@import 'dom/slider/Sliders.js';
 @import 'dom/popover/_handler.js';
 @import 'dom/popover/_popovers.js';
 @import 'dom/chips/_chip.js'

@@ -899,9 +899,8 @@ const CSS_PROP_TO_CAMEL_CASES  = {};
 const ANIMATION_DEFAULT_OPTIONS =
 {
     // Options
-    //'property', 'from', 'to'
+    //'property', 'from', 'to', 'callback', 'complete', 'start', 'fail'
     easing:               'ease',
-    callback:              () => {},
     duration:              500,
     fps:                   90, // (11ms)
 };
@@ -1299,8 +1298,6 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         this.intervalTimer = null;
 
-        this.callbacks = [options.callback];
-
         this.easing = options.easing;
 
         this.CSSProperty = options.property;
@@ -1330,30 +1327,13 @@ _.prototype.__animate_js = function(DOMElement, options)
         {
             if (animation.CSSProperty === CSSprop && animation.DOMElement === DOMElement)
             {
-                animation.stop(true);
+                animation.stop();
 
                 ANIMATING.splice(i, 1);
 
                 return false;
             }
         });
-
-        const _complete = function()
-        {
-            _helper.each(ANIMATING, function(i, animation)
-            {
-                if (animation === _this)
-                {
-                    ANIMATING.splice(i, 1);
-
-                    return false;
-                }
-            });
-        };
-
-        ANIMATING.push(this);
-
-        this.callbacks.push(_complete);
     }
 
     AnimateJS.prototype.start = function()
@@ -1366,11 +1346,40 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         var _this = this;
 
+        if (this.options.start) this.options.start(_this.DOMElement);
+
         this.intervalTimer = setInterval(function()
         {
             _this.loop();
 
         }, this.intervalDelay);
+
+        this._failTimer = setTimeout(() =>
+        {
+            if (this.options.fail) this.options.fail(_this.DOMElement);
+
+        }, this.duration + 50 );
+
+        this._completeTimer = setTimeout(() =>
+        {
+            _helper.each(ANIMATING, function(i, animation)
+            {
+                if (animation === _this)
+                {
+                    ANIMATING.splice(i, 1);
+
+                    return false;
+                }
+            });
+
+            if (this.options.complete) this.options.complete(_this.DOMElement);
+
+            if (this.options.callback) this.options.callback(_this.DOMElement);
+
+            
+        }, this.duration + 50 );
+
+        ANIMATING.push(this);
 
         return this;
     }
@@ -1384,27 +1393,31 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         this.currentKeyframe++;
 
-        this.stop();
+        this._complete();
     }
 
-    AnimateJS.prototype.stop = function(force)
+    AnimateJS.prototype._complete = function()
     {
-        if (this.keyframes.length === 0 || force === true)
-        {
-            clearInterval(this.intervalTimer);
+        if (this.keyframes.length > 0) return;
 
-            this.keyframes = [];
+        clearTimeout(this._failTimer);
 
-            const DOMElement = this.DOMElement;
+        clearInterval(this.intervalTimer);
 
-            _helper.each(this.callbacks, function(i, callback)
-            {                
-                if (_helper.is_function(callback))
-                {
-                    callback(DOMElement);
-                }
-            });
-        }
+        const DOMElement = this.DOMElement;
+
+        _helper.css(this.DOMElement, 'transition', this._pre_transition );
+    }
+
+    AnimateJS.prototype.stop = function()
+    {
+        clearTimeout(this._failTimer);
+
+        clearTimeout(this._completeTimer);
+
+        clearInterval(this.intervalTimer);
+
+        return this;
     }
 
     AnimateJS.prototype.parseOptions = function()
@@ -1597,8 +1610,6 @@ _.prototype.__animate_js = function(DOMElement, options)
         {
             this.keyFrameCount = 0;
 
-            this.stop();
-
             return;
         }
 
@@ -1664,7 +1675,7 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         const change = (distance * this.tween(this.easing, (index / this.keyFrameCount)));
 
-        const keyVal = this.roundNumber(backAnimation ? startValue - change : startValue + change, 5);
+        const keyVal = this.roundNumber(backAnimation ? startValue - change : startValue + change, this.CSSProperty === 'opacity' ? 5 : 1);
 
         var property = this.isTransform ? 'transform' : this.CSSProperty;
 
@@ -1735,8 +1746,7 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         _helper.css(this.DOMElement, 'transition', _helper.join_obj(transitions, ' ', ', '));
 
-        this.callbacks.push(() => { _helper.css(this.DOMElement, 'transition', !css_transition ? false : css_transition ); });
-
+        this._pre_transition = !css_transition ? false : css_transition;
     }
 
     AnimateJS.prototype.roundNumber = (n, dp) => 
@@ -1775,6 +1785,9 @@ _.prototype.__animate_js = function(DOMElement, options)
 
     // Pre animation transitions to restore
     this.preAnimatedTransitions = {};
+
+    // Cache stopvalues
+    this.stopValues = {};
 
     // Fail timer
     this._failTimer = null;
@@ -1830,6 +1843,8 @@ AnimateCss.prototype.stop = function()
     clearTimeout(this._failTimer);
 
     this.resotoreElement();
+
+    _THIS.css(this.DOMElement, this.stopValues);
 }
 
 /**
@@ -1932,7 +1947,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
 
         if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
         {
-            var inlineStyle = _THIS.inline_style(DOMElement, CSSProperty);
+            let inlineStyle = _THIS.inline_style(DOMElement, CSSProperty);
 
             _THIS.css(DOMElement, CSSProperty, endValue);
 
@@ -1942,6 +1957,8 @@ AnimateCss.prototype.preProcessStartEndValues = function()
         }
 
         this.animatedProps[CSSProperty] = endValue;
+
+        this.stopValues[CSSProperty] = _THIS.inline_style(DOMElement, CSSProperty) || false;
     
     }, this);
 }
@@ -2070,6 +2087,14 @@ _.prototype.animate = function(DOMElement, options)
         return this;
     };
 
+    Animation.prototype.start = function()
+    {
+        for (var i = 0; i < animationSet.length; i++)
+        {
+            animationSet[i].start();
+        }
+    };
+
     Animation.prototype.stop = function()
     {
         for (var i = 0; i < animationSet.length; i++)
@@ -2129,11 +2154,16 @@ _.prototype.animate = function(DOMElement, options)
  */
 _.prototype.animate_css = function(DOMElement, options)
 {
-    var cssAnimation;
+    let cssAnimation;
 
     const Animation = function()
     {
         return this;
+    };
+
+    Animation.prototype.start = function()
+    {
+        cssAnimation.start();
     };
 
     Animation.prototype.stop = function()
@@ -2188,7 +2218,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
         // animation_factory('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
         if (key === 'property')
         {
-            var options = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, opts);
+            var options = { ...ANIMATION_DEFAULT_OPTIONS, ...opts};
 
             options.FROM_FACTORY = true;
             options.property     = this.css_prop_to_hyphen_case(val);
@@ -2207,7 +2237,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
             {
                 var isObjSet = this.is_object(val);
                 var toMerge  = isObjSet ? val : opts;
-                var options  = this.array_merge({}, ANIMATION_DEFAULT_OPTIONS, toMerge);
+                var options  = { ...ANIMATION_DEFAULT_OPTIONS, ...toMerge};
                 
                 // animation_factory('foo', { height: '100px', opacity: 0 } );
                 if (!isObjSet)
@@ -2224,8 +2254,48 @@ _.prototype.__animation_factory = function(DOMElement, opts)
         }
     }, this);
 
+    // Santize callbacks
+    let longest  = 0;
+    let longestI = 0;
+    let start    = () => {};
+    let fail     = () => {};
+    let complete = () => {};
+    let step     = () => {};
+
     this.each(optionSets, function(i, options)
     {
+        if (options.start)
+        {
+            start = options.start;
+
+            delete options.start;
+        }
+
+        if (options.fail)
+        {
+            fail = options.fail;
+
+            delete options.fail;
+        }
+
+        // Store the maximum duration
+        if (options.duration >= longest)
+        {
+            if ((options.callback || options.complete)) complete = (options.callback || options.complete);
+
+            if ((options.step)) step = options.step;
+
+            delete options.callback;
+
+            delete options.step;
+
+            delete options.complete;
+
+            longest = options.duration;
+
+            longestI = i;
+        }
+
         // Not nessaray, but sanitize out redundant options
         options = this.map(options, function(key, val)
         {
@@ -2249,6 +2319,11 @@ _.prototype.__animation_factory = function(DOMElement, opts)
     {
         console.error('Animation Error: Either no CSS property(s) was provided or the provided property(s) is unsupported.');
     }
+
+    optionSets[longestI].fail     = fail;
+    optionSets[longestI].start    = start;
+    optionSets[longestI].complete = complete;
+    optionSets[longestI].step     = step;
 
     return optionSets;
 }
@@ -3571,9 +3646,9 @@ _.prototype.css_transform_props = function(DOMElement, returnAsString)
     let emptys   = [undefined, '', 'none', 'unset', 'initial', 'inherit'];
 
     // Has inline styles - inline do not need to converted
-    if (!this.in_array(inline, emptys))
+    if (!emptys.includes(inline))
     {
-        return inline;
+        return returnAsString ? inline : this.__un_css_matrix(inline, false);
     }
 
     // If element is hiddien we need to display it quickly
@@ -3691,7 +3766,6 @@ _.prototype.__un_css_matrix = function(DOMElement, returnAsString)
         });
 
     }, this);
-
 
     if (returnAsString)
     {
@@ -4889,8 +4963,23 @@ _.prototype.nth_siblings = function(DOMElement)
  * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
  * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-_.prototype.add_event_listener = function(DOMElement, eventName, handler)
+_.prototype.on = function()
 {
+    return this.add_event_listener(...arguments);
+}
+
+/**
+ * Add an event listener
+ *
+ * @access {public}
+ * @param  {DOMElement}    element    The target DOM node
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
+ */
+_.prototype.add_event_listener = function(DOMElement, eventName, handler)
+{    
     var args = TO_ARR.call(arguments);
 
     // Multiple elements
@@ -5030,7 +5119,7 @@ _.prototype.__event_dispatcher = function(e)
 
     _this.each(callbacks, function(i, handler)
     {        
-        if (handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]) === false)
+        if (handler && handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]) === false)
         {
             e.preventDefault();
 
@@ -5179,6 +5268,21 @@ _.prototype.event_listeners = function(DOMElement, eventName)
     return ret;
 }
 		/**
+ * Add an event listener
+ *
+ * @access {public}
+ * @param  {DOMElement}    element    The target DOM node
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
+ */
+_.prototype.off = function()
+{
+    return this.remove_event_listener(...arguments);
+}
+
+/**
  * Remove an event listener
  *
  * @access {public}
@@ -10980,6 +11084,783 @@ Container.singleton('_', _);
 
 
 // DOM Module
+(function()
+{
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const _ = Hubble._();
+
+    function roundPx(number)
+    {
+        return Math.round(number * 10) / 10;
+    }
+
+    /**
+     * Selectors
+     * 
+     * @var {Map}
+     */
+    const DEFAULT_OPTIONS =
+    {
+        accessibility: true,
+        // enable keyboard navigation, pressing left & right keys
+
+        autoPlay: true,
+        // advances to the next cell
+        // if true, default is 3 seconds
+        // or set time between advances in milliseconds
+        // i.e. `autoPlay: 1000` will advance every 1 second
+
+        groupCells: false,
+        // group cells together in slides
+
+        initialIndex: 0,
+        // zero-based index of the initial selected cell
+
+        controls: true,
+        // creates and enables buttons to click to previous & next cells
+
+        dots: true,
+        // create and enable page dots
+
+        resize: true,
+        // listens to window resize events to adjust size & positions
+
+        wrap: false,
+        // at end of cells, wraps-around to first for infinite scrolling
+
+        pauseOnHover: true,
+        // Pauses autoplay on hover
+
+        easing: 'easeOutExpo'
+    };
+    
+    /**
+     * Slider.
+     *
+     * @param {HTMLElement} wrapper Wrapper element
+     * @param {Object}      options Options
+     */
+    const _Slider = function(wrapper, options)
+    {
+        this.options = _.is_object(options) ? {...DEFAULT_OPTIONS, ...options } :  {...DEFAULT_OPTIONS };
+
+        this.DOMElementWrapper = wrapper;
+
+        this._animating = false;
+
+        this._playing = 'stopped';
+
+        this._hovering = false;
+
+        this._translated = 0;
+
+        this._build();
+
+        this._moveIndexToMiddle();
+
+        this.resize();
+
+        //if (this.options.autoPlay) this.play();
+    }
+
+    /**
+     * Destroy the slider.
+     *
+     * @access {public}
+     */
+    _Slider.prototype.destroy = function()
+    {
+        
+    }
+
+    /**
+     * Next slide
+     *
+     * @access {public}
+     */
+    _Slider.prototype.next = function(e)
+    {
+        // Stop on animating
+        if (this._animating) return;
+
+        // Do nothing on non-wrap and at end
+        if (!this.options.wrap && this._index === this._slidesIndexs) return;
+
+        // Pause autoplay
+        this.pause();
+
+        // We're now animating
+        this._animating = true;
+
+        // Run animation
+        let distance = (this._slideWidth + this._gapSize);
+
+        if (!this.options.wrap)
+        {
+            distance += this._translated;
+            
+            this._translated = distance;
+        }
+
+        _.animate(this._DOMElementViewport, { transform: `translateX(-${distance}px)`, easing: this.options.easing, duration: 750, complete: () => { 
+
+            if (this.options.wrap) _.css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+
+            this._moved(1);
+
+            this._animating = false;
+
+            if (!e) this.unpause();
+
+        }});
+    
+        // Update the index and dots.        
+        this._updateIndex(1);
+        this._updateDots();
+    }
+
+    /**
+     * Previous slide
+     *
+     * @access {public}
+     */
+    _Slider.prototype.previous = function()
+    {
+        // Stop on animating
+        if (this._animating) return;
+
+        // Do nothing on non-wrap and at start
+        if (!this.options.wrap && this._index === 0) return;
+
+        // Clear timeout
+        this.pause();
+
+        // We're now animating
+        this._animating = true;
+
+        if (!this.options.wrap)
+        {
+            let distance = this._translated - (this._slideWidth + this._gapSize);
+
+            this._translated = distance;
+            
+            _.animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+            { 
+                this._animating = false;
+
+                this.unpause();
+
+            } });
+        }
+        else
+        {
+            // Shuffle before animation
+            this._moved(-1);
+
+            // Adjust pre distance before animation
+            let preDistance = this._offset + (this._slideWidth + this._gapSize);
+
+            // Run animation
+            let distance = (this._slideWidth + this._gapSize);
+
+            _.css(this._DOMElementViewport, 'left', `-${preDistance}px`);
+
+            // Run animation
+            _.animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+            { 
+                _.css(this._DOMElementViewport, 'left', `-${this._offset}px`);
+
+                _.css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+
+                this._animating = false;
+
+                this.unpause();
+
+            } });
+        }
+            
+        // Update dots and indexes
+        this._updateIndex(-1);
+
+        this._updateDots();
+    }
+
+    /**
+     * Go to slide.
+     *
+     * @access {public}
+     * @param  {integer} slideNum Slide number
+     */
+    _Slider.prototype.toSlide = function(slideNum, fromClick)
+    {   
+        // Animating
+        if (this._animating) return false;
+
+        // convert slide number to index
+        let index = slideNum === 1 ? 0 : slideNum-1;
+
+        // Invalid or does nothing
+        if (index === this._index || index > this._slidesIndexs || index < 0) return;
+
+        // Go to previous
+        if ( (index === (this._index -1) && this._index > 0) || (index === this._slidesIndexs && this._index === 0 && this.options.wrap))
+        {
+            return this.previous();
+        }
+
+        // Go to next
+        else if ((index === (this._index + 1) && this._index < this._slidesIndexs) || (index === 0 && this._index === this._slidesIndexs && this.options.wrap))
+        {            
+            return this.next();
+        }
+
+        // We're now animating
+        this._animating = true;
+
+        // Clear timeout
+        this.pause();
+
+        // Default delta and direction
+        let { delta, direction } = this._moveDelta(index);
+
+        // If we're not wrapping we can skip all of this
+        if (!this.options.wrap)
+        {
+            let distance = (this._slideWidth + this._gapSize) * delta;
+
+            distance = direction === -1 ? this._translated - distance : this._translated + distance;
+            
+            this._translated = distance;
+
+            _.for(delta, () => { this._updateIndex(direction) });
+
+            this._updateDots();
+            
+            _.animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+            { 
+                this._animating = false;
+
+                this.unpause();
+
+            } });
+
+            return;
+        }
+
+        // Moving back shifts index forward
+        // Moving forwards shifts index back
+        let postIndex = direction === -1 ? this._middleIndex + delta : (this._middleIndex - delta) + this._bufferSize;
+
+        // Since we know the new index, we can just calculate how far offset center it is.
+        let tmpOffset = (postIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2);
+
+        // Run animation
+        let distance = (this._slideWidth + this._gapSize) * delta;
+        distance  = direction === 1 ? -distance : distance;
+
+        // Shuffle slides
+        _.for(delta, () => { this._moved(direction); this._updateIndex(direction) }, this);
+
+        // Insert buffer clones
+        let clones = this._bufferNodes(direction);
+
+        _.css(this._DOMElementViewport, 'left', `-${tmpOffset}px`);
+
+        // Run animation
+        _.animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+        { 
+            _.each(clones, (i, clone) =>
+            {
+                clone.parentNode.removeChild(clone);
+            });
+
+            _.css(this._DOMElementViewport, 'left', `-${this._offset}px`);
+
+            _.css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+
+            this._animating = false;
+
+            if (!fromClick) this.unpause();
+
+        } });
+
+        this._updateDots();
+    }
+
+    /**
+     * Window resize handler.
+     *
+     * @access {private}
+     */
+    _Slider.prototype.resize = function()
+    {
+        // Is full width, may change with responsive CSS
+        this._isFullWidth = parseInt(_.rendered_style(this._slides[0], 'max-width')) === 100;
+
+        // Viewport width
+        this._viewportWidth = Math.round(_.width(this.DOMElementWrapper));
+
+        // Gap size
+        this._gapSize = parseInt(_.rendered_style(this._DOMElementViewport, 'column-gap'));
+
+        // Slide width
+        this._slideWidth = Math.round(_.width(this._slides[0], this.DOMElementWrapper));
+
+        // Offset
+        this._offset = Math.round(this.options.wrap ? (this._middleIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2) : (this._slideWidth + this._gapSize) - ((this._viewportWidth + this._slideWidth) / 2));
+
+        // Buffer
+        if (!this._isFullWidth)
+        {
+            let percentagWidth  = (100 * this._slideWidth) / this._viewportWidth;
+            this._bufferSize    = percentagWidth > 50 ? 3 : Math.round(100 / percentagWidth);            
+        }
+
+        // Make offset
+        _.css(this._DOMElementViewport, 'left', `${this._offset === 0 ? 0 : -this._offset}px`);
+    }
+
+    /**
+     * Start autoplay.
+     *
+     * @access {public}
+     */
+    _Slider.prototype.play = function()
+    {      
+        if (this._playing === 'playing') return;
+
+        // do not play if page is hidden, start playing when page is visible
+        let isPageHidden = document.hidden;
+        
+        if (isPageHidden)
+        {
+            _.on(document, 'visibilitychange', this._onVisibilityPlay, this);
+
+            return;
+        }
+
+        this._playing = 'playing';
+
+        // listen to visibility change
+        _.on(document, 'visibilitychange', this._onVisibilityChange, this);
+
+        // start ticking
+        this._tick();
+    }
+
+    /**
+     * Stop autoplay.
+     *
+     * @access {public}
+     */
+    _Slider.prototype.stop = function()
+    {
+        this._playing = 'stopped';
+
+        clearTimeout(this._playTimer);
+        
+        // remove visibility change event
+        _.off(document, 'visibilitychange', this._onVisibilityChange, this);
+    }
+
+    /**
+     * Pause autoplay.
+     *
+     * @access {public}
+     */
+    _Slider.prototype.pause = function()
+    {
+        if (this._playing === 'playing')
+        {
+            this._playing = 'paused';
+            
+            clearTimeout(this._playTimer);
+        }
+    }
+
+    /**
+     * Unpause autoplay.
+     *
+     * @access {public}
+     */
+    _Slider.prototype.unpause = function()
+    {
+        // re-start play if paused
+        if (this._playing === 'paused') this.play();
+    }
+
+    /**
+     * Build the slider.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._build = function()
+    {
+        // Find slides
+        this._slides = _.find_all('> *', this.DOMElementWrapper);
+
+        // Slides count
+        this._slidesCount = this._slides.length;
+
+        // Slide indexes
+        this._slidesIndexs = this._slides.length -1;
+
+        // Starting index
+        this._index = this.options.initialIndex;
+
+        // Middle index
+        this._middleIndex = Math.floor(this._slidesCount / 2);
+
+        // Visible slides
+        this._visibleSlides = 1;
+
+        // Buffer size
+        this._bufferSize = 0;
+
+        // Create viewport
+        this._DOMElementViewport = _.dom_element({tag: 'div', class: 'slider-viewport js-slider-viewport'}, this.DOMElementWrapper, this._slides);
+
+        // Controls
+        if (this.options.controls) this._buildControls();
+
+        // Dots
+        this._dots = [];
+        this._dot = null;
+        if (this.options.dots) this._buildDots();
+
+        // Pause on hover
+        if (this.options.autoPlay && this.options.pauseOnHover)
+        {
+            _.on(this.DOMElementWrapper, 'mouseover', this.pause, this);
+
+            _.on(this.DOMElementWrapper, 'mouseout', this.unpause, this);
+        }
+    }
+
+     /**
+     * Build controls.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._buildControls = function()
+    {
+        // Right button
+        this._righBtn = _.dom_element({tag: 'button', type: 'button', class: 'slider-control control-right btn btn-pure'}, this.DOMElementWrapper, 
+            _.dom_element({tag: 'span',class: 'fa fa-caret-right'})
+        );
+
+        // Left button
+        this._leftBtn = _.dom_element({tag: 'button', type: 'button', class: 'slider-control control-left btn btn-pure'}, this.DOMElementWrapper, 
+            _.dom_element({tag: 'span',class: 'fa fa-caret-left'})
+        );
+
+        // Handlers
+        _.on(this._righBtn, 'click', this.next, this);
+        _.on(this._leftBtn, 'click', this.previous, this);
+    }
+
+    /**
+     * Build dots.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._buildDots = function()
+    {
+        let index = this._index;
+
+        this._dotWrap = _.dom_element({tag: 'div', class: 'slider-dots'}, this.DOMElementWrapper, _.map(this._slides, (i, slide) =>
+        {
+            let active = i === index ? 'btn-primary' : '';
+
+            let dot = _.dom_element({tag: 'button', type: 'button', dataIndex: i, class: `slider-dot js-slider-dot btn btn-circle ${active}`});
+
+            _.on(dot, 'click', this._dotClick, this);
+
+            this._dots.push(dot);
+
+            if (i === index) this._dot = dot;
+
+            return dot;
+        }));
+    }
+
+     /**
+     * Moves indexed slide to middle.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._moveIndexToMiddle = function()
+    {
+        if (!this.options.wrap) return;
+
+        let slide = this._slides[this._index];
+
+        _.for(this._slidesCount, (i) =>
+        {
+            if (_.nth_siblings(slide) === this._middleIndex) return false;
+
+            _.preapend(_.find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
+        
+        }, this);
+    }
+
+    /**
+     * On dot click.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._dotClick = function(e, dot)
+    {
+        let index = parseInt(_.attr(dot, 'data-index')) +1;
+
+        this.toSlide(index, true);
+    }
+    
+    /**
+     * Update index from previous / next.
+     *
+     * @access {private}
+     * @param  {Integer} direction -1|1
+     */
+    _Slider.prototype._updateIndex = function(direction)
+    {
+        if (direction === 1)
+        {
+            this._index = this._index === this._slidesIndexs ? 0 : this._index + 1;
+        }
+        else
+        {
+            this._index = this._index === 0 ? this._slidesIndexs : this._index - 1;
+        }
+    }
+
+    /**
+     * Returns the move delta
+     *
+     * @access {private}
+     * @param  {Integer} direction -1|1
+     */
+    _Slider.prototype._moveDelta = function(index)
+    {
+        // Default delta and direction
+        let delta       = index < this._index ? this._index - index : index - this._index;
+        let direction   = index < this._index ? -1 : 1;
+        
+        // We only go shortest path if we're wrapping
+        if (this.options.wrap)
+        {
+            if (index > this._index)
+            {
+                let backN = (this._slidesCount - index) + this._index;
+
+                if (backN < delta)
+                {
+                    delta = backN;
+                    direction = -1;
+                }
+            }
+            else if (index < this._index)
+            {
+                let forwdN = (this._slidesCount - this._index) + index;
+
+                if (forwdN < delta)
+                {
+                    delta = forwdN;
+                    direction = 1;
+                }
+            }
+        }
+
+        return { delta, direction };
+    }
+
+    /**
+     * Create buffers cloned nodes.
+     *
+     * @access {private}
+     * @param  {Integer} direction -1|1
+     */
+    _Slider.prototype._bufferNodes = function(direction)
+    {
+        let viewport = this._DOMElementViewport;
+
+        return _.map([...Array(this._bufferSize).keys()], (i) =>
+        {
+            let clone = _.find(`> *:nth${direction === -1 ? '-' : '-last-'}child(${i+1})`, viewport).cloneNode(true);
+
+            direction === -1 ? viewport.appendChild(clone) : _.preapend(clone, viewport);
+
+            return clone;
+
+        });
+    }
+
+    /**
+     * pause if page visibility is hidden, unpause if visible
+     *
+     * @access {private}
+     */
+    _Slider.prototype._onVisibilityChange = function()
+    {
+        let isPageHidden = document.hidden;
+        
+        this[ isPageHidden ? 'pause' : 'unpause' ]();
+    }
+
+    /**
+     * Start playing on page return.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._onVisibilityPlay = function()
+    {
+        this.play();
+        
+        _.off(document, 'visibilitychange', this._onVisibilityPlay, this);
+    }
+
+    /**
+     * Timeout ticker.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._tick = function()
+    {
+        // do not tick if not playing
+        if ( this._playing !== 'playing' ) return;
+
+        // default to 3 seconds
+        let time = typeof this.options.autoPlay == 'number' ? this.options.autoPlay : 3000;
+
+        // HACK: reset ticks if stopped and started within interval
+        clearTimeout(this._playTimer);
+
+        this._playTimer = setTimeout( () =>
+        {
+            this.next();
+            
+            this._tick();
+
+        }, time );
+    }
+
+    /**
+     * Shuffle slides after moved.
+     *
+     * @access {private}
+     * @param  {Integer} direction -1|1
+     */
+    _Slider.prototype._moved = function(direction)
+    {    
+        if (!this.options.wrap) return;
+
+        if (direction === 1)
+        {
+            this._DOMElementViewport.appendChild(_.find('> *:first-child', this._DOMElementViewport));
+        }
+        else
+        {
+           _.preapend(_.find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
+        }
+    }
+
+    /**
+     * Update active dot after move.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._updateDots = function()
+    {
+        if (!this.options.dots) return;
+
+        _.remove_class(this._dot, 'btn-primary');
+
+        this._dot = this._dots[this._index];
+
+        _.add_class(this._dot, 'btn-primary');
+    }
+
+    // Load into container
+    Hubble.set('_Slider', _Slider);
+
+})();
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {Class}
+     */
+    const [Component] = Hubble.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [attr, each, extend, json_decode] = Hubble.import(['attr', 'each', 'extend', 'json_decode']).from('_');
+    
+    /**
+     * Slider instances.
+     * 
+     * @var {Array}
+     */
+    const SLIDERS = [];
+
+    /**
+     * Dom Slider component.
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Slider = function()
+    {
+        this.super('.js-slider');
+    }
+    
+    /**
+     * @inheritdoc
+     * 
+     */
+    Slider.prototype.bind = function(node)
+    {
+        let options = attr(node, 'data-slider-options');
+
+        options = !options ? {} : json_decode(options);
+
+        SLIDERS.push(Hubble._Slider(node, options));
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Slider.prototype.unbind  = function(node)
+    {
+        each(SLIDERS, (i, slider) =>
+        {
+            if (slider.DOMElementWrapper === node)
+            {
+                slider.destroy();
+
+                SLIDERS.splice(i, 1);
+
+                return false;
+            }
+        });
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Slider', extend(Component, Slider));
+
+})();
+
 (function()
 {
     /**

@@ -41,4 +41,17 @@ module.exports =
         
         dest: 'dist/css/hubble.bundle.min.css',
     },
+
+    // JS
+    js_bundle :
+    {
+        src :
+        [
+            'dist/js/hubble.js',
+            'dist/js/hubble.gallery.js',
+            'dist/js/hubble.slider.js'
+        ],
+
+        dest: 'dist/js/hubble.bundle.js',
+    }
 };

@@ -22,9 +22,9 @@ _.prototype.css_transform_props = function(DOMElement, returnAsString)
     let emptys   = [undefined, '', 'none', 'unset', 'initial', 'inherit'];
 
     // Has inline styles - inline do not need to converted
-    if (!this.in_array(inline, emptys))
+    if (!emptys.includes(inline))
     {
-        return inline;
+        return returnAsString ? inline : this.__un_css_matrix(inline, false);
     }
 
     // If element is hiddien we need to display it quickly
@@ -142,7 +142,6 @@ _.prototype.__un_css_matrix = function(DOMElement, returnAsString)
         });
 
     }, this);
-
 
     if (returnAsString)
     {

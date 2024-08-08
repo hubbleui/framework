@@ -6,9 +6,8 @@
 const ANIMATION_DEFAULT_OPTIONS =
 {
     // Options
-    //'property', 'from', 'to'
+    //'property', 'from', 'to', 'callback', 'complete', 'start', 'fail'
     easing:               'ease',
-    callback:              () => {},
     duration:              500,
     fps:                   90, // (11ms)
 };

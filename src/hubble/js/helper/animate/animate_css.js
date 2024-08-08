@@ -12,6 +12,9 @@ const AnimateCss = function(DOMElement, options)
     // Pre animation transitions to restore
     this.preAnimatedTransitions = {};
 
+    // Cache stopvalues
+    this.stopValues = {};
+
     // Fail timer
     this._failTimer = null;
     
@@ -66,6 +69,8 @@ AnimateCss.prototype.stop = function()
     clearTimeout(this._failTimer);
 
     this.resotoreElement();
+
+    _THIS.css(this.DOMElement, this.stopValues);
 }
 
 /**
@@ -168,7 +173,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
 
         if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
         {
-            var inlineStyle = _THIS.inline_style(DOMElement, CSSProperty);
+            let inlineStyle = _THIS.inline_style(DOMElement, CSSProperty);
 
             _THIS.css(DOMElement, CSSProperty, endValue);
 
@@ -178,6 +183,8 @@ AnimateCss.prototype.preProcessStartEndValues = function()
         }
 
         this.animatedProps[CSSProperty] = endValue;
+
+        this.stopValues[CSSProperty] = _THIS.inline_style(DOMElement, CSSProperty) || false;
     
     }, this);
 }

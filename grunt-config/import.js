@@ -16,23 +16,18 @@ module.exports =
     theme :
     {
         src: 'src/theme/js/theme.js',
-        dest: 'dist/js/theme.js',
+        dest: 'dist/js/hubble.theme.js',
     },
 
     // Vendor
     gallery :
     {
         src: 'src/hubble/js/vendor/_photoSwipe.js',
-        dest: 'dist/js/gallery.js',
-    },
-    slider :
-    {
-        src: 'src/hubble/js/vendor/_flickity.js',
-        dest: 'dist/js/slider.js',
+        dest: 'dist/js/hubble.gallery.js',
     },
     lazy :
     {
         src: 'src/hubble/js/dom/_lazyLoad.js',
-        dest: 'dist/js/lazyload.js',
+        dest: 'dist/js/hubble.lazyload.js',
     },
 };

@@ -64,7 +64,7 @@ module.exports = function(grunt)
     // Default grunt task 
     grunt.registerTask('default', [ 'sass', 'autoprefixer' ,'cssmin', 'concat', 'import', 'uglify', 'image', 'svgmin']);
 
-    grunt.registerTask('js', ['import', 'uglify']);
+    grunt.registerTask('js', ['import', 'concat:js_bundle', 'uglify']);
 
     grunt.registerTask('css', ['sass', 'autoprefixer', 'cssmin', 'concat:css_core', 'concat:css_core_min']);
 

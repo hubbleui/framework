@@ -1,4 +1,19 @@
 /**
+ * Add an event listener
+ *
+ * @access {public}
+ * @param  {DOMElement}    element    The target DOM node
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
+ */
+_.prototype.off = function()
+{
+    return this.remove_event_listener(...arguments);
+}
+
+/**
  * Remove an event listener
  *
  * @access {public}

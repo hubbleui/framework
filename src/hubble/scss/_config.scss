@@ -280,8 +280,8 @@ $input-font-size:               1.5rem !default;
 $input-line-height:             1.5rem !default;
 $input-pad-y:                   1.5rem !default;
 $input-pad-x:                   1.6rem !default;
-$input-bg:                      transparent !default;
-$input-bg-focus:                transparent !default;
+$input-bg:                      var(--hb-body-bg) !default;
+$input-bg-focus:                var(--hb-body-bg) !default;
 $input-color:                   var(--hb-body-color) !default;
 $input-color-label:             var(--hb-gray-400) !default;
 $input-color-placeholder:       var(--hb-gray-300) !default;
@@ -345,7 +345,6 @@ $lazyload-falback-bg:           #d0d4d9;
 
 // Carousel
 $slider-bg:                     var(--body-bg) !default;
-$slider-height:                 420px !default;
 $slider-dots-color:             var(--hb-white) !default;
 $slider-dots-color-active:      var(--hb-brand-primary) !default;
 $slider-dots-size:              0.8rem !default;

@@ -8,8 +8,23 @@
  * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
  * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
  */
-_.prototype.add_event_listener = function(DOMElement, eventName, handler)
+_.prototype.on = function()
 {
+    return this.add_event_listener(...arguments);
+}
+
+/**
+ * Add an event listener
+ *
+ * @access {public}
+ * @param  {DOMElement}    element    The target DOM node
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
+ */
+_.prototype.add_event_listener = function(DOMElement, eventName, handler)
+{    
     var args = TO_ARR.call(arguments);
 
     // Multiple elements
@@ -149,7 +164,7 @@ _.prototype.__event_dispatcher = function(e)
 
     _this.each(callbacks, function(i, handler)
     {        
-        if (handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]) === false)
+        if (handler && handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]) === false)
         {
             e.preventDefault();
 

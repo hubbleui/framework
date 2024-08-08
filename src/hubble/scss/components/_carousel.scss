@@ -1,7 +1,7 @@
-.carousel
+.slider
 {
 	--hb-slider-bg: #{$slider-bg};
-	--hb-slider-height: #{$slider-height};
+	--hb-slider-gap: 20px;
 	--hb-slider-dots-color: #{$slider-dots-color};
 	--hb-slider-dots-color-active: #{$slider-dots-color-active};
 	--hb-slider-dots-size: #{$slider-dots-size};
@@ -12,19 +12,35 @@
 
 	width: 100%;
 	background-color: var(--hb-slider-bg);
-	.cell
+	overflow: hidden;
+    position: relative;
+
+    .slider-inner
 	{
-		height: var(--hb-slider-height);
-		width: 100%;
-		.inner
-		{
-			width: 100%;
-			height: var(--hb-slider-height);
-		}
+
+	}
+
+	.slider-viewport
+	{
+		display: flex;
+		flex-flow: row nowrap;
+		align-items: center;
+		column-gap: 20px;
+		justify-content: flex-start;
+		position: relative;
+		left: 0;
+	}
+
+	.slider-viewport > *
+	{
+		width: 40%;
+		max-width: 40%;
+		flex: 0 0 100%;
 	}
 	.flickity-page-dots
 	{
 		bottom: 30px;
+
 		.dot
 		{
 			background-color: var(--hb-slider-dots-color);
@@ -37,37 +53,44 @@
 			}
 		}
 	}
-	.flickity-prev-next-button
+
+	.slider-control
 	{
-		background-color: transparent;
-		opacity: 0;
-		color: var(--hb-slider-nav-btn-color);
-		transition: opacity $base-easing-time $base-easing;
-		
-		&:hover,&:active
+		position: absolute;
+		height: 100%;
+		top: 0;
+
+		&.control-right
 		{
-			background-color: transparent;
-			box-shadow: none;
-			--hb-slider-nav-btn-color: var(--hb-slider-nav-btn-color-hover);
+			right: 0;
 		}
-		&:after
+		&.control-left
 		{
-			@include glyph-icon;
-			font-size: var(--hb-slider-nav-icon-size);
+			left: 0;
 		}
-		&.previous:after
+		.fa
 		{
-			content: "\edc6";
-		}
-		&.next:after
-		{
-			content: "\edbe";
-		}
-		svg
-		{
-			display: none !important;
+			--hb-icon-size: 25px;
 		}
 	}
+
+	.slider-dots
+	{
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    column-gap: 15px;
+	    padding: 15px 0;
+
+		.slider-dot
+		{
+			--hb-btn-font-size: 3px;
+		}
+	}
+	
 	&:hover
 	{
 		.flickity-prev-next-button
