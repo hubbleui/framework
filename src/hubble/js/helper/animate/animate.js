@@ -31,8 +31,6 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         this.keyFrameCount = Math.floor(this.duration / this.intervalDelay) + 1;
 
-        this.intervalTimer = null;
-
         this.easing = options.easing;
 
         this.CSSProperty = options.property;
@@ -48,6 +46,8 @@ _.prototype.__animate_js = function(DOMElement, options)
         this.parseOptions();
 
         this.generateKeyframes();
+
+        this.stopped = true;
 
         return this;
     }
@@ -75,7 +75,7 @@ _.prototype.__animate_js = function(DOMElement, options)
     {
         if (this.keyFrameCount === 0) return;
 
-        clearInterval(this.intervalTimer);
+        this.stopped = false;
 
         if (!this.isScroll) this.clearTransitions();
 
@@ -83,35 +83,28 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         if (this.options.start) this.options.start(_this.DOMElement);
 
-        this.intervalTimer = setInterval(function()
-        {
-            _this.loop();
+        const loop = () =>
+        {        
+            if (this.stopped) return;
 
-        }, this.intervalDelay);
+            this._applyKeyframe(this.keyframes.shift());
+
+            if (this.keyframes.length === 0)
+            {
+                this._complete();
+
+                return;
+            }
+
+            setTimeout(loop, this.intervalDelay);
+        }
+
+        loop();
 
         this._failTimer = setTimeout(() =>
-        {
+        {            
             if (this.options.fail) this.options.fail(_this.DOMElement);
 
-        }, this.duration + 50 );
-
-        this._completeTimer = setTimeout(() =>
-        {
-            _helper.each(ANIMATING, function(i, animation)
-            {
-                if (animation === _this)
-                {
-                    ANIMATING.splice(i, 1);
-
-                    return false;
-                }
-            });
-
-            if (this.options.complete) this.options.complete(_this.DOMElement);
-
-            if (this.options.callback) this.options.callback(_this.DOMElement);
-
-            
         }, this.duration + 50 );
 
         ANIMATING.push(this);
@@ -119,38 +112,43 @@ _.prototype.__animate_js = function(DOMElement, options)
         return this;
     }
 
-    AnimateJS.prototype.loop = function()
-    {        
-        const keyframe = this.keyframes.shift();
-        const prop     = Object.keys(keyframe)[0];
+    AnimateJS.prototype._applyKeyframe = function(keyframe)
+    {
+        if (!keyframe) return;
+
+        let prop = Object.keys(keyframe)[0];
 
         this.isScroll ? window.scrollTo(keyframe[0], keyframe[1]) : _helper.css(this.DOMElement, prop, keyframe[prop]);
-
-        this.currentKeyframe++;
-
-        this._complete();
     }
 
     AnimateJS.prototype._complete = function()
     {
-        if (this.keyframes.length > 0) return;
-
         clearTimeout(this._failTimer);
 
-        clearInterval(this.intervalTimer);
+        _helper.each(ANIMATING, (i, animation) =>
+        {
+            if (animation === this)
+            {
+                ANIMATING.splice(i, 1);
 
-        const DOMElement = this.DOMElement;
+                return false;
+            }
+        });
 
-        _helper.css(this.DOMElement, 'transition', this._pre_transition );
+        let DOMElement = this.DOMElement;
+
+        if (this.options.complete) this.options.complete(DOMElement);
+
+        if (this.options.callback) this.options.callback(DOMElement);
+
+        _helper.css(DOMElement, 'transition', this._pre_transition );
     }
 
     AnimateJS.prototype.stop = function()
     {
+        this.stopped = true;
+
         clearTimeout(this._failTimer);
-
-        clearTimeout(this._completeTimer);
-
-        clearInterval(this.intervalTimer);
 
         return this;
     }

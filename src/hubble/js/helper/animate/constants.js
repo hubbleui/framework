@@ -9,7 +9,7 @@ const ANIMATION_DEFAULT_OPTIONS =
     //'property', 'from', 'to', 'callback', 'complete', 'start', 'fail'
     easing:               'ease',
     duration:              500,
-    fps:                   90, // (11ms)
+    fps:                   60, // (16ms)
 };
 
  /**
@@ -32,3 +32,4 @@ const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ..
  * @var {array}
  */
 const ANIMATING = [];
+

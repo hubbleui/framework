@@ -29,6 +29,7 @@
 @import 'utility/_ajax.js';
 @import 'utility/_formValidator.js';
 @import 'utility/_skeleton.js';
+@import 'utility/Gestures.js';
 
 // DOM Module
 @import 'dom/slider/Slider.js';

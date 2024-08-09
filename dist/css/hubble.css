@@ -5766,52 +5766,56 @@ form.success .msg-success {
 
 /* ---------------------------- components/carousel.scss ---------------------------- */
 .slider {
-  --hb-slider-bg: var(--body-bg);
-  --hb-slider-gap: 20px;
+  --hb-slider-bg: transparent;
   --hb-slider-dots-color: var(--hb-white);
   --hb-slider-dots-color-active: var(--hb-brand-primary);
-  --hb-slider-dots-size: 0.8rem;
-  --hb-slider-nav-btn-size: 4rem;
-  --hb-slider-nav-icon-size: 2rem;
+  --hb-slider-dots-size: 3px;
+  --hb-slider-nav-btn-size: 25px;
   --hb-slider-nav-btn-color: var(--hb-white);
   --hb-slider-nav-btn-color-hover: var(--hb-brand-primary);
+  --hb-slider-slides-gap: 20px;
+  --hb-slider-slide-width: 66%;
   width: 100%;
   background-color: var(--hb-slider-bg);
   overflow: hidden;
   position: relative;
 }
+.slider.draggable {
+  -webkit-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.slider.draggable .slider-viewport {
+  cursor: move;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+.slider.draggable.pointer-down .slider-viewport {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
 .slider .slider-viewport {
+  column-gap: var(--hb-slider-slides-gap);
   display: -ms-flexbox;
   display: flex;
   -ms-flex-flow: row nowrap;
       flex-flow: row nowrap;
   -ms-flex-align: center;
       align-items: center;
-  column-gap: 20px;
   -ms-flex-pack: start;
       justify-content: flex-start;
   position: relative;
   left: 0;
 }
 .slider .slider-viewport > * {
-  width: 40%;
-  max-width: 40%;
+  width: var(--hb-slider-slide-width);
+  max-width: var(--hb-slider-slide-width);
   -ms-flex: 0 0 100%;
       flex: 0 0 100%;
 }
-.slider .flickity-page-dots {
-  bottom: 30px;
-}
-.slider .flickity-page-dots .dot {
-  background-color: var(--hb-slider-dots-color);
-  opacity: 1;
-  width: var(--hb-slider-dots-size);
-  height: var(--hb-slider-dots-size);
-}
-.slider .flickity-page-dots .dot.is-selected {
-  --hb-slider-dots-color: var(--hb-slider-dots-color-active);
-}
 .slider .slider-control {
+  --hb-btn-color: var(--hb-slider-nav-btn-color);
+  --hb-btn-color-hover: var(--hb-slider-nav-btn-color);
   position: absolute;
   height: 100%;
   top: 0;
@@ -5823,7 +5827,10 @@ form.success .msg-success {
   left: 0;
 }
 .slider .slider-control .fa {
-  --hb-icon-size: 25px;
+  --hb-icon-size: var(--hb-slider-nav-btn-size);
+}
+.slider .slider-control:hover .fa {
+  color: var(--hb-slider-nav-btn-color-hover);
 }
 .slider .slider-dots {
   position: absolute;
@@ -5839,17 +5846,12 @@ form.success .msg-success {
   padding: 15px 0;
 }
 .slider .slider-dots .slider-dot {
-  --hb-btn-font-size: 3px;
-}
-.slider:hover .flickity-prev-next-button {
-  opacity: 1;
+  --hb-btn-bg-color: var(--hb-slider-dots-color);
+  --hb-btn-bg-color-hover: var(--hb-slider-dots-color);
+  --hb-btn-bg-color-active: var(--hb-slider-dots-color-active);
+  --hb-btn-font-size: var(--hb-slider-dots-size);
 }
 
-@media (max-width: 768px) {
-  .flickity-prev-next-button {
-    display: none;
-  }
-}
 /* ---------------------------- components/chips.scss ------------------------------- */
 .btn-chip {
   --hb-btn-transition: none;

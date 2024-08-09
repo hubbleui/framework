@@ -83,7 +83,6 @@
 		@import 'object/extend.js';
 		@import 'object/join_obj.js';
 		@import 'object/merge_deep.js';
-		@import 'object/obj_clone.js';
 		@import 'object/object_props.js';
 		@import 'object/prototypes.js';
 		@import 'object/flatten_obj.js';

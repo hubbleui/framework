@@ -902,7 +902,7 @@ const ANIMATION_DEFAULT_OPTIONS =
     //'property', 'from', 'to', 'callback', 'complete', 'start', 'fail'
     easing:               'ease',
     duration:              500,
-    fps:                   90, // (11ms)
+    fps:                   60, // (16ms)
 };
 
  /**
@@ -925,6 +925,8 @@ const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ..
  * @var {array}
  */
 const ANIMATING = [];
+
+
 	/**
  * Math Contstansts.
  * 
@@ -1296,8 +1298,6 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         this.keyFrameCount = Math.floor(this.duration / this.intervalDelay) + 1;
 
-        this.intervalTimer = null;
-
         this.easing = options.easing;
 
         this.CSSProperty = options.property;
@@ -1313,6 +1313,8 @@ _.prototype.__animate_js = function(DOMElement, options)
         this.parseOptions();
 
         this.generateKeyframes();
+
+        this.stopped = true;
 
         return this;
     }
@@ -1340,7 +1342,7 @@ _.prototype.__animate_js = function(DOMElement, options)
     {
         if (this.keyFrameCount === 0) return;
 
-        clearInterval(this.intervalTimer);
+        this.stopped = false;
 
         if (!this.isScroll) this.clearTransitions();
 
@@ -1348,35 +1350,28 @@ _.prototype.__animate_js = function(DOMElement, options)
 
         if (this.options.start) this.options.start(_this.DOMElement);
 
-        this.intervalTimer = setInterval(function()
-        {
-            _this.loop();
+        const loop = () =>
+        {        
+            if (this.stopped) return;
 
-        }, this.intervalDelay);
+            this._applyKeyframe(this.keyframes.shift());
+
+            if (this.keyframes.length === 0)
+            {
+                this._complete();
+
+                return;
+            }
+
+            setTimeout(loop, this.intervalDelay);
+        }
+
+        loop();
 
         this._failTimer = setTimeout(() =>
-        {
+        {            
             if (this.options.fail) this.options.fail(_this.DOMElement);
 
-        }, this.duration + 50 );
-
-        this._completeTimer = setTimeout(() =>
-        {
-            _helper.each(ANIMATING, function(i, animation)
-            {
-                if (animation === _this)
-                {
-                    ANIMATING.splice(i, 1);
-
-                    return false;
-                }
-            });
-
-            if (this.options.complete) this.options.complete(_this.DOMElement);
-
-            if (this.options.callback) this.options.callback(_this.DOMElement);
-
-            
         }, this.duration + 50 );
 
         ANIMATING.push(this);
@@ -1384,38 +1379,43 @@ _.prototype.__animate_js = function(DOMElement, options)
         return this;
     }
 
-    AnimateJS.prototype.loop = function()
-    {        
-        const keyframe = this.keyframes.shift();
-        const prop     = Object.keys(keyframe)[0];
+    AnimateJS.prototype._applyKeyframe = function(keyframe)
+    {
+        if (!keyframe) return;
+
+        let prop = Object.keys(keyframe)[0];
 
         this.isScroll ? window.scrollTo(keyframe[0], keyframe[1]) : _helper.css(this.DOMElement, prop, keyframe[prop]);
-
-        this.currentKeyframe++;
-
-        this._complete();
     }
 
     AnimateJS.prototype._complete = function()
     {
-        if (this.keyframes.length > 0) return;
-
         clearTimeout(this._failTimer);
 
-        clearInterval(this.intervalTimer);
+        _helper.each(ANIMATING, (i, animation) =>
+        {
+            if (animation === this)
+            {
+                ANIMATING.splice(i, 1);
 
-        const DOMElement = this.DOMElement;
+                return false;
+            }
+        });
 
-        _helper.css(this.DOMElement, 'transition', this._pre_transition );
+        let DOMElement = this.DOMElement;
+
+        if (this.options.complete) this.options.complete(DOMElement);
+
+        if (this.options.callback) this.options.callback(DOMElement);
+
+        _helper.css(DOMElement, 'transition', this._pre_transition );
     }
 
     AnimateJS.prototype.stop = function()
     {
+        this.stopped = true;
+
         clearTimeout(this._failTimer);
-
-        clearTimeout(this._completeTimer);
-
-        clearInterval(this.intervalTimer);
 
         return this;
     }
@@ -6094,6 +6094,30 @@ _.prototype.merge_deep = function()
     }, this);
 
     return first;
+}
+		/**
+ * Returns object properties and methods as array of keys.
+ * 
+ * @param   {mixed}    mixed_var    Variable to test
+ * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+ * @returns {array}
+ */
+_.prototype.object_props = function(mixed_var, deep)
+{
+    if (!mixed_var) return [];
+
+    deep = typeof deep === 'undefined' ? false : deep;
+
+    let keys = Object.keys(mixed_var);
+
+    let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+
+    if (deep)
+    {
+        keys = [...keys, ...this.object_props(proto, true)];
+    }
+    
+    return this.array_unique(keys);
 }
 
 
@@ -11082,6 +11106,328 @@ Container.singleton('_', _);
 
 })();
 
+(function()
+{
+    const Gestures = function(element, handlers)
+    {
+        handlers = handlers || {};
+
+
+        this.element = element;
+
+        this.handleEvent = this.handleEvent.bind(this);
+
+        Object.keys(handlers).forEach((key) =>
+        {
+            this[key] = handlers[key].bind(this);
+        });
+
+        this.bind();
+    }
+
+    // ----- bind start ----- //
+
+    // trigger handler methods for events
+    Gestures.prototype.handleEvent = function( event )
+    {
+        let method = 'on' + event.type;
+
+        if ( this[ method ] )
+        {
+            this[ method ]( event );
+        }
+    }
+
+    Gestures.prototype.emitEvent = function(event, args)
+    {
+        let method = 'handle' + event.charAt(0).toUpperCase() + event.slice(1);;
+
+        if ( this[ method ] )
+        {
+            this[ method ]( ...args );
+        }
+    };
+
+    let startEvent, activeEvents;
+    if ( 'ontouchstart' in window )
+    {
+    // HACK prefer Touch Events as you can preventDefault on touchstart to
+    // disable scroll in iOS & mobile Chrome metafizzy/flickity#1177
+        startEvent = 'touchstart';
+        activeEvents = [ 'touchmove', 'touchend', 'touchcancel' ];
+    } else if ( window.PointerEvent )
+    {
+    // Pointer Events
+        startEvent = 'pointerdown';
+        activeEvents = [ 'pointermove', 'pointerup', 'pointercancel' ];
+    } else {
+    // mouse events
+        startEvent = 'mousedown';
+        activeEvents = [ 'mousemove', 'mouseup' ];
+    }
+
+    // prototype so it can be overwriteable by Flickity
+    Gestures.prototype.touchActionValue = 'none';
+
+    Gestures.prototype.bind = function()
+    {
+        this.element.addEventListener(startEvent, this.handleEvent);
+
+        this.element.addEventListener('click', this.handleEvent);
+
+        // touch-action: none to override browser touch gestures.
+        if ( window.PointerEvent ) this.element.style.touchAction = 'none';
+    }
+
+    Gestures.prototype.unbind = function()
+    {
+        this.element.removeEventListener(startEvent, this.handleEvent);
+
+        this.element.removeEventListener('click', this.handleEvent);
+
+    }
+
+    Gestures.prototype.bindActivePointerEvents = function()
+    {
+        activeEvents.forEach( ( eventName ) => {
+            window.addEventListener( eventName, this.handleEvent);
+        } );
+    };
+
+    Gestures.prototype.unbindActivePointerEvents = function()
+    {
+        activeEvents.forEach( ( eventName ) => {
+            window.removeEventListener( eventName, this.handleEvent);
+        } );
+    };
+
+    // ----- event handler helpers ----- //
+
+    // trigger method with matching pointer
+    Gestures.prototype.withPointer = function( methodName, event )
+    {
+        if ( event.pointerId === this.pointerIdentifier )
+        {
+            this[ methodName ]( event, event );
+        }
+    };
+
+    // trigger method with matching touch
+    Gestures.prototype.withTouch = function( methodName, event )
+    {
+        let touch;
+        for ( let changedTouch of event.changedTouches )
+        {
+            if ( changedTouch.identifier === this.pointerIdentifier )
+            {
+                touch = changedTouch;
+            }
+        }
+        if ( touch ) this[ methodName ]( event, touch );
+    };
+
+    // ----- start event ----- //
+
+    Gestures.prototype.onmousedown = function( event )
+    {
+        this.pointerDown( event, event );
+    };
+
+    Gestures.prototype.ontouchstart = function( event )
+    {
+        this.pointerDown( event, event.changedTouches[0] );
+    };
+
+    Gestures.prototype.onpointerdown = function( event )
+    {
+        this.pointerDown( event, event );
+    };
+
+    // nodes that have text fields
+    const cursorNodes = [ 'TEXTAREA', 'INPUT', 'SELECT', 'OPTION' ];
+    // input types that do not have text fields
+    const clickTypes = [ 'radio', 'checkbox', 'button', 'submit', 'image', 'file' ];
+
+    /**
+    * any time you set `event, pointer` it refers to:
+    * @param {Event} event
+    * @param {Event | Touch} pointer
+    */
+    Gestures.prototype.pointerDown = function( event, pointer )
+    {
+        // dismiss multi-touch taps, right clicks, and clicks on text fields
+        let isCursorNode = cursorNodes.includes( event.target.nodeName );
+        let isClickType = clickTypes.includes( event.target.type );
+        let isOkayElement = !isCursorNode || isClickType;
+        let isOkay = !this.isPointerDown && !event.button && isOkayElement;
+        if ( !isOkay ) return;
+
+        this.isPointerDown = true;
+        // save pointer identifier to match up touch events
+        this.pointerIdentifier = pointer.pointerId !== undefined ?
+        // pointerId for pointer events, touch.indentifier for touch events
+        pointer.pointerId : pointer.identifier;
+        // track position for move
+        this.pointerDownPointer = {
+            pageX: pointer.pageX,
+            pageY: pointer.pageY,
+        };
+
+        this.bindActivePointerEvents();
+
+        this.emitEvent( 'pointerDown', [ event, pointer ] );
+    };
+
+    // ----- move ----- //
+
+    Gestures.prototype.onmousemove = function( event )
+    {
+        this.pointerMove( event, event );
+    };
+
+    Gestures.prototype.onpointermove = function( event )
+    {
+        this.withPointer( 'pointerMove', event );
+    };
+
+    Gestures.prototype.ontouchmove = function( event )
+    {
+        this.withTouch( 'pointerMove', event );
+    };
+
+    Gestures.prototype.pointerMove = function( event, pointer )
+    {
+        let moveVector = {
+            x: pointer.pageX - this.pointerDownPointer.pageX,
+            y: pointer.pageY - this.pointerDownPointer.pageY,
+        };
+        this.emitEvent( 'pointerMove', [ event, pointer, moveVector ] );
+    // start drag if pointer has moved far enough to start drag
+        let isDragStarting = !this.isDragging && this.hasDragStarted( moveVector );
+        if ( isDragStarting ) this.dragStart( event, pointer );
+        if ( this.isDragging ) this.dragMove( event, pointer, moveVector );
+    };
+
+    // condition if pointer has moved far enough to start drag
+    Gestures.prototype.hasDragStarted = function( moveVector )
+    {
+        return Math.abs( moveVector.x ) > 3 || Math.abs( moveVector.y ) > 3;
+    };
+
+    // ----- drag ----- //
+
+    Gestures.prototype.dragStart = function( event, pointer )
+    {
+        this.isDragging = true;
+        this.isPreventingClicks = true; // set flag to prevent clicks
+        this.emitEvent( 'dragStart', [ event, pointer ] );
+    };
+
+    Gestures.prototype.dragMove = function( event, pointer, moveVector )
+    {
+        this.emitEvent( 'dragMove', [ event, pointer, moveVector ] );
+    };
+
+        // ----- end ----- //
+
+    Gestures.prototype.onmouseup = function( event )
+    {
+        this.pointerUp( event, event );
+    };
+
+    Gestures.prototype.onpointerup = function( event )
+    {
+        this.withPointer( 'pointerUp', event );
+    };
+
+    Gestures.prototype.ontouchend = function( event )
+    {
+        this.withTouch( 'pointerUp', event );
+    };
+
+    Gestures.prototype.pointerUp = function( event, pointer )
+    {
+        this.pointerDone();
+        this.emitEvent( 'pointerUp', [ event, pointer ] );
+
+        if ( this.isDragging )
+        {
+            this.dragEnd( event, pointer );
+        } else {
+        // pointer didn't move enough for drag to start
+            this.staticClick( event, pointer );
+        }
+    };
+
+    Gestures.prototype.dragEnd = function( event, pointer )
+    {
+        this.isDragging = false; // reset flag
+        
+        // re-enable clicking async
+        setTimeout( () => delete this.isPreventingClicks );
+
+        this.emitEvent( 'dragEnd', [ event, pointer ] );
+    };
+
+    // triggered on pointer up & pointer cancel
+    Gestures.prototype.pointerDone = function()
+    {
+        this.isPointerDown = false;
+        delete this.pointerIdentifier;
+        this.unbindActivePointerEvents();
+        this.emitEvent('pointerDone');
+    };
+
+        // ----- cancel ----- //
+
+    Gestures.prototype.onpointercancel = function( event )
+    {
+        this.withPointer( 'pointerCancel', event );
+    };
+
+    Gestures.prototype.ontouchcancel = function( event )
+    {
+        this.withTouch( 'pointerCancel', event );
+    };
+
+    Gestures.prototype.pointerCancel = function( event, pointer )
+    {
+        this.pointerDone();
+        this.emitEvent( 'pointerCancel', [ event, pointer ] );
+    };
+
+        // ----- click ----- //
+
+        // handle all clicks and prevent clicks when dragging
+    Gestures.prototype.onclick = function( event )
+    {
+        if ( this.isPreventingClicks ) event.preventDefault();
+    };
+
+        // triggered after pointer down & up with no/tiny movement
+    Gestures.prototype.staticClick = function( event, pointer )
+    {
+        // ignore emulated mouse up clicks
+        let isMouseup = event.type === 'mouseup';
+        if ( isMouseup && this.isIgnoringMouseUp ) return;
+
+        this.emitEvent( 'staticClick', [ event, pointer ] );
+
+        // set flag for emulated clicks 300ms after touchend
+        if ( isMouseup )
+        {
+            this.isIgnoringMouseUp = true;
+        // reset flag after 400ms
+            setTimeout( () => {
+                delete this.isIgnoringMouseUp;
+            }, 400 );
+        }
+    };
+
+    // Load into container
+    Hubble.set('Gestures', Gestures);
+
+})();
 
 // DOM Module
 (function()
@@ -11091,17 +11437,12 @@ Container.singleton('_', _);
      * 
      * @var {Function}
      */
-    const _ = Hubble._();
-
-    function roundPx(number)
-    {
-        return Math.round(number * 10) / 10;
-    }
+    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width']).from('_');
 
     /**
-     * Selectors
+     * Default options
      * 
-     * @var {Map}
+     * @var {Object}
      */
     const DEFAULT_OPTIONS =
     {
@@ -11113,9 +11454,6 @@ Container.singleton('_', _);
         // if true, default is 3 seconds
         // or set time between advances in milliseconds
         // i.e. `autoPlay: 1000` will advance every 1 second
-
-        groupCells: false,
-        // group cells together in slides
 
         initialIndex: 0,
         // zero-based index of the initial selected cell
@@ -11129,13 +11467,18 @@ Container.singleton('_', _);
         resize: true,
         // listens to window resize events to adjust size & positions
 
-        wrap: false,
+        wrap: true,
         // at end of cells, wraps-around to first for infinite scrolling
 
         pauseOnHover: true,
         // Pauses autoplay on hover
 
-        easing: 'easeOutExpo'
+        easing: 'easeOutExpo',
+        // Easing pattern
+
+        draggable: '>1',
+        dragThreshold: 3,
+
     };
     
     /**
@@ -11146,7 +11489,7 @@ Container.singleton('_', _);
      */
     const _Slider = function(wrapper, options)
     {
-        this.options = _.is_object(options) ? {...DEFAULT_OPTIONS, ...options } :  {...DEFAULT_OPTIONS };
+        this.options = is_object(options) ? {...DEFAULT_OPTIONS, ...options } :  {...DEFAULT_OPTIONS };
 
         this.DOMElementWrapper = wrapper;
 
@@ -11157,6 +11500,8 @@ Container.singleton('_', _);
         this._hovering = false;
 
         this._translated = 0;
+
+        this._throttle = throttle(() => this.resize(), 100);
 
         this._build();
 
@@ -11174,7 +11519,19 @@ Container.singleton('_', _);
      */
     _Slider.prototype.destroy = function()
     {
-        
+        this.stop();
+
+        off(this._righBtn, 'click', this.next, this);
+
+        off(this._leftBtn, 'click', this.previous, this);
+
+        off(window, 'resize', this._throttle, this);
+
+        off(this.DOMElementWrapper, 'mouseover', this.pause, this);
+
+        off(this.DOMElementWrapper, 'mouseout', this.unpause, this);
+
+        off(this._dots, 'click', this.next, this);
     }
 
     /**
@@ -11206,9 +11563,9 @@ Container.singleton('_', _);
             this._translated = distance;
         }
 
-        _.animate(this._DOMElementViewport, { transform: `translateX(-${distance}px)`, easing: this.options.easing, duration: 750, complete: () => { 
+        animate(this._DOMElementViewport, { transform: `translateX(-${distance}px)`, easing: this.options.easing, duration: 550, complete: () => { 
 
-            if (this.options.wrap) _.css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+            if (this.options.wrap) css(this._DOMElementViewport, 'transform', `translateX(0px)`);
 
             this._moved(1);
 
@@ -11248,7 +11605,7 @@ Container.singleton('_', _);
 
             this._translated = distance;
             
-            _.animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+            animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
             { 
                 this._animating = false;
 
@@ -11267,14 +11624,14 @@ Container.singleton('_', _);
             // Run animation
             let distance = (this._slideWidth + this._gapSize);
 
-            _.css(this._DOMElementViewport, 'left', `-${preDistance}px`);
+            css(this._DOMElementViewport, 'left', `-${preDistance}px`);
 
             // Run animation
-            _.animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+            animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
             { 
-                _.css(this._DOMElementViewport, 'left', `-${this._offset}px`);
+                css(this._DOMElementViewport, 'left', `-${this._offset}px`);
 
-                _.css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+                css(this._DOMElementViewport, 'transform', `translateX(0px)`);
 
                 this._animating = false;
 
@@ -11336,11 +11693,11 @@ Container.singleton('_', _);
             
             this._translated = distance;
 
-            _.for(delta, () => { this._updateIndex(direction) });
+            _for(delta, () => { this._updateIndex(direction) });
 
             this._updateDots();
             
-            _.animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+            animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
             { 
                 this._animating = false;
 
@@ -11363,24 +11720,24 @@ Container.singleton('_', _);
         distance  = direction === 1 ? -distance : distance;
 
         // Shuffle slides
-        _.for(delta, () => { this._moved(direction); this._updateIndex(direction) }, this);
+        _for(delta, () => { this._moved(direction); this._updateIndex(direction) }, this);
 
         // Insert buffer clones
         let clones = this._bufferNodes(direction);
 
-        _.css(this._DOMElementViewport, 'left', `-${tmpOffset}px`);
+        css(this._DOMElementViewport, 'left', `-${tmpOffset}px`);
 
         // Run animation
-        _.animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+        animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
         { 
-            _.each(clones, (i, clone) =>
+            each(clones, (i, clone) =>
             {
                 clone.parentNode.removeChild(clone);
             });
 
-            _.css(this._DOMElementViewport, 'left', `-${this._offset}px`);
+            css(this._DOMElementViewport, 'left', `-${this._offset}px`);
 
-            _.css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+            css(this._DOMElementViewport, 'transform', `translateX(0px)`);
 
             this._animating = false;
 
@@ -11399,16 +11756,16 @@ Container.singleton('_', _);
     _Slider.prototype.resize = function()
     {
         // Is full width, may change with responsive CSS
-        this._isFullWidth = parseInt(_.rendered_style(this._slides[0], 'max-width')) === 100;
+        this._isFullWidth = parseInt(rendered_style(this._slides[0], 'max-width')) === 100;
 
         // Viewport width
-        this._viewportWidth = Math.round(_.width(this.DOMElementWrapper));
+        this._viewportWidth = Math.round(width(this.DOMElementWrapper));
 
         // Gap size
-        this._gapSize = parseInt(_.rendered_style(this._DOMElementViewport, 'column-gap'));
+        this._gapSize = parseInt(rendered_style(this._DOMElementViewport, 'column-gap'));
 
         // Slide width
-        this._slideWidth = Math.round(_.width(this._slides[0], this.DOMElementWrapper));
+        this._slideWidth = Math.round(width(this._slides[0], this.DOMElementWrapper));
 
         // Offset
         this._offset = Math.round(this.options.wrap ? (this._middleIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2) : (this._slideWidth + this._gapSize) - ((this._viewportWidth + this._slideWidth) / 2));
@@ -11421,7 +11778,7 @@ Container.singleton('_', _);
         }
 
         // Make offset
-        _.css(this._DOMElementViewport, 'left', `${this._offset === 0 ? 0 : -this._offset}px`);
+        css(this._DOMElementViewport, 'left', `${this._offset === 0 ? 0 : -this._offset}px`);
     }
 
     /**
@@ -11438,7 +11795,7 @@ Container.singleton('_', _);
         
         if (isPageHidden)
         {
-            _.on(document, 'visibilitychange', this._onVisibilityPlay, this);
+            on(document, 'visibilitychange', this._onVisibilityPlay, this);
 
             return;
         }
@@ -11446,7 +11803,7 @@ Container.singleton('_', _);
         this._playing = 'playing';
 
         // listen to visibility change
-        _.on(document, 'visibilitychange', this._onVisibilityChange, this);
+        on(document, 'visibilitychange', this._onVisibilityChange, this);
 
         // start ticking
         this._tick();
@@ -11464,7 +11821,7 @@ Container.singleton('_', _);
         clearTimeout(this._playTimer);
         
         // remove visibility change event
-        _.off(document, 'visibilitychange', this._onVisibilityChange, this);
+        off(document, 'visibilitychange', this._onVisibilityChange, this);
     }
 
     /**
@@ -11501,7 +11858,7 @@ Container.singleton('_', _);
     _Slider.prototype._build = function()
     {
         // Find slides
-        this._slides = _.find_all('> *', this.DOMElementWrapper);
+        this._slides = find_all('> *', this.DOMElementWrapper);
 
         // Slides count
         this._slidesCount = this._slides.length;
@@ -11522,7 +11879,7 @@ Container.singleton('_', _);
         this._bufferSize = 0;
 
         // Create viewport
-        this._DOMElementViewport = _.dom_element({tag: 'div', class: 'slider-viewport js-slider-viewport'}, this.DOMElementWrapper, this._slides);
+        this._DOMElementViewport = dom_element({tag: 'div', class: 'slider-viewport js-slider-viewport'}, this.DOMElementWrapper, this._slides);
 
         // Controls
         if (this.options.controls) this._buildControls();
@@ -11535,13 +11892,113 @@ Container.singleton('_', _);
         // Pause on hover
         if (this.options.autoPlay && this.options.pauseOnHover)
         {
-            _.on(this.DOMElementWrapper, 'mouseover', this.pause, this);
+            on(this.DOMElementWrapper, 'mouseover', this.pause, this);
 
-            _.on(this.DOMElementWrapper, 'mouseout', this.unpause, this);
+            on(this.DOMElementWrapper, 'mouseout', this.unpause, this);
+        }
+
+        // Window resize
+        if (this.options.resize)
+        {
+            on(window, 'resize', this._throttle, this);
+        }
+
+        if (this.options.draggable)
+        {
+            add_class(this.DOMElementWrapper, 'draggable');
+
+            this._bindGestures();
         }
     }
 
-     /**
+    /**
+     * Build controls.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._bindGestures = function()
+    {
+        let wrapper = this.DOMElementWrapper;
+
+        const handlePointerDown = function(event)
+        {
+            this.dragX = event.x;
+
+            add_class(wrapper, 'pointer-down');
+
+            console.log('pointerdown');
+        }
+
+        const handlePointerUp = function(event)
+        {
+            this.dragX = event.x;
+
+            remove_class(wrapper, 'pointer-down');
+
+            console.log('pointerdown');
+        }
+
+        const handleDragStart = function(event, pointer)
+        {
+            console.log('handleDragStart');
+
+            add_class(wrapper, 'dragging');
+
+            this.dragStartPosition = event.x;
+            
+            //this.startAnimation();
+        }
+
+        const handleDragMove = function( event, pointer, moveVector )
+        {
+            console.log('handleDragMove');
+
+            event.preventDefault();
+
+            this.previousDragX = this.dragX;
+
+            let dragX = this.dragStartPosition + moveVector.x;
+
+            /*if ( !this.options.draggable ) return;
+
+            // Slow down
+            if ( !this.options.wrap )
+            {
+                // slow drag
+                let originBound = Math.max( -this.slides[0].target, this.dragStartPosition );
+                dragX = dragX > originBound ? ( dragX + originBound ) * 0.5 : dragX;
+                let endBound = Math.min( -this.getLastSlide().target, this.dragStartPosition );
+                dragX = dragX < endBound ? ( dragX + endBound ) * 0.5 : dragX;
+            }
+
+            this.dragX = dragX;
+
+            this.dragMoveTime = new Date();*/
+        };
+
+        const handleDragEnd = () =>
+        {
+            console.log('handleDragEnd');
+
+            add_class(wrapper, 'dragging');
+
+            /*if ( !this.options.draggable ) return;
+
+            // set selectedIndex based on where flick will end up
+            //let index = this.dragEndRestingSelect();
+
+            delete this.previousDragX;
+
+            //this.select( index );
+            
+            delete this.isDragSelect;*/
+        }
+
+        // Gestures
+        const gestures = Hubble.Gestures(this.DOMElementWrapper, { handlePointerDown, handleDragStart, handleDragMove, handleDragEnd, handlePointerUp });
+    }
+
+    /**
      * Build controls.
      *
      * @access {private}
@@ -11549,18 +12006,18 @@ Container.singleton('_', _);
     _Slider.prototype._buildControls = function()
     {
         // Right button
-        this._righBtn = _.dom_element({tag: 'button', type: 'button', class: 'slider-control control-right btn btn-pure'}, this.DOMElementWrapper, 
-            _.dom_element({tag: 'span',class: 'fa fa-caret-right'})
+        this._righBtn = dom_element({tag: 'button', type: 'button', class: 'slider-control control-right btn btn-pure'}, this.DOMElementWrapper, 
+            dom_element({tag: 'span',class: 'fa fa-caret-right'})
         );
 
         // Left button
-        this._leftBtn = _.dom_element({tag: 'button', type: 'button', class: 'slider-control control-left btn btn-pure'}, this.DOMElementWrapper, 
-            _.dom_element({tag: 'span',class: 'fa fa-caret-left'})
+        this._leftBtn = dom_element({tag: 'button', type: 'button', class: 'slider-control control-left btn btn-pure'}, this.DOMElementWrapper, 
+            dom_element({tag: 'span',class: 'fa fa-caret-left'})
         );
 
         // Handlers
-        _.on(this._righBtn, 'click', this.next, this);
-        _.on(this._leftBtn, 'click', this.previous, this);
+        on(this._righBtn, 'click', this.next, this);
+        on(this._leftBtn, 'click', this.previous, this);
     }
 
     /**
@@ -11572,13 +12029,13 @@ Container.singleton('_', _);
     {
         let index = this._index;
 
-        this._dotWrap = _.dom_element({tag: 'div', class: 'slider-dots'}, this.DOMElementWrapper, _.map(this._slides, (i, slide) =>
+        this._dotWrap = dom_element({tag: 'div', class: 'slider-dots'}, this.DOMElementWrapper, map(this._slides, (i, slide) =>
         {
-            let active = i === index ? 'btn-primary' : '';
+            let active = i === index ? 'active' : '';
 
-            let dot = _.dom_element({tag: 'button', type: 'button', dataIndex: i, class: `slider-dot js-slider-dot btn btn-circle ${active}`});
+            let dot = dom_element({tag: 'button', type: 'button', dataIndex: i, class: `slider-dot js-slider-dot btn btn-circle ${active}`});
 
-            _.on(dot, 'click', this._dotClick, this);
+            on(dot, 'click', this._dotClick, this);
 
             this._dots.push(dot);
 
@@ -11599,11 +12056,11 @@ Container.singleton('_', _);
 
         let slide = this._slides[this._index];
 
-        _.for(this._slidesCount, (i) =>
+        _for(this._slidesCount, (i) =>
         {
-            if (_.nth_siblings(slide) === this._middleIndex) return false;
+            if (nth_siblings(slide) === this._middleIndex) return false;
 
-            _.preapend(_.find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
+            preapend(find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
         
         }, this);
     }
@@ -11615,7 +12072,7 @@ Container.singleton('_', _);
      */
     _Slider.prototype._dotClick = function(e, dot)
     {
-        let index = parseInt(_.attr(dot, 'data-index')) +1;
+        let index = parseInt(attr(dot, 'data-index')) +1;
 
         this.toSlide(index, true);
     }
@@ -11688,11 +12145,11 @@ Container.singleton('_', _);
     {
         let viewport = this._DOMElementViewport;
 
-        return _.map([...Array(this._bufferSize).keys()], (i) =>
+        return map([...Array(this._bufferSize).keys()], (i) =>
         {
-            let clone = _.find(`> *:nth${direction === -1 ? '-' : '-last-'}child(${i+1})`, viewport).cloneNode(true);
+            let clone = find(`> *:nth${direction === -1 ? '-' : '-last-'}child(${i+1})`, viewport).cloneNode(true);
 
-            direction === -1 ? viewport.appendChild(clone) : _.preapend(clone, viewport);
+            direction === -1 ? viewport.appendChild(clone) : preapend(clone, viewport);
 
             return clone;
 
@@ -11720,7 +12177,7 @@ Container.singleton('_', _);
     {
         this.play();
         
-        _.off(document, 'visibilitychange', this._onVisibilityPlay, this);
+        off(document, 'visibilitychange', this._onVisibilityPlay, this);
     }
 
     /**
@@ -11760,11 +12217,11 @@ Container.singleton('_', _);
 
         if (direction === 1)
         {
-            this._DOMElementViewport.appendChild(_.find('> *:first-child', this._DOMElementViewport));
+            this._DOMElementViewport.appendChild(find('> *:first-child', this._DOMElementViewport));
         }
         else
         {
-           _.preapend(_.find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
+           preapend(find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
         }
     }
 
@@ -11777,18 +12234,17 @@ Container.singleton('_', _);
     {
         if (!this.options.dots) return;
 
-        _.remove_class(this._dot, 'btn-primary');
+        remove_class(this._dot, 'active');
 
         this._dot = this._dots[this._index];
 
-        _.add_class(this._dot, 'btn-primary');
+        add_class(this._dot, 'active');
     }
 
     // Load into container
     Hubble.set('_Slider', _Slider);
 
 })();
-
 (function()
 {
     /**

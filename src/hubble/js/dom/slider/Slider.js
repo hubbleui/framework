@@ -5,17 +5,12 @@
      * 
      * @var {Function}
      */
-    const _ = Hubble._();
-
-    function roundPx(number)
-    {
-        return Math.round(number * 10) / 10;
-    }
+    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width']).from('_');
 
     /**
-     * Selectors
+     * Default options
      * 
-     * @var {Map}
+     * @var {Object}
      */
     const DEFAULT_OPTIONS =
     {
@@ -27,9 +22,6 @@
         // if true, default is 3 seconds
         // or set time between advances in milliseconds
         // i.e. `autoPlay: 1000` will advance every 1 second
-
-        groupCells: false,
-        // group cells together in slides
 
         initialIndex: 0,
         // zero-based index of the initial selected cell
@@ -43,13 +35,18 @@
         resize: true,
         // listens to window resize events to adjust size & positions
 
-        wrap: false,
+        wrap: true,
         // at end of cells, wraps-around to first for infinite scrolling
 
         pauseOnHover: true,
         // Pauses autoplay on hover
 
-        easing: 'easeOutExpo'
+        easing: 'easeOutExpo',
+        // Easing pattern
+
+        draggable: '>1',
+        dragThreshold: 3,
+
     };
     
     /**
@@ -60,7 +57,7 @@
      */
     const _Slider = function(wrapper, options)
     {
-        this.options = _.is_object(options) ? {...DEFAULT_OPTIONS, ...options } :  {...DEFAULT_OPTIONS };
+        this.options = is_object(options) ? {...DEFAULT_OPTIONS, ...options } :  {...DEFAULT_OPTIONS };
 
         this.DOMElementWrapper = wrapper;
 
@@ -71,6 +68,8 @@
         this._hovering = false;
 
         this._translated = 0;
+
+        this._throttle = throttle(() => this.resize(), 100);
 
         this._build();
 
@@ -88,7 +87,19 @@
      */
     _Slider.prototype.destroy = function()
     {
-        
+        this.stop();
+
+        off(this._righBtn, 'click', this.next, this);
+
+        off(this._leftBtn, 'click', this.previous, this);
+
+        off(window, 'resize', this._throttle, this);
+
+        off(this.DOMElementWrapper, 'mouseover', this.pause, this);
+
+        off(this.DOMElementWrapper, 'mouseout', this.unpause, this);
+
+        off(this._dots, 'click', this.next, this);
     }
 
     /**
@@ -120,9 +131,9 @@
             this._translated = distance;
         }
 
-        _.animate(this._DOMElementViewport, { transform: `translateX(-${distance}px)`, easing: this.options.easing, duration: 750, complete: () => { 
+        animate(this._DOMElementViewport, { transform: `translateX(-${distance}px)`, easing: this.options.easing, duration: 550, complete: () => { 
 
-            if (this.options.wrap) _.css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+            if (this.options.wrap) css(this._DOMElementViewport, 'transform', `translateX(0px)`);
 
             this._moved(1);
 
@@ -162,7 +173,7 @@
 
             this._translated = distance;
             
-            _.animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+            animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
             { 
                 this._animating = false;
 
@@ -181,14 +192,14 @@
             // Run animation
             let distance = (this._slideWidth + this._gapSize);
 
-            _.css(this._DOMElementViewport, 'left', `-${preDistance}px`);
+            css(this._DOMElementViewport, 'left', `-${preDistance}px`);
 
             // Run animation
-            _.animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+            animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
             { 
-                _.css(this._DOMElementViewport, 'left', `-${this._offset}px`);
+                css(this._DOMElementViewport, 'left', `-${this._offset}px`);
 
-                _.css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+                css(this._DOMElementViewport, 'transform', `translateX(0px)`);
 
                 this._animating = false;
 
@@ -250,11 +261,11 @@
             
             this._translated = distance;
 
-            _.for(delta, () => { this._updateIndex(direction) });
+            _for(delta, () => { this._updateIndex(direction) });
 
             this._updateDots();
             
-            _.animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+            animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
             { 
                 this._animating = false;
 
@@ -277,24 +288,24 @@
         distance  = direction === 1 ? -distance : distance;
 
         // Shuffle slides
-        _.for(delta, () => { this._moved(direction); this._updateIndex(direction) }, this);
+        _for(delta, () => { this._moved(direction); this._updateIndex(direction) }, this);
 
         // Insert buffer clones
         let clones = this._bufferNodes(direction);
 
-        _.css(this._DOMElementViewport, 'left', `-${tmpOffset}px`);
+        css(this._DOMElementViewport, 'left', `-${tmpOffset}px`);
 
         // Run animation
-        _.animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 750, complete: () => 
+        animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
         { 
-            _.each(clones, (i, clone) =>
+            each(clones, (i, clone) =>
             {
                 clone.parentNode.removeChild(clone);
             });
 
-            _.css(this._DOMElementViewport, 'left', `-${this._offset}px`);
+            css(this._DOMElementViewport, 'left', `-${this._offset}px`);
 
-            _.css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+            css(this._DOMElementViewport, 'transform', `translateX(0px)`);
 
             this._animating = false;
 
@@ -313,16 +324,16 @@
     _Slider.prototype.resize = function()
     {
         // Is full width, may change with responsive CSS
-        this._isFullWidth = parseInt(_.rendered_style(this._slides[0], 'max-width')) === 100;
+        this._isFullWidth = parseInt(rendered_style(this._slides[0], 'max-width')) === 100;
 
         // Viewport width
-        this._viewportWidth = Math.round(_.width(this.DOMElementWrapper));
+        this._viewportWidth = Math.round(width(this.DOMElementWrapper));
 
         // Gap size
-        this._gapSize = parseInt(_.rendered_style(this._DOMElementViewport, 'column-gap'));
+        this._gapSize = parseInt(rendered_style(this._DOMElementViewport, 'column-gap'));
 
         // Slide width
-        this._slideWidth = Math.round(_.width(this._slides[0], this.DOMElementWrapper));
+        this._slideWidth = Math.round(width(this._slides[0], this.DOMElementWrapper));
 
         // Offset
         this._offset = Math.round(this.options.wrap ? (this._middleIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2) : (this._slideWidth + this._gapSize) - ((this._viewportWidth + this._slideWidth) / 2));
@@ -335,7 +346,7 @@
         }
 
         // Make offset
-        _.css(this._DOMElementViewport, 'left', `${this._offset === 0 ? 0 : -this._offset}px`);
+        css(this._DOMElementViewport, 'left', `${this._offset === 0 ? 0 : -this._offset}px`);
     }
 
     /**
@@ -352,7 +363,7 @@
         
         if (isPageHidden)
         {
-            _.on(document, 'visibilitychange', this._onVisibilityPlay, this);
+            on(document, 'visibilitychange', this._onVisibilityPlay, this);
 
             return;
         }
@@ -360,7 +371,7 @@
         this._playing = 'playing';
 
         // listen to visibility change
-        _.on(document, 'visibilitychange', this._onVisibilityChange, this);
+        on(document, 'visibilitychange', this._onVisibilityChange, this);
 
         // start ticking
         this._tick();
@@ -378,7 +389,7 @@
         clearTimeout(this._playTimer);
         
         // remove visibility change event
-        _.off(document, 'visibilitychange', this._onVisibilityChange, this);
+        off(document, 'visibilitychange', this._onVisibilityChange, this);
     }
 
     /**
@@ -415,7 +426,7 @@
     _Slider.prototype._build = function()
     {
         // Find slides
-        this._slides = _.find_all('> *', this.DOMElementWrapper);
+        this._slides = find_all('> *', this.DOMElementWrapper);
 
         // Slides count
         this._slidesCount = this._slides.length;
@@ -436,7 +447,7 @@
         this._bufferSize = 0;
 
         // Create viewport
-        this._DOMElementViewport = _.dom_element({tag: 'div', class: 'slider-viewport js-slider-viewport'}, this.DOMElementWrapper, this._slides);
+        this._DOMElementViewport = dom_element({tag: 'div', class: 'slider-viewport js-slider-viewport'}, this.DOMElementWrapper, this._slides);
 
         // Controls
         if (this.options.controls) this._buildControls();
@@ -449,13 +460,113 @@
         // Pause on hover
         if (this.options.autoPlay && this.options.pauseOnHover)
         {
-            _.on(this.DOMElementWrapper, 'mouseover', this.pause, this);
+            on(this.DOMElementWrapper, 'mouseover', this.pause, this);
 
-            _.on(this.DOMElementWrapper, 'mouseout', this.unpause, this);
+            on(this.DOMElementWrapper, 'mouseout', this.unpause, this);
+        }
+
+        // Window resize
+        if (this.options.resize)
+        {
+            on(window, 'resize', this._throttle, this);
+        }
+
+        if (this.options.draggable)
+        {
+            add_class(this.DOMElementWrapper, 'draggable');
+
+            this._bindGestures();
         }
     }
 
-     /**
+    /**
+     * Build controls.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._bindGestures = function()
+    {
+        let wrapper = this.DOMElementWrapper;
+
+        const handlePointerDown = function(event)
+        {
+            this.dragX = event.x;
+
+            add_class(wrapper, 'pointer-down');
+
+            console.log('pointerdown');
+        }
+
+        const handlePointerUp = function(event)
+        {
+            this.dragX = event.x;
+
+            remove_class(wrapper, 'pointer-down');
+
+            console.log('pointerdown');
+        }
+
+        const handleDragStart = function(event, pointer)
+        {
+            console.log('handleDragStart');
+
+            add_class(wrapper, 'dragging');
+
+            this.dragStartPosition = event.x;
+            
+            //this.startAnimation();
+        }
+
+        const handleDragMove = function( event, pointer, moveVector )
+        {
+            console.log('handleDragMove');
+
+            event.preventDefault();
+
+            this.previousDragX = this.dragX;
+
+            let dragX = this.dragStartPosition + moveVector.x;
+
+            /*if ( !this.options.draggable ) return;
+
+            // Slow down
+            if ( !this.options.wrap )
+            {
+                // slow drag
+                let originBound = Math.max( -this.slides[0].target, this.dragStartPosition );
+                dragX = dragX > originBound ? ( dragX + originBound ) * 0.5 : dragX;
+                let endBound = Math.min( -this.getLastSlide().target, this.dragStartPosition );
+                dragX = dragX < endBound ? ( dragX + endBound ) * 0.5 : dragX;
+            }
+
+            this.dragX = dragX;
+
+            this.dragMoveTime = new Date();*/
+        };
+
+        const handleDragEnd = () =>
+        {
+            console.log('handleDragEnd');
+
+            add_class(wrapper, 'dragging');
+
+            /*if ( !this.options.draggable ) return;
+
+            // set selectedIndex based on where flick will end up
+            //let index = this.dragEndRestingSelect();
+
+            delete this.previousDragX;
+
+            //this.select( index );
+            
+            delete this.isDragSelect;*/
+        }
+
+        // Gestures
+        const gestures = Hubble.Gestures(this.DOMElementWrapper, { handlePointerDown, handleDragStart, handleDragMove, handleDragEnd, handlePointerUp });
+    }
+
+    /**
      * Build controls.
      *
      * @access {private}
@@ -463,18 +574,18 @@
     _Slider.prototype._buildControls = function()
     {
         // Right button
-        this._righBtn = _.dom_element({tag: 'button', type: 'button', class: 'slider-control control-right btn btn-pure'}, this.DOMElementWrapper, 
-            _.dom_element({tag: 'span',class: 'fa fa-caret-right'})
+        this._righBtn = dom_element({tag: 'button', type: 'button', class: 'slider-control control-right btn btn-pure'}, this.DOMElementWrapper, 
+            dom_element({tag: 'span',class: 'fa fa-caret-right'})
         );
 
         // Left button
-        this._leftBtn = _.dom_element({tag: 'button', type: 'button', class: 'slider-control control-left btn btn-pure'}, this.DOMElementWrapper, 
-            _.dom_element({tag: 'span',class: 'fa fa-caret-left'})
+        this._leftBtn = dom_element({tag: 'button', type: 'button', class: 'slider-control control-left btn btn-pure'}, this.DOMElementWrapper, 
+            dom_element({tag: 'span',class: 'fa fa-caret-left'})
         );
 
         // Handlers
-        _.on(this._righBtn, 'click', this.next, this);
-        _.on(this._leftBtn, 'click', this.previous, this);
+        on(this._righBtn, 'click', this.next, this);
+        on(this._leftBtn, 'click', this.previous, this);
     }
 
     /**
@@ -486,13 +597,13 @@
     {
         let index = this._index;
 
-        this._dotWrap = _.dom_element({tag: 'div', class: 'slider-dots'}, this.DOMElementWrapper, _.map(this._slides, (i, slide) =>
+        this._dotWrap = dom_element({tag: 'div', class: 'slider-dots'}, this.DOMElementWrapper, map(this._slides, (i, slide) =>
         {
-            let active = i === index ? 'btn-primary' : '';
+            let active = i === index ? 'active' : '';
 
-            let dot = _.dom_element({tag: 'button', type: 'button', dataIndex: i, class: `slider-dot js-slider-dot btn btn-circle ${active}`});
+            let dot = dom_element({tag: 'button', type: 'button', dataIndex: i, class: `slider-dot js-slider-dot btn btn-circle ${active}`});
 
-            _.on(dot, 'click', this._dotClick, this);
+            on(dot, 'click', this._dotClick, this);
 
             this._dots.push(dot);
 
@@ -513,11 +624,11 @@
 
         let slide = this._slides[this._index];
 
-        _.for(this._slidesCount, (i) =>
+        _for(this._slidesCount, (i) =>
         {
-            if (_.nth_siblings(slide) === this._middleIndex) return false;
+            if (nth_siblings(slide) === this._middleIndex) return false;
 
-            _.preapend(_.find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
+            preapend(find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
         
         }, this);
     }
@@ -529,7 +640,7 @@
      */
     _Slider.prototype._dotClick = function(e, dot)
     {
-        let index = parseInt(_.attr(dot, 'data-index')) +1;
+        let index = parseInt(attr(dot, 'data-index')) +1;
 
         this.toSlide(index, true);
     }
@@ -602,11 +713,11 @@
     {
         let viewport = this._DOMElementViewport;
 
-        return _.map([...Array(this._bufferSize).keys()], (i) =>
+        return map([...Array(this._bufferSize).keys()], (i) =>
         {
-            let clone = _.find(`> *:nth${direction === -1 ? '-' : '-last-'}child(${i+1})`, viewport).cloneNode(true);
+            let clone = find(`> *:nth${direction === -1 ? '-' : '-last-'}child(${i+1})`, viewport).cloneNode(true);
 
-            direction === -1 ? viewport.appendChild(clone) : _.preapend(clone, viewport);
+            direction === -1 ? viewport.appendChild(clone) : preapend(clone, viewport);
 
             return clone;
 
@@ -634,7 +745,7 @@
     {
         this.play();
         
-        _.off(document, 'visibilitychange', this._onVisibilityPlay, this);
+        off(document, 'visibilitychange', this._onVisibilityPlay, this);
     }
 
     /**
@@ -674,11 +785,11 @@
 
         if (direction === 1)
         {
-            this._DOMElementViewport.appendChild(_.find('> *:first-child', this._DOMElementViewport));
+            this._DOMElementViewport.appendChild(find('> *:first-child', this._DOMElementViewport));
         }
         else
         {
-           _.preapend(_.find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
+           preapend(find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
         }
     }
 
@@ -691,11 +802,11 @@
     {
         if (!this.options.dots) return;
 
-        _.remove_class(this._dot, 'btn-primary');
+        remove_class(this._dot, 'active');
 
         this._dot = this._dots[this._index];
 
-        _.add_class(this._dot, 'btn-primary');
+        add_class(this._dot, 'active');
     }
 
     // Load into container

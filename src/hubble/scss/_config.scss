@@ -344,14 +344,15 @@ $lazyload-transition:           opacity 1s cubic-bezier(0.4, 0.0, 0.2, 1), filte
 $lazyload-falback-bg:           #d0d4d9;
 
 // Carousel
-$slider-bg:                     var(--body-bg) !default;
+$slider-bg:                     transparent !default;
 $slider-dots-color:             var(--hb-white) !default;
 $slider-dots-color-active:      var(--hb-brand-primary) !default;
-$slider-dots-size:              0.8rem !default;
-$slider-nav-btn-size:           4rem !default;
-$slider-nav-icon-size:          2rem !default;
+$slider-dots-size:              3px !default;
+$slider-nav-btn-size:           25px !default;
 $slider-nav-btn-color:          var(--hb-white) !default;
 $slider-nav-btn-color-hover:    var(--hb-brand-primary) !default;
+$slider-slides-gap:				20px;
+$slider-slide-width:			66%;
 
 // Tooltips
 $tooltip-bg:                    var(--hb-gray-900) !default;
