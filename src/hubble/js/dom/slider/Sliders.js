@@ -12,7 +12,7 @@
      * 
      * @var {Function}
      */
-    const [attr, each, extend, json_decode] = Hubble.import(['attr', 'each', 'extend', 'json_decode']).from('_');
+    const [attr, each, map, extend, dom_element, json_decode] = Hubble.import(['attr', 'each', 'map', 'extend', 'dom_element', 'json_decode']).from('_');
     
     /**
      * Slider instances.
@@ -63,6 +63,15 @@
                 return false;
             }
         });
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Slider.prototype.template = function(props)
+    {
+        return dom_element({tag: 'div', class: 'slider js-slider'}, null, props.slides);
     }
 
     // Load into Hubble DOM core

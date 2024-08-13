@@ -347,95 +347,200 @@
                     </div>
                     <article class="docs-body">
                         <h1 id="slider">Slider</h1>
-<p>Hubble's slider component uses an open source library called <a href="http://flickity.metafizzy.co/index.html">flickity.js</a>. The library uses a combination <code>JavaScript</code> and <code>CSS</code> to produce cross-browser, responsive, mobile and touch enabled carousels.            </p>
-<blockquote>
-  <p>Slider is a large JS component so has been split from Hubble's core. To enable Gallery add <code>slider.js</code> file after your <code>hubble.js</code> file.</p>
-</blockquote>
-<blockquote>
-  <p>This documentation only shows some very simple usage examples. For more in-depth documentation please see the <a href="#http://flickity.metafizzy.co/index.html">flickity.js</a> website.</p>
-</blockquote>
+<p>Hubble's Slider component can be used to cycle through content such as images, cards and text as a carousel.</p>
 <hr />
+<p>How it works</p>
+<ul>
+<li><a href="#how-it-works">How it works</a></li>
+<li><a href="#markup">Markup</a></li>
+<li><a href="#options">Options</a></li>
+<li><a href="#javascript-instantiation">JavaScript Instantiation</a></li>
+<li><a href="#dynamic-javascript-instantiation">Dynamic JavaScript Instantiation</a></li>
+<li><a href="#css-customization">CSS Customization</a></li>
+</ul>
 <hr />
-<h3 id="basic-example">Basic example</h3>
-<p>Carousels can be enabled through <code>HTML</code> markup rather than manually via <code>JavaScript</code>. The options are stored as <code>JSON</code> in the <code>data-flickity</code> attribute. <br />
-Here's a very simple example.</p>
+<h3 id="how-it-works">How it works</h3>
+<p>Slider creates an interactive, fully touch-enabled carousel element. It works with a series of images, text, or custom markup. It also includes support for previous/next controls, indicators and lots more options.</p>
+<p>In browsers where the Page Visibility API is supported, the carousel will avoid sliding when the webpage is not visible to the user (such as when the browser tab is inactive, the browser window is minimized, etc.).</p>
+<hr />
+<h3 id="markup">Markup</h3>
+<p>Carousels don't automatically normalize slide dimensions, however in Hubble's <code>config.scss</code> file there is a default width used for slides. You can set this up how you want or use CSS Variables to customize slide dimensions.</p>
+<p>Carousels can be instantiated through <code>HTML</code> markup using the <code>.js-slider</code> class with <code>.slider</code> for styling. Options can be set using as <code>JSON</code> in the <code>data-slider-options</code> attribute.</p>
+<p>Here's is a basic example:</p>
 <div class="code-content-example">
-    <div class="slider js-slider" data-options='{ "wrap": true }'>
+    <div class="slider js-slider" data-slider-options='{ "wrap": true }'>
         <div class="bg-salmon">1</div>
         <div class="bg-teal">2</div>
         <div class="bg-bb-blue">3</div>
         <div class="bg-salmon">4</div>
         <div class="bg-teal">5</div>
         <div class="bg-bb-blue">6</div>
-        <div class="bg-salmon">7</div>
-        <div class="bg-teal">8</div>
-        <div class="bg-bb-blue">9</div>
     </div>
 </div>
-<pre><code class="html language-html">&lt;div class="slider js-slider" data-options='{ "wrapAround": true }'&gt;
-    &lt;div&gt;&lt;/div&gt;
-    &lt;div&gt;&lt;/div&gt;
-    &lt;div&gt;&lt;/div&gt;
-    &lt;div&gt;&lt;/div&gt;
-    &lt;div&gt;&lt;/div&gt;
+<pre><code class="html language-html">&lt;div class="slider js-slider" data-slider-options='{ "wrap": true }'&gt;
+    &lt;div class="bg-salmon"&gt;1&lt;/div&gt;
+    &lt;div class="bg-teal"&gt;2&lt;/div&gt;
+    &lt;div class="bg-bb-blue"&gt;3&lt;/div&gt;
+    &lt;div class="bg-salmon"&gt;4&lt;/div&gt;
+    &lt;div class="bg-teal"&gt;5&lt;/div&gt;
+    &lt;div class="bg-bb-blue"&gt;6&lt;/div&gt;
 &lt;/div&gt;</code></pre>
 <hr />
-<h3 id="initialization">Initialization</h3>
-<p>There are two ways to initialize Flickity. </p>
-<h4 id="initialize-with-javascript">Initialize with JavaScript</h4>
-<p>To retrieve the Flickity object, simply call it from the via the container with <code>Container.Flickity();</code>. The constructor accepts two arguments: the carousel element and an options object.</p>
-<pre><code class="html language-html">var elem = document.querySelector('.main-carousel');
-var flkty = Container.Flickity( elem,
+<h3 id="options">Options</h3>
+<p>Whether initializing via <code>HTML</code> or <code>JavaScript</code>, Slider options remain the same. The only difference is when Initialized via <strong>JavaScript</strong> you have direct reference to the <code>Slider</code> Component itself, which has a few helper methods.</p>
+<p>The table below outlines the available options and their respective effects on the Slider</p>
+<table>
+<thead>
+<tr>
+<th id="option">Option</th>
+<th id="var_type">Var Type</th>
+<th id="default">Default</th>
+<th id="description">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>accessibility</code></td>
+<td><code>Boolean</code></td>
+<td><code>true</code></td>
+<td>Enables keyboard naviagation of slider via arrow keys.</td>
+</tr>
+<tr>
+<td><code>autoPlay</code></td>
+<td><code>Boolean</code> <code>Integer</code></td>
+<td><code>3000</code></td>
+<td>Autoplay interval in milliseonds, or false to disable.</td>
+</tr>
+<tr>
+<td><code>controls</code></td>
+<td><code>Boolean</code></td>
+<td><code>true</code></td>
+<td>Enables/disables the previous and next buttons.</td>
+</tr>
+<tr>
+<td><code>dots</code></td>
+<td><code>Boolean</code></td>
+<td><code>true</code></td>
+<td>Enables/disables dot indicator navigation</td>
+</tr>
+<tr>
+<td><code>draggable</code></td>
+<td><code>Boolean</code></td>
+<td><code>true</code></td>
+<td>Enables dragging</td>
+</tr>
+<tr>
+<td><code>easing</code></td>
+<td><code>Boolean</code></td>
+<td><code>easeOutExpo</code></td>
+<td>JavaScript easing timing pattern in camelCase</td>
+</tr>
+<tr>
+<td><code>groupSlides</code></td>
+<td><code>Boolean</code></td>
+<td><code>false</code></td>
+<td>Group slides into blocks of n</td>
+</tr>
+<tr>
+<td><code>initialIndex</code></td>
+<td><code>Integer</code></td>
+<td><code>0</code></td>
+<td>The initial DOMElement starting index slide</td>
+</tr>
+<tr>
+<td><code>mouseSupport</code></td>
+<td><code>Boolean</code></td>
+<td><code>true</code></td>
+<td>Enable/Disable dragging with mouse. draggable must be set to true</td>
+</tr>
+<tr>
+<td><code>pauseOnHover</code></td>
+<td><code>Boolean</code></td>
+<td><code>true</code></td>
+<td>Pause autoplay on hover</td>
+</tr>
+<tr>
+<td><code>resize</code></td>
+<td><code>Boolean</code></td>
+<td><code>true</code></td>
+<td>Enable/disabled window resize listener to update the slider dimensions</td>
+</tr>
+<tr>
+<td><code>wrap</code></td>
+<td><code>Boolean</code></td>
+<td><code>true</code></td>
+<td>Wrap slides to an infinite carousel</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="javascript-instantiation">JavaScript Instantiation</h3>
+<p>To manually Initialize a Slider to Markup in the DOM, use Hubble's Container and the <code>_Slider</code> method:</p>
+<pre><code class="JavaScript language-JavaScript">let slider = Hubble.Slider(DOMElement, options);</code></pre>
+<p>The <code>next</code> method animates moving to the next slide:</p>
+<pre><code class="JavaScript language-JavaScript">slider.next();</code></pre>
+<p>The <code>previous</code> method animates moving to the previous slide:</p>
+<pre><code class="JavaScript language-JavaScript">slider.previous();</code></pre>
+<p>Passing <code>false</code> as an optional argument on both <code>next</code> and <code>previous</code> will skip the animation and move directly to the slide:</p>
+<pre><code class="JavaScript language-JavaScript">slider.next(false);</code></pre>
+<p>The <code>toSlide</code> method animates moving to a slide number:</p>
+<pre><code class="JavaScript language-JavaScript">slider.toSlide(3);</code></pre>
+<p>Passing <code>false</code> as an optional second argument on <code>toSlide</code> will skip the animation and move directly to the slide:</p>
+<pre><code class="JavaScript language-JavaScript">slider.toSlide(3, false);</code></pre>
+<p>Passing <code>resize</code> method re-calculates any internal variables for the slider and makes adjustments. This is called automatically when the <code>resize</code> option is enabled and window is resized :</p>
+<pre><code class="JavaScript language-JavaScript">slider.resize();</code></pre>
+<p>Autoplay functionality has the following methods <code>play</code> <code>pause</code> <code>unpause</code> <code>stop</code></p>
+<pre><code class="JavaScript language-JavaScript">slider.pause();</code></pre>
+<p>Finally, the <code>destroy</code> method will remove all listeners on the slider and disable it</p>
+<pre><code class="JavaScript language-JavaScript">slider.destroy();</code></pre>
+<hr />
+<h3 id="dynamic-javascript-instantiation">Dynamic JavaScript Instantiation</h3>
+<p>For dynamically generated content, Sliders can be instantiated via JavaScript to generate dynamic content on the fly with Hubble's <code>Component.Create</code> method either via the <code>Hubble.Dom</code> or the <code>Slider</code> Component directly. The <code>slides</code> value can be either an array or <code>HTML</code> strings or an Array/NodeList.</p>
+<pre><code class="JavaScript language-JavaScript">let options =
 {
-  // options
-  cellAlign: 'left',
-  contain: true
-});
-// element argument can be a selector string
-//   for an individual element
-var flkty = Container.Flickity( '.main-carousel',
-{
-  // options
-  cellAlign: 'left',
-  contain: true
-});</code></pre>
-<pre><code>                        &lt;br&gt;</code></pre>
-<h3 id="initialize-with-html">Initialize with HTML</h3>
-<p>You can initialize Flickity in HTML, without writing any JavaScript. Add data-flickity attribute to the carousel element. Options can be set in its value.  </p>
-<pre><code class="html language-html">&lt;div data-flickity='{ "cellAlign": "left", "contain": true }'&gt;</code></pre>
-<p><br></p>
-<blockquote>
-  <p>Options set in HTML must be valid <code>JSON</code>. Keys need to be quoted, for example <code>"cellAlign":</code>. Note that the attribute value uses single quotes <code>'</code>, but the JSON entities use double-quotes <code>"</code>. </p>
-</blockquote>
-<h3 id="styling">Styling</h3>
-<p>To provide as much customization as possible, Flickity provides only the styles necessary for the carousel to function. All sizing and styling of the cells are handled by your own CSS. The height of the carousel is set to the maximum height of the cells. </p>
-<div class="code-content-example">
-    <div class="slider">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
-<pre><code class="html language-html">.carousel-cell {
-  width: 100%; /* full width */
-  height: 160px; /* height of carousel */
-  margin-right: 10px;
-}</code></pre>
-<pre><code>                        &lt;div class="code-content-example"&gt;
-                            &lt;div class="carousel carousel-half" data-flickity&gt;
-                                &lt;div&gt;&lt;/div&gt;
-                                &lt;div&gt;&lt;/div&gt;
-                                &lt;div&gt;&lt;/div&gt;
-                                &lt;div&gt;&lt;/div&gt;
-                                &lt;div&gt;&lt;/div&gt;
-                            &lt;/div&gt;
-                        &lt;/div&gt; </code></pre>
-<pre><code class="html language-html">.carousel-cell {
-  width: 50%; /* half-width */
-  height: 160px;
-  margin-right: 10px;
+    wrap: false,
+    draggable: false,
+    slides:
+    [
+        '&lt;img src="..." alt="..."&gt;',
+        '&lt;img src="..." alt="..."&gt;',
+        '&lt;img src="..." alt="..."&gt;',
+        '&lt;img src="..." alt="..."&gt;',
+    ]
+};
+
+let container = document.querySelector('.my-container');
+
+// Via Hibble dom
+let slider = Hubble.Dom().create('Slider', options, container);
+
+// Or via Component directly
+let slider = Hubble.Dom().component('Slider').create(options, container);</code></pre>
+<hr />
+<h3 id="css-customization">CSS Customization</h3>
+<p>Slider uses local CSS variables on <code>.slider</code> along with Sass variables for enhanced component customization and styling. The base values are used by the UI to create all the styling. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported too.</p>
+<p>Customization via Sass can be made in the <code>src/scss/_config.scss</code> file in Hubble's source.</p>
+<pre><code class="file-path language-file-path">`src/scss/_config.scss`</code></pre>
+<pre><code class="sass language-sass">$slider-bg:                     transparent !default;
+$slider-dots-color:             var(--hb-white) !default;
+$slider-dots-color-active:      var(--hb-brand-primary) !default;
+$slider-dots-size:              3px !default;
+$slider-nav-btn-size:           25px !default;
+$slider-nav-btn-color:          var(--hb-white) !default;
+$slider-nav-btn-color-hover:    var(--hb-brand-primary) !default;
+$slider-slides-gap:             20px;
+$slider-slide-width:            66%;</code></pre>
+<pre><code class="file-path language-file-path">src/scss/components/slider.scss</code></pre>
+<pre><code class="css language-css">.slider {
+    --hb-slider-bg: transparent;
+    --hb-slider-dots-color: var(--hb-white);
+    --hb-slider-dots-color-active: var(--hb-brand-primary);
+    --hb-slider-dots-size: 3px;
+    --hb-slider-nav-btn-size: 25px;
+    --hb-slider-nav-btn-color: var(--hb-white);
+    --hb-slider-nav-btn-color-hover: var(--hb-brand-primary);
+    --hb-slider-slides-gap: 20px;
+    --hb-slider-slide-width: 66%;
 }</code></pre>
                     </article>
                 </div>

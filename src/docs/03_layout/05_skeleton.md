@@ -768,7 +768,7 @@ The example below shows swapping out the contents of card component. Click the `
 
 ### CSS Customization
 
-Skeleton uses local CSS variables on all `.skeleton` for enhanced component customization and styling. The base values are used by the UI to create all the sizing. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported, too.
+Skeleton uses local CSS variables on all `.skeleton` for enhanced component customization and styling. The base values are used by the UI to create all the sizing. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported too.
 
 Customization via Sass can be made in the `src/scss/_config.scss` file in Hubble's source.
 

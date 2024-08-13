@@ -5794,13 +5794,11 @@ form.success .msg-success {
   -webkit-user-select: none;
       -ms-user-select: none;
           user-select: none;
-}
-.slider.draggable .slider-viewport {
   cursor: move;
   cursor: -webkit-grab;
   cursor: grab;
 }
-.slider.draggable.pointer-down .slider-viewport {
+.slider.draggable.pointer-down {
   cursor: -webkit-grabbing;
   cursor: grabbing;
 }
@@ -5822,6 +5820,10 @@ form.success .msg-success {
   max-width: var(--hb-slider-slide-width);
   -ms-flex: 0 0 100%;
       flex: 0 0 100%;
+}
+.slider .slider-viewport > .slide-group {
+  display: -ms-flexbox;
+  display: flex;
 }
 .slider .slider-control {
   --hb-btn-color: var(--hb-slider-nav-btn-color);

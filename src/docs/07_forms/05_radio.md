@@ -232,7 +232,7 @@ Additional sizing is available through `.radio-sm`, `radio-md` and `radio-lg`:
 
 ### Customization
 
-Checkboxes use local CSS variables on `.radio` for enhanced component customization and styling. The base values are used by the UI to create all the variants. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported, too.
+Checkboxes use local CSS variables on `.radio` for enhanced component customization and styling. The base values are used by the UI to create all the variants. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported too.
 
 Customization via Sass can be made in the `src/scss/_config.scss` file in Hubble's source.
 

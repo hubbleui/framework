@@ -87,7 +87,7 @@ Container gutters are left and right padding applied to the container element. T
 
 ### CSS Customization
 
-The container system uses a combination of both local root CSS variables for enhanced component customization and styling. The base values are used by the UI to create the gutters and sizings. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported, too.
+The container system uses a combination of both local root CSS variables for enhanced component customization and styling. The base values are used by the UI to create the gutters and sizings. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported too.
 
 Customization via Sass can be made in the `src/scss/_config.scss` file in Hubble's source.
 

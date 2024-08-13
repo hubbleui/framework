@@ -5,7 +5,7 @@
      * 
      * @var {Function}
      */
-    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width']).from('_');
+    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width, inline_style] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width','inline_style']).from('_');
 
     /**
      * Default options
@@ -14,18 +14,18 @@
      */
     const DEFAULT_OPTIONS =
     {
-        accessibility: true,
         // enable keyboard navigation, pressing left & right keys
-
-        autoPlay: true,
+        accessibility: true,
+        
         // advances to the next cell
         // if true, default is 3 seconds
         // or set time between advances in milliseconds
         // i.e. `autoPlay: 1000` will advance every 1 second
+        autoPlay: true,
 
-        initialIndex: 0,
         // zero-based index of the initial selected cell
-
+        initialIndex: 0,
+        
         controls: true,
         // creates and enables buttons to click to previous & next cells
 
@@ -38,15 +38,30 @@
         wrap: true,
         // at end of cells, wraps-around to first for infinite scrolling
 
+        // Group slides
+        groupSlides: false,
+
         pauseOnHover: true,
         // Pauses autoplay on hover
 
         easing: 'easeOutExpo',
         // Easing pattern
 
-        draggable: '>1',
-        dragThreshold: 3,
+        draggable: true,
+        // Draggable
 
+        friction: 0.85,
+        // Dragging friction
+
+        mouseSupport: true,
+        // Enables dragging with mouse,
+
+        // Minimum swipe distance to be a "swipe"
+        threshold: (type, self) => 3,
+
+        // Minimum travel swipe velocity to be considered a "swipe"
+        velocityThreshold: 3,
+        
     };
     
     /**
@@ -65,11 +80,9 @@
 
         this._playing = 'stopped';
 
-        this._hovering = false;
-
         this._translated = 0;
 
-        this._throttle = throttle(() => this.resize(), 100);
+        this._resizeThrottle = throttle(() => this.resize(), 100);
 
         this._build();
 
@@ -89,11 +102,13 @@
     {
         this.stop();
 
+        if (this._gestures) this.gestures.destroy();
+
         off(this._righBtn, 'click', this.next, this);
 
         off(this._leftBtn, 'click', this.previous, this);
 
-        off(window, 'resize', this._throttle, this);
+        off(window, 'resize', this._resizeThrottle, this);
 
         off(this.DOMElementWrapper, 'mouseover', this.pause, this);
 
@@ -110,7 +125,7 @@
     _Slider.prototype.next = function(e)
     {
         // Stop on animating
-        if (this._animating) return;
+        if (this._animating || this._dragging) return;
 
         // Do nothing on non-wrap and at end
         if (!this.options.wrap && this._index === this._slidesIndexs) return;
@@ -131,21 +146,36 @@
             this._translated = distance;
         }
 
-        animate(this._DOMElementViewport, { transform: `translateX(-${distance}px)`, easing: this.options.easing, duration: 550, complete: () => { 
+        // Update the index and dots.        
+        this._updateIndex(1);
+        this._updateDots();
 
-            if (this.options.wrap) css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+        // Shuffle before animation
+        if (this.options.wrap)
+        {
+            // Adjust pre distance before animation
+            let preDistance = this._offset - this._slideWidthWGap;
 
             this._moved(1);
+
+            css(this._DOMElementViewport, 'left', `-${preDistance}px`);
+        }
+
+        animate(this._DOMElementViewport, { transform: `translateX(-${distance}px)`, easing: this.options.easing, duration: 550, complete: () =>
+        { 
+            if (this.options.wrap)
+            {
+                css(this._DOMElementViewport, 'left', `-${this._offset}px`);
+
+                css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+            }
+
+            if (!this.options.wrap) this._moved(1);
 
             this._animating = false;
 
             if (!e) this.unpause();
-
         }});
-    
-        // Update the index and dots.        
-        this._updateIndex(1);
-        this._updateDots();
     }
 
     /**
@@ -153,10 +183,10 @@
      *
      * @access {public}
      */
-    _Slider.prototype.previous = function()
+    _Slider.prototype.previous = function(e)
     {
         // Stop on animating
-        if (this._animating) return;
+        if (this._animating || this._dragging) return;
 
         // Do nothing on non-wrap and at start
         if (!this.options.wrap && this._index === 0) return;
@@ -167,51 +197,43 @@
         // We're now animating
         this._animating = true;
 
-        if (!this.options.wrap)
+        // Cache distance
+        let distance = !this.options.wrap ? (this._translated - (this._slideWidth + this._gapSize)) : this._slideWidth + this._gapSize;
+
+        this._translated = distance < 2 ? 0 : distance;
+
+        // Failsafe 
+        if (!this.options.wrap) distance = distance < 2 ? 0 : -distance;
+
+        // Update dots and indexes
+        this._updateIndex(-1);
+        this._updateDots();
+
+        // Shuffle before animation
+        if (this.options.wrap)
         {
-            let distance = this._translated - (this._slideWidth + this._gapSize);
-
-            this._translated = distance;
-            
-            animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
-            { 
-                this._animating = false;
-
-                this.unpause();
-
-            } });
-        }
-        else
-        {
-            // Shuffle before animation
-            this._moved(-1);
-
             // Adjust pre distance before animation
             let preDistance = this._offset + (this._slideWidth + this._gapSize);
 
-            // Run animation
-            let distance = (this._slideWidth + this._gapSize);
+            this._moved(-1);
 
             css(this._DOMElementViewport, 'left', `-${preDistance}px`);
+        }
 
-            // Run animation
-            animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
-            { 
+        // Run animation
+        animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
+        { 
+            if (this.options.wrap)
+            {
                 css(this._DOMElementViewport, 'left', `-${this._offset}px`);
 
                 css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+            }
 
-                this._animating = false;
+            this._animating = false;
 
-                this.unpause();
-
-            } });
-        }
-            
-        // Update dots and indexes
-        this._updateIndex(-1);
-
-        this._updateDots();
+            if (!e) this.unpause();
+        } });
     }
 
     /**
@@ -220,10 +242,16 @@
      * @access {public}
      * @param  {integer} slideNum Slide number
      */
-    _Slider.prototype.toSlide = function(slideNum, fromClick)
-    {   
+    _Slider.prototype.toSlide = function(slideNum, animation, fromClick)
+    {
         // Animating
         if (this._animating) return false;
+
+        animation = typeof animation === 'undefined' ? true : animation;
+
+        fromClick = typeof fromClick === 'undefined' ? false : fromClick;
+
+        if (!animation) return this._toSlideDirect(slideNum);
 
         // convert slide number to index
         let index = slideNum === 1 ? 0 : slideNum-1;
@@ -259,17 +287,17 @@
 
             distance = direction === -1 ? this._translated - distance : this._translated + distance;
             
-            this._translated = distance;
+            this._translated = distance < 2 ? 0 : distance;
 
             _for(delta, () => { this._updateIndex(direction) });
 
             this._updateDots();
             
-            animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
+            animate(this._DOMElementViewport, { transform: `translateX(${distance < 2 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
             { 
                 this._animating = false;
 
-                this.unpause();
+                if (!fromClick) this.unpause();
 
             } });
 
@@ -296,7 +324,7 @@
         css(this._DOMElementViewport, 'left', `-${tmpOffset}px`);
 
         // Run animation
-        animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
+        animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 650, complete: () => 
         { 
             each(clones, (i, clone) =>
             {
@@ -316,6 +344,54 @@
         this._updateDots();
     }
 
+     /**
+     * Go to slide.
+     *
+     * @access {public}
+     * @param  {integer} slideNum Slide number
+     */
+    _Slider.prototype._toSlideDirect = function(slideNum)
+    {
+        // convert slide number to index
+        let index = slideNum === 1 ? 0 : slideNum-1;
+
+        // Clear timeout
+        this.pause();
+
+        // Default delta and direction
+        let delta       = index < this._index ? this._index - index : index - this._index;
+        let direction   = index < this._index ? -1 : 1;
+
+        // If we're not wrapping we can skip all of this
+        if (!this.options.wrap)
+        {
+            let distance = (this._slideWidth + this._gapSize) * delta;
+
+            distance = direction === -1 ? this._translated - distance : this._translated + distance;
+            
+            this._translated = distance < 2 ? 0 : distance;
+
+            _for(delta, () => { this._updateIndex(direction) });
+
+            this._updateDots();
+
+            css(this._DOMElementViewport, 'transform',  `translateX(${distance < 2 ? 0 : -distance}px)`);
+            
+            this.unpause();
+
+            return;
+        }
+
+        // Shuffle slides
+        _for(delta, () => { this._moved(direction); this._updateIndex(direction) }, this);
+
+        css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+
+        this._updateDots();
+
+        this.unpause();
+    }
+
     /**
      * Window resize handler.
      *
@@ -323,6 +399,8 @@
      */
     _Slider.prototype.resize = function()
     {
+        if (this._slidesCount === 0) return;
+
         // Is full width, may change with responsive CSS
         this._isFullWidth = parseInt(rendered_style(this._slides[0], 'max-width')) === 100;
 
@@ -334,6 +412,9 @@
 
         // Slide width
         this._slideWidth = Math.round(width(this._slides[0], this.DOMElementWrapper));
+
+        // Slide width with gap
+        this._slideWidthWGap = this._slideWidth + this._gapSize;
 
         // Offset
         this._offset = Math.round(this.options.wrap ? (this._middleIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2) : (this._slideWidth + this._gapSize) - ((this._viewportWidth + this._slideWidth) / 2));
@@ -347,6 +428,13 @@
 
         // Make offset
         css(this._DOMElementViewport, 'left', `${this._offset === 0 ? 0 : -this._offset}px`);
+
+        // Visible slides
+        this._visibleSlides = this._isFullWidth ? 1 : this._viewportWidth / (this._slideWidth + this._gapSize);
+
+        this._dragBoundryL = this._offset - (this._slideWidth / 2);
+
+        this._dragBoundryR = -(this._dragBoundryL);
     }
 
     /**
@@ -426,7 +514,11 @@
     _Slider.prototype._build = function()
     {
         // Find slides
-        this._slides = find_all('> *', this.DOMElementWrapper);
+        this._slides = !this.options.groupSlides ? find_all('> *', this.DOMElementWrapper) : map([...Array(Math.ceil(find_all('> *', this.DOMElementWrapper).length / this.options.groupSlides)).keys()], (i) =>
+        {
+            // Since we're appending children as we go we're always taking the first n children
+            return dom_element({tag: 'div', class: 'slide-group'}, null, find_all('> *', this.DOMElementWrapper).slice(0, this.options.groupSlides));
+        });
 
         // Slides count
         this._slidesCount = this._slides.length;
@@ -454,7 +546,6 @@
 
         // Dots
         this._dots = [];
-        this._dot = null;
         if (this.options.dots) this._buildDots();
 
         // Pause on hover
@@ -468,15 +559,205 @@
         // Window resize
         if (this.options.resize)
         {
-            on(window, 'resize', this._throttle, this);
+            on(window, 'resize', this._resizeThrottle, this);
         }
 
-        if (this.options.draggable)
+        if (this.options.draggable && this._slidesCount > 1)
         {
             add_class(this.DOMElementWrapper, 'draggable');
 
             this._bindGestures();
         }
+
+        add_class(this.DOMElementWrapper, 'js-slider');
+    }
+
+    /**
+     * Start dragging slide.
+     *
+     * @access {public}
+     * @param  {integer} slideNum Slide number
+     */
+    _Slider.prototype._dragSlide = function(moved)
+    {
+        let x = this._dragX;
+
+        if (this.options.wrap)
+        {
+            let nearEnd = (x < 0 && x <= this._dragBoundryR) || (x > 0 && x >= this._dragBoundryL);
+
+            if (nearEnd)
+            {
+                this._dragCloneSlides();
+
+                return;
+            }
+        }
+
+        css(this._DOMElementViewport, 'transform', `translateX(${x}px)`);
+    }
+
+    /**
+     * Go to slide.
+     *
+     * @access {public}
+     * @param  {integer} slideNum Slide number
+     */
+    _Slider.prototype._dragCloneSlides = function()
+    {   
+        // No need to clone on non wrapping sliders     
+        if (!this.options.wrap) return;
+
+        let distance = (this._slideWidth + this._gapSize) * this._bufferSize;
+
+        // Push out the drag boundaries
+        // Drag bondry L remains the same as it is a fixed position from start
+        this._dragBoundryR = -(((this._slideWidth + this._gapSize) * (this._bufferSize + this._slidesCount -1)) + (this._slideWidth /2));
+
+        // Adjust the dragging buffer
+        this._draggingbuffer = !this._draggingbuffer ? distance : this._draggingbuffer + distance;
+
+        // Resting distance
+        distance = this._dragX - distance;
+
+        // Pad sides and clone
+        this._bufferDragClones();
+
+        // Adjust drag position
+        css(this._DOMElementViewport, 'transform', `translateX(${distance}px)`);
+    }
+
+    /**
+     * Fake shuffle cloned slides to start or end
+     *
+     * @access {private}
+     */
+    _Slider.prototype._bufferDragClones = function()
+    {    
+        if (!this.options.wrap) return;
+
+        let viewport = this._DOMElementViewport;
+
+        let clones = [];
+
+        _for(this._bufferSize, (i) =>
+        {
+            let cloneR = find(`> *:nth-child(${this._dragRIndex})`, this._DOMElementViewport).cloneNode(true);
+            let cloneL = find(`> *:nth-last-child(${this._dragLIndex})`, this._DOMElementViewport).cloneNode(true);
+            add_class([cloneR, cloneL], 'slide-clone');
+
+            this._dragClones.push(cloneR);
+            this._dragClones.push(cloneL);
+
+            preapend(cloneL, viewport);
+
+            viewport.appendChild(cloneR);
+
+            this._dragRIndex += 2;
+
+            this._dragLIndex += 2;
+        });
+    }
+
+    /**
+     * Clear drag clones.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._clearDragClones = function()
+    {
+        each(this._dragClones, (i, clone) =>
+        {
+            this._DOMElementViewport.removeChild(clone);
+        });
+    }
+
+    _Slider.prototype._restingDragPos = function()
+    {
+        let ret = { rest: 0, slideIndex: 1 };
+
+        // There would be a smarter way to figure all this out, however have not been able to figure out an easy solution
+        let wrapping = this.options.wrap;
+
+        // What distance have we actually moved in total?
+        let moved = !wrapping ? Math.abs(this._dragX) - Math.abs(this._offset) : (this._slideWidthWGap * this._middleIndex) + (this._slideWidth / 2)
+
+        if (wrapping) moved = this._dragX < 0 ? moved + Math.abs(this._dragX) : moved - this._dragX;
+
+        // Always first slide
+        if (!wrapping && (this._dragX > 0 || moved < 0)) return ret;
+
+        // Get the DOM index of the slide that should be resting
+        let index = !wrapping ? Math.ceil(moved / this._slideWidthWGap) : Math.ceil(moved / this._slideWidthWGap) -1;
+
+        // Dragged over the edge on non-wrapping sliders
+        if (!wrapping && index > this._slidesIndexs) index = this._slidesIndexs;
+
+        // Get X pos of where target slide starts
+        let slideStarts = (index * this._slideWidthWGap) - (this._viewportWidth / 2) + (this._slideWidth / 2);
+
+        // Figure out the resting point
+        let rest = this._offset - slideStarts;
+
+        let slideIndex = parseInt(attr(find(`>:nth-child(${index +1})`, this._DOMElementViewport), 'data-index')) +1;
+
+        this._dragMoved = (slideIndex -1) !== this._index;
+
+        if (!wrapping) this._translated = Math.abs(rest);
+
+        return { rest, slideIndex };
+    }
+
+    /**
+     * Find closest slide on end
+     *
+     * @access {private}
+     */
+    _Slider.prototype._onDragEnd = function()
+    {
+        let { rest, slideIndex } = this._restingDragPos();
+
+        this._dragEndAnim = animate(this._DOMElementViewport, { property: 'transform', from: `translateX(${this._dragX}px)`, to: `translateX(${rest}px)`, duration: 650, easing: this.options.easing, complete: () => 
+        {
+            if (this._dragClones.length >= 1) this._clearDragClones();
+
+            if (this._dragMoved && this.options.wrap) this.toSlide(slideIndex, false, false);
+
+            if (!this._dragMoved && this.options.wrap) css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+
+            this._index = slideIndex -1;
+
+            this._translated = Math.abs(rest);
+
+            this._updateDots();
+
+            this.unpause();
+
+            this._resetDragVars();
+        }} );
+    }
+
+    /**
+     * Build controls.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._resetDragVars = function()
+    {
+        this._dragClones      = [];
+        this._dragRIndex      = 1;
+        this._dragLIndex      = 1;
+        this._dragging        = false;
+        this._dragMoved       = false;
+        this._dragStartPointX = { x: 0, y: 0};
+        
+        delete this._dragX;
+
+        delete this._prevDrag;
+
+        delete this._dragEndAnim;
+
+        delete this._draggingbuffer;
     }
 
     /**
@@ -488,82 +769,125 @@
     {
         let wrapper = this.DOMElementWrapper;
 
-        const handlePointerDown = function(event)
+        const gestures = Hubble.TinyGesture(this.DOMElementWrapper, { mouseSupport: this.options.mouseSupport, velocityThreshold: this.options.velocityThreshold, threshold: this.options.threshold });
+
+        this._resetDragVars();
+
+        gestures.on('panstart', (event) =>
         {
-            this.dragX = event.x;
+            // No drag on transitioning
+            if (this._animating) return;
 
-            add_class(wrapper, 'pointer-down');
+            // Clear timeout
+            this.pause();
 
-            console.log('pointerdown');
-        }
+            // Register start point
+            this._dragStartPointX = event.pageX;
 
-        const handlePointerUp = function(event)
-        {
-            this.dragX = event.x;
-
-            remove_class(wrapper, 'pointer-down');
-
-            console.log('pointerdown');
-        }
-
-        const handleDragStart = function(event, pointer)
-        {
-            console.log('handleDragStart');
-
-            add_class(wrapper, 'dragging');
-
-            this.dragStartPosition = event.x;
-            
-            //this.startAnimation();
-        }
-
-        const handleDragMove = function( event, pointer, moveVector )
-        {
-            console.log('handleDragMove');
-
-            event.preventDefault();
-
-            this.previousDragX = this.dragX;
-
-            let dragX = this.dragStartPosition + moveVector.x;
-
-            /*if ( !this.options.draggable ) return;
-
-            // Slow down
-            if ( !this.options.wrap )
+            // We have a previous unfinished drag
+            if (this._dragEndAnim)
             {
-                // slow drag
-                let originBound = Math.max( -this.slides[0].target, this.dragStartPosition );
-                dragX = dragX > originBound ? ( dragX + originBound ) * 0.5 : dragX;
-                let endBound = Math.min( -this.getLastSlide().target, this.dragStartPosition );
-                dragX = dragX < endBound ? ( dragX + endBound ) * 0.5 : dragX;
+                this._dragEndAnim.stop();
+
+                this._prevDrag = parseFloat(inline_style(this._DOMElementViewport, 'transform').replaceAll(/[^0-9-.]/g, ''));
+
+                delete this._dragEndAnim;
             }
 
-            this.dragX = dragX;
-
-            this.dragMoveTime = new Date();*/
-        };
-
-        const handleDragEnd = () =>
-        {
-            console.log('handleDragEnd');
-
+            // Add helper class for optional UI
             add_class(wrapper, 'dragging');
+        });
 
-            /*if ( !this.options.draggable ) return;
+        gestures.on('panmove', (event) =>
+        {
+            // No drag on transitioning
+            if (this._animating) return;
 
-            // set selectedIndex based on where flick will end up
-            //let index = this.dragEndRestingSelect();
+            // Base movement
+            let moveVectorX = (event.pageX - this._dragStartPointX);
 
-            delete this.previousDragX;
+            // No drag
+            if ( Math.abs(moveVectorX) < 3 ) return;
 
-            //this.select( index );
+            this._dragging = true;
+
+            // Much slower on non-wrapping sliders when at end or start and going in opposite direction
+            if (!this.options.wrap && ( (this._index === 0 && moveVectorX > 0) || (this._index === this._slidesIndexs && moveVectorX < 0) ))
+            {
+                moveVectorX = moveVectorX * (this.options.friction / 3);
+            }
+            else
+            {
+                // Slow down further we drag
+                moveVectorX = moveVectorX * this.options.friction;
+            }
+
+            // Previous drag
+            if (this._prevDrag)
+            {
+                moveVectorX = this._prevDrag + moveVectorX
+            }
+
+            // Non wrap + translated
+            else if (!this.options.wrap)
+            {
+                moveVectorX = moveVectorX - this._translated;
+            }
+
+            // Calculate travel distance
+            this._dragX = !this._draggingbuffer ? moveVectorX : moveVectorX - this._draggingbuffer;
+
+            // Drag the slide
+            this._dragSlide();
+        });
+
+        gestures.on('panend', (event) =>
+        {
+            remove_class(wrapper, 'dragging');
+
+            if (!this._dragX) return this.unpause();
+
+            this._onDragEnd();
+        });
+
+        gestures.on('swiperight', (event) =>
+        {
+            // Don't swipe on animating
+            if (this._animating) return;
+
+            // Don't swipe on drags
+            if (this._dragEndAnim && this._dragMoved) return;
+
+            // Can't go back
+            if (!this.options.wrap && this._index === 0) return;
+
+            // Stop dragend if running
+            if (this._dragEndAnim) this._dragEndAnim.stop();
+
+            this._resetDragVars();
+
+            this.previous();
+        });
+        gestures.on('swipeleft', (event) =>
+        {
+            // Don't swipe on animating
+            if (this._animating) return;
+
+            // Don't swipe on drags
+            if (this._dragEndAnim && this._dragMoved) return;
             
-            delete this.isDragSelect;*/
-        }
+            // Can't go forward
+            if (!this.options.wrap && this._index === this._slidesIndexs) return;
 
-        // Gestures
-        const gestures = Hubble.Gestures(this.DOMElementWrapper, { handlePointerDown, handleDragStart, handleDragMove, handleDragEnd, handlePointerUp });
+            // Stop dragend if running
+            if (this._dragEndAnim) this._dragEndAnim.stop();
+
+            this._resetDragVars();
+
+            this.next();
+        });
+
+        this._gestures = gestures;
     }
 
     /**
@@ -597,7 +921,7 @@
     {
         let index = this._index;
 
-        this._dotWrap = dom_element({tag: 'div', class: 'slider-dots'}, this.DOMElementWrapper, map(this._slides, (i, slide) =>
+        this._dotWrap = dom_element({tag: 'div', class: 'slider-dots js-slider-dots'}, this.DOMElementWrapper, map(this._slides, (i, slide) =>
         {
             let active = i === index ? 'active' : '';
 
@@ -606,8 +930,6 @@
             on(dot, 'click', this._dotClick, this);
 
             this._dots.push(dot);
-
-            if (i === index) this._dot = dot;
 
             return dot;
         }));
@@ -620,6 +942,12 @@
      */
     _Slider.prototype._moveIndexToMiddle = function()
     {
+        each(this._slides, (i) =>
+        {
+            attr(this._slides[i], 'data-index', i);
+        
+        }, this);
+
         if (!this.options.wrap) return;
 
         let slide = this._slides[this._index];
@@ -630,7 +958,7 @@
 
             preapend(find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
         
-        }, this);
+        }, this);  
     }
 
     /**
@@ -640,9 +968,11 @@
      */
     _Slider.prototype._dotClick = function(e, dot)
     {
+        if (this._animating || this._dragging) return;
+
         let index = parseInt(attr(dot, 'data-index')) +1;
 
-        this.toSlide(index, true);
+        this.toSlide(index, true, true);
     }
     
     /**
@@ -675,8 +1005,8 @@
         let delta       = index < this._index ? this._index - index : index - this._index;
         let direction   = index < this._index ? -1 : 1;
         
-        // We only go shortest path if we're wrapping
-        if (this.options.wrap)
+        // We only go shortest path if we're wrapping and there's more than 5 slides
+        if (this.options.wrap && this._slidesCount > 4)
         {
             if (index > this._index)
             {
@@ -720,7 +1050,6 @@
             direction === -1 ? viewport.appendChild(clone) : preapend(clone, viewport);
 
             return clone;
-
         });
     }
 
@@ -802,11 +1131,9 @@
     {
         if (!this.options.dots) return;
 
-        remove_class(this._dot, 'active');
+        remove_class(find('.js-slider-dots .js-slider-dot.active', this.DOMElementWrapper), 'active');
 
-        this._dot = this._dots[this._index];
-
-        add_class(this._dot, 'active');
+        add_class(this._dots[this._index], 'active');
     }
 
     // Load into container

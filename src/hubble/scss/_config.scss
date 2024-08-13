@@ -343,7 +343,7 @@ $lazyload-end-grayscale:        0 !default;
 $lazyload-transition:           opacity 1s cubic-bezier(0.4, 0.0, 0.2, 1), filter 1s cubic-bezier(0.4, 0.0, 0.2, 1);
 $lazyload-falback-bg:           #d0d4d9;
 
-// Carousel
+// Slider
 $slider-bg:                     transparent !default;
 $slider-dots-color:             var(--hb-white) !default;
 $slider-dots-color-active:      var(--hb-brand-primary) !default;

@@ -1265,511 +1265,498 @@ _.prototype._guidgen = function()
 {
     return `__${this._guid++}`;
 }
-		/**
- * JS Aniamation Core
- *
- * @access {private}
- * @param  {DOMElement} DOMElement          Target DOM node
- * @param  {object}     options             Options object
- * @param  {string}     options.property    CSS property
- * @param  {mixed}      options.from        Start value
- * @param  {mixed}      options.to          Ending value
- * @param  {int}        options.duration    Animation duration in MS
- * @param  {string}     options.easing      Easing function in camelCase
- * @param  {function}   options.callback    Callback to apply when animation ends (optional)
- */
-_.prototype.__animate_js = function(DOMElement, options)
+		
+
+const AnimateJS = function(DOMElement, options)
 {
-    const _helper = this;
+    this.DOMElement = DOMElement;
 
-    const AnimateJS = function(DOMElement, options)
+    this.options = options;
+
+    this.keyframes = [];
+
+    this.currentKeyframe = 0;
+
+    this.duration = options.duration;
+
+    this.intervalDelay = Math.floor(1000 / options.fps);
+
+    this.keyFrameCount = Math.floor(this.duration / this.intervalDelay) + 1;
+
+    this.easing = options.easing;
+
+    this.CSSProperty = options.property;
+
+    this.isTransform = this.CSSProperty.toLowerCase().includes('transform');
+
+    this.isScroll = this.CSSProperty.toLowerCase() === 'scrollto' && DOMElement === window;
+
+    this.isColor = options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb');
+
+    this.clearAnimating();
+
+    this.parseOptions();
+
+    this.generateKeyframes();
+
+    this.stopped = true;
+
+    return this;
+}
+
+AnimateJS.prototype.clearAnimating = function()
+{
+    const CSSprop = this.CSSProperty;
+
+    const _this = this;
+
+    _THIS.each(ANIMATING, function(i, animation)
     {
-        this.DOMElement = DOMElement;
+        if (animation.CSSProperty === CSSprop && animation.DOMElement === DOMElement)
+        {
+            animation.stop();
 
-        this.options = options;
+            ANIMATING.splice(i, 1);
 
-        this.keyframes = [];
+            return false;
+        }
+    });
+}
 
-        this.currentKeyframe = 0;
+AnimateJS.prototype.start = function()
+{
+    if (this.keyFrameCount === 0) return;
 
-        this.duration = options.duration;
+    this.stopped = false;
 
-        this.intervalDelay = Math.floor(1000 / options.fps);
+    if (!this.isScroll) this.clearTransitions();
 
-        this.keyFrameCount = Math.floor(this.duration / this.intervalDelay) + 1;
+    var _this = this;
 
-        this.easing = options.easing;
+    if (this.options.start) this.options.start(_this.DOMElement);
 
-        this.CSSProperty = options.property;
+    const loop = () =>
+    {        
+        if (this.stopped) return;
 
-        this.isTransform = this.CSSProperty.toLowerCase().includes('transform');
+        this._applyKeyframe(this.keyframes.shift());
 
-        this.isScroll = this.CSSProperty.toLowerCase() === 'scrollto' && DOMElement === window;
+        if (this.keyframes.length === 0)
+        {
+            this._complete();
 
-        this.isColor = options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb');
+            return;
+        }
 
-        this.clearAnimating();
-
-        this.parseOptions();
-
-        this.generateKeyframes();
-
-        this.stopped = true;
-
-        return this;
+        setTimeout(loop, this.intervalDelay);
     }
 
-    AnimateJS.prototype.clearAnimating = function()
+    loop();
+
+    this._failTimer = setTimeout(() =>
+    {            
+        if (this.options.fail) this.options.fail(_this.DOMElement);
+
+    }, this.duration + 50 );
+
+    ANIMATING.push(this);
+
+    return this;
+}
+
+AnimateJS.prototype._applyKeyframe = function(keyframe)
+{
+    if (!keyframe) return;
+
+    let prop = Object.keys(keyframe)[0];
+
+    this.isScroll ? window.scrollTo(keyframe[0], keyframe[1]) : _THIS.css(this.DOMElement, prop, keyframe[prop]);
+}
+
+AnimateJS.prototype._complete = function()
+{
+    clearTimeout(this._failTimer);
+
+    _THIS.each(ANIMATING, (i, animation) =>
     {
-        const CSSprop = this.CSSProperty;
-
-        const _this = this;
-
-        _helper.each(ANIMATING, function(i, animation)
+        if (animation === this)
         {
-            if (animation.CSSProperty === CSSprop && animation.DOMElement === DOMElement)
+            ANIMATING.splice(i, 1);
+
+            return false;
+        }
+    });
+
+    let DOMElement = this.DOMElement;
+
+    if (this.options.complete) this.options.complete(DOMElement);
+
+    if (this.options.callback) this.options.callback(DOMElement);
+
+    _THIS.css(DOMElement, 'transition', this._pre_transition );
+}
+
+AnimateJS.prototype.stop = function()
+{
+    this.stopped = true;
+
+    clearTimeout(this._failTimer);
+
+    return this;
+}
+
+AnimateJS.prototype.parseOptions = function()
+{
+    if (this.isScroll)
+    {
+        this.parseScrollOptions();
+    }
+    else if (this.isTransform)
+    {
+        this.parseTransformOptions();
+    }
+    else if (this.isColor)
+    {
+        this.parseColorOptions();
+    }
+    else
+    {
+        this.parseDefaultOptions();
+    }
+}
+
+AnimateJS.prototype.parseScrollOptions = function()
+{
+    if (!this.options.to.includes(','))
+    {
+        throw new Error('Invalid scroll value. Animating scroll should be provided as [Y, X].');
+    }
+
+    // We ignore 'from'
+    let startY = window.scrollY;
+    let startX = window.scrollX;
+    let endX   = parseInt(this.options.to.split(',').shift().trim());
+    let endY   = parseInt(this.options.to.split(',').pop().trim());
+    let distX  = Math.abs(endX < startX ? (startX - endX) : (endX - startX))
+    let distY  = Math.abs(endY < startY ? (startY - endY) : (endY - startY))
+
+    this.startValue    = [startX, startY];
+    this.endValue      = [endX, endY];
+    this.backAnimation = [endX < startX, endY < startY];
+    this.distance      = [distX, distY] ;
+    this.CSSunits      = '';
+}
+
+AnimateJS.prototype.parseDefaultOptions = function()
+{
+    var startVal = _THIS.is_undefined(this.options.from) ? _THIS.rendered_style(this.DOMElement, this.CSSProperty) : this.options.from;
+    var endVal   = this.options.to;
+
+    // We need to set the end value, then remove it and re-apply any inline styles if they
+    // existed
+    if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset')
+    {
+        let prevStyle = _THIS.inline_style(this.DOMElement, this.CSSProperty);
+
+        _THIS.css(this.DOMElement, this.CSSProperty, endVal);
+        
+        endVal = _THIS.rendered_style(this.DOMElement, this.CSSProperty);
+        
+        _THIS.css(this.DOMElement, this.CSSProperty, prevStyle ? prevStyle : false);
+    }
+
+    // From auto
+    if (startVal === 'auto' || startVal === 'initial')
+    {
+        startVal = _THIS.rendered_style(this.DOMElement, this.CSSProperty);
+    }
+
+    var startUnit = _THIS.css_value_unit(startVal);
+    var endUnit   = _THIS.css_value_unit(endVal);
+
+    if (startUnit !== endUnit && this.CSSProperty !== 'opacity')
+    {
+        if (startUnit !== 'px')
+        {
+            startVal  = _THIS.css_to_px(startVal + startUnit, this.DOMElement, this.CSSProperty);
+            startUnit = 'px';
+        }
+        if (endUnit !== 'px')
+        {
+            endVal  = _THIS.css_to_px(this.options.to, this.DOMElement, this.CSSProperty);
+            endUnit = 'px';
+        }
+    }
+
+    startVal = _THIS.css_unit_value(startVal);
+    endVal   = _THIS.css_unit_value(endVal);
+
+    this.startValue    = _THIS.css_unit_value(startVal);
+    this.endValue      = _THIS.css_unit_value(endVal);
+    this.backAnimation = endVal < startVal;
+    this.distance      = Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal));
+    this.CSSunits      = endUnit;
+}
+
+AnimateJS.prototype.parseTransformOptions = function()
+{
+    var DOMElement    = this.DOMElement;
+    var startValues   = _THIS.css_transform_props(DOMElement, false);
+    var endValues     = _THIS.css_transform_props(this.options.to, false);
+
+    // If a start value was specified it gets overwritten as the transform
+    // property is singular
+    if (this.options.from)
+    {
+        startValues = _THIS.css_transform_props(this.options.from);
+    }
+
+    this.CSSProperty    = [];
+    this.startValue     = [];
+    this.endValue       = [];
+    this.CSSunits       = [];
+    this.backAnimation  = [];
+    this.distance       = [];
+    this.baseTransforms = _THIS.is_empty(startValues) ? '' : _THIS.join_obj(_THIS.map(startValues, (prop, val) => !endValues[prop] ? val : false), '(', ') ', false, false);
+
+    _THIS.each(endValues, function(propAxis, valueStr)
+    {
+        var startValStr        = !startValues[propAxis] ? (propAxis.includes('scale') ? '1' : '0') : startValues[propAxis];
+        var startVal           = _THIS.css_unit_value(startValStr);
+        var endVal             = _THIS.css_unit_value(valueStr);
+        var startUnit          = _THIS.css_value_unit(startValStr);
+        var endUnit            = _THIS.css_value_unit(valueStr);
+        var CSSpropertyUnits   = endUnit;
+
+        if (startUnit !== endUnit)
+        {
+            // 0 no need to convert
+            if (_THIS.is_empty(startUnit))
             {
-                animation.stop();
+                startUnit = endUnit;
+            }
+            else
+            {
+                if (startUnit !== 'px') startVal = _THIS.css_to_px(startVal + startUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                if (endUnit !== 'px') endVal = _THIS.css_to_px(endVal + endUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                CSSpropertyUnits = 'px';
+            }
+        }
 
-                ANIMATING.splice(i, 1);
+        this.CSSProperty.push(propAxis);
+        this.CSSunits.push(endUnit);
+        this.endValue.push(endVal);
+        this.startValue.push(startVal);
+        this.backAnimation.push(endVal < startVal);
+        this.distance.push(Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal)));
 
-                return false;
+    }, this);
+}
+
+AnimateJS.prototype.parseColorOptions = function()
+{
+    this.startValue = this.sanitizeColor(this.options.from || _THIS.rendered_style(this.DOMElement, this.CSSProperty));
+    this.endValue   = this.sanitizeColor(this.options.to);
+}
+
+/**
+ * Sanitize the start and end colors to RGB arrays.
+ * 
+ * @param  {string} color  hex or rgb color as as string
+ * @return {array}
+ */
+AnimateJS.prototype.sanitizeColor = function(color)
+{
+    if (color.startsWith('rgb('))
+    {
+        return color.split(' ', 3).map((x) => parseInt(x.replaceAll(/[^\d+]/g, '')));
+    }
+    else if (color.length === 7 )
+    {
+        let rgb = [];
+
+        color.match(/#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i).forEach((item) =>
+        {
+            if (item.length === 2)
+            {
+                const color = parseInt(item, 16);
+
+                rgb.push(color);
             }
         });
+
+        return rgb;
+    }
+}
+
+AnimateJS.prototype.generateKeyframes = function()
+{    
+    if (_THIS.is_equal(this.startValue, this.endValue))
+    {
+        this.keyFrameCount = 0;
+
+        return;
     }
 
-    AnimateJS.prototype.start = function()
+    if (this.isScroll)
     {
-        if (this.keyFrameCount === 0) return;
-
-        this.stopped = false;
-
-        if (!this.isScroll) this.clearTransitions();
-
-        var _this = this;
-
-        if (this.options.start) this.options.start(_this.DOMElement);
-
-        const loop = () =>
-        {        
-            if (this.stopped) return;
-
-            this._applyKeyframe(this.keyframes.shift());
-
-            if (this.keyframes.length === 0)
-            {
-                this._complete();
-
-                return;
-            }
-
-            setTimeout(loop, this.intervalDelay);
-        }
-
-        loop();
-
-        this._failTimer = setTimeout(() =>
-        {            
-            if (this.options.fail) this.options.fail(_this.DOMElement);
-
-        }, this.duration + 50 );
-
-        ANIMATING.push(this);
-
-        return this;
-    }
-
-    AnimateJS.prototype._applyKeyframe = function(keyframe)
-    {
-        if (!keyframe) return;
-
-        let prop = Object.keys(keyframe)[0];
-
-        this.isScroll ? window.scrollTo(keyframe[0], keyframe[1]) : _helper.css(this.DOMElement, prop, keyframe[prop]);
-    }
-
-    AnimateJS.prototype._complete = function()
-    {
-        clearTimeout(this._failTimer);
-
-        _helper.each(ANIMATING, (i, animation) =>
+        _THIS.for(this.keyFrameCount, function(index)
         {
-            if (animation === this)
-            {
-                ANIMATING.splice(i, 1);
+            let x = this.generateKeyframe(index, 0);
+            let y = this.generateKeyframe(index, 1);
 
-                return false;
-            }
-        });
-
-        let DOMElement = this.DOMElement;
-
-        if (this.options.complete) this.options.complete(DOMElement);
-
-        if (this.options.callback) this.options.callback(DOMElement);
-
-        _helper.css(DOMElement, 'transition', this._pre_transition );
-    }
-
-    AnimateJS.prototype.stop = function()
-    {
-        this.stopped = true;
-
-        clearTimeout(this._failTimer);
-
-        return this;
-    }
-
-    AnimateJS.prototype.parseOptions = function()
-    {
-        if (this.isScroll)
-        {
-            this.parseScrollOptions();
-        }
-        else if (this.isTransform)
-        {
-            this.parseTransformOptions();
-        }
-        else if (this.isColor)
-        {
-            this.parseColorOptions();
-        }
-        else
-        {
-            this.parseDefaultOptions();
-        }
-    }
-
-    AnimateJS.prototype.parseScrollOptions = function()
-    {
-        if (!this.options.to.includes(','))
-        {
-            throw new Error('Invalid scroll value. Animating scroll should be provided as [Y, X].');
-        }
-
-        // We ignore 'from'
-        let startY = window.scrollY;
-        let startX = window.scrollX;
-        let endX   = parseInt(this.options.to.split(',').shift().trim());
-        let endY   = parseInt(this.options.to.split(',').pop().trim());
-        let distX  = Math.abs(endX < startX ? (startX - endX) : (endX - startX))
-        let distY  = Math.abs(endY < startY ? (startY - endY) : (endY - startY))
-
-        this.startValue    = [startX, startY];
-        this.endValue      = [endX, endY];
-        this.backAnimation = [endX < startX, endY < startY];
-        this.distance      = [distX, distY] ;
-        this.CSSunits      = '';
-    }
-
-    AnimateJS.prototype.parseDefaultOptions = function()
-    {
-        var startVal = _helper.is_undefined(this.options.from) ? _helper.rendered_style(this.DOMElement, this.CSSProperty) : this.options.from;
-        var endVal   = this.options.to;
-
-        // We need to set the end value, then remove it and re-apply any inline styles if they
-        // existed
-        if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset')
-        {
-            let prevStyle = _helper.inline_style(this.DOMElement, this.CSSProperty);
-
-            _helper.css(this.DOMElement, this.CSSProperty, endVal);
-            
-            endVal = _helper.rendered_style(this.DOMElement, this.CSSProperty);
-            
-            _helper.css(this.DOMElement, this.CSSProperty, prevStyle ? prevStyle : false);
-        }
-
-        // From auto
-        if (startVal === 'auto' || startVal === 'initial')
-        {
-            startVal = _helper.rendered_style(this.DOMElement, this.CSSProperty);
-        }
-
-        var startUnit = _helper.css_value_unit(startVal);
-        var endUnit   = _helper.css_value_unit(endVal);
-
-        if (startUnit !== endUnit && this.CSSProperty !== 'opacity')
-        {
-            if (startUnit !== 'px')
-            {
-                startVal  = _helper.css_to_px(startVal + startUnit, this.DOMElement, this.CSSProperty);
-                startUnit = 'px';
-            }
-            if (endUnit !== 'px')
-            {
-                endVal  = _helper.css_to_px(this.options.to, this.DOMElement, this.CSSProperty);
-                endUnit = 'px';
-            }
-        }
-
-        startVal = _helper.css_unit_value(startVal);
-        endVal   = _helper.css_unit_value(endVal);
-
-        this.startValue    = _helper.css_unit_value(startVal);
-        this.endValue      = _helper.css_unit_value(endVal);
-        this.backAnimation = endVal < startVal;
-        this.distance      = Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal));
-        this.CSSunits      = endUnit;
-    }
-
-    AnimateJS.prototype.parseTransformOptions = function()
-    {
-        var DOMElement    = this.DOMElement;
-        var startValues   = _helper.css_transform_props(DOMElement, false);
-        var endValues     = _helper.css_transform_props(this.options.to, false);
-
-        // If a start value was specified it gets overwritten as the transform
-        // property is singular
-        if (this.options.from)
-        {
-            startValues = _helper.css_transform_props(this.options.from);
-        }
-
-        this.CSSProperty    = [];
-        this.startValue     = [];
-        this.endValue       = [];
-        this.CSSunits       = [];
-        this.backAnimation  = [];
-        this.distance       = [];
-        this.baseTransforms = _helper.is_empty(startValues) ? '' : _helper.join_obj(_helper.map(startValues, (prop, val) => !endValues[prop] ? val : false), '(', ') ', false, false);
-
-        _helper.each(endValues, function(propAxis, valueStr)
-        {
-            var startValStr        = !startValues[propAxis] ? (propAxis.includes('scale') ? '1' : '0') : startValues[propAxis];
-            var startVal           = _helper.css_unit_value(startValStr);
-            var endVal             = _helper.css_unit_value(valueStr);
-            var startUnit          = _helper.css_value_unit(startValStr);
-            var endUnit            = _helper.css_value_unit(valueStr);
-            var CSSpropertyUnits   = endUnit;
-
-            if (startUnit !== endUnit)
-            {
-                // 0 no need to convert
-                if (_helper.is_empty(startUnit))
-                {
-                    startUnit = endUnit;
-                }
-                else
-                {
-                    if (startUnit !== 'px') startVal = _helper.css_to_px(startVal + startUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
-                    if (endUnit !== 'px') endVal = _helper.css_to_px(endVal + endUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
-                    CSSpropertyUnits = 'px';
-                }
-            }
-
-            this.CSSProperty.push(propAxis);
-            this.CSSunits.push(endUnit);
-            this.endValue.push(endVal);
-            this.startValue.push(startVal);
-            this.backAnimation.push(endVal < startVal);
-            this.distance.push(Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal)));
-
+            this.keyframes.push([x, y]);
+                            
         }, this);
+
+        // Fallback
+        this.keyframes.push([this.endValue[0], this.endValue[1]]);
+
+        return;
     }
 
-    AnimateJS.prototype.parseColorOptions = function()
+    if (this.isTransform)
     {
-        this.startValue = this.sanitizeColor(this.options.from || _helper.rendered_style(this.DOMElement, this.CSSProperty));
-        this.endValue   = this.sanitizeColor(this.options.to);
-    }
-
-    /**
-     * Sanitize the start and end colors to RGB arrays.
-     * 
-     * @param  {string} color  hex or rgb color as as string
-     * @return {array}
-     */
-    AnimateJS.prototype.sanitizeColor = function(color)
-    {
-        if (color.startsWith('rgb('))
+        _THIS.for(this.endValue, function(transformIndex)
         {
-            return color.split(' ', 3).map((x) => parseInt(x.replaceAll(/[^\d+]/g, '')));
-        }
-        else if (color.length === 7 )
-        {
-            let rgb = [];
-
-            color.match(/#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i).forEach((item) =>
+            _THIS.for(this.keyFrameCount, function(index)
             {
-                if (item.length === 2)
-                {
-                    const color = parseInt(item, 16);
-
-                    rgb.push(color);
-                }
-            });
-
-            return rgb;
-        }
-    }
-
-    AnimateJS.prototype.generateKeyframes = function()
-    {    
-        if (_helper.is_equal(this.startValue, this.endValue))
-        {
-            this.keyFrameCount = 0;
-
-            return;
-        }
-
-        if (this.isScroll)
-        {
-            _helper.for(this.keyFrameCount, function(index)
-            {
-                let x = this.generateKeyframe(index, 0);
-                let y = this.generateKeyframe(index, 1);
-
-                this.keyframes.push([x, y]);
-                                
-            }, this);
-
-            // Fallback
-            this.keyframes.push([this.endValue[0], this.endValue[1]]);
-
-            return;
-        }
-
-        if (this.isTransform)
-        {
-            _helper.for(this.endValue, function(transformIndex)
-            {
-                _helper.for(this.keyFrameCount, function(index)
-                {
-                    this.keyframes.push(this.generateKeyframe(index, transformIndex));
-                    
-                }, this);
+                this.keyframes.push(this.generateKeyframe(index, transformIndex));
                 
             }, this);
-
-            return;
-        }
-
-        _helper.for(this.keyFrameCount, function(index)
-        {
-            this.keyframes.push(this.generateKeyframe(index));
             
         }, this);
 
-        // Failsafe
-        if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== `${this.endValue}${this.CSSunits}`)
-        {
-            this.keyframes.push({[this.CSSProperty]: `${this.endValue}${this.CSSunits}`});
-        }
+        return;
     }
 
-    AnimateJS.prototype.generateKeyframe = function(index, transformIndex)
+    _THIS.for(this.keyFrameCount, function(index)
     {
-        if (this.isColor)
-        {
-            const change = this.tween(this.easing, (index / this.keyFrameCount));
-            
-            return { [this.CSSProperty]: this.mixColors(this.startValue, this.endValue, change) };
-        }
+        this.keyframes.push(this.generateKeyframe(index));
         
-        const backAnimation = this.isTransform || this.isScroll ? this.backAnimation[transformIndex] : this.backAnimation;
+    }, this);
 
-        const startValue = this.isTransform || this.isScroll ? this.startValue[transformIndex] : this.startValue;
-
-        const distance = this.isTransform || this.isScroll ? this.distance[transformIndex] : this.distance;
-
-        const change = (distance * this.tween(this.easing, (index / this.keyFrameCount)));
-
-        const keyVal = this.roundNumber(backAnimation ? startValue - change : startValue + change, this.CSSProperty === 'opacity' ? 5 : 1);
-
-        var property = this.isTransform ? 'transform' : this.CSSProperty;
-
-        var prefix  = this.isTransform ? `${this.CSSProperty[transformIndex]}(` : '';
-
-        var suffix  = this.isTransform ? `${this.CSSunits[transformIndex]})` : this.CSSunits;
-        
-        var keyframe = { [property]:  `${prefix}${keyVal}${suffix}` };
-        
-        if (this.isScroll)
-        {
-            return keyVal;
-        }
-
-        if (this.isTransform && _helper.is_undefined(this.keyframes[index]))
-        {
-            keyframe[property] = `${this.baseTransforms} ${keyframe[property]}`.trim();
-        }
-
-        return keyframe;
-    }
-
-    /**
-     * Mix 2 colors.
-     * 
-     * @param  {array}  color1 RGB color array
-     * @param  {array}  color2 RGB color array
-     * @param  {number} blend % between 0 and 1
-     * @return {string} 
-     */
-    AnimateJS.prototype.mixColors = function(color1RGB, color2RGB, blend)
+    // Failsafe
+    if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== `${this.endValue}${this.CSSunits}`)
     {
-        function linearInterpolation(y1, y2, x)
-        {
-            return Math.round(x * (y2 - y1) + y1);
-        }
+        this.keyframes.push({[this.CSSProperty]: `${this.endValue}${this.CSSunits}`});
+    }
+}
+
+AnimateJS.prototype.generateKeyframe = function(index, transformIndex)
+{
+    if (this.isColor)
+    {
+        const change = this.tween(this.easing, (index / this.keyFrameCount));
         
-        const colorRGB  = [];
-
-        color1RGB.forEach((c1, index) =>
-        {
-            const mixedColor = linearInterpolation(c1, color2RGB[index], blend);
-
-            colorRGB.push(mixedColor);
-        });
-
-        return 'rgb(' + colorRGB + ')';
+        return { [this.CSSProperty]: this.mixColors(this.startValue, this.endValue, change) };
     }
+    
+    const backAnimation = this.isTransform || this.isScroll ? this.backAnimation[transformIndex] : this.backAnimation;
 
-    /**
-     * Calculate the easing pattern.
-     * 
-     * @private
-     * @link    {https://gist.github.com/gre/1650294}
-     * @param   {String} type Easing pattern
-     * @param   {Number} time Time animation should take to complete
-     * @returns {Number}
-     */
-    AnimateJS.prototype.clearTransitions = function()
-    {        
-        var CSSProperty    = this.isTransform ? 'transform' : this.CSSProperty;
-        var transitions    = _helper.css_transition_props(this.DOMElement);
-        var css_transition = _helper.inline_style(this.DOMElement, 'transition'); 
+    const startValue = this.isTransform || this.isScroll ? this.startValue[transformIndex] : this.startValue;
 
-        if (_helper.is_empty(transitions) || !transitions[CSSProperty]) return;
+    const distance = this.isTransform || this.isScroll ? this.distance[transformIndex] : this.distance;
 
-        transitions[CSSProperty] = '0s linear 0s';
+    const change = (distance * this.tween(this.easing, (index / this.keyFrameCount)));
 
-        _helper.css(this.DOMElement, 'transition', _helper.join_obj(transitions, ' ', ', '));
+    const keyVal = this.roundNumber(backAnimation ? startValue - change : startValue + change, this.CSSProperty === 'opacity' ? 5 : 1);
 
-        this._pre_transition = !css_transition ? false : css_transition;
-    }
+    var property = this.isTransform ? 'transform' : this.CSSProperty;
 
-    AnimateJS.prototype.roundNumber = (n, dp) => 
+    var prefix  = this.isTransform ? `${this.CSSProperty[transformIndex]}(` : '';
+
+    var suffix  = this.isTransform ? `${this.CSSunits[transformIndex]})` : this.CSSunits;
+    
+    var keyframe = { [property]:  `${prefix}${keyVal}${suffix}` };
+    
+    if (this.isScroll)
     {
-        const h = +('1'.padEnd(dp + 1, '0')) // 10 or 100 or 1000 or etc
-
-        return Math.round(n * h) / h;
+        return keyVal;
     }
 
-    /**
-     * Calculate the easing pattern.
-     * 
-     * @private
-     * @link    {https://gist.github.com/gre/1650294}
-     * @param   {String} type Easing pattern
-     * @param   {Number} time Time animation should take to complete
-     * @returns {Number}
-     */
-    AnimateJS.prototype.tween = function(type, time)
+    if (this.isTransform && _THIS.is_undefined(this.keyframes[index]))
     {
-        return ANIMATION_EASING_FUNCTIONS[type].call(null, time) || time;
+        keyframe[property] = `${this.baseTransforms} ${keyframe[property]}`.trim();
     }
 
+    return keyframe;
+}
+
+/**
+ * Mix 2 colors.
+ * 
+ * @param  {array}  color1 RGB color array
+ * @param  {array}  color2 RGB color array
+ * @param  {number} blend % between 0 and 1
+ * @return {string} 
+ */
+AnimateJS.prototype.mixColors = function(color1RGB, color2RGB, blend)
+{
+    function linearInterpolation(y1, y2, x)
+    {
+        return Math.round(x * (y2 - y1) + y1);
+    }
+    
+    const colorRGB  = [];
+
+    color1RGB.forEach((c1, index) =>
+    {
+        const mixedColor = linearInterpolation(c1, color2RGB[index], blend);
+
+        colorRGB.push(mixedColor);
+    });
+
+    return 'rgb(' + colorRGB + ')';
+}
+
+/**
+ * Calculate the easing pattern.
+ * 
+ * @private
+ * @link    {https://gist.github.com/gre/1650294}
+ * @param   {String} type Easing pattern
+ * @param   {Number} time Time animation should take to complete
+ * @returns {Number}
+ */
+AnimateJS.prototype.clearTransitions = function()
+{        
+    var CSSProperty    = this.isTransform ? 'transform' : this.CSSProperty;
+    var transitions    = _THIS.css_transition_props(this.DOMElement);
+    var css_transition = _THIS.inline_style(this.DOMElement, 'transition'); 
+
+    if (_THIS.is_empty(transitions) || !transitions[CSSProperty]) return;
+
+    transitions[CSSProperty] = '0s linear 0s';
+
+    _THIS.css(this.DOMElement, 'transition', _THIS.join_obj(transitions, ' ', ', '));
+
+    this._pre_transition = !css_transition ? false : css_transition;
+}
+
+AnimateJS.prototype.roundNumber = (n, dp) => 
+{
+    const h = +('1'.padEnd(dp + 1, '0')) // 10 or 100 or 1000 or etc
+
+    return Math.round(n * h) / h;
+}
+
+/**
+ * Calculate the easing pattern.
+ * 
+ * @private
+ * @link    {https://gist.github.com/gre/1650294}
+ * @param   {String} type Easing pattern
+ * @param   {Number} time Time animation should take to complete
+ * @returns {Number}
+ */
+AnimateJS.prototype.tween = function(type, time)
+{
+    return ANIMATION_EASING_FUNCTIONS[type].call(null, time) || time;
+}
+
+_.prototype.__animate_js = function(DOMElement, options)
+{
     return (new AnimateJS(DOMElement, options)).start();
 }
 		const AnimateCss = function(DOMElement, options)
@@ -2260,7 +2247,6 @@ _.prototype.__animation_factory = function(DOMElement, opts)
     let start    = () => {};
     let fail     = () => {};
     let complete = () => {};
-    let step     = () => {};
 
     this.each(optionSets, function(i, options)
     {
@@ -2283,11 +2269,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
         {
             if ((options.callback || options.complete)) complete = (options.callback || options.complete);
 
-            if ((options.step)) step = options.step;
-
             delete options.callback;
-
-            delete options.step;
 
             delete options.complete;
 
@@ -2323,7 +2305,6 @@ _.prototype.__animation_factory = function(DOMElement, opts)
     optionSets[longestI].fail     = fail;
     optionSets[longestI].start    = start;
     optionSets[longestI].complete = complete;
-    optionSets[longestI].step     = step;
 
     return optionSets;
 }
@@ -11108,326 +11089,319 @@ Container.singleton('_', _);
 
 (function()
 {
-    const Gestures = function(element, handlers)
-    {
-        handlers = handlers || {};
 
-
+    class TinyGesture {
+    constructor(element, options) {
         this.element = element;
-
-        this.handleEvent = this.handleEvent.bind(this);
-
-        Object.keys(handlers).forEach((key) =>
-        {
-            this[key] = handlers[key].bind(this);
-        });
-
-        this.bind();
-    }
-
-    // ----- bind start ----- //
-
-    // trigger handler methods for events
-    Gestures.prototype.handleEvent = function( event )
-    {
-        let method = 'on' + event.type;
-
-        if ( this[ method ] )
-        {
-            this[ method ]( event );
+        this.touch1 = null;
+        this.touch2 = null;
+        this.touchStartX = null;
+        this.touchStartY = null;
+        this.touchEndX = null;
+        this.touchEndY = null;
+        this.touchMove1 = null;
+        this.touchMove2 = null;
+        this.touchMoveX = null;
+        this.touchMoveY = null;
+        this.velocityX = null;
+        this.velocityY = null;
+        this.longPressTimer = null;
+        this.doubleTapTimer = null;
+        this.doubleTapWaiting = false;
+        this.thresholdX = 0;
+        this.thresholdY = 0;
+        this.disregardVelocityThresholdX = 0;
+        this.disregardVelocityThresholdY = 0;
+        this.swipingHorizontal = false;
+        this.swipingVertical = false;
+        this.swipingDirection = null;
+        this.swipedHorizontal = false;
+        this.swipedVertical = false;
+        this.originalDistance = null;
+        this.newDistance = null;
+        this.scale = null;
+        this.originalAngle = null;
+        this.newAngle = null;
+        this.rotation = null;
+        this.handlers = {
+            panstart: [],
+            panmove: [],
+            panend: [],
+            swipeleft: [],
+            swiperight: [],
+            swipeup: [],
+            swipedown: [],
+            tap: [],
+            doubletap: [],
+            longpress: [],
+            pinch: [],
+            pinchend: [],
+            rotate: [],
+            rotateend: [],
+        };
+        this._onTouchStart = this.onTouchStart.bind(this);
+        this._onTouchMove = this.onTouchMove.bind(this);
+        this._onTouchEnd = this.onTouchEnd.bind(this);
+        this.opts = Object.assign({}, TinyGesture.defaults, options);
+        this.element.addEventListener('touchstart', this._onTouchStart, passiveIfSupported);
+        this.element.addEventListener('touchmove', this._onTouchMove, passiveIfSupported);
+        this.element.addEventListener('touchend', this._onTouchEnd, passiveIfSupported);
+        if (this.opts.mouseSupport && !('ontouchstart' in window)) {
+            this.element.addEventListener('mousedown', this._onTouchStart, passiveIfSupported);
+            document.addEventListener('mousemove', this._onTouchMove, passiveIfSupported);
+            document.addEventListener('mouseup', this._onTouchEnd, passiveIfSupported);
         }
     }
-
-    Gestures.prototype.emitEvent = function(event, args)
-    {
-        let method = 'handle' + event.charAt(0).toUpperCase() + event.slice(1);;
-
-        if ( this[ method ] )
-        {
-            this[ method ]( ...args );
+    destroy() {
+        var _a, _b;
+        this.element.removeEventListener('touchstart', this._onTouchStart);
+        this.element.removeEventListener('touchmove', this._onTouchMove);
+        this.element.removeEventListener('touchend', this._onTouchEnd);
+        this.element.removeEventListener('mousedown', this._onTouchStart);
+        document.removeEventListener('mousemove', this._onTouchMove);
+        document.removeEventListener('mouseup', this._onTouchEnd);
+        clearTimeout((_a = this.longPressTimer) !== null && _a !== void 0 ? _a : undefined);
+        clearTimeout((_b = this.doubleTapTimer) !== null && _b !== void 0 ? _b : undefined);
+    }
+    on(type, fn) {
+        if (this.handlers[type]) {
+            this.handlers[type].push(fn);
+            return {
+                type,
+                fn,
+                cancel: () => this.off(type, fn),
+            };
         }
-    };
-
-    let startEvent, activeEvents;
-    if ( 'ontouchstart' in window )
-    {
-    // HACK prefer Touch Events as you can preventDefault on touchstart to
-    // disable scroll in iOS & mobile Chrome metafizzy/flickity#1177
-        startEvent = 'touchstart';
-        activeEvents = [ 'touchmove', 'touchend', 'touchcancel' ];
-    } else if ( window.PointerEvent )
-    {
-    // Pointer Events
-        startEvent = 'pointerdown';
-        activeEvents = [ 'pointermove', 'pointerup', 'pointercancel' ];
-    } else {
-    // mouse events
-        startEvent = 'mousedown';
-        activeEvents = [ 'mousemove', 'mouseup' ];
     }
-
-    // prototype so it can be overwriteable by Flickity
-    Gestures.prototype.touchActionValue = 'none';
-
-    Gestures.prototype.bind = function()
-    {
-        this.element.addEventListener(startEvent, this.handleEvent);
-
-        this.element.addEventListener('click', this.handleEvent);
-
-        // touch-action: none to override browser touch gestures.
-        if ( window.PointerEvent ) this.element.style.touchAction = 'none';
-    }
-
-    Gestures.prototype.unbind = function()
-    {
-        this.element.removeEventListener(startEvent, this.handleEvent);
-
-        this.element.removeEventListener('click', this.handleEvent);
-
-    }
-
-    Gestures.prototype.bindActivePointerEvents = function()
-    {
-        activeEvents.forEach( ( eventName ) => {
-            window.addEventListener( eventName, this.handleEvent);
-        } );
-    };
-
-    Gestures.prototype.unbindActivePointerEvents = function()
-    {
-        activeEvents.forEach( ( eventName ) => {
-            window.removeEventListener( eventName, this.handleEvent);
-        } );
-    };
-
-    // ----- event handler helpers ----- //
-
-    // trigger method with matching pointer
-    Gestures.prototype.withPointer = function( methodName, event )
-    {
-        if ( event.pointerId === this.pointerIdentifier )
-        {
-            this[ methodName ]( event, event );
-        }
-    };
-
-    // trigger method with matching touch
-    Gestures.prototype.withTouch = function( methodName, event )
-    {
-        let touch;
-        for ( let changedTouch of event.changedTouches )
-        {
-            if ( changedTouch.identifier === this.pointerIdentifier )
-            {
-                touch = changedTouch;
+    off(type, fn) {
+        if (this.handlers[type]) {
+            const idx = this.handlers[type].indexOf(fn);
+            if (idx !== -1) {
+                this.handlers[type].splice(idx, 1);
             }
         }
-        if ( touch ) this[ methodName ]( event, touch );
-    };
-
-    // ----- start event ----- //
-
-    Gestures.prototype.onmousedown = function( event )
-    {
-        this.pointerDown( event, event );
-    };
-
-    Gestures.prototype.ontouchstart = function( event )
-    {
-        this.pointerDown( event, event.changedTouches[0] );
-    };
-
-    Gestures.prototype.onpointerdown = function( event )
-    {
-        this.pointerDown( event, event );
-    };
-
-    // nodes that have text fields
-    const cursorNodes = [ 'TEXTAREA', 'INPUT', 'SELECT', 'OPTION' ];
-    // input types that do not have text fields
-    const clickTypes = [ 'radio', 'checkbox', 'button', 'submit', 'image', 'file' ];
-
-    /**
-    * any time you set `event, pointer` it refers to:
-    * @param {Event} event
-    * @param {Event | Touch} pointer
-    */
-    Gestures.prototype.pointerDown = function( event, pointer )
-    {
-        // dismiss multi-touch taps, right clicks, and clicks on text fields
-        let isCursorNode = cursorNodes.includes( event.target.nodeName );
-        let isClickType = clickTypes.includes( event.target.type );
-        let isOkayElement = !isCursorNode || isClickType;
-        let isOkay = !this.isPointerDown && !event.button && isOkayElement;
-        if ( !isOkay ) return;
-
-        this.isPointerDown = true;
-        // save pointer identifier to match up touch events
-        this.pointerIdentifier = pointer.pointerId !== undefined ?
-        // pointerId for pointer events, touch.indentifier for touch events
-        pointer.pointerId : pointer.identifier;
-        // track position for move
-        this.pointerDownPointer = {
-            pageX: pointer.pageX,
-            pageY: pointer.pageY,
-        };
-
-        this.bindActivePointerEvents();
-
-        this.emitEvent( 'pointerDown', [ event, pointer ] );
-    };
-
-    // ----- move ----- //
-
-    Gestures.prototype.onmousemove = function( event )
-    {
-        this.pointerMove( event, event );
-    };
-
-    Gestures.prototype.onpointermove = function( event )
-    {
-        this.withPointer( 'pointerMove', event );
-    };
-
-    Gestures.prototype.ontouchmove = function( event )
-    {
-        this.withTouch( 'pointerMove', event );
-    };
-
-    Gestures.prototype.pointerMove = function( event, pointer )
-    {
-        let moveVector = {
-            x: pointer.pageX - this.pointerDownPointer.pageX,
-            y: pointer.pageY - this.pointerDownPointer.pageY,
-        };
-        this.emitEvent( 'pointerMove', [ event, pointer, moveVector ] );
-    // start drag if pointer has moved far enough to start drag
-        let isDragStarting = !this.isDragging && this.hasDragStarted( moveVector );
-        if ( isDragStarting ) this.dragStart( event, pointer );
-        if ( this.isDragging ) this.dragMove( event, pointer, moveVector );
-    };
-
-    // condition if pointer has moved far enough to start drag
-    Gestures.prototype.hasDragStarted = function( moveVector )
-    {
-        return Math.abs( moveVector.x ) > 3 || Math.abs( moveVector.y ) > 3;
-    };
-
-    // ----- drag ----- //
-
-    Gestures.prototype.dragStart = function( event, pointer )
-    {
-        this.isDragging = true;
-        this.isPreventingClicks = true; // set flag to prevent clicks
-        this.emitEvent( 'dragStart', [ event, pointer ] );
-    };
-
-    Gestures.prototype.dragMove = function( event, pointer, moveVector )
-    {
-        this.emitEvent( 'dragMove', [ event, pointer, moveVector ] );
-    };
-
-        // ----- end ----- //
-
-    Gestures.prototype.onmouseup = function( event )
-    {
-        this.pointerUp( event, event );
-    };
-
-    Gestures.prototype.onpointerup = function( event )
-    {
-        this.withPointer( 'pointerUp', event );
-    };
-
-    Gestures.prototype.ontouchend = function( event )
-    {
-        this.withTouch( 'pointerUp', event );
-    };
-
-    Gestures.prototype.pointerUp = function( event, pointer )
-    {
-        this.pointerDone();
-        this.emitEvent( 'pointerUp', [ event, pointer ] );
-
-        if ( this.isDragging )
-        {
-            this.dragEnd( event, pointer );
-        } else {
-        // pointer didn't move enough for drag to start
-            this.staticClick( event, pointer );
+    }
+    fire(type, event) {
+        for (let i = 0; i < this.handlers[type].length; i++) {
+            this.handlers[type][i](event);
         }
-    };
-
-    Gestures.prototype.dragEnd = function( event, pointer )
-    {
-        this.isDragging = false; // reset flag
-        
-        // re-enable clicking async
-        setTimeout( () => delete this.isPreventingClicks );
-
-        this.emitEvent( 'dragEnd', [ event, pointer ] );
-    };
-
-    // triggered on pointer up & pointer cancel
-    Gestures.prototype.pointerDone = function()
-    {
-        this.isPointerDown = false;
-        delete this.pointerIdentifier;
-        this.unbindActivePointerEvents();
-        this.emitEvent('pointerDone');
-    };
-
-        // ----- cancel ----- //
-
-    Gestures.prototype.onpointercancel = function( event )
-    {
-        this.withPointer( 'pointerCancel', event );
-    };
-
-    Gestures.prototype.ontouchcancel = function( event )
-    {
-        this.withTouch( 'pointerCancel', event );
-    };
-
-    Gestures.prototype.pointerCancel = function( event, pointer )
-    {
-        this.pointerDone();
-        this.emitEvent( 'pointerCancel', [ event, pointer ] );
-    };
-
-        // ----- click ----- //
-
-        // handle all clicks and prevent clicks when dragging
-    Gestures.prototype.onclick = function( event )
-    {
-        if ( this.isPreventingClicks ) event.preventDefault();
-    };
-
-        // triggered after pointer down & up with no/tiny movement
-    Gestures.prototype.staticClick = function( event, pointer )
-    {
-        // ignore emulated mouse up clicks
-        let isMouseup = event.type === 'mouseup';
-        if ( isMouseup && this.isIgnoringMouseUp ) return;
-
-        this.emitEvent( 'staticClick', [ event, pointer ] );
-
-        // set flag for emulated clicks 300ms after touchend
-        if ( isMouseup )
-        {
-            this.isIgnoringMouseUp = true;
-        // reset flag after 400ms
-            setTimeout( () => {
-                delete this.isIgnoringMouseUp;
-            }, 400 );
+    }
+    onTouchStart(event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1;
+        let didTouch1 = false;
+        let didTouch2 = false;
+        if (event.type !== 'mousedown') {
+            if (!this.touch1) {
+                this.touch1 = event.changedTouches[0];
+                didTouch1 = true;
+            }
+            if (((didTouch1 && event.changedTouches.length > 1) || !didTouch1) && !this.touch2) {
+                this.touch2 =
+                    [...event.changedTouches].find((touch) => { var _a; return touch.identifier !== ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); }) ||
+                        null;
+                this.originalDistance = Math.sqrt(Math.pow(((_b = (_a = this.touch2) === null || _a === void 0 ? void 0 : _a.screenX) !== null && _b !== void 0 ? _b : 0) - ((_f = (_d = (_c = this.touchMove1) === null || _c === void 0 ? void 0 : _c.screenX) !== null && _d !== void 0 ? _d : (_e = this.touch1) === null || _e === void 0 ? void 0 : _e.screenX) !== null && _f !== void 0 ? _f : 0), 2) +
+                    Math.pow(((_h = (_g = this.touch2) === null || _g === void 0 ? void 0 : _g.screenY) !== null && _h !== void 0 ? _h : 0) - ((_m = (_k = (_j = this.touchMove1) === null || _j === void 0 ? void 0 : _j.screenY) !== null && _k !== void 0 ? _k : (_l = this.touch1) === null || _l === void 0 ? void 0 : _l.screenY) !== null && _m !== void 0 ? _m : 0), 2));
+                this.originalAngle =
+                    Math.atan2(((_p = (_o = this.touch2) === null || _o === void 0 ? void 0 : _o.screenY) !== null && _p !== void 0 ? _p : 0) - ((_t = (_r = (_q = this.touchMove1) === null || _q === void 0 ? void 0 : _q.screenY) !== null && _r !== void 0 ? _r : (_s = this.touch1) === null || _s === void 0 ? void 0 : _s.screenY) !== null && _t !== void 0 ? _t : 0), ((_v = (_u = this.touch2) === null || _u === void 0 ? void 0 : _u.screenX) !== null && _v !== void 0 ? _v : 0) - ((_z = (_x = (_w = this.touchMove1) === null || _w === void 0 ? void 0 : _w.screenX) !== null && _x !== void 0 ? _x : (_y = this.touch1) === null || _y === void 0 ? void 0 : _y.screenX) !== null && _z !== void 0 ? _z : 0)) /
+                        (Math.PI / 180);
+                return;
+            }
+            if (!didTouch1 && !didTouch2) {
+                return;
+            }
         }
-    };
+        if (didTouch1 || event.type === 'mousedown') {
+            this.thresholdX = this.opts.threshold('x', this);
+            this.thresholdY = this.opts.threshold('y', this);
+            this.disregardVelocityThresholdX = this.opts.disregardVelocityThreshold('x', this);
+            this.disregardVelocityThresholdY = this.opts.disregardVelocityThreshold('y', this);
+            this.touchStartX = event.type === 'mousedown' ? event.screenX : ((_0 = this.touch1) === null || _0 === void 0 ? void 0 : _0.screenX) || 0;
+            this.touchStartY = event.type === 'mousedown' ? event.screenY : ((_1 = this.touch1) === null || _1 === void 0 ? void 0 : _1.screenY) || 0;
+            this.touchMoveX = null;
+            this.touchMoveY = null;
+            this.touchEndX = null;
+            this.touchEndY = null;
+            this.swipingDirection = null;
+            this.longPressTimer = setTimeout(() => this.fire('longpress', event), this.opts.longPressTime);
+            this.scale = 1;
+            this.rotation = 0;
+            this.fire('panstart', event);
+        }
+    }
+    onTouchMove(event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+        if (event.type === 'mousemove' && (!this.touchStartX || this.touchEndX !== null)) {
+            return;
+        }
+        let touch1 = undefined;
+        let touch2 = undefined;
+        if (event.type !== 'mousemove') {
+            touch1 = [...event.changedTouches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); });
+            this.touchMove1 = touch1 || this.touchMove1;
+            touch2 = [...event.changedTouches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch2) === null || _a === void 0 ? void 0 : _a.identifier); });
+            this.touchMove2 = touch2 || this.touchMove2;
+        }
+        if (event.type === 'mousemove' || touch1) {
+            const touchMoveX = (event.type === 'mousemove' ? event.screenX : (_a = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenX) !== null && _a !== void 0 ? _a : 0) - ((_b = this.touchStartX) !== null && _b !== void 0 ? _b : 0);
+            this.velocityX = touchMoveX - ((_c = this.touchMoveX) !== null && _c !== void 0 ? _c : 0);
+            this.touchMoveX = touchMoveX;
+            const touchMoveY = (event.type === 'mousemove' ? event.screenY : (_d = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenY) !== null && _d !== void 0 ? _d : 0) - ((_e = this.touchStartY) !== null && _e !== void 0 ? _e : 0);
+            this.velocityY = touchMoveY - ((_f = this.touchMoveY) !== null && _f !== void 0 ? _f : 0);
+            this.touchMoveY = touchMoveY;
+            const absTouchMoveX = Math.abs(this.touchMoveX);
+            const absTouchMoveY = Math.abs(this.touchMoveY);
+            this.swipingHorizontal = absTouchMoveX > this.thresholdX;
+            this.swipingVertical = absTouchMoveY > this.thresholdY;
+            this.swipingDirection =
+                absTouchMoveX > absTouchMoveY
+                    ? this.swipingHorizontal
+                        ? 'horizontal'
+                        : 'pre-horizontal'
+                    : this.swipingVertical
+                        ? 'vertical'
+                        : 'pre-vertical';
+            if (Math.max(absTouchMoveX, absTouchMoveY) > this.opts.pressThreshold) {
+                clearTimeout((_g = this.longPressTimer) !== null && _g !== void 0 ? _g : undefined);
+            }
+            this.fire('panmove', event);
+        }
+        if (event.type !== 'mousemove' && this.touchMove1 != null && this.touchMove2 != null) {
+            this.newDistance = Math.sqrt(Math.pow(this.touchMove2.screenX - this.touchMove1.screenX, 2) +
+                Math.pow(this.touchMove2.screenY - this.touchMove1.screenY, 2));
+            this.scale = this.newDistance / ((_h = this.originalDistance) !== null && _h !== void 0 ? _h : 0);
+            this.fire('pinch', event);
+            this.newAngle =
+                Math.atan2(((_j = this.touchMove2.screenY) !== null && _j !== void 0 ? _j : 0) - ((_k = this.touchMove1.screenY) !== null && _k !== void 0 ? _k : 0), ((_l = this.touchMove2.screenX) !== null && _l !== void 0 ? _l : 0) - ((_m = this.touchMove1.screenX) !== null && _m !== void 0 ? _m : 0)) /
+                    (Math.PI / 180);
+            this.rotation = this.newAngle - ((_o = this.originalAngle) !== null && _o !== void 0 ? _o : 0);
+            this.fire('rotate', event);
+        }
+    }
+    onTouchEnd(event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+        let touch1 = undefined;
+        if (event.type !== 'mouseup') {
+            touch1 = [...event.changedTouches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); });
+            if (![...event.touches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); })) {
+                this.touch1 = null;
+                this.touchMove1 = null;
+            }
+            if (![...event.touches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch2) === null || _a === void 0 ? void 0 : _a.identifier); })) {
+                this.touch2 = null;
+                this.touchMove2 = null;
+            }
+        }
+        if (event.type === 'mouseup' && (!this.touchStartX || this.touchEndX !== null)) {
+            return;
+        }
+        if (event.type === 'mouseup' || touch1) {
+            this.touchEndX = event.type === 'mouseup' ? event.screenX : (_a = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenX) !== null && _a !== void 0 ? _a : 0;
+            this.touchEndY = event.type === 'mouseup' ? event.screenY : (_b = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenY) !== null && _b !== void 0 ? _b : 0;
+            this.fire('panend', event);
+            clearTimeout((_c = this.longPressTimer) !== null && _c !== void 0 ? _c : undefined);
+            const x = this.touchEndX - ((_d = this.touchStartX) !== null && _d !== void 0 ? _d : 0);
+            const absX = Math.abs(x);
+            const y = this.touchEndY - ((_e = this.touchStartY) !== null && _e !== void 0 ? _e : 0);
+            const absY = Math.abs(y);
+            const distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+            const absDistance = Math.abs(distance);
+            const diagonal = absY / absX;
+            if (absX > this.thresholdX ||
+                absY > this.thresholdY ||
+                (this.opts.diagonalSwipes && (absDistance > this.thresholdX || absDistance > this.thresholdY))) {
+                this.swipedHorizontal = absX > this.thresholdX || (this.opts.diagonalSwipes && absDistance > this.thresholdX);
+                this.swipedVertical = absY > this.thresholdY || (this.opts.diagonalSwipes && absDistance > this.thresholdY);
+                if (!this.opts.diagonalSwipes ||
+                    diagonal < Math.tan(((45 - this.opts.diagonalLimit) * Math.PI) / 180) ||
+                    diagonal > Math.tan(((45 + this.opts.diagonalLimit) * Math.PI) / 180)) {
+                    if (absX >= absY) {
+                        this.swipedVertical = false;
+                    }
+                    if (absY > absX) {
+                        this.swipedHorizontal = false;
+                    }
+                }
+                if (this.swipedHorizontal) {
+                    if (x < 0) {
+                        if (((_f = this.velocityX) !== null && _f !== void 0 ? _f : 0) < -this.opts.velocityThreshold || distance < -this.disregardVelocityThresholdX) {
+                            this.fire('swipeleft', event);
+                        }
+                    }
+                    else {
+                        if (((_g = this.velocityX) !== null && _g !== void 0 ? _g : 0) > this.opts.velocityThreshold || distance > this.disregardVelocityThresholdX) {
+                            this.fire('swiperight', event);
+                        }
+                    }
+                }
+                if (this.swipedVertical) {
+                    if (y < 0) {
+                        if (((_h = this.velocityY) !== null && _h !== void 0 ? _h : 0) < -this.opts.velocityThreshold || distance < -this.disregardVelocityThresholdY) {
+                            this.fire('swipeup', event);
+                        }
+                    }
+                    else {
+                        if (((_j = this.velocityY) !== null && _j !== void 0 ? _j : 0) > this.opts.velocityThreshold || distance > this.disregardVelocityThresholdY) {
+                            this.fire('swipedown', event);
+                        }
+                    }
+                }
+            }
+            else if (absX < this.opts.pressThreshold && absY < this.opts.pressThreshold) {
+                if (this.doubleTapWaiting) {
+                    this.doubleTapWaiting = false;
+                    clearTimeout((_k = this.doubleTapTimer) !== null && _k !== void 0 ? _k : undefined);
+                    this.fire('doubletap', event);
+                }
+                else {
+                    this.doubleTapWaiting = true;
+                    this.doubleTapTimer = setTimeout(() => (this.doubleTapWaiting = false), this.opts.doubleTapTime);
+                    this.fire('tap', event);
+                }
+            }
+        }
+        if (!this.touch1 && !this.touch2) {
+            this.fire('pinchend', event);
+            this.fire('rotateend', event);
+            this.originalDistance = null;
+            this.newDistance = null;
+            this.scale = null;
+            this.originalAngle = null;
+            this.newAngle = null;
+            this.rotation = null;
+        }
+    }
+}
+TinyGesture.defaults = {
+    threshold: (type, _self) => Math.max(25, Math.floor(0.15 *
+        (type === 'x'
+            ? window.innerWidth || document.body.clientWidth
+            : window.innerHeight || document.body.clientHeight))),
+    velocityThreshold: 10,
+    disregardVelocityThreshold: (type, self) => Math.floor(0.5 * (type === 'x' ? self.element.clientWidth : self.element.clientHeight)),
+    pressThreshold: 8,
+    diagonalSwipes: false,
+    diagonalLimit: 15,
+    longPressTime: 500,
+    doubleTapTime: 300,
+    mouseSupport: true,
+};
+ 
+let passiveIfSupported = false;
+try {
+    window.addEventListener('test', null, Object.defineProperty({}, 'passive',{
+        get: function () {
+            passiveIfSupported = { passive: true };
+        },
+    }));
+}
+catch (err) { }
 
-    // Load into container
-    Hubble.set('Gestures', Gestures);
+Hubble.set('TinyGesture', TinyGesture);
+   
 
 })();
+
+
 
 // DOM Module
 (function()
@@ -11437,7 +11411,7 @@ Container.singleton('_', _);
      * 
      * @var {Function}
      */
-    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width']).from('_');
+    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width, inline_style] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width','inline_style']).from('_');
 
     /**
      * Default options
@@ -11446,18 +11420,18 @@ Container.singleton('_', _);
      */
     const DEFAULT_OPTIONS =
     {
-        accessibility: true,
         // enable keyboard navigation, pressing left & right keys
-
-        autoPlay: true,
+        accessibility: true,
+        
         // advances to the next cell
         // if true, default is 3 seconds
         // or set time between advances in milliseconds
         // i.e. `autoPlay: 1000` will advance every 1 second
+        autoPlay: true,
 
-        initialIndex: 0,
         // zero-based index of the initial selected cell
-
+        initialIndex: 0,
+        
         controls: true,
         // creates and enables buttons to click to previous & next cells
 
@@ -11470,15 +11444,30 @@ Container.singleton('_', _);
         wrap: true,
         // at end of cells, wraps-around to first for infinite scrolling
 
+        // Group slides
+        groupSlides: false,
+
         pauseOnHover: true,
         // Pauses autoplay on hover
 
         easing: 'easeOutExpo',
         // Easing pattern
 
-        draggable: '>1',
-        dragThreshold: 3,
+        draggable: true,
+        // Draggable
 
+        friction: 0.85,
+        // Dragging friction
+
+        mouseSupport: true,
+        // Enables dragging with mouse,
+
+        // Minimum swipe distance to be a "swipe"
+        threshold: (type, self) => 3,
+
+        // Minimum travel swipe velocity to be considered a "swipe"
+        velocityThreshold: 3,
+        
     };
     
     /**
@@ -11497,11 +11486,9 @@ Container.singleton('_', _);
 
         this._playing = 'stopped';
 
-        this._hovering = false;
-
         this._translated = 0;
 
-        this._throttle = throttle(() => this.resize(), 100);
+        this._resizeThrottle = throttle(() => this.resize(), 100);
 
         this._build();
 
@@ -11521,11 +11508,13 @@ Container.singleton('_', _);
     {
         this.stop();
 
+        if (this._gestures) this.gestures.destroy();
+
         off(this._righBtn, 'click', this.next, this);
 
         off(this._leftBtn, 'click', this.previous, this);
 
-        off(window, 'resize', this._throttle, this);
+        off(window, 'resize', this._resizeThrottle, this);
 
         off(this.DOMElementWrapper, 'mouseover', this.pause, this);
 
@@ -11542,7 +11531,7 @@ Container.singleton('_', _);
     _Slider.prototype.next = function(e)
     {
         // Stop on animating
-        if (this._animating) return;
+        if (this._animating || this._dragging) return;
 
         // Do nothing on non-wrap and at end
         if (!this.options.wrap && this._index === this._slidesIndexs) return;
@@ -11563,21 +11552,36 @@ Container.singleton('_', _);
             this._translated = distance;
         }
 
-        animate(this._DOMElementViewport, { transform: `translateX(-${distance}px)`, easing: this.options.easing, duration: 550, complete: () => { 
+        // Update the index and dots.        
+        this._updateIndex(1);
+        this._updateDots();
 
-            if (this.options.wrap) css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+        // Shuffle before animation
+        if (this.options.wrap)
+        {
+            // Adjust pre distance before animation
+            let preDistance = this._offset - this._slideWidthWGap;
 
             this._moved(1);
+
+            css(this._DOMElementViewport, 'left', `-${preDistance}px`);
+        }
+
+        animate(this._DOMElementViewport, { transform: `translateX(-${distance}px)`, easing: this.options.easing, duration: 550, complete: () =>
+        { 
+            if (this.options.wrap)
+            {
+                css(this._DOMElementViewport, 'left', `-${this._offset}px`);
+
+                css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+            }
+
+            if (!this.options.wrap) this._moved(1);
 
             this._animating = false;
 
             if (!e) this.unpause();
-
         }});
-    
-        // Update the index and dots.        
-        this._updateIndex(1);
-        this._updateDots();
     }
 
     /**
@@ -11585,10 +11589,10 @@ Container.singleton('_', _);
      *
      * @access {public}
      */
-    _Slider.prototype.previous = function()
+    _Slider.prototype.previous = function(e)
     {
         // Stop on animating
-        if (this._animating) return;
+        if (this._animating || this._dragging) return;
 
         // Do nothing on non-wrap and at start
         if (!this.options.wrap && this._index === 0) return;
@@ -11599,51 +11603,43 @@ Container.singleton('_', _);
         // We're now animating
         this._animating = true;
 
-        if (!this.options.wrap)
+        // Cache distance
+        let distance = !this.options.wrap ? (this._translated - (this._slideWidth + this._gapSize)) : this._slideWidth + this._gapSize;
+
+        this._translated = distance < 2 ? 0 : distance;
+
+        // Failsafe 
+        if (!this.options.wrap) distance = distance < 2 ? 0 : -distance;
+
+        // Update dots and indexes
+        this._updateIndex(-1);
+        this._updateDots();
+
+        // Shuffle before animation
+        if (this.options.wrap)
         {
-            let distance = this._translated - (this._slideWidth + this._gapSize);
-
-            this._translated = distance;
-            
-            animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
-            { 
-                this._animating = false;
-
-                this.unpause();
-
-            } });
-        }
-        else
-        {
-            // Shuffle before animation
-            this._moved(-1);
-
             // Adjust pre distance before animation
             let preDistance = this._offset + (this._slideWidth + this._gapSize);
 
-            // Run animation
-            let distance = (this._slideWidth + this._gapSize);
+            this._moved(-1);
 
             css(this._DOMElementViewport, 'left', `-${preDistance}px`);
+        }
 
-            // Run animation
-            animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
-            { 
+        // Run animation
+        animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
+        { 
+            if (this.options.wrap)
+            {
                 css(this._DOMElementViewport, 'left', `-${this._offset}px`);
 
                 css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+            }
 
-                this._animating = false;
+            this._animating = false;
 
-                this.unpause();
-
-            } });
-        }
-            
-        // Update dots and indexes
-        this._updateIndex(-1);
-
-        this._updateDots();
+            if (!e) this.unpause();
+        } });
     }
 
     /**
@@ -11652,10 +11648,16 @@ Container.singleton('_', _);
      * @access {public}
      * @param  {integer} slideNum Slide number
      */
-    _Slider.prototype.toSlide = function(slideNum, fromClick)
-    {   
+    _Slider.prototype.toSlide = function(slideNum, animation, fromClick)
+    {
         // Animating
         if (this._animating) return false;
+
+        animation = typeof animation === 'undefined' ? true : animation;
+
+        fromClick = typeof fromClick === 'undefined' ? false : fromClick;
+
+        if (!animation) return this._toSlideDirect(slideNum);
 
         // convert slide number to index
         let index = slideNum === 1 ? 0 : slideNum-1;
@@ -11691,17 +11693,17 @@ Container.singleton('_', _);
 
             distance = direction === -1 ? this._translated - distance : this._translated + distance;
             
-            this._translated = distance;
+            this._translated = distance < 2 ? 0 : distance;
 
             _for(delta, () => { this._updateIndex(direction) });
 
             this._updateDots();
             
-            animate(this._DOMElementViewport, { transform: `translateX(${distance < 0 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
+            animate(this._DOMElementViewport, { transform: `translateX(${distance < 2 ? 0 : -distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
             { 
                 this._animating = false;
 
-                this.unpause();
+                if (!fromClick) this.unpause();
 
             } });
 
@@ -11728,7 +11730,7 @@ Container.singleton('_', _);
         css(this._DOMElementViewport, 'left', `-${tmpOffset}px`);
 
         // Run animation
-        animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 550, complete: () => 
+        animate(this._DOMElementViewport, { transform: `translateX(${distance}px)`, easing: this.options.easing, duration: 650, complete: () => 
         { 
             each(clones, (i, clone) =>
             {
@@ -11748,6 +11750,54 @@ Container.singleton('_', _);
         this._updateDots();
     }
 
+     /**
+     * Go to slide.
+     *
+     * @access {public}
+     * @param  {integer} slideNum Slide number
+     */
+    _Slider.prototype._toSlideDirect = function(slideNum)
+    {
+        // convert slide number to index
+        let index = slideNum === 1 ? 0 : slideNum-1;
+
+        // Clear timeout
+        this.pause();
+
+        // Default delta and direction
+        let delta       = index < this._index ? this._index - index : index - this._index;
+        let direction   = index < this._index ? -1 : 1;
+
+        // If we're not wrapping we can skip all of this
+        if (!this.options.wrap)
+        {
+            let distance = (this._slideWidth + this._gapSize) * delta;
+
+            distance = direction === -1 ? this._translated - distance : this._translated + distance;
+            
+            this._translated = distance < 2 ? 0 : distance;
+
+            _for(delta, () => { this._updateIndex(direction) });
+
+            this._updateDots();
+
+            css(this._DOMElementViewport, 'transform',  `translateX(${distance < 2 ? 0 : -distance}px)`);
+            
+            this.unpause();
+
+            return;
+        }
+
+        // Shuffle slides
+        _for(delta, () => { this._moved(direction); this._updateIndex(direction) }, this);
+
+        css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+
+        this._updateDots();
+
+        this.unpause();
+    }
+
     /**
      * Window resize handler.
      *
@@ -11755,6 +11805,8 @@ Container.singleton('_', _);
      */
     _Slider.prototype.resize = function()
     {
+        if (this._slidesCount === 0) return;
+
         // Is full width, may change with responsive CSS
         this._isFullWidth = parseInt(rendered_style(this._slides[0], 'max-width')) === 100;
 
@@ -11766,6 +11818,9 @@ Container.singleton('_', _);
 
         // Slide width
         this._slideWidth = Math.round(width(this._slides[0], this.DOMElementWrapper));
+
+        // Slide width with gap
+        this._slideWidthWGap = this._slideWidth + this._gapSize;
 
         // Offset
         this._offset = Math.round(this.options.wrap ? (this._middleIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2) : (this._slideWidth + this._gapSize) - ((this._viewportWidth + this._slideWidth) / 2));
@@ -11779,6 +11834,13 @@ Container.singleton('_', _);
 
         // Make offset
         css(this._DOMElementViewport, 'left', `${this._offset === 0 ? 0 : -this._offset}px`);
+
+        // Visible slides
+        this._visibleSlides = this._isFullWidth ? 1 : this._viewportWidth / (this._slideWidth + this._gapSize);
+
+        this._dragBoundryL = this._offset - (this._slideWidth / 2);
+
+        this._dragBoundryR = -(this._dragBoundryL);
     }
 
     /**
@@ -11858,7 +11920,11 @@ Container.singleton('_', _);
     _Slider.prototype._build = function()
     {
         // Find slides
-        this._slides = find_all('> *', this.DOMElementWrapper);
+        this._slides = !this.options.groupSlides ? find_all('> *', this.DOMElementWrapper) : map([...Array(Math.ceil(find_all('> *', this.DOMElementWrapper).length / this.options.groupSlides)).keys()], (i) =>
+        {
+            // Since we're appending children as we go we're always taking the first n children
+            return dom_element({tag: 'div', class: 'slide-group'}, null, find_all('> *', this.DOMElementWrapper).slice(0, this.options.groupSlides));
+        });
 
         // Slides count
         this._slidesCount = this._slides.length;
@@ -11886,7 +11952,6 @@ Container.singleton('_', _);
 
         // Dots
         this._dots = [];
-        this._dot = null;
         if (this.options.dots) this._buildDots();
 
         // Pause on hover
@@ -11900,15 +11965,205 @@ Container.singleton('_', _);
         // Window resize
         if (this.options.resize)
         {
-            on(window, 'resize', this._throttle, this);
+            on(window, 'resize', this._resizeThrottle, this);
         }
 
-        if (this.options.draggable)
+        if (this.options.draggable && this._slidesCount > 1)
         {
             add_class(this.DOMElementWrapper, 'draggable');
 
             this._bindGestures();
         }
+
+        add_class(this.DOMElementWrapper, 'js-slider');
+    }
+
+    /**
+     * Start dragging slide.
+     *
+     * @access {public}
+     * @param  {integer} slideNum Slide number
+     */
+    _Slider.prototype._dragSlide = function(moved)
+    {
+        let x = this._dragX;
+
+        if (this.options.wrap)
+        {
+            let nearEnd = (x < 0 && x <= this._dragBoundryR) || (x > 0 && x >= this._dragBoundryL);
+
+            if (nearEnd)
+            {
+                this._dragCloneSlides();
+
+                return;
+            }
+        }
+
+        css(this._DOMElementViewport, 'transform', `translateX(${x}px)`);
+    }
+
+    /**
+     * Go to slide.
+     *
+     * @access {public}
+     * @param  {integer} slideNum Slide number
+     */
+    _Slider.prototype._dragCloneSlides = function()
+    {   
+        // No need to clone on non wrapping sliders     
+        if (!this.options.wrap) return;
+
+        let distance = (this._slideWidth + this._gapSize) * this._bufferSize;
+
+        // Push out the drag boundaries
+        // Drag bondry L remains the same as it is a fixed position from start
+        this._dragBoundryR = -(((this._slideWidth + this._gapSize) * (this._bufferSize + this._slidesCount -1)) + (this._slideWidth /2));
+
+        // Adjust the dragging buffer
+        this._draggingbuffer = !this._draggingbuffer ? distance : this._draggingbuffer + distance;
+
+        // Resting distance
+        distance = this._dragX - distance;
+
+        // Pad sides and clone
+        this._bufferDragClones();
+
+        // Adjust drag position
+        css(this._DOMElementViewport, 'transform', `translateX(${distance}px)`);
+    }
+
+    /**
+     * Fake shuffle cloned slides to start or end
+     *
+     * @access {private}
+     */
+    _Slider.prototype._bufferDragClones = function()
+    {    
+        if (!this.options.wrap) return;
+
+        let viewport = this._DOMElementViewport;
+
+        let clones = [];
+
+        _for(this._bufferSize, (i) =>
+        {
+            let cloneR = find(`> *:nth-child(${this._dragRIndex})`, this._DOMElementViewport).cloneNode(true);
+            let cloneL = find(`> *:nth-last-child(${this._dragLIndex})`, this._DOMElementViewport).cloneNode(true);
+            add_class([cloneR, cloneL], 'slide-clone');
+
+            this._dragClones.push(cloneR);
+            this._dragClones.push(cloneL);
+
+            preapend(cloneL, viewport);
+
+            viewport.appendChild(cloneR);
+
+            this._dragRIndex += 2;
+
+            this._dragLIndex += 2;
+        });
+    }
+
+    /**
+     * Clear drag clones.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._clearDragClones = function()
+    {
+        each(this._dragClones, (i, clone) =>
+        {
+            this._DOMElementViewport.removeChild(clone);
+        });
+    }
+
+    _Slider.prototype._restingDragPos = function()
+    {
+        let ret = { rest: 0, slideIndex: 1 };
+
+        // There would be a smarter way to figure all this out, however have not been able to figure out an easy solution
+        let wrapping = this.options.wrap;
+
+        // What distance have we actually moved in total?
+        let moved = !wrapping ? Math.abs(this._dragX) - Math.abs(this._offset) : (this._slideWidthWGap * this._middleIndex) + (this._slideWidth / 2)
+
+        if (wrapping) moved = this._dragX < 0 ? moved + Math.abs(this._dragX) : moved - this._dragX;
+
+        // Always first slide
+        if (!wrapping && (this._dragX > 0 || moved < 0)) return ret;
+
+        // Get the DOM index of the slide that should be resting
+        let index = !wrapping ? Math.ceil(moved / this._slideWidthWGap) : Math.ceil(moved / this._slideWidthWGap) -1;
+
+        // Dragged over the edge on non-wrapping sliders
+        if (!wrapping && index > this._slidesIndexs) index = this._slidesIndexs;
+
+        // Get X pos of where target slide starts
+        let slideStarts = (index * this._slideWidthWGap) - (this._viewportWidth / 2) + (this._slideWidth / 2);
+
+        // Figure out the resting point
+        let rest = this._offset - slideStarts;
+
+        let slideIndex = parseInt(attr(find(`>:nth-child(${index +1})`, this._DOMElementViewport), 'data-index')) +1;
+
+        this._dragMoved = (slideIndex -1) !== this._index;
+
+        if (!wrapping) this._translated = Math.abs(rest);
+
+        return { rest, slideIndex };
+    }
+
+    /**
+     * Find closest slide on end
+     *
+     * @access {private}
+     */
+    _Slider.prototype._onDragEnd = function()
+    {
+        let { rest, slideIndex } = this._restingDragPos();
+
+        this._dragEndAnim = animate(this._DOMElementViewport, { property: 'transform', from: `translateX(${this._dragX}px)`, to: `translateX(${rest}px)`, duration: 650, easing: this.options.easing, complete: () => 
+        {
+            if (this._dragClones.length >= 1) this._clearDragClones();
+
+            if (this._dragMoved && this.options.wrap) this.toSlide(slideIndex, false, false);
+
+            if (!this._dragMoved && this.options.wrap) css(this._DOMElementViewport, 'transform', `translateX(0px)`);
+
+            this._index = slideIndex -1;
+
+            this._translated = Math.abs(rest);
+
+            this._updateDots();
+
+            this.unpause();
+
+            this._resetDragVars();
+        }} );
+    }
+
+    /**
+     * Build controls.
+     *
+     * @access {private}
+     */
+    _Slider.prototype._resetDragVars = function()
+    {
+        this._dragClones      = [];
+        this._dragRIndex      = 1;
+        this._dragLIndex      = 1;
+        this._dragging        = false;
+        this._dragMoved       = false;
+        this._dragStartPointX = { x: 0, y: 0};
+        
+        delete this._dragX;
+
+        delete this._prevDrag;
+
+        delete this._dragEndAnim;
+
+        delete this._draggingbuffer;
     }
 
     /**
@@ -11920,82 +12175,125 @@ Container.singleton('_', _);
     {
         let wrapper = this.DOMElementWrapper;
 
-        const handlePointerDown = function(event)
+        const gestures = Hubble.TinyGesture(this.DOMElementWrapper, { mouseSupport: this.options.mouseSupport, velocityThreshold: this.options.velocityThreshold, threshold: this.options.threshold });
+
+        this._resetDragVars();
+
+        gestures.on('panstart', (event) =>
         {
-            this.dragX = event.x;
+            // No drag on transitioning
+            if (this._animating) return;
 
-            add_class(wrapper, 'pointer-down');
+            // Clear timeout
+            this.pause();
 
-            console.log('pointerdown');
-        }
+            // Register start point
+            this._dragStartPointX = event.pageX;
 
-        const handlePointerUp = function(event)
-        {
-            this.dragX = event.x;
-
-            remove_class(wrapper, 'pointer-down');
-
-            console.log('pointerdown');
-        }
-
-        const handleDragStart = function(event, pointer)
-        {
-            console.log('handleDragStart');
-
-            add_class(wrapper, 'dragging');
-
-            this.dragStartPosition = event.x;
-            
-            //this.startAnimation();
-        }
-
-        const handleDragMove = function( event, pointer, moveVector )
-        {
-            console.log('handleDragMove');
-
-            event.preventDefault();
-
-            this.previousDragX = this.dragX;
-
-            let dragX = this.dragStartPosition + moveVector.x;
-
-            /*if ( !this.options.draggable ) return;
-
-            // Slow down
-            if ( !this.options.wrap )
+            // We have a previous unfinished drag
+            if (this._dragEndAnim)
             {
-                // slow drag
-                let originBound = Math.max( -this.slides[0].target, this.dragStartPosition );
-                dragX = dragX > originBound ? ( dragX + originBound ) * 0.5 : dragX;
-                let endBound = Math.min( -this.getLastSlide().target, this.dragStartPosition );
-                dragX = dragX < endBound ? ( dragX + endBound ) * 0.5 : dragX;
+                this._dragEndAnim.stop();
+
+                this._prevDrag = parseFloat(inline_style(this._DOMElementViewport, 'transform').replaceAll(/[^0-9-.]/g, ''));
+
+                delete this._dragEndAnim;
             }
 
-            this.dragX = dragX;
-
-            this.dragMoveTime = new Date();*/
-        };
-
-        const handleDragEnd = () =>
-        {
-            console.log('handleDragEnd');
-
+            // Add helper class for optional UI
             add_class(wrapper, 'dragging');
+        });
 
-            /*if ( !this.options.draggable ) return;
+        gestures.on('panmove', (event) =>
+        {
+            // No drag on transitioning
+            if (this._animating) return;
 
-            // set selectedIndex based on where flick will end up
-            //let index = this.dragEndRestingSelect();
+            // Base movement
+            let moveVectorX = (event.pageX - this._dragStartPointX);
 
-            delete this.previousDragX;
+            // No drag
+            if ( Math.abs(moveVectorX) < 3 ) return;
 
-            //this.select( index );
+            this._dragging = true;
+
+            // Much slower on non-wrapping sliders when at end or start and going in opposite direction
+            if (!this.options.wrap && ( (this._index === 0 && moveVectorX > 0) || (this._index === this._slidesIndexs && moveVectorX < 0) ))
+            {
+                moveVectorX = moveVectorX * (this.options.friction / 3);
+            }
+            else
+            {
+                // Slow down further we drag
+                moveVectorX = moveVectorX * this.options.friction;
+            }
+
+            // Previous drag
+            if (this._prevDrag)
+            {
+                moveVectorX = this._prevDrag + moveVectorX
+            }
+
+            // Non wrap + translated
+            else if (!this.options.wrap)
+            {
+                moveVectorX = moveVectorX - this._translated;
+            }
+
+            // Calculate travel distance
+            this._dragX = !this._draggingbuffer ? moveVectorX : moveVectorX - this._draggingbuffer;
+
+            // Drag the slide
+            this._dragSlide();
+        });
+
+        gestures.on('panend', (event) =>
+        {
+            remove_class(wrapper, 'dragging');
+
+            if (!this._dragX) return this.unpause();
+
+            this._onDragEnd();
+        });
+
+        gestures.on('swiperight', (event) =>
+        {
+            // Don't swipe on animating
+            if (this._animating) return;
+
+            // Don't swipe on drags
+            if (this._dragEndAnim && this._dragMoved) return;
+
+            // Can't go back
+            if (!this.options.wrap && this._index === 0) return;
+
+            // Stop dragend if running
+            if (this._dragEndAnim) this._dragEndAnim.stop();
+
+            this._resetDragVars();
+
+            this.previous();
+        });
+        gestures.on('swipeleft', (event) =>
+        {
+            // Don't swipe on animating
+            if (this._animating) return;
+
+            // Don't swipe on drags
+            if (this._dragEndAnim && this._dragMoved) return;
             
-            delete this.isDragSelect;*/
-        }
+            // Can't go forward
+            if (!this.options.wrap && this._index === this._slidesIndexs) return;
 
-        // Gestures
-        const gestures = Hubble.Gestures(this.DOMElementWrapper, { handlePointerDown, handleDragStart, handleDragMove, handleDragEnd, handlePointerUp });
+            // Stop dragend if running
+            if (this._dragEndAnim) this._dragEndAnim.stop();
+
+            this._resetDragVars();
+
+            this.next();
+        });
+
+        this._gestures = gestures;
     }
 
     /**
@@ -12029,7 +12327,7 @@ Container.singleton('_', _);
     {
         let index = this._index;
 
-        this._dotWrap = dom_element({tag: 'div', class: 'slider-dots'}, this.DOMElementWrapper, map(this._slides, (i, slide) =>
+        this._dotWrap = dom_element({tag: 'div', class: 'slider-dots js-slider-dots'}, this.DOMElementWrapper, map(this._slides, (i, slide) =>
         {
             let active = i === index ? 'active' : '';
 
@@ -12038,8 +12336,6 @@ Container.singleton('_', _);
             on(dot, 'click', this._dotClick, this);
 
             this._dots.push(dot);
-
-            if (i === index) this._dot = dot;
 
             return dot;
         }));
@@ -12052,6 +12348,12 @@ Container.singleton('_', _);
      */
     _Slider.prototype._moveIndexToMiddle = function()
     {
+        each(this._slides, (i) =>
+        {
+            attr(this._slides[i], 'data-index', i);
+        
+        }, this);
+
         if (!this.options.wrap) return;
 
         let slide = this._slides[this._index];
@@ -12062,7 +12364,7 @@ Container.singleton('_', _);
 
             preapend(find('> *:last-child', this._DOMElementViewport), this._DOMElementViewport);
         
-        }, this);
+        }, this);  
     }
 
     /**
@@ -12072,9 +12374,11 @@ Container.singleton('_', _);
      */
     _Slider.prototype._dotClick = function(e, dot)
     {
+        if (this._animating || this._dragging) return;
+
         let index = parseInt(attr(dot, 'data-index')) +1;
 
-        this.toSlide(index, true);
+        this.toSlide(index, true, true);
     }
     
     /**
@@ -12107,8 +12411,8 @@ Container.singleton('_', _);
         let delta       = index < this._index ? this._index - index : index - this._index;
         let direction   = index < this._index ? -1 : 1;
         
-        // We only go shortest path if we're wrapping
-        if (this.options.wrap)
+        // We only go shortest path if we're wrapping and there's more than 5 slides
+        if (this.options.wrap && this._slidesCount > 4)
         {
             if (index > this._index)
             {
@@ -12152,7 +12456,6 @@ Container.singleton('_', _);
             direction === -1 ? viewport.appendChild(clone) : preapend(clone, viewport);
 
             return clone;
-
         });
     }
 
@@ -12234,11 +12537,9 @@ Container.singleton('_', _);
     {
         if (!this.options.dots) return;
 
-        remove_class(this._dot, 'active');
+        remove_class(find('.js-slider-dots .js-slider-dot.active', this.DOMElementWrapper), 'active');
 
-        this._dot = this._dots[this._index];
-
-        add_class(this._dot, 'active');
+        add_class(this._dots[this._index], 'active');
     }
 
     // Load into container
@@ -12259,7 +12560,7 @@ Container.singleton('_', _);
      * 
      * @var {Function}
      */
-    const [attr, each, extend, json_decode] = Hubble.import(['attr', 'each', 'extend', 'json_decode']).from('_');
+    const [attr, each, map, extend, dom_element, json_decode] = Hubble.import(['attr', 'each', 'map', 'extend', 'dom_element', 'json_decode']).from('_');
     
     /**
      * Slider instances.
@@ -12310,6 +12611,15 @@ Container.singleton('_', _);
                 return false;
             }
         });
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Slider.prototype.template = function(props)
+    {
+        return dom_element({tag: 'div', class: 'slider js-slider'}, null, props.slides);
     }
 
     // Load into Hubble DOM core

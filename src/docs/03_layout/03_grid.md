@@ -413,7 +413,7 @@ In the example below both columns are full width on mobile. On breakpoint (>=md)
 
 ### CSS Customization
 
-The grid system uses a combination of both local CSS variables on all components for enhanced component customization and styling. The base values are used by the UI to create all the sizing. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported, too.
+The grid system uses a combination of both local CSS variables on all components for enhanced component customization and styling. The base values are used by the UI to create all the sizing. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported too.
 
 Customization via Sass can be made in the `src/scss/_config.scss` file in Hubble's source.
 

@@ -18,15 +18,12 @@
     &.draggable
     {
     	user-select: none;
-    	
-    	.slider-viewport
-    	{
-    		cursor: move;
-		    cursor: -webkit-grab;
-		    cursor: grab;
-    	}
 
-    	&.pointer-down .slider-viewport
+    	cursor: move;
+	    cursor: -webkit-grab;
+	    cursor: grab;
+
+    	&.pointer-down 
     	{
     		cursor: -webkit-grabbing;
 		    cursor: grabbing;
@@ -50,6 +47,11 @@
 		max-width: var(--hb-slider-slide-width);
 		flex: 0 0 100%;
 	}
+	.slider-viewport > .slide-group
+	{
+		display: flex;
+	}
+
 	.slider-control
 	{
 		--hb-btn-color: var(--hb-slider-nav-btn-color);

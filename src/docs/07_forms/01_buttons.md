@@ -435,7 +435,7 @@ States for `btn-white` will also work
 
 ### CSS Customization
 
-Buttons use local CSS variables on `.btn` for enhanced component customization and styling. The base values are used by the UI to create all the variants. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported, too.
+Buttons use local CSS variables on `.btn` for enhanced component customization and styling. The base values are used by the UI to create all the variants. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported too.
 
 Customization via Sass can be made in the `src/scss/_config.scss` file in Hubble's source.
 

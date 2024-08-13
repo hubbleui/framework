@@ -604,7 +604,7 @@ Add an arrow on the border of the dropdown using the `.arrow` with an arrow posi
 
 ### CSS Customization
 
-Dropdown uses local CSS variables on `.drop-container` and `.menu` along with Sass variables for enhanced component customization and styling. The base values are used by the UI to create all the styling. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported, too.
+Dropdown uses local CSS variables on `.drop-container` and `.menu` along with Sass variables for enhanced component customization and styling. The base values are used by the UI to create all the styling. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported too.
 
 
 <div class="code-content-example">
