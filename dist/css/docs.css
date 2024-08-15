@@ -480,6 +480,11 @@ pre[class*="language-file-path"]
 {
     height: 120px;
 }
+.card-skeleton-example .skeleton-block
+{
+    margin-bottom: 10px;
+}
+
 table code
 {
     font-size: 11px;
@@ -496,15 +501,6 @@ table code
 .code-content-example .card-header-content .skeleton-text-block
 {
     padding: 7px 0px;
-}
-.table.table-dense > tbody > tr > td,
-.table.table-dense > tbody > tr > th,
-.table.table-dense > tfoot > tr > td,
-.table.table-dense > tfoot > tr > th,
-.table.table-dense > thead > tr > td, 
-.table.table-dense > thead > tr > th
-{
-    padding: var(--hb-table-cell-pad-y) var(--hb-table-cell-pad-x);
 }
 
 .api-table + .table-responsive table > thead > tr > th

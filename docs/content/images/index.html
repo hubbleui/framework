@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="hb-darkmode">
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -346,7 +346,237 @@
                         <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger"> Documentation Menu </button>
                     </div>
                     <article class="docs-body">
-                        
+                        <h1 id="images">Images</h1>
+<p>Hubble comes with a set of handy image utilities for setting image dimensions as well as LazyLoading and much more.</p>
+<hr />
+<ul>
+<li><a href="#aspect-ratios">Aspect ratios</a></li>
+<li><a href="#aspect-ratios">Dimensions</a></li>
+<li><a href="#javaScript-instantiation">JavaScript Instantiation</a></li>
+</ul>
+<hr />
+<h3 id="aspect-ratios">Aspect ratios</h3>
+<p>Hubble's utility classes allow you to set aspect ratios on both <strong>image</strong> and <strong>Background image</strong> elements. This enables you to set a fixed height or width for an image, while retaining a specific aspect ratio.</p>
+<p>For <code>&lt;image&gt;</code> elements, wrap the image in a <code>.ratio-img</code> div, then add the relevant <code>.ratio-[w]-[h]</code> class to the wrapper:</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center">
+        <div class="col-12 col-md-8 col-lg-5">
+            <div class="raised-1 ratio-img ratio-16-9">
+                <img src="../../../dist/img/trump-hero.jpg" alt="trump" />
+            </div>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;div class="raised-1 ratio-img ratio-16-9"&gt;
+    &lt;img src="trump-hero.jpg" alt="trump" /&gt;
+&lt;/div&gt;</code></pre>
+<p>For <strong>Background image</strong> elements, add the relevant <code>.ratio-[w]-[h]</code> class to the <code>.bg-image</code> element directly:</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center">
+        <div class="col-12 col-md-8 col-lg-5">
+            <div class="bg-image ratio-16-9 raised-1" style="background-image: url(../../../dist/img/trump-hero.jpg)"></div>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;div class="bg-image ratio-16-9" style="background-image: url(...)"&gt;&lt;/div&gt;</code></pre>
+<p>Hubble provides a set of classes for common aspect ratios which are detailed below:</p>
+<p><strong>Landscape aspect ratios:</strong></p>
+<table>
+<thead>
+<tr>
+<th id="css_class">CSS Class</th>
+<th id="css_var">CSS Var</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ratio-1-1</code></td>
+<td><code>--hb-aspect-ratio:ratio-1-1</code></td>
+</tr>
+<tr>
+<td><code>ratio-3-2</code></td>
+<td><code>--hb-aspect-ratio:ratio-3-2</code></td>
+</tr>
+<tr>
+<td><code>ratio-4-3</code></td>
+<td><code>--hb-aspect-ratio:ratio-4-3</code></td>
+</tr>
+<tr>
+<td><code>ratio-5-3</code></td>
+<td><code>--hb-aspect-ratio:ratio-5-3</code></td>
+</tr>
+<tr>
+<td><code>ratio-5-4</code></td>
+<td><code>--hb-aspect-ratio:ratio-5-4</code></td>
+</tr>
+<tr>
+<td><code>ratio-16-9</code></td>
+<td><code>--hb-aspect-ratio:ratio-16-9</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Portrait aspect ratios:</strong></p>
+<table>
+<thead>
+<tr>
+<th id="css_class">CSS Class</th>
+<th id="css_var">CSS Var</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ratio-2-3</code></td>
+<td><code>--hb-aspect-ratio:ratio-2-3</code></td>
+</tr>
+<tr>
+<td><code>ratio-3-4</code></td>
+<td><code>--hb-aspect-ratio:ratio-3-4</code></td>
+</tr>
+<tr>
+<td><code>ratio-3-5</code></td>
+<td><code>--hb-aspect-ratio:ratio-3-5</code></td>
+</tr>
+<tr>
+<td><code>ratio-4-5</code></td>
+<td><code>--hb-aspect-ratio:ratio-4-5</code></td>
+</tr>
+<tr>
+<td><code>ratio-9-16</code></td>
+<td><code>--hb-aspect-ratio:ratio-9-16</code></td>
+</tr>
+</tbody>
+</table>
+<p>Aspect ratios are set via CSS Variables, which can be also be customized for more flexibility. Below are the variables available for both <code>.ratio-img</code> and <code>.bg-img</code>. You can set the <code>--hb-aspect-ratio</code> to whatever aspect ratio value you like to create your own aspect ratio if needed.</p>
+<pre><code class="html language-html">&lt;div class="raised-1 ratio-img" style="--hb-aspect-ratio:5/9"&gt;
+    &lt;img src="trump-hero.jpg" alt="trump" /&gt;
+&lt;/div&gt;</code></pre>
+<pre><code class="css language-css">.ratio-img, .bg-image
+{
+    --hb-aspect-ratio: 1/1;
+}</code></pre>
+<hr />
+<h3 id="dimensions">Dimensions</h3>
+<p>Dimensions for both <strong>image</strong> and <strong>Background image</strong> elements can be set via CSS Variables. For browsers that support the CSS <a href="https://caniuse.com/mdn-css_properties_aspect-ratio">aspect-ratio</a> property, these values can be customized. The default values are <code>width: 100%</code> and <code>height: auto</code>:</p>
+<div class="code-content-example">
+    <div class="flex-row align-cols-center">
+        <div class="col col-md-8 col-lg-4">
+            <div class="ratio-img raised-1" style="--hb-aspect-ratio:1/1;">
+                <img class="js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" data-src="../../../dist/img/trump-hero.jpg" alt="trump" />
+            </div>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;div class="ratio-img raised-1" style="--hb-aspect-ratio:1/1; --hb-width: auto;--hb-height: 200px;"&gt;
+    &lt;img class="js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" data-src="../../../dist/img/trump-hero.jpg" alt="trump" /&gt;
+&lt;/div&gt;</code></pre>
+<pre><code class="css language-css">.ratio-img
+{
+    --hb-aspect-ratio:1/1
+    --hb-width: auto;
+    --hb-height: 200px;
+}</code></pre>
+<hr />
+<h3 id="javascript-instantiation">JavaScript Instantiation</h3>
+<p>Images can be instantiated via JavaScript to generate dynamic content on the fly. To create an image dynamically, use Hubble's <code>Component.Create</code> method either via the <code>Hubble.Dom</code> or the <code>Image</code> Component directly:</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center-x align-cols-top col-gaps-xs row-gaps-xs">
+        <div class="col-3 js-img-container">
+        </div>
+    </div>
+</div>
+<pre><code class="JavaScript language-JavaScript">let options =
+{
+    src: '../../../dist/img/trump-hero.jpg',
+    alt: 'Trump',
+    lazy: true,
+    ratio: '1/1',
+    background: false,
+};
+
+let container = document.querySelector('.js-img-container');
+
+// Via Hibble dom
+Hubble.Dom().create('Image', options, container);
+
+// Or via Component directly
+Hubble.Dom().component('Image').create(options, container);</code></pre>
+<script>
+window.addEventListener('Hubble:ready', () => 
+{
+    let options =
+    {
+        src: '../../../dist/img/trump-hero.jpg',
+        alt: 'Trump',
+        lazy: true,
+        ratio: '1/1',
+        background: false,
+    };
+
+    Hubble.Dom().create('Image', options, Hubble._().find('.js-img-container'));
+});
+
+</script>
+<p>Below are the available options:</p>
+<table>
+<thead>
+<tr>
+<th id="option">Option</th>
+<th id="default">Default</th>
+<th id="example">Example</th>
+<th id="behavior">Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>background</code></td>
+<td><code>false</code></td>
+<td><code>{ background: true }</code></td>
+<td>Creates a background image element.</td>
+</tr>
+<tr>
+<td><code>ratio</code></td>
+<td><code>null</code></td>
+<td><code>{ ratio: '16/9' }</code></td>
+<td>Creates either a background image or image with specified aspect ratio.</td>
+</tr>
+<tr>
+<td><code>lazy</code></td>
+<td><code>false</code></td>
+<td><code>{ lazy: true }</code></td>
+<td>Enables LazyLoading.</td>
+</tr>
+<tr>
+<td><code>grayscale</code></td>
+<td><code>false</code></td>
+<td><code>{ grayscale: true }</code></td>
+<td>Enables grayscale effect on lazyload.</td>
+</tr>
+<tr>
+<td><code>placeholder</code></td>
+<td><code>null</code></td>
+<td><code>{ placeholder: 'https://.....jpg' }</code></td>
+<td>Temporary image URL to load when lazyload enabled.</td>
+</tr>
+<tr>
+<td><code>src</code></td>
+<td><code>null</code></td>
+<td><code>{ src: 'https://.....jpg' }</code></td>
+<td>Image source URL</td>
+</tr>
+<tr>
+<td><code>{...props}</code></td>
+<td><code>null</code></td>
+<td><code>{ alt: 'Trump' }</code></td>
+<td>Any additonal attributes to pass to the <code>&lt;image&gt;</code> tag or <code>&lt;div&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="see-also">See Also</h3>
+<ul>
+<li><a href="../../images/lazy-load/index.html">Lazyload</a> - Lazyload image Component.</li>
+<li><a href="../../images/slider/index.html">Slider</a> - Carousel slider Component.</li>
+<li><a href="../../images/gallery/index.html">Gallery</a> - Image gallery Component.</li>
+</ul>
                     </article>
                 </div>
             </div>

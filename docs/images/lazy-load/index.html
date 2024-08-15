@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="hb-darkmode">
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -360,16 +360,16 @@
 <hr />
 <h3 id="setup">Setup</h3>
 <p>Lazyloading requires a small amount of <code>JavaScript</code> and CSS loaded in the document head, preferably as high up possible.</p>
-<pre><code class="html language-html">&lt;script src="build/js/lazyload.js"&gt;&lt;/script&gt;
+<pre><code class="html language-html">&lt;script src="dist/js/lazyload.js"&gt;&lt;/script&gt;
 
-&lt;link rel="stylesheet" href="build/css/lazyload.css"&gt;</code></pre>
+&lt;link rel="stylesheet" href="dist/css/lazyload.css"&gt;</code></pre>
 <h3 id="markup">Markup</h3>
 <p>Once that is setup, add your images, you'll want to have a reduced size thumbnail version of your image set as the <code>src</code> and the full size as the image <code>data-src</code>.</p>
 <p>Remember to add the <code>.js-lazyload</code> <code>.lazyload</code> classes.</p>
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center">
         <div class="avatar avatar-xl">
-            <img alt="Trump" data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload" src="../../../build/img/trump-avatar_thumb.jpg" />
+            <img alt="Trump" data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload" src="../../../dist/img/trump-avatar_thumb.jpg" />
         </div>
     </div>
 </div>
@@ -378,7 +378,7 @@
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center">
         <div class="avatar avatar-xl">
-            <img alt="Trump" data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload" src="../../../build/img/trump-avatar_thumb.jpg" />
+            <img alt="Trump" data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload" src="../../../dist/img/trump-avatar_thumb.jpg" />
         </div>
     </div>
 </div>
@@ -388,7 +388,7 @@
 <p>Lazyloading works on CSS background image elements too. This can be handy when you need an image at a fixed height.</p>
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center">
-        <div style="height: 200px;width: auto;" data-src="../../../build/img/trump-hero.jpg" class="bg-image js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../build/img/trump-hero_thumb.jpg)"></div>
+        <div style="height: 200px;width: auto;" data-src="../../../dist/img/trump-hero.jpg" class="bg-image js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
     </div>
 </div>
 <pre><code class="html language-html">&lt;div data-src="trump-hero.jpg" class="bg-image js-lazyload lazyload grayscale" style="background-image: url(trump-hero_thumb.jpg)"&gt;&lt;/div&gt;</code></pre>
@@ -412,9 +412,9 @@
 </ul>
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center col-gaps-xs">
-        <div style="height: 200px;width: auto;" data-src="../../../build/img/trump-hero.jpg" class="bg-image ratio-2-3 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../build/img/trump-hero_thumb.jpg)"></div>
-        <div style="height: 200px;width: auto;" data-src="../../../build/img/trump-hero.jpg" class="bg-image ratio-3-4 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../build/img/trump-hero_thumb.jpg)"></div>
-        <div style="height: 200px;width: auto;" data-src="../../../build/img/trump-hero.jpg" class="bg-image ratio-3-5 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../build/img/trump-hero_thumb.jpg)"></div>
+        <div style="height: 200px;width: auto;" data-src="../../../dist/img/trump-hero.jpg" class="bg-image ratio-2-3 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
+        <div style="height: 200px;width: auto;" data-src="../../../dist/img/trump-hero.jpg" class="bg-image ratio-3-4 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
+        <div style="height: 200px;width: auto;" data-src="../../../dist/img/trump-hero.jpg" class="bg-image ratio-3-5 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
     </div>
 </div>
 <pre><code class="html language-html">&lt;div data-src="..." class="bg-image ratio-2-3 js-lazyload lazyload grayscale raised-1" style="background-image: url(...)"&gt;&lt;/div&gt;
@@ -445,9 +445,9 @@
 <p>The fallback image is set via the JavaScript LazyLoad module from the variable <code>LAZY_FALLBACK_IMAGE</code>. You can change this by setting the variable to your own image before the LazyLoad script is called:</p>
 <pre><code class="html language-html">&lt;script type="text/javascript"&gt;var LAZY_FALLBACK_IMAGE = '...';&lt;/script&gt;
 
-&lt;script src="build/js/lazyload.js"&gt;&lt;/script&gt;
+&lt;script src="dist/js/lazyload.js"&gt;&lt;/script&gt;
 
-&lt;link rel="stylesheet" href="build/css/lazyload.css"&gt;</code></pre>
+&lt;link rel="stylesheet" href="dist/css/lazyload.css"&gt;</code></pre>
 <hr />
 <h3 id="dynamic-content">Dynamic content</h3>
 <p>When inserting elements into the DOM after the page has loaded, for example using dynamic content via <code>Ajax</code>, you can refresh the <code>LazyLoad</code> module via the Hubble's <code>dom</code>.</p>
@@ -464,7 +464,7 @@
 
             document.querySelector('.js-trigger-image').addEventListener('click', () =>
             {
-                wrapper.innerHTML += '<div class="avatar avatar-xl"><img alt="Trump" data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" /></div>';
+                wrapper.innerHTML += '<div class="avatar avatar-xl"><img alt="Trump" data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" /></div>';
 
                 Hubble.dom().refresh('LazyLoad', wrapper);
             });

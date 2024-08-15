@@ -17,7 +17,7 @@ _.prototype.css_to_object = function(styles)
         var nestedStyles = [...css.matchAll(nested_regex)];
     }
 
-    this.each(styles.split(';'), function(i, rule)
+    this.each(styles.split(/;(?=(?:[^"]*"[^"]*")*[^"]*$)/g), function(i, rule)
     {
         var style = rule.split(':');
 

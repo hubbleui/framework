@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="hb-darkmode">
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -355,7 +355,6 @@
 <li><a href="#text">Text</a></li>
 <li><a href="#text-blocks">Text Blocks</a></li>
 <li><a href="#variant-examples">Variant examples</a></li>
-<li><a href="#component-example">Component Example</a></li>
 <li><a href="#javascript-utility">JavaScript Utility</a><ul>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#options">Options</a></li>
@@ -366,14 +365,59 @@
 <h3 id="markup">Markup</h3>
 <p>Skeletons are simple to create, simply create an element with the <code>.skeleton</code> class inside a component.</p>
 <p>Note that Skeletons by default with fill all available vertical and horizontal space inside their container. If you're placing a skeleton inside an empty column or a container without a height you'll need to either specify a height on the container or on the skeleton itself.</p>
+<p>The example below shows the markup for a skeleton using a simple card:</p>
 <div class="code-content-example">
-    <div class="row">
-         <div class="col col-12 col-md-4 skeleton-doc-col center-horizontal">
-            <div class="skeleton"></div>
+    <div class="flex-row align-cols-center-x">
+        <div class="card col col-lg-4">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"></div>
+                </div>
+                <div class="card-header-content">
+                    <div class="skeleton-text-block skeleton-lines">
+                        <div class="skeleton" style="width: 71%;"></div>
+                        <div class="skeleton" style="width: 81%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-media">
+                <div class="skeleton skeleton-block skeleton-wave" style="width: 100%; height: auto; aspect-ratio: 16 / 9;"></div>
+            </div>
+            <div class="card-block">
+                <div class="skeleton skeleton-h5"></div>
+                <div class="skeleton-text-block skeleton-lines">
+                    <div class="skeleton" style="width: 81%;"></div>
+                    <div class="skeleton" style="width: 84%;"></div>
+                    <div class="skeleton" style="width: 91%;"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<pre><code class="html language-html">&lt;div class="skeleton"&gt;&lt;/div&gt;</code></pre>
+<pre><code class="html language-html">&lt;div class="card"&gt;
+    &lt;div class="card-header"&gt;
+        &lt;div class="card-header-left"&gt;
+            &lt;div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="card-header-content"&gt;
+            &lt;div class="skeleton-text-block skeleton-lines"&gt;
+                &lt;div class="skeleton" style="width: 71%;"&gt;&lt;/div&gt;
+                &lt;div class="skeleton" style="width: 81%;"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="card-media"&gt;
+        &lt;div class="skeleton skeleton-block skeleton-wave" style="width: 100%; height: auto; aspect-ratio: 16 / 9;"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="card-block"&gt;
+        &lt;div class="skeleton skeleton-h5"&gt;&lt;/div&gt;
+        &lt;div class="skeleton-text-block skeleton-lines"&gt;
+            &lt;div class="skeleton" style="width: 81%;"&gt;&lt;/div&gt;
+            &lt;div class="skeleton" style="width: 84%;"&gt;&lt;/div&gt;
+            &lt;div class="skeleton" style="width: 91%;"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
 <hr />
 <h3 id="base-variants">Base Variants</h3>
 <p>Skeletons come in a few different base variants <code>.skeleton-wave</code>, <code>.skeleton-text</code>, <code>.skeleton-rounded</code>, <code>.skeleton-btn</code>, <code>.skeleton-input</code>, <code>.skeleton-circle</code> and via modifier classes. </p>
@@ -672,8 +716,8 @@
             </div>
         </div>
         <form class="js-skeleton-form">
-            <div class="flex-row pole-xs pole-s">
-                <div class="flex-col gutter-xxs gutter-r">
+            <div class="flex-row-fluid pole-xs pole-s">
+                <div class="col gutter-xxs gutter-r">
                     <div class="form-field row">
                         <select name="count" id="count">
                             <option value="1" selected>1</option>
@@ -690,7 +734,7 @@
                         <label for="select">Count</label>
                     </div>
                 </div>
-                <div class="flex-col">
+                <div class="col">
                     <div class="form-field row">
                         <select name="variant" id="variant">
                             <option value="block" selected>block</option>
@@ -708,7 +752,7 @@
                         <label for="select">Variant</label>
                     </div>
                 </div>
-                <div class="flex-col gutter-xxs gutter-l">
+                <div class="col gutter-xxs gutter-l">
                     <div class="form-field row">
                         <select name="style" id="style">
                             <option value="rounded" selected>rounded</option>
@@ -791,62 +835,6 @@ const sandbox = function()
 window.addEventListener('Hubble:ready', sandbox);
 
 </script>
-<hr />
-<h3 id="component-example">Component Example</h3>
-<p>The example below shows the markup for a skeleton using a simple card:</p>
-<div class="code-content-example">
-    <div class="flex-row align-cols-center-x">
-        <div class="card col col-lg-4">
-            <div class="card-header">
-                <div class="card-header-left">
-                    <div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"></div>
-                </div>
-                <div class="card-header-content">
-                    <div class="skeleton-text-block skeleton-lines">
-                        <div class="skeleton" style="width: 71%;"></div>
-                        <div class="skeleton" style="width: 81%;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="card-media">
-                <div class="skeleton skeleton-block skeleton-wave" style="width: 100%; height: auto; aspect-ratio: 16 / 9;"></div>
-            </div>
-            <div class="card-block">
-                <div class="skeleton skeleton-h5"></div>
-                <div class="skeleton-text-block skeleton-lines">
-                    <div class="skeleton" style="width: 81%;"></div>
-                    <div class="skeleton" style="width: 84%;"></div>
-                    <div class="skeleton" style="width: 91%;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<pre><code class="html language-html">&lt;div class="card"&gt;
-    &lt;div class="card-header"&gt;
-        &lt;div class="card-header-left"&gt;
-            &lt;div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"&gt;&lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div class="card-header-content"&gt;
-            &lt;div class="skeleton-text-block skeleton-lines"&gt;
-                &lt;div class="skeleton" style="width: 71%;"&gt;&lt;/div&gt;
-                &lt;div class="skeleton" style="width: 81%;"&gt;&lt;/div&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="card-media"&gt;
-        &lt;div class="skeleton skeleton-block skeleton-wave" style="width: 100%; height: auto; aspect-ratio: 16 / 9;"&gt;&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="card-block"&gt;
-        &lt;div class="skeleton skeleton-h5"&gt;&lt;/div&gt;
-        &lt;div class="skeleton-text-block skeleton-lines"&gt;
-            &lt;div class="skeleton" style="width: 81%;"&gt;&lt;/div&gt;
-            &lt;div class="skeleton" style="width: 84%;"&gt;&lt;/div&gt;
-            &lt;div class="skeleton" style="width: 91%;"&gt;&lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-<hr />
 <h3 id="javascript-utility">JavaScript Utility</h3>
 <p>Hubble comes with a handy JavaScript utility component for creating skeletons on the fly. You can create a skeleton by calling <code>Skeleton</code> via the container.</p>
 <h4 id="usage">Usage</h4>
@@ -978,6 +966,18 @@ skeleton.load(content);</code></pre>
         <button class=" btn js-reset-skeletons">Reset</button>
     </div>
 </div>
+<pre><code class="JavaScript language-JavaScript">const [find]       = Hubble.import(['find']).from('_');
+const cardWrapper  = find('.js-skeleton-loader-card');
+const options      = 
+{
+    '.js-card-header-left' : '&lt;div class="avatar"&gt;&lt;img ... /&gt;&lt;/div&gt;',
+    '.js-card-header-content' : '&lt;div class="text-bold"&gt;...&lt;/div&gt;',
+    '.js-card-media' : '&lt;img ... /&gt;',
+    '.js-card-title' : '&lt;h5&gt;...&lt;/h5&gt;',
+    '.js-card-text' : '&lt;p&gt;...&lt;/p&gt;',
+};
+
+Hubble.Skeleton(cardWrapper).load(options);</code></pre>
 <script type="text/javascript">
 (function()
 {
@@ -988,9 +988,9 @@ skeleton.load(content);</code></pre>
         const [cardWrapper, triggerLoad, triggerReset] = [$('.js-skeleton-loader-card'), $('.js-load-content'), $('.js-reset-skeletons')];
         const contents  = 
         {
-            '.js-card-header-left' : '<div class="avatar"><img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../build/img/trump-avatar.jpg"></div>',
+            '.js-card-header-left' : '<div class="avatar"><img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../dist/img/trump-avatar.jpg"></div>',
             '.js-card-header-content' : '<div class="text-bold">The Don</div><div class="color-gray font-italic">Make America Great Again</div>',
-            '.js-card-media' : '<img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />',
+            '.js-card-media' : '<img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />',
             '.js-card-title' : '<h5 class="text-bold">MAGA Country</h5>',
             '.js-card-text' : '<p>Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.</p>',
         };

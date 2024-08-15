@@ -1265,9 +1265,7 @@ _.prototype._guidgen = function()
 {
     return `__${this._guid++}`;
 }
-		
-
-const AnimateJS = function(DOMElement, options)
+		const AnimateJS = function(DOMElement, options)
 {
     this.DOMElement = DOMElement;
 
@@ -1289,11 +1287,11 @@ const AnimateJS = function(DOMElement, options)
 
     this.isTransform = this.CSSProperty.toLowerCase().includes('transform');
 
-    this.isScroll = this.CSSProperty.toLowerCase() === 'scrollto' && DOMElement === window;
+    this.isScroll = this.CSSProperty.toLowerCase().replace('-', '') === 'scrollto' && DOMElement === window;
 
     this.isColor = options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb');
 
-    this.clearAnimating();
+    this.clearAnimating(DOMElement);
 
     this.parseOptions();
 
@@ -1304,11 +1302,9 @@ const AnimateJS = function(DOMElement, options)
     return this;
 }
 
-AnimateJS.prototype.clearAnimating = function()
+AnimateJS.prototype.clearAnimating = function(DOMElement)
 {
     const CSSprop = this.CSSProperty;
-
-    const _this = this;
 
     _THIS.each(ANIMATING, function(i, animation)
     {
@@ -1331,9 +1327,7 @@ AnimateJS.prototype.start = function()
 
     if (!this.isScroll) this.clearTransitions();
 
-    var _this = this;
-
-    if (this.options.start) this.options.start(_this.DOMElement);
+    if (this.options.start) this.options.start(this.DOMElement);
 
     const loop = () =>
     {        
@@ -1342,7 +1336,7 @@ AnimateJS.prototype.start = function()
         this._applyKeyframe(this.keyframes.shift());
 
         if (this.keyframes.length === 0)
-        {
+        {            
             this._complete();
 
             return;
@@ -1355,7 +1349,7 @@ AnimateJS.prototype.start = function()
 
     this._failTimer = setTimeout(() =>
     {            
-        if (this.options.fail) this.options.fail(_this.DOMElement);
+        if (this.options.fail) this.options.fail(this.DOMElement);
 
     }, this.duration + 50 );
 
@@ -1393,7 +1387,7 @@ AnimateJS.prototype._complete = function()
 
     if (this.options.callback) this.options.callback(DOMElement);
 
-    _THIS.css(DOMElement, 'transition', this._pre_transition );
+    if (!this.isScroll) _THIS.css(DOMElement, 'transition', this._pre_transition );
 }
 
 AnimateJS.prototype.stop = function()
@@ -2928,33 +2922,17 @@ _.prototype.attr = function(DOMElement, name, value)
             {
                 DOMElement.removeAttribute('style');
             }
-            // Clear style and overwrite
-            else if (this.is_string(value))
+
+            DOMElement.style = '';
+
+            let style = this.is_string(value) ? this.css_to_object(value) : value;
+
+            this.each(style, (prop, value) =>
             {
-                DOMElement.style = '';
+                this.css(DOMElement, prop, value);
                 
-                // attr(node, 'css', 'foo : bar; baz: bar;})
-                this.each(value.split(';'), function(i, rule)
-                {
-                    var style = rule.split(':');
-
-                    if (style.length >= 2)
-                    {
-                        this.css(DOMElement, style.shift().trim(), style.join(':').trim());
-                    }
-                }, this);
-            }
-            // attr(node, 'css', {foo : 'bar', baz: 'bar'})
-            else if (this.is_object(value))
-            {
-                DOMElement.style = '';
-
-                this.each(value, function(prop, value)
-                {
-                    this.css(DOMElement, prop, value);
-                    
-                }, this);
-            }
+            });
+           
             break;
 
         // Events / attributes
@@ -3312,7 +3290,7 @@ _.prototype.css_to_object = function(styles)
         var nestedStyles = [...css.matchAll(nested_regex)];
     }
 
-    this.each(styles.split(';'), function(i, rule)
+    this.each(styles.split(/;(?=(?:[^"]*"[^"]*")*[^"]*$)/g), function(i, rule)
     {
         var style = rule.split(':');
 
@@ -4215,67 +4193,6 @@ _.prototype.has_class = function(el, className)
     return el.classList.contains(className);
 }
 		/**
- * Check if a node matches a CSS selector
- *
- * @access {public}
- * @param  {DOMElement}   DOMElement Target element
- * @param  {string|array} selector   CSS Selector
- * @return {bool}
- */
-_.prototype.$_with_context = function(selector, context)
-{
-    // has_selector(node, 'div, .class, #id')
-    if (selector.includes(','))
-    {
-        let ret = [];
-
-        this.each(selector.split(','), (i, sel) =>
-        {
-            ret = [...ret, ...this.$_with_context(sel, context)];
-
-        }, this);
-
-        return ret;
-    }
-
-    // Cleanup
-    selector = selector.replace(/  +/g, ' ').trim();
-
-    // Match id failsafe
-    if (selector[0] === '#')
-    {
-        return context.id === selector.substring(1).trim().split(/[^A-Za-z0-9-_]/).shift().trim() ? [context] : [];
-    }
-
-    // Split rules and keep delimiter
-    let selectors = selector.split(/(?=[\s>+~])|(?<=[\s>+~])/).filter((x) => x !== ' ');
-
-    // Are we selecting children?
-    let selChilds = selectors.length === 1;
-
-    // Make sure we have a parent
-    let parent      = context.parentNode;
-    let hasParent   = this.is_htmlElement(parent);
-
-    if (!hasParent)
-    {
-        parent = document.createElement('div');
-        parent.appendChild(context);
-    }
-    
-    // Setup base nth child selector
-    let nthSelector = !hasParent ? ':nth-child(1)' : `:nth-child(${this.nth_siblings(context) +1})`;
-
-    let find = `> ${selectors.shift()}${nthSelector} ${selectors.join(' ')}`.trim();
-    
-    // Find match(es)
-    let ret = this.array_unique([...this.$All(selector, context), ...this.$All(find, parent)]);
-
-    if (!hasParent) parent.removeChild(context);
-    
-    return ret;
-}
-		/**
  * Aria hide an element
  *
  * @access {public}
@@ -4324,7 +4241,7 @@ _.prototype.inner_HTML = function(DOMElement, content, append)
         DOMElement.innerHTML = content;
     }
 
-    this.trigger_event(el, `Hubble:dom:mutate`);
+    this.trigger_event(DOMElement, `Hubble:dom:mutate`);
 
     this.trigger_event(window, `Hubble:dom:mutate`, { DOMElement: DOMElement });
 }
@@ -4377,7 +4294,15 @@ _.prototype.input_value = function(input)
  * @param {object} options
  */
 _.prototype.dom_element = function(options, appendTo, innerHTMLOrChildren)
-{
+{    
+    // dom_element(null, wrappper, content);
+    if (!options && appendTo && innerHTMLOrChildren)
+    {
+        this._recursive_dom_element(innerHTMLOrChildren, appendTo);
+
+        return appendTo;
+    }
+
     if (!options.tag) throw new Error('Element tag not provided.');
 
     let node = document.createElement(options.tag);
@@ -4388,18 +4313,7 @@ _.prototype.dom_element = function(options, appendTo, innerHTMLOrChildren)
 
     if (innerHTMLOrChildren)
     {
-        if (this.is_htmlElement(innerHTMLOrChildren))
-        {
-            node.appendChild(innerHTMLOrChildren);
-        }
-        else if (this.is_array(innerHTMLOrChildren))
-        {
-            this.each(this.array_filter(innerHTMLOrChildren), (i, child) => this.is_string(child) ? node.innerText = child : node.appendChild(child), this);
-        }
-        else if (this.is_string(innerHTMLOrChildren))
-        {
-            node.innerHTML = innerHTMLOrChildren;
-        }
+        this._recursive_dom_element(innerHTMLOrChildren, node);
     }
 
     if (appendTo)
@@ -4409,6 +4323,31 @@ _.prototype.dom_element = function(options, appendTo, innerHTMLOrChildren)
 
     return node;
 }
+
+_.prototype._recursive_dom_element = function(mixedVar, parent)
+{
+    if (this.is_htmlElement(mixedVar))
+    {
+        parent.appendChild(mixedVar);
+    }
+    else if (this.is_array(mixedVar))
+    {
+        this.each(this.array_filter(mixedVar), (i, child) =>
+        {
+            this._recursive_dom_element(child, parent);
+        }); 
+    }
+    else if (this.is_object(mixedVar))
+    {
+        this.dom_element(mixedVar, node);
+    }
+    else
+    {
+        parent.innerHTML += mixedVar;
+    }
+}
+
+
 		/**
  * Traverse nextSibling untill type or class or array of either
  *
@@ -4685,11 +4624,18 @@ _.prototype.scroll_pos = function()
 _.prototype.$ = function(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
-    
-    // Fast
-    if (!selector.trim().substring(0, 1) === '>') return context.querySelector(selector);
 
-    return context.querySelector(`:scope ${selector}`);
+    let fchild = selector.trim().substring(0, 1) === '>';
+    let multi  = selector.includes(',');
+
+    // Fast
+    if (!fchild && !multi) return context.querySelector(selector);
+
+    if (multi) selector = selector.replaceAll(/,\s?>/g, ', :scope >');
+    
+    if (fchild) selector = `:scope ${selector}`;
+
+    return context.querySelector(selector);
 }
 
 /**
@@ -4709,31 +4655,36 @@ _.prototype.find = function(selector, context)
  * @param  {DOMElement}   context (optional) (default document)
  * @return {DOMElement}
  */
-_.prototype.$All = function(selector, context)
+_.prototype.$All = function(selector, context, includeContextEl)
 {
     context = (typeof context === 'undefined' ? document : context);
 
+    includeContextEl = (typeof includeContextEl === 'undefined' ? false : includeContextEl && context !== document);
+
     let fchild = selector.trim().substring(0, 1) === '>';
     let multi  = selector.includes(',');
+    let deleteParent = false;
 
-    // Fast
-    if (!fchild && !multi) return TO_ARR.call(context.querySelectorAll(selector));
-
-    // Easier to just split and loop here
-    if (multi)
+    if (includeContextEl)
     {
-        let ret = [];
-
-        this.each(selector.split(','), (i, s) =>
+        if (!hasParent)
         {
-            ret = [...ret, ...this.$All(s.trim(), context)];
-        
-        }, this);
+            parent = document.createElement('div');
+            parent.appendChild(context);
+            deleteParent = true;
+        }
 
-        return this.array_unique(ret);
+        context = context.parentNode;
     }
 
-    return TO_ARR.call(context.querySelectorAll(`:scope ${selector}`));
+    if (multi)  selector = selector.replaceAll(/,\s?>/g, ', :scope >');
+    if (fchild) selector = `:scope ${selector}`;
+
+    let ret = TO_ARR.call(context.querySelectorAll(selector));
+
+    if (deleteParent) context.parentNode.removeChild(context);
+
+    return ret;
 }
 
 /**
@@ -7388,7 +7339,7 @@ Container.singleton('_', _);
 
 (function()
 {
-    const [$All, each, closest, is_empty, $_with_context] = Hubble.import(['$All','each','closest','is_empty','$_with_context']).from('_');
+    const [find_all, each, closest, is_empty] = Hubble.import(['find_all','each','closest','is_empty']).from('_');
 
     /**
      * Component base class
@@ -7421,7 +7372,7 @@ Container.singleton('_', _);
         this._DOMElements = [];
 
         // Init
-        if (selector) this.construct(document);
+        if (!is_empty(this._selector)) this.construct(document);
 
         return this;
     }
@@ -7433,7 +7384,9 @@ Container.singleton('_', _);
      */
     Component.prototype.construct = function(context)
     {
-        let nodes = context === document ? $All(this._selector, context) : $_with_context(this._selector, context);
+        if (is_empty(this._selector)) return;
+
+        let nodes = find_all(this._selector, context, context !== document);
 
         if (!is_empty(nodes))
         {
@@ -7529,201 +7482,6 @@ Container.singleton('_', _);
 
 
 // Vendors
-(function()
-{
-    /*
-     *  Copyright 2012-2013 (c) Pierre Duquesne <stackp@online.fr>
-     *  Licensed under the New BSD License.
-     *  https://github.com/stackp/promisejs
-     */
-    (function(a)
-    {
-        function b()
-        {
-            this._callbacks = [];
-        }
-        b.prototype.then = function(a, c)
-        {
-            var d;
-            if (this._isdone) d = a.apply(c, this.result);
-            else
-            {
-                d = new b();
-                this._callbacks.push(function()
-                {
-                    var b = a.apply(c, arguments);
-                    if (b && typeof b.then === 'function') b.then(d.done, d);
-                });
-            }
-            return d;
-        };
-        b.prototype.done = function()
-        {
-            this.result = arguments;
-            this._isdone = true;
-            for (var a = 0; a < this._callbacks.length; a++) this._callbacks[a].apply(null, arguments);
-            this._callbacks = [];
-        };
-
-        function c(a)
-        {
-            var c = new b();
-            var d = [];
-            if (!a || !a.length)
-            {
-                c.done(d);
-                return c;
-            }
-            var e = 0;
-            var f = a.length;
-
-            function g(a)
-            {
-                return function()
-                {
-                    e += 1;
-                    d[a] = Array.prototype.slice.call(arguments);
-                    if (e === f) c.done(d);
-                };
-            }
-            for (var h = 0; h < f; h++) a[h].then(g(h));
-            return c;
-        }
-
-        function d(a, c)
-        {
-            var e = new b();
-            if (a.length === 0) e.done.apply(e, c);
-            else a[0].apply(null, c).then(function()
-            {
-                a.splice(0, 1);
-                d(a, arguments).then(function()
-                {
-                    e.done.apply(e, arguments);
-                });
-            });
-            return e;
-        }
-
-        function e(a)
-        {
-            var b = "";
-            if (typeof a === "string") b = a;
-            else
-            {
-                var c = encodeURIComponent;
-                var d = [];
-                for (var e in a)
-                    if (a.hasOwnProperty(e)) d.push(c(e) + '=' + c(a[e]));
-                b = d.join('&');
-            }
-            return b;
-        }
-
-        function f()
-        {
-            var a;
-            if (window.XMLHttpRequest) a = new XMLHttpRequest();
-            else if (window.ActiveXObject) try
-            {
-                a = new ActiveXObject("Msxml2.XMLHTTP");
-            }
-            catch (b)
-            {
-                a = new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            return a;
-        }
-
-        function g(a, c, d, g)
-        {
-            var h = new b();
-            var j, k;
-            d = d ||
-            {};
-            g = g ||
-            {};
-            try
-            {
-                j = f();
-            }
-            catch (l)
-            {
-                h.done(i.ENOXHR, "");
-                return h;
-            }
-            k = e(d);
-            if (a === 'GET' && k)
-            {
-                c += '?' + k;
-                k = null;
-            }
-            j.open(a, c);
-            var m = 'application/x-www-form-urlencoded';
-            for (var n in g)
-                if (g.hasOwnProperty(n))
-                    if (n.toLowerCase() === 'content-type') m = g[n];
-                    else j.setRequestHeader(n, g[n]);
-            j.setRequestHeader('Content-type', m);
-
-            function o()
-            {
-                j.abort();
-                h.done(i.ETIMEOUT, "", j);
-            }
-            var p = i.ajaxTimeout;
-            if (p) var q = setTimeout(o, p);
-            j.onreadystatechange = function()
-            {
-                if (p) clearTimeout(q);
-                if (j.readyState === 4)
-                {
-                    var a = (!j.status || (j.status < 200 || j.status >= 300) && j.status !== 304);
-                    h.done(a, j.responseText, j);
-                }
-            };
-            j.send(k);
-            return h;
-        }
-
-        function h(a)
-        {
-            return function(b, c, d)
-            {
-                return g(a, b, c, d);
-            };
-        }
-        var i = {
-            Promise: b,
-            join: c,
-            chain: d,
-            ajax: g,
-            get: h('GET'),
-            post: h('POST'),
-            put: h('PUT'),
-            del: h('DELETE'),
-            ENOXHR: 1,
-            ETIMEOUT: 2,
-            ajaxTimeout: 0
-        };
-        if (typeof define === 'function' && define.amd) define(function()
-        {
-            return i;
-        });
-        else a.promise = i;
-    })(this);
-
-    var _promise = promise;
-
-    window.promise = null;
-
-    Hubble.set('Promise', function()
-    {
-        return new _promise.Promise();
-    });
-
-}());
-
 (function()
 {
     /* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
@@ -7958,470 +7716,6 @@ Container.singleton('_', _);
     Hubble.set('NProgress', _NProgress);
 
 })();
-
-/**
- * Pluralize
- * @see {https://shopify.dev/docs/themes/ajax-api/reference/product-recommendations}
- * 
- * @example {Hubble._().pluralize('tomato',} 5);
- * 
- */
-(function()
-{
-    /**
-     * Pluralize a word.
-     *
-     * @param  {string} word  The input word
-     * @param  {int}    count The amount of items (optional) (default 2)
-     * @return {string}
-     */
-    var Pluralize = function(word, count)
-    {
-        /**
-         * The word to convert.
-         *
-         * @var {string}
-         */
-        this.word = '';
-
-        /**
-         * Lowercase version of word.
-         *
-         * @var {string}
-         */
-        this.lowercase = '';
-
-        /**
-         * Uppercase version of word.
-         *
-         * @var {string}
-         */
-        this.upperCase = '';
-
-        /**
-         * Sentence-case version of word.
-         *
-         * @var {string}
-         */
-        this.sentenceCase = '';
-
-        /**
-         * Casing pattern of the provided word.
-         *
-         * @var {string}
-         */
-        this.casing = '';
-
-        /**
-         * Sibilants.
-         *
-         * @var {array}
-         */
-        this.sibilants = ['x', 's', 'z', 's'];
-
-        /**
-         * Vowels.
-         *
-         * @var {array}
-         */
-        this.vowels = ['a', 'e', 'i', 'o', 'u'];
-
-        /**
-         * Consonants.
-         *
-         * @var {array}
-         */
-        this.consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
-
-        count = (typeof count === 'undefined' ? 2 : count);
-
-        return this.convert(string, word, int);
-    }
-
-    /**
-     * Pluralize a word.
-     *
-     * @param  {string} word  The input word
-     * @param  {int}    count The amount of items (optional) (default 2)
-     * @return {string}
-     */
-    Pluralize.prototype.convert = function(word, count)
-    {
-        // Return the word if we don't need to pluralize
-        if (count === 1)
-        {
-            return word;
-        }
-
-        // Set class variables for use
-        this.word = word;
-        this.lowercase = strtolower(word);
-        this.upperCase = strtoupper(word);
-        this.sentenceCase = uc_first(word);
-        this.casing = this.getCasing();
-
-        // save some time in the case that singular and plural are the same
-        if (this.isUncountable())
-        {
-            return word;
-        }
-
-        // check for irregular forms
-        irregular = this.isIrregular();
-        if (irregular)
-        {
-            return this.toCasing(irregular, this.casing);
-        }
-
-        // nouns that end in -ch, x, s, z or s-like sounds require an es for the plural:
-        if (in_array(this.suffix(this.lowercase, 1), this.sibilants) || (this.suffix(this.lowercase, 2) === 'ch'))
-        {
-            return this.toCasing(word + 'es', this.casing);
-        }
-
-        // Nouns that end in a vowel + y take the letter s:
-        if (in_array(this.nthLast(this.lowercase, 1), this.vowels) && this.suffix(this.lowercase, 1) === 'y')
-        {
-            return this.toCasing(word + 's', this.casing);
-        }
-
-        // Nouns that end in a consonant + y drop the y and take ies:
-        if (in_array(this.nthLast(this.lowercase, 1), this.consonants) && this.suffix(this.lowercase, 1) === 'y')
-        {
-            return this.toCasing(this.sliceFromEnd(word, 1) + 'ies', this.casing);
-        }
-
-        // Nouns that end in a consonant + o add s:
-        if (in_array(this.nthLast(this.lowercase, 1), this.consonants) && this.suffix(this.lowercase, 1) === 'o')
-        {
-            return this.toCasing(word + 's', this.casing);
-        }
-
-        // Nouns that end in a vowel + o take the letter s:
-        if (in_array(this.nthLast(this.lowercase, 1), this.vowels) && this.suffix(this.lowercase, 1) === 'o')
-        {
-            return this.toCasing(word + 's', this.casing);
-        }
-
-        // irregular suffixes that cant be pluralized
-        if (this.suffix(this.lowercase, 4) === 'ness' || this.suffix(this.lowercase, 3) === 'ess')
-        {
-            return word;
-        }
-
-        // Lastly, change the word based on suffix rules
-        pluralized = this.autoSuffix();
-
-        if (pluralized)
-        {
-            return this.toCasing(this.sliceFromEnd(word, pluralized[0]) + pluralized[1], this.casing);
-        }
-
-        return this.word + 's';
-    }
-
-    /**
-     * Is the word irregular and uncountable (e.g fish).
-     *
-     * @return {bool}
-     */
-    Pluralize.prototype.isUncountable = function()
-    {
-        var uncountable = [
-            'gold',
-            'audio',
-            'police',
-            'sheep',
-            'fish',
-            'deer',
-            'series',
-            'species',
-            'money',
-            'rice',
-            'information',
-            'equipment',
-            'bison',
-            'buffalo',
-            'duck',
-            'pike',
-            'plankton',
-            'salmon',
-            'squid',
-            'swine',
-            'trout',
-            'moose',
-            'aircraft',
-            'you',
-            'pants',
-            'shorts',
-            'eyeglasses',
-            'scissors',
-            'offspring',
-            'eries',
-            'premises',
-            'kudos',
-            'corps',
-            'heep',
-        ];
-
-        return in_array(this.lowercase, uncountable);
-    }
-
-    /**
-     * Returns plural version of iregular words or FALSE if it is not irregular.
-     *
-     * @return {string|bool}
-     */
-    Pluralize.prototype.isIrregular = function()
-    {
-        var irregular = {
-            'addendum': 'addenda',
-            'alga': 'algae',
-            'alumna': 'alumnae',
-            'alumnus': 'alumni',
-            'analysis': 'analyses',
-            'antenna': 'antennae',
-            'apparatus': 'apparatuses',
-            'appendix': 'appendices',
-            'axis': 'axes',
-            'bacillus': 'bacilli',
-            'bacterium': 'bacteria',
-            'basis': 'bases',
-            'beau': 'beaux',
-            'kilo': 'kilos',
-            'bureau': 'bureaus',
-            'bus': 'buses',
-            'cactus': 'cacti',
-            'calf': 'calves',
-            'child': 'children',
-            'corps': 'corps',
-            'corpus': 'corpora',
-            'crisis': 'crises',
-            'criterion': 'criteria',
-            'curriculum': 'curricula',
-            'datum': 'data',
-            'deer': 'deer',
-            'die': 'dice',
-            'dwarf': 'dwarves',
-            'diagnosis': 'diagnoses',
-            'echo': 'echoes',
-            'elf': 'elves',
-            'ellipsis': 'ellipses',
-            'embargo': 'embargoes',
-            'emphasis': 'emphases',
-            'erratum': 'errata',
-            'fireman': 'firemen',
-            'fish': 'fish',
-            'fly': 'flies',
-            'focus': 'focuses',
-            'foot': 'feet',
-            'formula': 'formulas',
-            'fungus': 'fungi',
-            'genus': 'genera',
-            'goose': 'geese',
-            'human': 'humans',
-            'half': 'halves',
-            'hero': 'heroes',
-            'hippopotamus': 'hippopotami',
-            'hoof': 'hooves',
-            'hypothesis': 'hypotheses',
-            'index': 'indices',
-            'knife': 'knives',
-            'leaf': 'leaves',
-            'life': 'lives',
-            'loaf': 'loaves',
-            'louse': 'lice',
-            'man': 'men',
-            'matrix': 'matrices',
-            'means': 'means',
-            'medium': 'media',
-            'memorandum': 'memoranda',
-            'millennium': 'millenniums',
-            'moose': 'moose',
-            'mosquito': 'mosquitoes',
-            'mouse': 'mice',
-            'my': 'our',
-            'nebula': 'nebulae',
-            'neurosis': 'neuroses',
-            'nucleus': 'nuclei',
-            'neurosis': 'neuroses',
-            'nucleus': 'nuclei',
-            'oasis': 'oases',
-            'octopus': 'octopi',
-            'ovum': 'ova',
-            'ox': 'oxen',
-            'paralysis': 'paralyses',
-            'parenthesis': 'parentheses',
-            'person': 'people',
-            'phenomenon': 'phenomena',
-            'potato': 'potatoes',
-            'quiz': 'quizzes',
-            'radius': 'radii',
-            'scarf': 'scarfs',
-            'self': 'selves',
-            'series': 'series',
-            'sheep': 'sheep',
-            'shelf': 'shelves',
-            'scissors': 'scissors',
-            'species': 'species',
-            'stimulus': 'stimuli',
-            'stratum': 'strata',
-            'syllabus': 'syllabi',
-            'symposium': 'symposia',
-            'synthesis': 'syntheses',
-            'synopsis': 'synopses',
-            'tableau': 'tableaux',
-            'that': 'those',
-            'thesis': 'theses',
-            'thief': 'thieves',
-            'this': 'these',
-            'tomato': 'tomatoes',
-            'tooth': 'teeth',
-            'torpedo': 'torpedoes',
-            'vertebra': 'vertebrae',
-            'veto': 'vetoes',
-            'vita': 'vitae',
-            'virus': 'viri',
-            'watch': 'watches',
-            'wife': 'wives',
-            'wolf': 'wolves',
-            'woman': 'women',
-            'is': 'are',
-            'was': 'were',
-            'he': 'they',
-            'she': 'they',
-            'i': 'we',
-            'zero': 'zeroes',
-        };
-
-        if (typeof irregular[this.lowercase] !== 'undefined')
-        {
-            return irregular[this.lowercase];
-        }
-
-        return false;
-    }
-
-    /**
-     * Return an array with an index of where to cut off the ending and a suffix or FALSE.
-     *
-     * @return {array|false}
-     */
-    Pluralize.prototype.autoSuffix = function()
-    {
-        var suffix1 = this.suffix(this.lowercase, 1);
-        var suffix2 = this.suffix(this.lowercase, 2);
-        var suffix3 = this.suffix(this.lowercase, 3);
-
-        if (this.suffix(this.lowercase, 4) === 'zoon') return [4, 'zoa'];
-
-        if (suffix3 === 'eau') return [3, 'eaux'];
-        if (suffix3 === 'ieu') return [3, 'ieux'];
-        if (suffix3 === 'ion') return [3, 'ions'];
-        if (suffix3 === 'oof') return [3, 'ooves'];
-
-        if (suffix2 === 'an') return [2, 'en'];
-        if (suffix2 === 'ch') return [2, 'ches'];
-        if (suffix2 === 'en') return [2, 'ina'];
-        if (suffix2 === 'ex') return [2, 'exes'];
-        if (suffix2 === 'is') return [2, 'ises'];
-        if (suffix2 === 'ix') return [2, 'ices'];
-        if (suffix2 === 'nx') return [2, 'nges'];
-        if (suffix2 === 'nx') return [2, 'nges'];
-        if (suffix2 === 'fe') return [2, 'ves'];
-        if (suffix2 === 'on') return [2, 'a'];
-        if (suffix2 === 'sh') return [2, 'shes'];
-        if (suffix2 === 'um') return [2, 'a'];
-        if (suffix2 === 'us') return [2, 'i'];
-        if (suffix2 === 'x') return [1, 'xes'];
-        if (suffix2 === 'y') return [1, 'ies'];
-
-        if (suffix1 === 'a') return [1, 'ae'];
-        if (suffix1 === 'o') return [1, 'oes'];
-        if (suffix1 === 'f') return [1, 'ves'];
-
-        return false;
-    }
-
-    /**
-     * Get provided casing of word.
-     *
-     * @return {string}
-     */
-    Pluralize.prototype.getCasing = function()
-    {
-        var casing = 'lower';
-        casing = this.lowercase === this.word ? 'lower' : casing;
-        casing = this.upperCase === this.word ? 'upper' : casing;
-        casing = this.sentenceCase === this.word ? 'sentence' : casing;
-
-        return casing;
-    }
-
-    /**
-     * Convert word to a casing.
-     *
-     * @param  {string} word   The word to convert
-     * @param  {string} casing The casing format to convert to
-     * @return {string}
-     */
-    Pluralize.prototype.toCasing = function(word, casing)
-    {
-        if (casing === 'lower')
-        {
-            return word.toLowerCase();
-        }
-        elseif(casing === 'upper')
-        {
-            return word.toUpperCase();
-        }
-        elseif(casing === 'sentence')
-        {
-            return word.charAt(0).toUpperCase() + word.slice(1);
-        }
-
-        return word;
-    }
-
-    /**
-     * Strip end off a word at a given char index and return the end part.
-     *
-     * @param  {string} word  The word to convert
-     * @param  {int}    count The index to split at
-     * @return {string}
-     */
-    Pluralize.prototype.suffix = function(word, count)
-    {
-        return substr(word, word.length - count);
-    }
-
-    /**
-     * Strip end off a word at a given char index and return the start part.
-     *
-     * @param  {string} word  The word to convert
-     * @param  {int}    count The index to split at
-     * @return {string}
-     */
-    Pluralize.prototype.sliceFromEnd = function(word, count)
-    {
-        return substr(word, 0, word.length - count);
-    }
-
-    /**
-     * Get the nth last character of a string.
-     *
-     * @param  {string} word  The word to convert
-     * @param  {int}    count The index to get
-     * @return {string}
-     */
-    Pluralize.prototype.nthLast = function(word, count)
-    {
-        return word.split().reverse().join()[count];
-    }
-
-    Hubble.set('pluralize', Pluralize);
-
-}());
 
 
 // Utility
@@ -10714,7 +10008,7 @@ Container.singleton('_', _);
     /**
      * @var {Helper} obj
      */
-    const [$, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, in_dom, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css, is_array_last] = Hubble.import(['$','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','in_dom','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css', 'is_array_last']).from('_');
+    const [find, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, in_dom, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css, is_array_last, dom_element] = Hubble.import(['find','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','in_dom','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css', 'is_array_last','dom_element']).from('_');
 
     /**
      * Wrappers that need "position:relative" to hide overflow.
@@ -10813,7 +10107,7 @@ Container.singleton('_', _);
                 {
                     let cb = is_array_last(node, content) ? callback : null;
 
-                    this.load(node, cb, $(selector, this._DOMElement));
+                    this.load(node, cb, find(selector, this._DOMElement));
 
                 }, this);
 
@@ -10836,7 +10130,7 @@ Container.singleton('_', _);
             if (in_array(position, STATIC_POSITIONS)) newStyles.position = 'relative';
 
             // Prep content for inserting
-            var isFragment    = false;
+            var isFragment = false;
             var oldContnet;
 
             if (isHTML)
@@ -10845,12 +10139,11 @@ Container.singleton('_', _);
             }
             else
             {
-                let div = document.createElement('DIV');
-                div.innerHTML = content;
-                div.className = div.children.length ? 'swapping-content-wrapper fragment' :'swapping-content-wrapper';
-                isFragment    = div.children.length > 1;
-                oldContnet    = content;
-                content       = div;
+                let div    = dom_element({tag: 'div', class: 'swapping-content-wrapper'}, null, content);
+                isFragment = div.children.length > 1;
+                if (isFragment) div.className += ' fragment';
+                oldContnet = content;
+                content    = div;
             }
 
             const _this = this;
@@ -10868,7 +10161,9 @@ Container.singleton('_', _);
                 {
                     if (isFragment)
                     {
-                        wrapper.innerHTML = oldContnet;
+                        wrapper.innerHTML = '';
+
+                        dom_element(null, wrapper, oldContnet);
                     }
                     else
                     {
@@ -10975,7 +10270,7 @@ Container.singleton('_', _);
             let wrapper    = null;
             let skeleton   = document.createElement('div');
             let variants   = options.variant.split(' ').map((x) => x.trim().toLowerCase()).filter((x) => x !== '');
-            let DOMElement = options.selector ? $(options.selector, this._DOMElement) : this._DOMElement;
+            let DOMElement = options.selector ? find(options.selector, this._DOMElement) : this._DOMElement;
             let width      = options.width;
             let height     = options.height;
             let classes    = ['skeleton'];
@@ -11528,13 +10823,16 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {public}
      */
-    _Slider.prototype.next = function(e)
+    _Slider.prototype.next = function(animationOrClickEvent)
     {
         // Stop on animating
         if (this._animating || this._dragging) return;
 
         // Do nothing on non-wrap and at end
         if (!this.options.wrap && this._index === this._slidesIndexs) return;
+
+        // Don't animate
+        if (animationOrClickEvent === false) return this._toSlideDirect(this._index +1);
 
         // Pause autoplay
         this.pause();
@@ -11543,7 +10841,7 @@ Hubble.set('TinyGesture', TinyGesture);
         this._animating = true;
 
         // Run animation
-        let distance = (this._slideWidth + this._gapSize);
+        let distance = this._slideWidthWGap;
 
         if (!this.options.wrap)
         {
@@ -11580,7 +10878,7 @@ Hubble.set('TinyGesture', TinyGesture);
 
             this._animating = false;
 
-            if (!e) this.unpause();
+            if (!animationOrClickEvent) this.unpause();
         }});
     }
 
@@ -11589,13 +10887,16 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {public}
      */
-    _Slider.prototype.previous = function(e)
+    _Slider.prototype.previous = function(animationOrClickEvent)
     {
         // Stop on animating
         if (this._animating || this._dragging) return;
 
         // Do nothing on non-wrap and at start
         if (!this.options.wrap && this._index === 0) return;
+
+        // Don't animate
+        if (animationOrClickEvent === false) return this._toSlideDirect(this._index +1);
 
         // Clear timeout
         this.pause();
@@ -11604,7 +10905,7 @@ Hubble.set('TinyGesture', TinyGesture);
         this._animating = true;
 
         // Cache distance
-        let distance = !this.options.wrap ? (this._translated - (this._slideWidth + this._gapSize)) : this._slideWidth + this._gapSize;
+        let distance = !this.options.wrap ? (this._translated - this._slideWidthWGap) : this._slideWidthWGap;
 
         this._translated = distance < 2 ? 0 : distance;
 
@@ -11619,7 +10920,7 @@ Hubble.set('TinyGesture', TinyGesture);
         if (this.options.wrap)
         {
             // Adjust pre distance before animation
-            let preDistance = this._offset + (this._slideWidth + this._gapSize);
+            let preDistance = this._offset + this._slideWidthWGap;
 
             this._moved(-1);
 
@@ -11638,7 +10939,7 @@ Hubble.set('TinyGesture', TinyGesture);
 
             this._animating = false;
 
-            if (!e) this.unpause();
+            if (!animationOrClickEvent) this.unpause();
         } });
     }
 
@@ -11689,7 +10990,7 @@ Hubble.set('TinyGesture', TinyGesture);
         // If we're not wrapping we can skip all of this
         if (!this.options.wrap)
         {
-            let distance = (this._slideWidth + this._gapSize) * delta;
+            let distance = this._slideWidthWGap * delta;
 
             distance = direction === -1 ? this._translated - distance : this._translated + distance;
             
@@ -11715,10 +11016,10 @@ Hubble.set('TinyGesture', TinyGesture);
         let postIndex = direction === -1 ? this._middleIndex + delta : (this._middleIndex - delta) + this._bufferSize;
 
         // Since we know the new index, we can just calculate how far offset center it is.
-        let tmpOffset = (postIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2);
+        let tmpOffset = (postIndex * this._slideWidthWGap) - (this._viewportWidth / 2) + (this._slideWidth / 2);
 
         // Run animation
-        let distance = (this._slideWidth + this._gapSize) * delta;
+        let distance = this._slideWidthWGap * delta;
         distance  = direction === 1 ? -distance : distance;
 
         // Shuffle slides
@@ -11771,7 +11072,7 @@ Hubble.set('TinyGesture', TinyGesture);
         // If we're not wrapping we can skip all of this
         if (!this.options.wrap)
         {
-            let distance = (this._slideWidth + this._gapSize) * delta;
+            let distance = this._slideWidthWGap * delta;
 
             distance = direction === -1 ? this._translated - distance : this._translated + distance;
             
@@ -11823,7 +11124,7 @@ Hubble.set('TinyGesture', TinyGesture);
         this._slideWidthWGap = this._slideWidth + this._gapSize;
 
         // Offset
-        this._offset = Math.round(this.options.wrap ? (this._middleIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2) : (this._slideWidth + this._gapSize) - ((this._viewportWidth + this._slideWidth) / 2));
+        this._offset = Math.round(this.options.wrap ? (this._middleIndex * this._slideWidthWGap) - (this._viewportWidth / 2) + (this._slideWidth / 2) : this._slideWidthWGap - ((this._viewportWidth + this._slideWidth) / 2));
 
         // Buffer
         if (!this._isFullWidth)
@@ -11836,9 +11137,9 @@ Hubble.set('TinyGesture', TinyGesture);
         css(this._DOMElementViewport, 'left', `${this._offset === 0 ? 0 : -this._offset}px`);
 
         // Visible slides
-        this._visibleSlides = this._isFullWidth ? 1 : this._viewportWidth / (this._slideWidth + this._gapSize);
+        this._visibleSlides = this._isFullWidth ? 1 : this._viewportWidth / this._slideWidthWGap;
 
-        this._dragBoundryL = this._offset - (this._slideWidth / 2);
+        this._dragBoundryL = this._offset - this._slideWidthWGap;
 
         this._dragBoundryR = -(this._dragBoundryL);
     }
@@ -11988,6 +11289,8 @@ Hubble.set('TinyGesture', TinyGesture);
     {
         let x = this._dragX;
 
+        console.log(this._dragBoundryR, this._dragBoundryL);
+
         if (this.options.wrap)
         {
             let nearEnd = (x < 0 && x <= this._dragBoundryR) || (x > 0 && x >= this._dragBoundryL);
@@ -12014,11 +11317,11 @@ Hubble.set('TinyGesture', TinyGesture);
         // No need to clone on non wrapping sliders     
         if (!this.options.wrap) return;
 
-        let distance = (this._slideWidth + this._gapSize) * this._bufferSize;
+        let distance = this._slideWidthWGap * this._bufferSize;
 
         // Push out the drag boundaries
         // Drag bondry L remains the same as it is a fixed position from start
-        this._dragBoundryR = -(((this._slideWidth + this._gapSize) * (this._bufferSize + this._slidesCount -1)) + (this._slideWidth /2));
+        this._dragBoundryR = -((this._slideWidthWGap * (this._bufferSize + this._slidesCount -1)) + (this._slideWidth /2));
 
         // Adjust the dragging buffer
         this._draggingbuffer = !this._draggingbuffer ? distance : this._draggingbuffer + distance;
@@ -12650,6 +11953,7 @@ Hubble.set('TinyGesture', TinyGesture);
         this.el = this.buildPopEl();
         this.el.className = options.classes;
         this.animation = false;
+        this.state = 'inactive';
 
         if (options.animation === 'pop')
         {
@@ -12663,8 +11967,14 @@ Hubble.set('TinyGesture', TinyGesture);
         this.render = function()
         {
             document.body.appendChild(this.el);
+
             this.stylePop();
+
             this.el.classList.add(this.animation);
+
+            this.state = 'active';
+
+            return this.el;
         }
     }
 
@@ -12687,6 +11997,7 @@ Hubble.set('TinyGesture', TinyGesture);
         {
             pop.appendChild(this.options.template);
         }
+
         return pop;
     }
 
@@ -12698,6 +12009,8 @@ Hubble.set('TinyGesture', TinyGesture);
     PopHandler.prototype.remove = function()
     {
         if (in_dom(this.el)) this.el.parentNode.removeChild(this.el);
+
+        this.state = 'inactive';
     }
 
     /**
@@ -12754,7 +12067,11 @@ Hubble.set('TinyGesture', TinyGesture);
      * 
      * @var {object}
      */
-    const [$, $All, add_class, add_event_listener, closest, has_class, is_empty, remove_class, remove_event_listener, extend] = Hubble.import(['$', '$All', 'add_class', 'add_event_listener', 'closest', 'has_class', 'is_empty', 'remove_class', 'remove_event_listener', 'extend']).from('_');
+    const [find, find_all, add_class, on, closest, has_class, is_empty, remove_class, off, each, extend] = Hubble.import(['find', 'find_all', 'add_class', 'on', 'closest', 'has_class', 'is_empty', 'remove_class', 'off', 'each', 'extend']).from('_');
+
+    var HOVER_TIMER;
+
+    var POP_HANDLERS = new Map;
 
     /**
      * Popovers
@@ -12765,11 +12082,9 @@ Hubble.set('TinyGesture', TinyGesture);
      */
     const Popovers = function()
     {
-        this.super('.js-popover');
-
-        this._pops = [];
-
         this._windowClick = false;
+
+        this.super('.js-popover');
     }
 
     /**
@@ -12782,20 +12097,20 @@ Hubble.set('TinyGesture', TinyGesture);
     {
         if (!this._windowClick)
         {
-            add_event_listener(window, 'click', this._windowClickHandler, this);
+            on(window, 'click', this._windowClickHandler, this);
 
             this._windowClick = true;
         }
 
-        var direction = trigger.dataset.popoverDirection;
-        var title     = trigger.dataset.popoverTitle;
-        var theme     = trigger.dataset.popoverTheme || 'dark';
-        var content   = trigger.dataset.popoverContent;
-        var evnt      = trigger.dataset.popoverEvent;
-        var animation = trigger.dataset.popoverAnimate || 'pop';
-        var target    = trigger.dataset.popoverTarget;
-        var closeBtn  = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="fa fa-xmark"></span></button>' : '';
-        var pop       = '<div class="popover-content"><p>' + content + '</p></div>';
+        let direction = trigger.dataset.popoverDirection;
+        let title     = trigger.dataset.popoverTitle;
+        let theme     = trigger.dataset.popoverTheme || 'dark';
+        let content   = trigger.dataset.popoverContent;
+        let evnt      = trigger.dataset.popoverEvent;
+        let animation = trigger.dataset.popoverAnimate || 'pop';
+        let target    = trigger.dataset.popoverTarget;
+        let closeBtn  = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="fa fa-xmark"></span></button>' : '';
+        let pop       = '<div class="popover-content"><p>' + content + '</p></div>';
 
         if (title)
         {
@@ -12804,11 +12119,11 @@ Hubble.set('TinyGesture', TinyGesture);
 
         if (target)
         {
-            pop = $('#' + target).cloneNode(true);
+            pop = find('#' + target).cloneNode(true);
             pop.classList.remove('hidden');
         }
 
-        var popHandler = Hubble.get('PopHandler',
+        let popHandler = Hubble.get('PopHandler',
         {
             target: trigger,
             direction: direction,
@@ -12817,18 +12132,17 @@ Hubble.set('TinyGesture', TinyGesture);
             classes: 'popover ' + direction + ' ' + theme,
         });
 
-        this._pops.push(popHandler);
-
         if (evnt === 'click')
         {
-            add_event_listener(trigger, 'click', this._clickHandler, this);
-            add_event_listener(window, 'resize', this._windowResize, this);
+            on(trigger, 'click', this._clickHandler, this);
+            on(window, 'resize', this._windowResize, this);
         }
         else
         {                
-            add_event_listener(trigger, 'mouseenter', this._hoverOver, this);
-            add_event_listener(trigger, 'mouseleave', this._hoverLeavTimeout, this);
+            on(trigger, 'mouseenter', this._hoverEnter, this);
         }
+
+        POP_HANDLERS.set(trigger, popHandler);
     }
 
     /**
@@ -12841,7 +12155,7 @@ Hubble.set('TinyGesture', TinyGesture);
     {
         if (this._windowClick)
         {
-            remove_event_listener(window, 'click', this._windowClickHandler, this);
+            off(window, 'click', this._windowClickHandler, this);
 
             this._windowClick = false;
         }
@@ -12850,28 +12164,18 @@ Hubble.set('TinyGesture', TinyGesture);
 
         if (evnt === 'click')
         {
-            remove_event_listener(trigger, 'click', this._clickHandler, this);
-            remove_event_listener(window, 'resize', this._windowResize, this);
+            off(trigger, 'click', this._clickHandler, this);
+            off(window, 'resize', this._windowResize, this);
         }
         else
         {
-            remove_event_listener(trigger, 'mouseenter', this._hoverOver, this);
-            remove_event_listener(trigger, 'mouseleave', this._hoverLeavTimeout, this);
+            off(trigger, 'mouseenter', this._hoverEnter, this);
+            off(trigger, 'mouseleave', this._hoverLeave, this);
+
+            this._killPop(trigger);
+
+            POP_HANDLERS.delete(trigger);
         }
-    }
-
-    /**
-     * Timeout handler for hoverleave
-     *
-     * @access {private}
-     */
-    Popovers.prototype._hoverLeavTimeout = function(e)
-    {
-        e = e || window.event;
-
-        const _this = this;
-
-        setTimeout(() => _this._hoverLeave(e), 300);
     }
 
     /**
@@ -12879,13 +12183,17 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {private}
      */
-    Popovers.prototype._hoverOver = function(e, trigger)
+    Popovers.prototype._hoverEnter = function(e, trigger)
     {
-        var popHandler = this._getHandler(trigger);
-
         if (has_class(trigger, 'popped')) return;
+
+        let handler = POP_HANDLERS.get(trigger);
         
-        popHandler.render();
+        let pop = handler.render();
+
+        on(pop, 'mouseenter', this._hoverPop, this);
+
+        on(trigger, 'mouseleave', this._hoverLeave, this);
         
         add_class(trigger, 'popped');
     }
@@ -12895,19 +12203,38 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {private}
      */
-    Popovers.prototype._hoverLeave = function(e)
+    Popovers.prototype._hoverLeave = function(e, trigger)
     {
-        var hovers = $All(':hover');
+        clearTimeout(HOVER_TIMER);
 
-        const _this = this;
-
-        each(hovers, (i, hover) =>
+        // Mouse leaving pop not trigger
+        if (!has_class(trigger, '.js-popover'))
         {
-            if (has_class(hover, 'popover'))
+            for (let [_trigger, handler] of POP_HANDLERS)
             {
-                remove_event_listener(hover, 'mouseleave', _this._hoverLeave, _this)
+                if (handler.el === trigger) trigger = handler.trigger;
             }
-        });
+        }
+
+        HOVER_TIMER = setTimeout(() => 
+        {
+            this._killPop(trigger);
+
+            off(trigger, 'mouseleave', this._hoverLeave, this);
+
+        }, 300);
+    }
+
+    /**
+     * Hover leave event handler
+     *
+     * @access {private}
+     */
+    Popovers.prototype._hoverPop = function(e, pop)
+    {
+        clearTimeout(HOVER_TIMER);
+
+        on(pop, 'mouseleave', this._hoverLeave, this);
     }
 
     /**
@@ -12917,16 +12244,26 @@ Hubble.set('TinyGesture', TinyGesture);
      */
     Popovers.prototype._windowResize = function()
     {
-        each(this._DOMElements, (i, node) =>
+        for (let [trigger, handler] of POP_HANDLERS)
         {
-            if (has_class(node, 'popped'))
-            {
-                var popHandler = this._getHandler(node);
-                
-                popHandler.stylePop();
-            }
+            if (handler.state === 'active') handler.stylePop();
 
-        }, this);
+        }
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    Popovers.prototype._killPop = function(trigger)
+    {            
+        let handler = POP_HANDLERS.get(trigger);
+
+        handler.remove();
+        
+        remove_class(trigger, 'popped');
     }
 
     /**
@@ -12941,11 +12278,11 @@ Hubble.set('TinyGesture', TinyGesture);
 
         e.preventDefault();
         
-        var popHandler = this._getHandler(trigger);
+        var popHandler = POP_HANDLERS.get(trigger);
 
         if (has_class(trigger, 'popped'))
         {
-            this._removeAll();
+            this._removeAll(trigger);
             
             popHandler.remove();
             
@@ -12953,7 +12290,7 @@ Hubble.set('TinyGesture', TinyGesture);
         }
         else
         {
-            this._removeAll();
+            this._removeAll(trigger);
             
             popHandler.render();
             
@@ -12966,16 +12303,14 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {private}
      */
-    Popovers.prototype._windowClickHandler = function(e, clicked)
-    {
-        e = e || window.event;
-        
-        var clicked = e.target;
+    Popovers.prototype._windowClickHandler = function(e)
+    {        
+        let clicked = e.target;
 
         // Clicked the close button
         if (has_class(clicked, 'js-remove-pop') || closest(clicked, '.js-remove-pop'))
         {
-            _this._removeAll();
+            this._removeAll();
 
             return;
         }
@@ -12996,42 +12331,21 @@ Hubble.set('TinyGesture', TinyGesture);
     }
 
     /**
-     * Get the handler for the trigger
-     * 
-     * @access {private}
-     * @param  {DOMElement}    trigger DOM node that triggered event
-     * @return {object|false}
-     */
-    Popovers.prototype._getHandler = function(trigger)
-    {
-        var ret = false;
-
-        each(this._pops, (i, pop) =>
-        {
-            if (pop['trigger'] === trigger)
-            {
-                ret = pop;
-
-                return false;
-            }
-        });
-
-        return ret;
-    }
-
-    /**
      * Remove all the popovers currently being displayed
      *
      * @access {private}
      */
-    Popovers.prototype._removeAll = function()
-    {
-        each(this._pops, (i, pop) =>
+    Popovers.prototype._removeAll = function(exception)
+    {        
+        for (let [trigger, handler] of POP_HANDLERS)
         {
-            pop.remove();
+            if (!exception || (exception && trigger !== exception))
+            {
+                handler.remove();
 
-            remove_class(pop.options.target, 'popped');
-        });
+                remove_class(trigger, 'popped');
+            }
+        }
     }
 
     // Load into Hubble DOM core
@@ -13140,11 +12454,11 @@ Hubble.set('TinyGesture', TinyGesture);
 
         add_event_listener($All('.js-remove-btn', _wrapper), 'click', this._removeChip);
 
-        add_event_listener(_input, 'keyup', this._onKeyUp);
+        add_event_listener(_input, 'keyup', this._onKeyUp, this);
 
         if (closest(_input, 'form'))
         {
-            add_event_listener(_input, 'keydown', this._preventSubmit);
+            add_event_listener(_input, 'keydown', this._preventSubmit, this);
         }
     }
 
@@ -13161,11 +12475,11 @@ Hubble.set('TinyGesture', TinyGesture);
 
         remove_event_listener(_removeBtns, 'click', this._removeChip);
 
-        remove_event_listener(_input, 'keyup', this._onKeyUp);
+        remove_event_listener(_input, 'keyup', this._onKeyUp, this);
 
         if (closest(_input, 'form'))
         {
-            remove_event_listener(_input, 'keydown', this._preventSubmit);
+            remove_event_listener(_input, 'keydown', this._preventSubmit, this);
         }
     }
 
@@ -13175,7 +12489,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * @access {private}
      * @param  {event|null} e
      */
-    ChipInputs.prototype._preventSubmit = function(e)
+    ChipInputs.prototype._preventSubmit = function(e, input)
     {
         e = e || window.event;
 
@@ -13190,11 +12504,11 @@ Hubble.set('TinyGesture', TinyGesture);
         // Backspace
         else if (_key == 'Delete' || _key == 'Backspace' || _key == 8 || _key == 46)
         {
-            if (this.value === '')
+            if (input.value === '')
             {
-                var _wrapper = closest(this, '.js-chips-input');
+                var _wrapper = closest(input, '.js-chips-input');
 
-                Hubble.ChipInputs()._removeLastChip(_wrapper);
+                this._removeLastChip(_wrapper);
             }
         }
     }
@@ -13205,7 +12519,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * @access {private}
      * @param  {event|null} e
      */
-    ChipInputs.prototype._onKeyUp = function(e)
+    ChipInputs.prototype._onKeyUp = function(e, input)
     {
         e = e || window.event;
 
@@ -13214,17 +12528,15 @@ Hubble.set('TinyGesture', TinyGesture);
         // Enter
         if (_key == 'Enter' || _key === 13)
         {
-            var _this = Hubble.ChipInputs();
+            var _wrapper = closest(input, '.js-chips-input');
 
-            var _wrapper = closest(this, '.js-chips-input');
+            var _value = input_value(input).trim();
 
-            var _value = input_value(this).trim();
-
-            if (!in_array(_value, _this._getChipsValues(_wrapper)) && _value !== '')
+            if (!in_array(_value, this._getChipsValues(_wrapper)) && _value !== '')
             {
-                _this.addChip(_value, _wrapper);
+                this.addChip(_value, _wrapper);
 
-                this.value = '';
+                input.value = '';
             }
         }
     }
@@ -13266,7 +12578,7 @@ Hubble.set('TinyGesture', TinyGesture);
 
         add_event_listener($('.js-remove-btn', chip), 'click', this._removeChip);
 
-        Hubble.Hubble().dom().refresh('Ripple', _wrapper);
+        Hubble.dom().refresh('Ripple', _wrapper);
     }
 
     /**
@@ -14218,7 +13530,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * 
      * @var {Function}
      */
-    const [$, add_event_listener, remove_event_listener, has_class, add_class, remove_class, closest, trigger_event, extend] = Hubble.import(['$','add_event_listener','remove_event_listener','has_class','add_class','remove_class','closest','trigger_event','extend']).from('_');
+    const [find, add_event_listener, remove_event_listener, has_class, add_class, remove_class, closest, trigger_event, dom_element, map, extend] = Hubble.import(['find','add_event_listener','remove_event_listener','has_class','add_class','remove_class','closest','trigger_event','dom_element', 'map','extend']).from('_');
 
     /**
      * Toggle active on lists
@@ -14227,7 +13539,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    const Lists = function()
+    const List = function()
     { 
         this.super('.js-select-list > li');
     }
@@ -14236,7 +13548,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * @inheritdoc
      * 
      */
-    Lists.prototype.bind = function(node)
+    List.prototype.bind = function(node)
     {            
         add_event_listener(node, 'click', this._eventHandler);
     }
@@ -14245,7 +13557,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * @inheritdoc
      * 
      */
-    Lists.prototype.unbind = function(node)
+    List.prototype.unbind = function(node)
     {
         remove_event_listener(node, 'click', this._eventHandler);
     }
@@ -14256,7 +13568,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * @param {event|null} e JavaScript click event
      * @access {private}
      */
-    Lists.prototype._eventHandler = function(e)
+    List.prototype._eventHandler = function(e)
     {
         e = e || window.event;
         
@@ -14264,15 +13576,33 @@ Hubble.set('TinyGesture', TinyGesture);
 
         var list = closest(this, '.js-select-list');
 
-        remove_class($('li.selected', list), 'selected');
+        remove_class(find('li.selected', list), 'selected');
         
         add_class(this, 'selected');
 
         trigger_event(list, 'list:selected', {item: this});
     }
 
+    /**
+     * @inheritdoc
+     * 
+     */
+    List.prototype.template = function(props)
+    {
+        return dom_element({tag: 'ul', class: `list ${props.classes ? props.classes : ''} ${props.dense ? 'list-dense' : ''} ${props.ellipsis ? 'list-ellipsis' : ''} ${ props.selectable ? `js-select-list` : '' }`}, null, map(props.items, (i, item) =>
+            {
+                return dom_element({tag: 'li', class: `${item.state} ${props.selected && (props.selected === item.value || props.selected === item.text) ? 'selected' : null}`}, null,
+                [
+                    item.left ? dom_element({tag: 'span', class: 'item-left', innerHTML: item.left}) : null,
+                    dom_element({tag: 'span', class: 'item-body', innerText: item.body || item.text || item }),
+                    item.right ? dom_element({tag: 'span', class: 'item-right', innerHTML: item.right}) : null,
+                ])
+            })
+        );
+    }
+
     // Load into Hubble DOM core
-    Hubble.dom().register('Lists', extend(Component, Lists));
+    Hubble.dom().register('List', extend(Component, List));
 
 }());
 
@@ -15219,7 +14549,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * 
      * @var {Function}
      */
-    const [add_class, add_event_listener, animate_css, closest, coordinates, css, has_class, height, in_array, in_dom, inline_style, preapend, remove_class, remove_event_listener, rendered_style, traverse_up, trigger_event, width, extend] = Hubble.import(['add_class','add_event_listener','animate_css','closest','coordinates','css','has_class','height','in_array','in_dom','inline_style','preapend','remove_class','remove_event_listener','rendered_style','traverse_up','trigger_event','width','extend']).from('_');
+    const [find, add_class, on, animate_css, closest, coordinates, css, has_class, height, in_array, in_dom, inline_style, preapend, remove_class, off, rendered_style, traverse_up, trigger_event, width, extend] = Hubble.import(['find','add_class','on','animate_css','closest','coordinates','css','has_class','height','in_array','in_dom','inline_style','preapend','remove_class','off','rendered_style','traverse_up','trigger_event','width','extend']).from('_');
 
     /**
      * Ripple animation time.
@@ -15293,11 +14623,14 @@ Hubble.set('TinyGesture', TinyGesture);
             return;
         }
 
-        // No ripples inside list items
-        if (!has_class(node.parentNode, 'list') && closest(node, '.list'))
+        // No ripples inside list buttons
+        if (has_class(node, 'btn') && closest(node, '.list'))
         {
             return;
         }
+
+        // No ripples on list items with checkbox controls
+        if (closest(node, '.list') && (find('> .item-right .checkbox', node) || find('> .item-right .radio', node)  || find('> .item-right .switch', node))) return;
 
         // Cache 'overflow' and 'position' inline styles
         // to revert back to after complete
@@ -15311,7 +14644,7 @@ Hubble.set('TinyGesture', TinyGesture);
             INLINESTYLES.set(node, [CSSoverflow, CSSposition]);
         }
 
-        add_event_listener(node, 'mousedown, touchstart', this._startRipple, this);
+        on(node, 'mousedown, touchstart', this._startRipple, this);
     }
 
     /**
@@ -15320,7 +14653,7 @@ Hubble.set('TinyGesture', TinyGesture);
      */
     Ripple.prototype.unbind  = function(node)
     {
-        remove_event_listener(node, 'mousedown, touchstart', this._startRipple, this);
+        off(node, 'mousedown, touchstart', this._startRipple, this);
     }
 
     /**
@@ -15356,6 +14689,8 @@ Hubble.set('TinyGesture', TinyGesture);
     Ripple.prototype._startRipple  = function(e, wrapper)
     {
         e = e || window.event;
+
+        CLICKED = e.target;
 
         const _this = this;
 
@@ -15453,6 +14788,193 @@ Hubble.set('TinyGesture', TinyGesture);
     Hubble.dom().register('Ripple', extend(Component, Ripple));
 
 })();
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Hubble.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, on, off, has_class, add_class, remove_class, closest, trigger_event, dom_element, map, is_object, extend] = Hubble.import(['find','on','off','has_class','add_class','remove_class','closest','trigger_event','dom_element','map','is_object','extend']).from('_');
+
+    /**
+     * Toggle active on tables
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Table = function()
+    { 
+        this.super('.js-select-table > tbody > tr');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Table.prototype.bind = function(node)
+    {            
+        on(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Table.prototype.unbind = function(node)
+    {
+        off(node, 'click', this._eventHandler);
+    }
+
+    /**
+     * Handle the click event
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    Table.prototype._eventHandler = function(e)
+    {
+        e = e || window.event;
+        
+        if (has_class(this, 'selected')) return;
+
+        var table = closest(this, '.js-select-table');
+
+        remove_class(find('tr.selected', table), 'selected');
+        
+        add_class(this, 'selected');
+
+        trigger_event(table, 'table:selected', {item: this});
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Table.prototype.template = function(props)
+    {
+        let head = dom_element({tag: 'thead'}, null, dom_element({tag: 'tr'}, null, map(props.head, (i, cell) =>
+        {   
+            return is_object(cell) ? dom_element({tag: 'th', ...cell}) : dom_element({tag: 'th'}, null, cell);                    
+        })));
+
+        let body = dom_element({tag: 'tbody'}, null, map(props.rows, (i, item) =>
+        {
+            return dom_element({tag: 'tr', class: `${props.selected && (props.selected === i) ? 'selected' : null}`}, null, map(item, (j, cell) =>
+            {
+                return is_object(cell) ? dom_element({tag: 'th', ...cell}) : dom_element({tag: 'th'}, null, cell);
+            }));
+        }));
+
+        return dom_element({tag: 'table', class: `table ${props.classes ? props.classes : ''} ${props.dense ? 'table-dense' : ''} ${ props.selectable ? `js-select-table` : '' }`}, null, [head, body]);
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Table', extend(Component, Table));
+
+}());
+
+(function()
+{
+    /**
+     * Lazyload fallback
+     * 
+     * @var {string}
+     */
+    var LAZY_FALLBACK_IMAGE = typeof LAZY_FALLBACK_IMAGE === 'undefined' ? '"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSJ3aGl0ZSI+CiAgPHBhdGggZD0iTTAgNCBMMCAyOCBMMzIgMjggTDMyIDQgeiBNNCAyNCBMMTAgMTAgTDE1IDE4IEwxOCAxNCBMMjQgMjR6IE0yNSA3IEE0IDQgMCAwIDEgMjUgMTUgQTQgNCAwIDAgMSAyNSA3Ij48L3BhdGg+Cjwvc3ZnPg=="' : LAZY_FALLBACK_IMAGE;
+
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Hubble.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [is_undefined, map, dom_element, extend] = Hubble.import(['is_undefined','map','dom_element','extend']).from('_');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const AVAILABLE_OPTIONS =[ 'background', 'lazy', 'ratio', 'placeholder', 'src', 'grayscale'];
+
+    /**
+     * Toggle active on lists
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Image = function()
+    { 
+        this.super();
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Image.prototype.template = function(props)
+    {
+        let attrs        = map({...props}, (k, v) => !AVAILABLE_OPTIONS.includes(k) ? v : false );
+        let isBackground = props.background;
+        let isRatio      = !is_undefined(props.ratio);
+        let isLazy       = is_undefined(props.lazy) ? false : props.lazy;
+        let src          = isLazy ? (props.placeholder || LAZY_FALLBACK_IMAGE) : props.src;
+        let dataSrc      = isLazy ? props.src : false;
+        
+        if (!attrs.style) attrs.style = '';
+        if (!attrs.class) attrs.class = '';
+
+        if (isLazy)
+        {
+            attrs.class  += ` lazyload js-lazyload ${props.grayscale ? 'grayscale' : ''}`;
+            attrs.dataSrc = dataSrc;
+        }
+
+        // Background image
+        if (isBackground)
+        {
+            attrs.class += ' bg-image';
+            attrs.style += `;background-image: url(${src})`;
+            
+            if (isRatio) attrs.class += ` ratio-${props.ratio}`;
+
+            return dom_element({...attrs, tag: 'div'});
+        }
+
+        attrs.src = src;
+
+        let image = dom_element({...attrs, src: src, dataSrc: dataSrc, tag: 'img'})
+
+        // Ratio image
+        if (isRatio)
+        {
+            return dom_element({tag: 'div', class: `ratio-img ratio-${props.ratio}`}, null, image);
+        }
+
+        return image;
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Image', extend(Component, Image));
+
+}());
 
 
 

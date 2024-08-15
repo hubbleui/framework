@@ -3,7 +3,7 @@
     /**
      * @var {Helper} obj
      */
-    const [$, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, in_dom, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css, is_array_last] = Hubble.import(['$','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','in_dom','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css', 'is_array_last']).from('_');
+    const [find, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, in_dom, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css, is_array_last, dom_element] = Hubble.import(['find','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','in_dom','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css', 'is_array_last','dom_element']).from('_');
 
     /**
      * Wrappers that need "position:relative" to hide overflow.
@@ -102,7 +102,7 @@
                 {
                     let cb = is_array_last(node, content) ? callback : null;
 
-                    this.load(node, cb, $(selector, this._DOMElement));
+                    this.load(node, cb, find(selector, this._DOMElement));
 
                 }, this);
 
@@ -125,7 +125,7 @@
             if (in_array(position, STATIC_POSITIONS)) newStyles.position = 'relative';
 
             // Prep content for inserting
-            var isFragment    = false;
+            var isFragment = false;
             var oldContnet;
 
             if (isHTML)
@@ -134,12 +134,11 @@
             }
             else
             {
-                let div = document.createElement('DIV');
-                div.innerHTML = content;
-                div.className = div.children.length ? 'swapping-content-wrapper fragment' :'swapping-content-wrapper';
-                isFragment    = div.children.length > 1;
-                oldContnet    = content;
-                content       = div;
+                let div    = dom_element({tag: 'div', class: 'swapping-content-wrapper'}, null, content);
+                isFragment = div.children.length > 1;
+                if (isFragment) div.className += ' fragment';
+                oldContnet = content;
+                content    = div;
             }
 
             const _this = this;
@@ -157,7 +156,9 @@
                 {
                     if (isFragment)
                     {
-                        wrapper.innerHTML = oldContnet;
+                        wrapper.innerHTML = '';
+
+                        dom_element(null, wrapper, oldContnet);
                     }
                     else
                     {
@@ -264,7 +265,7 @@
             let wrapper    = null;
             let skeleton   = document.createElement('div');
             let variants   = options.variant.split(' ').map((x) => x.trim().toLowerCase()).filter((x) => x !== '');
-            let DOMElement = options.selector ? $(options.selector, this._DOMElement) : this._DOMElement;
+            let DOMElement = options.selector ? find(options.selector, this._DOMElement) : this._DOMElement;
             let width      = options.width;
             let height     = options.height;
             let classes    = ['skeleton'];

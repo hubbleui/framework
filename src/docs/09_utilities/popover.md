@@ -16,8 +16,9 @@ Similar to tooltip, popover allows you to display helper content and information
 Popovers can be instantiated automatically via HTML through a combination of classes and data-attributes. Below is an example of a basic hover popover.
 
 <div class="code-content-example">
-    <div class="flex-row-fluid align-cols-center">
-        <button class="btn js-popover"data-popover-title="Popover Title" data-popover-content="Aliqua commodo fugiat pariatur fugiat est dolor ut cillum dolore esse aliquip voluptate dolore labore." data-popover-direction="top" data-popover-event="click">Click me!</button>
+    <div class="flex-row-fluid align-cols-center col-gaps-xs">
+        <button class="btn js-popover" data-popover-theme="dark" data-popover-title="Popover Title" data-popover-content="Aliqua commodo fugiat pariatur fugiat est dolor ut cillum dolore esse aliquip voluptate dolore labore." data-popover-direction="top" data-popover-event="click">Dark!</button>
+        <button class="btn js-popover"  data-popover-theme="light" data-popover-title="Popover Title" data-popover-content="Aliqua commodo fugiat pariatur fugiat est dolor ut cillum dolore esse aliquip voluptate dolore labore." data-popover-direction="top" data-popover-event="click">Light</button>
     </div>
 </div>
 
@@ -48,7 +49,7 @@ Data attributes placed on the target element define various behavior of the popo
 
 
 <div class="code-content-example">
-    <div class="container-fuid">
+    <div class="flex-row-fluid align-cols-center col-gaps-xs">
         <button class="btn js-popover" data-popover-title="Popover Title" data-popover-content="Laborum qui aute nulla reprehenderit culpa dolore non eu proident do ut tempor aliqua magna." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="click" data-popover-animate="pop"> Click Me! </button>
         <button class="btn js-popover" data-popover-title="Popover Title" data-popover-content="Ullamco laborum velit dolore do minim cillum minim labore sint excepteur sint laboris cupidatat proident dolor." data-popover-direction="top" data-popover-type="popover-primary" data-popover-event="hover" data-popover-animate="fade"> Hover Me! </button>
     </div>

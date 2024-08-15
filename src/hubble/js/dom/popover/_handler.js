@@ -21,6 +21,7 @@
         this.el = this.buildPopEl();
         this.el.className = options.classes;
         this.animation = false;
+        this.state = 'inactive';
 
         if (options.animation === 'pop')
         {
@@ -34,8 +35,14 @@
         this.render = function()
         {
             document.body.appendChild(this.el);
+
             this.stylePop();
+
             this.el.classList.add(this.animation);
+
+            this.state = 'active';
+
+            return this.el;
         }
     }
 
@@ -58,6 +65,7 @@
         {
             pop.appendChild(this.options.template);
         }
+
         return pop;
     }
 
@@ -69,6 +77,8 @@
     PopHandler.prototype.remove = function()
     {
         if (in_dom(this.el)) this.el.parentNode.removeChild(this.el);
+
+        this.state = 'inactive';
     }
 
     /**

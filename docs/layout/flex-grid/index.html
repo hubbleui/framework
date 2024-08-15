@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="hb-darkmode">
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -380,8 +380,8 @@
 <hr />
 <h3 id="introduction">Introduction</h3>
 <p>Grid systems are used for creating page layouts through a series of rows and columns that house your content. Before CSS <code>flex</code> was introduced the common way of doing things was through a 12 column grid system.</p>
-<p>However with <code>flex</code>, the way grids and columns are structured is different. There are pros and cons to both, but once you become accustomed to using <code>flex</code> it is essentially just a native way to skin a cat.</p>
-<p>The biggest problem with <code>flex</code> and a grid system is that it isn't really designed for mobile-first semantically speaking. i.e it defaults to packing in as many columns that fit - which normally isn't what you want on mobile-first.</p>
+<p>However with <code>flex</code>, the way grids and columns are structured is different. There are pros and cons to both, but once you become accustomed to using <code>flex</code> it is essentially just a another way to skin a cat.</p>
+<p>One issue with <code>flex</code> and a grid system is that it isn't really designed for mobile-first (semantically speaking). i.e it defaults to packing in as many columns that natively fit into a space - which normally isn't what you want on mobile-first.</p>
 <p>In Hubble, the Flex Grid is designed to mobile-first. Meaning all children of a row will default to full-width unless overridden at a breakpoint. This makes it far easier to design grid layouts with less markup and less styling.</p>
 <p>Here is a breakdown of how it works:</p>
 <ul>
@@ -449,7 +449,7 @@ $breakpoints:
 </div>
 <pre><code class="html language-html">&lt;div class="flex-row"&gt;&lt;/div&gt;</code></pre>
 <h4 id="responsive-rows">Responsive rows</h4>
-<p>Hubble's grid system comes with mobile-first fully responsive set of helpers to display rows according to screen size. You can use these helpers as modifiers on <code>.flex-row</code> to hide or show the row at different breakpoints.</p>
+<p>Hubble's grid system comes with a mobile-first fully responsive set of helpers to display rows according to screen size. You can use these helpers as modifiers on <code>.flex-row</code> to hide or show the row at different breakpoints.</p>
 <p>The table below outlines the available options.</p>
 <table>
 <thead>
@@ -516,7 +516,7 @@ $breakpoints:
 &lt;/div&gt;</code></pre>
 <hr />
 <h3 id="columns">Columns</h3>
-<p>With Hubble's flex grid system is incredibly flexible, so there are multiple ways to specify column widths depending on your needs.</p>
+<p>Hubble's flex grid system is incredibly flexible, so there are multiple ways to specify column widths depending on your needs.</p>
 <ol>
 <li><strong>On the parent <code>.flex-row</code></strong><br />
 Suitable when your columns are all evenly sized. Individual child <code>.col</code> width can be specified, while siblings retain specified width.</li>
@@ -524,10 +524,10 @@ Suitable when your columns are all evenly sized. Individual child <code>.col</co
 Suitable when your columns need specific sizing and you don't want them to grow or shrink</li>
 <li><strong>Combination</strong><br />
 Suitable when you have multiple columns at one size but want a few exceptions.</li>
-<li><strong>Fluid <code>.flex-rows</code></strong><br />
+<li><strong>Fluid <code>.flex-row-fluid</code></strong><br />
 Defaults to evenly distributing sizes and spacing. Can be used with any combination of the above. </li>
 </ol>
-<h4 id="row-columns">Row Columns</h4>
+<h4 id="1-row-columns">1. Row Columns</h4>
 <p>Setting column width via the <code>.flex-row</code> is easy to setup via modifier classes. Simply add <code>.flex-cols-*</code> with your desired column sizings:</p>
 <table>
 <thead>
@@ -554,23 +554,23 @@ Defaults to evenly distributing sizes and spacing. Can be used with any combinat
     <div class="parent-row-diagram"><code>.flex-row</code></div>
     <div class="flex-row">
         <div class="col">
-            <div class="bg-salmon fill">.col</div>
+            <div class="bg-salmon fill"><code>.col</code></div>
         </div>
     </div>
     <div class="flex-row pole-xs"></div>
     <div class="parent-row-diagram"><code>.flex-row</code><code>.flex-cols-3</code></div>
     <div class="flex-row flex-cols-3 col-gaps-xs row-gaps-xs">
         <div class="col">
-            <div class="bg-bb-blue fill">.col</div>
+            <div class="bg-bb-blue fill"><code>.col</code></div>
         </div>
         <div class="col">
-            <div class="bg-teal fill">.col</div>
+            <div class="bg-teal fill"><code>.col</code></div>
         </div>
         <div class="col">
-            <div class="bg-bb-blue fill">.col</div>
+            <div class="bg-bb-blue fill"><code>.col</code></div>
         </div>
         <div class="col">
-            <div class="bg-teal fill">.col</div>
+            <div class="bg-teal fill"><code>.col</code></div>
         </div>
     </div>
 </div>
@@ -583,7 +583,7 @@ Defaults to evenly distributing sizes and spacing. Can be used with any combinat
     &lt;div class="col"&gt;&lt;/div&gt;
     &lt;div class="col"&gt;&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-<h4 id="child-columns">Child Columns</h4>
+<h4 id="2-child-columns">2. Child Columns</h4>
 <p>The core base class of Hubble layouts is the <code>.col</code>. The table below outlines the classes and formats made available when implementing layouts using child columns.</p>
 <table>
 <thead>
@@ -612,28 +612,28 @@ Defaults to evenly distributing sizes and spacing. Can be used with any combinat
 </tr>
 </tbody>
 </table>
-<p>And here we set the width via the child <code>.col</code> elements:</p>
+<p>Here we set the width via the child <code>.col</code> elements:</p>
 <div class="code-content-example">
     <div class="parent-row-diagram"><code>.flex-row</code></div>
     <div class="flex-row">
         <div class="col col-12">
-            <div class="bg-salmon fill">.col-12</div>
+            <div class="bg-salmon fill"><code>.col-12</code></div>
         </div>
     </div>
     <div class="flex-row pole-xs"></div>
     <div class="parent-row-diagram"><code>.flex-row</code></div>
     <div class="flex-row col-gaps-xs row-gaps-xs">
         <div class="col col-3">
-            <div class="bg-bb-blue fill small">.col-3</div>
+            <div class="bg-bb-blue fill small"><code>.col-3</code></div>
         </div>
         <div class="col col-3">
-            <div class="bg-teal fill small">.col-3</div>
+            <div class="bg-teal fill small"><code>.col-3</code></div>
         </div>
         <div class="col col-3">
-            <div class="bg-bb-blue fill small">.col-3</div>
+            <div class="bg-bb-blue fill small"><code>.col-3</code></div>
         </div>
         <div class="col col-3">
-            <div class="bg-teal fill small">.col-3</div>
+            <div class="bg-teal fill small"><code>.col-3</code></div>
         </div>
     </div>
 </div>
@@ -646,8 +646,8 @@ Defaults to evenly distributing sizes and spacing. Can be used with any combinat
     &lt;div class="col col-3"&gt;&lt;/div&gt;
     &lt;div class="col col-3"&gt;&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-<h4 id="using-both">Using both</h4>
-<p>You can set the base column-width via the parent <code>.flex-row</code> and adjust individual columns. Remaining columns will remain their size defined by the parent:</p>
+<h4 id="3-using-both">3. Using both</h4>
+<p>This design pattern uses a combination of both the parent <code>.flex-row</code> and it's children. The base column-width is defined on the parent <code>.flex-row</code>, with any individual adjustments made on individual columns. Remaining columns will remain their size defined by the parent:</p>
 <div class="code-content-example">
     <div class="parent-row-diagram"><code>.flex-row</code><code>flex-cols-3</code></div>
     <div class="flex-row flex-cols-3 col-gaps-xs row-gaps-xs">
@@ -735,7 +735,7 @@ Defaults to evenly distributing sizes and spacing. Can be used with any combinat
 </table>
 <p>This example shows setting even column widths at <code>.col-6</code> on mobile and <code>.col-3'</code> at breakpoint <code>lg</code> and above via parent <code>.flex-row</code>:</p>
 <div class="code-content-example">
-    <div class="parent-row-diagram"><code>.flex-cols-3</code><code>.flex-cols-lg-6</code></div>
+    <div class="parent-row-diagram"><code>.flex-row</code> <code>.flex-cols-3</code> <code>.flex-cols-lg-6</code></div>
     <div class="flex-row flex-cols-3 flex-cols-lg-6 col-gaps-xs row-gaps-xs">
         <div class="col">
             <div class="bg-bb-blue fill"><code>.col</code></div>

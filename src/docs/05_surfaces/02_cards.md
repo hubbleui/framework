@@ -61,7 +61,7 @@ To render media inside a card, wrap an image in a `.card-media` block. Media can
    <div class="flex-row col-gaps-xs row-gaps-xs">
         <div class="card col col-lg-4">
             <div class="card-media">
-                <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
             </div>    
             <div class="card-block">
                 <h4 class="card-title">MAGA Country</h4>
@@ -70,7 +70,7 @@ To render media inside a card, wrap an image in a `.card-media` block. Media can
             <div class="card-footer">
                 <div class="card-footer-left">
                     <div class="avatar">
-                        <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                     </div>
                 </div>
                 <div class="card-footer-content p5">
@@ -83,7 +83,7 @@ To render media inside a card, wrap an image in a `.card-media` block. Media can
             <div class="card-header">
                 <div class="card-header-left">
                     <div class="avatar">
-                        <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                     </div>
                 </div>
                 <div class="card-header-content p5">
@@ -92,7 +92,7 @@ To render media inside a card, wrap an image in a `.card-media` block. Media can
                 </div>
             </div>
             <div class="card-media">
-                <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
             </div>
             <div class="card-block">
                 <h4 class="card-title">MAGA Country</h4>
@@ -103,7 +103,7 @@ To render media inside a card, wrap an image in a `.card-media` block. Media can
             <div class="card-header">
                 <div class="card-header-left">
                     <div class="avatar">
-                        <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                     </div>
                 </div>
                 <div class="card-header-content p5">
@@ -116,7 +116,7 @@ To render media inside a card, wrap an image in a `.card-media` block. Media can
                 <p>Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.</p>
             </div>
             <div class="card-media">
-                <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
             </div> 
         </div>
     </div>
@@ -170,7 +170,7 @@ You can also make use of Hubble's `.bg-image` inside a `.card-media` block if yo
             <div class="card-header">
                 <div class="card-header-left">
                     <div class="avatar">
-                        <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                     </div>
                 </div>
                 <div class="card-header-content p5">
@@ -179,7 +179,7 @@ You can also make use of Hubble's `.bg-image` inside a `.card-media` block if yo
                 </div>
             </div>
             <div class="card-media">
-                <div data-src="../../../build/img/trump-hero.jpg" class="bg-image js-lazyload lazyload grayscale" style="background-image: url(../../../build/img/trump-hero_thumb.jpg)"></div>
+                <div data-src="../../../dist/img/trump-hero.jpg" class="bg-image js-lazyload lazyload grayscale" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
             </div>
             <div class="card-block">
                 <h4 class="card-title">MAGA Country</h4>
@@ -218,7 +218,7 @@ If using `card-header` or `.card-footer`, you'll need to your card content in a 
                 <div class="card-header">
                     <div class="card-header-left">
                         <div class="avatar">
-                            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                         </div>
                     </div>
                     <div class="card-header-content p5">
@@ -232,18 +232,18 @@ If using `card-header` or `.card-footer`, you'll need to your card content in a 
                 </div>
             </div>
             <div class="card-media">
-                <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
             </div> 
         </div>
         <div class="col col-lg-8 card card-landscape">
             <div class="card-media">
-                <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
             </div> 
             <div>
                 <div class="card-header">
                     <div class="card-header-left">
                         <div class="avatar">
-                            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                         </div>
                     </div>
                     <div class="card-header-content p5">
@@ -293,13 +293,13 @@ Add the `.responsive` modifier class to `.card.card-landscape` to make it stack 
     <div class="flex-row align-cols-center row-gaps-xs">
         <div class="col col-lg-8 card card-landscape responsive">
             <div class="card-media">
-                <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
             </div> 
             <div>
                 <div class="card-header">
                     <div class="card-header-left">
                         <div class="avatar">
-                            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                         </div>
                     </div>
                     <div class="card-header-content p5">
@@ -328,7 +328,7 @@ Add an optional header within a card by using `.card-header`, remember to wrap a
             <div class="card-header">
                 <div class="card-header-content">
                     <div class="avatar">
-                        <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                     </div>
                 </div>
             </div>
@@ -360,7 +360,7 @@ Add an optional header within a card by using `.card-header`, remember to wrap a
             <div class="card-header">
                 <div class="card-header-left">
                     <div class="avatar">
-                        <img src="../../../build/img/trump-avatar.jpg" />
+                        <img src="../../../dist/img/trump-avatar.jpg" />
                     </div>
                 </div>
                 <div class="card-header-content">
@@ -434,7 +434,7 @@ Add an optional footer within a card by using `.card-footer`, remember to wrap a
     <div class="flex-row align-cols-center">
         <div class="card col col-md-8 col-lg-5">
             <div class="card-media">
-                <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
             </div>
             <div class="card-block">
                 <p>Proident minim veniam in adipisicing in adipisicing sint quis in commodo labore labore ea velit officia dolor incididunt nisi consequat ut in tempor id.</p>
@@ -474,7 +474,7 @@ Add an optional footer within a card by using `.card-footer`, remember to wrap a
             <div class="card-header">
                 <div class="card-header-left">
                     <div class="avatar">
-                        <img src="../../../build/img/trump-avatar.jpg" />
+                        <img src="../../../dist/img/trump-avatar.jpg" />
                     </div>
                 </div>
                 <div class="card-header-content">
@@ -591,7 +591,7 @@ Dividers outside of `.card-block` should indicate areas of a card that can expan
             <div class="card-header">
                 <div class="card-header-left">
                     <div class="avatar">
-                        <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                     </div>
                 </div>
                 <div class="card-header-content p5">
@@ -600,7 +600,7 @@ Dividers outside of `.card-block` should indicate areas of a card that can expan
                 </div>
             </div>
             <div class="card-media">
-                <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
             </div>
             <div class="card-block">
                 <h4 class="card-title">MAGA Country</h4>
@@ -649,7 +649,7 @@ To add tables to simply add the table markup without a `.card-block` so it spans
             <div class="card-header">
                 <div class="card-header-left">
                     <div class="avatar">
-                        <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                     </div>
                 </div>
                 <div class="card-header-content p5">
@@ -722,7 +722,7 @@ Add the `.primary-action` to any element inside a card or the card itself to mak
    <div class="flex-row col-gaps-xs row-gaps-xs align-cols-center-x align-cols-y-stretch">
         <div class="card col col-lg-4 primary-action">
             <div class="card-media">
-                <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
             </div>    
             <div class="card-block">
                 <h4 class="card-title">MAGA Country</h4>
@@ -731,7 +731,7 @@ Add the `.primary-action` to any element inside a card or the card itself to mak
             <div class="card-footer">
                 <div class="card-footer-left">
                     <div class="avatar">
-                        <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                     </div>
                 </div>
                 <div class="card-footer-content p5">
@@ -743,7 +743,7 @@ Add the `.primary-action` to any element inside a card or the card itself to mak
         <div class="card col col-lg-4">
             <div class="primary-action">
                 <div class="card-media">
-                    <img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />
+                    <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
                 </div>    
                 <div class="card-block">
                     <h4 class="card-title">MAGA Country</h4>

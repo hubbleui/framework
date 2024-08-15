@@ -54,10 +54,6 @@ $body-color:                    #1d1d1d !default;
 $link-color:                    var(--hb-brand-primary) !default;
 $link-color-hover:              var(--hb-brand-primary-500) !default;
 
-// Darkmode
-$body-bg-darkmode:              var(--hb-black) !default;
-$body-color-darkmode:           var(--hb-white) !default;
-
 // Global font families
 $font-family-sans-serif:        -apple-system, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !default;
 $font-family-serif:             Georgia, "Times New Roman", Times, serif !default;
@@ -165,21 +161,20 @@ $btn-icon-font-size:            20px !default;
 $btn-group-radius:              var(--hb-border-radius) !default;
 
 // Lists
-$list-bg:                       transparent !default;
-$list-color:                    transparent !default;
-$list-icon-color:               var(--hb-gray) !default;
-$list-pad-y:                    1rem !default;
-$list-pad-x:                    1.5rem !default;
-$list-font-size:                var(--hb-base-font-size) !default;
-$list-transition:               background-color 0.15s #{$base-easing} !default;
-$list-title-color:              var(--hb-body-color) !default;
-$list-subtitle-color:           var(--hb-gray-500) !default;
-$list-title-font-size:          1.4rem !default;
-$list-subtitle-font-size:       1.35rem !default;
-$list-bg-hover:                 var(--hb-gray-100) !default;
-$list-color-hover:              inherit !default;
-$list-bg-active:                var(--hb-brand-info-100) !default;
-$list-color-active:             inherit !default;
+$list-bg:						var(--hb-white) !default;
+$list-color:					var(--hb-gray-700) !default;
+$list-font-size:				1.3rem !default;
+$list-item-bg:                  transparent !default;
+$list-item-color-hover:         var(--hb-gray-700) !default;
+$list-item-color-active:        var(--hb-gray-700) !default;
+$list-item-color-selected:      var(--hb-white) !default;
+$list-item-bg-hover:            var(--hb-gray-200) !default;
+$list-item-bg-active:           var(--hb-brand-info-100) !default;
+$list-item-bg-selected:         var(--hb-brand-info) !default;
+$list-item-pad-y:               10px !default;
+$list-item-pad-x:               12px !default;
+$list-divider-color:            var(--hb-gray-200) !default;
+$list-divider-space:            5px;
 
 // Dropdown
 $dropdown-border-radius:        var(--hb-border-radius) !default;
@@ -221,6 +216,8 @@ $table-head-bg:                 var(--hb-gray-200) !default;
 $table-head-color:              var(--hb-gray-900) !default;
 $table-head-weight:             $text-bold !default;
 $table-caption-color:           var(--hb-gray) !default;
+$table-selected-color:          var(--hb-white) !default;
+$table-selected-bg:             var(--hb-brand-info) !default;
 
 
 // Messages
@@ -384,9 +381,9 @@ $popover-pad-y:                 1rem !default;
 $popover-pad-x:                 1.5rem !default;
 
 $popover-bg-light:              var(--hb-white) !default;     
-$popover-color-light:           var(--hb-body-color) !default;
-$popover-title-color-light:     var(--hb-brand-primary) !default;
-$popover-title-border-light:     1px solid !default;
+$popover-color-light:           var(--hb-gray-600) !default;
+$popover-title-color-light:     var(--hb-gray-700) !default;
+$popover-title-border-light:    1px solid var(--hb-gray-300) !default;
 
 $popover-bg-dark:               var(--hb-black) !default;
 $popover-color-dark:            var(--hb-gray-400) !default;

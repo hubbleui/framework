@@ -83,33 +83,17 @@ _.prototype.attr = function(DOMElement, name, value)
             {
                 DOMElement.removeAttribute('style');
             }
-            // Clear style and overwrite
-            else if (this.is_string(value))
+
+            DOMElement.style = '';
+
+            let style = this.is_string(value) ? this.css_to_object(value) : value;
+
+            this.each(style, (prop, value) =>
             {
-                DOMElement.style = '';
+                this.css(DOMElement, prop, value);
                 
-                // attr(node, 'css', 'foo : bar; baz: bar;})
-                this.each(value.split(';'), function(i, rule)
-                {
-                    var style = rule.split(':');
-
-                    if (style.length >= 2)
-                    {
-                        this.css(DOMElement, style.shift().trim(), style.join(':').trim());
-                    }
-                }, this);
-            }
-            // attr(node, 'css', {foo : 'bar', baz: 'bar'})
-            else if (this.is_object(value))
-            {
-                DOMElement.style = '';
-
-                this.each(value, function(prop, value)
-                {
-                    this.css(DOMElement, prop, value);
-                    
-                }, this);
-            }
+            });
+           
             break;
 
         // Events / attributes

@@ -6,7 +6,7 @@
      * @var {string}
      */
     var LAZY_FALLBACK_IMAGE = typeof LAZY_FALLBACK_IMAGE === 'undefined' ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSJ3aGl0ZSI+CiAgPHBhdGggZD0iTTAgNCBMMCAyOCBMMzIgMjggTDMyIDQgeiBNNCAyNCBMMTAgMTAgTDE1IDE4IEwxOCAxNCBMMjQgMjR6IE0yNSA3IEE0IDQgMCAwIDEgMjUgMTUgQTQgNCAwIDAgMSAyNSA3Ij48L3BhdGg+Cjwvc3ZnPg==" : LAZY_FALLBACK_IMAGE;
-
+    
     /**
      * JS Async Queue
      *
@@ -212,6 +212,8 @@
                 _image.onerror = {};
             };
 
+            _image.classList.add('lazy-loading');
+
             _image.src = url;
         };
     }
@@ -238,24 +240,6 @@
      * @return string
      */
     LazyLoad.prototype._markLoaded = function(node)
-    {
-        node.classList.add('lazy-loading');
-
-        node.removeAttribute('data-src');
-
-        const _this = this;
-
-        setTimeout(() => _this._loadedComplete(node), 1500);
-    }
-
-    /**
-     * Mark node as loaded
-     *
-     * @access private
-     * @param  node    node Image node element
-     * @return string
-     */
-    LazyLoad.prototype._loadedComplete = function(node)
     {
         node.classList.add('lazy-loaded');
 

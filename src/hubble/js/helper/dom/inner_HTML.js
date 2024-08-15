@@ -19,7 +19,7 @@ _.prototype.inner_HTML = function(DOMElement, content, append)
         DOMElement.innerHTML = content;
     }
 
-    this.trigger_event(el, `Hubble:dom:mutate`);
+    this.trigger_event(DOMElement, `Hubble:dom:mutate`);
 
     this.trigger_event(window, `Hubble:dom:mutate`, { DOMElement: DOMElement });
 }

@@ -73,11 +73,11 @@ Badges can be customized using Hubble's contextual classes:
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center text-center col-gaps-xs pole-sm pole-s">
     	<div class="avatar">
-            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
         	<span class="badge badge-danger">9</span>
         </div>
         <div class="avatar">
-            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
         	<span class="badge badge-info">4</span>
         </div>
    	</div>
@@ -131,15 +131,15 @@ Use the `.status` class to indicate a status:
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center text-center col-gaps-xs">
     	<div class="avatar">
-            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
         	<span class="status status-warning"></span>
         </div>
         <div class="avatar">
-            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
         	<span class="status status-success"></span>
         </div>
         <div class="avatar">
-            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
         	<span class="status status-danger"></span>
         </div>
     </div>
@@ -249,7 +249,7 @@ Hubble comes with 5 basic loading animators. Use the base class `.loader` with `
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center text-center col-gaps-sm">
         <div class="avatar">
-            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
         </div>
         <div class="avatar">
             <span class="fa fa-heart3 color-danger"></span>
@@ -277,7 +277,7 @@ Adjust sizing and backgrounds using the available sizing modifiers `.avatar-xs` 
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center text-center col-gaps-sm">
         <div class="avatar avatar-xs">
-            <img data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+            <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
         </div>
         <div class="avatar avatar-sm">
             <span class="fa fa-heart3 color-danger"></span>

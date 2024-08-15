@@ -1,6 +1,6 @@
 (function()
 {
-    const [$All, each, closest, is_empty, $_with_context] = Hubble.import(['$All','each','closest','is_empty','$_with_context']).from('_');
+    const [find_all, each, closest, is_empty] = Hubble.import(['find_all','each','closest','is_empty']).from('_');
 
     /**
      * Component base class
@@ -33,7 +33,7 @@
         this._DOMElements = [];
 
         // Init
-        if (selector) this.construct(document);
+        if (!is_empty(this._selector)) this.construct(document);
 
         return this;
     }
@@ -45,7 +45,9 @@
      */
     Component.prototype.construct = function(context)
     {
-        let nodes = context === document ? $All(this._selector, context) : $_with_context(this._selector, context);
+        if (is_empty(this._selector)) return;
+
+        let nodes = find_all(this._selector, context, context !== document);
 
         if (!is_empty(nodes))
         {

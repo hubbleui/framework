@@ -12,6 +12,8 @@
 	--hb-table-head-weight: #{$table-head-weight};
 	--hb-table-caption-color: #{$table-caption-color};
 	--hb-table-bg-alternate: #{$table-bg-alternate};
+	--hb-table-selected-color: #{$table-selected-color};
+	--hb-table-selected-bg: #{$table-selected-bg};
 
 	caption
 	{
@@ -90,6 +92,15 @@
 		{
 			background-color: var(--hb-table-bg-alternate);
 		}
+	}
+
+	// Selected
+	> tbody > tr.selected > td,
+	> tbody > tr.selected > th
+	{
+		color: var(--hb-table-selected-color);
+		background-color: var(--hb-table-selected-bg);
+		border-color: var(--hb-table-selected-bg);
 	}
 
 	// Contextual classes

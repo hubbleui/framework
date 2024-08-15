@@ -122,13 +122,16 @@
      *
      * @access {public}
      */
-    _Slider.prototype.next = function(e)
+    _Slider.prototype.next = function(animationOrClickEvent)
     {
         // Stop on animating
         if (this._animating || this._dragging) return;
 
         // Do nothing on non-wrap and at end
         if (!this.options.wrap && this._index === this._slidesIndexs) return;
+
+        // Don't animate
+        if (animationOrClickEvent === false) return this._toSlideDirect(this._index +1);
 
         // Pause autoplay
         this.pause();
@@ -137,7 +140,7 @@
         this._animating = true;
 
         // Run animation
-        let distance = (this._slideWidth + this._gapSize);
+        let distance = this._slideWidthWGap;
 
         if (!this.options.wrap)
         {
@@ -174,7 +177,7 @@
 
             this._animating = false;
 
-            if (!e) this.unpause();
+            if (!animationOrClickEvent) this.unpause();
         }});
     }
 
@@ -183,13 +186,16 @@
      *
      * @access {public}
      */
-    _Slider.prototype.previous = function(e)
+    _Slider.prototype.previous = function(animationOrClickEvent)
     {
         // Stop on animating
         if (this._animating || this._dragging) return;
 
         // Do nothing on non-wrap and at start
         if (!this.options.wrap && this._index === 0) return;
+
+        // Don't animate
+        if (animationOrClickEvent === false) return this._toSlideDirect(this._index +1);
 
         // Clear timeout
         this.pause();
@@ -198,7 +204,7 @@
         this._animating = true;
 
         // Cache distance
-        let distance = !this.options.wrap ? (this._translated - (this._slideWidth + this._gapSize)) : this._slideWidth + this._gapSize;
+        let distance = !this.options.wrap ? (this._translated - this._slideWidthWGap) : this._slideWidthWGap;
 
         this._translated = distance < 2 ? 0 : distance;
 
@@ -213,7 +219,7 @@
         if (this.options.wrap)
         {
             // Adjust pre distance before animation
-            let preDistance = this._offset + (this._slideWidth + this._gapSize);
+            let preDistance = this._offset + this._slideWidthWGap;
 
             this._moved(-1);
 
@@ -232,7 +238,7 @@
 
             this._animating = false;
 
-            if (!e) this.unpause();
+            if (!animationOrClickEvent) this.unpause();
         } });
     }
 
@@ -283,7 +289,7 @@
         // If we're not wrapping we can skip all of this
         if (!this.options.wrap)
         {
-            let distance = (this._slideWidth + this._gapSize) * delta;
+            let distance = this._slideWidthWGap * delta;
 
             distance = direction === -1 ? this._translated - distance : this._translated + distance;
             
@@ -309,10 +315,10 @@
         let postIndex = direction === -1 ? this._middleIndex + delta : (this._middleIndex - delta) + this._bufferSize;
 
         // Since we know the new index, we can just calculate how far offset center it is.
-        let tmpOffset = (postIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2);
+        let tmpOffset = (postIndex * this._slideWidthWGap) - (this._viewportWidth / 2) + (this._slideWidth / 2);
 
         // Run animation
-        let distance = (this._slideWidth + this._gapSize) * delta;
+        let distance = this._slideWidthWGap * delta;
         distance  = direction === 1 ? -distance : distance;
 
         // Shuffle slides
@@ -365,7 +371,7 @@
         // If we're not wrapping we can skip all of this
         if (!this.options.wrap)
         {
-            let distance = (this._slideWidth + this._gapSize) * delta;
+            let distance = this._slideWidthWGap * delta;
 
             distance = direction === -1 ? this._translated - distance : this._translated + distance;
             
@@ -417,7 +423,7 @@
         this._slideWidthWGap = this._slideWidth + this._gapSize;
 
         // Offset
-        this._offset = Math.round(this.options.wrap ? (this._middleIndex * (this._slideWidth + this._gapSize)) - (this._viewportWidth / 2) + (this._slideWidth / 2) : (this._slideWidth + this._gapSize) - ((this._viewportWidth + this._slideWidth) / 2));
+        this._offset = Math.round(this.options.wrap ? (this._middleIndex * this._slideWidthWGap) - (this._viewportWidth / 2) + (this._slideWidth / 2) : this._slideWidthWGap - ((this._viewportWidth + this._slideWidth) / 2));
 
         // Buffer
         if (!this._isFullWidth)
@@ -430,9 +436,9 @@
         css(this._DOMElementViewport, 'left', `${this._offset === 0 ? 0 : -this._offset}px`);
 
         // Visible slides
-        this._visibleSlides = this._isFullWidth ? 1 : this._viewportWidth / (this._slideWidth + this._gapSize);
+        this._visibleSlides = this._isFullWidth ? 1 : this._viewportWidth / this._slideWidthWGap;
 
-        this._dragBoundryL = this._offset - (this._slideWidth / 2);
+        this._dragBoundryL = this._offset - this._slideWidthWGap;
 
         this._dragBoundryR = -(this._dragBoundryL);
     }
@@ -582,6 +588,8 @@
     {
         let x = this._dragX;
 
+        console.log(this._dragBoundryR, this._dragBoundryL);
+
         if (this.options.wrap)
         {
             let nearEnd = (x < 0 && x <= this._dragBoundryR) || (x > 0 && x >= this._dragBoundryL);
@@ -608,11 +616,11 @@
         // No need to clone on non wrapping sliders     
         if (!this.options.wrap) return;
 
-        let distance = (this._slideWidth + this._gapSize) * this._bufferSize;
+        let distance = this._slideWidthWGap * this._bufferSize;
 
         // Push out the drag boundaries
         // Drag bondry L remains the same as it is a fixed position from start
-        this._dragBoundryR = -(((this._slideWidth + this._gapSize) * (this._bufferSize + this._slidesCount -1)) + (this._slideWidth /2));
+        this._dragBoundryR = -((this._slideWidthWGap * (this._bufferSize + this._slidesCount -1)) + (this._slideWidth /2));
 
         // Adjust the dragging buffer
         this._draggingbuffer = !this._draggingbuffer ? distance : this._draggingbuffer + distance;

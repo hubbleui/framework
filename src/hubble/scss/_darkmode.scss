@@ -1,0 +1,83 @@
+.hb-darkmode:root
+{
+    --hb-body-bg:    var(--hb-black-900);
+    --hb-body-color: var(--hb-white);
+}
+
+
+.hb-darkmode
+{
+	/* CARDS / PAPER */
+	.paper
+	{
+	    --hb-paper-bg: var(--hb-black-500);
+	    --hb-paper-border-color: var(--hb-black-600);
+	}
+	.card
+	{
+		--hb-card-bg: var(--hb-black-500);
+	    --hb-card-bg-focus: var(--hb-black-500);
+	    --hb-card-color: var(--hb-gray-300);
+	    --hb-card-title-color: var(--hb-white);
+	    --hb-card-border-color: var(--hb-black-600);
+	    --hb-card-divider-color: var(--hb-black-400);
+	}
+
+	/* TABLES */
+	.table
+	{
+	    --hb-table-border-color: var(--hb-black-500);
+	    --hb-table-head-bg: var(--hb-black-800);
+	    --hb-table-head-color: var(--hb-gray-400);
+	    --hb-table-bg-alternate: rgba(0, 0, 0, 0.08);
+	}
+
+	/* BTN BASE */
+	.btn:not(.btn-primary):not(.btn-info):not(.btn-success):not(.btn-warning):not(.btn-danger):not(.btn-black):not(.btn-white)
+	{
+	    
+	    --hb-btn-bg-color: var(--hb-black-500);
+	    --hb-btn-color: var(--hb-white);
+	    --hb-btn-loader-color: var(--hb-btn-color);
+	    --hb-btn-color-hover: var(--hb-white);
+	    --hb-btn-bg-color-hover: var(--hb-black-600);
+	    --hb-btn-color-active: var(--hb-white);
+	    --hb-btn-bg-color-active: var(--hb-black-700);
+	}
+
+	/* DROPDOWN */
+	.drop-container
+	{
+	    --hb-dropdown-bg: var(--hb-black);
+	}
+	.menu
+	{
+	    --hb-menu-color: var(--hb-white);
+	    --hb-menu-item-color-hover: var(--hb-white);
+	    --hb-menu-item-color-active: var(--hb-brand-primary);
+	    --hb-menu-item-color-selected: var(--hb-brand-primary);
+	    --hb-menu-item-bg-hover: var(--hb-gray-900);
+	    --hb-menu-item-bg-active: var(--hb-gray-900);
+	    --hb-menu-item-bg-selected: var(--hb-gray-900);
+	    --hb-menu-divider-color: var(--hb-gray-600);
+	}
+
+	/* FORMS */
+	.form-field
+	{
+	    --hb-input-bg: var(--hb-body-bg);
+	    --hb-input-color: var(--hb-body-color);
+	    --hb-input-color-label: var(--hb-gray-400);
+	    --hb-input-color-placeholder: var(--hb-gray-900);
+	    --hb-input-border-color: var(--hb-black-400);
+
+	    --hb-input-addon-bg: var(--hb-black-500);
+	    --hb-input-addon-color: var(--hb-black-400);
+	    
+	    .input-addon
+	    {
+	    	border-color: var(--hb-black-400);
+	    }
+	}
+}
+

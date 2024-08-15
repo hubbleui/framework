@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="hb-darkmode">
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -487,15 +487,22 @@
 <pre><code class="JavaScript language-JavaScript">slider.toSlide(3);</code></pre>
 <p>Passing <code>false</code> as an optional second argument on <code>toSlide</code> will skip the animation and move directly to the slide:</p>
 <pre><code class="JavaScript language-JavaScript">slider.toSlide(3, false);</code></pre>
-<p>Passing <code>resize</code> method re-calculates any internal variables for the slider and makes adjustments. This is called automatically when the <code>resize</code> option is enabled and window is resized :</p>
+<p>The <code>resize</code> method re-calculates any internal variables for the slider and makes adjustments. This is called automatically when the <code>resize</code> option is enabled and window is resized :</p>
 <pre><code class="JavaScript language-JavaScript">slider.resize();</code></pre>
 <p>Autoplay functionality has the following methods <code>play</code> <code>pause</code> <code>unpause</code> <code>stop</code></p>
-<pre><code class="JavaScript language-JavaScript">slider.pause();</code></pre>
+<pre><code class="JavaScript language-JavaScript">slider.play();
+
+slider.pause();
+
+slider.unpause();
+
+slider.stop();</code></pre>
 <p>Finally, the <code>destroy</code> method will remove all listeners on the slider and disable it</p>
 <pre><code class="JavaScript language-JavaScript">slider.destroy();</code></pre>
 <hr />
 <h3 id="dynamic-javascript-instantiation">Dynamic JavaScript Instantiation</h3>
-<p>For dynamically generated content, Sliders can be instantiated via JavaScript to generate dynamic content on the fly with Hubble's <code>Component.Create</code> method either via the <code>Hubble.Dom</code> or the <code>Slider</code> Component directly. The <code>slides</code> value can be either an array or <code>HTML</code> strings or an Array/NodeList.</p>
+<p>For dynamically generated content, Sliders can be instantiated via JavaScript to generate dynamic content on the fly with Hubble's <code>Component.Create</code> method either via the <code>Hubble.Dom</code> or the <code>Slider</code> Component directly.</p>
+<p>The <code>slides</code> value can be either an array or <code>HTML</code> strings or an Array/NodeList of <code>HTMLElements</code>.</p>
 <pre><code class="JavaScript language-JavaScript">let options =
 {
     wrap: false,

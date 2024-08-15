@@ -45,7 +45,6 @@
 		@import 'dom/form_inputs.js';
 		@import 'dom/form_values.js';
 		@import 'dom/has_class.js';
-		@import 'dom/has_selector.js';
 		@import 'dom/hide_aria.js';
 		@import 'dom/in_viewport.js';
 		@import 'dom/inner_HTML.js';

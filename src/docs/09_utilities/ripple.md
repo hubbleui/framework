@@ -17,14 +17,14 @@ To add a ripple to an element, add the `.js-ripple` class. The library will hand
 <div class="code-content-example">
 	<div class="flex-row-fluid align-cols-center">
 		<div style="width: 300px;" class="js-ripple raised-1">
-			<img alt="Trump" data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+			<img alt="Trump" data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
 		</div>
 	</div>
 </div>
 
 ```html
 <div class="js-ripple raised-1">
-	<img alt="Trump" data-src="../../../build/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-avatar_thumb.jpg" />
+	<img alt="Trump" data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
 </div>
 ```
 

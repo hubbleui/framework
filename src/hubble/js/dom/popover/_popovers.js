@@ -12,7 +12,11 @@
      * 
      * @var {object}
      */
-    const [$, $All, add_class, add_event_listener, closest, has_class, is_empty, remove_class, remove_event_listener, extend] = Hubble.import(['$', '$All', 'add_class', 'add_event_listener', 'closest', 'has_class', 'is_empty', 'remove_class', 'remove_event_listener', 'extend']).from('_');
+    const [find, find_all, add_class, on, closest, has_class, is_empty, remove_class, off, each, extend] = Hubble.import(['find', 'find_all', 'add_class', 'on', 'closest', 'has_class', 'is_empty', 'remove_class', 'off', 'each', 'extend']).from('_');
+
+    var HOVER_TIMER;
+
+    var POP_HANDLERS = new Map;
 
     /**
      * Popovers
@@ -23,11 +27,9 @@
      */
     const Popovers = function()
     {
-        this.super('.js-popover');
-
-        this._pops = [];
-
         this._windowClick = false;
+
+        this.super('.js-popover');
     }
 
     /**
@@ -40,20 +42,20 @@
     {
         if (!this._windowClick)
         {
-            add_event_listener(window, 'click', this._windowClickHandler, this);
+            on(window, 'click', this._windowClickHandler, this);
 
             this._windowClick = true;
         }
 
-        var direction = trigger.dataset.popoverDirection;
-        var title     = trigger.dataset.popoverTitle;
-        var theme     = trigger.dataset.popoverTheme || 'dark';
-        var content   = trigger.dataset.popoverContent;
-        var evnt      = trigger.dataset.popoverEvent;
-        var animation = trigger.dataset.popoverAnimate || 'pop';
-        var target    = trigger.dataset.popoverTarget;
-        var closeBtn  = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="fa fa-xmark"></span></button>' : '';
-        var pop       = '<div class="popover-content"><p>' + content + '</p></div>';
+        let direction = trigger.dataset.popoverDirection;
+        let title     = trigger.dataset.popoverTitle;
+        let theme     = trigger.dataset.popoverTheme || 'dark';
+        let content   = trigger.dataset.popoverContent;
+        let evnt      = trigger.dataset.popoverEvent;
+        let animation = trigger.dataset.popoverAnimate || 'pop';
+        let target    = trigger.dataset.popoverTarget;
+        let closeBtn  = evnt === 'click' ? '<button type="button" class="btn btn-sm btn-pure btn-circle js-remove-pop close-btn"><span class="fa fa-xmark"></span></button>' : '';
+        let pop       = '<div class="popover-content"><p>' + content + '</p></div>';
 
         if (title)
         {
@@ -62,11 +64,11 @@
 
         if (target)
         {
-            pop = $('#' + target).cloneNode(true);
+            pop = find('#' + target).cloneNode(true);
             pop.classList.remove('hidden');
         }
 
-        var popHandler = Hubble.get('PopHandler',
+        let popHandler = Hubble.get('PopHandler',
         {
             target: trigger,
             direction: direction,
@@ -75,18 +77,17 @@
             classes: 'popover ' + direction + ' ' + theme,
         });
 
-        this._pops.push(popHandler);
-
         if (evnt === 'click')
         {
-            add_event_listener(trigger, 'click', this._clickHandler, this);
-            add_event_listener(window, 'resize', this._windowResize, this);
+            on(trigger, 'click', this._clickHandler, this);
+            on(window, 'resize', this._windowResize, this);
         }
         else
         {                
-            add_event_listener(trigger, 'mouseenter', this._hoverOver, this);
-            add_event_listener(trigger, 'mouseleave', this._hoverLeavTimeout, this);
+            on(trigger, 'mouseenter', this._hoverEnter, this);
         }
+
+        POP_HANDLERS.set(trigger, popHandler);
     }
 
     /**
@@ -99,7 +100,7 @@
     {
         if (this._windowClick)
         {
-            remove_event_listener(window, 'click', this._windowClickHandler, this);
+            off(window, 'click', this._windowClickHandler, this);
 
             this._windowClick = false;
         }
@@ -108,28 +109,18 @@
 
         if (evnt === 'click')
         {
-            remove_event_listener(trigger, 'click', this._clickHandler, this);
-            remove_event_listener(window, 'resize', this._windowResize, this);
+            off(trigger, 'click', this._clickHandler, this);
+            off(window, 'resize', this._windowResize, this);
         }
         else
         {
-            remove_event_listener(trigger, 'mouseenter', this._hoverOver, this);
-            remove_event_listener(trigger, 'mouseleave', this._hoverLeavTimeout, this);
+            off(trigger, 'mouseenter', this._hoverEnter, this);
+            off(trigger, 'mouseleave', this._hoverLeave, this);
+
+            this._killPop(trigger);
+
+            POP_HANDLERS.delete(trigger);
         }
-    }
-
-    /**
-     * Timeout handler for hoverleave
-     *
-     * @access {private}
-     */
-    Popovers.prototype._hoverLeavTimeout = function(e)
-    {
-        e = e || window.event;
-
-        const _this = this;
-
-        setTimeout(() => _this._hoverLeave(e), 300);
     }
 
     /**
@@ -137,13 +128,17 @@
      *
      * @access {private}
      */
-    Popovers.prototype._hoverOver = function(e, trigger)
+    Popovers.prototype._hoverEnter = function(e, trigger)
     {
-        var popHandler = this._getHandler(trigger);
-
         if (has_class(trigger, 'popped')) return;
+
+        let handler = POP_HANDLERS.get(trigger);
         
-        popHandler.render();
+        let pop = handler.render();
+
+        on(pop, 'mouseenter', this._hoverPop, this);
+
+        on(trigger, 'mouseleave', this._hoverLeave, this);
         
         add_class(trigger, 'popped');
     }
@@ -153,19 +148,38 @@
      *
      * @access {private}
      */
-    Popovers.prototype._hoverLeave = function(e)
+    Popovers.prototype._hoverLeave = function(e, trigger)
     {
-        var hovers = $All(':hover');
+        clearTimeout(HOVER_TIMER);
 
-        const _this = this;
-
-        each(hovers, (i, hover) =>
+        // Mouse leaving pop not trigger
+        if (!has_class(trigger, '.js-popover'))
         {
-            if (has_class(hover, 'popover'))
+            for (let [_trigger, handler] of POP_HANDLERS)
             {
-                remove_event_listener(hover, 'mouseleave', _this._hoverLeave, _this)
+                if (handler.el === trigger) trigger = handler.trigger;
             }
-        });
+        }
+
+        HOVER_TIMER = setTimeout(() => 
+        {
+            this._killPop(trigger);
+
+            off(trigger, 'mouseleave', this._hoverLeave, this);
+
+        }, 300);
+    }
+
+    /**
+     * Hover leave event handler
+     *
+     * @access {private}
+     */
+    Popovers.prototype._hoverPop = function(e, pop)
+    {
+        clearTimeout(HOVER_TIMER);
+
+        on(pop, 'mouseleave', this._hoverLeave, this);
     }
 
     /**
@@ -175,16 +189,26 @@
      */
     Popovers.prototype._windowResize = function()
     {
-        each(this._DOMElements, (i, node) =>
+        for (let [trigger, handler] of POP_HANDLERS)
         {
-            if (has_class(node, 'popped'))
-            {
-                var popHandler = this._getHandler(node);
-                
-                popHandler.stylePop();
-            }
+            if (handler.state === 'active') handler.stylePop();
 
-        }, this);
+        }
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    Popovers.prototype._killPop = function(trigger)
+    {            
+        let handler = POP_HANDLERS.get(trigger);
+
+        handler.remove();
+        
+        remove_class(trigger, 'popped');
     }
 
     /**
@@ -199,11 +223,11 @@
 
         e.preventDefault();
         
-        var popHandler = this._getHandler(trigger);
+        var popHandler = POP_HANDLERS.get(trigger);
 
         if (has_class(trigger, 'popped'))
         {
-            this._removeAll();
+            this._removeAll(trigger);
             
             popHandler.remove();
             
@@ -211,7 +235,7 @@
         }
         else
         {
-            this._removeAll();
+            this._removeAll(trigger);
             
             popHandler.render();
             
@@ -224,16 +248,14 @@
      *
      * @access {private}
      */
-    Popovers.prototype._windowClickHandler = function(e, clicked)
-    {
-        e = e || window.event;
-        
-        var clicked = e.target;
+    Popovers.prototype._windowClickHandler = function(e)
+    {        
+        let clicked = e.target;
 
         // Clicked the close button
         if (has_class(clicked, 'js-remove-pop') || closest(clicked, '.js-remove-pop'))
         {
-            _this._removeAll();
+            this._removeAll();
 
             return;
         }
@@ -254,42 +276,21 @@
     }
 
     /**
-     * Get the handler for the trigger
-     * 
-     * @access {private}
-     * @param  {DOMElement}    trigger DOM node that triggered event
-     * @return {object|false}
-     */
-    Popovers.prototype._getHandler = function(trigger)
-    {
-        var ret = false;
-
-        each(this._pops, (i, pop) =>
-        {
-            if (pop['trigger'] === trigger)
-            {
-                ret = pop;
-
-                return false;
-            }
-        });
-
-        return ret;
-    }
-
-    /**
      * Remove all the popovers currently being displayed
      *
      * @access {private}
      */
-    Popovers.prototype._removeAll = function()
-    {
-        each(this._pops, (i, pop) =>
+    Popovers.prototype._removeAll = function(exception)
+    {        
+        for (let [trigger, handler] of POP_HANDLERS)
         {
-            pop.remove();
+            if (!exception || (exception && trigger !== exception))
+            {
+                handler.remove();
 
-            remove_class(pop.options.target, 'popped');
-        });
+                remove_class(trigger, 'popped');
+            }
+        }
     }
 
     // Load into Hubble DOM core

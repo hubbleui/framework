@@ -9,11 +9,18 @@
 _.prototype.$ = function(selector, context)
 {
     context = (typeof context === 'undefined' ? document : context);
-    
-    // Fast
-    if (!selector.trim().substring(0, 1) === '>') return context.querySelector(selector);
 
-    return context.querySelector(`:scope ${selector}`);
+    let fchild = selector.trim().substring(0, 1) === '>';
+    let multi  = selector.includes(',');
+
+    // Fast
+    if (!fchild && !multi) return context.querySelector(selector);
+
+    if (multi) selector = selector.replaceAll(/,\s?>/g, ', :scope >');
+    
+    if (fchild) selector = `:scope ${selector}`;
+
+    return context.querySelector(selector);
 }
 
 /**
@@ -33,31 +40,36 @@ _.prototype.find = function(selector, context)
  * @param  {DOMElement}   context (optional) (default document)
  * @return {DOMElement}
  */
-_.prototype.$All = function(selector, context)
+_.prototype.$All = function(selector, context, includeContextEl)
 {
     context = (typeof context === 'undefined' ? document : context);
 
+    includeContextEl = (typeof includeContextEl === 'undefined' ? false : includeContextEl && context !== document);
+
     let fchild = selector.trim().substring(0, 1) === '>';
     let multi  = selector.includes(',');
+    let deleteParent = false;
 
-    // Fast
-    if (!fchild && !multi) return TO_ARR.call(context.querySelectorAll(selector));
-
-    // Easier to just split and loop here
-    if (multi)
+    if (includeContextEl)
     {
-        let ret = [];
-
-        this.each(selector.split(','), (i, s) =>
+        if (!hasParent)
         {
-            ret = [...ret, ...this.$All(s.trim(), context)];
-        
-        }, this);
+            parent = document.createElement('div');
+            parent.appendChild(context);
+            deleteParent = true;
+        }
 
-        return this.array_unique(ret);
+        context = context.parentNode;
     }
 
-    return TO_ARR.call(context.querySelectorAll(`:scope ${selector}`));
+    if (multi)  selector = selector.replaceAll(/,\s?>/g, ', :scope >');
+    if (fchild) selector = `:scope ${selector}`;
+
+    let ret = TO_ARR.call(context.querySelectorAll(selector));
+
+    if (deleteParent) context.parentNode.removeChild(context);
+
+    return ret;
 }
 
 /**

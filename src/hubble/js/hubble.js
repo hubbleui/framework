@@ -15,9 +15,7 @@
 @import 'application/_component.js';
 
 // Vendors
-@import 'vendor/_promise.js';
 @import 'vendor/_nprogress.js';
-@import 'vendor/_pluralize.js';
 
 // Utility
 @import 'utility/_smoothScroll.js';
@@ -53,6 +51,8 @@
 @import 'dom/_inputs.js';
 @import 'dom/_imgZoom.js';
 @import 'dom/_ripple.js';
+@import 'dom/Table.js';
+@import 'dom/Image.js';
 
 
 // Boot Hubble

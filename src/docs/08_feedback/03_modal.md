@@ -49,7 +49,7 @@ If you want a custom modal with your own content, provide your own HTML as strin
                 <div class="card-header">
                     <div class="card-header-left">
                         <div class="avatar">
-                            <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../build/img/trump-avatar.jpg">
+                            <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../dist/img/trump-avatar.jpg">
                         </div>
                     </div>
                     <div class="card-header-content p5">
@@ -58,7 +58,7 @@ If you want a custom modal with your own content, provide your own HTML as strin
                     </div>
                 </div>
                 <div class="card-media">
-                    <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../build/img/trump-hero.jpg">
+                    <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../dist/img/trump-hero.jpg">
                 </div>
                 <div class="card-block">
                     <h4 class="card-title">MAGA Country</h4>
@@ -77,7 +77,7 @@ const card = `
     <div class="card-header">
         <div class="card-header-left">
             <div class="avatar">
-                <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../build/img/trump-avatar.jpg">
+                <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../dist/img/trump-avatar.jpg">
             </div>
         </div>
         <div class="card-header-content p5">
@@ -86,7 +86,7 @@ const card = `
         </div>
     </div>
     <div class="card-media">
-        <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../build/img/trump-hero.jpg">
+        <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../dist/img/trump-hero.jpg">
     </div>
     <div class="card-block">
         <h4 class="card-title">MAGA Country</h4>
@@ -111,7 +111,7 @@ Here's another example using options
                 confirmBtn       : 'MAGA',
                 confirmClass     : 'btn btn-pure btn-primary',
                 overlay          : 'dark',
-                extras           : '<img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />',
+                extras           : '<img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />',
                 callbackRender   : () => Hubble.dom().refresh('LazyLoad')
             }));
         });
@@ -127,7 +127,7 @@ Hubble.Modal( {
     confirmBtn       : 'MAGA',
     confirmClass     : 'btn btn-pure btn-primary',
     overlay          : 'dark',
-    extras           : '<img data-src="../../../build/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../build/img/trump-hero_thumb.jpg" />',
+    extras           : '<img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />',
     callbackRender   : () => Hubble.dom().refresh('LazyLoad')
 });
 ```

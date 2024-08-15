@@ -1,10 +1,13 @@
-.form-result {
+.form-result
+{
     display: none;
     overflow: hidden;
     padding-top: 20px;
     backface-visibility: visible !important;
     animation-name: flipInX;
-    .msg {
+    .msg
+   
+   {
         width: 100%;
         opacity: 0;
         display: none;
@@ -16,8 +19,9 @@ form.default .form-result,
 form.danger  .form-result,
 form.info    .form-result,
 form.warning .form-result,
-form.success .form-result {
-    display: block;
+form.success .form-result
+{
+    display: flex;
     animation-duration: .5s;
     animation-fill-mode: both;
 }
@@ -25,42 +29,51 @@ form.default .msg-default,
 form.danger .msg-danger,
 form.info .msg-info,
 form.warning .msg-warning,
-form.success .msg-success {
-    display: block;
+form.success .msg-success
+{
+    display: flex;
     opacity: 1;
 }
 
 
-@-webkit-keyframes flipInX {
-    from {
+@-webkit-keyframes flipInX
+{
+    from
+    {
         -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
         transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
         -webkit-animation-timing-function: ease-in;
         animation-timing-function: ease-in;
         opacity: 0;
     }
-    40% {
+    40%
+    {
         -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
         transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
         -webkit-animation-timing-function: ease-in;
         animation-timing-function: ease-in;
     }
-    60% {
+    60%
+    {
         -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
         transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
         opacity: 1;
     }
-    80% {
+    80%
+    {
         -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
         transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
     }
-    to {
+    to
+    {
         -webkit-transform: perspective(400px);
         transform: perspective(400px);
     }
 }
-@keyframes flipInX {
-    from {
+@keyframes flipInX
+{
+    from
+    {
         -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
         transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
         -webkit-animation-timing-function: ease-in;
@@ -68,25 +81,29 @@ form.success .msg-success {
         opacity: 0;
     }
 
-    40% {
+    40%
+    {
         -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
         transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
         -webkit-animation-timing-function: ease-in;
         animation-timing-function: ease-in;
     }
 
-    60% {
+    60%
+    {
         -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
         transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
         opacity: 1;
     }
 
-    80% {
+    80%
+    {
         -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
         transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
     }
 
-    to {
+    to
+    {
         -webkit-transform: perspective(400px);
         transform: perspective(400px);
     }

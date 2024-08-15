@@ -38,11 +38,11 @@
 
         add_event_listener($All('.js-remove-btn', _wrapper), 'click', this._removeChip);
 
-        add_event_listener(_input, 'keyup', this._onKeyUp);
+        add_event_listener(_input, 'keyup', this._onKeyUp, this);
 
         if (closest(_input, 'form'))
         {
-            add_event_listener(_input, 'keydown', this._preventSubmit);
+            add_event_listener(_input, 'keydown', this._preventSubmit, this);
         }
     }
 
@@ -59,11 +59,11 @@
 
         remove_event_listener(_removeBtns, 'click', this._removeChip);
 
-        remove_event_listener(_input, 'keyup', this._onKeyUp);
+        remove_event_listener(_input, 'keyup', this._onKeyUp, this);
 
         if (closest(_input, 'form'))
         {
-            remove_event_listener(_input, 'keydown', this._preventSubmit);
+            remove_event_listener(_input, 'keydown', this._preventSubmit, this);
         }
     }
 
@@ -73,7 +73,7 @@
      * @access {private}
      * @param  {event|null} e
      */
-    ChipInputs.prototype._preventSubmit = function(e)
+    ChipInputs.prototype._preventSubmit = function(e, input)
     {
         e = e || window.event;
 
@@ -88,11 +88,11 @@
         // Backspace
         else if (_key == 'Delete' || _key == 'Backspace' || _key == 8 || _key == 46)
         {
-            if (this.value === '')
+            if (input.value === '')
             {
-                var _wrapper = closest(this, '.js-chips-input');
+                var _wrapper = closest(input, '.js-chips-input');
 
-                Hubble.ChipInputs()._removeLastChip(_wrapper);
+                this._removeLastChip(_wrapper);
             }
         }
     }
@@ -103,7 +103,7 @@
      * @access {private}
      * @param  {event|null} e
      */
-    ChipInputs.prototype._onKeyUp = function(e)
+    ChipInputs.prototype._onKeyUp = function(e, input)
     {
         e = e || window.event;
 
@@ -112,17 +112,15 @@
         // Enter
         if (_key == 'Enter' || _key === 13)
         {
-            var _this = Hubble.ChipInputs();
+            var _wrapper = closest(input, '.js-chips-input');
 
-            var _wrapper = closest(this, '.js-chips-input');
+            var _value = input_value(input).trim();
 
-            var _value = input_value(this).trim();
-
-            if (!in_array(_value, _this._getChipsValues(_wrapper)) && _value !== '')
+            if (!in_array(_value, this._getChipsValues(_wrapper)) && _value !== '')
             {
-                _this.addChip(_value, _wrapper);
+                this.addChip(_value, _wrapper);
 
-                this.value = '';
+                input.value = '';
             }
         }
     }
@@ -164,7 +162,7 @@
 
         add_event_listener($('.js-remove-btn', chip), 'click', this._removeChip);
 
-        Hubble.Hubble().dom().refresh('Ripple', _wrapper);
+        Hubble.dom().refresh('Ripple', _wrapper);
     }
 
     /**

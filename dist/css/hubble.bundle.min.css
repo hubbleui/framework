@@ -3261,6 +3261,8 @@ dl dd:last-child {
   --hb-table-head-weight: 500;
   --hb-table-caption-color: var(--hb-gray);
   --hb-table-bg-alternate: rgba(0, 0, 0, 0.08);
+  --hb-table-selected-color: var(--hb-white);
+  --hb-table-selected-bg: var(--hb-brand-info);
   width: 100%;
   font-size: var(--hb-table-font-size);
   color: var(--hb-table-color);
@@ -3314,6 +3316,12 @@ dl dd:last-child {
 }
 .table.table-alternate tbody tr:nth-child(even) {
   background-color: var(--hb-table-bg-alternate);
+}
+.table > tbody > tr.selected > td,
+.table > tbody > tr.selected > th {
+  color: var(--hb-table-selected-color);
+  background-color: var(--hb-table-selected-bg);
+  border-color: var(--hb-table-selected-bg);
 }
 .table .primary a,
 .table .secondary a,
@@ -4605,18 +4613,19 @@ input.unstyled:focus {
   height: var(--hb-checkbox-size);
   min-width: var(--hb-checkbox-size);
   line-height: var(--hb-checkbox-size);
+  display: block;
 }
 .checkbox:before {
   content: "";
   display: block;
   position: absolute;
   border-radius: 50%;
-  width: calc(var(--hb-checkbox-size) * 2);
-  height: calc(var(--hb-checkbox-size) * 2);
+  width: calc(var(--hb-checkbox-size) * 1.85);
+  height: calc(var(--hb-checkbox-size) * 1.85);
   background-color: var(--hb-checkbox-color);
   top: 50%;
-  left: calc(var(--hb-checkbox-size) / 2 * -1);
-  transform: translateY(-50%);
+  left: 50%;
+  transform: translate(-50%, -50%);
   opacity: 0;
   transition: opacity 0.15s var(--hb-ease-in-out-circ);
 }
@@ -4625,7 +4634,7 @@ input.unstyled:focus {
   cursor: pointer;
   position: relative;
   margin: 0;
-  padding: 0 0 0 calc(var(--hb-checkbox-size) * 1.2);
+  padding: 0 0 0 var(--hb-checkbox-size);
   white-space: nowrap;
   min-width: var(--hb-checkbox-size);
   height: var(--hb-checkbox-size);
@@ -4663,7 +4672,7 @@ input.unstyled:focus {
   display: inline-block;
   position: absolute;
   font-size: calc(var(--hb-checkbox-size) * 0.8);
-  left: 2px;
+  left: 2.5px;
   top: 50%;
   opacity: 0;
   transform: translateY(-50%) scale(0);
@@ -5151,7 +5160,8 @@ form.danger .form-result,
 form.info .form-result,
 form.warning .form-result,
 form.success .form-result {
-  display: block;
+  display: -ms-flexbox;
+  display: flex;
   animation-duration: 0.5s;
   animation-fill-mode: both;
 }
@@ -5161,7 +5171,8 @@ form.danger .msg-danger,
 form.info .msg-info,
 form.warning .msg-warning,
 form.success .msg-success {
-  display: block;
+  display: -ms-flexbox;
+  display: flex;
   opacity: 1;
 }
 
@@ -5236,7 +5247,7 @@ form.success .msg-success {
   background: var(--hb-ripple-color);
   transform: scale(0);
   animation: ripple 0.5s ease-out forwards;
-  z-index: 1;
+  z-index: 2;
   opacity: 1;
   transition: opacity 0.5s ease;
 }
@@ -5257,6 +5268,10 @@ form.success .msg-success {
 
 .no-ripple .ripple {
   display: none !important;
+}
+
+.ripple ~ * {
+  z-index: 1;
 }
 
 /* ---------------------------- components/avatar.scss ------------------------------ */
@@ -5508,10 +5523,6 @@ form.success .msg-success {
 }
 .card.flat {
   box-shadow: none;
-  border: 1px solid var(--hb-card-border-color);
-}
-.card.flat:active, .card.flat:hover {
-  background-color: transparent;
 }
 .card.primary-action,
 .card .primary-action {
@@ -6786,9 +6797,9 @@ form.success .msg-success {
   --hb-popover-pad-y: 1rem;
   --hb-popover-pad-x: 1.5rem;
   --hb-popover-bg-light: var(--hb-white);
-  --hb-popover-color-light: var(--hb-body-color);
-  --hb-popover-title-color-light: var(--hb-brand-primary);
-  --hb-popover-title-border-light: 1px solid;
+  --hb-popover-color-light: var(--hb-gray-600);
+  --hb-popover-title-color-light: var(--hb-gray-700);
+  --hb-popover-title-border-light: 1px solid var(--hb-gray-300);
   --hb-popover-bg-dark: var(--hb-black);
   --hb-popover-color-dark: var(--hb-gray-400);
   --hb-popover-title-color-dark: var(--hb-white);
@@ -6843,6 +6854,8 @@ form.success .msg-success {
   cursor: pointer;
   top: 0;
   right: 0;
+  width: 35px;
+  height: 35px;
 }
 
 @keyframes popoverfade {
@@ -7650,30 +7663,33 @@ form.success .msg-success {
 
 /* ---------------------------- components/lists.scss ------------------------------- */
 .list {
-  --hb-list-bg: transparent;
-  --hb-list-color: transparent;
-  --hb-list-icon-color: var(--hb-gray);
-  --hb-list-pad-y: 1rem;
-  --hb-list-pad-x: 1.5rem;
-  --hb-list-font-size: var(--hb-base-font-size);
-  --hb-list-transition: background-color 0.15s var(--hb-ease-in-out-circ);
-  --hb-list-title-color: var(--hb-body-color);
-  --hb-list-subtitle-color: var(--hb-gray-500);
-  --hb-list-title-font-size: 1.4rem;
-  --hb-list-subtitle-font-size: 1.35rem;
-  --hb-list-bg-hover: var(--hb-gray-100);
-  --hb-list-color-hover: inherit;
-  --hb-list-bg-active: var(--hb-brand-info-100);
-  --hb-list-color-active: inherit;
-  padding: 8px 0;
-  margin: 0;
+  --hb-list-bg: var(--hb-white);
+  --hb-list-color: var(--hb-gray-700);
+  --hb-list-font-size: 1.3rem;
+  --hb-list-item-color-hover: var(--hb-gray-700);
+  --hb-list-item-color-active: var(--hb-gray-700);
+  --hb-list-item-color-selected: var(--hb-white);
+  --hb-list-item-bg: transparent;
+  --hb-list-item-bg-hover: var(--hb-gray-200);
+  --hb-list-item-bg-active: var(--hb-brand-info-100);
+  --hb-list-item-bg-selected: var(--hb-brand-info);
+  --hb-list-item-pad-y: 10px;
+  --hb-list-item-pad-x: 12px;
+  --hb-list-divider-color: var(--hb-gray-200);
+  --hb-list-divider-space: 5px;
   list-style: none;
+  margin: 0;
+  background-color: var(--hb-list-bg);
+  color: var(--hb-list-color);
+  padding: var(--hb-list-item-pad-y) 0px;
+  font-size: var(--hb-list-font-size);
 }
 .list > * {
-  padding: var(--hb-list-pad-y) var(--hb-list-pad-x);
-  background-color: var(--hb-list-bg);
-  font-size: var(--hb-list-font-size);
   margin: 0;
+  padding: var(--hb-list-item-pad-y) var(--hb-list-item-pad-x);
+  background-color: var(--hb-list-item-bg);
+  column-gap: var(--hb-list-item-pad-x);
+  cursor: pointer;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
@@ -7682,49 +7698,83 @@ form.success .msg-success {
       justify-content: space-between;
   position: relative;
 }
-.list > *:hover {
-  background-color: var(--hb-list-bg-hover);
-  color: var(--hb-list-color-hover);
-  transition: var(--hb-list-transition);
-}
-.list > *:active, .list > *:focus, .list > *:focus-within, .list > *.selected {
-  background-color: var(--hb-list-bg-active);
-  color: var(--hb-list-color-active);
-}
-.list .item-left,
-.list .item-right {
+.list > * .item-left,
+.list > * .item-right {
   -ms-flex: 0 0 auto;
       flex: 0 0 auto;
   display: -ms-flexbox;
   display: flex;
+  position: relative;
 }
-.list .item-body {
+.list > * .item-body {
   -ms-flex: 1 1 auto;
       flex: 1 1 auto;
 }
-.list .item-body,
-.list .item-left,
-.list .item-right {
-  display: table-cell;
-  vertical-align: middle;
-  color: var(--hb-list-icon-color);
+.list > * a, .list > * a:hover {
+  text-decoration: none;
+  color: inherit;
 }
-.list .item-title {
-  color: var(--hb-list-title-color);
-  font-size: var(--hb-list-title-font-size);
+.list > *:hover, .list > *.hover {
+  background-color: var(--hb-list-item-bg-hover);
+  color: var(--hb-list-item-color-hover);
 }
-.list .item-subtitle {
-  color: var(--hb-list-subtitle-color);
-  font-size: var(--hb-list-subtitle-font-size);
+.list > *.active {
+  background-color: var(--hb-list-item-bg-active);
+  color: var(--hb-list-item-color-active);
 }
-.list .item-left {
-  padding-right: 2rem;
+.list > *.selected {
+  background-color: var(--hb-list-item-bg-selected);
+  color: var(--hb-list-item-color-selected);
 }
-.list .item-left .fa {
-  vertical-align: middle;
+.list > *.selected .item-title {
+  color: var(--hb-list-item-color-selected);
 }
-.list .item-right {
-  padding-left: 2rem;
+.list > *.disabled, .list > *.disabled:hover {
+  background-color: var(--hb-list-item-bg);
+  color: var(--hb-list-color);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.list > * .item-title {
+  color: var(--hb-body-color);
+  font-weight: 500;
+}
+.list.list-ellipsis > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list.list-ellipsis > * .item-body {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list.list-ellipsis > * .item-body > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list .list-header {
+  font-weight: 500;
+  padding: 0px var(--hb-list-item-pad-x) var(--hb-list-item-pad-y) var(--hb-list-item-pad-x);
+  border-bottom: 1px solid var(--hb-list-divider-color);
+}
+.list .list-divider {
+  padding: var(--hb-list-divider-space) 0 0 0;
+  margin: 0 0 var(--hb-list-divider-space) 0;
+  border-bottom: 1px solid var(--hb-list-divider-color);
+}
+.list .list-header:hover,
+.list .list-divider:hover {
+  background-color: var(--hb-list-item-bg);
+  color: var(--hb-list-color);
+}
+.list.list-dense {
+  --hb-list-font-size: 1.261rem;
+  --hb-list-item-pad-y: 6px;
+  --hb-list-item-pad-x: 10.8px;
+  --hb-list-divider-space: 3.5px;
 }
 
 /* ---------------------------- components/drawer.scss ------------------------------ */
@@ -8561,51 +8611,92 @@ div.pswp__img--placeholder, .pswp__img--with-bg {
   outline: none;
 }
 
-.bg-image {
+.ratio-img, .bg-image {
   --hb-width: 100%;
   --hb-height: auto;
-  --hb-aspect-ratio: 16/9;
-  aspect-ratio: var(--hb-aspect-ratio);
   width: var(--hb-width);
   height: var(--hb-height);
+}
+
+.bg-image {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
 }
-.bg-image.ratio-1-1 {
-  --hb-aspect-ratio: 1/1 ;
+
+.ratio-img {
+  --hb-aspect-ratio: 1/1;
+  position: relative;
+  overflow: hidden;
 }
-.bg-image.ratio-3-2 {
-  --hb-aspect-ratio: 3/2 ;
+.ratio-img > img {
+  position: absolute;
+  width: auto;
+  height: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0px);
 }
-.bg-image.ratio-4-3 {
-  --hb-aspect-ratio: 4/3 ;
-}
-.bg-image.ratio-5-3 {
-  --hb-aspect-ratio: 5/3 ;
-}
-.bg-image.ratio-5-4 {
-  --hb-aspect-ratio: 5/4 ;
-}
-.bg-image.ratio-16-9 {
-  --hb-aspect-ratio: 16/9 ;
-}
-.bg-image.ratio-2-3 {
-  --hb-aspect-ratio: 2/3 ;
-}
-.bg-image.ratio-3-4 {
-  --hb-aspect-ratio: 3/4 ;
-}
-.bg-image.ratio-3-5 {
-  --hb-aspect-ratio: 3/5 ;
-}
-.bg-image.ratio-4-5 {
-  --hb-aspect-ratio: 4/5 ;
-}
-.bg-image.ratio-9-16 {
-  --hb-aspect-ratio: 9/16 ;
+.ratio-img:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
+.ratio-1-1 {
+  --hb-aspect-ratio: 1/1;
+}
+
+.ratio-3-2 {
+  --hb-aspect-ratio: 3/2;
+}
+
+.ratio-4-3 {
+  --hb-aspect-ratio: 4/3;
+}
+
+.ratio-5-3 {
+  --hb-aspect-ratio: 5/3;
+}
+
+.ratio-5-4 {
+  --hb-aspect-ratio: 5/4;
+}
+
+.ratio-16-9 {
+  --hb-aspect-ratio: 16/9;
+}
+
+.ratio-2-3 {
+  --hb-aspect-ratio: 2/3;
+}
+
+.ratio-3-4 {
+  --hb-aspect-ratio: 3/4;
+}
+
+.ratio-3-5 {
+  --hb-aspect-ratio: 3/5;
+}
+
+.ratio-4-5 {
+  --hb-aspect-ratio: 4/5;
+}
+
+.ratio-9-16 {
+  --hb-aspect-ratio: 9/16;
+}
+
+.ratio-img {
+  padding-top: calc(100% / (var(--hb-aspect-ratio)));
+}
+
+@supports (aspect-ratio: 1/1) {
+  .ratio-img {
+    padding-top: 0;
+    aspect-ratio: var(--hb-aspect-ratio);
+  }
+}
 /* ---------------------------- helpers/raised.scss -------------------------------- */
 .raised-1 {
   box-shadow: var(--hb-raised-level-one);
@@ -9220,4 +9311,71 @@ div.pswp__img--placeholder, .pswp__img--with-bg {
 
 .nowrap {
   white-space: nowrap;
+}
+
+/* --------------------------------- DARK MODE ------------------------------------- */
+/* --------------------------------------------------------------------------------- */
+.hb-darkmode:root {
+  --hb-body-bg: var(--hb-black-900);
+  --hb-body-color: var(--hb-white);
+}
+
+.hb-darkmode {
+  /* CARDS / PAPER */
+  /* TABLES */
+  /* BTN BASE */
+  /* DROPDOWN */
+  /* FORMS */
+}
+.hb-darkmode .paper {
+  --hb-paper-bg: var(--hb-black-500);
+  --hb-paper-border-color: var(--hb-black-600);
+}
+.hb-darkmode .card {
+  --hb-card-bg: var(--hb-black-500);
+  --hb-card-bg-focus: var(--hb-black-500);
+  --hb-card-color: var(--hb-gray-300);
+  --hb-card-title-color: var(--hb-white);
+  --hb-card-border-color: var(--hb-black-600);
+  --hb-card-divider-color: var(--hb-black-400);
+}
+.hb-darkmode .table {
+  --hb-table-border-color: var(--hb-black-500);
+  --hb-table-head-bg: var(--hb-black-800);
+  --hb-table-head-color: var(--hb-gray-400);
+  --hb-table-bg-alternate: rgba(0, 0, 0, 0.08);
+}
+.hb-darkmode .btn:not(.btn-primary):not(.btn-info):not(.btn-success):not(.btn-warning):not(.btn-danger):not(.btn-black):not(.btn-white) {
+  --hb-btn-bg-color: var(--hb-black-500);
+  --hb-btn-color: var(--hb-white);
+  --hb-btn-loader-color: var(--hb-btn-color);
+  --hb-btn-color-hover: var(--hb-white);
+  --hb-btn-bg-color-hover: var(--hb-black-600);
+  --hb-btn-color-active: var(--hb-white);
+  --hb-btn-bg-color-active: var(--hb-black-700);
+}
+.hb-darkmode .drop-container {
+  --hb-dropdown-bg: var(--hb-black);
+}
+.hb-darkmode .menu {
+  --hb-menu-color: var(--hb-white);
+  --hb-menu-item-color-hover: var(--hb-white);
+  --hb-menu-item-color-active: var(--hb-brand-primary);
+  --hb-menu-item-color-selected: var(--hb-brand-primary);
+  --hb-menu-item-bg-hover: var(--hb-gray-900);
+  --hb-menu-item-bg-active: var(--hb-gray-900);
+  --hb-menu-item-bg-selected: var(--hb-gray-900);
+  --hb-menu-divider-color: var(--hb-gray-600);
+}
+.hb-darkmode .form-field {
+  --hb-input-bg: var(--hb-body-bg);
+  --hb-input-color: var(--hb-body-color);
+  --hb-input-color-label: var(--hb-gray-400);
+  --hb-input-color-placeholder: var(--hb-gray-900);
+  --hb-input-border-color: var(--hb-black-400);
+  --hb-input-addon-bg: var(--hb-black-500);
+  --hb-input-addon-color: var(--hb-black-400);
+}
+.hb-darkmode .form-field .input-addon {
+  border-color: var(--hb-black-400);
 }

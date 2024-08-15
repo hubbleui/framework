@@ -1,5 +1,3 @@
-
-
 const AnimateJS = function(DOMElement, options)
 {
     this.DOMElement = DOMElement;
@@ -22,11 +20,11 @@ const AnimateJS = function(DOMElement, options)
 
     this.isTransform = this.CSSProperty.toLowerCase().includes('transform');
 
-    this.isScroll = this.CSSProperty.toLowerCase() === 'scrollto' && DOMElement === window;
+    this.isScroll = this.CSSProperty.toLowerCase().replace('-', '') === 'scrollto' && DOMElement === window;
 
     this.isColor = options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb');
 
-    this.clearAnimating();
+    this.clearAnimating(DOMElement);
 
     this.parseOptions();
 
@@ -37,11 +35,9 @@ const AnimateJS = function(DOMElement, options)
     return this;
 }
 
-AnimateJS.prototype.clearAnimating = function()
+AnimateJS.prototype.clearAnimating = function(DOMElement)
 {
     const CSSprop = this.CSSProperty;
-
-    const _this = this;
 
     _THIS.each(ANIMATING, function(i, animation)
     {
@@ -64,9 +60,7 @@ AnimateJS.prototype.start = function()
 
     if (!this.isScroll) this.clearTransitions();
 
-    var _this = this;
-
-    if (this.options.start) this.options.start(_this.DOMElement);
+    if (this.options.start) this.options.start(this.DOMElement);
 
     const loop = () =>
     {        
@@ -75,7 +69,7 @@ AnimateJS.prototype.start = function()
         this._applyKeyframe(this.keyframes.shift());
 
         if (this.keyframes.length === 0)
-        {
+        {            
             this._complete();
 
             return;
@@ -88,7 +82,7 @@ AnimateJS.prototype.start = function()
 
     this._failTimer = setTimeout(() =>
     {            
-        if (this.options.fail) this.options.fail(_this.DOMElement);
+        if (this.options.fail) this.options.fail(this.DOMElement);
 
     }, this.duration + 50 );
 
@@ -126,7 +120,7 @@ AnimateJS.prototype._complete = function()
 
     if (this.options.callback) this.options.callback(DOMElement);
 
-    _THIS.css(DOMElement, 'transition', this._pre_transition );
+    if (!this.isScroll) _THIS.css(DOMElement, 'transition', this._pre_transition );
 }
 
 AnimateJS.prototype.stop = function()

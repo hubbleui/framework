@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="hb-darkmode">
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -355,20 +355,20 @@
 <li><a href="#bordered-table">Bordered table</a></li>
 <li><a href="#alternate-table">Alternate table</a></li>
 <li><a href="#raised-table">Raised Table</a></li>
-<li><a href="#pure-button">Pure button</a></li>
 <li><a href="#hover-table">Hover table</a></li>
+<li><a href="#selectable-table">Selectable table</a></li>
 <li><a href="#responsive-table">Responsive table</a></li>
 <li><a href="#dense-table">Dense table</a></li>
 <li><a href="#table-highlights">Table highlights</a></li>
 <li><a href="#css-customization">CSS Customization</a></li>
+<li><a href="#javascript-instantiation">JavaScript Instantiation</a></li>
 </ul>
 <hr />
 <h3 id="basic-table">Basic table</h3>
 <p>For the most basic of table styling, simply add the <code>.table</code> class to a table.</p>
 <div class="code-content-example">
-    <div class="container-fuid">
+    <div class="card flat hide-overflow">
         <table class="table">
-            <caption>Optional table caption.</caption>
             <thead>
                 <tr>
                     <th>#</th>
@@ -401,43 +401,41 @@
     </div>
 </div>
 <pre><code class="html language-html">&lt;table class="table"&gt;
-        &lt;caption&gt;Optional table caption.&lt;/caption&gt;
-        &lt;thead&gt;
-            &lt;tr&gt;
-                &lt;th&gt;#&lt;/th&gt;
-                &lt;th&gt;First Name&lt;/th&gt;
-                &lt;th&gt;Last Name&lt;/th&gt;
-                &lt;th&gt;Username&lt;/th&gt;
-            &lt;/tr&gt;
-        &lt;/thead&gt;
-        &lt;tbody&gt;
-            &lt;tr&gt;
-                &lt;th scope="row"&gt;1&lt;/th&gt;
-                &lt;td&gt;John&lt;/td&gt;
-                &lt;td&gt;Foobar&lt;/td&gt;
-                &lt;td&gt;@fbar&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-                &lt;th scope="row"&gt;2&lt;/th&gt;
-                &lt;td&gt;Joe&lt;/td&gt;
-                &lt;td&gt;Thornton&lt;/td&gt;
-                &lt;td&gt;@fat&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-                &lt;th scope="row"&gt;3&lt;/th&gt;
-                &lt;td&gt;James&lt;/td&gt;
-                &lt;td&gt;the Bird&lt;/td&gt;
-                &lt;td&gt;@twitter&lt;/td&gt;
-            &lt;/tr&gt;
-        &lt;/tbody&gt;
-    &lt;/table&gt;</code></pre>
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;#&lt;/th&gt;
+            &lt;th&gt;First Name&lt;/th&gt;
+            &lt;th&gt;Last Name&lt;/th&gt;
+            &lt;th&gt;Username&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;1&lt;/th&gt;
+            &lt;td&gt;John&lt;/td&gt;
+            &lt;td&gt;Foobar&lt;/td&gt;
+            &lt;td&gt;@fbar&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;2&lt;/th&gt;
+            &lt;td&gt;Joe&lt;/td&gt;
+            &lt;td&gt;Thornton&lt;/td&gt;
+            &lt;td&gt;@fat&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;3&lt;/th&gt;
+            &lt;td&gt;James&lt;/td&gt;
+            &lt;td&gt;the Bird&lt;/td&gt;
+            &lt;td&gt;@twitter&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
 <hr />
 <h3 id="bordered-table">Bordered table</h3>
 <p>To make a bordered table add the <code>.table-bordered</code> class to a <code>.table</code>:</p>
 <div class="code-content-example">
-    <div class="container-fuid">
+    <div class="card flat hide-overflow">
         <table class="table table-bordered">
-            <caption>Optional table caption.</caption>
             <thead>
                 <tr>
                     <th>#</th>
@@ -470,7 +468,6 @@
     </div>
 </div>
 <pre><code class="html language-html">&lt;table class="table table-bordered"&gt;
-    &lt;caption&gt;Optional table caption.&lt;/caption&gt;
     &lt;thead&gt;
         &lt;tr&gt;
             &lt;th&gt;#&lt;/th&gt;
@@ -504,9 +501,8 @@
 <h3 id="alternate-table">Alternate table</h3>
 <p>Add the <code>.table-alternate</code> class to a <code>.table</code> to add alternate background colors on rows:</p>
 <div class="code-content-example">
-    <div class="container-fuid">
+    <div class="card flat hide-overflow">
         <table class="table table-alternate">
-            <caption>Optional table caption.</caption>
             <thead>
                 <tr>
                     <th>#</th>
@@ -539,7 +535,6 @@
     </div>
 </div>
 <pre><code class="html language-html">&lt;table class="table table-bordered"&gt;
-    &lt;caption&gt;Optional table caption.&lt;/caption&gt;
     &lt;thead&gt;
         &lt;tr&gt;
             &lt;th&gt;#&lt;/th&gt;
@@ -573,9 +568,8 @@
 <h3 id="raised-table">Raised table</h3>
 <p>Make a table raised by adding the <code>.raised-1</code>, <code>.raised-2</code> or <code>.raised-3</code> classes.</p>
 <div class="code-content-example">
-    <div class="container-fuid">
+    <div class="card flat hide-overflow">
         <table class="table table-bordered raised-1">
-            <caption>Optional table caption.</caption>
             <thead>
                 <tr>
                     <th>#</th>
@@ -608,7 +602,6 @@
     </div>
 </div>
 <pre><code class="html language-html">&lt;table class="table table-bordered raised-1"&gt;
-    &lt;caption&gt;Optional table caption.&lt;/caption&gt;
     &lt;thead&gt;
         &lt;tr&gt;
             &lt;th&gt;#&lt;/th&gt;
@@ -642,9 +635,8 @@
 <h3 id="hover-table">Hover table</h3>
 <p>Adding the <code>.table-hover</code> class highlights the rows on hover.</p>
 <div class="code-content-example">
-    <div class="container-fuid">
+    <div class="card flat hide-overflow">
         <table class="table table-bordered table-hover">
-            <caption>Optional table caption.</caption>
             <thead>
                 <tr>
                     <th>#</th>
@@ -677,7 +669,6 @@
     </div>
 </div>
 <pre><code class="html language-html">&lt;table class="table table-hover"&gt;
-    &lt;caption&gt;Optional table caption.&lt;/caption&gt;
     &lt;thead&gt;
         &lt;tr&gt;
             &lt;th&gt;#&lt;/th&gt;
@@ -708,13 +699,104 @@
     &lt;/tbody&gt;
 &lt;/table&gt;</code></pre>
 <hr />
+<h3 id="selectable-table">Selectable table</h3>
+<p>Add the <code>.js-select-table</code> class to any table to enable clickable selection on table rows.</p>
+<p>Hubble will fire a custom event on the <code>&lt;table&gt;</code> when an row is selected. The <code>event.detail.item</code> key will tell you which row has been selected</p>
+<table>
+<thead>
+<tr>
+<th id="event">Event</th>
+<th id="description">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>table:selected</code></td>
+<td>Fired immediately when an row is selected in a table</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="javascript language-javascript">const list = document.getElementById('my-table')
+
+list.addEventListener('table:selected', event =&gt; 
+{
+    const item = event.detail.item;
+
+    // Do something here  
+})</code></pre>
+<div class="code-content-example">
+    <div class="card flat hide-overflow">
+        <table class="table js-select-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>John</td>
+                    <td>Foobar</td>
+                    <td>@fbar</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Joe</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>James</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;table class="table js-select-table"&gt;
+
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;#&lt;/th&gt;
+                &lt;th&gt;First Name&lt;/th&gt;
+                &lt;th&gt;Last Name&lt;/th&gt;
+                &lt;th&gt;Username&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            &lt;tr&gt;
+                &lt;th scope="row"&gt;1&lt;/th&gt;
+                &lt;td&gt;John&lt;/td&gt;
+                &lt;td&gt;Foobar&lt;/td&gt;
+                &lt;td&gt;@fbar&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;th scope="row"&gt;2&lt;/th&gt;
+                &lt;td&gt;Joe&lt;/td&gt;
+                &lt;td&gt;Thornton&lt;/td&gt;
+                &lt;td&gt;@fat&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;th scope="row"&gt;3&lt;/th&gt;
+                &lt;td&gt;James&lt;/td&gt;
+                &lt;td&gt;the Bird&lt;/td&gt;
+                &lt;td&gt;@twitter&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;</code></pre>
+<hr />
 <h3 id="responsive-table">Responsive table</h3>
 <p>A responsive table will scroll horizontally at smaller screen sizes. This is handy for tables with lots of text. Simply wrap the table in a <code>div</code> with the <code>.table-responsive</code> class.</p>
 <div class="code-content-example">
-    <div class="container-fuid">
+    <div class="card flat hide-overflow">
         <div class="table-responsive">
             <table class="table table-bordered">
-                <caption>Optional table caption.</caption>
+
                 <thead>
                     <tr>
                         <th>#</th>
@@ -749,7 +831,7 @@
 </div>
 <pre><code class="html language-html">&lt;div class="table-responsive"&gt;
     &lt;table class="table"&gt;
-        &lt;caption&gt;Optional table caption.&lt;/caption&gt;
+
         &lt;thead&gt;
             &lt;tr&gt;
                 &lt;th&gt;#&lt;/th&gt;
@@ -784,9 +866,8 @@
 <h3 id="dense-table">Dense table</h3>
 <p>Adding the <code>.table-dense</code> for a table with less padding in its cells:</p>
 <div class="code-content-example">
-    <div class="container-fuid">
+    <div class="card flat hide-overflow">
         <table class="table table-dense">
-            <caption>Optional table caption.</caption>
             <thead>
                 <tr>
                     <th>#</th>
@@ -819,7 +900,6 @@
     </div>
 </div>
 <pre><code class="html language-html">&lt;table class="table table-hover"&gt;
-    &lt;caption&gt;Optional table caption.&lt;/caption&gt;
     &lt;thead&gt;
         &lt;tr&gt;
             &lt;th&gt;#&lt;/th&gt;
@@ -853,7 +933,7 @@
 <h3 id="table-highlights">Table Highlights</h3>
 <p>You can highlight table rows, cells, heads and foots using Hubble's contextual classes. Simply add <code>.primary</code> <code>.info</code>, <code>.success</code>, <code>.warning</code>, or <code>.danger</code> to a table element to highlight it</p>
 <div class="code-content-example">
-    <div class="container-fuid">
+    <div class="card flat hide-overflow">
         <table class="table table-bordered">
             <thead class="primary">
                 <tr>
@@ -876,7 +956,7 @@
                     <td>Foobar</td>
                     <td>@fbar</td>
                 </tr>
-                <tr class="info">
+                <tr class="primary color-white">
                     <th scope="row">3</th>
                     <td>Joe</td>
                     <td>Thornton</td>
@@ -890,7 +970,7 @@
                 </tr>
                 <tr>
                     <th scope="row">5</th>
-                    <td class="info">James</td>
+                    <td class="primary color-white">James</td>
                     <td>the Bird</td>
                     <td>@twitter</td>
                 </tr>
@@ -898,6 +978,201 @@
         </table>
     </div>
 </div>
+<hr />
+<h3 id="css-customization">CSS Customization</h3>
+<p>Table uses local CSS variables on <code>.table</code> along with Sass variables for enhanced component customization and styling. The base values are used by the UI to create all the styling. Values for the CSS variables are set via Sass, so pre-compilation customization is still supported too.</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center">
+        <style scoped>
+            .custom-table
+            {
+                --hb-table-bg: var(--hb-black);
+                --hb-table-color: var(--hb-white);
+                --hb-table-bg-hover: var(--hb-gray-900);
+                --hb-table-border-color: var(--hb-gray-900);
+                --hb-table-head-bg: var(--hb-gray-900);
+                --hb-table-head-color: var(--hb-white);
+            }
+        </style>
+        <table class="table custom-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>John</td>
+                    <td>Foobar</td>
+                    <td>@fbar</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>John</td>
+                    <td>Foobar</td>
+                    <td>@fbar</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Joe</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <th scope="row">4</th>
+                    <td>James</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                </tr>
+                <tr>
+                    <th scope="row">5</th>
+                    <td>James</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<pre><code class="css language-css">.custom-table
+{
+    --hb-table-bg: var(--hb-black);
+    --hb-table-color: var(--hb-white);
+    --hb-table-bg-hover: var(--hb-gray-900);
+    --hb-table-border-color: var(--hb-gray-900);
+    --hb-table-head-bg: var(--hb-gray-900);
+    --hb-table-head-color: var(--hb-white);
+}</code></pre>
+<p>Customization via Sass can be made in the <code>src/scss/_config.scss</code> file in Hubble's source.</p>
+<pre><code class="file-path language-file-path">`src/scss/_config.scss`</code></pre>
+<pre><code class="sass language-sass">$table-font-size:               1.3rem !default;
+$table-bg:                      transparent !default;
+$table-bg-hover:                rgba(0, 0, 0, 0.08) !default;
+$table-bg-alternate:            rgba(0, 0, 0, 0.08) !default;
+$table-color:                   inherit !default;
+$table-cell-pad-y:              1.2rem !default;
+$table-cell-pad-x:              1.8rem !default;
+$table-border-color:            var(--hb-gray-200) !default;
+$table-head-bg:                 var(--hb-gray-200) !default;
+$table-head-color:              var(--hb-gray-900) !default;
+$table-head-weight:             $text-bold !default;
+$table-caption-color:           var(--hb-gray) !default;
+$table-selected-color:          var(--hb-white) !default;
+$table-selected-bg:             var(--hb-brand-info) !default;</code></pre>
+<pre><code class="file-path language-file-path">src/scss/components/table.scss</code></pre>
+<pre><code class="css language-css">.table {
+    --hb-table-font-size: 1.3rem;
+    --hb-table-bg: transparent;
+    --hb-table-color: inherit;
+    --hb-table-bg-hover: rgba(0, 0, 0, 0.08);
+    --hb-table-cell-pad-y: 1.2rem;
+    --hb-table-cell-pad-x: 1.8rem;
+    --hb-table-border-color: var(--hb-gray-200);
+    --hb-table-head-bg: var(--hb-gray-200);
+    --hb-table-head-color: var(--hb-gray-900);
+    --hb-table-head-weight: 500;
+    --hb-table-caption-color: var(--hb-gray);
+    --hb-table-bg-alternate: rgba(0, 0, 0, 0.08);
+    --hb-table-selected-color: var(--hb-white);
+    --hb-table-selected-bg: var(--hb-brand-info);
+}</code></pre>
+<hr />
+<h3 id="javascript-instantiation">JavaScript Instantiation</h3>
+<p>Table can be instantiated via JavaScript to generate dynamic content on the fly. To create a Table dynamically, use Hubble's <code>Component.Create</code> method either via the <code>Hubble.Dom</code> or the Table Component directly:</p>
+<div class="code-content-example">
+    <div class="card flat js-table-container"></div>
+</div>
+<script>
+window.addEventListener('Hubble:ready', () =>
+{
+    let options =
+    {
+        head: ['Dessert (100g serving)', 'Calories', 'Fat (g)', 'Carbs (g)', 'Protein (g)'],
+        rows:
+        [
+            ['Frozen yoghurt', 159, 6.0, 24, 4.0],
+            ['Ice cream sandwich', 237, 9.0, 37, 4.3],
+            ['Eclair', 262, 16.0, 24, 6.0],
+            ['Cupcake', 305, 3.7, 67, 4.3],
+            ['Gingerbread', 356, 16.0, 49, 3.9],
+        ]
+    };
+
+    let container = document.querySelector('.js-table-container');
+
+    // Via Hibble dom
+    Hubble.Dom().create('Table', options, container);
+});
+</script>
+<pre><code class="JavaScript language-JavaScript">let options =
+{
+    dense: false,
+    selectable: false,
+    head: ['Dessert (100g serving)', 'Calories', 'Fat (g)', 'Carbs (g)', 'Protein (g)'],
+    rows:
+    [
+        ['Frozen yoghurt', 159, 6.0, 24, 4.0],
+        ['Ice cream sandwich', 237, 9.0, 37, 4.3],
+        ['Eclair', 262, 16.0, 24, 6.0],
+        ['Cupcake', 305, 3.7, 67, 4.3],
+        ['Gingerbread', 356, 16.0, 49, 3.9],
+    ]
+};
+
+let container = document.querySelector('.js-table-container');
+
+// Via Hibble dom
+Hubble.Dom().create('Table', options, container);
+
+// Or via Component directly
+Hubble.Dom().component('Table').create(options, container);</code></pre>
+<p>Below are the available options:</p>
+<table>
+<thead>
+<tr>
+<th id="option">Option</th>
+<th id="default">Default</th>
+<th id="example">Example</th>
+<th id="behavior">Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>classes</code></td>
+<td><code>''</code></td>
+<td><code>my-button</code></td>
+<td>Additional class name(s) on <code>&lt;table&gt;</code> element.</td>
+</tr>
+<tr>
+<td><code>dense</code></td>
+<td><code>false</code></td>
+<td><code>true</code></td>
+<td>Makes dense table.</td>
+</tr>
+<tr>
+<td><code>selectable</code></td>
+<td><code>false</code></td>
+<td><code>true</code></td>
+<td>Enables selectable rows.</td>
+</tr>
+<tr>
+<td><code>selected</code></td>
+<td><code>null</code></td>
+<td><code>1</code></td>
+<td>Index of selected row when <code>selectable</code> is true.</td>
+</tr>
+<tr>
+<td><code>row</code></td>
+<td><code>[]</code></td>
+<td><code>['Heading', 'cell 1']</code></td>
+<td>Array of rows with first item is the table heading</td>
+</tr>
+</tbody>
+</table>
                     </article>
                 </div>
             </div>

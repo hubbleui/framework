@@ -4,7 +4,15 @@
  * @param {object} options
  */
 _.prototype.dom_element = function(options, appendTo, innerHTMLOrChildren)
-{
+{    
+    // dom_element(null, wrappper, content);
+    if (!options && appendTo && innerHTMLOrChildren)
+    {
+        this._recursive_dom_element(innerHTMLOrChildren, appendTo);
+
+        return appendTo;
+    }
+
     if (!options.tag) throw new Error('Element tag not provided.');
 
     let node = document.createElement(options.tag);
@@ -15,18 +23,7 @@ _.prototype.dom_element = function(options, appendTo, innerHTMLOrChildren)
 
     if (innerHTMLOrChildren)
     {
-        if (this.is_htmlElement(innerHTMLOrChildren))
-        {
-            node.appendChild(innerHTMLOrChildren);
-        }
-        else if (this.is_array(innerHTMLOrChildren))
-        {
-            this.each(this.array_filter(innerHTMLOrChildren), (i, child) => this.is_string(child) ? node.innerText = child : node.appendChild(child), this);
-        }
-        else if (this.is_string(innerHTMLOrChildren))
-        {
-            node.innerHTML = innerHTMLOrChildren;
-        }
+        this._recursive_dom_element(innerHTMLOrChildren, node);
     }
 
     if (appendTo)
@@ -36,3 +33,27 @@ _.prototype.dom_element = function(options, appendTo, innerHTMLOrChildren)
 
     return node;
 }
+
+_.prototype._recursive_dom_element = function(mixedVar, parent)
+{
+    if (this.is_htmlElement(mixedVar))
+    {
+        parent.appendChild(mixedVar);
+    }
+    else if (this.is_array(mixedVar))
+    {
+        this.each(this.array_filter(mixedVar), (i, child) =>
+        {
+            this._recursive_dom_element(child, parent);
+        }); 
+    }
+    else if (this.is_object(mixedVar))
+    {
+        this.dom_element(mixedVar, node);
+    }
+    else
+    {
+        parent.innerHTML += mixedVar;
+    }
+}
+

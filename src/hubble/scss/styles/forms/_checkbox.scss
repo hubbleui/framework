@@ -13,6 +13,7 @@
     height: var(--hb-checkbox-size);
     min-width: var(--hb-checkbox-size);
     line-height: var(--hb-checkbox-size);
+    display: block;
 
     // Click circle
     &:before
@@ -21,12 +22,12 @@
         display: block;
         position: absolute;
         border-radius: 50%;
-        width: calc(var(--hb-checkbox-size) * 2);
-        height: calc(var(--hb-checkbox-size) * 2);
+        width: calc(var(--hb-checkbox-size) * 1.85);
+        height: calc(var(--hb-checkbox-size) * 1.85);
         background-color:var(--hb-checkbox-color);
         top: 50%;
-        left: calc( (var(--hb-checkbox-size) / 2) * -1);
-        transform: translateY(-50%);
+        left: 50%;
+        transform: translate(-50%, -50%);
         opacity: 0;
         transition: opacity .15s $base-easing;
     }
@@ -38,7 +39,7 @@
         cursor: pointer;
         position: relative;
         margin: 0;
-        padding: 0 0 0 calc(var(--hb-checkbox-size) * 1.2);
+        padding: 0 0 0 var(--hb-checkbox-size);
         white-space: nowrap;
         min-width: var(--hb-checkbox-size);
         height: var(--hb-checkbox-size);
@@ -76,7 +77,7 @@
         display: inline-block;
         position: absolute;
         font-size: calc(var(--hb-checkbox-size) * 0.8);
-        left: 2px;
+        left: 2.5px;
         top: 50%;
         opacity: 0;
         transform: translateY(-50%) scale(0);

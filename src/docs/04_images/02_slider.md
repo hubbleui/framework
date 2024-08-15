@@ -111,14 +111,20 @@ Passing `false` as an optional second argument on `toSlide` will skip the animat
 slider.toSlide(3, false);
 ```
 
-Passing `resize` method re-calculates any internal variables for the slider and makes adjustments. This is called automatically when the `resize` option is enabled and window is resized :
+The `resize` method re-calculates any internal variables for the slider and makes adjustments. This is called automatically when the `resize` option is enabled and window is resized :
 ```JavaScript
 slider.resize();
 ```
 
 Autoplay functionality has the following methods `play` `pause` `unpause` `stop`
 ```JavaScript
+slider.play();
+
 slider.pause();
+
+slider.unpause();
+
+slider.stop();
 ```
 
 Finally, the `destroy` method will remove all listeners on the slider and disable it
@@ -130,7 +136,9 @@ slider.destroy();
 
 ### Dynamic JavaScript Instantiation
 
-For dynamically generated content, Sliders can be instantiated via JavaScript to generate dynamic content on the fly with Hubble's `Component.Create` method either via the `Hubble.Dom` or the `Slider` Component directly. The `slides` value can be either an array or `HTML` strings or an Array/NodeList.
+For dynamically generated content, Sliders can be instantiated via JavaScript to generate dynamic content on the fly with Hubble's `Component.Create` method either via the `Hubble.Dom` or the `Slider` Component directly.
+
+The `slides` value can be either an array or `HTML` strings or an Array/NodeList of `HTMLElements`.
 
 ```JavaScript
 let options =

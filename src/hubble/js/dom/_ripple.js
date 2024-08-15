@@ -12,7 +12,7 @@
      * 
      * @var {Function}
      */
-    const [add_class, add_event_listener, animate_css, closest, coordinates, css, has_class, height, in_array, in_dom, inline_style, preapend, remove_class, remove_event_listener, rendered_style, traverse_up, trigger_event, width, extend] = Hubble.import(['add_class','add_event_listener','animate_css','closest','coordinates','css','has_class','height','in_array','in_dom','inline_style','preapend','remove_class','remove_event_listener','rendered_style','traverse_up','trigger_event','width','extend']).from('_');
+    const [find, add_class, on, animate_css, closest, coordinates, css, has_class, height, in_array, in_dom, inline_style, preapend, remove_class, off, rendered_style, traverse_up, trigger_event, width, extend] = Hubble.import(['find','add_class','on','animate_css','closest','coordinates','css','has_class','height','in_array','in_dom','inline_style','preapend','remove_class','off','rendered_style','traverse_up','trigger_event','width','extend']).from('_');
 
     /**
      * Ripple animation time.
@@ -86,11 +86,14 @@
             return;
         }
 
-        // No ripples inside list items
-        if (!has_class(node.parentNode, 'list') && closest(node, '.list'))
+        // No ripples inside list buttons
+        if (has_class(node, 'btn') && closest(node, '.list'))
         {
             return;
         }
+
+        // No ripples on list items with checkbox controls
+        if (closest(node, '.list') && (find('> .item-right .checkbox', node) || find('> .item-right .radio', node)  || find('> .item-right .switch', node))) return;
 
         // Cache 'overflow' and 'position' inline styles
         // to revert back to after complete
@@ -104,7 +107,7 @@
             INLINESTYLES.set(node, [CSSoverflow, CSSposition]);
         }
 
-        add_event_listener(node, 'mousedown, touchstart', this._startRipple, this);
+        on(node, 'mousedown, touchstart', this._startRipple, this);
     }
 
     /**
@@ -113,7 +116,7 @@
      */
     Ripple.prototype.unbind  = function(node)
     {
-        remove_event_listener(node, 'mousedown, touchstart', this._startRipple, this);
+        off(node, 'mousedown, touchstart', this._startRipple, this);
     }
 
     /**
@@ -149,6 +152,8 @@
     Ripple.prototype._startRipple  = function(e, wrapper)
     {
         e = e || window.event;
+
+        CLICKED = e.target;
 
         const _this = this;
 
