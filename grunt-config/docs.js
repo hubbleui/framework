@@ -209,7 +209,7 @@ function createDocs()
         {
             if (typeof item === 'string')
             {
-                let active = filepath.includes(item) ? 'class="active"' : '';
+                let active = filepath.includes(item) ? 'class="active js-pjax-link"' : 'class="js-pjax-link"';
                 let name   = item.toLowerCase().replaceAll(' ', '-');
                 let slug   = `${dir}/${name}/index.html`;
                 let back   = relativeLinkBack(slug, currFile.toLowerCase().split(DOCS_DEST_DIR.toLowerCase()).pop());
@@ -286,11 +286,18 @@ function createDocs()
 
             FS.writeFileSync(destpath, page, {encoding: 'utf8', flag: 'a+'}); 
         });
+
+        let txt = `<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>`;
+
+        FS.writeFileSync(`${DOCS_DEST_DIR}/javascript/pjax/tab-1.html`, `<h3>Panel 1</h3>${txt}`, {encoding: 'utf8', flag: 'a+'});
+        FS.writeFileSync(`${DOCS_DEST_DIR}/javascript/pjax/tab-2.html`, `<h3>Panel 2</h3>${txt}`, {encoding: 'utf8', flag: 'a+'}); 
+        FS.writeFileSync(`${DOCS_DEST_DIR}/javascript/pjax/tab-3.html`, `<h3>Panel 3</h3>${txt}`, {encoding: 'utf8', flag: 'a+'}); 
     }
 
     startBuild();
 }
 
-module.exports = {
+module.exports =
+{
   dist: createDocs,
 };

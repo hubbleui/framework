@@ -13,7 +13,8 @@ _.prototype.parse_url = function(str)
     {
         var queries = url.search.substring(1).split('&');
         var qret    = {};
-        this.foreach(queries, function(i, query)
+        
+        this.each(queries, function(i, query)
         {
             if (query.includes('='))
             {

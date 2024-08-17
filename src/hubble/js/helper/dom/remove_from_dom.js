@@ -8,6 +8,11 @@
  */
 _.prototype.remove_from_dom = function(el)
 {
+    if (this.is_array(el))
+    {
+        return this.each(el, (i, DOMElement) => this.remove_from_dom(DOMElement));
+    }
+
     if (this.in_dom(el))
     {
         el.parentNode.removeChild(el);

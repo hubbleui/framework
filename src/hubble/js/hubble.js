@@ -25,6 +25,7 @@
 @import 'utility/_frontdrop.js';
 @import 'utility/_notification.js';
 @import 'utility/_ajax.js';
+@import 'utility/Pjax.js';
 @import 'utility/_formValidator.js';
 @import 'utility/_skeleton.js';
 @import 'utility/Gestures.js';
@@ -39,8 +40,7 @@
 @import 'dom/chips/_suggestion.js';
 @import 'dom/chips/_choice.js';
 @import 'dom/chips/_filter.js';
-@import "dom/pjax/_pjax.js";
-@import "dom/pjax/_links.js";
+@import "dom/Pjax.js";
 @import 'dom/_collapse.js';
 @import 'dom/_lists.js';
 @import 'dom/_dropdown.js';

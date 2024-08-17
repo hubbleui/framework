@@ -4238,6 +4238,8 @@ _.prototype.inner_HTML = function(DOMElement, content, append)
     }
     else
     {
+        this.clear_event_listeners(DOMElement, true);
+
         DOMElement.innerHTML = content;
     }
 
@@ -4576,6 +4578,11 @@ _.prototype.remove_class = function(DOMElement, className)
  */
 _.prototype.remove_from_dom = function(el)
 {
+    if (this.is_array(el))
+    {
+        return this.each(el, (i, DOMElement) => this.remove_from_dom(DOMElement));
+    }
+
     if (this.in_dom(el))
     {
         el.parentNode.removeChild(el);
@@ -5065,8 +5072,23 @@ _.prototype.__event_dispatcher = function(e)
  *
  * @access {public}
  */
-_.prototype.clear_event_listeners = function()
+_.prototype.clear_event_listeners = function(DOMElement, onlyChildren)
 {
+    DOMElement = this.is_undefined(DOMElement) ? document : DOMElement;
+
+    onlyChildren = this.is_undefined(onlyChildren) ? false : onlyChildren;
+
+    if (DOMElement !== document)
+    {
+        let children = this.find_all('*', DOMElement).reverse();
+
+        this.each(children, (i, child) => this.off(child));
+
+        if (!onlyChildren) this.off(DOMElement);
+        
+        return;
+    }
+
     var events = this._events;
 
     let _this = this;
@@ -5082,6 +5104,9 @@ _.prototype.clear_event_listeners = function()
     });
 
     this._events = {};
+
+
+
 }
 		/**
  * Removes all event listeners registered by the library on nodes
@@ -5410,7 +5435,8 @@ _.prototype.parse_url = function(str)
     {
         var queries = url.search.substring(1).split('&');
         var qret    = {};
-        this.foreach(queries, function(i, query)
+        
+        this.each(queries, function(i, query)
         {
             if (query.includes('='))
             {
@@ -5481,6 +5507,44 @@ _.prototype.url_query = function(name)
     }
 
     return false;
+}
+		/**
+ * Normalises a url
+ *
+ * @access {public}
+ * @param  {string}  url The url to normalise
+ * @return {string}
+ */
+_.prototype.normalize_url = function(url)
+{
+    // Remove www.
+    if (url.startsWith('www.') || url.includes('//www.')) url = url.replace('www.', '');
+
+    // Back dirs
+    if (url.startsWith('../'))
+    {
+        let paths = this.parse_url(this.trim(window.location.href, '/')).pathname.split('/');
+
+        if (!this.is_empty(paths))
+        {
+            // Remove file
+            if (paths.slice(-1).includes('.')) paths.pop();
+
+            let backs = url.split('../').length;
+
+            this.for(backs, () => paths.pop());
+
+            url = '/' + this.trim(`${paths.join('/')}/${url.replace(/\.\.\//g, '')}`, '/');
+        }
+    }
+
+    // Local
+    if (url[0] === '/') url = window.location.origin + url;
+
+    // Add protocol
+    if (!url.startsWith('https') && !url.startsWith('http')) url = `${window.location.protocol}//${url}`;
+
+    return url;
 }
 		/**
  * Clones any variables
@@ -7713,7 +7777,7 @@ Container.singleton('_', _);
     window.NProgress = null;
 
     // Load into container 
-    Hubble.set('NProgress', _NProgress);
+    Hubble.singleton('NProgress', _NProgress);
 
 })();
 
@@ -9255,6 +9319,7 @@ Container.singleton('_', _);
         {
             'url': '',
             'async': true,
+            'timeout': 10000,
             'headers':
             {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -9331,6 +9396,20 @@ Container.singleton('_', _);
         this._setResponseHandlers('UPLOAD', url, data, success, error, complete, abort, headers, progress);
 
         AJAX_QUEUE.add(this._call, this);
+
+        return this;
+    }
+
+
+    /**
+     * Set async
+     *
+     * @param  {function}  callback Callback function
+     * @return {this}
+     */
+    Ajax.prototype.async = function(bool)
+    {
+        this._settings.async = bool;
 
         return this;
     }
@@ -9496,19 +9575,19 @@ Container.singleton('_', _);
 
         xhr.open(method, url, this._settings.async);
 
+        xhr.timeout = this._settings.timeout;
+
         this._sendHeaders();
 
         if (this._settings.async)
         {
-            let _this = this;
+            xhr.onreadystatechange = () => { this._ready() };
 
-            xhr.onreadystatechange = () => { _this._ready() };
-
-            xhr.send(this.data);
+            xhr.send(this.data || null);
         }
         else
         {
-            xhr.send(this.data);
+            xhr.send(this.data || null);
 
             this._ready();
         }
@@ -9526,9 +9605,9 @@ Container.singleton('_', _);
      */
     Ajax.prototype._sendHeaders = function()
     {
-        if (this.xhr.mthod === 'POST') this._settings.headers['REQUESTED-WITH'] = 'XMLHttpRequest';
+        if (this.method === 'POST') this._settings.headers['REQUESTED-WITH'] = 'XMLHttpRequest';
 
-        each(this._settings.headers, (k,v) => xhr.setRequestHeader(k, v));
+        each(this._settings.headers, (k,v) => this._xhr.setRequestHeader(k, v));
     }
 
     /**
@@ -9546,7 +9625,7 @@ Container.singleton('_', _);
      */
     Ajax.prototype._setResponseHandlers = function(method, url, data, success, error, complete, abort, headers, progress)
     {
-        let ret = { url, data, success, error, complete, abort, headers, progress };
+        let ret = { method, url, data, success, error, complete, abort, headers, progress };
 
         // Cleanup
         let args = Array.prototype.slice.call(arguments);
@@ -9624,7 +9703,9 @@ Container.singleton('_', _);
             }
         }
 
-        each(ret, (x,v) => this[key] = (k !== 'headers' ? v : {...this.headers, ...v}));
+        let callbacks = ['success', 'error', 'complete', 'abort', 'headers', 'progress'];
+
+        each(ret, (k,v) => callbacks.includes(k) ? this[k](v) : this[k] = v);
     }
 
     /**
@@ -9637,7 +9718,7 @@ Container.singleton('_', _);
      * @param  {function}      abort    Abort callback (optional)
      */
     Ajax.prototype._ready = function()
-    {
+    {        
         let xhr = this._xhr;
 
         if (xhr.readyState == 4)
@@ -9665,6 +9746,404 @@ Container.singleton('_', _);
     }
 
     Hubble.set('Ajax', Ajax);
+
+})();
+
+(function()
+{
+    /**
+     * Helper functions.
+     * 
+     * @var {Function}
+     */
+    const [find, find_all, on, each, map, in_array, in_dom, is_empty, is_string, scroll_pos, trigger_event, normalize_url, inner_HTML, extend] = Hubble.import(['find','find_all','on','each','map','in_array','in_dom','is_empty','is_string','scroll_pos','trigger_event','normalize_url','inner_HTML','extend']).from('_');
+
+    /**
+     * Are we listening for state changes ?
+     * 
+     * @var {bool}
+     */
+    var _listening = false;
+
+    /**
+     * Default options
+     * 
+     * @var {object}
+     */
+    const DEFAULT_OPTIONS = 
+    {
+        element:   'body',
+        cacheBust:  true,
+        once:       false,
+        keepScroll: true,
+        pushstate:  false,
+        urlhash:    false,
+    };
+
+    /**
+     * Pjax module
+     *
+     * @class
+     * @extends   {Ajax}
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Pjax = function()
+    {
+        this.super();
+
+        if (!_listening)
+        {
+            on(window, 'popstate', this._popStateHandler, this);
+
+            _listening = true;
+        }
+    }
+
+    Pjax.prototype.request = function(url, options, success, error, complete, abort, headers)
+    {
+        // If we are already loading a pjax, cancel it and
+        if (this._xhr) this.abort();
+
+        // Reset variables
+        this._reset();
+
+        // We are now loading
+        _requesting = true;
+
+        // Merge options with defaults
+        options = typeof options === 'undefined' ? { ...DEFAULT_OPTIONS } : { ...DEFAULT_OPTIONS, ...options };
+
+        // Set PJAX header
+        this.headers({'X-PJAX': true});
+
+        // Store URL in options for callbacks
+        options.url = normalize_url(url.trim());
+
+        // Default data to send
+        let data = options.cacheBust ? { t: Date.now().toString() } : {};
+        
+        // Fire the start event
+        trigger_event(window, 'Hubble:Pjax:start', { options });
+
+        // Set response handlers
+        this._setResponseHandlers('GET', options.url, data, success, error, complete, abort, headers);
+
+        // Cache callbacks
+        const [_success, _error, _complete, _abort ] = [this.success, this.error, this.complete, this.abort];
+
+        // Cache current state
+        if (options.pushstate)
+        {            
+            let state = { ...options, id: normalize_url(window.location.href), scroll: {top: 0, left: 0} };
+
+            window.history.pushState(state, '', state.id);
+        }
+
+        Hubble.NProgress().start();
+
+        this.success((html) =>
+        {            
+            this._handleSuccess(html.trim(), options);
+
+            if (_success) this._makeCallback(_success, html);
+        })
+        .error((html) =>
+        {
+            trigger_event(window, 'Hubble:Pjax:error', { options });
+
+            if (_error) this._makeCallback(_error, html);
+        })
+        .abort((html) =>
+        {
+            rigger_event(window, 'Hubble:Pjax:abort', { options });
+
+            if (_abort) this._makeCallback(_abort, html);
+        })
+        .complete((response, successfull) =>
+        {
+            if (_complete) this._makeCallback(_complete, response);
+
+            this._reset();
+
+            Hubble.NProgress().done();
+
+        })._call();
+    }
+
+    /**
+     * Pjax success handler
+     *
+     * @access {private}
+     * @param  {object} locationObj Location object from the cache
+     * @param  {string} HTML        HTML string response from server
+     * @param  {bool}   stateChange Change the window history state
+     */
+    Pjax.prototype._handleSuccess = function(HTML, options)
+    {        
+        // Parse the HTML
+        let responseDoc = this._parseHTML(HTML);
+
+        // Cache scripts
+        let descrMeta       = find('meta[name=description]');
+        let responseTitle   = this._findDomTitle(responseDoc);
+        let responseDesc    = this._findDomDesc(responseDoc);
+        let responseScripts = this._getScripts(responseDoc);
+        let currScripts     = this._getScripts(document);
+        responseDoc         = this._removeScripts(responseDoc);
+
+        // Move scripts to head incase we're replacing body
+        each(currScripts, (i, script) => { if (script.node.parentNode.nodeName.toLowerCase() !== 'head') find('head').appendChild(script.node); });
+
+        // Default to document bodys
+        let targetEl        = document.body;
+        let responseEl      = responseDoc.body;
+
+        // Selector
+        if (is_string(options.element))
+        {
+            targetEl = find(options.element);
+        }
+        // DOM Node
+        else if (in_dom(options.element))
+        {
+            // Target is options.element
+            targetEl = options.element;
+        }
+
+        // Push new state
+        if (options.pushstate)
+        {
+            if (responseTitle) document.title = responseTitle;
+
+            if (responseDesc && descrMeta) descrMeta.content = responseDesc;
+        
+            let state = { ...options, id: options.url, scroll: { top: 0, left: 0 } };
+
+            window.history.pushState(state, '', options.url);
+        }
+        // Adjust hash
+        else if (options.urlhash && targetEl !== document.body)
+        {
+            let url = window.location.href.split('#').shift();
+
+            window.history.replaceState({}, '', `${url}#${targetEl.id}`);
+        }
+
+        // Insert content
+        inner_HTML(targetEl, responseEl.innerHTML);
+
+        this._appendScripts(currScripts, responseScripts, () =>
+        {
+            Hubble.dom().refresh(targetEl === document.body ? document : targetEl);
+
+            trigger_event(window, 'Hubble:Pjax:success', {options});
+        });
+
+        if (!options.keepScroll || targetEl === document.body) window.scrollTo(0, 0);
+    }
+
+    /**
+     * State change event handler (back/forward clicks)
+     *
+     * Popstate is treated as another pjax request essentially
+     * 
+     * @access {private}
+     * @param  {e}       event JavaScript 'popstate' event
+     */
+    Pjax.prototype._popStateHandler = function(e)
+    {
+        // State obj exists 
+        if (e.state && typeof e.state.id !== 'undefined')
+        {
+            // Prevent default
+            e.preventDefault();
+
+            let options = e.state;
+
+            this.request(options.id, {...options, pushstate: false });
+
+            return false;
+        }
+    }
+
+    /**
+     * If there are any new scripts load them
+     * 
+     * Note that appending or replacing content via 'innerHTML' or even
+     * native Nodes with scripts inside their 'innerHTML'
+     * will not load scripts so we need to compare what scripts have loaded
+     * on the current page with any scripts that are in the new DOM tree 
+     * and load any that don't already exist
+     *
+     * @access {private}
+     * @param  {array}   currScripts Currently loaded scripts array
+     * @param  {object}  newScripts  Newly loaded scripts
+     */
+    Pjax.prototype._appendScripts = function(currScripts, newScripts, callback)
+    {
+        let scripts = map(newScripts, (i, script) =>
+        {
+            let ret = script;
+
+            each(currScripts, (i, cScript) =>
+            {
+                if (cScript.content === script.content && cScript.inline === script.inline)
+                {
+                    ret = false;
+
+                    return;
+                }
+            })
+
+            return ret;
+        });
+
+        if (scripts.length > 0) 
+        {
+            return each(scripts, (i, script) =>  this._appendScript(script, i === scripts.length -1 ? callback : null));
+        }
+
+        callback();
+    }
+
+    Pjax.prototype._appendScript = function(scriptObj, callback)
+    {
+        let element = document.createElement(scriptObj.type);
+
+        element.type = scriptObj.type === 'script' ? 'text/javascript' : 'text/css';
+
+        if (scriptObj.type === 'script')
+        {
+            element.async = false;
+
+            if (!scriptObj.inline)
+            {
+                element.src = scriptObj.src;
+
+                if (callback) element.onload = () => callback();
+            }
+            else
+            {
+                element.innerHTML = scriptObj.src;
+
+                if (callback) callback();
+            }
+        }
+        else
+        {
+            element.rel = 'stylesheet';
+            
+            element.href = scriptObj.src;
+
+            if (callback) element.onload = () => callback();
+        }
+
+        find('head').appendChild(element);
+    }
+
+    /**
+     * Filter scripts with unique key/values into an array
+     *
+     * @access {private}
+     * @param  {string} html HTML as a string (with or without full doctype)
+     * @return {array}
+     */
+    Pjax.prototype._getScripts = function(doc)
+    {
+        var ret     = [];
+        var scripts = find_all('script, link[rel=stylesheet]', doc);
+
+        each(scripts, function(i, script)
+        {
+            let type   = script.nodeName.toLowerCase();
+            let src    = type === 'link' ? script.getAttribute('href') : script.getAttribute('src');
+            let inline = false; 
+            let node   = script;
+
+            if (!src)
+            {
+                inline = true;
+                src = script.innerHTML.trim()
+            }
+
+            ret.push({type, src, inline, node });
+        });
+
+        return ret;
+    }
+
+    /**
+     * Remove all scripts from a document
+     *
+     * @access {private}
+     * @param  {Document} Document Document element
+     * @return {Document}
+     */
+    Pjax.prototype._removeScripts = function(doc)
+    {
+        var scripts = find_all('script, link[rel=stylesheet]', doc);
+
+        each(scripts, (i, script) => script.parentNode.removeChild(script));
+
+        return doc;
+    }
+
+    /**
+     * Try to find the page title in a DOM tree
+     *
+     * @access {private}
+     * @param  {string} html HTML as a string (with or without full doctype)
+     * @return {string|false}
+     */
+    Pjax.prototype._findDomTitle = function(DOM)
+    {
+        var title = DOM.getElementsByTagName('title');
+
+        if (title.length)
+        {
+            return title[0].innerHTML.trim();
+        }
+
+        return false;
+    }
+
+    /**
+     * Try to find the page title in a DOM tree
+     *
+     * @access {private}
+     * @param  {string} html HTML as a string (with or without full doctype)
+     * @return {string|false}
+     */
+    Pjax.prototype._findDomDesc = function(DOM)
+    {
+        var desc = find('meta[name=description]', DOM);
+
+        if (desc)
+        {
+            return desc.content.trim();
+        }
+
+        return false;
+    }
+
+    /**
+     * Parse HTML from string into a document
+     *
+     * @access {private}
+     * @param  {string} html HTML as a string (with or without full doctype)
+     * @return {DOM} tree
+     */
+    Pjax.prototype._parseHTML = function(html)
+    {
+        var parser = new DOMParser();
+
+        return parser.parseFromString(html, 'text/html');
+    }
+
+    // Pjax is singleton
+    Hubble.singleton('Pjax', extend(Hubble.Ajax().constructor, Pjax));
 
 })();
 
@@ -10706,7 +11185,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * 
      * @var {Function}
      */
-    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width, inline_style] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width','inline_style']).from('_');
+    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width, remove_from_dom, inline_style] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width','remove_from_dom','inline_style']).from('_');
 
     /**
      * Default options
@@ -10791,7 +11270,7 @@ Hubble.set('TinyGesture', TinyGesture);
 
         this.resize();
 
-        //if (this.options.autoPlay) this.play();
+        if (this.options.autoPlay) this.play();
     }
 
     /**
@@ -10803,11 +11282,7 @@ Hubble.set('TinyGesture', TinyGesture);
     {
         this.stop();
 
-        if (this._gestures) this.gestures.destroy();
-
-        off(this._righBtn, 'click', this.next, this);
-
-        off(this._leftBtn, 'click', this.previous, this);
+        if (this._gestures) this._gestures.destroy();
 
         off(window, 'resize', this._resizeThrottle, this);
 
@@ -10815,7 +11290,13 @@ Hubble.set('TinyGesture', TinyGesture);
 
         off(this.DOMElementWrapper, 'mouseout', this.unpause, this);
 
-        off(this._dots, 'click', this.next, this);
+        if (this.options.dots) remove_from_dom(this._dotWrap);
+
+        if (this.options.controls) remove_from_dom([this._righBtn, this._leftBtn]);
+
+        let slides = !this.options.groupSlides ? this._slides : find_all('.slide-group > *', this.DOMElementWrapper);
+
+        each(slides, (i, slide) => this.DOMElementWrapper.appendChild(slide));
     }
 
     /**
@@ -11288,8 +11769,6 @@ Hubble.set('TinyGesture', TinyGesture);
     _Slider.prototype._dragSlide = function(moved)
     {
         let x = this._dragX;
-
-        console.log(this._dragBoundryR, this._dragBoundryL);
 
         if (this.options.wrap)
         {
@@ -12871,473 +13350,26 @@ Hubble.set('TinyGesture', TinyGesture);
 (function()
 {
     /**
-     * Helper functions.
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Hubble.get('Component');
+    
+    /**
+     * Helper functions
      * 
      * @var {Function}
      */
-    const [add_event_listener, foreach, in_array, in_dom, is_empty, is_string, scroll_pos, trigger_event, extend] = Hubble.import(['add_event_listener','foreach','in_array','in_dom','is_empty','is_string','scroll_pos','trigger_event','extend']).from('_');
+    const [on, off, attr, bool, extend]  = Hubble.import(['on','off','attr','bool','extend']).from('_');
 
     /**
-     * AJAX URL to list paginated reviews
-     * 
-     * @var {string}
-     */
-    var _urlBase = window.location.origin;
-
-    /**
-     * Are we listening for state changes ?
-     * 
-     * @var {bool}
-     */
-    var _listening = false;
-
-    /**
-     * Are we currently loading a pjax request ?
-     * 
-     * @var {bool}
-     */
-    var _requesting = false;
-
-    /**
-     * Default options
+     * URLS Requested
      * 
      * @var {object}
      */
-    const DEFAULT_OPTIONS = 
-    {
-        element:   'body',
-        timeout :   10000,
-        cacheBust:  true,
-        keepScroll: false,
-        animation:  'fade',
-        progress:   true,
-    };
+    const REQUESTED = [];
 
-    /**
-     * Pjax module
-     *
-     * @class
-     * @extends   {Ajax}
-     * @author    {Joe J. Howard}
-     * @copyright {Joe J. Howard}
-     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
-     */
-    const Pjax = function()
-    {
-        this.super();
-
-        if (!_listening)
-        {
-            add_event_listener(window, 'popstate', this._popStateHandler);
-
-            _listening = true;
-        }
-    }
-
-    /**
-     * Start a pjax request
-     *
-     * @access {public}
-     * @param  {string}            url                The url to send the request to
-     * @param  {object|null}       options            Options (optional)
-     * @param  {string|DOMElement} options.element    Can be a selector or an existing dom element to replace content into (optional) (default 'body')
-     * @param  {bool}              options.keepScroll Weather to retain existing scroll position (optional) (default false) 
-     * @param  {bool}              options.scroll_pos  If provided will scroll to position  
-     * @param  {string}            options.animation  fade|undefined|null
-     * @param  {bool}              options.progress   Use Nprogress on load
-     * @param  {int}               options.timeout    Timeout in MS (optional) (default 10,000)
-     * @param  {bool}              options.cacheBust  When set to true, Pjax appends a timestamp query string segment to the requested URL in order to skip the browser cache (optional) (default true)
-     * @param  {function}          options.onError    Callback when error occurs (optional)
-     * @param  {function}          options.onSuccess  Callback when success occurs (optional)
-     * @param  {function}          options.onComplete Callback when complete occurs (optional)
-     */
-    Pjax.prototype.request = function(url, data, success, error, complete, abort, options)
-    {
-        // If we are already loading a pjax, cancel it and
-        if (this._xhr)
-        {
-            this.abort();
-        }
-
-        this._reset();
-
-        // We are now loading
-        _requesting = true;
-
-        // Merge options with defaults
-        options = typeof options === 'undefined' ? { ...DEFAULT_OPTIONS } : { ...DEFAULT_OPTIONS, ...options };
-
-        // Normalize the url
-        url = this._normaliseUrl(url.trim());
-
-        // Normalize current url
-        var currUrl = this._normaliseUrl(window.location.href); 
-
-        this._load(url, options);
-    }
-
-    /**
-     * Send a pjax request
-     *
-     * @access {private}
-     * @param  {string}            url                The url to send the request to
-     * @param  {object|null}       options            Options (optional)
-     * @param  {string|DOMElement} options.element    Can be a selector or an existing dom element to replace content into (optional) (default 'body')
-     * @param  {string}            options.animation  fade|undefined|null
-     * @param  {int}               options.timeout    Timeout in MS (optional) (default 10,000)
-     * @param  {bool}              options.cacheBust  When set to true, Pjax appends a timestamp query string segment to the requested URL in order to skip the browser cache (optional) (default true)
-     * @param  {function}          options.onError    Callback when error occurs (optional)
-     * @param  {function}          options.onSuccess  Callback when success occurs (optional)
-     * @param  {function}          options.onComplete Callback when complete occurs (optional)
-     */
-    Pjax.prototype._load = function(url, options)
-    {
-        let data = {};
-
-        // Store this
-        var _this = this;
-
-        // Cachebust
-        if (options.cacheBust)
-        {
-            data.cachebust = Date.now().toString();
-        }
-
-        this._settings.headers['X-PJAX'] = true;
-
-        // Store URL in options for callbacks
-        options.url = url;
-        
-        // Push the current state
-        window.history.pushState( { id: currUrl, scroll: scroll_pos() }, '', currUrl);
-
-        // Fire the start event
-        trigger_event('Hubble:Pjax:start', options);
-
-        // Send GET request
-        this.get(url,
-            function success(HTML)
-            {
-                // Handle the response
-                _this._handleSuccess(HTML, options);
-            },
-        
-            // Handle the error
-            function error(error)
-            {
-                // Handle the error
-                _this._handleError(HTML, options);
-
-            }
-        );
-    }
-
-    /**
-     * Pjax success handler
-     *
-     * @access {private}
-     * @param  {object} locationObj Location object from the cache
-     * @param  {string} HTML        HTML string response from server
-     * @param  {bool}   stateChange Change the window history state
-     */
-    Pjax.prototype._handleSuccess = function(HTML, options)
-    {
-        // Parse the HTML
-        var responseDoc = this._parseHTML(HTML);
-
-        // Try to get the title
-        var _title = this._findDomTitle(responseDoc);
-
-        // Cache scripts
-        var responseScripts = this._getScripts(responseDoc);
-        var currScripts     = this._getScripts(document);
-        responseDoc         = this._removeScripts(responseDoc);
-
-        // Default to document bodys
-        var targetEl        = document.body;
-        var responseEl      = responseDoc.body;
-
-        // Was pjax supported?
-        var pjaxSuported = HTML.startsWith('<!DOCTYPE html>')
-
-        // Selector
-        if (is_string(options.element))
-        {
-            targetEl   = document.querySelector(options.element);
-            responseEl = responseDoc.querySelector(options.element);
-        }
-        // DOM Node
-        else if (in_dom(options.element))
-        {
-            // Target is options.element
-            targetEl = options.element;
-        }
-
-        // Insert content
-        targetEl.innerHTML = responseEl.innerHTML;
-
-        _this._appendScripts(currScripts, newScripts, function then()
-        {
-            trigger_event('Hubble:Pjax:success', options);
-            trigger_event('Hubble:Pjax:complete', options);
-
-            _requesting = false;
-        });
-    }
-
-    /**
-     * Handle Pjax Error
-     *
-     * @access {private}
-     * @param  {object} locationObj Location object from the cache
-     */
-    Pjax.prototype._handleError = function(HTML, options)
-    {
-        _requesting = false;
-    }
-
-    /**
-     * State change event handler (back/forward clicks)
-     *
-     * Popstate is treated as another pjax request essentially
-     * 
-     * @access {private}
-     * @param  {e}       event JavaScript 'popstate' event
-     */
-    Pjax.prototype._popStateHandler = function(e)
-    {
-        e = e || window.event;
-
-        var _this = Hubble.require('Pjax');
-
-        // State obj exists 
-        if (e.state && typeof e.state.id !== 'undefined')
-        {
-            // Prevent default
-            e.preventDefault();
-
-            var stateObj = e.state;
-
-            opts = {...DEFAULT_OPTIONS, scroll_pos: stateObj.scroll, keepScroll: false };
-
-            // Load entire body from cache
-            _this._load(stateObj.id, DEFAULT_OPTIONS);
-        }
-        else
-        {
-            history.back();
-        }
-    }
-
-    /**
-     * If there are any new scripts load them
-     * 
-     * Note that appending or replacing content via 'innerHTML' or even
-     * native Nodes with scripts inside their 'innerHTML'
-     * will not load scripts so we need to compare what scripts have loaded
-     * on the current page with any scripts that are in the new DOM tree 
-     * and load any that don't already exist
-     *
-     * @access {private}
-     * @param  {array}   currScripts Currently loaded scripts array
-     * @param  {object}  newScripts  Newly loaded scripts
-     */
-    Pjax.prototype._appendScripts = function(currScripts, newScripts, callback)
-    {
-        var newScripts = newScripts.filter(x => !in_array(x, currScripts));
-        var complete  = !is_empty(newScripts);
-
-        if (!complete)
-        {
-            foreach(newScripts, function(i, script)
-            {
-                this._appendScript(script);
-            });
-        }
-        else
-        {
-            callback();
-        }
-    }
-
-    Pjax.prototype._appendScript = function(scriptObj)
-    {
-        // Create a new script
-        var script   = document.createElement('script');
-        script.type  = 'text/javascript';
-        script.async = false;
-
-        // Is this an inline script or a src ?
-        if (scriptObj.inline === true)
-        {
-            script.innerHTML = scriptObj.content;
-        }
-        else
-        {
-            script.src = scriptObj.content;
-            script.add_event_listener('load', function()
-            {
-                chain.next();
-            });
-        }
-
-        // Append the new script
-        document.body.appendChild(script);
-    }
-
-
-    /**
-     * Filter scripts with unique key/values into an array
-     *
-     * @access {private}
-     * @param  {string} html HTML as a string (with or without full doctype)
-     * @return {array}
-     */
-    Pjax.prototype._getScripts = function(doc)
-    {
-        var ret     = [];
-        var scripts = Array.prototype.slice.call(doc.getElementsByTagName('script'));
-
-        foreach(scripts, function(i, script)
-        {
-            var src = script.getAttribute('src');
-
-            if (src)
-            {
-                // Remove the query string
-                src = src.split('?')[0];
-
-                ret.push(
-                {
-                    'inline' : false,
-                    'content': src
-                });
-            }
-            else
-            {
-                ret.push(
-                {
-                    'inline' : true,
-                    'content': script.innerHTML.trim()
-                });
-            }
-        });
-
-        return ret;
-    }
-
-    /**
-     * Remove all scripts from a document
-     *
-     * @access {private}
-     * @param  {Document} Document Document element
-     * @return {Document}
-     */
-    Pjax.prototype._removeScripts = function(doc)
-    {
-        var scripts = Array.prototype.slice.call(doc.getElementsByTagName('script'));
-
-        foreach(scripts, function(i, script)
-        {
-            script.parentNode.removeChild(script);
-        });
-
-        return doc;
-    }
-
-    /**
-     * Try to find the page title in a DOM tree
-     *
-     * @access {private}
-     * @param  {string} html HTML as a string (with or without full doctype)
-     * @return {string|false}
-     */
-    Pjax.prototype._findDomTitle = function(DOM)
-    {
-        var title = DOM.getElementsByTagName('title');
-
-        if (title.length)
-        {
-            return title[0].innerHTML.trim();
-        }
-
-        return false;
-    }
-
-    /**
-     * Parse HTML from string into a document
-     *
-     * @access {private}
-     * @param  {string} html HTML as a string (with or without full doctype)
-     * @return {DOM} tree
-     */
-    Pjax.prototype._parseHTML = function(html)
-    {
-        var parser = new DOMParser();
-        return parser.parseFromString(html, 'text/html');
-    }
-
-    /**
-     * Normalises a url
-     *
-     * @access {private}
-     * @param  {string}  url The url to normalise
-     * @return {string}
-     */
-    Pjax.prototype._normaliseUrl = function(url)
-    {
-        // If the url was set as local
-
-        // e.g www.foobar.com/foobar
-        // foobar.com/foobar
-        if (url.indexOf('http') < 0)
-        {
-            // Get the path
-            var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;
-
-            // e.g www.foobar.com/foobar
-            if (url[0] === 'w')
-            {
-                var host = url.split('.com');
-
-                url = window.location.protocol + '//' + host[0] + '.com/' + path;
-            }
-            else
-            {
-                // foobar.com/foobar
-                if (url.indexOf('.com') !== -1)
-                {
-                    var host = url.split('.com');
-                    url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
-                }
-                // /foobar/bar/
-                else
-                {
-                    url = window.location.origin + '/' + path;
-                }
-
-            }
-        }
-
-        return url;
-    }
-        
-    // Load into Hubble DOM core
-    Hubble.set('Pjax', extend(Hubble.Ajax().constructor, Pjax));
-
-    console.log(Hubble.Pjax());
-
-})();
-
-(function()
-{
-    /**
-     * JS Helper reference
-     * 
-     * @var {object}
-     */
-    const Helper = Hubble._();
-    
     /**
      * Pjax Links Module
      *
@@ -13345,81 +13377,58 @@ Hubble.set('TinyGesture', TinyGesture);
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    class PjaxLinks
+    const PjaxLinks = function()
     {
-        /**
-         * Module constructor
-         *
-         * @access {public}
-         * @constructor
-         */
-    	constructor()
-        {
-            this._nodes = Helper.$All('.js-pjax-link');
+        this.super('.js-pjax-link');
+    }
 
-            if (!Helper.is_empty(this._nodes))
-            {
-                this._bind();
-            }
+    /**
+     * @inheritdoc
+     * 
+     */
+    PjaxLinks.prototype.bind = function(node)
+    {
+        on(node, 'click', this._eventHandler, this);
+    }
 
-            return this;
-        }
+    /**
+     * @inheritdoc
+     * 
+     */
+    PjaxLinks.prototype.unbind = function(node)
+    {
+        off(node, 'click', this._eventHandler, this);
+    }
 
-        /**
-         * Module destructor
-         *
-         * @access {public}
-         */
-        destruct()
-        {
-            this._unbind();
-        }
+    /**
+     * Event handler
+     *
+     * @param {event|null} e JavaScript click event
+     * @access {private}
+     */
+    PjaxLinks.prototype._eventHandler = function(e, clicked)
+    {
+        let url       = clicked.href || attr(clicked, 'data-pjax-target');
+        let once      = attr(clicked, 'data-pjax-once') || false;
+        let element   = attr(clicked, 'data-pjax-target');
+        let cacheBust = bool(attr(clicked, 'data-pjax-nocache'));
+        let pushstate = !element ? true : false;
+        let urlhash   = !element ? false : bool(attr(clicked, 'data-pjax-urlhash'));
 
-        /**
-         * Event binder - Binds all events on node click
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            Helper.add_event_listener(this._nodes, 'click', this._eventHandler);
-        }
+        // Only request once
+        if (REQUESTED.includes(url) && once) return;
 
-        /**
-         * Event unbinder - Removes all events on node click
-         *
-         * @access {private}
-         */
-        _unbind()
-        {
-            Helper.remove_event_listener(this._nodes, 'click', this._eventHandler);
-        }
+        REQUESTED.push(url);
 
-        /**
-         * Handle the click event
-         *
-         * @param {event|null} e JavaScript click event
-         * @access {private}
-         */
-        _eventHandler(e)
-        {
-            e = e || window.event;
+        if (element) element = element[0] !== '#' ? `#${element}` : element;
 
-            e.preventDefault();
+        Hubble.Pjax().request(url, {once, element, cacheBust, pushstate, urlhash});
 
-            var trigger = this;
-            var href = trigger.dataset.pjaxHref;
-            var target = trigger.dataset.pjaxTarget;
-            var title = trigger.dataset.pjaxTitle || false;
-            var stateChange = Helper.bool(trigger.dataset.pjaxStateChange);
-            var singleRequest = Helper.bool(trigger.dataset.pjaxSingleRequest);
-
-            Hubble.Pjax().invoke(href, target, title, stateChange, singleRequest);
-        }
+        return false;
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('PjaxLinks', PjaxLinks);
+    Hubble.dom().register('PjaxLinks', extend(Component, PjaxLinks));
 
 }());
 

@@ -76,6 +76,7 @@
 		@import 'misc/is_retina.js';
 		@import 'misc/parse_url.js';
 		@import 'misc/url_query.js';
+		@import 'misc/normalize_url.js';
 		@import 'object/clone_deep.js';
 		@import 'object/bind.js';
 		@import 'object/dotify.js';

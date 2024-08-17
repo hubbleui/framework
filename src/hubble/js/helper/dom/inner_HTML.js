@@ -16,6 +16,8 @@ _.prototype.inner_HTML = function(DOMElement, content, append)
     }
     else
     {
+        this.clear_event_listeners(DOMElement, true);
+
         DOMElement.innerHTML = content;
     }
 

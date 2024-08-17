@@ -35,19 +35,19 @@ Here's a basic example
         </li>
     </ul>
     <div class="tab-panels-wrap js-tab-panels-wrap">
-        <div class="tab-panel active" data-tab-panel="panel-1">
+        <div class="tab-panel active" data-tab-panel="panel-1" id="tab-1">
             <div class="pad-20">
                 <h4>Panel 1</h4>
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
             </div>
         </div>
-        <div class="tab-panel" data-tab-panel="panel-2">
+        <div class="tab-panel" data-tab-panel="panel-2" id="tab-2">
             <div class="pad-20">
                 <h4>Panel 2</h4>
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
             </div>
         </div>
-        <div class="tab-panel" data-tab-panel="panel-3">
+        <div class="tab-panel" data-tab-panel="panel-3" id="tab-3">
             <div class="pad-20">
                 <h4>Panel 3</h4>
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.

@@ -3,8 +3,23 @@
  *
  * @access {public}
  */
-_.prototype.clear_event_listeners = function()
+_.prototype.clear_event_listeners = function(DOMElement, onlyChildren)
 {
+    DOMElement = this.is_undefined(DOMElement) ? document : DOMElement;
+
+    onlyChildren = this.is_undefined(onlyChildren) ? false : onlyChildren;
+
+    if (DOMElement !== document)
+    {
+        let children = this.find_all('*', DOMElement).reverse();
+
+        this.each(children, (i, child) => this.off(child));
+
+        if (!onlyChildren) this.off(DOMElement);
+        
+        return;
+    }
+
     var events = this._events;
 
     let _this = this;
@@ -20,4 +35,7 @@ _.prototype.clear_event_listeners = function()
     });
 
     this._events = {};
+
+
+
 }

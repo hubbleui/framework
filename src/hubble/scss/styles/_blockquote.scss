@@ -1,4 +1,4 @@
-blockquote
+.bq, blockquote[class*="bq-"]
 {
     --hb-bq-bg: #{$bq-bg};
     --hb-bq-radius: #{$bq-radius};

@@ -8,6 +8,7 @@
 
 .ratio-img, .bg-image
 {
+    --hb-aspect-ratio: 1/1;
     --hb-width: 100%;
     --hb-height: auto;
     width: var(--hb-width);
@@ -21,7 +22,6 @@
 }
 .ratio-img
 {
-    --hb-aspect-ratio: 1/1;
     position: relative;
     overflow: hidden;
 
@@ -55,13 +55,13 @@
 .ratio-4-5  { --hb-aspect-ratio: 4/5;  }
 .ratio-9-16 { --hb-aspect-ratio: 9/16;  }
 
-.ratio-img
+.ratio-img, .bg-image
 {
     padding-top: calc(100% / (var(--hb-aspect-ratio)));
 }
 @supports (aspect-ratio: 1/1)
 {
-    .ratio-img
+    .ratio-img, .bg-image
     {
         padding-top: 0;
         aspect-ratio: var(--hb-aspect-ratio);

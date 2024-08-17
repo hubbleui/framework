@@ -61,9 +61,11 @@ Add the optional `.graysale` class to have the image fade from grayscale to full
 
 Lazyloading works on CSS background image elements too. This can be handy when you need an image at a fixed height.
 
+> Hubble's `.bg-image` image is a handy utility to help manage image sizing. For more information checkout the [Images Documentation](../../content/images/index.html).
+
 <div class="code-content-example">
     <div class="flex-row-fluid align-cols-center">
-        <div style="height: 200px;width: auto;" data-src="../../../dist/img/trump-hero.jpg" class="bg-image js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
+        <div class="bg-image js-lazyload lazyload grayscale raised-1 col-12 col-md-6 col-lg-4" data-src="../../../dist/img/trump-hero.jpg" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
     </div>
 </div>
 
@@ -71,49 +73,6 @@ Lazyloading works on CSS background image elements too. This can be handy when y
 <div data-src="trump-hero.jpg" class="bg-image js-lazyload lazyload grayscale" style="background-image: url(trump-hero_thumb.jpg)"></div>
 ```
 
-Hubble's `.bg-image` image is a handy utility to help manage image sizing, simply add one of the aspect ratio modifier classes and ensure the element has either a width or height.
-
-Landscape aspect ratio classes are:
-
-*   `ratio-1-1`
-*   `ratio-3-2`
-*   `ratio-4-3`
-*   `ratio-5-3`
-*   `ratio-5-4`
-*   `ratio-16-9`
-
-And portrait aspect ratios:
-
-*   `ratio-2-3`
-*   `ratio-3-4`
-*   `ratio-3-5`
-*   `ratio-4-5`
-*   `ratio-9-16`
-
-<div class="code-content-example">
-    <div class="flex-row-fluid align-cols-center col-gaps-xs">
-        <div style="height: 200px;width: auto;" data-src="../../../dist/img/trump-hero.jpg" class="bg-image ratio-2-3 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
-        <div style="height: 200px;width: auto;" data-src="../../../dist/img/trump-hero.jpg" class="bg-image ratio-3-4 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
-        <div style="height: 200px;width: auto;" data-src="../../../dist/img/trump-hero.jpg" class="bg-image ratio-3-5 js-lazyload lazyload grayscale raised-1" style="background-image: url(../../../dist/img/trump-hero_thumb.jpg)"></div>
-    </div>
-</div>
-
-```html
-<div data-src="..." class="bg-image ratio-2-3 js-lazyload lazyload grayscale raised-1" style="background-image: url(...)"></div>
-<div data-src="..." class="bg-image ratio-3-4 js-lazyload lazyload grayscale raised-1" style="background-image: url(...)"></div>
-<div data-src="..." class="bg-image ratio-3-5 js-lazyload lazyload grayscale raised-1" style="background-image: url(...)"></div>
-```
-
-Background images can be customized using CSS variables below:
-
-```css
-.bg-image
-{
-    --hb-width: 100%;
-    --hb-height: auto;
-    --hb-aspect-ratio: 16/9;
-}
-```
 ---
 
 ### Fallback

@@ -27,7 +27,7 @@
   --hb-color-concrete: #95a5a6;
   --hb-color-asbestos: #7f8c8d;
   --hb-color-neongreen: #2bf877;
-  --hb-color-skyblue: #039BE5;
+  --hb-color-skyblue: #73dcff;
   --hb-color-beetroot: #c349ff;
   --hb-color-hotpink: #ff2eaa;
   --hb-color-pineapple: #fff224;
@@ -61,7 +61,7 @@
   --hb-color-concrete-rgb: 149, 165, 166;
   --hb-color-asbestos-rgb: 127, 140, 141;
   --hb-color-neongreen-rgb: 43, 248, 119;
-  --hb-color-skyblue-rgb: 3, 155, 229;
+  --hb-color-skyblue-rgb: 115, 220, 255;
   --hb-color-beetroot-rgb: 195, 73, 255;
   --hb-color-hotpink-rgb: 255, 46, 170;
   --hb-color-pineapple-rgb: 255, 242, 36;
@@ -92,15 +92,15 @@
   --hb-brand-secondary-800: #a6415a;
   --hb-brand-secondary-900: #8e384d;
   /* info */
-  --hb-brand-info-100: #e6f5fc;
-  --hb-brand-info-200: #cdebfa;
-  --hb-brand-info-300: #81cdf2;
-  --hb-brand-info-400: #5bbeee;
-  --hb-brand-info-500: #0393da;
-  --hb-brand-info-600: #027cb7;
-  --hb-brand-info-700: #0274ac;
-  --hb-brand-info-800: #026da0;
-  --hb-brand-info-900: #025d89;
+  --hb-brand-info-100: #f1fcff;
+  --hb-brand-info-200: #e3f8ff;
+  --hb-brand-info-300: #b9eeff;
+  --hb-brand-info-400: #a4e8ff;
+  --hb-brand-info-500: #6dd1f2;
+  --hb-brand-info-600: #5cb0cc;
+  --hb-brand-info-700: #56a5bf;
+  --hb-brand-info-800: #519ab3;
+  --hb-brand-info-900: #458499;
   /* success */
   --hb-brand-success-100: #eafaf1;
   --hb-brand-success-200: #d5f5e3;
@@ -3418,7 +3418,7 @@ dl dd:last-child {
   }
 }
 /* styles/blockquote'; */
-blockquote {
+.bq, blockquote[class*=bq-] {
   --hb-bq-bg: var(--hb-gray-200);
   --hb-bq-radius: var(--hb-border-radius);
   --hb-bq-pad-y: 2rem;
@@ -3429,54 +3429,55 @@ blockquote {
   color: var(--hb-bq-color);
   background-color: var(--hb-bq-bg);
 }
-blockquote p {
+.bq p, blockquote[class*=bq-] p {
   padding: 0;
   color: rgba(0, 0, 0, 0.57);
 }
-blockquote a {
+.bq a, blockquote[class*=bq-] a {
   font-weight: 500;
   color: rgba(0, 0, 0, 0.6);
 }
-blockquote code,
-blockquote pre {
+.bq code,
+.bq pre, blockquote[class*=bq-] code,
+blockquote[class*=bq-] pre {
   border: none;
   color: var(--hb-white);
   background-color: rgba(0, 0, 0, 0.3);
 }
-blockquote > footer {
+.bq > footer, blockquote[class*=bq-] > footer {
   display: block;
   font-size: 85%;
   line-height: 1.42857143;
   color: rgba(0, 0, 0, 0.8);
 }
-blockquote > footer :before {
+.bq > footer :before, blockquote[class*=bq-] > footer :before {
   content: "— ";
 }
-blockquote > :last-child {
+.bq > :last-child, blockquote[class*=bq-] > :last-child {
   margin-bottom: 0;
 }
-blockquote.bq-primary {
+.bq.bq-primary, blockquote[class*=bq-].bq-primary {
   --hb-bq-bg: var(--hb-brand-primary-400);
 }
-blockquote.bq-secondary {
+.bq.bq-secondary, blockquote[class*=bq-].bq-secondary {
   --hb-bq-bg: var(--hb-brand-secondary-400);
 }
-blockquote.bq-info {
+.bq.bq-info, blockquote[class*=bq-].bq-info {
   --hb-bq-bg: var(--hb-brand-info-400);
 }
-blockquote.bq-success {
+.bq.bq-success, blockquote[class*=bq-].bq-success {
   --hb-bq-bg: var(--hb-brand-success-400);
 }
-blockquote.bq-warning {
+.bq.bq-warning, blockquote[class*=bq-].bq-warning {
   --hb-bq-bg: var(--hb-brand-warning-400);
 }
-blockquote.bq-danger {
+.bq.bq-danger, blockquote[class*=bq-].bq-danger {
   --hb-bq-bg: var(--hb-brand-danger-400);
 }
-blockquote.bq-white {
+.bq.bq-white, blockquote[class*=bq-].bq-white {
   --hb-bq-bg: var(--hb-white-400);
 }
-blockquote.bq-black {
+.bq.bq-black, blockquote[class*=bq-].bq-black {
   --hb-bq-bg: var(--hb-black-400);
 }
 
@@ -6383,36 +6384,6 @@ form.success .msg-success {
   border: 1px solid;
 }
 
-/* ---------------------------- components/media.scss ------------------------------- */
-.media-body {
-  width: 10000px;
-}
-
-.media, .media-body {
-  overflow: hidden;
-  zoom: 1;
-}
-.media :last-child, .media-body :last-child {
-  margin-bottom: 0;
-}
-
-.media.show-overlow,
-.media.show-overlow .media-body {
-  overflow: visible;
-}
-
-.media-body,
-.media-left,
-.media-right {
-  display: table-cell;
-  vertical-align: middle;
-}
-.media-body img,
-.media-left img,
-.media-right img {
-  display: block;
-}
-
 /* ---------------------------- components/message.scss ----------------------------- */
 .msg {
   --hb-msg-bg: var(--hb-black);
@@ -8602,6 +8573,7 @@ div.pswp__img--placeholder, .pswp__img--with-bg {
 }
 
 .ratio-img, .bg-image {
+  --hb-aspect-ratio: 1/1;
   --hb-width: 100%;
   --hb-height: auto;
   width: var(--hb-width);
@@ -8615,7 +8587,6 @@ div.pswp__img--placeholder, .pswp__img--with-bg {
 }
 
 .ratio-img {
-  --hb-aspect-ratio: 1/1;
   position: relative;
   overflow: hidden;
 }
@@ -8677,12 +8648,12 @@ div.pswp__img--placeholder, .pswp__img--with-bg {
   --hb-aspect-ratio: 9/16;
 }
 
-.ratio-img {
+.ratio-img, .bg-image {
   padding-top: calc(100% / (var(--hb-aspect-ratio)));
 }
 
 @supports (aspect-ratio: 1/1) {
-  .ratio-img {
+  .ratio-img, .bg-image {
     padding-top: 0;
     aspect-ratio: var(--hb-aspect-ratio);
   }

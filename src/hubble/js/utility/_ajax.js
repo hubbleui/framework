@@ -96,6 +96,7 @@
         {
             'url': '',
             'async': true,
+            'timeout': 10000,
             'headers':
             {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -172,6 +173,20 @@
         this._setResponseHandlers('UPLOAD', url, data, success, error, complete, abort, headers, progress);
 
         AJAX_QUEUE.add(this._call, this);
+
+        return this;
+    }
+
+
+    /**
+     * Set async
+     *
+     * @param  {function}  callback Callback function
+     * @return {this}
+     */
+    Ajax.prototype.async = function(bool)
+    {
+        this._settings.async = bool;
 
         return this;
     }
@@ -337,19 +352,19 @@
 
         xhr.open(method, url, this._settings.async);
 
+        xhr.timeout = this._settings.timeout;
+
         this._sendHeaders();
 
         if (this._settings.async)
         {
-            let _this = this;
+            xhr.onreadystatechange = () => { this._ready() };
 
-            xhr.onreadystatechange = () => { _this._ready() };
-
-            xhr.send(this.data);
+            xhr.send(this.data || null);
         }
         else
         {
-            xhr.send(this.data);
+            xhr.send(this.data || null);
 
             this._ready();
         }
@@ -367,9 +382,9 @@
      */
     Ajax.prototype._sendHeaders = function()
     {
-        if (this.xhr.mthod === 'POST') this._settings.headers['REQUESTED-WITH'] = 'XMLHttpRequest';
+        if (this.method === 'POST') this._settings.headers['REQUESTED-WITH'] = 'XMLHttpRequest';
 
-        each(this._settings.headers, (k,v) => xhr.setRequestHeader(k, v));
+        each(this._settings.headers, (k,v) => this._xhr.setRequestHeader(k, v));
     }
 
     /**
@@ -387,7 +402,7 @@
      */
     Ajax.prototype._setResponseHandlers = function(method, url, data, success, error, complete, abort, headers, progress)
     {
-        let ret = { url, data, success, error, complete, abort, headers, progress };
+        let ret = { method, url, data, success, error, complete, abort, headers, progress };
 
         // Cleanup
         let args = Array.prototype.slice.call(arguments);
@@ -465,7 +480,9 @@
             }
         }
 
-        each(ret, (x,v) => this[key] = (k !== 'headers' ? v : {...this.headers, ...v}));
+        let callbacks = ['success', 'error', 'complete', 'abort', 'headers', 'progress'];
+
+        each(ret, (k,v) => callbacks.includes(k) ? this[k](v) : this[k] = v);
     }
 
     /**
@@ -478,7 +495,7 @@
      * @param  {function}      abort    Abort callback (optional)
      */
     Ajax.prototype._ready = function()
-    {
+    {        
         let xhr = this._xhr;
 
         if (xhr.readyState == 4)

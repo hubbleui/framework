@@ -5,7 +5,7 @@
      * 
      * @var {Function}
      */
-    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width, inline_style] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width','inline_style']).from('_');
+    const [add_class, animate, attr, css, dom_element, each, find, find_all, _for, is_object, map, nth_siblings, off, on, preapend, remove_class, rendered_style, width, remove_from_dom, inline_style] = Hubble.import(['add_class','animate','attr','css','dom_element','each','find','find_all','for','is_object','map','nth_siblings','off','on','preapend','remove_class','rendered_style','width','remove_from_dom','inline_style']).from('_');
 
     /**
      * Default options
@@ -90,7 +90,7 @@
 
         this.resize();
 
-        //if (this.options.autoPlay) this.play();
+        if (this.options.autoPlay) this.play();
     }
 
     /**
@@ -102,11 +102,7 @@
     {
         this.stop();
 
-        if (this._gestures) this.gestures.destroy();
-
-        off(this._righBtn, 'click', this.next, this);
-
-        off(this._leftBtn, 'click', this.previous, this);
+        if (this._gestures) this._gestures.destroy();
 
         off(window, 'resize', this._resizeThrottle, this);
 
@@ -114,7 +110,13 @@
 
         off(this.DOMElementWrapper, 'mouseout', this.unpause, this);
 
-        off(this._dots, 'click', this.next, this);
+        if (this.options.dots) remove_from_dom(this._dotWrap);
+
+        if (this.options.controls) remove_from_dom([this._righBtn, this._leftBtn]);
+
+        let slides = !this.options.groupSlides ? this._slides : find_all('.slide-group > *', this.DOMElementWrapper);
+
+        each(slides, (i, slide) => this.DOMElementWrapper.appendChild(slide));
     }
 
     /**
@@ -587,8 +589,6 @@
     _Slider.prototype._dragSlide = function(moved)
     {
         let x = this._dragX;
-
-        console.log(this._dragBoundryR, this._dragBoundryL);
 
         if (this.options.wrap)
         {

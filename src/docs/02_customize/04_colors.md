@@ -11,8 +11,9 @@ Hubble is supported by an extensive CSS color system for enhanced styling, compo
 *	[Theme colors](#theme-colors)
 	* [Usage](#theme-usage)
 * [Sass](#sass)
-	*	[Base colors](#sass-base-colors)
-	*	[Theme colors](#sass-theme-colors)
+	* [brand-colors](#brand-colors)
+	* [Palette](#pallette)
+	* [Shades](#shades)
 
 ---
 
@@ -33,7 +34,6 @@ Hubble's color system is built using a combination of both CSS variables, Sass v
 | <div class="docs-swatch bg-info"></div>       | `--hb-brand-info`       | `$brand-info`       | Global `brand-info` definition.                            |
 | <div class="docs-swatch bg-warning"></div>    | `--hb-brand-warning`    | `$brand-warning`    | Global `brand-warning` definition.                         |
 | <div class="docs-swatch bg-danger"></div>     | `--hb-brand-danger`     | `$brand-danger`     | Global `brand-danger` definition.                          |
-| <div class="docs-swatch bg-on-primary"></div> | `--hb-brand-on-primary` | `$brand-on-primary` | Used for elements that sit on a `brand-primary` background |
 
 #### Usage<a id='base-usage'></a>
 
@@ -104,7 +104,7 @@ All gray colors are available via Hubble's utility helper classes as `.bg-[name]
 
 ### Theme colors
 
-Hubble comes with a number of theme colors via both CSS ans Sass variables for changing theme colors, customizing components or building out custom UI components. The table below outlines theme colors:
+Hubble comes with a palette of theme colors via both CSS ans Sass variables for changing theme colors, customizing components or building out custom UI components. The table below outlines theme colors:
 
 | Swatch                                                                           | CSS Variable              | Sass Variable   |
 |:--------------------------------------------------------------------------------:|---------------------------|-----------------|
@@ -142,9 +142,9 @@ Hubble comes with a number of theme colors via both CSS ans Sass variables for c
 
 #### Usage<a id='theme-usage'></a>
 
-Theme colors are available through both Sass and CSS Variables. They are not available as a utility classes or palette shades however they are designed primarily for setting a theme.
+Theme colors are available through both Sass and CSS Variables. They are not available as a utility classes or palette shades unless defined as a "brand" color pre-complication
 
-Changing Hubble's core theme color via Sass is super simple however:
+Changing Hubble's core theme color via Sass is super simple:
 
 ```file-path
 `src/scss/_config.scss`
@@ -160,11 +160,11 @@ Alternatively, you can change a theme by simply changing the CSS variable on `:r
 :root
 {
 	--hb-brand-primary: var(--hb-color-emerland);
-	--hb-brand-secondary: var(--hb-color-nephritis);
+	--hb-brand-primary-rgb: var(--hb-color-emerland-rgb);
 }
 ```
 
-Hubble uses a Sass function for gradients on theme colors to style things like `button:hover`, if changing the theme color via CSS you will also need to update these CSS variables:
+Hubble uses a Sass function for gradients on theme colors to style the odd component, if changing the theme color via CSS you will also need to update these CSS variables:
 
 ```css
 :root
@@ -181,40 +181,89 @@ Hubble uses a Sass function for gradients on theme colors to style things like `
 }
 ```
 
+---
+
 ### Sass
 
 All Sass color variable definitions will point to the the real hex color of a given color (rather than a CSS Variable).
 
-Hubble uses Sass functions to generate color shades (`100` -> `900`) for **Base colors** and **Grays** and assign them as CSS Variables on `:root`. However doing this for all theme colors would obviously create a large amount of unnecessary CSS variables. 
+#### Theme colors<a id="sass-theme-colors"></a>
 
-#### Base colors<a id="sass-base-colors"></a>
-
-Base colors are available via Sass variables or the `$colors` Sass-map.
+Hubble defines the following variables for use in a theme. Note that theme colors will point to a CSS variable defined in `:root` rather than the hex.
 
 ```scss
-$colors:
-(
-    'gray':                     $gray,
-    'brand-primary':            $brand-primary,
-    'brand-secondary':          $brand-secondary,
-    'brand-success':            $brand-success,
-    'brand-info':               $brand-info,
-    'brand-warning':            $brand-warning,
-    'brand-danger':             $brand-danger,
-    'brand-on-primary':         $brand-on-primary
-) !default;
+// Contexts
+$brand-primary:                 var(--hb-color-hotpink)     !default;
+$brand-secondary:               var(--hb-color-salmon)      !default;
+$brand-success:                 var(--hb-color-emerland)    !default;
+$brand-info:                    var(--hb-color-skyblue)     !default;
+$brand-warning:                 var(--hb-color-sunflower)   !default;
+$brand-danger:                  var(--hb-color-coralred)    !default;
 ```
 
-Here's an example of how to use a **Base Color** variable in Sass:
-
 ```scss
-.my-element
+.my-element 
 {
-	background-color: $gray;
-	color: map-get($colors, 'gray');
+	background-color: $brand-primary;
 }
-
 ```
+
+#### Palette <a id="sass-theme-colors"></a>
+
+All palette hex colors are available through the following:
+
+```scss
+// Prebuilt colors to choose a theme from
+// Flat colors
+$teal:                          #7de3b5 !default;
+$turquoise:                     #1abc9c !default;
+$greensea:                      #16a085 !default;
+$emerland:                      #2ecc71 !default;
+$nephritis:                     #27ae60 !default;
+$babyblue:                      #b0e2fe !default;
+$peterrive:                     #3498db !default;
+$belizehol:                     #2980b9 !default;
+$amethyst:                      #9b59b6 !default;
+$wisteria:                      #8e44ad !default;
+$wetasphalt:                    #34495e !default;
+$midnightblue:                  #2c3e50 !default;
+$sunflower:                     #f1c40f !default;
+$orange:                        #f39c12 !default;
+$carrot:                        #e67e22 !default;
+$salmon:                        #ed5d81 !default;
+$pumpkin:                       #d35400 !default;
+$alizarin:                      #e74c3c !default;
+$pomegranate:                   #c0392b !default;
+$clouds:                        #ecf0f1 !default;
+$silver:                        #bdc3c7 !default;
+$concrete:                      #95a5a6 !default;
+$asbestos:                      #7f8c8d !default;
+
+// Neons
+$neongreen:                     #2bf877 !default;
+$skyblue:                       #73dcff !default;
+$beetroot:                      #c349ff !default;
+$hotpink:                       #ff2eaa !default;
+$pineapple:                     #fff224 !default;
+$coralred:                      #ff3a24 !default;
+$ash:                           #838c92 !default;
+
+// Basic colors
+$white:                         #FFFFFF !default;
+$black:                         #323232 !default;
+$gray:                          #9597a0 !default;
+```
+
+```scss
+.my-element 
+{
+	background-color: $teal;
+}
+```
+
+#### Shades <a id="sass-theme-shades"></a>
+
+Hubble uses Sass functions to generate color shades (`100` -> `900`) for all palette colors and assign them as CSS Variables on `:root`. However doing this for all theme colors would obviously create a large amount of unnecessary CSS variables. 
 
 You can also access **Base Color** shades (`100` -> `900`) via Sass variables:
 
@@ -222,69 +271,6 @@ You can also access **Base Color** shades (`100` -> `900`) via Sass variables:
 .my-element
 {
 	background-color: $gray-100;
-	color: $gray-600;
 }
 
-```
-
-#### Theme colors<a id="sass-theme-colors"></a>
-
-Theme colors are available via Sass variables or the `$themeColors` Sass-map.
-
-```scss
-$colors:
-(
-    'teal':                     $teal,
-    'turquoise':                $turquoise,
-    'greensea':                 $greensea,
-    'emerland':                 $emerland,
-    'nephritis':                $nephritis,
-    'babyblue':                 $babyblue,
-    'peterrive':                $peterrive,
-    'belizehol':                $belizehol,
-    'amethyst':                 $amethyst,
-    'wisteria':                 $wisteria,
-    'wetasphalt':               $wetasphalt,
-    'midnightblue':             $midnightblue,
-    'sunflower':                $sunflower,
-    'orange':                   $orange,
-    'carrot':                   $carrot,
-    'salmon':                   $salmon,
-    'pumpkin':                  $pumpkin,
-    'alizarin':                 $alizarin,
-    'pomegranate':              $pomegranate,
-    'clouds':                   $clouds,
-    'silver':                   $silver,
-    'concrete':                 $concrete,
-    'asbestos':                 $asbestos,
-
-    // Neons
-    'neongreen':                $neongreen,
-    'skyblue':                  $skyblue,
-    'beetroot':                 $beetroot,
-    'hotpink':                  $hotpink,
-    'pineapple':                $pineapple,
-    'coralred':                 $coralred,
-    'ash':                      $ash,
-) !default;
-```
-
-Here's an example of how to use a **Theme Color** variable in Sass:
-
-```scss
-.my-element
-{
-	background-color: $hotpink;
-	color: map-get($colors, 'hotpink');
-}
-```
-
-You can also access **Theme Color** shades (`100` -> `900`) via Sass variables:
-
-```scss
-.my-element
-{
-	background-color: $hotpink-100;
-	color: $hotpink-900;
-}
 ```
