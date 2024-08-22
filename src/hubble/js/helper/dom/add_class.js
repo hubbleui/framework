@@ -6,37 +6,40 @@
  * @param  {array|string} className  Class name(s) to add
  */
 _.prototype.add_class = function(DOMElement, className)
-{
+{    
     if (this.is_array(DOMElement))
     {
-        this.each(DOMElement, function(i, _DOMElement)
-        {
-            this.add_class(_DOMElement, className);
-
-        }, this);
+        this.each(DOMElement, (i, _DOMElement) =>  this.add_class(_DOMElement, className));
 
         return this;
     }
 
-    if (this.is_string(className) && className.includes(','))
-    {
-        this.each(className.split(','), function(i, _className)
-        {
-            DOMElement.classList.add(_className.trim());
-        });
-
-        return;
-    }
-
     if (this.is_array(className))
     {
-        this.each(className, function(i, _className)
-        {
-            DOMElement.classList.add(_className);
-        });
-
-        return;
+        this.each(className, (i, _className) =>  this.add_class(DOMElement, _className));
+    
+        return this;
     }
 
+    if (className.includes(','))
+    {
+        this.each(this.array_filter(className.split(',')), (i, _className) => this.add_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    if (className.includes('.'))
+    {
+        this.each(this.array_filter(className.split('.')), (i, _className) => this.add_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    className = className.trim();
+
+    if (className[0] === '.') className = className.slice(1);
+
     DOMElement.classList.add(className);
+
+    return this;
 }

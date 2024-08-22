@@ -229,16 +229,16 @@ input.unstyled
     // Danger state
     &.danger
     {
-        --hb-input-color-label: var(--hb-brand-danger);
-        --hb-input-border-color: var(--hb-brand-danger);
-        --hb-input-box-shadow: inset 0 0 0 1px var(--hb-brand-danger);
+        --hb-input-color-label: var(--hb-theme-danger);
+        --hb-input-border-color: var(--hb-theme-danger);
+        --hb-input-box-shadow: inset 0 0 0 1px var(--hb-theme-danger);
     }
     // Warning state
     &.warning
     {
-        --hb-input-color-label: var(--hb-brand-warning);
-        --hb-input-border-color: var(--hb-brand-warning);
-        --hb-input-box-shadow: inset 0 0 0 1px var(--hb-brand-warning);
+        --hb-input-color-label: var(--hb-theme-warning);
+        --hb-input-border-color: var(--hb-theme-warning);
+        --hb-input-box-shadow: inset 0 0 0 1px var(--hb-theme-warning);
     }
 
     // Disabled state
@@ -299,12 +299,12 @@ input.unstyled
         // Danger state
         &.danger:after
         {
-            background-color: var(--hb-brand-danger);
+            background-color: var(--hb-theme-danger);
         }
         // Warning state
         &.warning
         {
-            background-color: var(--hb-brand-warning);
+            background-color: var(--hb-theme-warning);
         }
     }
 }
@@ -323,11 +323,11 @@ input.unstyled
 }
 .help-danger
 {
-    color: var(--hb-brand-danger);
+    color: var(--hb-theme-danger);
 }
 .help-warning
 {
-    color: var(--hb-brand-warning);
+    color: var(--hb-theme-warning);
 }
 .form-field.danger ~ .help-danger,
 .form-field.warning ~ .help-warning

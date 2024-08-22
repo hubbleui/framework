@@ -1,38 +1,203 @@
-.drawer
+.drawer-container
 {
-	position: fixed;
-	top: 0;
-	left: 0;
+	// Drawer
+	--hb-drawer-bg: #{$drawer-bg};
+	--hb-drawer-transition: #{$drawer-transition};
+	--hb-drawer-width: #{$drawer-width};
+	--hb-drawer-width-peekable: #{$drawer-width-peekable};
+
+	// Overlay
+	--hb-drawer-overlay-bg: #{$drawer-overlay-bg};
+	--hb-drawer-overlay-bg-dark: #{$drawer-overlay-bg-dark};
+	--hb-drawer-overlay-opacity: #{$drawer-overlay-opacity};
+	--hb-drawer-overlay-transition: #{$drawer-overlay-transition};
+
 	height: 100%;
-	width: 80%;
-	max-width: $drawer-width;
-	background-color: $body-bg;
-	visibility: hidden;
-	overflow: hidden;
-	transform: translateX(-$drawer-width);
-	z-index: var(--hb-zindex-drawer);
-	@include raised(3);
+    width: 100%;
+
+	.drawer-wrap
+	{
+		top: var(--hb-drawer-top);
+		z-index: var(--hb-zindex-drawer);
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: flex-end;
+	    overflow: hidden;
+	    overflow-y: auto;
+	    transition: transform var(--hb-drawer-transition);
+	    background-color: var(--hb-drawer-bg);
+
+	    &.disabled
+	    {
+	    	display: none;
+	    }
+	    
+		.drawer-dialog
+		{
+			width: 100%;
+			height: 100%;
+		}
+	}
+	.drawer-body-wrap
+	{
+		transition: margin var(--hb-drawer-transition);
+		margin: 0;
+	}
+	.drawer-header
+	{
+		border-bottom: 1px solid var(--hb-gray-200);
+	}
+
+	// Shared positions
+	&.drawer-right .drawer-wrap,
+	&.drawer-left .drawer-wrap
+	{
+		height: 100%;
+		top: 0;
+		width: var(--hb-drawer-width);
+	}
+	&.drawer-top .drawer-wrap,
+	&.drawer-bottom .drawer-wrap
+	{
+		width: 100%;
+		right: 0;
+		left: 0;
+		height: auto;
+	}
+
+	&.drawer-left
+	{
+		.drawer-wrap
+		{
+			--hb-peekable-size: #{calc( (var(--hb-drawer-width) - 150px) * -1)};
+			transform: translate3d(-105%, 0px, 0px);
+			left: 0;
+			box-shadow: 4px 0px 7px -1px rgb(0 0 0 / 30%);
+		}
+		&.push-body .drawer-wrap
+		{
+			border-right: 1px solid var(--hb-gray-200);
+		}
+		&.expanded .drawer-body-wrap
+		{
+			margin-left: var(--hb-drawer-width);
+		}
+	}
 	&.drawer-right
 	{
-		left: initial;
-		right: 0;
-		transform: translateX($drawer-width);
+		.drawer-wrap
+		{
+			transform: translate3d(105%, 0px, 0px);
+			right: 0;
+			box-shadow: -4px 0px 7px -1px rgb(0 0 0 / 30%);
+		}
+		&.push-body .drawer-wrap
+		{
+			border-left: 1px solid var(--hb-gray-200);
+		}
+		&.expanded .drawer-body-wrap
+		{
+			margin-right: var(--hb-drawer-width);
+		}
 	}
-}
-.drawer-overlay
-{
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(35, 47, 52, .32);
-	z-index: var(--hb-zindex-drawer-overlay);
-	opacity: 0;
-	visibility: hidden;
-	transition: opacity 0.3s ease;
-	&.dark
+	&.drawer-top
 	{
-		background-color: rgba(#000, 0.8);
+		.drawer-wrap
+		{
+			transform: translate3d(0px, -105%, 0px);
+			top: 0;
+			box-shadow: 0px 4px 7px -1px rgb(0 0 0 / 30%);
+		}
+		&.push-body .drawer-wrap
+		{
+			border-bottom: 1px solid var(--hb-gray-200);
+			position: absolute;
+			top: 0;
+		}
+	}
+	&.drawer-bottom 
+	{
+		.drawer-wrap
+		{
+			transform: translate3d(0px, 105%, 0px);
+			bottom: 0;
+			box-shadow: 0px -4px 7px -1px rgb(0 0 0 / 30%);
+		}
+		&.push-body .drawer-wrap
+		{
+			border-top: 1px solid var(--hb-gray-200);
+			position: relative;
+			bottom: 0;
+		}
+	}
+	> .drawer-overlay
+	{
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		z-index: var(--hb-zindex-drawer);
+		transition: var(--hb-drawer-overlay-transition);
+		opacity: 0;
+		visibility: hidden;
+	}
+	&.overlay-dark .drawer-overlay
+	{
+		background-color: var(--hb-drawer-overlay-bg-dark);
+	}
+	&.overlay-light .drawer-overlay
+	{
+		background-color: var(--hb-drawer-overlay-bg);
+	}
+
+	&.expanded
+	{
+		.drawer-wrap
+		{
+			transform: translate3d(0px, 0px, 0px);
+		}
+		.drawer-overlay
+		{
+			visibility: visible;
+			opacity: var(--hb-drawer-overlay-opacity);
+		}
+	}
+	&.closing
+	{
+		.drawer-overlay
+		{
+			visibility: visible;
+		}
+	}
+	&.closed:not(.push-body)
+	{
+		position: absolute;
+	  	width: 1px;
+	  	height: 1px;
+	  	padding: 0;
+	  	margin: -1px;
+	  	overflow: hidden;
+	  	clip: rect(0,0,0,0);
+	  	border: 0;
+	  	visibility: hidden;
+	}
+	&.push-body
+	{
+		&.closed .drawer-wrap
+		{
+			display: none;
+		}
+		.drawer-wrap
+		{
+			box-shadow: none;
+		}
+		.drawer-overlay
+		{
+			display: none;
+		}
 	}
 }

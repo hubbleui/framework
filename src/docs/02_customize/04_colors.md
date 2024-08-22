@@ -4,20 +4,20 @@ Hubble is supported by an extensive CSS color system for enhanced styling, compo
 
 ---
 
-*	[Base colors](#base-colors)
-	* [Usage](#base-usage)
+*	[Theme colors](#theme-colors)
+	* [Usage](#theme-usage)
 *	[Grays](#grays)
 	* [Usage](#gray-usage)
 *	[Theme colors](#theme-colors)
 	* [Usage](#theme-usage)
 * [Sass](#sass)
-	* [brand-colors](#brand-colors)
+	* [theme-colors](#theme-colors)
 	* [Palette](#pallette)
 	* [Shades](#shades)
 
 ---
 
-### Base colors
+### Theme colors
 
 Hubble's color system is built using a combination of both CSS variables, Sass variables and Sass functions. The table below outlines the core color palette used by Hubble:
 
@@ -28,16 +28,16 @@ Hubble's color system is built using a combination of both CSS variables, Sass v
 | <div class="docs-swatch bg-white"></div>      | `--hb-white`            | `$white`            | Global `white` definition.                                 |
 | <div class="docs-swatch bg-black"></div>      | `--hb-black`            | `$black`            | Global `black` definition.                                 |
 | <div class="docs-swatch bg-gray"></div>       | `--hb-gray`             | `$gray`             | Global `gray` definition.                                  |
-| <div class="docs-swatch bg-primary"></div>    | `--hb-brand-primary`    | `$brand-primary`    | Global `brand-primary` definition.                         |
-| <div class="docs-swatch bg-secondary"></div>  | `--hb-brand-secondary`  | `$brand-secondary`  | Global `brand-secondary` definition.                       |
-| <div class="docs-swatch bg-success"></div>    | `--hb-brand-success`    | `$brand-success`    | Global `brand-success` definition.                         |
-| <div class="docs-swatch bg-info"></div>       | `--hb-brand-info`       | `$brand-info`       | Global `brand-info` definition.                            |
-| <div class="docs-swatch bg-warning"></div>    | `--hb-brand-warning`    | `$brand-warning`    | Global `brand-warning` definition.                         |
-| <div class="docs-swatch bg-danger"></div>     | `--hb-brand-danger`     | `$brand-danger`     | Global `brand-danger` definition.                          |
+| <div class="docs-swatch bg-primary"></div>    | `--hb-theme-primary`    | `$theme-primary`    | Global `theme-primary` definition.                         |
+| <div class="docs-swatch bg-secondary"></div>  | `--hb-theme-secondary`  | `$theme-secondary`  | Global `theme-secondary` definition.                       |
+| <div class="docs-swatch bg-success"></div>    | `--hb-theme-success`    | `$theme-success`    | Global `theme-success` definition.                         |
+| <div class="docs-swatch bg-info"></div>       | `--hb-theme-info`       | `$theme-info`       | Global `theme-info` definition.                            |
+| <div class="docs-swatch bg-warning"></div>    | `--hb-theme-warning`    | `$theme-warning`    | Global `theme-warning` definition.                         |
+| <div class="docs-swatch bg-danger"></div>     | `--hb-theme-danger`     | `$theme-danger`     | Global `theme-danger` definition.                          |
 
-#### Usage<a id='base-usage'></a>
+#### Usage<a id='theme-usage'></a>
 
-All base colors are available via Hubble's utility helper classes as `.bg-[name]` and `color-[name]` without the word `brand`.
+All theme colors are available via Hubble's utility helper classes as `.bg-[name]` and `color-[name]` without the word `theme`.
 
 <div class="code-content-example">
 	<div class="flex-row align-cols-center">
@@ -48,18 +48,17 @@ All base colors are available via Hubble's utility helper classes as `.bg-[name]
 </div>
 
 ```html
-<div class="paper paper-rounded raised-1 col col-3 bg-primary pad-20 text-center">
-	<p class="color-white text-bolder no-margin">Hello World!</p>
+<div class="paper paper-rounded raised-1 bg-primary color-white">
+	<p class="text-bolder no-margin">Hello World!</p>
 </div>
 ```
 
-If using any of the base colors pre CSS compilation, using the Sass variable will output actual #hex color.
+If using any of the theme colors pre compilation, using the Sass variable will output a reference to the CSS Variable:
 
 ```scss
 .my-element
 {
-	color: $brand-primary;
-	background var(--hb-brand-primary);
+	color: $theme-primary;
 }
 ```
 
@@ -142,7 +141,7 @@ Hubble comes with a palette of theme colors via both CSS ans Sass variables for 
 
 #### Usage<a id='theme-usage'></a>
 
-Theme colors are available through both Sass and CSS Variables. They are not available as a utility classes or palette shades unless defined as a "brand" color pre-complication
+Theme colors are available through both Sass and CSS Variables. They are not available as a utility classes or palette shades unless defined as a "theme" color pre-complication
 
 Changing Hubble's core theme color via Sass is super simple:
 
@@ -150,8 +149,8 @@ Changing Hubble's core theme color via Sass is super simple:
 `src/scss/_config.scss`
 ```
 ```sass
-$brand-primary: $emerland;
-$brand-secondary: $nephritis;
+$theme-primary: $emerland;
+$theme-secondary: $nephritis;
 ```
 
 Alternatively, you can change a theme by simply changing the CSS variable on `:root`:
@@ -159,8 +158,8 @@ Alternatively, you can change a theme by simply changing the CSS variable on `:r
 ```css
 :root
 {
-	--hb-brand-primary: var(--hb-color-emerland);
-	--hb-brand-primary-rgb: var(--hb-color-emerland-rgb);
+	--hb-theme-primary: var(--hb-color-emerland);
+	--hb-theme-primary-rgb: var(--hb-color-emerland-rgb);
 }
 ```
 
@@ -169,15 +168,15 @@ Hubble uses a Sass function for gradients on theme colors to style the odd compo
 ```css
 :root
 {
-	--hb-brand-primary-100: #ffeaf7;
-	--hb-brand-primary-200: #ffd5ee;
-	--hb-brand-primary-300: #ff97d5;
-	--hb-brand-primary-400: #ff77c8;
-	--hb-brand-primary-500: #f22ca2;
-	--hb-brand-primary-600: #cc2588;
-	--hb-brand-primary-700: #bf2380;
-	--hb-brand-primary-800: #b32077;
-	--hb-brand-primary-900: #991c66;
+	--hb-theme-primary-100: #ffeaf7;
+	--hb-theme-primary-200: #ffd5ee;
+	--hb-theme-primary-300: #ff97d5;
+	--hb-theme-primary-400: #ff77c8;
+	--hb-theme-primary-500: #f22ca2;
+	--hb-theme-primary-600: #cc2588;
+	--hb-theme-primary-700: #bf2380;
+	--hb-theme-primary-800: #b32077;
+	--hb-theme-primary-900: #991c66;
 }
 ```
 
@@ -193,18 +192,18 @@ Hubble defines the following variables for use in a theme. Note that theme color
 
 ```scss
 // Contexts
-$brand-primary:                 var(--hb-color-hotpink)     !default;
-$brand-secondary:               var(--hb-color-salmon)      !default;
-$brand-success:                 var(--hb-color-emerland)    !default;
-$brand-info:                    var(--hb-color-skyblue)     !default;
-$brand-warning:                 var(--hb-color-sunflower)   !default;
-$brand-danger:                  var(--hb-color-coralred)    !default;
+$theme-primary:                 var(--hb-color-hotpink)     !default;
+$theme-secondary:               var(--hb-color-salmon)      !default;
+$theme-success:                 var(--hb-color-emerland)    !default;
+$theme-info:                    var(--hb-color-skyblue)     !default;
+$theme-warning:                 var(--hb-color-sunflower)   !default;
+$theme-danger:                  var(--hb-color-coralred)    !default;
 ```
 
 ```scss
 .my-element 
 {
-	background-color: $brand-primary;
+	background-color: $theme-primary;
 }
 ```
 

@@ -169,6 +169,8 @@
                 context  = component;
                 
                 component = false;
+
+                globalRefresh = true;
             }
 
             // refresh('module')
@@ -192,6 +194,8 @@
         }, this);
 
         trigger_event(window, `Hubble:dom:refresh`, { context: context});
+
+        if (globalRefresh) this._dispatchReady();
     }
 
     /**

@@ -785,7 +785,7 @@ $table-head-color:              var(--hb-gray-900) !default;
 $table-head-weight:             $text-bold !default;
 $table-caption-color:           var(--hb-gray) !default;
 $table-selected-color:          var(--hb-white) !default;
-$table-selected-bg:             var(--hb-brand-info) !default;
+$table-selected-bg:             var(--hb-theme-info) !default;
 ```
 
 ```file-path
@@ -806,7 +806,7 @@ src/scss/components/table.scss
     --hb-table-caption-color: var(--hb-gray);
     --hb-table-bg-alternate: rgba(0, 0, 0, 0.08);
     --hb-table-selected-color: var(--hb-white);
-    --hb-table-selected-bg: var(--hb-brand-info);
+    --hb-table-selected-bg: var(--hb-theme-info);
 }
 ```
 

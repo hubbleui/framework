@@ -102,14 +102,14 @@ _.prototype.__normaliseListenerArgs = function(DOMElement, args)
  * @param  {closure} handler    Callback event
  * @param  {bool}    data Use capture (optional) (defaul false)
  */
-_.prototype.__addListener = function(DOMElement, eventName, handler, thisArg, args, pushFirst)
+_.prototype.__addListener = function(element, eventName, callback, thisArg, args, pushFirst)
 {
     // Apply GUID to element and callback
-    DOMElement.guid = DOMElement.guid || (DOMElement.guid = this._guidgen());
-    handler.guid    = handler.guid || (handler.guid = this._guidgen());
+    element.guid = element.guid || (element.guid = this._guidgen());
+    callback.guid    = callback.guid || (callback.guid = this._guidgen());
 
     let hasHandler = true;
-    let guid       = DOMElement.guid;
+    let guid       = element.guid;
 
     // Make sure an array for event type exists
     if (!this._events[guid])
@@ -127,18 +127,13 @@ _.prototype.__addListener = function(DOMElement, eventName, handler, thisArg, ar
     }
 
     // Push the details to the events object
-    const handlerObj = {
-        callback : handler,
-        thisArg  : thisArg,
-        args     : args,
-        element  : DOMElement,
-    };
+    const handlerObj = {callback, thisArg, args, element};
     
     pushFirst ? this._events[guid][eventName].unshift(handlerObj) : this._events[guid][eventName].push(handlerObj);
 
     if (!hasHandler)
     {
-        eventName === 'touchstart' || eventName === 'mousedown' ? DOMElement.addEventListener(eventName, this.__event_dispatcher, { passive: true }) : DOMElement.addEventListener(eventName, this.__event_dispatcher);
+        element.addEventListener(eventName, this.__event_dispatcher);
     }
 }
 
@@ -158,17 +153,22 @@ _.prototype.__event_dispatcher = function(e)
 
     if (!guid) return;
 
-    let _this = Hubble._();
+    let callbacks =  _THIS._events[guid][e.type] || [];
 
-    let callbacks = _this.array_get(`${guid}.${e.type}`, _this._events) || [];
-
-    _this.each(callbacks, function(i, handler)
+    _THIS.each(callbacks, (i, handler) =>
     {        
-        if (handler && handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]) === false)
+        if (handler)
         {
-            e.preventDefault();
+            let handled = handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]);
 
-            e.stopPropagation();
+            if (handled === false || handled === null)
+            {
+                e.preventDefault();
+
+                e.stopPropagation();
+
+                if (handled === null) return false;
+            }
         }
     });
 }

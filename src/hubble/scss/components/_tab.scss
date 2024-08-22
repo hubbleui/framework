@@ -17,20 +17,21 @@
     height: 41px;
     border-bottom: 1px solid var(--hb-tab-nav-divider-color);
     list-style: none;
+    display: flex;
+
     > li
     {
         display: inline-block;
-        float: left;
-        padding-right: 20px;
         margin: 0;
+
+        
 
         &:last-of-type
         {
             padding-right:0;
         }
-        a
+        > *:not(button)
         {
-            position: relative;
             text-decoration: none;
             display: block;
             text-align: center;
@@ -93,14 +94,11 @@
     &.tab-centered
     {
         text-align: center;
-        li
-        {
-            float: none;
-        }
+        justify-content: center;
     }
 }
 // Panels
-.tab-panels-wrap .tab-panel
+.tab-panels .tab-panel
 {
     --hb-tab-transition: #{$tab-transition};
     visibility: hidden;
@@ -109,7 +107,7 @@
     overflow: hidden;
     transition: var(--hb-tab-transition);
 }
-.tab-panels-wrap .tab-panel.active
+.tab-panels .tab-panel.active
 {
     visibility: visible;
     opacity: 1;

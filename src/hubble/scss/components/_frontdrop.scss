@@ -1,147 +1,200 @@
+.frontdrop-wrap
+{
+	--hb-frontdrop-title-size: #{$frontdrop-title-size};
+	--hb-frontdrop-transition: #{$frontdrop-transition};
+	--hb-frontdrop-shadow: #{$frontdrop-shadow};
+	--hb-frontdrop-top: #{$frontdrop-top};
+	--hb-frontdrop-edge-btm: #{calc(100% - 190px)};
+	top: var(--hb-frontdrop-top);
+	z-index: var(--hb-zindex-frontdrop);
+	position: fixed;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+    overflow: hidden;
+
+	.frontdrop-dialog
+	{
+		width: 100%;
+		height: 100%;
+		padding-top: 30px;
+
+		&:after
+		{
+			z-index: var(--hb-zindex-frontdrop);
+			content: "";
+		    width: 100%;
+		    height: 60px;
+		    position: absolute;
+		    top: 0;
+		    cursor: move;
+		    cursor: -webkit-grab;
+		    cursor: grab;
+		}
+
+	    .card
+		{
+			--hb-card-box-shadow: var(--hb-frontdrop-shadow);
+			--hb-card-box-shadow-hover:var(--hb-frontdrop-shadow);
+			--hb-card-spacer-x: 0;
+			height: calc(100% - var(--hb-frontdrop-top));
+			flex-direction: column;
+    		flex-wrap: nowrap;
+			border-radius: 0;
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+			padding-bottom: 55px;
+
+			&:before
+			{
+				content: "";
+				width: 30px;
+			    height: 6px;
+			    background-color: rgb(224, 224, 224);
+			    border-radius: 3px;
+			    position: absolute;
+			    top: 8px;
+			    left: calc(50% - 15px);
+			}
+
+			> *
+			{
+				flex: none;
+			}
+			.card-block
+			{
+				overflow-y: auto;
+    			height: 100%;
+			}
+
+			.card-header
+			{
+				padding: calc(var(--hb-card-spacer-y) * 2) 0 var(--hb-card-spacer-y) 0;
+				border-top-left-radius: 10px;
+    			border-top-right-radius: 10px;
+
+				.card-title
+				{
+					font-size: var(--hb-frontdrop-title-size);
+				}
+			}
+
+		}
+		.card-footer
+		{
+			position: fixed;
+		    bottom: var(--hb-frontdrop-top);
+		    left: 0;
+		    right: 0;
+		    margin: 0 auto;
+		    text-align: center;
+		}
+	}
+	&.cursor-down .frontdrop-dialog:after
+	{ 
+		cursor: -webkit-grabbing;
+	    cursor: grabbing;
+	}
+	&.with-confirmation .card .card-block
+	{
+		padding-bottom: 60px;
+	}
+}
+
 .frontdrop-overlay
 {
+	--hb-frontdrop-overlay-bg: #{$frontdrop-overlay-bg};
+	--hb-frontdrop-overlay-bg-dark: #{$frontdrop-overlay-bg-dark};
+	--hb-frontdrop-overlay-opacity: #{$frontdrop-overlay-opacity};
+	--hb-frontdrop-overlay-transition: #{$frontdrop-overlay-transition};
+
 	position: fixed;
 	width: 100%;
 	height: 100%;
-	opacity: 0;
-	visibility: hidden;
 	top: 0;
 	left: 0;
 	z-index: var(--hb-zindex-frontdrop);
-	transition: opacity .3s var(--hb-ease);
+
+	&.dark
+	{
+		background-color: var(--hb-frontdrop-overlay-bg-dark);
+	}
+	&.light
+	{
+		background-color: var(--hb-frontdrop-overlay-bg);
+	}
 }
-.frontdrop-overlay.dark
+
+// Default state
+.frontdrop-overlay
 {
-	background-color: rgba(#000, 0.8);
-}
-.frontdrop-overlay.light
-{
-	background-color: rgba(35, 47, 52, .32);
+	transition: var(--hb-frontdrop-overlay-transition);
+	opacity: 0;
+	visibility: hidden;
 }
 .frontdrop-wrap
 {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	visibility: hidden;
-	overflow: hidden;
-	z-index: var(--hb-zindex-frontdrop);
-}
-.frontdrop-dialog
-{
-	margin-top: 50px;
-	padding-top: 20px;
-	overflow: hidden;
-	.btn-confirm
-	{
-		position: fixed;
-		bottom: 30px;
-		left: 0;
-		right: 0;
-		margin: 0 auto;
-	}
-}
-.frontdrop-header
-{
-	position: sticky;
-	top: 0;
-	height: 80px;
-	width: 100%;
-	background: #fff;
-	border-top-left-radius: 30px;
-	border-top-right-radius: 30px;
-	padding: 40px 0 17px 0;
-	box-shadow: rgb(0 0 0 / 20%) 0px -5px 5px -3px, rgb(0 0 0 / 14%) 0px -8px 10px -1px, rgb(0 0 0 / 12%) 0px -6px 14px -6px;
-	.btn-close
-	{
-		position: absolute;
-    	top: 15px;
-    	left: 15px;
-	}
-	.frontdrop-title
-	{
-		text-align: center;
-		margin: 0;
-		padding: 0;
-		font-size: 1.8rem;
-		line-height: 1.8rem;
-		white-space: nowrap;
-		font-weight: $text-bold;
-	}
-	&:before
-	{
-		content: "";
-		width: 40px;
-		height: 3px;
-		background-color: var(--hb-gray-300);
-		border-radius: 5px;
-		position: absolute;
-		top: 20px;
-		left: 0;
-		right: 0;
-		margin: 0 auto;
-	}
-	&:after
-	{
-		content: "";
-		width: calc(100vw - 40px);
-		height: 1px;
-		background-color: var(--hb-gray-300);
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		margin: 0 auto;
-	}
-}
-.frontdrop-body
-{
-	height: calc(100vh - 150px);
-	overflow-y: auto;
-	background-color: #fff;
-}
-.frontdrop-dialog
-{
-	width: 100%;
+	transition: var(--hb-frontdrop-transition);
 	opacity: 0;
-	transform: translateY(50%);
-	transition: opacity .3s var(--hb-ease), transform .15s var(--hb-ease);
-	margin-left: auto;
-    margin-right: auto;	
+	transform: translateY(100%);
 }
 
-// Active
-.frontdrop-overlay.active
+// Open
+.frontdrop-overlay.expanded
 {
-	visibility: visible;
 	opacity: 1;
-}
-.frontdrop-overlay.active + .frontdrop-wrap
-{
 	visibility: visible;
 }
-.frontdrop-overlay.active + .frontdrop-wrap .frontdrop-dialog
+.frontdrop-wrap.expanded
+{
+	opacity: 1;
+	transform: translateY(0);
+}
+.frontdrop-wrap.collapsible.expanded
 {
 	opacity: 1;
 	transform: translateY(0);
 }
 
-// Transition-off
-.frontdrop-overlay.transition-off
-{
-	visibility: visible;
-	opacity: 0;
-}
-.frontdrop-overlay.transition-off + .frontdrop-wrap
-{
-	visibility: visible;
-}
-.frontdrop-overlay.transition-off + .frontdrop-wrap .frontdrop-dialog
+// Closing
+.frontdrop-overlay.closing
 {
 	opacity: 0;
-	transform: translateY(50%);
+}
+.frontdrop-wrap.closing
+{
+	opacity: 0;
+	transform: translateY(100%);
+}
+.frontdrop-wrap.collapsible.closing
+{
+	opacity: 1;
+	transform: translateY(var(--hb-frontdrop-edge-btm));
+}
+
+// Closed
+.frontdrop-overlay.closed
+{
+	opacity: 0;
+	visibility: hidden;
+}
+.frontdrop-wrap.closed
+{
+	transform: translateY(100%);
+	visibility: hidden;
+	.card .card-block
+	{
+		overflow-y: unset;
+	}
+}
+.frontdrop-wrap.collapsible.closed
+{
+	visibility: visible;
+	opacity: 1;
+	transform: translateY(var(--hb-frontdrop-edge-btm));
 }

@@ -15,16 +15,6 @@
     const [find, add_class, on, animate_css, closest, coordinates, css, has_class, height, in_array, in_dom, inline_style, preapend, remove_class, off, rendered_style, traverse_up, trigger_event, width, extend] = Hubble.import(['find','add_class','on','animate_css','closest','coordinates','css','has_class','height','in_array','in_dom','inline_style','preapend','remove_class','off','rendered_style','traverse_up','trigger_event','width','extend']).from('_');
 
     /**
-     * Ripple animation time.
-     * 
-     * Note 1. this is set in CSS
-     * Note 2. This value is actually half of total animation time as the the ripple scales (2.5)
-     * 
-     * @var {int}
-     */
-    const RPL_AN_TIME = 400;
-
-    /**
      * Wrappers that need "position:relative" to hide overflow.
      * 
      * @var {array}
@@ -44,6 +34,13 @@
      * @var {Map}
      */
     const RIPPLING = new Map();
+
+    /**
+     * Currently clicking
+     * 
+     * @var {Map}
+     */
+    var CLICKING;
 
     /**
      * Selectors
@@ -151,8 +148,6 @@
      */
     Ripple.prototype._startRipple  = function(e, wrapper)
     {
-        e = e || window.event;
-
         CLICKED = e.target;
 
         const _this = this;

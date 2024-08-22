@@ -19,17 +19,27 @@
     var POP_HANDLERS = new Map;
 
     /**
-     * Popovers
+     * Popover
      *
      * @author    {Joe J. Howard}
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    const Popovers = function()
+    const Popover = function()
     {
+        this.super('.js-popover');
+
         this._windowClick = false;
 
-        this.super('.js-popover');
+        this.defaultProps = 
+        {
+            direction: 'top',
+            animation: 'pop',
+            theme:     'light',
+            title:     '',
+            content:   '',
+            event:     'click',
+        };
     }
 
     /**
@@ -38,7 +48,29 @@
      * @access {private}
      * @param  {DOMElement} trigger Click/hover trigger
      */
-    Popovers.prototype.bind = function(trigger)
+    Popover.prototype.template = function(props)
+    {
+
+    }
+
+    /**
+     * Initialize the handlers on a trigger
+     *
+     * @access {private}
+     * @param  {DOMElement} trigger Click/hover trigger
+     */
+    Popover.prototype._build = function(options)
+    {
+
+    }
+
+    /**
+     * Initialize the handlers on a trigger
+     *
+     * @access {private}
+     * @param  {DOMElement} trigger Click/hover trigger
+     */
+    Popover.prototype.bind = function(trigger)
     {
         if (!this._windowClick)
         {
@@ -96,7 +128,7 @@
      * @param {trigger} node
      * @access {private}
      */
-    Popovers.prototype.unbind = function(trigger)
+    Popover.prototype.unbind = function(trigger)
     {
         if (this._windowClick)
         {
@@ -128,7 +160,7 @@
      *
      * @access {private}
      */
-    Popovers.prototype._hoverEnter = function(e, trigger)
+    Popover.prototype._hoverEnter = function(e, trigger)
     {
         if (has_class(trigger, 'popped')) return;
 
@@ -148,7 +180,7 @@
      *
      * @access {private}
      */
-    Popovers.prototype._hoverLeave = function(e, trigger)
+    Popover.prototype._hoverLeave = function(e, trigger)
     {
         clearTimeout(HOVER_TIMER);
 
@@ -175,7 +207,7 @@
      *
      * @access {private}
      */
-    Popovers.prototype._hoverPop = function(e, pop)
+    Popover.prototype._hoverPop = function(e, pop)
     {
         clearTimeout(HOVER_TIMER);
 
@@ -187,7 +219,7 @@
      *
      * @access {private}
      */
-    Popovers.prototype._windowResize = function()
+    Popover.prototype._windowResize = function()
     {
         for (let [trigger, handler] of POP_HANDLERS)
         {
@@ -202,7 +234,7 @@
      * @param {event|null} e JavaScript click event
      * @access {private}
      */
-    Popovers.prototype._killPop = function(trigger)
+    Popover.prototype._killPop = function(trigger)
     {            
         let handler = POP_HANDLERS.get(trigger);
 
@@ -217,7 +249,7 @@
      * @param {event|null} e JavaScript click event
      * @access {private}
      */
-    Popovers.prototype._clickHandler = function(e, trigger)
+    Popover.prototype._clickHandler = function(e, trigger)
     {
         e = e || window.event;
 
@@ -248,7 +280,7 @@
      *
      * @access {private}
      */
-    Popovers.prototype._windowClickHandler = function(e)
+    Popover.prototype._windowClickHandler = function(e)
     {        
         let clicked = e.target;
 
@@ -280,7 +312,7 @@
      *
      * @access {private}
      */
-    Popovers.prototype._removeAll = function(exception)
+    Popover.prototype._removeAll = function(exception)
     {        
         for (let [trigger, handler] of POP_HANDLERS)
         {
@@ -294,6 +326,6 @@
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('Popovers', extend(Component, Popovers));
+    Hubble.dom().register('Popover', extend(Component, Popover));
 
 }());

@@ -263,7 +263,7 @@ src/scss/_config.scss
 ```sass
 $msg-bg:                        var(--hb-black) !default;
 $msg-color:                     var(--hb-white) !default;
-$msg-icon-color:                var(--hb-brand-primary) !default;
+$msg-icon-color:                var(--hb-theme-primary) !default;
 $msg-spacer-y:                  3rem !default;
 $msg-spacer-x:                  2rem !default;
 $msg-font-size:                 1.4rem !default;

@@ -5,8 +5,8 @@
  */
 var _options =
 {
-    optipng        : false,
-    pngquant       : true,
+    optipng        : true,
+    pngquant       : false,
     zopflipng      : true,
     jpegRecompress : false,
     mozjpeg        : true,

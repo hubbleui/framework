@@ -17,13 +17,13 @@ Tabs are super simple to setup and require very little custom markup. Below are 
     *The `.js-` class is for JavaScript functionality, while the other is for CSS styling.*
 2. Add the `data-tab=[panel-id]` attribute to clickable links
     *The `data-tab` attribute should point to the `id` of the respective tab panel*
-3. Wrap panels in a parent `.tab-panels-wrap` `.js-tab-panels-wrap` element.
+3. Wrap panels in a parent `.tab-panels` `.js-tab-panels` element.
 4. Give each panel the `.tab-panel` class-name and its respective `id`
 
 Here's a basic example
 
 <div class="code-content-example">
-    <ul class="tab-nav js-tab-nav">
+    <ul class="tab-nav js-tab-nav" data-panels="">
         <li>
             <a href="#" class="active" data-tab="panel-1">Tab 1</a>
         </li>
@@ -34,7 +34,7 @@ Here's a basic example
             <a href="#" data-tab="panel-3">Tab 3</a>
         </li>
     </ul>
-    <div class="tab-panels-wrap js-tab-panels-wrap">
+    <div class="tab-panels js-tab-panels">
         <div class="tab-panel active" data-tab-panel="panel-1" id="tab-1">
             <div class="pad-20">
                 <h4>Panel 1</h4>
@@ -63,7 +63,7 @@ Here's a basic example
     <li><a href="#" data-tab="panel-3">Tab 3</a></li>
 </ul>
 
-<div class="tab-panels-wrap js-tab-panels-wrap">
+<div class="tab-panels js-tab-panels">
     <div class="tab-panel active" data-tab-panel="panel-1">
         ...
     </div>
@@ -146,38 +146,38 @@ Here is an example Hubble's `.btn` for the navigation:
 
 <div class="code-content-example">
     <div class="flex-row-fluid col-gaps-xs align-cols-center js-tab-nav" data-active-class="btn-primary">
-        <button class="btn active btn-primary" data-tab="panel-1">Tab 1</button>
-        <button class="btn" data-tab="panel-2">Tab 2</button>
-        <button class="btn" data-tab="panel-2">Tab 2</button>
+        <button type="button" class="btn btn-primary" data-tab="panel-1">Tab 1</button>
+        <button type="button" class="btn" data-tab="panel-2">Tab 2</button>
+        <button type="button" class="btn" data-tab="panel-3">Tab 3</button>
     </div>
 </div>
 
 ```html
 <div class="flex-row-fluid col-gaps-xs align-cols-center js-tab-nav" data-active-class="btn-primary">
-    <button class="btn active btn-primary" data-tab="panel-1">Tab 1</button>
-    <button class="btn" data-tab="panel-2">Tab 2</button>
-    <button class="btn" data-tab="panel-2">Tab 2</button>
+    <button type="button" class="btn active btn-primary" data-tab="panel-1">Tab 1</button>
+    <button type="button" class="btn" data-tab="panel-2">Tab 2</button>
+    <button type="button" class="btn" data-tab="panel-3">Tab 3</button>
 </div>
 ```
 
 Here's another example using Hubble `.chip` components:
 
 <div class="code-content-example">
-    <ul class="list-unstyled js-tab-nav">
+    <ul class="list-unstyled js-tab-nav" data-active-class="selected">
         <li>
-            <span class="chip active" data-tab="panel-1">
+            <button type="button" class="btn btn-chip selected" data-tab="panel-1">
                 <span class="chip-text">Tab 1</span>
-            </span>
+            </button>
         </li>
         <li>
-            <span class="chip" data-tab="panel-2">
+            <button type="button" class="btn btn-chip" data-tab="panel-2">
                 <span class="chip-text">Tab 2</span>
-            </span>
+            </button>
         </li>
         <li>
-            <span class="chip" data-tab="panel-3">
+            <button type="button" class="btn btn-chip" data-tab="panel-3">
                 <span class="chip-text">Tab 3</span>
-            </span>
+            </button>
         </li>
     </ul>
 </div>

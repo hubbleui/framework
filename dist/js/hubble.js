@@ -3834,39 +3834,42 @@ _.prototype.css_to_3d_transform = function(transformsStr)
  * @param  {array|string} className  Class name(s) to add
  */
 _.prototype.add_class = function(DOMElement, className)
-{
+{    
     if (this.is_array(DOMElement))
     {
-        this.each(DOMElement, function(i, _DOMElement)
-        {
-            this.add_class(_DOMElement, className);
-
-        }, this);
+        this.each(DOMElement, (i, _DOMElement) =>  this.add_class(_DOMElement, className));
 
         return this;
     }
 
-    if (this.is_string(className) && className.includes(','))
-    {
-        this.each(className.split(','), function(i, _className)
-        {
-            DOMElement.classList.add(_className.trim());
-        });
-
-        return;
-    }
-
     if (this.is_array(className))
     {
-        this.each(className, function(i, _className)
-        {
-            DOMElement.classList.add(_className);
-        });
-
-        return;
+        this.each(className, (i, _className) =>  this.add_class(DOMElement, _className));
+    
+        return this;
     }
 
+    if (className.includes(','))
+    {
+        this.each(this.array_filter(className.split(',')), (i, _className) => this.add_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    if (className.includes('.'))
+    {
+        this.each(this.array_filter(className.split('.')), (i, _className) => this.add_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    className = className.trim();
+
+    if (className[0] === '.') className = className.slice(1);
+
     DOMElement.classList.add(className);
+
+    return this;
 }
 		/**
  * Closest parent node by type/class or array of either
@@ -4147,50 +4150,41 @@ _.prototype.form_values = function(form)
  * @param  {string|array} className  Class name(s) to check for
  * @return {bool}
  */
-_.prototype.has_class = function(el, className)
+_.prototype.has_class = function(DOMElement, className)
 {
-    if (!this.in_dom(el))
-    {
-        return false;
-    }
-
-    if (!el.classList)
-    {
-        return false;
-    }
+    let ret = false;
 
     if (this.is_array(className))
     {
-        for (var i = 0; i < className.length; i++)
-        {
-            if (el.classList.contains(className[i]))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        this.each(className, (i, _className) => { if (this.has_class(DOMElement, _className)) ret = true; return false; });
+        
+        return ret;
     }
 
-    var classNames = className.split('.');
-
-    if ((classNames.length - 1) > 1)
+    if (className.includes(','))
     {
-        for (var i = 0; i < classNames.length; i++)
+        this.each(this.array_filter(className.split(',')), (i, _className) => { if (this.has_class(DOMElement, _className)) ret = true; return false; });
+    
+        return ret;
+    }
+
+    if (className.includes('.'))
+    {
+        let count = className.split('.').length;
+
+        if (count >= 3)
         {
-            if (el.classList.contains(classNames[i]))
-            {
-                return true;
-            }
+            this.each(this.array_filter(className.split('.')), (i, _className) => { ret = this.has_class(DOMElement, _className); if (!ret) return false; });
+
+            return ret;
         }
     }
 
-    if (className[0] === '.')
-    {
-        className = className.substring(1);
-    }
+    className = className.trim();
 
-    return el.classList.contains(className);
+    if (className[0] === '.') className = className.slice(1);
+
+    return DOMElement.classList.contains(className);
 }
 		/**
  * Aria hide an element
@@ -4539,30 +4533,35 @@ _.prototype.remove_class = function(DOMElement, className)
 {
     if (this.is_array(DOMElement))
     {
-        this.each(DOMElement, function(i, _DOMElement)
-        {
-            this.remove_class(_DOMElement, className);
+        this.each(DOMElement, (i, _DOMElement) =>  this.remove_class(_DOMElement, className));
 
-        }, this);
-
-        return this;
-    }
-
-    if (!this.in_dom(DOMElement))
-    {
         return this;
     }
 
     if (this.is_array(className))
     {
-        this.each(className, function(i, _className)
-        {
-            DOMElement.classList.remove(_className);
-
-        });
-
+        this.each(className, (i, _className) =>  this.remove_class(DOMElement, _className));
+    
         return this;
     }
+
+    if (className.includes(','))
+    {
+        this.each(this.array_filter(className.split(',')), (i, _className) => this.remove_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    if (className.includes('.'))
+    {
+        this.each(this.array_filter(className.split('.')), (i, _className) => this.remove_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    className = className.trim();
+
+    if (className[0] === '.') className = className.slice(1);
 
     DOMElement.classList.remove(className);
 
@@ -4609,8 +4608,16 @@ _.prototype.remove_from_dom = function(el)
  * @access {private}
  * @return {obj}
  */
-_.prototype.scroll_pos = function()
+_.prototype.scroll_pos = function(context)
 {
+    if (context)
+    {
+        return {
+            top: context.scrollTop,
+            left: context.scrollLeft
+        };
+    }
+
     var doc  = document.documentElement;
     var top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
     var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
@@ -4720,20 +4727,15 @@ _.prototype.show_aria = function(el)
  * @param  {DOMElement}         el         Target element
  * @param  {string}       className  Class name to toggle
  */
-_.prototype.toggle_class = function(el, className)
-{
-    if (!this.in_dom(el))
+_.prototype.toggle_class = function(DOMElement, className)
+{    
+    if (this.has_class(DOMElement, className))
     {
-        return;
-    }
-
-    if (this.has_class(el, className))
-    {
-        this.remove_class(el, className);
+        this.remove_class(DOMElement, className);
     }
     else
     {
-        this.add_class(el, className);
+        this.add_class(DOMElement, className);
     }
 }
 		/**
@@ -4996,14 +4998,14 @@ _.prototype.__normaliseListenerArgs = function(DOMElement, args)
  * @param  {closure} handler    Callback event
  * @param  {bool}    data Use capture (optional) (defaul false)
  */
-_.prototype.__addListener = function(DOMElement, eventName, handler, thisArg, args, pushFirst)
+_.prototype.__addListener = function(element, eventName, callback, thisArg, args, pushFirst)
 {
     // Apply GUID to element and callback
-    DOMElement.guid = DOMElement.guid || (DOMElement.guid = this._guidgen());
-    handler.guid    = handler.guid || (handler.guid = this._guidgen());
+    element.guid = element.guid || (element.guid = this._guidgen());
+    callback.guid    = callback.guid || (callback.guid = this._guidgen());
 
     let hasHandler = true;
-    let guid       = DOMElement.guid;
+    let guid       = element.guid;
 
     // Make sure an array for event type exists
     if (!this._events[guid])
@@ -5021,18 +5023,13 @@ _.prototype.__addListener = function(DOMElement, eventName, handler, thisArg, ar
     }
 
     // Push the details to the events object
-    const handlerObj = {
-        callback : handler,
-        thisArg  : thisArg,
-        args     : args,
-        element  : DOMElement,
-    };
+    const handlerObj = {callback, thisArg, args, element};
     
     pushFirst ? this._events[guid][eventName].unshift(handlerObj) : this._events[guid][eventName].push(handlerObj);
 
     if (!hasHandler)
     {
-        eventName === 'touchstart' || eventName === 'mousedown' ? DOMElement.addEventListener(eventName, this.__event_dispatcher, { passive: true }) : DOMElement.addEventListener(eventName, this.__event_dispatcher);
+        element.addEventListener(eventName, this.__event_dispatcher);
     }
 }
 
@@ -5052,17 +5049,22 @@ _.prototype.__event_dispatcher = function(e)
 
     if (!guid) return;
 
-    let _this = Hubble._();
+    let callbacks =  _THIS._events[guid][e.type] || [];
 
-    let callbacks = _this.array_get(`${guid}.${e.type}`, _this._events) || [];
-
-    _this.each(callbacks, function(i, handler)
+    _THIS.each(callbacks, (i, handler) =>
     {        
-        if (handler && handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]) === false)
+        if (handler)
         {
-            e.preventDefault();
+            let handled = handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]);
 
-            e.stopPropagation();
+            if (handled === false || handled === null)
+            {
+                e.preventDefault();
+
+                e.stopPropagation();
+
+                if (handled === null) return false;
+            }
         }
     });
 }
@@ -7145,7 +7147,7 @@ Container.singleton('_', _);
      */
     Application.prototype.boot = function()
     {        
-        this.Dom().boot();
+        this.dom().boot();
 
         this._().trigger_event(window, 'Hubble:ready', this);
     }
@@ -7346,6 +7348,8 @@ Container.singleton('_', _);
                 context  = component;
                 
                 component = false;
+
+                globalRefresh = true;
             }
 
             // refresh('module')
@@ -7369,6 +7373,8 @@ Container.singleton('_', _);
         }, this);
 
         trigger_event(window, `Hubble:dom:refresh`, { context: context});
+
+        if (globalRefresh) this._dispatchReady();
     }
 
     /**
@@ -8723,332 +8729,737 @@ Container.singleton('_', _);
 })();
 
 /**
- * Modal
+ * drawer
  *
- * The Modal class is a utility class used to
- * display a Frontdrop.
+ * The drawer class is a utility class used to
+ * display a drawer.
  *
  */
 (function()
 {
     /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, find_all, each, dom_element, add_class, toggle_class, on, off, has_class, remove_class, remove_from_dom, css, height, preapend, scroll_pos] = Hubble.import(['find','find_all','each','dom_element','add_class','toggle_class','on','off','has_class','remove_class','remove_from_dom', 'css', 'height', 'preapend', 'scroll_pos']).from('_');
+
+    /**
+     * Default options
+     * 
      * @var {obj}
      */
-    const Helper = Hubble._();
+    var DEFAULT_OPTIONS =
+    {
+        // Content - can be a node, nodelist, or string of HTML
+        content: '',
+        
+        // Overlay color - dark, light, none,
+        overlay: 'dark',
+
+        // When true allows swiping on screen to hide/show
+        swipeable: false,
+
+        // When keepEdge is true, the default state to set "expanded"|"collapsed"
+        state: 'expanded',
+
+        // Where the drawer comes from - left,right,top,bottom
+        direction: 'left',
+
+        // Collapses to icon size
+        peekable: false,
+
+        // Push body
+        pushBody: false,
+
+        // State callbacks
+        callbackBuilt:    () => { },
+        callbackRender:   () => { },
+        callbackClose:    () => { },
+        callbackOpen:     () => { },
+        callbackValidate: () => true,
+    };
+
+    /**
+     * Closing arrow icons.
+     * 
+     * @var {obj}
+     */
+    const PUSH_ARROWS =
+    {
+        left: 'left',
+        right: 'right',
+        top: 'up',
+        bottom: 'down'
+    };
+
+    /**
+     * Swipe open/close directions.
+     * 
+     * @var {obj}
+     */
+    const SWIPE_DIRECTIONS =
+    {
+        left: ['swiperight', 'swipeleft'],
+        right: ['swipeleft', 'swiperight'],
+        top:  ['swipedown', 'swipeup'],
+        bottom: ['swipeup', 'swipedown'],
+    };
+
+    /**
+     * Don't double wrap body.
+     * 
+     * @var {boolean}
+     */
+    var WRAPPED_BODY = false;
+
+    /**
+     * Don't double wrap body.
+     * 
+     * @var {boolean}
+     */
+    var WRAPPED_DRAWERS = 0;
+
+    /**
+     * Module constructor
+     *
+     * @class
+     * @params {options} obj
+     * @access {public}
+     */
+    const Drawer = function(options)
+    { 
+        // Merge options
+        this._options = {...DEFAULT_OPTIONS, ...options};
+
+        if (!SWIPE_DIRECTIONS[this._options.direction]) throw new Error('Unsupported direction.');
+
+        // Save state
+        this._state = this._options.state;
+
+        // Animating
+        this._animating = false;
+
+        // Build the drawer
+        this._build();
+
+        // Render the drawer        
+        this._mount();
+
+        // Add listeners
+        this._bindListeners();
+
+        return this;
+    }
+
+    /**
+     * Destroy drawer.
+     *
+     * @access {public}
+     */
+    Drawer.prototype.destroy = function()
+    {
+        // Close
+        this.close();
+
+        // Remove gestures
+        this._gestures.destroy();
+
+        // Unwrap body
+        if (this._options.pushBody) this._unwrapBody();
+
+        // Remove from DOM and unbind
+        remove_from_dom(this._containerWrap);
+    }
+
+    /**
+     * Close drawer.
+     *
+     * @access {public}
+     */
+    Drawer.prototype.open = function()
+    {
+        // Don't open when animating or not already closed
+        if (this._state !== 'collapsed' || this._animating) return;
+
+        this._state = 'expanded';
+
+        this._animating = true;
+
+        remove_class(this._bodyWrap, 'disabled');
+
+        if (!this._options.pushBody) add_class(document.body, 'no-scroll');
+
+        remove_class(this._containerWrap, 'closed, closing');
+
+        add_class(this._containerWrap, 'expanded');
+
+        // Push body if necessary
+        if (this._options.pushBody && (this._options.direction === 'top' || this._options.direction === 'bottom')) this._pushBody();
+
+        on(this._containerWrap, 'transitionend', this._transitioned, this);
+    }
+
+    /**
+     * Completed opening / closing.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._transitioned = function()
+    {
+        // Multiple transitions
+        if (!this._animating) return;
+
+        this._animating = false;
+
+        // Opened
+        if (this._state === 'expanded')
+        {
+            this._makeCallback(this._options.callbackOpen);
+        }
+        // closed
+        else
+        {
+            remove_class(document.body, 'no-scroll');
+
+            add_class(this._containerWrap, 'closed');
+
+            remove_class(this._containerWrap, 'closing');
+
+            this._makeCallback(this._options.callbackClose);
+        }
+
+        off(this._containerWrap, 'transitionend', this._transitioned, this);
+    }
+
+    /**
+     * Open drawer.
+     *
+     * @access {public}
+     */
+    Drawer.prototype.close = function()
+    {        
+        if (this._state !== 'expanded' || this._animating) return;
+
+        this._animating = true;
+
+        this._state = 'collapsed';
+
+        add_class(this._containerWrap, 'closing');
+
+        remove_class(this._containerWrap, 'expanded');
+
+        if (this._options.pushBody && (this._options.direction === 'top' || this._options.direction === 'bottom')) this._pullBody();
+
+        on(this._containerWrap, 'transitionend', this._transitioned, this);
+    }
+
+    /**
+     * Build DOM Elements for drawer.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._build = function()
+    {
+        this._containerWrap = dom_element({tag: 'div', class: `js-drawer-container drawer-container drawer-${this._options.direction} ${this._options.pushBody ? 'push-body' : ''} ${this._options.peekable ? 'drawer-peekable' : null } overlay-${this._options.overlay}`});
+
+        let overlay = dom_element({tag: 'div', class: 'js-drawer-overlay drawer-overlay'});
+        let drawer   = dom_element({tag: 'div', class: 'js-drawer-wrap drawer-wrap'}, null, 
+            dom_element({tag: 'div', class: 'drawer-dialog js-drawer-dialog' }, null, this._options.content )
+        );
+
+        this._drawer     = drawer;
+        this._overlay    = overlay;
+        this._dialog     = find('.js-drawer-dialog', this._drawer);
+
+        if (this._options.pushBody)
+        {
+            let header = dom_element({tag: 'div', class: `flex-row-fluid align-cols-center-y drawer-header ${this._options.direction !== 'right' ? 'align-cols-right' : ''}`});
+            let closer = dom_element({tag: 'button', type: 'button', class: 'btn btn-pure btn-circle btn-xs close-btn'}, header, dom_element({tag: 'span', class: `fa fa-chevron-${PUSH_ARROWS[this._options.direction]}`}));
+            
+            this._options.direction === 'top' ? this._dialog.appendChild(header) : preapend(header, this._dialog);
+
+            on(closer, 'click', this._closeValidate, this);
+        }
+
+        this._makeCallback(this._options.callbackBuilt);
+    }
+
+    /**
+     * Mount and render the drawer.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._mount = function()
+    {
+        document.body.appendChild(this._containerWrap);
+
+        if (this._options.pushBody) this._wrapBody();
+
+        // Wrap body and set 'body to the body-wrap
+        // We also need to wrap everything so the drawer and body-wrap share the same CSS Variables
+        if (this._state === 'expanded')
+        {
+            this._state = 'collapsed';
+
+            if (!this._options.pushBody) this._containerWrap.appendChild(this._overlay);
+
+            this._containerWrap.appendChild(this._drawer);
+
+            setTimeout(() => this.open(), 5);
+
+            this._makeCallback(this._options.callbackRender);
+        }
+        // No transition, mount and closed
+        else
+        {
+            add_class(this._containerWrap, 'closed');
+
+            if (!this._options.pushBody) this._containerWrap.appendChild(this._overlay);
+
+            this._containerWrap.appendChild(this._drawer);
+        }
+    }
+
+    /**
+     * Wrap body when 'pushBody' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._wrapBody = function()
+    {
+        WRAPPED_DRAWERS++;
+
+        // Don't double-wrap body
+        if (WRAPPED_BODY)
+        {
+            // Disable other drawers
+            each(find_all('.js-drawer-wrap'), (i, drawer) => add_class(drawer, 'disabled'));
+
+            let classN = this._containerWrap.className;
+
+            this._containerWrap.parentNode.removeChild(this._containerWrap);
+
+            this._containerWrap = find('.js-drawer-container');
+
+            this._bodyWrap = find('.js-drawer-body-wrap');
+
+            this._containerWrap.className = classN;
+
+            return;
+        }
+
+        WRAPPED_BODY = true;
+
+        let pos = scroll_pos();
+
+        let content = find_all('body > *');
+
+        this._bodyWrap = dom_element({tag: 'div', class: 'js-drawer-body-wrap drawer-body-wrap'});
+
+        this._containerWrap.appendChild(this._bodyWrap);
+        
+        each(content, (i, node) => node !== this._containerWrap ? this._bodyWrap.appendChild(node) : null);
+
+        this._containerWrap.scrollTo(pos.left, pos.top);
+    }
+
+    /**
+     * Unwrap body when 'pushBody' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._unwrapBody = function()
+    {
+        if (!WRAPPED_BODY) return;
+
+        WRAPPED_DRAWERS--;
+
+        // Only unwrap if we're the last drawer using the container.
+        if (WRAPPED_DRAWERS <= 0)
+        {
+            let pos = scroll_pos(this._containerWrap);
+
+            let content = find_all('> *', this._bodyWrap);
+
+            each(content, (i, node) => document.body.appendChild(node));
+
+            document.body.removeChild(this._containerWrap);
+           
+            window.scrollTo(pos.left, pos.top);
+
+            WRAPPED_BODY = false;
+        }
+    }
+
+    /**
+     * Push body for "top" only.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._pushBody = function()
+    {
+        if (this._options.direction === 'top')
+        {
+            let h = height(this._drawer);
+
+            css(this._bodyWrap, 'margin-top', `${h}px`);
+        }
+    }
+
+    /**
+     * Pull body back.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._pullBody = function()
+    {
+        css(this._bodyWrap, 'margin', false);
+    }
+
+    /**
+     * Validate closing.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._closeValidate = function()
+    {
+        if (this._makeCallback(this._options.callbackValidate)) this.close();
+    }
+
+    /**
+     * Bind event listeners for drawer.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._bindListeners = function()
+    {
+        Hubble.dom().refresh(this._containerWrap);
+
+        on([this._overlay, this._dialog], 'click', this._closeValidate, this);
+
+        on(this._drawer, 'mousedown, mouseup, touchstart, touchend', () => toggle_class(this._drawer, 'cursor-down') );
+
+        this._gestures = Hubble.TinyGesture(this._options.swipeable ? window : this._drawer, { mouseSupport: true, velocityThreshold: 3, threshold: (type, self) => this._options.swipeable ? 20 : 3 });
+
+        let directions = SWIPE_DIRECTIONS[this._options.direction];
+
+        this._gestures.on(directions[0], (event) => this.open() );
+
+        this._gestures.on(directions[1], (event) => this._closeValidate() );
+    }
+
+    /**
+     * Fire callbacks.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._makeCallback = function(callback)
+    {
+        if (callback) return callback(this._drawer);
+    }
+
+    // Load into container 
+    Hubble.set('Drawer', Drawer);
+
+})();
+
+/**
+ * Modal
+ *
+ * The Modal class is a utility class used to
+ * display a modal.
+ *
+ */
+(function()
+{
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, dom_element, add_class, toggle_class, on, has_class, remove_class, remove_from_dom] = Hubble.import(['find','dom_element','add_class','toggle_class','on','has_class','remove_class','remove_from_dom']).from('_');
 
     /**
      * @var {obj}
      */
-    var defaults =
+    var DEFAULT_OPTIONS =
     {
+        // Title - string
         title: '',
+
+        // Content - can be a node, nodelist, or string of HTML
         content: '',
-        closeAnywhere: true,
-        targetContent: null,
 
-        closeBtn: true,
-        closeText: '',
-        closeClass: 'btn btn-pure',
-
-        confirmBtn: true,
-        confirmText: 'Confirm',
-        confirmClass: 'btn btn-primary',
+        // Confirm button text or null + confirm button class
+        confirmBtn: null,
+        confirmClass: 'btn-primary',
         
-        overlay: 'light',
-        onBuilt: null,
-        onBuiltArgs: null,
-        onRender: null,
-        onRenderArgs: null,
-        onClose: null,
-        onCloseArgs: null,
-        validateConfirm: null,
-        validateConfirmArgs: null
+        // Overlay color - "dark"| "light"
+        overlay: 'dark',
 
+        // Allows collapsing,expanding
+        keepEdge: false,
+
+        // When true allows swiping on screen to hide/show
+        swipeable: false,
+
+        // When keepEdge is true, the default state to set "expanded"|"collapsed"
+        state: 'expanded',
+
+        // State callbacks
+        callbackBuilt:    () => { },
+        callbackRender:   () => { },
+        callbackConfirm:  () => { },
+        callbackClose:    () => { },
+        callbackOpen:     () => { },
+        callbackValidate: () => true,
     };
 
     /**
      * Module constructor
      *
      * @class
-     {*} @constructor
      * @params {options} obj
      * @access {public}
      * @return {this}
      */
-    class Frontdrop
+    const Frontdrop = function(options)
+    { 
+        // Merge options
+        this._options = {...DEFAULT_OPTIONS, ...options};
+
+        // Save state
+        this._state = this._options.state;
+
+        // Animating
+        this._animating = false;
+
+        // State timer
+        this._stateTimer = null;
+
+        // Build the modal
+        this._build();
+
+        // Render the modal        
+        this._mount();
+
+        // Add listeners
+        this._bindListeners();
+
+        return this;
+    }
+
+    /**
+     * Destroy
+     *
+     * @access {public}
+     */
+    Frontdrop.prototype.destroy = function()
+    {        
+        this.close();
+
+        this._gestures.destroy();
+
+        remove_from_dom(this._modal);
+
+        remove_from_dom(this._overlay);
+    }
+
+    /**
+     * Forced close
+     *
+     * @access {public}
+     */
+    Frontdrop.prototype.open = function()
     {
-        constructor(options)
+        if (this._state !== 'collapsed' || this._animating) return;
+
+        this._state = 'expanded';
+
+        this._animating = true;
+
+        clearTimeout(this._stateTimer);
+
+        remove_class([this._modal, this._overlay], 'closed, closing');
+
+        add_class([this._modal, this._overlay], 'expanded');
+
+        this._stateTimer = setTimeout(() =>
         {
-            if (typeof options !== 'undefined')
+            this._animating = false;
+
+            add_class(document.body, 'no-scroll');
+
+            this._makeCallback(this._options.callbackOpen);
+
+        }, 500);
+    }
+
+    /**
+     * Forced close
+     *
+     * @access {public}
+     */
+    Frontdrop.prototype.close = function(e)
+    {        
+        if (this._state !== 'expanded' || this._animating) return;
+
+        if ( (e && (e.target === this._overlay || e.target === this._dialog)) || typeof e === 'undefined')
+        {
+            this._animating = true;
+
+            clearTimeout(this._stateTimer);
+
+            this._state = 'collapsed';
+
+            add_class([this._modal, this._overlay], 'closing');
+
+            this._stateTimer = setTimeout(() =>
             {
-                this._options = Helper.array_merge(defaults, options);
-                this._timer = null;
-                this._modal = null;
-                this._overlay = null;
-                this._modalInner = null;
+                this._animating = false;
 
-                this._invoke();
-            }
+                remove_class(document.body, 'no-scroll');
 
-            return this;
+                add_class([this._modal, this._overlay], 'closed');
+
+                remove_class([this._modal, this._overlay], 'closing, expanded');
+
+                this._makeCallback(this._options.callbackClose);
+
+            }, 500);
         }
+    }
 
-        /**
-         * After options have parsed invoke the modal
-         *
-         * @access {private}
-         */
-        _invoke()
+    /**
+     * Build the frontdrop and overlay.
+     *
+     * @access {private}
+     */
+    Frontdrop.prototype._build = function()
+    {
+        let footer = this._options.confirmBtn ? dom_element({tag: 'div', class: 'card-footer'}, null, 
+            dom_element({tag: 'div', class: 'card-footer'}, null,
+                dom_element({tag: 'div', class: 'card-footer-content'}, null,
+                    dom_element({tag: 'div', class: 'container-fluid'}, null,
+                        dom_element({tag: 'button', type: 'button', class: `btn btn-block js-frontdrop-confirm ${this._options.confirmClass}`}, null, this._options.confirmBtn)
+                    )
+                )
+            )
+        ) : null;
+
+        let overlay = dom_element({tag: 'div', class: `frontdrop-overlay ${this._options.overlay}`});
+        let modal   = dom_element({tag: 'div', class: `frontdrop-wrap ${this._options.confirmBtn ? 'with-confirmation' : ''} ${this._options.keepEdge ? 'collapsible' : null }`}, null, 
+            dom_element({tag: 'div', class: 'frontdrop-dialog js-frontdrop-dialog' }, null, 
+                dom_element({tag: 'div', class: 'card js-frontdrop-inner'}, null,
+                [ 
+                    dom_element({tag: 'div', class: 'card-header'}, null,
+                        dom_element({tag: 'div', class: 'container-fluid'}, null, 
+                            dom_element({tag: 'div', class: 'card-header-content'}, null,
+                                dom_element({tag: 'card-title', class: 'card-title'}, null, this._options.title)
+                            )
+                        )
+                    ),
+                    dom_element({tag: 'div', class: 'card-block'}, null, 
+                        dom_element({tag: 'div', class: 'container-fluid'}, null, this._options.content)
+                    ),
+                    footer
+                ])
+            )
+        );
+
+        this._modal      = modal;
+        this._overlay    = overlay;
+        this._dialog     = find('.js-frontdrop-dialog', this._modal);
+        
+        this._makeCallback(this._options.callbackBuilt);
+    }
+
+    /**
+     * Render the modal
+     *
+     * @access {private}
+     */
+    Frontdrop.prototype._mount = function()
+    {
+        if (this._state === 'expanded')
         {
-            // Build the modal
-            this._buildModal();
-
-            // Render the modal        
-            this._render();
-
-            // Add listeners
-            this._bindListeners();
-
-            return this;
-        }
-
-        /**
-         * Build the actual modal
-         *
-         * @access {private}
-         */
-        _buildModal()
-        {
-            var modal = document.createElement('DIV');
-            modal.className = 'frontdrop-wrap';
-
-            var overlay = document.createElement('DIV');
-            overlay.className = 'frontdrop-overlay ' + this._options['overlay'];
-
-            var close   = '';
-            var content = this._options.targetContent !== null ? this._getTargetContent() : this._options.content;
-            var confirm = this._options.confirmBtn === true ? '<button type="button" class="btn btn-xl ' + this._options.confirmClass + ' btn-confirm js-frontdrop-close js-frontdrop-confirm">' + this._options.confirmText + '</button>' : '';
-
-            if (this._options.closeBtn)
-            {
-                if (this._options.closeText)
-                {
-                    close = '<button type="button" class="' + this._options.closeClass + ' js-frontdrop-close">' + this._options.closeText + '</button>';
-                }
-                else
-                {
-                    close = '<button type="button" class="btn btn-pure btn-sm btn-circle btn-close js-frontdrop-close"><span class="glyph-icon glyph-icon-cross2"></span></button>';
-                }
-            }
-
-            Helper.inner_HTML(modal, [
-                '<div class="frontdrop-dialog js-frontdrop-dialog">',
-                    '<div class="frontdrop-header">',
-                        close,
-                        '<h4 class="frontdrop-title">' + this._options.title + '</h4>',
-                    '</div>',
-                    '<div class="frontdrop-body">',
-                        content,
-                    '</div>',
-                    confirm,
-                '</div>',
-            ]);
-
-            this._modal      = modal;
-            this._overlay    = overlay;
-            this._modalInner = Helper.$('.js-frontdrop-dialog', modal);
-            this._fireBuilt();
-        }
-
-        /**
-         * Get modal content from an existing DOM node
-         *
-         * @access {private}
-         * @return {string}
-         */
-        _getTargetContent()
-        {
-            var content = Helper.$(this._options.targetContent);
-
-            if (!Helper.in_dom(content))
-            {
-                throw new Error('Could not find modal content with selector "' + this._options.targetContent + '"');
-            }
-
-            return content.innerHTML.trim();
-        }
-
-        /**
-         * Render the modal
-         *
-         * @access {private}
-         */
-        _render()
-        {
-            var _this = this;
             document.body.appendChild(this._overlay);
+
             document.body.appendChild(this._modal);
 
-            var overlay = this._overlay;
+            add_class(document.body, 'no-scroll');
 
-            setTimeout(function()
+            this._modal.offsetHeight;
+
+            setTimeout(() =>
             {
-                Helper.add_class(overlay, 'active');
+                add_class(this._modal, 'expanded');
 
-            }, 50);
+                add_class(this._overlay, 'expanded');
 
-            this._fireRender();
+            }, 5);
 
-            Helper.add_class(document.body, 'no-scroll');
+            this._makeCallback(this._options.callbackRender);
         }
-
-        /**
-         * Bind event listeners inside the built modal
-         *
-         * @access {private}
-         */
-        _bindListeners()
+        // No transition, mount and closed
+        else
         {
-            var _this = this;
+            add_class(this._modal, 'closed');
 
-            var closeModal = function(e)
-            {
-                e = e || window.event;
+            add_class(this._overlay, 'closed');
 
-                if (_this._options.closeAnywhere === true)
-                {
-                    if (this === _this._modal)
-                    {
-                        var clickedInner = Helper.closest(e.target, '.js-frontdrop-dialog');
+            document.body.appendChild(this._overlay);
 
-                        if (clickedInner)
-                        {
-                            return;
-                        }
-                    }
-                }
-
-                e.preventDefault();
-
-                clearTimeout(_this._timer);
-
-                if (Helper.has_class(this, 'js-frontdrop-confirm'))
-                {
-                    var canClose = _this._fireConfirmValidator();
-
-                    if (!canClose)
-                    {
-                        return;
-                    }
-                }
-
-                Helper.add_class(_this._overlay, 'transition-off');
-
-                _this._fireClosed();
-
-                if (Helper.has_class(this, 'js-frontdrop-confirm'))
-                {
-                    _this._fireConfirm();
-                }
-
-                _this._timer = setTimeout(function()
-                {
-                    Helper.remove_from_dom(_this._overlay);
-                    Helper.remove_from_dom(_this._modal);
-                    Helper.remove_class(document.body, 'no-scroll');
-                }, 500);
-            }
-
-            if (this._options.closeAnywhere === true)
-            {
-                Helper.add_event_listener(this._modal, 'click', closeModal, false);
-            }
-
-            var modalCloses = Helper.$All('.js-frontdrop-close', this._modal);
-            if (!Helper.is_empty(modalCloses))
-            {
-                Helper.add_event_listener(modalCloses, 'click', closeModal, false);
-            }
+            document.body.appendChild(this._modal);
         }
+    }
 
-        /**
-         * Fire render event
-         *
-         * @access {private}
-         */
-        _fireRender()
+    /**
+     * Bind event listeners inside the built modal
+     *
+     * @access {private}
+     */
+    Frontdrop.prototype._closeValidate = function(e, clicked)
+    {
+        if (this._makeCallback(this._options.callbackValidate))
         {
-            if (this._options.onRender !== null && Helper.is_callable(this._options.onRender))
-            {
-                var callback = this._options.onRender;
-                var args = this._options.onRenderArgs;
-                callback.apply(this._modal, args);
+            this._makeCallback(this._options.callbackConfirm);
 
-            }
+            this.close();
         }
+    }
 
-        /**
-         * Fire the closed event
-         *
-         * @access {private}
-         */
-        _fireClosed()
-        {
-            if (this._options.onClose !== null && Helper.is_callable(this._options.onClose))
-            {
-                var callback = this._options.onClose;
-                var args = this._options.onCloseArgs;
-                callback.apply(this._modal, args);
-                Helper.remove_class(document.body, 'no-scroll');
-            }
-        }
+    /**
+     * Bind event listeners inside the built modal
+     *
+     * @access {private}
+     */
+    Frontdrop.prototype._bindListeners = function()
+    {
+        Hubble.dom().refresh(this._modal);
 
-        /**
-         * Fire the confirm event
-         *
-         * @access {private}
-         */
-        _fireConfirm()
-        {
-            if (this._options.onConfirm !== null && Helper.is_callable(this._options.onConfirm))
-            {
-                var callback = this._options.onConfirm;
-                var args = this._options.onConfirmArgs;
-                callback.apply(this._modal, args);
-            }
-        }
+        if (this._options.confirmBtn) on(find('.js-frontdrop-confirm', this._modal), 'click', this._closeValidate, this);
 
-        /**
-         * Fire the confirm validation
-         *
-         * @access {private}
-         */
-        _fireConfirmValidator()
-        {
-            if (this._options.validateConfirm !== null && Helper.is_callable(this._options.validateConfirm))
-            {
-                var callback = this._options.validateConfirm;
-                var args = this._options.validateConfirmArgs;
-                return callback.apply(this._modal, args);
-            }
+        on([this._overlay, this._dialog], 'click', this.close, this);
 
-            return true;
-        }
+        on(this._modal, 'mousedown, mouseup, touchstart, touchend', () => toggle_class(this._modal, 'cursor-down') );
 
-        /**
-         * Fire the built event
-         *
-         * @access {private}
-         */
-        _fireBuilt()
-        {
-            if (this._options.onBuilt !== null && Helper.is_callable(this._options.onBuilt))
-            {
-                var callback = this._options.onBuilt;
-                var args = this._options.onBuiltArgs;
-                callback.apply(this._modal, args);
-            }
-        }
+        this._gestures = Hubble.TinyGesture(this._options.swipeable ? window : this._modal, { mouseSupport: true, velocityThreshold: 3, threshold: (type, self) => this._options.swipeable ? 20 : 3 });
+
+        this._gestures.on('swipeup', (event) => this.open() );
+
+        this._gestures.on('swipedown', (event) => this.close() );
+    }
+
+    /**
+     * Fire render event
+     *
+     * @access {private}
+     */
+    Frontdrop.prototype._makeCallback = function(callback)
+    {
+        if (callback) return callback(this._modal);
     }
 
     // Load into container 
@@ -11938,6 +12349,8 @@ Hubble.set('TinyGesture', TinyGesture);
         this._dragging        = false;
         this._dragMoved       = false;
         this._dragStartPointX = { x: 0, y: 0};
+        this._dragBoundryL    = this._offset - this._slideWidthWGap;
+        this._dragBoundryR    = -(this._dragBoundryL);
         
         delete this._dragX;
 
@@ -12553,17 +12966,27 @@ Hubble.set('TinyGesture', TinyGesture);
     var POP_HANDLERS = new Map;
 
     /**
-     * Popovers
+     * Popover
      *
      * @author    {Joe J. Howard}
      * @copyright {Joe J. Howard}
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
-    const Popovers = function()
+    const Popover = function()
     {
+        this.super('.js-popover');
+
         this._windowClick = false;
 
-        this.super('.js-popover');
+        this.defaultProps = 
+        {
+            direction: 'top',
+            animation: 'pop',
+            theme:     'light',
+            title:     '',
+            content:   '',
+            event:     'click',
+        };
     }
 
     /**
@@ -12572,7 +12995,29 @@ Hubble.set('TinyGesture', TinyGesture);
      * @access {private}
      * @param  {DOMElement} trigger Click/hover trigger
      */
-    Popovers.prototype.bind = function(trigger)
+    Popover.prototype.template = function(props)
+    {
+
+    }
+
+    /**
+     * Initialize the handlers on a trigger
+     *
+     * @access {private}
+     * @param  {DOMElement} trigger Click/hover trigger
+     */
+    Popover.prototype._build = function(options)
+    {
+
+    }
+
+    /**
+     * Initialize the handlers on a trigger
+     *
+     * @access {private}
+     * @param  {DOMElement} trigger Click/hover trigger
+     */
+    Popover.prototype.bind = function(trigger)
     {
         if (!this._windowClick)
         {
@@ -12630,7 +13075,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * @param {trigger} node
      * @access {private}
      */
-    Popovers.prototype.unbind = function(trigger)
+    Popover.prototype.unbind = function(trigger)
     {
         if (this._windowClick)
         {
@@ -12662,7 +13107,7 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {private}
      */
-    Popovers.prototype._hoverEnter = function(e, trigger)
+    Popover.prototype._hoverEnter = function(e, trigger)
     {
         if (has_class(trigger, 'popped')) return;
 
@@ -12682,7 +13127,7 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {private}
      */
-    Popovers.prototype._hoverLeave = function(e, trigger)
+    Popover.prototype._hoverLeave = function(e, trigger)
     {
         clearTimeout(HOVER_TIMER);
 
@@ -12709,7 +13154,7 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {private}
      */
-    Popovers.prototype._hoverPop = function(e, pop)
+    Popover.prototype._hoverPop = function(e, pop)
     {
         clearTimeout(HOVER_TIMER);
 
@@ -12721,7 +13166,7 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {private}
      */
-    Popovers.prototype._windowResize = function()
+    Popover.prototype._windowResize = function()
     {
         for (let [trigger, handler] of POP_HANDLERS)
         {
@@ -12736,7 +13181,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * @param {event|null} e JavaScript click event
      * @access {private}
      */
-    Popovers.prototype._killPop = function(trigger)
+    Popover.prototype._killPop = function(trigger)
     {            
         let handler = POP_HANDLERS.get(trigger);
 
@@ -12751,7 +13196,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * @param {event|null} e JavaScript click event
      * @access {private}
      */
-    Popovers.prototype._clickHandler = function(e, trigger)
+    Popover.prototype._clickHandler = function(e, trigger)
     {
         e = e || window.event;
 
@@ -12782,7 +13227,7 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {private}
      */
-    Popovers.prototype._windowClickHandler = function(e)
+    Popover.prototype._windowClickHandler = function(e)
     {        
         let clicked = e.target;
 
@@ -12814,7 +13259,7 @@ Hubble.set('TinyGesture', TinyGesture);
      *
      * @access {private}
      */
-    Popovers.prototype._removeAll = function(exception)
+    Popover.prototype._removeAll = function(exception)
     {        
         for (let [trigger, handler] of POP_HANDLERS)
         {
@@ -12828,7 +13273,7 @@ Hubble.set('TinyGesture', TinyGesture);
     }
 
     // Load into Hubble DOM core
-    Hubble.dom().register('Popovers', extend(Component, Popovers));
+    Hubble.dom().register('Popover', extend(Component, Popover));
 
 }());
 
@@ -13175,7 +13620,7 @@ Hubble.set('TinyGesture', TinyGesture);
         // Chips input
         if (has_class(_input, '.js-chips-input'))
         {
-            Hubble.ChipInputs().addChip(_text, _input);
+            Hubble.dom().component('ChipInputs').addChip(_text, _input);
 
             remove_from_dom(this);
 
@@ -13897,7 +14342,7 @@ Hubble.set('TinyGesture', TinyGesture);
      * 
      * @var {Function}
      */
-    const [$, add_class, add_event_listener, closest, closest_class, has_class, is_empty, remove_class, remove_event_listener, extend] = Hubble.import(['$','add_class','add_event_listener','closest','closest_class','has_class','is_empty','remove_class','remove_event_listener','extend']).from('_');
+    const [find, attr, add_class, on, closest, has_class, is_empty, remove_class, off, extend] = Hubble.import(['find','attr','add_class','on','closest','has_class','is_empty','remove_class','off','extend']).from('_');
 
     /**
      * Tab Nav
@@ -13917,7 +14362,7 @@ Hubble.set('TinyGesture', TinyGesture);
      */
     TabNav.prototype.bind = function(node)
     {            
-        add_event_listener(node, 'click', this._eventHandler);
+        on(node, 'click', this._eventHandler);
     }
 
     /**
@@ -13928,7 +14373,7 @@ Hubble.set('TinyGesture', TinyGesture);
      */
     TabNav.prototype.unbind = function(node)
     {            
-        remove_event_listener(node, 'click', this._eventHandler);
+        off(node, 'click', this._eventHandler, this);
     }
 
     /**
@@ -13937,42 +14382,24 @@ Hubble.set('TinyGesture', TinyGesture);
      * @param {event|null} e JavaScript click event
      * @access {private}
      */
-    TabNav.prototype._eventHandler = function(e)
+    TabNav.prototype._eventHandler = function(e, clicked)
     {
-        e = e || window.event;
-
-        e.preventDefault();
-
-        var _this = Hubble.get('TabNav');
         
-        var node = this;
+        let nav         = closest(clicked, '.js-tab-nav');
+        let activeClass = attr(nav, 'data-active-class') || 'active';
+        let panel       = find(`[data-tab-panel=${attr(clicked, 'data-tab')}]`);
+        let panels      = closest(panel, '.js-tab-panels');
 
-        if (has_class(node, 'active')) return;
-        
-        var tab           = node.dataset.tab;
-        var tabNav        = closest(node, '.js-tab-nav');
+        if (has_class(clicked, activeClass)) return false;
 
-        var tabPane       = $('[data-tab-panel="' + tab + '"]');
-        var tabPanel      = closest_class(tabPane, '.js-tab-panels-wrap');
-        var activePanel   = $('.tab-panel.active', tabPanel);
+        remove_class(find(`.${activeClass}[data-tab]`, nav), activeClass);
+        add_class(clicked, activeClass);
 
-        var navWrap       = closest_class(node, 'js-tab-nav');
-        var activeNav     = $('.active', navWrap);
-        var activeClass   = navWrap.dataset.activeClass;
-        var activeClasses = ['active'];
+        remove_class(find('.active[data-tab-panel]', panels), 'active');
+        add_class(panel, 'active');
 
-        if (!is_empty(activeClass))
-        {
-            activeClasses.push(activeClass);
-        }
-
-        remove_class(activeNav, activeClasses);
-        remove_class(activePanel, activeClasses);
-
-        add_class(node, activeClasses);
-        add_class(tabPane, activeClasses);
-        
-    }
+        return false;
+    }   
 
     // Load into Hubble DOM core
     Hubble.dom().register('TabNav', extend(Component, TabNav));
@@ -14561,16 +14988,6 @@ Hubble.set('TinyGesture', TinyGesture);
     const [find, add_class, on, animate_css, closest, coordinates, css, has_class, height, in_array, in_dom, inline_style, preapend, remove_class, off, rendered_style, traverse_up, trigger_event, width, extend] = Hubble.import(['find','add_class','on','animate_css','closest','coordinates','css','has_class','height','in_array','in_dom','inline_style','preapend','remove_class','off','rendered_style','traverse_up','trigger_event','width','extend']).from('_');
 
     /**
-     * Ripple animation time.
-     * 
-     * Note 1. this is set in CSS
-     * Note 2. This value is actually half of total animation time as the the ripple scales (2.5)
-     * 
-     * @var {int}
-     */
-    const RPL_AN_TIME = 400;
-
-    /**
      * Wrappers that need "position:relative" to hide overflow.
      * 
      * @var {array}
@@ -14590,6 +15007,13 @@ Hubble.set('TinyGesture', TinyGesture);
      * @var {Map}
      */
     const RIPPLING = new Map();
+
+    /**
+     * Currently clicking
+     * 
+     * @var {Map}
+     */
+    var CLICKING;
 
     /**
      * Selectors
@@ -14697,8 +15121,6 @@ Hubble.set('TinyGesture', TinyGesture);
      */
     Ripple.prototype._startRipple  = function(e, wrapper)
     {
-        e = e || window.event;
-
         CLICKED = e.target;
 
         const _this = this;

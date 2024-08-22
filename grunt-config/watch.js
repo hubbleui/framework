@@ -53,7 +53,7 @@ module.exports =
     docs :
     {
         options : _options,
-        files   : ['src/docs/**/*.md'],
+        files   : ['src/docs/**/*.md', 'src/docs/**/*.html'],
         tasks   : ['docs'],
     }
 };

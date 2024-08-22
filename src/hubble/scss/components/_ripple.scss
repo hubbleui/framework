@@ -13,7 +13,7 @@
     background: var(--hb-ripple-color);
     transform: scale(0);
     animation: ripple 0.5s ease-out forwards;
-    z-index: 2;
+    z-index: 1;
     opacity: 1;
     transition: opacity .5s ease;
 
@@ -43,5 +43,6 @@
 // IMPORTANT TO STOP BLOCKING CLICKS!!
 .ripple ~ *
 {
-    z-index: 1;
+    z-index: 2;
+    position: relative;
 }

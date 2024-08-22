@@ -758,6 +758,8 @@
         this._dragging        = false;
         this._dragMoved       = false;
         this._dragStartPointX = { x: 0, y: 0};
+        this._dragBoundryL    = this._offset - this._slideWidthWGap;
+        this._dragBoundryR    = -(this._dragBoundryL);
         
         delete this._dragX;
 

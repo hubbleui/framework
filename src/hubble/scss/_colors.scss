@@ -358,13 +358,13 @@ $palette:
 // to things like buttons, badges, labels etc...
 $contexts:
 (
-    'primary':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-primary)),
-    'secondary':                ('contrast' : var(--hb-white), 'color': var(--hb-brand-secondary)),
-    'info':                     ('contrast' : var(--hb-white), 'color': var(--hb-brand-info)),
-    'success':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-success)),
-    'warning':                  ('contrast' : var(--hb-white), 'color': var(--hb-brand-warning)),
-    'danger':                   ('contrast' : var(--hb-white), 'color': var(--hb-brand-danger)),
-    'white':                    ('contrast' : var(--hb-brand-primary), 'color': var(--hb-color-white)),
+    'primary':                  ('contrast' : var(--hb-white), 'color': var(--hb-theme-primary)),
+    'secondary':                ('contrast' : var(--hb-white), 'color': var(--hb-theme-secondary)),
+    'info':                     ('contrast' : var(--hb-white), 'color': var(--hb-theme-info)),
+    'success':                  ('contrast' : var(--hb-white), 'color': var(--hb-theme-success)),
+    'warning':                  ('contrast' : var(--hb-white), 'color': var(--hb-theme-warning)),
+    'danger':                   ('contrast' : var(--hb-white), 'color': var(--hb-theme-danger)),
+    'white':                    ('contrast' : var(--hb-theme-primary), 'color': var(--hb-color-white)),
     'black':                    ('contrast' : var(--hb-color-white), 'color': var(--hb-color-black)),
 ) !default;
 
@@ -373,10 +373,10 @@ $contexts:
 // to things like buttons, badges, labels etc...
 $contextsCSSVar:
 (
-    'primary':                  $brand-primary,
-    'secondary':                $brand-secondary,
-    'info':                     $brand-info,
-    'success':                  $brand-success,
-    'warning':                  $brand-warning,
-    'danger':                   $brand-danger,
+    'primary':                  $theme-primary,
+    'secondary':                $theme-secondary,
+    'info':                     $theme-info,
+    'success':                  $theme-success,
+    'warning':                  $theme-warning,
+    'danger':                   $theme-danger,
 ) !default;

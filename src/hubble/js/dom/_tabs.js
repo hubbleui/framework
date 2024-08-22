@@ -12,7 +12,7 @@
      * 
      * @var {Function}
      */
-    const [$, add_class, add_event_listener, closest, closest_class, has_class, is_empty, remove_class, remove_event_listener, extend] = Hubble.import(['$','add_class','add_event_listener','closest','closest_class','has_class','is_empty','remove_class','remove_event_listener','extend']).from('_');
+    const [find, attr, add_class, on, closest, has_class, is_empty, remove_class, off, extend] = Hubble.import(['find','attr','add_class','on','closest','has_class','is_empty','remove_class','off','extend']).from('_');
 
     /**
      * Tab Nav
@@ -32,7 +32,7 @@
      */
     TabNav.prototype.bind = function(node)
     {            
-        add_event_listener(node, 'click', this._eventHandler);
+        on(node, 'click', this._eventHandler);
     }
 
     /**
@@ -43,7 +43,7 @@
      */
     TabNav.prototype.unbind = function(node)
     {            
-        remove_event_listener(node, 'click', this._eventHandler);
+        off(node, 'click', this._eventHandler, this);
     }
 
     /**
@@ -52,42 +52,24 @@
      * @param {event|null} e JavaScript click event
      * @access {private}
      */
-    TabNav.prototype._eventHandler = function(e)
+    TabNav.prototype._eventHandler = function(e, clicked)
     {
-        e = e || window.event;
-
-        e.preventDefault();
-
-        var _this = Hubble.get('TabNav');
         
-        var node = this;
+        let nav         = closest(clicked, '.js-tab-nav');
+        let activeClass = attr(nav, 'data-active-class') || 'active';
+        let panel       = find(`[data-tab-panel=${attr(clicked, 'data-tab')}]`);
+        let panels      = closest(panel, '.js-tab-panels');
 
-        if (has_class(node, 'active')) return;
-        
-        var tab           = node.dataset.tab;
-        var tabNav        = closest(node, '.js-tab-nav');
+        if (has_class(clicked, activeClass)) return false;
 
-        var tabPane       = $('[data-tab-panel="' + tab + '"]');
-        var tabPanel      = closest_class(tabPane, '.js-tab-panels-wrap');
-        var activePanel   = $('.tab-panel.active', tabPanel);
+        remove_class(find(`.${activeClass}[data-tab]`, nav), activeClass);
+        add_class(clicked, activeClass);
 
-        var navWrap       = closest_class(node, 'js-tab-nav');
-        var activeNav     = $('.active', navWrap);
-        var activeClass   = navWrap.dataset.activeClass;
-        var activeClasses = ['active'];
+        remove_class(find('.active[data-tab-panel]', panels), 'active');
+        add_class(panel, 'active');
 
-        if (!is_empty(activeClass))
-        {
-            activeClasses.push(activeClass);
-        }
-
-        remove_class(activeNav, activeClasses);
-        remove_class(activePanel, activeClasses);
-
-        add_class(node, activeClasses);
-        add_class(tabPane, activeClasses);
-        
-    }
+        return false;
+    }   
 
     // Load into Hubble DOM core
     Hubble.dom().register('TabNav', extend(Component, TabNav));

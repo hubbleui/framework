@@ -22,7 +22,8 @@
 @import 'utility/_cookie.js';
 @import 'utility/_inputMasker.js';
 @import 'utility/_modal.js';
-@import 'utility/_frontdrop.js';
+@import 'utility/Drawer.js';
+@import 'utility/Frontdrop.js';
 @import 'utility/_notification.js';
 @import 'utility/_ajax.js';
 @import 'utility/Pjax.js';

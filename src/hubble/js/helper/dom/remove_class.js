@@ -9,30 +9,35 @@ _.prototype.remove_class = function(DOMElement, className)
 {
     if (this.is_array(DOMElement))
     {
-        this.each(DOMElement, function(i, _DOMElement)
-        {
-            this.remove_class(_DOMElement, className);
+        this.each(DOMElement, (i, _DOMElement) =>  this.remove_class(_DOMElement, className));
 
-        }, this);
-
-        return this;
-    }
-
-    if (!this.in_dom(DOMElement))
-    {
         return this;
     }
 
     if (this.is_array(className))
     {
-        this.each(className, function(i, _className)
-        {
-            DOMElement.classList.remove(_className);
-
-        });
-
+        this.each(className, (i, _className) =>  this.remove_class(DOMElement, _className));
+    
         return this;
     }
+
+    if (className.includes(','))
+    {
+        this.each(this.array_filter(className.split(',')), (i, _className) => this.remove_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    if (className.includes('.'))
+    {
+        this.each(this.array_filter(className.split('.')), (i, _className) => this.remove_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    className = className.trim();
+
+    if (className[0] === '.') className = className.slice(1);
 
     DOMElement.classList.remove(className);
 

@@ -618,8 +618,8 @@ Dropdown uses local CSS variables on `.drop-container` and `.menu` along with Sa
             {
                 --hb-menu-color: var(--hb-white);
                 --hb-menu-item-color-hover: var(--hb-white);
-                --hb-menu-item-color-active: var(--hb-brand-primary);
-                --hb-menu-item-color-selected: var(--hb-brand-primary);
+                --hb-menu-item-color-active: var(--hb-theme-primary);
+                --hb-menu-item-color-selected: var(--hb-theme-primary);
                 --hb-menu-item-bg-hover: var(--hb-gray-900);
                 --hb-menu-item-bg-active: var(--hb-gray-900);
                 --hb-menu-item-bg-selected: var(--hb-gray-900);
@@ -675,8 +675,8 @@ Dropdown uses local CSS variables on `.drop-container` and `.menu` along with Sa
 {
     --hb-menu-color: var(--hb-white);
     --hb-menu-item-color-hover: var(--hb-white);
-    --hb-menu-item-color-active: var(--hb-brand-primary);
-    --hb-menu-item-color-selected: var(--hb-brand-primary);
+    --hb-menu-item-color-active: var(--hb-theme-primary);
+    --hb-menu-item-color-selected: var(--hb-theme-primary);
     --hb-menu-item-bg-hover: var(--hb-gray-900);
     --hb-menu-item-bg-active: var(--hb-gray-900);
     --hb-menu-item-bg-selected: var(--hb-gray-900);
@@ -706,8 +706,8 @@ $menu-item-color-hover:         var(--hb-gray-700) !default;
 $menu-item-color-active:        var(--hb-gray-700) !default;
 $menu-item-color-selected:      var(--hb-white) !default;
 $menu-item-bg-hover:            var(--hb-gray-200) !default;
-$menu-item-bg-active:           var(--hb-brand-info-100) !default;
-$menu-item-bg-selected:         var(--hb-brand-info) !default;
+$menu-item-bg-active:           var(--hb-theme-info-100) !default;
+$menu-item-bg-selected:         var(--hb-theme-info) !default;
 $menu-item-pad-y:               10px !default;
 $menu-item-pad-x:               12px !default;
 $menu-divider-color:            var(--hb-gray-200) !default;
@@ -739,8 +739,8 @@ src/scss/components/menu.scss
     --hb-menu-item-color-selected: var(--hb-white);
     --hb-menu-item-bg: transparent;
     --hb-menu-item-bg-hover: var(--hb-gray-200);
-    --hb-menu-item-bg-active: var(--hb-brand-info-100);
-    --hb-menu-item-bg-selected: var(--hb-brand-info);
+    --hb-menu-item-bg-active: var(--hb-theme-info-100);
+    --hb-menu-item-bg-selected: var(--hb-theme-info);
     --hb-menu-item-pad-y: 10px;
     --hb-menu-item-pad-x: 12px;
     --hb-menu-divider-color: var(--hb-gray-200);

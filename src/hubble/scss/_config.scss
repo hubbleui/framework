@@ -39,20 +39,20 @@ $black:                         #323232 !default;
 $gray:                          #9597a0 !default;
 
 // Contexts
-$brand-primary:                 var(--hb-color-hotpink)     !default;
-$brand-secondary:               var(--hb-color-salmon)      !default;
-$brand-success:                 var(--hb-color-emerland)    !default;
-$brand-info:                    var(--hb-color-skyblue)     !default;
-$brand-warning:                 var(--hb-color-sunflower)   !default;
-$brand-danger:                  var(--hb-color-coralred)    !default;
+$theme-primary:                 var(--hb-color-hotpink)     !default;
+$theme-secondary:               var(--hb-color-salmon)      !default;
+$theme-success:                 var(--hb-color-emerland)    !default;
+$theme-info:                    var(--hb-color-skyblue)     !default;
+$theme-warning:                 var(--hb-color-sunflower)   !default;
+$theme-danger:                  var(--hb-color-coralred)    !default;
 
 @import 'colors';
 
 // Basic element coloring
 $body-bg:                       #fafafa !default;
 $body-color:                    #1d1d1d !default;
-$link-color:                    var(--hb-brand-primary) !default;
-$link-color-hover:              var(--hb-brand-primary-500) !default;
+$link-color:                    var(--hb-theme-primary) !default;
+$link-color-hover:              var(--hb-theme-primary-500) !default;
 
 // Global font families
 $font-family-sans-serif:        -apple-system, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !default;
@@ -169,8 +169,8 @@ $list-item-color-hover:         var(--hb-gray-700) !default;
 $list-item-color-active:        var(--hb-gray-700) !default;
 $list-item-color-selected:      var(--hb-white) !default;
 $list-item-bg-hover:            var(--hb-gray-200) !default;
-$list-item-bg-active:           var(--hb-brand-info-100) !default;
-$list-item-bg-selected:         var(--hb-brand-info) !default;
+$list-item-bg-active:           var(--hb-theme-info-100) !default;
+$list-item-bg-selected:         var(--hb-theme-info) !default;
 $list-item-pad-y:               10px !default;
 $list-item-pad-x:               12px !default;
 $list-divider-color:            var(--hb-gray-200) !default;
@@ -193,8 +193,8 @@ $menu-item-color-hover:         var(--hb-gray-700) !default;
 $menu-item-color-active:        var(--hb-gray-700) !default;
 $menu-item-color-selected:      var(--hb-white) !default;
 $menu-item-bg-hover:            var(--hb-gray-200) !default;
-$menu-item-bg-active:           var(--hb-brand-info-100) !default;
-$menu-item-bg-selected:         var(--hb-brand-info) !default;
+$menu-item-bg-active:           var(--hb-theme-info-100) !default;
+$menu-item-bg-selected:         var(--hb-theme-info) !default;
 $menu-item-pad-y:               10px !default;
 $menu-item-pad-x:               12px !default;
 $menu-divider-color:            var(--hb-gray-200) !default;
@@ -217,13 +217,13 @@ $table-head-color:              var(--hb-gray-900) !default;
 $table-head-weight:             $text-bold !default;
 $table-caption-color:           var(--hb-gray) !default;
 $table-selected-color:          var(--hb-white) !default;
-$table-selected-bg:             var(--hb-brand-info) !default;
+$table-selected-bg:             var(--hb-theme-info) !default;
 
 
 // Messages
 $msg-bg:                        var(--hb-black) !default;
 $msg-color:                     var(--hb-white) !default;
-$msg-icon-color:                var(--hb-brand-primary) !default;
+$msg-icon-color:                var(--hb-theme-primary) !default;
 $msg-spacer-y:                  3rem !default;
 $msg-spacer-x:                  2rem !default;
 $msg-font-size:                 1.4rem !default;
@@ -242,6 +242,16 @@ $modal-transition-on:           opacity .2s .3s ease, transform .3s .3s ease !de
 $modal-transition-off:          opacity .4s  ease, transform .5s ease !default;
 $modal-overlay-transition-on:   opacity .5s ease !default;
 $modal-overlay-transition-off:  opacity .5s ease !default;
+
+// Frontdrop
+$frontdrop-overlay-bg:           var(--hb-white) !default;
+$frontdrop-overlay-bg-dark:      var(--hb-black) !default;
+$frontdrop-overlay-opacity:      0.8 !default;
+$frontdrop-title-size:           1.8rem !default;
+$frontdrop-transition:           opacity .2s ease, transform .4s var(--hb-ease-out-expo) !default;
+$frontdrop-overlay-transition:   opacity .35s ease !default;
+$frontdrop-shadow:				 0px -5px 10px 0px rgb(0 0 0 / 22%);
+$frontdrop-top:                  100px;
 
 // Paper
 $paper-bg:                      var(--hb-white) !default;
@@ -284,7 +294,7 @@ $input-color-label:             var(--hb-gray-400) !default;
 $input-color-placeholder:       var(--hb-gray-300) !default;
 $input-border-color:            var(--hb-gray-400) !default;
 $input-radius:                  var(--hb-border-radius) !default;
-$input-focus-theme:             var(--hb-brand-info) !default;
+$input-focus-theme:             var(--hb-theme-info) !default;
 $input-border-size-n:           1px !default;
 $input-border-size-e:           1px !default;
 $input-border-size-s:           1px !default;
@@ -320,7 +330,7 @@ $progress-gradient:             linear-gradient(to right,  #b0e2fe 0%,#b0b2fb 10
 // Tabs
 $tab-nav-color:                 var(--hb-gray-700) !default;
 $tab-nav-color-active:          var(--hb-body-color) !default;
-$tab-nav-color-highlight:       var(--hb-brand-primary) !default;
+$tab-nav-color-highlight:       var(--hb-theme-primary) !default;
 $tab-nav-divider-color:         var(--hb-gray-200) !default;
 $tab-nav-font-size:             1.3rem !default;
 $tab-nav-font-weight:           $text-normal !default;
@@ -343,11 +353,11 @@ $lazyload-falback-bg:           #d0d4d9;
 // Slider
 $slider-bg:                     transparent !default;
 $slider-dots-color:             var(--hb-white) !default;
-$slider-dots-color-active:      var(--hb-brand-primary) !default;
+$slider-dots-color-active:      var(--hb-theme-primary) !default;
 $slider-dots-size:              3px !default;
 $slider-nav-btn-size:           25px !default;
 $slider-nav-btn-color:          var(--hb-white) !default;
-$slider-nav-btn-color-hover:    var(--hb-brand-primary) !default;
+$slider-nav-btn-color-hover:    var(--hb-theme-primary) !default;
 $slider-slides-gap:				20px;
 $slider-slide-width:			66%;
 
@@ -369,7 +379,7 @@ $avatar-bg:                     var(--hb-gray-200) !default;
 $avatar-text-color:             inherit !default;
 
 // Nprogress
-$nprogress-color:               var(--hb-brand-primary) !default;
+$nprogress-color:               var(--hb-theme-primary) !default;
 
 // Popovers
 $popover-max-width:             270px !default;
@@ -416,7 +426,7 @@ $notif-shadow:                  3 !default;
 
 // Hamburger
 $hamburger-color:               var(--hb-body-color) !default;
-$hamburger-color-active:        var(--hb-brand-primary) !default;
+$hamburger-color-active:        var(--hb-theme-primary) !default;
 
 // Loading animations
 $loader-color1:                 var(--hb-gray) !default;
@@ -442,17 +452,20 @@ $skeleton-bg-1:                 rgba(0, 0, 0, 0.2) !default;
 $skeleton-bg-2:                 rgba(0, 0, 0, 0.4) !default;
 $skeleton-text-radius:          var(--hb-border-radius) !default;
 
-// Frontdrop
-
 // Backdrop
-$backdrop-bg:                   var(--hb-brand-primary) !default;
+$backdrop-bg:                   var(--hb-theme-primary) !default;
 $backdrop-color:                var(--hb-white) !default;
 $backdrop-shadow:               rgb(0 0 0 / 20%) 0px -5px 5px -3px, rgb(0 0 0 / 14%) 0px -8px 10px -1px, rgb(0 0 0 / 12%) 0px -6px 14px -6px !default;
 
 // Drawer
-$drawer-width:                  540px !default;
-
-// Smart search
+$drawer-bg:						var(--hb-white) !default;
+$drawer-width:                  230px !default;
+$drawer-width-peekable:         80px !default;
+$drawer-overlay-bg:             var(--hb-white) !default;
+$drawer-overlay-bg-dark:        var(--hb-black) !default;
+$drawer-overlay-opacity:        0.8 !default;
+$drawer-transition:             .35s var(--hb-ease-out-quart) !default;
+$drawer-overlay-transition:     .35s var(--hb-ease-out-quart) !default;
 
 // Responsive breakpoints
 $breakpoints:

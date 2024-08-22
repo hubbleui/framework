@@ -72,7 +72,7 @@
         // Chips input
         if (has_class(_input, '.js-chips-input'))
         {
-            Hubble.ChipInputs().addChip(_text, _input);
+            Hubble.dom().component('ChipInputs').addChip(_text, _input);
 
             remove_from_dom(this);
 

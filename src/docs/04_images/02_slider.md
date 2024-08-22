@@ -177,11 +177,11 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in Hubble
 ```sass
 $slider-bg:                     transparent !default;
 $slider-dots-color:             var(--hb-white) !default;
-$slider-dots-color-active:      var(--hb-brand-primary) !default;
+$slider-dots-color-active:      var(--hb-theme-primary) !default;
 $slider-dots-size:              3px !default;
 $slider-nav-btn-size:           25px !default;
 $slider-nav-btn-color:          var(--hb-white) !default;
-$slider-nav-btn-color-hover:    var(--hb-brand-primary) !default;
+$slider-nav-btn-color-hover:    var(--hb-theme-primary) !default;
 $slider-slides-gap:             20px;
 $slider-slide-width:            66%;
 ```
@@ -193,11 +193,11 @@ src/scss/components/slider.scss
 .slider {
     --hb-slider-bg: transparent;
     --hb-slider-dots-color: var(--hb-white);
-    --hb-slider-dots-color-active: var(--hb-brand-primary);
+    --hb-slider-dots-color-active: var(--hb-theme-primary);
     --hb-slider-dots-size: 3px;
     --hb-slider-nav-btn-size: 25px;
     --hb-slider-nav-btn-color: var(--hb-white);
-    --hb-slider-nav-btn-color-hover: var(--hb-brand-primary);
+    --hb-slider-nav-btn-color-hover: var(--hb-theme-primary);
     --hb-slider-slides-gap: 20px;
     --hb-slider-slide-width: 66%;
 }

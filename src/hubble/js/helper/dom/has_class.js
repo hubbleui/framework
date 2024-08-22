@@ -6,48 +6,39 @@
  * @param  {string|array} className  Class name(s) to check for
  * @return {bool}
  */
-_.prototype.has_class = function(el, className)
+_.prototype.has_class = function(DOMElement, className)
 {
-    if (!this.in_dom(el))
-    {
-        return false;
-    }
-
-    if (!el.classList)
-    {
-        return false;
-    }
+    let ret = false;
 
     if (this.is_array(className))
     {
-        for (var i = 0; i < className.length; i++)
-        {
-            if (el.classList.contains(className[i]))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        this.each(className, (i, _className) => { if (this.has_class(DOMElement, _className)) ret = true; return false; });
+        
+        return ret;
     }
 
-    var classNames = className.split('.');
-
-    if ((classNames.length - 1) > 1)
+    if (className.includes(','))
     {
-        for (var i = 0; i < classNames.length; i++)
+        this.each(this.array_filter(className.split(',')), (i, _className) => { if (this.has_class(DOMElement, _className)) ret = true; return false; });
+    
+        return ret;
+    }
+
+    if (className.includes('.'))
+    {
+        let count = className.split('.').length;
+
+        if (count >= 3)
         {
-            if (el.classList.contains(classNames[i]))
-            {
-                return true;
-            }
+            this.each(this.array_filter(className.split('.')), (i, _className) => { ret = this.has_class(DOMElement, _className); if (!ret) return false; });
+
+            return ret;
         }
     }
 
-    if (className[0] === '.')
-    {
-        className = className.substring(1);
-    }
+    className = className.trim();
 
-    return el.classList.contains(className);
+    if (className[0] === '.') className = className.slice(1);
+
+    return DOMElement.classList.contains(className);
 }

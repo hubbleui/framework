@@ -5,19 +5,14 @@
  * @param  {DOMElement}         el         Target element
  * @param  {string}       className  Class name to toggle
  */
-_.prototype.toggle_class = function(el, className)
-{
-    if (!this.in_dom(el))
+_.prototype.toggle_class = function(DOMElement, className)
+{    
+    if (this.has_class(DOMElement, className))
     {
-        return;
-    }
-
-    if (this.has_class(el, className))
-    {
-        this.remove_class(el, className);
+        this.remove_class(DOMElement, className);
     }
     else
     {
-        this.add_class(el, className);
+        this.add_class(DOMElement, className);
     }
 }

@@ -209,12 +209,15 @@ function createDocs()
         {
             if (typeof item === 'string')
             {
-                let active = filepath.includes(item) ? 'class="active js-pjax-link"' : 'class="js-pjax-link"';
-                let name   = item.toLowerCase().replaceAll(' ', '-');
-                let slug   = `${dir}/${name}/index.html`;
-                let back   = relativeLinkBack(slug, currFile.toLowerCase().split(DOCS_DEST_DIR.toLowerCase()).pop());
+                if (!item.includes('iframe'))
+                {
+                    let active = filepath.includes(item) ? 'class="active"' : '';
+                    let name   = item.toLowerCase().replaceAll(' ', '-');
+                    let slug   = `${dir}/${name}/index.html`;
+                    let back   = relativeLinkBack(slug, currFile.toLowerCase().split(DOCS_DEST_DIR.toLowerCase()).pop());
 
-                HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li class="menu-item"><a ${active} href="${back}${slug}">${item}</a></li>`;
+                    HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li class="menu-item"><a ${active} href="${back}${slug}">${item}</a></li>`;
+                }
             }
             else
             {
@@ -281,6 +284,8 @@ function createDocs()
             let menu     = buildHTMLMenu(MENU_TREE, destpath);
             let article  = MDtoHTMLFile(filepath);
             let page     = PAGE_TEMPLATE.replace('{{DOCS_MENU}}', menu).replace('{{ARTICLEBODY}}', article).replaceAll('{{ASSET_PATH}}', buildAssethref(destpath)).replaceAll('DOLLAR_SIGN', '$');
+
+            if (filepath.includes('_iframe')) page = FS.readFileSync(filepath, 'utf8', (err, data) => data).replaceAll('{{ASSET_PATH}}', buildAssethref(destpath));
 
             writeDirRecursive(destpath);
 

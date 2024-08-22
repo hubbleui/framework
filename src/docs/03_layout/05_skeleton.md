@@ -808,8 +808,8 @@ The example below shows customization using CSS Variables:
     <style scoped>
         .skeleton-custom
         {
-            --hb-skeleton-bg-1: var(--hb-brand-primary-300);
-            --hb-skeleton-bg-2: var(--hb-brand-primary-600);
+            --hb-skeleton-bg-1: var(--hb-theme-primary-300);
+            --hb-skeleton-bg-2: var(--hb-theme-primary-600);
         }
     </style>
     <div class="row pole-xs pole-s">
@@ -824,7 +824,7 @@ The example below shows customization using CSS Variables:
 ```css
 .skeleton
 {
-    --hb-skeleton-bg-1: var(--hb-brand-primary-300);
-    --hb-skeleton-bg-2: var(--hb-brand-primary-600);
+    --hb-skeleton-bg-1: var(--hb-theme-primary-300);
+    --hb-skeleton-bg-2: var(--hb-theme-primary-600);
 }
 ```

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Documentation | Hubble UI</title>
+        <meta name="description" content="">
+        <script src="../../dist/js/hubble.lazyload.js"></script>
+        <link rel="stylesheet" href="../../dist/css/lazyload.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../dist/css/hubble-icons.css">
+        <link rel="stylesheet" href="../../dist/css/hubble.css">
+        <link rel="stylesheet" href="../../dist/css/docs.css">
+    </head>
+    <body>
+        <div class="flex-row-fluid align-cols-center pole-md">
+            <p>Swipe or down to open/close</p>
+        </div>
+        
+        <script src="../../dist/js/hubble.bundle.js"></script>
+        <script src="../../dist/js/docs.js"></script>
+        <script type="text/javascript">
+            const frontdrop = Hubble.Frontdrop(
+            {
+                swipeable:       true,
+                state:           'expanded',
+                title            : '<span class="skeleton skeleton-h5" style="width:150px"></span>',
+                content          : `<div class="skeleton skeleton-block skeleton-wave" style="width: 100%; height: auto; aspect-ratio: 16 / 9;"></div>
+                        <div class="skeleton-text-block skeleton-lines">
+                            <div class="skeleton" style="width: 81%;"></div>
+                            <div class="skeleton" style="width: 84%;"></div>
+                            <div class="skeleton" style="width: 91%;"></div>
+                        </div>`
+            });
+        </script>
+    </body>
+</html>

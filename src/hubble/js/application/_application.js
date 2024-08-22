@@ -25,7 +25,7 @@
      */
     Application.prototype.boot = function()
     {        
-        this.Dom().boot();
+        this.dom().boot();
 
         this._().trigger_event(window, 'Hubble:ready', this);
     }

@@ -102,7 +102,7 @@
 
 @function _color-base-name-from-var($colorVar)
 {
-    @return _str-replace(_color-name-from-var($colorVar) ,'brand-', '');
+    @return _str-replace(_color-name-from-var($colorVar) ,'theme-', '');
 }
 
 @function _var-to-str($cssVar)

@@ -18,16 +18,16 @@
         $color : map-get($palette, quote(_color-name-from-var($colorVar)));
 
         /* #{$name} */
-        --hb-brand-#{$name}-100:                 #{_lighter($color, 90%)};
-        --hb-brand-#{$name}-200:                 #{_lighter($color, 80%)};
-        --hb-brand-#{$name}-300:                 #{_lighter($color, 50%)};
-        --hb-brand-#{$name}-400:                 #{_lighter($color, 35%)};
+        --hb-theme-#{$name}-100:                 #{_lighter($color, 90%)};
+        --hb-theme-#{$name}-200:                 #{_lighter($color, 80%)};
+        --hb-theme-#{$name}-300:                 #{_lighter($color, 50%)};
+        --hb-theme-#{$name}-400:                 #{_lighter($color, 35%)};
         // Default is between 400 and 500 (i.e 450)
-        --hb-brand-#{$name}-500:                 #{_darker($color, 5%)};
-        --hb-brand-#{$name}-600:                 #{_darker($color, 20%)};
-        --hb-brand-#{$name}-700:                 #{_darker($color, 25%)};
-        --hb-brand-#{$name}-800:                 #{_darker($color, 30%)};
-        --hb-brand-#{$name}-900:                 #{_darker($color, 40%)};
+        --hb-theme-#{$name}-500:                 #{_darker($color, 5%)};
+        --hb-theme-#{$name}-600:                 #{_darker($color, 20%)};
+        --hb-theme-#{$name}-700:                 #{_darker($color, 25%)};
+        --hb-theme-#{$name}-800:                 #{_darker($color, 30%)};
+        --hb-theme-#{$name}-900:                 #{_darker($color, 40%)};
     }
     /* gray */
     --hb-gray-100:                 #{_lighter($gray, 90%)};
@@ -68,13 +68,13 @@
     @each $name, $colorVar in $contextsCSSVar
     {
         /* #{$name} */
-        --hb-brand-#{$name}:             #{$colorVar};
+        --hb-theme-#{$name}:             #{$colorVar};
     }
     /* Contextual RGB assignments */
     @each $name, $colorVar in $contextsCSSVar
     {
         /* #{$name} */
-        --hb-brand-#{$name}-rgb:         var(--#{_var-to-str($colorVar)}-rgb);
+        --hb-theme-#{$name}-rgb:         var(--#{_var-to-str($colorVar)}-rgb);
     }
 
     /* Base Colors */

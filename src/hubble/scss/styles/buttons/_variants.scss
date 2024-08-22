@@ -99,7 +99,7 @@
     &.selected,
     &.checked
     {
-        --hb-btn-border:  1px solid var(--hb-brand-primary);
+        --hb-btn-border:  1px solid var(--hb-theme-primary);
     }
 }
 @each $context, $colors in $contexts

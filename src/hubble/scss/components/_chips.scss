@@ -49,10 +49,10 @@
 	justify-content: flex-start;
 	flex-wrap: wrap;
 	column-gap: 5px;
-
+    row-gap: 20px;
 	border: 1px solid $input-border-color;
     border-radius: $input-radius;
-    padding: 0 $input-pad-x 0 $input-pad-x;
+    padding: 0;
 
     &:focus,
     &:focus-within
@@ -63,6 +63,10 @@
     .btn-chip
     {
         margin: math.div($input-pad-y, 2) 0;
+        &:first-child
+        {
+            margin-left: $input-pad-x;
+        }
     }
     .form-field
     {
@@ -70,6 +74,7 @@
     	flex: 1 0 0%;
     	width: 100%;
     	min-width: 30%;
+        padding: 0 1px;
 
         input
         {
@@ -78,14 +83,17 @@
             border-bottom-left-radius: 0;
             border: none;
             box-shadow: none;
-
-            &:focus,
-            &.focus
-            {
-                box-shadow: none;
-                border: none;
-                outline: none;
-            }
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+        &:focus,
+        &.focus
+        {
+            box-shadow: none;
+            border: none;
+            outline: none;
+            box-shadow: none;
+            box-shadow: none;
         }
     }
 }
