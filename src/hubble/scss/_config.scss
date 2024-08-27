@@ -116,7 +116,7 @@ $breakpoint-lg:                 992px !default;
 $breakpoint-xl:                 1200px !default;
 
 // Base transitions
-$base-easing:                   var(--hb-ease-in-out-circ) !default;
+$base-easing:                   cubic-bezier(0, 0, 0.2, 1) !default;
 $base-easing-time:              var(--hb-ease-time-sm) !default;
 
 // Raised levels
@@ -233,25 +233,37 @@ $msg-border-radius:             var(--hb-border-radius) !default;
 
 // Modals
 $modal-max-width:               680px !default;
+$modal-max-height:              80vh !default;
 $modal-shadow:                  3 !default; //0,1,2,3 
-$modal-overlay-bg:              var(--hb-white) !default;
-$modal-overlay-bg-dark:         var(--hb-black) !default;
-$modal-overlay-opacity:         0.8 !default;
+$modal-overlay-bg:              rgba(255, 255, 255, 0.8) !default;
+$modal-overlay-bg-dark:         rgba(0, 0, 0, 0.5) !default;
 $modal-title-size:              1.8rem !default;
-$modal-transition-on:           opacity .2s .3s ease, transform .3s .3s ease !default;
-$modal-transition-off:          opacity .4s  ease, transform .5s ease !default;
-$modal-overlay-transition-on:   opacity .5s ease !default;
-$modal-overlay-transition-off:  opacity .5s ease !default;
+$modal-transform-on:            translate3d(0px, 0px, 0px) !default;
+$modal-transform-off:           translate3d(0px, -50px, 0px) !default;
+$modal-transition:              opacity .225s ease-out .225s, transform .225s ease-out .225s !default;
+$modal-overlay-transition:      opacity .225s ease-out !default;
+
+
+// Drawer
+$drawer-bg:						var(--hb-white) !default;
+$drawer-width:                  230px !default;
+$drawer-size-peekable:          80px !default;
+$drawer-overlay-bg:             rgba(255, 255, 255, 0.8) !default;
+$drawer-overlay-bg-dark:        rgba(0, 0, 0, 0.5) !default;
+$drawer-border-color:    		var(--hb-gray-200) !default;
 
 // Frontdrop
-$frontdrop-overlay-bg:           var(--hb-white) !default;
-$frontdrop-overlay-bg-dark:      var(--hb-black) !default;
-$frontdrop-overlay-opacity:      0.8 !default;
-$frontdrop-title-size:           1.8rem !default;
-$frontdrop-transition:           opacity .2s ease, transform .4s var(--hb-ease-out-expo) !default;
-$frontdrop-overlay-transition:   opacity .35s ease !default;
-$frontdrop-shadow:				 0px -5px 10px 0px rgb(0 0 0 / 22%);
-$frontdrop-top:                  100px;
+$frontdrop-height:               75vh !default;
+$frontdrop-peekable-height:      50px !default;
+$frontdrop-radius:               10px !default;
+$frontdrop-overlay-bg:           rgba(255, 255, 255, 0.8) !default;
+$frontdrop-overlay-bg-dark:      rgba(0, 0, 0, 0.5) !default;
+
+// Backdrop
+$backdrop-bg:					 var(--hb-gray-700) !default;
+$backdrop-color:				 var(--hb-white) !default;
+$backdrop-width:                 230px !default;
+$backdrop-size-peekable:         80px !default;
 
 // Paper
 $paper-bg:                      var(--hb-white) !default;
@@ -266,7 +278,7 @@ $card-title-color:              var(--hb-body-color) !default;
 $card-line-height:              1.8 !default;
 $card-border-radius:            var(--hb-border-radius) !default;
 $card-border-width:             0 !default;
-$card-border-color:             var(--hb-gray-300) !default;
+$card-border-color:             var(--hb-gray-200) !default;
 $card-box-shadow:               var(--hb-raised-level-two) !default;
 $card-box-shadow-hover:         var(--hb-raised-level-two) !default;
 $card-spacer-y:                 1.2rem !default;
@@ -420,9 +432,10 @@ $bq-pad-y:                      2rem !default;
 $bq-pad-x:                      2rem !default;
 
 // Notifications
-$notif-bg:                      var(--hb-black) !default;
-$notif-color:                   var(--hb-white) !default;
-$notif-shadow:                  3 !default;
+$notification-max-width:        450px;
+$notification-bg:               var(--hb-black) !default;
+$notification-color:            var(--hb-white) !default;
+$notification-shadow:           3 !default;
 
 // Hamburger
 $hamburger-color:               var(--hb-body-color) !default;
@@ -451,21 +464,6 @@ $scrollbar-handle-active:       rgba(0, 0, 0, 0.35) !default;
 $skeleton-bg-1:                 rgba(0, 0, 0, 0.2) !default;
 $skeleton-bg-2:                 rgba(0, 0, 0, 0.4) !default;
 $skeleton-text-radius:          var(--hb-border-radius) !default;
-
-// Backdrop
-$backdrop-bg:                   var(--hb-theme-primary) !default;
-$backdrop-color:                var(--hb-white) !default;
-$backdrop-shadow:               rgb(0 0 0 / 20%) 0px -5px 5px -3px, rgb(0 0 0 / 14%) 0px -8px 10px -1px, rgb(0 0 0 / 12%) 0px -6px 14px -6px !default;
-
-// Drawer
-$drawer-bg:						var(--hb-white) !default;
-$drawer-width:                  230px !default;
-$drawer-width-peekable:         80px !default;
-$drawer-overlay-bg:             var(--hb-white) !default;
-$drawer-overlay-bg-dark:        var(--hb-black) !default;
-$drawer-overlay-opacity:        0.8 !default;
-$drawer-transition:             .35s var(--hb-ease-out-quart) !default;
-$drawer-overlay-transition:     .35s var(--hb-ease-out-quart) !default;
 
 // Responsive breakpoints
 $breakpoints:

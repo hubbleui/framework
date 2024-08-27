@@ -1,14 +1,16 @@
 # Frontdrop
 
-Frontdrop is provides an provides access to an elevated a surface providing additional app functionality such as filtering items, account access or displaying search results.
+Frontdrop provides access to an elevated surface providing additional app functionality such as filtering items, account access or displaying search results.
 
 ---
 
 *   [Example](#example)
 *   [Confirm Button](#confirm-button)
 *   [Swipeable](#swipeable)
-*   [KeepEdge](#keepedge)
-*	[Options](#options)
+*   [Peekable](#peekable)
+*   [Methods](#methods)
+*   [Options](#options)
+*   [HTML Initialization](#html-initialization)
 *   [CSS Customization](#css-customization)
 
 ---
@@ -20,59 +22,29 @@ A Frontdrop can be created via Hubble's Container with the `Frontdrop` method:
 <div class="code-content-example">
     <button class="js-fd-trigger-1 btn btn-primary">Show Frontdrop</button>
     <script type="text/javascript">
+        const SKELETONS = 
+        [
+            { lines: 1, variant: 'block-h3' },
+            { lines: 6, variant: 'text-block' },
+            { lines: 1, variant: 'block-h4' },
+            { lines: 8, variant: 'text-block' },
+        ];
 	    window.addEventListener('Hubble:ready', function()
 	    {
-            var frontdrop;
-
-	        document.querySelector('.js-fd-trigger-1').addEventListener('click', () => 
+            let frontdrop = Hubble.Frontdrop(
             {
-                if (frontdrop) frontdrop.destroy();
-
-                frontdrop = Hubble.Frontdrop(
-                {
-                    title            : 'Options',
-                    content          : `<ul class="list">
-                        <li>
-                            <div class="item-body">
-                                <div class="item-title">Amet proident.</div>
-                                <div class="item-subtitle">Officia cillum nisi ea velit.</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="item-body">
-                                <div class="item-title">Eu dolor anim.</div>
-                                <div class="item-subtitle">Lorem ipsum elit aute sint irure id esse.</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="item-body">
-                                <div class="item-title">Eu dolor anim.</div>
-                                <div class="item-subtitle">Lorem ipsum elit aute sint irure id esse.</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="item-body">
-                                <div class="item-title">Eu dolor anim.</div>
-                                <div class="item-subtitle">Lorem ipsum elit aute sint irure id esse.</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="item-body">
-                                <div class="item-title">Minim velit laboris in aliquip.</div>
-                                <div class="item-subtitle">Esse et cillum magna.</div>
-                            </div>
-                        </li>
-                    </ul>`
-                });
+                callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
+                state: 'collapsed'
             });
+
+	        document.querySelector('.js-fd-trigger-1').addEventListener('click', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
 	    });
     </script>
 </div>
 
 ```javascript
 const frontdrop = Hubble.Frontdrop( {
-    title   : 'Options',
-    content : '<ul>...</ul>',
+    content : '...',
 });
 ```
 
@@ -87,33 +59,22 @@ Pass a text value to `confirmBtn` to add a persistent confirmation button a Fron
     <script type="text/javascript">
         window.addEventListener('Hubble:ready', function()
         {
-            var frontdrop;
-
-            document.querySelector('.js-fd-trigger-2').addEventListener('click', () => 
+            let frontdrop = Hubble.Frontdrop(
             {
-                if (frontdrop) frontdrop.destroy();
-
-                frontdrop = Hubble.Frontdrop(
-                {
-                    title            : '<span class="skeleton skeleton-h5" style="width:150px"></span>',
-                    content          : `
-                        <div class="skeleton-text-block skeleton-lines">
-                            <div class="skeleton" style="width: 81%;"></div>
-                            <div class="skeleton" style="width: 84%;"></div>
-                            <div class="skeleton" style="width: 91%;"></div>
-                        </div>`,
-                    confirmBtn: 'Confirm',
-                });
+                callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
+                state: 'collapsed',
+                confirmBtn: 'Confirm Choice',
             });
+
+            document.querySelector('.js-fd-trigger-2').addEventListener('click', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
         });
     </script>
 </div>
 
 ```javascript
 const frontdrop = Hubble.Frontdrop( {
-    title            : '...',
     content          : '...',
-    confirmBtn       : 'Confirm',
+    confirmBtn       : 'Confirm Choice',
     callbackValidate : () => {
         //if (some condition) return false;
         return true;
@@ -135,7 +96,6 @@ By default, the Frontdrop element itself is Swipeable when expanded. You can mak
 
 ```javascript
 const frontdrop = Hubble.Frontdrop({
-    title     : '...',
     content   : '...',
     swipeable : true
 });
@@ -143,9 +103,9 @@ const frontdrop = Hubble.Frontdrop({
 
 ---
 
-### KeepEdge
+### Peekable
 
-By default, the Frontdrop element will hide completely when collapsed. You can make the a frontdrop collapse to an edge by passing `keepEdge: true` in the options. This allows a remain persistent through user-actions. 
+By default, the Frontdrop element will hide completely when collapsed. You can make the a frontdrop collapse to an edge by passing `peekable: true` in the options. This allows a remain persistent through user-actions. 
 
 <div class="code-content-example">
     <div class="iphone-case">
@@ -155,34 +115,133 @@ By default, the Frontdrop element will hide completely when collapsed. You can m
 
 ```javascript
 const frontdrop = Hubble.Frontdrop({
-    title     : '...',
     content   : '...',
-    keepEdge  : true
+    peekable  : true
 });
 ```
 
+---
+
+### Methods
+
+Once a Frontdrop instance is created, there are a few methods to interact with the drawer:
+
+The `open` method will animate and open the drawer:
+
+```javascript
+frontdrop.open();
+```
+
+The `close` method will animate and close the drawer:
+
+```javascript
+frontdrop.close();
+```
+
+The `direction` method returns the drawer state which will be either `collapsed` or `expanded`:
+
+```javascript
+if (frontdrop.state() === 'collapsed')
+{
+
+}
+```
+
+The `state` method returns the drawer state which will be either `collapsed` or `expanded`:
+
+```javascript
+if (frontdrop.state() === 'collapsed')
+{
+
+}
+```
+
+The `opened` method returns `true` if the drawer is open or `false` if not
+
+```javascript
+if (frontdrop.opened())
+{
+
+}
+```
+
+The `closed` method returns `true` if the drawer is closed or `false` if not
+
+```javascript
+if (frontdrop.closed())
+{
+
+}
+```
+
+Finally the `destroy` method completely removes the drawer from the DOM and all related event listeners:
+
+```javascript
+frontdrop.destroy()
+```
+
+---
 
 ### Options
 
-There are a number of options for a modal depending on a given purpose. The table below outlines the available options:
+There are a number of options for a Frontdrop depending on a given purpose. The table below outlines the available options:
 
-| Option key         | Var Type                                  | Behavior                                                                          | Required | Default       |
-|--------------------|-------------------------------------------|-----------------------------------------------------------------------------------|----------|---------------|
-| `title`            | `string`                                  | Text to be displayed inside `.card-title`.                                        | `no`     | `null`        |
-| `content`          | `string` `array` `nodelist` `HTMLElement` | Content to be displayed inside `.card-body > *`.                                  | `no`     | `null`        |
-| `overlay`          | `string`                                  | Either `light` or `dark`                                                          | `no`     | `dark`        |
-| `confirmBtn`       | `string`                                  | Inner text on confirm button. No confirm button will be rendered if not provided. | `no`     | `null`        |
-| `confirmClass`     | `string`                                  | Btn variant/context class for confirmation button. e.g `.btn-success`.            | `no`     | `btn-primary` |
-| `state`            | `string`                                  | Default state when first created can be either `collapsed` or `expanded`          | `no`     | `expanded`    |
-| `swipeable`        | `boolean`                                 | Enables up/down swipes on the window to open/close frontdrop                      | `no`     | `false`       |
-| `callbackBuilt`    | `function`                                | Callback function to be called when frontdrop is first built but not rendered.    | `no`     | `null`        |
-| `callbackRender`   | `function`                                | Callback function to be called when frontdrop is first rendered into DOM.         | `no`     | `null`        |
-| `callbackConfirm`  | `function`                                | Callback function to be called when confirm button is clicked.                    | `no`     | `null`        |
-| `callbackOpen`     | `function`                                | Callback function to be called when frontdrop is opened.                          | `no`     | `null`        |
-| `callbackClose`    | `function`                                | Callback function to be called when frontdrop is closed.                          | `no`     | `null`        |
-| `callbackValidate` | `function`                                | Callback function to validate if frontdrop can be closed. Must return boolean     | `no`     | `null`        |
+| Option key         | Var Type                                  | Behavior                                                                        | Required | Default    |
+|--------------------|-------------------------------------------|---------------------------------------------------------------------------------|----------|------------|
+| `content`          | `string` `array` `nodelist` `HTMLElement` | Content to be displayed inside the drawer                                       | `no`     | `null`     |
+| `peekable`         | `Boolean`                                 | Enables peekable drawer.                                                        | `no`     | `false`    |
+| `swipeable`        | `boolean`                                 | Enables swipes on the window to open/close drawer                               | `no`     | `false`    |
+| `state`            | `string`                                  | Default state when first created can be either `collapsed` or `expanded`        | `no`     | `expanded` |
+| `overlay`          | `string`                                  | Either `light` or `dark`                                                        | `no`     | `dark`     |
+| `easing`           | `string`                                  | JavaScript easing pattern in `camelCase`                                        | `no`     | `easeOut`  |
+| `animationTime`    | `Integer`                                 | Animation duration in milliseconds.                                             | `no`     | `250`      |
+| `classes`          | `string`                                  | Additional classes to pass to the drawer wrapper                                | `no`     | `dark`     |
+| `callbackBuilt`    | `function`                                | Callback function to be called when drawer is first built but not rendered.     | `no`     | `null`     |
+| `callbackRender`   | `function`                                | Callback function to be called when drawer is first rendered into DOM.          | `no`     | `null`     |
+| `callbackOpen`     | `function`                                | Callback function to be called when drawer is opened.                           | `no`     | `null`     |
+| `callbackClose`    | `function`                                | Callback function to be called when drawer is closed.                           | `no`     | `null`     |
+| `callbackValidate` | `function`                                | Callback function to validate if drawer can be closed. Must return boolean      | `no`     | `null`     |
 
 
+Note that all callbacks callbacks will receive the following arguments: `containerWrap, drawer, overlay, bodyWrap`
+
+---
+
+### HTML Initialization
+
+For basic use-cases where access to the underlying JavaScript is not required, Frontdrop can be enabled through HTML markup via an anchor element with the `.js-frontdrop-trigger` class.
+
+For basic HTML string content, simply use the `data-content` attribute with any required string content to populate the Frontdrop.
+
+For more complex requirements point to the id of a hidden target element element in the DOM with the `data-content` attribute. Remember to always include the `#` character before the ID as this differentiates it from it being interpenetrated as a string.
+
+All other options can be set through `data-attributes` on the anchor element in `hyphen-case`. For example to set the `closeAnywhere` option, you would set the `data-close-anywhere="true"` attribute.
+
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center pole-sm">
+        <button type="button" class="btn js-frontdrop-trigger" data-content="#fd-content">Toggle</button>
+        <div id="fd-content"  style="display: none;">
+            <div class="skeleton-text-block skeleton-lines">
+                <div class="skeleton" style="width: 81%;"></div>
+                <div class="skeleton" style="width: 74%;"></div>
+                <div class="skeleton" style="width: 78%;"></div>
+                <div class="skeleton" style="width: 81%;"></div>
+                <div class="skeleton" style="width: 74%;"></div>
+                <div class="skeleton" style="width: 78%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 91%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 91%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+```html
+<button type="button" class="btn js-frontdrop-trigger" data-content="#fd-content">Toggle</button>
+
+<div id="fd-content">...</ul>
+```
 ---
 
 ### CSS Customization
@@ -195,34 +254,32 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in Hubble
 `src/scss/_config.scss`
 ```
 ```sass
-$frontdrop-overlay-bg:           var(--hb-white) !default;
-$frontdrop-overlay-bg-dark:      var(--hb-black) !default;
-$frontdrop-overlay-opacity:      0.8 !default;
-$frontdrop-title-size:           1.8rem !default;
-$frontdrop-transition:           opacity .2s ease, transform .4s var(--hb-ease-out-expo) !default;
-$frontdrop-overlay-transition:   opacity .35s ease !default;
-$frontdrop-shadow:               0px -5px 10px 0px rgb(0 0 0 / 22%);
-$frontdrop-top:                  100px;
+$frontdrop-height:               75vh !default;
+$frontdrop-peekable-height:      50px !default;
+$frontdrop-radius:               10px !default;
+$frontdrop-overlay-bg:           rgba(255, 255, 255, 0.8) !default;
+$frontdrop-overlay-bg-dark:      rgba(0, 0, 0, 0.5) !default;
 ```
+
 
 ```file-path
 `src/scss/components/_frontdrop.scss`
 ```
-```sass
-.frontdrop-overlay
+```scss
+.drawer-container.frontdrop.drawer-bottom
 {
-    --hb-frontdrop-overlay-bg: #{$frontdrop-overlay-bg};
-    --hb-frontdrop-overlay-bg-dark: #{$frontdrop-overlay-bg-dark};
-    --hb-frontdrop-overlay-opacity: #{$frontdrop-overlay-opacity};
-    --hb-frontdrop-overlay-transition: #{$frontdrop-overlay-transition};
-}
-.frontdrop-wrap
-{
-    --hb-frontdrop-title-size: #{$frontdrop-title-size};
-    --hb-frontdrop-transition: #{$frontdrop-transition};
-    --hb-frontdrop-shadow: #{$frontdrop-shadow};
-    --hb-frontdrop-top: #{$frontdrop-top};
-    --hb-frontdrop-edge-btm: #{calc(100% - 190px)};
+    // Drawer
+    --hb-drawer-bg: #{$drawer-bg};
+    --hb-drawer-width: var(--hb-frontdrop-height);
+    --hb-drawer-size-peekable: #{$frontdrop-peekable-height};
+
+    // Overlay
+    --hb-drawer-overlay-bg: #{$frontdrop-overlay-bg};
+    --hb-drawer-overlay-bg-dark: #{$frontdrop-overlay-bg-dark};
+
+    // Frontdrop
+    --hb-frontdrop-height: #{$frontdrop-height};
+    --hb-frontdrop-radius: #{$frontdrop-radius};
 }
 ```
 

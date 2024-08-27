@@ -12,7 +12,7 @@
      * 
      * @var {Function}
      */
-    const [find, find_all, each, dom_element, add_class, toggle_class, on, off, has_class, remove_class, remove_from_dom, css, height, preapend, scroll_pos] = Hubble.import(['find','find_all','each','dom_element','add_class','toggle_class','on','off','has_class','remove_class','remove_from_dom', 'css', 'height', 'preapend', 'scroll_pos']).from('_');
+    const [find, find_all, each, dom_element, add_class, toggle_class, on, off, has_class, remove_class, remove_from_dom, css, height, preapend, scroll_pos, animate_css, rendered_style] = Hubble.import(['find','find_all','each','dom_element','add_class','toggle_class','on','off','has_class','remove_class','remove_from_dom', 'css', 'height', 'preapend', 'scroll_pos', 'animate_css', 'rendered_style']).from('_');
 
     /**
      * Default options
@@ -27,6 +27,9 @@
         // Overlay color - dark, light, none,
         overlay: 'dark',
 
+        // Force overlay on persistent drawer
+        persistentOverlay: false,
+
         // When true allows swiping on screen to hide/show
         swipeable: false,
 
@@ -39,8 +42,26 @@
         // Collapses to icon size
         peekable: false,
 
-        // Push body
-        pushBody: false,
+        // Adapt body body
+        persistent: false,
+
+        // Push body instead of changing width
+        pushbody: false,
+
+        // Animiation time
+        animationTime: 250,
+
+        // Animation easing
+        easing: 'easeOut',
+
+        // HTML initialized
+        fromHTML: false,
+        
+        // Additional classes to apply to wrapper
+        classes: '',
+
+        // Animate mounting
+        //animateOnMount
 
         // State callbacks
         callbackBuilt:    () => { },
@@ -104,11 +125,29 @@
 
         if (!SWIPE_DIRECTIONS[this._options.direction]) throw new Error('Unsupported direction.');
 
+        if (this._options.peekable) this._options.persistent = true;
+
+        if (this._options.pushbody)
+        {
+            this._options.persistent = true;
+
+            this._options.peekable = false;
+        }
+
         // Save state
         this._state = this._options.state;
 
         // Animating
         this._animating = false;
+
+        // Already mounted?
+        this._mounted = false;
+
+        // Initial mount
+        this._animateOnMount = typeof this._options.animateOnMount === 'undefined' ? this._state === 'expanded' && !this._options.fromHTML : this._options.animateOnMount;
+
+        // Do we have an overlay
+        this._hasOverlay = !this._options.persistent || (this._options.persistent && this._options.persistentOverlay);
 
         // Build the drawer
         this._build();
@@ -120,6 +159,50 @@
         this._bindListeners();
 
         return this;
+    }
+
+    /**
+     * Is drawer open?
+     *
+     * @access {public}
+     * @return {Boolean}
+     */
+    Drawer.prototype.opened = function()
+    {
+        return this._state === 'expanded';
+    }
+
+    /**
+     * Is drawer closed?
+     *
+     * @access {public}
+     * @return {Boolean}
+     */
+    Drawer.prototype.closed = function()
+    {
+        return this._state === 'collapsed';
+    }
+
+    /**
+     * Is drawer open or closed?
+     *
+     * @access {public}
+     * @return {String}
+     */
+    Drawer.prototype.state = function()
+    {
+        return this._state;
+    }
+
+    /**
+     * Returns drawer direction.
+     *
+     * @access {public}
+     * @return {String}
+     */
+    Drawer.prototype.direction = function()
+    {
+        return this._options.direction;
     }
 
     /**
@@ -136,10 +219,18 @@
         this._gestures.destroy();
 
         // Unwrap body
-        if (this._options.pushBody) this._unwrapBody();
+        if (this._options.persistent) this._unwrapBody();
 
-        // Remove from DOM and unbind
-        remove_from_dom(this._containerWrap);
+        if (WRAPPED_DRAWERS <= 0)
+        {
+            remove_from_dom(this._containerWrap);
+        }
+        else
+        {
+            if (this._hasOverlay) remove_from_dom(this._overlay);
+
+            remove_from_dom(this._drawer);
+        }
     }
 
     /**
@@ -152,54 +243,28 @@
         // Don't open when animating or not already closed
         if (this._state !== 'collapsed' || this._animating) return;
 
-        this._state = 'expanded';
-
         this._animating = true;
-
-        remove_class(this._bodyWrap, 'disabled');
-
-        if (!this._options.pushBody) add_class(document.body, 'no-scroll');
 
         remove_class(this._containerWrap, 'closed, closing');
 
-        add_class(this._containerWrap, 'expanded');
+        add_class(this._containerWrap, 'opening');
 
-        // Push body if necessary
-        if (this._options.pushBody && (this._options.direction === 'top' || this._options.direction === 'bottom')) this._pushBody();
+        remove_class(this._drawer, 'disabled');
 
-        on(this._containerWrap, 'transitionend', this._transitioned, this);
-    }
+        this._animteDrawer();
 
-    /**
-     * Completed opening / closing.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._transitioned = function()
-    {
-        // Multiple transitions
-        if (!this._animating) return;
-
-        this._animating = false;
-
-        // Opened
-        if (this._state === 'expanded')
+        if (this._hasOverlay)
         {
-            this._makeCallback(this._options.callbackOpen);
-        }
-        // closed
-        else
-        {
-            remove_class(document.body, 'no-scroll');
+            add_class(document.body, 'no-scroll');
 
-            add_class(this._containerWrap, 'closed');
-
-            remove_class(this._containerWrap, 'closing');
-
-            this._makeCallback(this._options.callbackClose);
+            this._animateOverlay();
         }
 
-        off(this._containerWrap, 'transitionend', this._transitioned, this);
+        if (this._options.pushbody) add_class(document.body, 'no-scroll');
+
+        if (this._options.persistent) this._animateBody();
+
+        if (!this._mounted) this._toggleEnd();
     }
 
     /**
@@ -208,20 +273,135 @@
      * @access {public}
      */
     Drawer.prototype.close = function()
-    {        
+    {
         if (this._state !== 'expanded' || this._animating) return;
 
         this._animating = true;
 
-        this._state = 'collapsed';
-
         add_class(this._containerWrap, 'closing');
 
-        remove_class(this._containerWrap, 'expanded');
+        remove_class(this._containerWrap, 'expanded, opening');
 
-        if (this._options.pushBody && (this._options.direction === 'top' || this._options.direction === 'bottom')) this._pullBody();
+        remove_class(document.body, 'no-scroll');
 
-        on(this._containerWrap, 'transitionend', this._transitioned, this);
+        this._animteDrawer();
+
+        if (this._hasOverlay) this._animateOverlay();
+
+        if (this._options.persistent) this._animateBody();
+
+        if (!this._mounted) this._toggleEnd();
+    }
+
+    /**
+     * Wrap body when 'persistent' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._animteDrawer = function()
+    {
+        let peekable  = this._options.peekable;
+        let state     = this._state;
+        let direction = this._options.direction;
+        let duration  = this._options.animationTime;
+        let easing    = this._options.easing;
+        let property  = peekable ? (direction === 'left' || direction === 'right' ? 'width' : 'height') : 'transform';
+        let to        = peekable ? (state === 'collapsed' ? this._drawerSize : this._peekableSize) : 'translate3d(0px, 0px, 0px)';
+        let from      = peekable ? (state === 'collapsed' ? this._peekableSize : 'auto') : null;
+
+        if (peekable && state === 'collapsed' && (direction === 'top' || direction === 'bottom'))
+        {
+            to = this._drawerSize;
+        }
+
+        if (!peekable)
+        {
+            let x = (direction === 'left' || direction === 'right') ? (direction === 'left' ? '-105%' : '105%') : '0px';
+            let y = (direction === 'top' || direction === 'bottom') ? (direction === 'top' ? '-105%' : '105%') : '0px';
+            let tofrom = `translate3d(${x}, ${y}, 0px)`;
+
+            state === 'expanded' ? to = tofrom : from = tofrom;
+        }
+
+        (this._mounted || (!this._mounted && this._animateOnMount)) ? animate_css(this._drawer, {property, from, to, duration, easing, callback: () => this._toggleEnd() }) : css(this._drawer, property, to);
+    }
+
+    /**
+     * Wrap body when 'persistent' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._animateOverlay = function()
+    {
+        let duration  = this._options.animationTime;
+        let easing    = this._options.easing;
+        let property  = 'opacity';
+        let to        = this._state === 'collapsed' ? '1' : '0';
+        let from      = this._state === 'collapsed' ? '0' : '1';
+
+        (this._mounted || (!this._mounted && this._animateOnMount)) ? animate_css(this._overlay, {property, from, to, duration, easing }) : css(this._overlay, property, to);
+    }
+
+    /**
+     * Wrap body when 'persistent' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._animateBody = function()
+    {
+        if (!this._options.persistent) return;
+
+        let peekable  = this._options.peekable;
+        let state     = this._state;
+        let direction = this._options.direction;
+        let duration  = this._options.animationTime;
+        let easing    = this._options.easing;
+        let property  = 'margin';
+        let n = e =s = w = '0px';
+
+        if (direction === 'left')   w = state === 'collapsed' ? this._drawerSize  : (peekable ? this._peekableSize : '0px');
+        if (direction === 'right')  e = state === 'collapsed' ? this._drawerSize  : (peekable ? this._peekableSize : '0px');
+        if (direction === 'top')    n = state === 'collapsed' ? `${height(this._drawer)}px` : (peekable ? this._peekableSize : '0px');
+
+        let to = `${n} ${e} ${s} ${w}`;
+
+        if (this._options.pushbody)
+        {
+            property = 'transform';
+            to = 'translate3d(0px, 0px, 0px)';
+
+            if (state === 'collapsed')
+            {
+                let x = y = '0px';
+                if (e !== '0px') x = `-${e}`;
+                if (w !== '0px') x = w;
+                if (n !== '0px') y = n;
+                to = `translate3d(${x}, ${y}, 0px)`;
+            }
+        }
+
+        (this._mounted || (!this._mounted && this._animateOnMount)) ? animate_css(this._bodyWrap, {property, to, duration, easing }) : css(this._bodyWrap, property, to);
+    }
+
+    /**
+     * Completed opening / closing.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._toggleEnd = function()
+    {        
+        // Multiple transitions
+        if (!this._animating) return;
+
+        this._state = this._state === 'collapsed' ? 'expanded' : 'collapsed';
+
+        add_class(this._containerWrap, this._state === 'expanded' ? 'expanded' : 'closed');
+
+        remove_class(this._containerWrap, this._state === 'expanded' ? 'opening' : 'closing');
+
+        this._makeCallback(this._state === 'expanded' ? this._options.callbackOpen : this._options.callbackClose);
+
+        this._animating = false;
     }
 
     /**
@@ -231,18 +411,18 @@
      */
     Drawer.prototype._build = function()
     {
-        this._containerWrap = dom_element({tag: 'div', class: `js-drawer-container drawer-container drawer-${this._options.direction} ${this._options.pushBody ? 'push-body' : ''} ${this._options.peekable ? 'drawer-peekable' : null } overlay-${this._options.overlay}`});
-
-        let overlay = dom_element({tag: 'div', class: 'js-drawer-overlay drawer-overlay'});
-        let drawer   = dom_element({tag: 'div', class: 'js-drawer-wrap drawer-wrap'}, null, 
+        let container = dom_element({tag: 'div', class: `js-drawer-container drawer-container drawer-${this._options.direction} ${this._options.persistent ? 'persistent' : ''} ${this._options.peekable ? 'peekable' : null } overlay-${this._options.overlay} ${this._options.classes}`});
+        let overlay   = dom_element({tag: 'div', class: 'js-drawer-overlay drawer-overlay'}, !this._hasOverlay ? null : container);
+        let drawer    = dom_element({tag: 'div', class: 'js-drawer-wrap drawer-wrap'}, container, 
             dom_element({tag: 'div', class: 'drawer-dialog js-drawer-dialog' }, null, this._options.content )
         );
 
-        this._drawer     = drawer;
-        this._overlay    = overlay;
-        this._dialog     = find('.js-drawer-dialog', this._drawer);
+        this._containerWrap = container;
+        this._drawer        = drawer;
+        this._overlay       = overlay;
+        this._dialog        = find('.js-drawer-dialog', this._drawer);
 
-        if (this._options.pushBody)
+        if (this._options.persistent)
         {
             let header = dom_element({tag: 'div', class: `flex-row-fluid align-cols-center-y drawer-header ${this._options.direction !== 'right' ? 'align-cols-right' : ''}`});
             let closer = dom_element({tag: 'button', type: 'button', class: 'btn btn-pure btn-circle btn-xs close-btn'}, header, dom_element({tag: 'span', class: `fa fa-chevron-${PUSH_ARROWS[this._options.direction]}`}));
@@ -264,35 +444,24 @@
     {
         document.body.appendChild(this._containerWrap);
 
-        if (this._options.pushBody) this._wrapBody();
+        this._containerWrap.offsetHeight;
 
-        // Wrap body and set 'body to the body-wrap
-        // We also need to wrap everything so the drawer and body-wrap share the same CSS Variables
-        if (this._state === 'expanded')
-        {
-            this._state = 'collapsed';
+        this._peekableSize = this._options.peekableSize || rendered_style(this._containerWrap, '--hb-drawer-size-peekable');
+        this._drawerSize   = this._options.drawerSize || rendered_style(this._containerWrap, '--hb-drawer-width');
 
-            if (!this._options.pushBody) this._containerWrap.appendChild(this._overlay);
+        if (this._options.persistent) this._wrapBody();
 
-            this._containerWrap.appendChild(this._drawer);
+        this._state = this._state === 'expanded' ? 'collapsed' : 'expanded';
 
-            setTimeout(() => this.open(), 5);
+        this._state === 'collapsed' ? this.open() : this.close();
 
-            this._makeCallback(this._options.callbackRender);
-        }
-        // No transition, mount and closed
-        else
-        {
-            add_class(this._containerWrap, 'closed');
+        this._mounted = true;
 
-            if (!this._options.pushBody) this._containerWrap.appendChild(this._overlay);
-
-            this._containerWrap.appendChild(this._drawer);
-        }
+        this._makeCallback(this._options.callbackRender);
     }
 
     /**
-     * Wrap body when 'pushBody' true.
+     * Wrap body when 'persistent' true.
      *
      * @access {private}
      */
@@ -308,13 +477,15 @@
 
             let classN = this._containerWrap.className;
 
-            this._containerWrap.parentNode.removeChild(this._containerWrap);
+            if (this._containerWrap.parentNode) this._containerWrap.parentNode.removeChild(this._containerWrap);
 
             this._containerWrap = find('.js-drawer-container');
 
             this._bodyWrap = find('.js-drawer-body-wrap');
 
             this._containerWrap.className = classN;
+
+            this._containerWrap.appendChild(this._drawer);
 
             return;
         }
@@ -327,7 +498,7 @@
 
         this._bodyWrap = dom_element({tag: 'div', class: 'js-drawer-body-wrap drawer-body-wrap'});
 
-        this._containerWrap.appendChild(this._bodyWrap);
+        preapend(this._bodyWrap, this._containerWrap);
         
         each(content, (i, node) => node !== this._containerWrap ? this._bodyWrap.appendChild(node) : null);
 
@@ -335,7 +506,7 @@
     }
 
     /**
-     * Unwrap body when 'pushBody' true.
+     * Unwrap body when 'persistent' true.
      *
      * @access {private}
      */
@@ -353,38 +524,11 @@
             let content = find_all('> *', this._bodyWrap);
 
             each(content, (i, node) => document.body.appendChild(node));
-
-            document.body.removeChild(this._containerWrap);
            
             window.scrollTo(pos.left, pos.top);
 
             WRAPPED_BODY = false;
         }
-    }
-
-    /**
-     * Push body for "top" only.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._pushBody = function()
-    {
-        if (this._options.direction === 'top')
-        {
-            let h = height(this._drawer);
-
-            css(this._bodyWrap, 'margin-top', `${h}px`);
-        }
-    }
-
-    /**
-     * Pull body back.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._pullBody = function()
-    {
-        css(this._bodyWrap, 'margin', false);
     }
 
     /**
@@ -404,19 +548,17 @@
      */
     Drawer.prototype._bindListeners = function()
     {
-        Hubble.dom().refresh(this._containerWrap);
+        if (!this._options.fromHTML) Hubble.dom().refresh(this._containerWrap);
 
-        on([this._overlay, this._dialog], 'click', this._closeValidate, this);
-
-        on(this._drawer, 'mousedown, mouseup, touchstart, touchend', () => toggle_class(this._drawer, 'cursor-down') );
-
-        this._gestures = Hubble.TinyGesture(this._options.swipeable ? window : this._drawer, { mouseSupport: true, velocityThreshold: 3, threshold: (type, self) => this._options.swipeable ? 20 : 3 });
+        on(this._overlay, 'click', this._closeValidate, this);
 
         let directions = SWIPE_DIRECTIONS[this._options.direction];
 
-        this._gestures.on(directions[0], (event) => this.open() );
+        this._gestures = Hubble.TinyGesture(this._options.swipeable ? window : this._drawer, { mouseSupport: true, velocityThreshold: 3, threshold: (type, self) => this._options.swipeable ? 20 : 3 });
 
-        this._gestures.on(directions[1], (event) => this._closeValidate() );
+        this._gestures.on(directions[0], () => this.open() );
+
+        this._gestures.on(directions[1], () => this._closeValidate() );
     }
 
     /**
@@ -426,7 +568,7 @@
      */
     Drawer.prototype._makeCallback = function(callback)
     {
-        if (callback) return callback(this._drawer);
+        if (callback) return callback(this._containerWrap, this._drawer, this._overlay, this._bodyWrap);
     }
 
     // Load into container 

@@ -139,9 +139,9 @@
         <ul>
             <li class="menu-item"><a  href="../../surfaces/paper/index.html">Paper</a></li>
             <li class="menu-item"><a  href="../../surfaces/cards/index.html">Cards</a></li>
-            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
             <li class="menu-item"><a  href="../../surfaces/drawer/index.html">Drawer</a></li>
             <li class="menu-item"><a  href="../../surfaces/frontdrop/index.html">Frontdrop</a></li>
+            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
         </ul>
     </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-navigation">
@@ -355,7 +355,7 @@
 <li><a href="#Instantiation">Instantiation</a></li>
 <li><a href="#markup">Markup</a></li>
 <li><a href="#validating">Validating</a></li>
-<li><a href="#dxample">Example</a></li>
+<li><a href="#example">Example</a></li>
 </ul>
 <hr />
 <h3 id="instantiation">Instantiation</h3>
@@ -404,118 +404,120 @@
 <h3 id="example">Example</h3>
 <p>Below is an example form using the validator. In a real request, you would use Hubble's <code>Ajax</code> component, however for this example we just use a <code>timeout</code>. Check the console log for more details.</p>
 <div class="code-content-example">
-    <form class="js-form">
-        <div class="row floor-xs">
-            <div class="form-field row">
-                <input type="text" name="name" id="name" data-js-required="true" data-js-validation="name">
-                <label for="name">Name</label>
-            </div>
-            <p class="help-danger">* You need to enter your name.</p>
-        </div>
-        <div class="row floor-xs">
-            <div class="form-field row">
-                <input type="email" name="email" id="email" data-js-required="true" data-js-validation="email">
-                <label for="email">Email</label>
-            </div>
-            <p class="help-danger">* You need to enter your email address.</p>
-        </div>
-        <div class="row floor-xs">
-            <div class="form-field row">
-                <input type="password" name="password" id="password" data-js-required="true" data-js-validation="password">
-                <label for="password">Password</label>
-            </div>
-            <p class="help-danger">* Passwords must include a number or special character.</p>
-        </div>
-        <div class="row floor-xs">
-            <div class="form-field row">
-                <span class="checkbox">
-                    <input type="checkbox" name="checkbox" id="checkbox" checked="true" />
-                    <label for="checkbox">Send me free stuff</label>
-                </span>
-            </div>
-        </div>
-        <div class="row floor-xs">
-            <div class="form-field pad-10 pad-r pad-s">
-                <p class="no-margin">Form result:</p>
-                <span class="radio radio-info">
-                    <input type="radio" name="result" id="radio_10" value="info" />
-                    <label for="radio_10">Info</label>
-                </span>
-            </div>
-            <div class="form-field pad-10">
-                <span class="radio radio-success">
-                    <input type="radio" name="result" id="radio_11" value="success" checked />
-                    <label for="radio_11">Success</label>
-                </span>
-            </div>
-            <div class="form-field pad-10">
-                <span class="radio radio-warning">
-                    <input type="radio" name="result" id="radio_12" value="warning" />
-                    <label for="radio_12">Warning</label>
-                </span>
-            </div>
-            <div class="form-field pad-10">
-                <span class="radio radio-danger">
-                    <input type="radio" name="result" id="radio_13" value="danger" />
-                    <label for="radio_13">Danger</label>
-                </span>
-            </div>
-        </div>
-        <div class="row floor-xs">
-            <button type="submit" class="btn with-loading">
-                <span class="loader loader-1"></span>
-                Submit
-            </button>
-        </div>
-        <div class="form-result">
-            <div class="msg msg-info" aria-hidden="true">
-                <div class="msg-icon">
-                    <span class="fa fa-bell icon"></span>
+    <form class="flex-row row-gaps-xs align-cols-center js-form">
+        <div class="col-12 col-md-8">
+            <div class="row pole-xs pole-s">
+                <div class="form-field row">
+                    <input type="text" name="name" id="name" data-js-required="true" data-js-validation="name">
+                    <label for="name">Name</label>
                 </div>
-                <div class="msg-body">
-                    <p>Please check your email to activate your account</p>
+                <p class="help-danger">* You need to enter your name.</p>
+            </div>
+            <div class="row pole-xs pole-s">
+                <div class="form-field row">
+                    <input type="email" name="email" id="email" data-js-required="true" data-js-validation="email">
+                    <label for="email">Email</label>
+                </div>
+                <p class="help-danger">* You need to enter your email address.</p>
+            </div>
+            <div class="row pole-xs pole-s">
+                <div class="form-field row">
+                    <input type="password" name="password" id="password" data-js-required="true" data-js-validation="password">
+                    <label for="password">Password</label>
+                </div>
+                <p class="help-danger">* Passwords must include a number or special character.</p>
+            </div>
+            <div class="row pole-xs pole-s">
+                <div class="form-field row">
+                    <span class="checkbox">
+                        <input type="checkbox" name="checkbox" id="checkbox" checked="true" />
+                        <label for="checkbox">Send me free stuff</label>
+                    </span>
                 </div>
             </div>
-            <div class="msg msg-success" aria-hidden="true">
-                <div class="msg-icon">
-                    <span class="fa fa-check icon"></span>
+            <div class="row pole-xs pole-s">
+                <div class="form-field pad-10 pad-r pad-s">
+                    <p class="no-margin">Form result:</p>
+                    <span class="radio radio-info">
+                        <input type="radio" name="result" id="radio_10" value="info" />
+                        <label for="radio_10">Info</label>
+                    </span>
                 </div>
-                <div class="msg-body">
-                    <p>Hooorayy! Your message was successfully sent!</p>
+                <div class="form-field pad-10">
+                    <span class="radio radio-success">
+                        <input type="radio" name="result" id="radio_11" value="success" checked />
+                        <label for="radio_11">Success</label>
+                    </span>
+                </div>
+                <div class="form-field pad-10">
+                    <span class="radio radio-warning">
+                        <input type="radio" name="result" id="radio_12" value="warning" />
+                        <label for="radio_12">Warning</label>
+                    </span>
+                </div>
+                <div class="form-field pad-10">
+                    <span class="radio radio-danger">
+                        <input type="radio" name="result" id="radio_13" value="danger" />
+                        <label for="radio_13">Danger</label>
+                    </span>
                 </div>
             </div>
-            <div class="msg msg-warning" aria-hidden="true">
-                <div class="msg-icon">
-                    <span class="fa fa-triangle-exclamation icon"></span>
-                </div>
-                <div class="msg-body">
-                    <p>There was an unknown error. Please try again later or contact support.</p>
-                </div>
+            <div class="row pole-xs pole-s">
+                <button type="submit" class="btn with-loading">
+                    <span class="loader loader-1"></span>
+                    Submit
+                </button>
             </div>
-            <div class="msg msg-danger" aria-hidden="true">
-                <div class="msg-icon">
-                    <span class="fa fa-xmark icon"></span>
+            <div class="form-result">
+                <div class="msg msg-info" aria-hidden="true">
+                    <div class="msg-icon">
+                        <span class="fa fa-bell icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>Please check your email to activate your account</p>
+                    </div>
                 </div>
-                <div class="msg-body">
-                    <p>You have been banned from creating an account with us.</p>
+                <div class="msg msg-success" aria-hidden="true">
+                    <div class="msg-icon">
+                        <span class="fa fa-check icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>Hooorayy! Your message was successfully sent!</p>
+                    </div>
+                </div>
+                <div class="msg msg-warning" aria-hidden="true">
+                    <div class="msg-icon">
+                        <span class="fa fa-triangle-exclamation icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>There was an unknown error. Please try again later or contact support.</p>
+                    </div>
+                </div>
+                <div class="msg msg-danger" aria-hidden="true">
+                    <div class="msg-icon">
+                        <span class="fa fa-xmark icon"></span>
+                    </div>
+                    <div class="msg-body">
+                        <p>You have been banned from creating an account with us.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </form>
 </div>
 <script type="text/javascript">
-window.addEventListener('DOMContentLoaded', function()
+window.addEventListener('Hubble:ready', function()
 {
     /* Helpers */
-    const [$, has_class, add_class, remove_class, addEventListener] = Hubble.import(['$', 'has_class', 'add_class', 'remove_class', 'addEventListener']).from('Helper');
+    const [find, has_class, add_class, remove_class, on] = Hubble.import(['find', 'has_class', 'add_class', 'remove_class', 'on']).from('_');
 
     // Instantiate validator and cache vars
-    const DOMElementform = $('.js-form');
+    const DOMElementform = find('.js-form');
     const validator = Hubble.FormValidator(DOMElementform);
-    const submitBtn = $('button[type=submit]', DOMElementform);
+    const submitBtn = find('button[type=submit]', DOMElementform);
     let fakeAjax;
 
-    addEventListener(submitBtn, 'click', function(e)
+    on(submitBtn, 'click', function(e)
     {
         console.log('submitting');
 
@@ -562,15 +564,15 @@ window.addEventListener('DOMContentLoaded', function()
 
 </script>
 <pre><code class="javascript language-javascript">/* Helpers */
-const [$, has_class, add_class, remove_class, addEventListener] = Hubble.import(['$', 'has_class', 'add_class', 'remove_class', 'addEventListener']).from('Helper');
+const [find, has_class, add_class, remove_class, on] = Hubble.import(['find', 'has_class', 'add_class', 'remove_class', 'on']).from('Helper');
 
 // Instantiate validator and cache vars
-const form      = $('.js-form');
+const form      = find('.js-form');
 const validator = Hubble.FormValidator(form);
-const submitBtn = $('button[type=submit]', form);
+const submitBtn = find('button[type=submit]', form);
 let fakeAjax;
 
-addEventListener(submitBtn, 'click', function(e)
+on(submitBtn, 'click', function(e)
 {
     // Stop the form from submitting via POST
     e = e || window.event;
@@ -661,5 +663,6 @@ addEventListener(submitBtn, 'click', function(e)
         </footer>
         <script src="../../../dist/js/hubble.bundle.js"></script>
         <script src="../../../dist/js/docs.js"></script>
+        <script type="text/javascript">Hubble.dom().refresh()</script>
     </body>
 </html>

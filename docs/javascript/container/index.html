@@ -139,9 +139,9 @@
         <ul>
             <li class="menu-item"><a  href="../../surfaces/paper/index.html">Paper</a></li>
             <li class="menu-item"><a  href="../../surfaces/cards/index.html">Cards</a></li>
-            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
             <li class="menu-item"><a  href="../../surfaces/drawer/index.html">Drawer</a></li>
             <li class="menu-item"><a  href="../../surfaces/frontdrop/index.html">Frontdrop</a></li>
+            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
         </ul>
     </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-navigation">
@@ -369,13 +369,10 @@
 <p>Any key-value pair set to the Container can also be retrieved using a direct method call. Hubble converts the key <code>CamelCase</code> when adding to the Container:</p>
 <pre><code class="javascript language-javascript">let awesome = Hubble.FooBar();</code></pre>
 <p>You can set any variable you like to a key, including functions, instantiated instances and Object Functions. Functions that can instantiate an instance will automatically get created with any provided arguments:</p>
-<pre><code class="javascript language-javascript">Hubble.set('do something', () =&gt; 'Hello world');
-
-// Retrieve the function
-let callback = Hubble.get('do something');
+<pre><code class="javascript language-javascript">Hubble.set('do something', (arg1, arg2) =&gt; console.log(arg1, arg2));
 
 // Or via method
-Hubble.DoSomething();</code></pre>
+Hubble.DoSomething('foo', 'bar');</code></pre>
 <p>Here is am example of setting an instance as key / value pair. The same instance will be returned each time the key is retrieved:</p>
 <pre><code class="javascript language-javascript">const app = function(a, b)
 {
@@ -415,6 +412,13 @@ let instance = Hubble.get('app', 1, 2);
 
 // Or directly via method
 let instance = Hubble.App(1, 2);</code></pre>
+<p>When setting a function as a key/value pair, if you require reference to underlying function itself (rather than it being called or instantiated), pass the <code>Hubble.IMPORT_AS_REF</code> to retrieve the function:</p>
+<pre><code class="javascript language-javascript">Hubble.set('do something', (arg1, arg2) =&gt; console.log(arg1, arg2));
+
+// Or via method
+let callback = Hubble.DoSomething(Hubble.IMPORT_AS_REF);
+
+callback('foo', 'bar');</code></pre>
 <hr />
 <h3 id="dependency-injection">Dependency injection</h3>
 <p>Hubble comes with a handy Dependency injection utility to import functions, constants or any other properties from an object, this means you only need to import the variables you require on a given piece of code.</p>
@@ -474,5 +478,6 @@ let instance = Hubble.App(1, 2);</code></pre>
         </footer>
         <script src="../../../dist/js/hubble.bundle.js"></script>
         <script src="../../../dist/js/docs.js"></script>
+        <script type="text/javascript">Hubble.dom().refresh()</script>
     </body>
 </html>

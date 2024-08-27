@@ -5,7 +5,7 @@
      * 
      * @var {functions}
      */
-    const [add_event_listener, remove_event_listener, _map, is_regexp] = Hubble.import(['add_event_listener', 'remove_event_listener', 'map', 'is_regexp']).from('_');
+    const [on, off, _map, is_regexp] = Hubble.import(['on', 'off', 'map', 'is_regexp']).from('_');
 
     /**
      * Regex masks
@@ -59,206 +59,197 @@
         {'type':'diners_club','pattern':/^54/, 'format': _format_4444, 'maxlength':16},
         {'type':'diners_club_international','pattern':/^36/, 'format': _format_464, 'maxlength':14},
         {'type':'diners_club_carte_blanche','pattern':/^30[0-5]/, 'format': _format_464, 'maxlength':14}
-    ];    
+    ];
 
     /**
-     * InputMasker
+     * Component constructor.
      *
+     * @constructor
+     * @param       {DOMElement}  element  Input element
+     * @param       {string}      mask     Supported mask name or regex filter as string
+     * @param       {string}      format   Optional format e.g (xxxx-xxxx-xxxx-xxxx);
      */
-    class InputMasker
+    const InputMasker = function(element, mask, format)
     {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         * @param       {DOMElement}  element  Input element
-         * @param       {string}      mask     Supported mask name or regex filter as string
-         * @param       {string}      format   Optional format e.g (xxxx-xxxx-xxxx-xxxx);
-         */
-        constructor(element, mask, format)
+        this.DOMElement = element;
+
+        this.maskRegexp = this._getMaskRegexp(mask);
+
+        this.format = !format ? null : this._buildFormatRegexp(format);
+
+        this.maskName = mask;
+
+        this.handler = function(){};
+
+        this._bind();
+
+    }
+
+    /**
+     * Disable the mask
+     *
+     * @access {public}
+     */
+    InputMasker.prototype.destroy = function()
+    {
+        off(this.DOMElement, 'input', this.handler);
+        off(this.DOMElement, 'paste', this.handler);
+    }
+
+    /**
+     * Binds input events.
+     *
+     * @access {private}
+     */
+    InputMasker.prototype._bind = function()
+    {
+        var _this      = this;
+        var DOMElement = this.DOMElement;
+        var maskRegexp = this.maskRegexp;
+        var format     = this.format;
+        var isCC       = _this.maskName === 'creditcard';
+
+        const _handler = function(e)
         {
-            this.DOMElement = element;
+            e = e || window.event;
 
-            this.maskRegexp = this._getMaskRegexp(mask);
-
-            this.format = !format ? null : this._buildFormatRegexp(format);
-
-            this.maskName = mask;
-
-            this.handler = function(){};
-
-            this._bind();
-
-            return this;
+            _this._handle(DOMElement, DOMElement.value, maskRegexp, isCC);
         }
 
-        /**
-         * Disable the mask
-         *
-         * @access {public}
-         */
-        destroy()
-        {
-            remove_event_listener(this.DOMElement, 'input', this.handler);
-            remove_event_listener(this.DOMElement, 'paste', this.handler);
-        }
+        this.handler = _handler;
 
-        /**
-         * Binds input events.
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            var _this      = this;
-            var DOMElement = this.DOMElement;
-            var maskRegexp = this.maskRegexp;
-            var format     = this.format;
-            var isCC       = _this.maskName === 'creditcard';
+        on(this.DOMElement, 'input', _handler);
+        on(this.DOMElement, 'paste', _handler);
+    }
 
-            const _handler = function(e)
-            {
-                e = e || window.event;
-
-                _this._handle(DOMElement, DOMElement.value, maskRegexp, isCC);
-            }
-
-            this.handler = _handler;
-
-            add_event_listener(this.DOMElement, 'input', _handler);
-            add_event_listener(this.DOMElement, 'paste', _handler);
-        }
-
-        /**
-         * Get or builds mask regexp.
-         *
-         * @access {private}
-         * @param  {string}  mask
-         * @return {RegExp}
-         */
-        _getMaskRegexp(mask)
-        {
-            if (is_regexp(mask)) return mask;
-            
-            let regexp = MASK_MAP[mask.replaceAll('-', '').toLowerCase()];
-
-            if (!regexp)
-            {
-                return new RegExp(mask);
-            }
-
-            return regexp;
-        }
-
-        /**
-         * Builds custom format values.
-         *
-         * @access {private}
-         * @param  {string}  format Formatting string
-         * @return {object}
-         */
-        _buildFormatRegexp(format)
-        {
-            let raw        = format;
-            let seperators = format.split('x').filter((x) => x !== '');
-            let regexp     = new RegExp(_map(format.split(/[^x]/), (i, x) => x.includes('x') ? `(.{0,${x.length}})` : false ).join(''));
-            let prefix     = format.startsWith('x') ? '' : seperators.shift();
-            let suffix     = format.endsWith('x') ? '' : seperators.pop();
-            let len        = (raw.length -suffix.length);
-
-            return { seperators, regexp, prefix, suffix, raw, len };
-        }
+    /**
+     * Get or builds mask regexp.
+     *
+     * @access {private}
+     * @param  {string}  mask
+     * @return {RegExp}
+     */
+    InputMasker.prototype._getMaskRegexp = function(mask)
+    {
+        if (is_regexp(mask)) return mask;
         
-        /**
-         * Custom format function.
-         *
-         * @access {private}
-         * @param  {string}  str
-         * @return {str}
-         */
-        _formatFilter(str)
+        let regexp = MASK_MAP[mask.replaceAll('-', '').toLowerCase()];
+
+        if (!regexp)
         {
-            // Regex filter
-            str = _map(str.split(''), (x, char) => !this.maskRegexp.test(char) ? null : char ).join('');
-
-            // Ignore or no formatting
-            if (str === '' || !this.format) return str;
-
-            // Cache seperators
-            let { seperators, regexp, prefix, suffix, raw, len } = this.format;
-
-            let splits = _map(str.match(regexp).slice(1), (i, str) => str === '' ? false : str);
-            let mapped = _map(splits, function(i, match)
-            {
-                return i === 0 ? prefix + match : seperators[i-1] + match;
-                
-            }).join('');
-
-            if (mapped.length === len)
-            {
-                mapped += suffix;
-            }
-
-            return mapped;
+            return new RegExp(mask);
         }
 
-        /**
-         * Sepcial handler for creditcard
-         *
-         * @access {private}
-         */
-        _formatCC(cc)
-        {           
-            cc = cc.replaceAll(/[^0-9]/g, '');
+        return regexp;
+    }
 
-            for(var i in _CARD_TYPES)
-            {
-                const ct = _CARD_TYPES[i];
+    /**
+     * Builds custom format values.
+     *
+     * @access {private}
+     * @param  {string}  format Formatting string
+     * @return {object}
+     */
+    InputMasker.prototype._buildFormatRegexp = function(format)
+    {
+        let raw        = format;
+        let seperators = format.split('x').filter((x) => x !== '');
+        let regexp     = new RegExp(_map(format.split(/[^x]/), (i, x) => x.includes('x') ? `(.{0,${x.length}})` : false ).join(''));
+        let prefix     = format.startsWith('x') ? '' : seperators.shift();
+        let suffix     = format.endsWith('x') ? '' : seperators.pop();
+        let len        = (raw.length -suffix.length);
 
-                if (cc.match(ct.pattern))
-                {
-                    cc = cc.substring(0, ct.maxlength)
-                    
-                    return ct.format(cc);
-                }
-            }
+        return { seperators, regexp, prefix, suffix, raw, len };
+    }
+    
+    /**
+     * Custom format function.
+     *
+     * @access {private}
+     * @param  {string}  str
+     * @return {str}
+     */
+    InputMasker.prototype._formatFilter = function(str)
+    {
+        // Regex filter
+        str = _map(str.split(''), (x, char) => !this.maskRegexp.test(char) ? null : char ).join('');
 
-            cc = cc.substring(0,19);
+        // Ignore or no formatting
+        if (str === '' || !this.format) return str;
 
-            return _format_4444(cc);
-        }
+        // Cache seperators
+        let { seperators, regexp, prefix, suffix, raw, len } = this.format;
 
-        /**
-         * Handles input event
-         *
-         * @access {private}
-         * @param  {DOMElement} DOMElement
-         * @param  {string}     oldval     
-         * @param  {RegExp}     maskRegexp 
-         * @param  {bool}       isCC 
-         */
-        _handle(DOMElement, oldval, maskRegexp, isCC)
+        let splits = _map(str.match(regexp).slice(1), (i, str) => str === '' ? false : str);
+        let mapped = _map(splits, function(i, match)
         {
-            // Filter
-            let newVal = isCC ? this._formatCC(oldval) : this._formatFilter(oldval);
-
-            // Ignore no change
-            if (newVal == oldval) return;
-
-            // Set position and format
-            var pos          = DOMElement.selectionStart;
-            var before_caret = oldval.substring(0, pos);
-            before_caret     = isCC ? this._formatCC(oldval) : this._formatFilter(before_caret);
-            pos              = before_caret.length;
+            return i === 0 ? prefix + match : seperators[i-1] + match;
             
-            DOMElement.value = newVal;
-            DOMElement.focus();
-            DOMElement.setSelectionRange(pos,pos);
+        }).join('');
+
+        if (mapped.length === len)
+        {
+            mapped += suffix;
         }
+
+        return mapped;
+    }
+
+    /**
+     * Sepcial handler for creditcard
+     *
+     * @access {private}
+     */
+    InputMasker.prototype._formatCC = function(cc)
+    {           
+        cc = cc.replaceAll(/[^0-9]/g, '');
+
+        for(var i in _CARD_TYPES)
+        {
+            const ct = _CARD_TYPES[i];
+
+            if (cc.match(ct.pattern))
+            {
+                cc = cc.substring(0, ct.maxlength)
+                
+                return ct.format(cc);
+            }
+        }
+
+        cc = cc.substring(0,19);
+
+        return _format_4444(cc);
+    }
+
+    /**
+     * Handles input event
+     *
+     * @access {private}
+     * @param  {DOMElement} DOMElement
+     * @param  {string}     oldval     
+     * @param  {RegExp}     maskRegexp 
+     * @param  {bool}       isCC 
+     */
+    InputMasker.prototype._handle = function(DOMElement, oldval, maskRegexp, isCC)
+    {
+        // Filter
+        let newVal = isCC ? this._formatCC(oldval) : this._formatFilter(oldval);
+
+        // Ignore no change
+        if (newVal == oldval) return;
+
+        // Set position and format
+        var pos          = DOMElement.selectionStart;
+        var before_caret = oldval.substring(0, pos);
+        before_caret     = isCC ? this._formatCC(oldval) : this._formatFilter(before_caret);
+        pos              = before_caret.length;
+        
+        DOMElement.value = newVal;
+        DOMElement.focus();
+        DOMElement.setSelectionRange(pos,pos);
     }
 
     // SET IN IOC
-    /*****************************************/
     Hubble.set('InputMasker', InputMasker);
 
 }());

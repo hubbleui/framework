@@ -1,15 +1,17 @@
 # Drawer
 
-Drawer is provides an provides access to an elevated a surface providing additional app functionality such as filtering items, account access or displaying search results.
+Drawer provides access to an elevated surface providing additional app functionality such as filtering items, account access or displaying search results.
 
 ---
 
 *   [Example](#example)
 *   [Direction](#direction)
 *   [Swipeable](#swipeable)
-*   [Push Body](#push-body)
+*   [Persistent](#persistent)
 *   [Peekable](#peekable)
-*	[Options](#options)
+*   [Methods](#methods)
+*   [Options](#options)
+*   [HTML Initialization](#html-initialization)
 *   [CSS Customization](#css-customization)
 
 ---
@@ -21,6 +23,9 @@ A Drawer can be created via Hubble's Container with the `Drawer` method:
 <div class="code-content-example">
     <button class="js-dw-trigger-1 btn">Show Drawer</button>
     <script type="text/javascript">
+        
+        const DRAWER_MENU = '<ul class="menu"><li><span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span><span class="item-body">Inbox</span><span class="item-right"><span class="label">4</span></span>  </li>  <li><span class="item-left"><span class="fa fa-flag color-gray-500"></span></span><span class="item-body">Flagged</span><span class="item-right"><span class="label">23</span></span>  </li>  <li><span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span><span class="item-body">Drafts</span><span class="item-right"><span class="label">3</span></span>  </li>  <li><span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span><span class="item-body">Sent</span><span class="item-right"><span class="status status-xs"></span></span>  </li>  <li><span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span><span class="item-body">Junk</span><span class="item-right"><span class="status status-xs status-warning"></span></span>  </li>  <li><span class="item-left"><span class="fa fa-trash color-gray-500"></span></span><span class="item-body">Trash</span><span class="item-right"><span class="status status-xs status-danger"></span></span>  </li> </ul>';
+
 	    window.addEventListener('Hubble:ready', function()
 	    {
             var drawer;
@@ -31,38 +36,7 @@ A Drawer can be created via Hubble's Container with the `Drawer` method:
 
                 drawer = Hubble.Drawer(
                 {
-                    content : `<ul class="menu"> 
-                    <li>
-                        <span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span>
-                        <span class="item-body">Inbox</span>
-                        <span class="item-right"><span class="label">4</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-flag color-gray-500"></span></span>
-                        <span class="item-body">Flagged</span>
-                        <span class="item-right"><span class="label">23</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span>
-                        <span class="item-body">Drafts</span>
-                        <span class="item-right"><span class="label">3</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span>
-                        <span class="item-body">Sent</span>
-                        <span class="item-right"><span class="status status-xs"></span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span>
-                        <span class="item-body">Junk</span>
-                        <span class="item-right"><span class="status status-xs status-warning"></span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-trash color-gray-500"></span></span>
-                        <span class="item-body">Trash</span>
-                        <span class="item-right"><span class="status status-xs status-danger"></span></span>
-                    </li>
-                </ul>`
+                    content : DRAWER_MENU
                 });
             });
 	    });
@@ -110,38 +84,7 @@ const drawer = Hubble.Drawer({
             drawer = Hubble.Drawer(
             {
                 direction : btn.innerText.toLowerCase().trim(),
-                content          : `<ul class="menu"> 
-                    <li>
-                        <span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span>
-                        <span class="item-body">Inbox</span>
-                        <span class="item-right"><span class="label">4</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-flag color-gray-500"></span></span>
-                        <span class="item-body">Flagged</span>
-                        <span class="item-right"><span class="label">23</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span>
-                        <span class="item-body">Drafts</span>
-                        <span class="item-right"><span class="label">3</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span>
-                        <span class="item-body">Sent</span>
-                        <span class="item-right"><span class="status status-xs"></span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span>
-                        <span class="item-body">Junk</span>
-                        <span class="item-right"><span class="status status-xs status-warning"></span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-trash color-gray-500"></span></span>
-                        <span class="item-body">Trash</span>
-                        <span class="item-right"><span class="status status-xs status-danger"></span></span>
-                    </li>
-                </ul>`,
+                content : DRAWER_MENU,
         
             });
         });
@@ -152,7 +95,9 @@ const drawer = Hubble.Drawer({
 
 ### Swipeable
 
-By default, the Drawer element itself is Swipeable when expanded. You can make the a drawer swipeable with on the window when open or closed by adding the `swipeable` option. This means you can open and close the drawer by simply swiping up or down on the window itself at any time.
+By default, the Drawer element itself is Swipeable when expanded - meaning once it's opened, it can be swiped closed by swiping on the drawer in the opposite direction.
+
+You can make the drawer swipeable on the window element itself instead by adding the `swipeable` option. This means a drawer can opened or closed by simply swiping up/down/left/right on the window itself at any time.
 
 <div class="code-content-example">
     <div class="iphone-case">
@@ -169,12 +114,14 @@ const drawer = Hubble.Drawer({
 
 ---
 
-### Push Body
+### Persistent
 
-Persistent navigation drawers can toggle open or closed. The drawer sits on the same surface elevation as the main page content. Pass `pushBody` to the options when creating a drawer to enable it.
+Persistent navigation drawers can toggle open or closed and sits on the same surface elevation as the content. When the drawer opens or closes, the main page content is pushed or pulled adapts in width/height based on the drawer size.
+
+Drawer will automatically wrap and unwrap page content when the it is invoked or destroyed.
 
 <div class="code-content-example">
-    <div class="row" style="height: 400px">
+    <div class="row" style="height: 450px">
         <iframe src="../drawer_iframe2.html"></iframe>
     </div>
 </div>
@@ -182,7 +129,7 @@ Persistent navigation drawers can toggle open or closed. The drawer sits on the 
 ```javascript
 const drawer = Hubble.Drawer({
     content   : '...',
-    pushBody : true,
+    persistent : true,
 });
 ```
 
@@ -190,32 +137,162 @@ const drawer = Hubble.Drawer({
 
 ### Peekable
 
+On persistent left and right drawers, adding the `peekable` option, allows the drawer to collapse into a fixed width when closed. When expanded, it appears as the standard persistent navigation drawer.
+
+<div class="code-content-example">
+    <div class="row" style="height: 450px">
+        <iframe src="../drawer_iframe3.html"></iframe>
+    </div>
+</div>
+
+```javascript
+const drawer = Hubble.Drawer({
+    content   : '...',
+    persistent : true,
+    peekable : true,
+});
+```
 
 ---
 
+### Methods
+
+Once a drawer instance is created, there are a few methods to interact with the drawer:
+
+The `open` method will animate and open the drawer:
+
+```javascript
+drawer.open();
+```
+
+The `close` method will animate and close the drawer:
+
+```javascript
+drawer.close();
+```
+
+The `direction` method returns the drawer state which will be either `collapsed` or `expanded`:
+
+```javascript
+if (drawer.state() === 'collapsed')
+{
+
+}
+```
+
+The `state` method returns the drawer state which will be either `collapsed` or `expanded`:
+
+```javascript
+if (drawer.state() === 'collapsed')
+{
+
+}
+```
+
+The `opened` method returns `true` if the drawer is open or `false` if not
+
+```javascript
+if (drawer.opened())
+{
+
+}
+```
+
+The `closed` method returns `true` if the drawer is closed or `false` if not
+
+```javascript
+if (drawer.closed())
+{
+
+}
+```
+
+Finally the `destroy` method completely removes the drawer from the DOM and all related event listeners:
+
+```javascript
+drawer.destroy()
+```
+
+---
 
 ### Options
 
-There are a number of options for a modal depending on a given purpose. The table below outlines the available options:
+Drawer initialization has a number of different options depending on the use-case. The table below outlines the available options:
 
-| Option key         | Var Type                                  | Behavior                                                                          | Required | Default       |
-|--------------------|-------------------------------------------|-----------------------------------------------------------------------------------|----------|---------------|
-| `title`            | `string`                                  | Text to be displayed inside `.card-title`.                                        | `no`     | `null`        |
-| `content`          | `string` `array` `nodelist` `HTMLElement` | Content to be displayed inside `.card-body > *`.                                  | `no`     | `null`        |
-| `overlay`          | `string`                                  | Either `light` or `dark`                                                          | `no`     | `dark`        |
-| `confirmBtn`       | `string`                                  | Inner text on confirm button. No confirm button will be rendered if not provided. | `no`     | `null`        |
-| `confirmClass`     | `string`                                  | Btn variant/context class for confirmation button. e.g `.btn-success`.            | `no`     | `` |
-| `state`            | `string`                                  | Default state when first created can be either `collapsed` or `expanded`          | `no`     | `expanded`    |
-| `swipeable`        | `boolean`                                 | Enables up/down swipes on the window to open/close drawer                      | `no`     | `false`       |
-| `callbackBuilt`    | `function`                                | Callback function to be called when drawer is first built but not rendered.    | `no`     | `null`        |
-| `callbackRender`   | `function`                                | Callback function to be called when drawer is first rendered into DOM.         | `no`     | `null`        |
-| `callbackConfirm`  | `function`                                | Callback function to be called when confirm button is clicked.                    | `no`     | `null`        |
-| `callbackOpen`     | `function`                                | Callback function to be called when drawer is opened.                          | `no`     | `null`        |
-| `callbackClose`    | `function`                                | Callback function to be called when drawer is closed.                          | `no`     | `null`        |
-| `callbackValidate` | `function`                                | Callback function to validate if drawer can be closed. Must return boolean     | `no`     | `null`        |
+| Option key         | Var Type                                  | Behavior                                                                        | Required | Default    |
+|--------------------|-------------------------------------------|---------------------------------------------------------------------------------|----------|------------|
+| `content`          | `string` `array` `nodelist` `HTMLElement` | Content to be displayed inside the drawer                                       | `no`     | `null`     |
+| `persistent`       | `Boolean`                                 | Enables persistent drawer.                                                      | `no`     | `false`    |
+| `peekable`         | `Boolean`                                 | Enables peekable drawer.                                                        | `no`     | `false`    |
+| `animateOnMount`   | `Boolean`                                 | Enables animating on initial mount. Defaults to `true` when state is `expanded` | `no`     | `false`    |
+| `swipeable`        | `boolean`                                 | Enables swipes on the window to open/close drawer                               | `no`     | `false`    |
+| `state`            | `string`                                  | Default state when first created can be either `collapsed` or `expanded`        | `no`     | `expanded` |
+| `overlay`          | `string`                                  | Either `light` or `dark`                                                        | `no`     | `dark`     |
+| `easing`           | `string`                                  | JavaScript easing pattern in `camelCase`                                        | `no`     | `easeOut`  |
+| `animationTime`    | `Integer`                                 | Animation duration in milliseconds.                                             | `no`     | `250`      |
+| `classes`          | `string`                                  | Additional classes to pass to the drawer wrapper                                | `no`     | `dark`     |
+| `callbackBuilt`    | `function`                                | Callback function to be called when drawer is first built but not rendered.     | `no`     | `null`     |
+| `callbackRender`   | `function`                                | Callback function to be called when drawer is first rendered into DOM.          | `no`     | `null`     |
+| `callbackOpen`     | `function`                                | Callback function to be called when drawer is opened.                           | `no`     | `null`     |
+| `callbackClose`    | `function`                                | Callback function to be called when drawer is closed.                           | `no`     | `null`     |
+| `callbackValidate` | `function`                                | Callback function to validate if drawer can be closed. Must return boolean      | `no`     | `null`     |
 
+Note that all callbacks callbacks will receive the following arguments: `containerWrap, drawer, overlay, bodyWrap`
 
 ---
+
+### HTML Initialization
+
+For basic use cases where access to the underlying JavaScript, Drawers can be enabled through HTML markup via an anchor element. Options can be set through `data-attributes` on the anchor element.
+
+To initialize a drawer, create an anchor element using the `.js-drawer-trigger` class, you can then point to the id of the target drawer element in the DOM via the `data-content` attribute. No other special markup is required.
+
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center pole-sm">
+        <button type="button" class="btn js-drawer-trigger" data-content="#menu">Toggle</button>
+        <ul id="menu" class="menu" style="display: none;"> 
+            <li>
+                <span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span>
+                <span class="item-body">Inbox</span>
+                <span class="item-right"><span class="label">4</span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-flag color-gray-500"></span></span>
+                <span class="item-body">Flagged</span>
+                <span class="item-right"><span class="label">23</span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span>
+                <span class="item-body">Drafts</span>
+                <span class="item-right"><span class="label">3</span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span>
+                <span class="item-body">Sent</span>
+                <span class="item-right"><span class="status status-xs"></span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span>
+                <span class="item-body">Junk</span>
+                <span class="item-right"><span class="status status-xs status-warning"></span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-trash color-gray-500"></span></span>
+                <span class="item-body">Trash</span>
+                <span class="item-right"><span class="status status-xs status-danger"></span></span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+```html
+<button type="button" class="btn js-drawer-trigger" data-content="#my-drawer">Toggle</button>
+
+<ul class="memu" id="my-drawer">...</ul>
+```
+
+---
+
 
 ### CSS Customization
 
@@ -227,34 +304,27 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in Hubble
 `src/scss/_config.scss`
 ```
 ```sass
-$drawer-overlay-bg:           var(--hb-white) !default;
-$drawer-overlay-bg-dark:      var(--hb-black) !default;
-$drawer-overlay-opacity:      0.8 !default;
-$drawer-title-size:           1.8rem !default;
-$drawer-transition:           opacity .2s ease, transform .4s var(--hb-ease-out-expo) !default;
-$drawer-overlay-transition:   opacity .35s ease !default;
-$drawer-shadow:               0px -5px 10px 0px rgb(0 0 0 / 22%);
-$drawer-top:                  100px;
+$drawer-bg:                     var(--hb-white) !default;
+$drawer-width:                  230px !default;
+$drawer-size-peekable:          80px !default;
+$drawer-overlay-bg:             rgba(255, 255, 255, 0.8) !default;
+$drawer-overlay-bg-dark:        rgba(0, 0, 0, 0.5) !default;
 ```
 
 ```file-path
 `src/scss/components/_drawer.scss`
 ```
 ```sass
-.drawer-overlay
+.drawer-container
 {
+    // Variables
+    --hb-drawer-bg: #{$drawer-bg};
+    --hb-drawer-width: #{$drawer-width};
+    --hb-drawer-size-peekable: #{$drawer-size-peekable};
+
+    // Overlay
     --hb-drawer-overlay-bg: #{$drawer-overlay-bg};
     --hb-drawer-overlay-bg-dark: #{$drawer-overlay-bg-dark};
-    --hb-drawer-overlay-opacity: #{$drawer-overlay-opacity};
-    --hb-drawer-overlay-transition: #{$drawer-overlay-transition};
-}
-.drawer-wrap
-{
-    --hb-drawer-title-size: #{$drawer-title-size};
-    --hb-drawer-transition: #{$drawer-transition};
-    --hb-drawer-shadow: #{$drawer-shadow};
-    --hb-drawer-top: #{$drawer-top};
-    --hb-drawer-edge-btm: #{calc(100% - 190px)};
 }
 ```
 

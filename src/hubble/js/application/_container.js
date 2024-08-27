@@ -10,6 +10,8 @@
     const Inverse = function()
     {
         this._store = {};
+
+        this.IMPORT_AS_REF = 100;
     }
 
     /**
@@ -106,32 +108,34 @@
 
         let args = Array.prototype.slice.call(arguments).slice(1);
 
-        let valObj = this._store[key];
+        let storeObj = this._store[key];
 
         if (this.has(key))
         {
+            if (args[0] && args[0] === this.IMPORT_AS_REF) return storeObj.value;
+
             // Singletons
-            if (valObj.singleton)
+            if (storeObj.singleton)
             {
-                if (!valObj.instance)
+                if (!storeObj.instance)
                 {
-                    return valObj.singleton.apply(this, [key, ...args]);
+                    return storeObj.singleton.apply(this, [key, ...args]);
                 }
 
-                return valObj.instance;
+                return storeObj.instance;
             }
             // Constructorables
-            if (valObj.invokable)
+            if (storeObj.invokable)
             {
-                return this._newInstance(valObj.value, args);
+                return this._newInstance(storeObj.value, args);
             }
             // Functions
-            if (valObj.funcn)
+            if (storeObj.funcn)
             {
-                return valObj.value.apply(this, args);
+                return storeObj.value.apply(this, args);
             }
             // Intances and all other var types
-            return valObj.value;
+            return storeObj.value;
         }
     }
 
@@ -219,19 +223,19 @@
      */
     Inverse.prototype._singletonFunc = function(key)
     {
-        var valObj   = this._store[key];
-        var instance = valObj.invoked ? valObj.instance : null;
-        var args     = Array.prototype.slice.call(arguments).slice(1);
+        let storeObj = this._store[key];
+        let instance = storeObj.invoked ? storeObj.instance : null;
+        let args     = Array.prototype.slice.call(arguments).slice(1);
 
         if (!instance)
         {
-            instance         = this._newInstance(valObj.value, args);
-            valObj.function  = false;
-            valObj.invokable = false;
-            valObj.invoked   = true;
-            valObj.value     = null;
-            valObj.instance  = instance;
-            valObj.singleton = true;
+            instance           = this._newInstance(storeObj.value, args);
+            storeObj.function  = false;
+            storeObj.invokable = false;
+            storeObj.invoked   = true;
+            storeObj.value     = null;
+            storeObj.instance  = instance;
+            storeObj.singleton = true;
         }
 
         return instance;
@@ -304,20 +308,14 @@
     {
         isSingleton = typeof isSingleton === 'undefined' ? false : isSingleton;
 
-        var invokable   = this._isInvokable(mixedVar);
-        var invoked     = this._isInvoked(mixedVar);
-        var instance    = invoked && isSingleton ? mixedVar : null;
-        var isFunc      = this._is_func(mixedVar) && !invokable && !invoked && !isSingleton;
-        var singleton   = isSingleton ? this._singletonFunc : false;
+        let value       = mixedVar;
+        let invokable   = this._isInvokable(mixedVar);
+        let invoked     = this._isInvoked(mixedVar);
+        let instance    = invoked && isSingleton ? mixedVar : null;
+        let funcn       = this._is_func(mixedVar) && !invokable && !invoked && !isSingleton;
+        let singleton   = isSingleton ? this._singletonFunc : false;
 
-        return {
-            funcn     : isFunc,
-            invokable : invokable,
-            invoked   : invoked,
-            value     : mixedVar,
-            instance  : instance,
-            singleton : singleton,
-        };
+        return { funcn, invokable, invoked, value, instance, singleton };
     }
 
     /**

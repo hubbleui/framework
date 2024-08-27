@@ -30,6 +30,8 @@ _.prototype.__computed_style = function(DOMElement, property)
     {
         let styles = window.getComputedStyle(DOMElement, null);
 
+        if (property && property.startsWith('--')) return styles.getPropertyValue(property);
+
         return !property ? styles : styles[property];
     }
     else if (DOMElement.currentStyle)

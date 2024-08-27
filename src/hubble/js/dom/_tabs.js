@@ -54,7 +54,6 @@
      */
     TabNav.prototype._eventHandler = function(e, clicked)
     {
-        
         let nav         = closest(clicked, '.js-tab-nav');
         let activeClass = attr(nav, 'data-active-class') || 'active';
         let panel       = find(`[data-tab-panel=${attr(clicked, 'data-tab')}]`);

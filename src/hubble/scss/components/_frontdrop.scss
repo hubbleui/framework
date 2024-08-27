@@ -1,200 +1,97 @@
-.frontdrop-wrap
+.drawer-container.frontdrop.drawer-bottom
 {
-	--hb-frontdrop-title-size: #{$frontdrop-title-size};
-	--hb-frontdrop-transition: #{$frontdrop-transition};
-	--hb-frontdrop-shadow: #{$frontdrop-shadow};
-	--hb-frontdrop-top: #{$frontdrop-top};
-	--hb-frontdrop-edge-btm: #{calc(100% - 190px)};
-	top: var(--hb-frontdrop-top);
-	z-index: var(--hb-zindex-frontdrop);
-	position: fixed;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	
-	display: flex;
-	justify-content: center;
-	align-items: flex-end;
-    overflow: hidden;
+	// Drawer
+	--hb-drawer-bg: #{$drawer-bg};
+	--hb-drawer-width: var(--hb-frontdrop-height);
+	--hb-drawer-size-peekable: #{$frontdrop-peekable-height};
 
-	.frontdrop-dialog
+	// Overlay
+	--hb-drawer-overlay-bg: #{$frontdrop-overlay-bg};
+	--hb-drawer-overlay-bg-dark: #{$frontdrop-overlay-bg-dark};
+
+	// Frontdrop
+	--hb-frontdrop-height: #{$frontdrop-height};
+	--hb-frontdrop-radius: #{$frontdrop-radius};
+
+	.drawer-wrap
 	{
-		width: 100%;
-		height: 100%;
-		padding-top: 30px;
-
+		height: var(--hb-frontdrop-height);
+		border-top: none;
+		border-top-left-radius: var(--hb-frontdrop-radius);
+		border-top-right-radius: var(--hb-frontdrop-radius);
+		box-shadow: 0px -4px 7px -1px rgba(0, 0, 0, 0.2);
 		&:after
 		{
-			z-index: var(--hb-zindex-frontdrop);
 			content: "";
-		    width: 100%;
-		    height: 60px;
+			width: 30px;
+		    height: 6px;
+		    background-color: rgb(224, 224, 224);
+		    border-radius: 3px;
 		    position: absolute;
-		    top: 0;
-		    cursor: move;
-		    cursor: -webkit-grab;
-		    cursor: grab;
+		    top: 20px;
+		    left: calc(50% - 15px);
 		}
+	}
+	&.persistent .drawer-wrap
+	{
+		position: fixed;
+		bottom: 0;
+	}
+
+	.drawer-dialog
+	{
+		padding-top: 30px;
 
 	    .card
 		{
-			--hb-card-box-shadow: var(--hb-frontdrop-shadow);
-			--hb-card-box-shadow-hover:var(--hb-frontdrop-shadow);
+			--hb-card-box-shadow: none;
+			--hb-card-box-shadow-hover:none;
 			--hb-card-spacer-x: 0;
-			height: calc(100% - var(--hb-frontdrop-top));
+			overflow-y: auto;
+			height: 100%;
 			flex-direction: column;
     		flex-wrap: nowrap;
 			border-radius: 0;
-			border-top-left-radius: 10px;
-			border-top-right-radius: 10px;
-			padding-bottom: 55px;
-
-			&:before
-			{
-				content: "";
-				width: 30px;
-			    height: 6px;
-			    background-color: rgb(224, 224, 224);
-			    border-radius: 3px;
-			    position: absolute;
-			    top: 8px;
-			    left: calc(50% - 15px);
-			}
+			border-top-left-radius: var(--hb-frontdrop-radius);
+			border-top-right-radius: var(--hb-frontdrop-radius);
 
 			> *
 			{
 				flex: none;
 			}
-			.card-block
+			.card-footer
 			{
-				overflow-y: auto;
-    			height: 100%;
+				display: block;
+				position: fixed;
+			    bottom: 0;
+			    left: 0;
+			    right: 0;
+			    margin: 0 auto;
+			    text-align: center;
+			    width: 100%;
 			}
-
-			.card-header
-			{
-				padding: calc(var(--hb-card-spacer-y) * 2) 0 var(--hb-card-spacer-y) 0;
-				border-top-left-radius: 10px;
-    			border-top-right-radius: 10px;
-
-				.card-title
-				{
-					font-size: var(--hb-frontdrop-title-size);
-				}
-			}
-
 		}
-		.card-footer
+		.drawer-header
 		{
-			position: fixed;
-		    bottom: var(--hb-frontdrop-top);
-		    left: 0;
-		    right: 0;
-		    margin: 0 auto;
-		    text-align: center;
+			position: absolute;
+		    top: 5px;
+		    right: 5px;
+		    display: block;
+		    padding: 0;
+		    border: none;
+		    z-index: var(--hb-zindex-drawer);
 		}
-	}
-	&.cursor-down .frontdrop-dialog:after
-	{ 
-		cursor: -webkit-grabbing;
-	    cursor: grabbing;
 	}
 	&.with-confirmation .card .card-block
 	{
 		padding-bottom: 60px;
 	}
-}
-
-.frontdrop-overlay
-{
-	--hb-frontdrop-overlay-bg: #{$frontdrop-overlay-bg};
-	--hb-frontdrop-overlay-bg-dark: #{$frontdrop-overlay-bg-dark};
-	--hb-frontdrop-overlay-opacity: #{$frontdrop-overlay-opacity};
-	--hb-frontdrop-overlay-transition: #{$frontdrop-overlay-transition};
-
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	z-index: var(--hb-zindex-frontdrop);
-
-	&.dark
+	&.persistent .card
 	{
-		background-color: var(--hb-frontdrop-overlay-bg-dark);
+		overflow-y: hidden;
 	}
-	&.light
+	&.persistent.expanded .card
 	{
-		background-color: var(--hb-frontdrop-overlay-bg);
+		overflow-y: auto;
 	}
-}
-
-// Default state
-.frontdrop-overlay
-{
-	transition: var(--hb-frontdrop-overlay-transition);
-	opacity: 0;
-	visibility: hidden;
-}
-.frontdrop-wrap
-{
-	transition: var(--hb-frontdrop-transition);
-	opacity: 0;
-	transform: translateY(100%);
-}
-
-// Open
-.frontdrop-overlay.expanded
-{
-	opacity: 1;
-	visibility: visible;
-}
-.frontdrop-wrap.expanded
-{
-	opacity: 1;
-	transform: translateY(0);
-}
-.frontdrop-wrap.collapsible.expanded
-{
-	opacity: 1;
-	transform: translateY(0);
-}
-
-// Closing
-.frontdrop-overlay.closing
-{
-	opacity: 0;
-}
-.frontdrop-wrap.closing
-{
-	opacity: 0;
-	transform: translateY(100%);
-}
-.frontdrop-wrap.collapsible.closing
-{
-	opacity: 1;
-	transform: translateY(var(--hb-frontdrop-edge-btm));
-}
-
-// Closed
-.frontdrop-overlay.closed
-{
-	opacity: 0;
-	visibility: hidden;
-}
-.frontdrop-wrap.closed
-{
-	transform: translateY(100%);
-	visibility: hidden;
-	.card .card-block
-	{
-		overflow-y: unset;
-	}
-}
-.frontdrop-wrap.collapsible.closed
-{
-	visibility: visible;
-	opacity: 1;
-	transform: translateY(var(--hb-frontdrop-edge-btm));
 }

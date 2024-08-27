@@ -42,7 +42,7 @@ _.prototype.css = function(el, property, value)
         }
         else
         {
-            if (value.includes('important'))
+            if (value.includes('important') || property.startsWith('--'))
             {
                 let styles = el.getAttribute('style');
 
@@ -59,8 +59,10 @@ _.prototype.css = function(el, property, value)
 
                 return;
             }
-
-            el.style[property] = value;
+            else
+            {
+                el.style[property] = value;    
+            }
         }
     }
 }

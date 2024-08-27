@@ -1,22 +1,52 @@
-.backdrop-wrapper
+.drawer-container.backdrop
 {
-	--hb-backdrop-bg: #{$backdrop-bg};
+	// Drawer
+	--hb-drawer-bg: #{$backdrop-bg};
+	--hb-drawer-width: #{$backdrop-width};
+	--hb-drawer-size-peekable: #{$backdrop-size-peekable};
 	--hb-backdrop-color: #{$backdrop-color};
-	position: fixed;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	text-align: center;
-	visibility: hidden;
-	background: var(--hb-backdrop-bg);
-	color: var(--hb-backdrop-color);
-	&.backdrop-open
+	--hb-drawer-border-color: transparent;
+
+	.drawer-header
 	{
-		visibility: visible;
+		.close-btn,.close-btn:hover, .close-btn .fa,.close-btn:hover .fa
+		{
+			color: inherit;
+		}
+	}
+
+	.drawer-wrap
+	{
+		color: var(--hb-backdrop-color);
+
+		.skeleton
+		{
+	    	--hb-skeleton-bg-1: rgba(255, 255, 255, 0.5);
+    		--hb-skeleton-bg-2: rgba(255, 255, 255, 1);
+	    }
+	}
+	
+	&.drawer-left .drawer-wrap
+	{
+		box-shadow: inset -21px 0px 9px -15px rgb(0 0 0 / 18%);
+		border-right: none;
+	}
+	&.drawer-right .drawer-wrap
+	{
+		box-shadow: inset 21px 0px 9px -15px rgb(0 0 0 / 18%);
+		border-left: none;
+	}
+	&.drawer-top .drawer-wrap
+	{
+		box-shadow: inset 0px -21px 9px -15px rgb(0 0 0 / 18%);
+		border-bottom: none;
+	}
+	&.drawer-bottom .drawer-wrap
+	{
+		box-shadow: inset 0px 21px 9px -15px rgb(0 0 0 / 18%);
+		border-top: none;
 	}
 }
-.backdrop-page-wrapper
-{
-	background-color: var(--hb-body-bg);
-}
+
+
+    

@@ -216,9 +216,9 @@ const CSS_EASINGS =
     // Defaults
     ease: 'ease',
     linear: 'linear',
-    easeIn: 'ease-in',
-    easeOut: 'ease-out',
-    easeInOut: 'ease-in-out',
+    easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+    easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+    easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
 
     // sine
     easeInSine: 'cubic-bezier(0.47, 0, 0.745, 0.715)',

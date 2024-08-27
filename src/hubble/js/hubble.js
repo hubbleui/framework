@@ -18,20 +18,21 @@
 @import 'vendor/_nprogress.js';
 
 // Utility
-@import 'utility/_smoothScroll.js';
-@import 'utility/_cookie.js';
-@import 'utility/_inputMasker.js';
-@import 'utility/_modal.js';
+@import 'utility/Ajax.js';
+@import 'utility/Pjax.js';
+@import 'utility/Skeleton.js';
+@import 'utility/Gestures.js';
 @import 'utility/Drawer.js';
 @import 'utility/Frontdrop.js';
-@import 'utility/_notification.js';
-@import 'utility/_ajax.js';
-@import 'utility/Pjax.js';
-@import 'utility/_formValidator.js';
-@import 'utility/_skeleton.js';
-@import 'utility/Gestures.js';
+@import 'utility/Backdrop.js';
+@import 'utility/Modal.js';
+@import 'utility/Notification.js';
+@import 'utility/SmoothScroll.js';
+@import 'utility/_inputMasker.js';
 
-// DOM Module
+@import 'utility/_formValidator.js';
+
+// DOM Components
 @import 'dom/slider/Slider.js';
 @import 'dom/slider/Sliders.js';
 @import 'dom/popover/_handler.js';
@@ -41,6 +42,10 @@
 @import 'dom/chips/_suggestion.js';
 @import 'dom/chips/_choice.js';
 @import 'dom/chips/_filter.js';
+@import 'dom/Modal.js';
+@import 'dom/Drawer.js';
+@import 'dom/Frontdrop.js';
+@import 'dom/Backdrop.js';
 @import "dom/Pjax.js";
 @import 'dom/_collapse.js';
 @import 'dom/_lists.js';

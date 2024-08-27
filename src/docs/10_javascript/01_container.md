@@ -51,13 +51,10 @@ let awesome = Hubble.FooBar();
 You can set any variable you like to a key, including functions, instantiated instances and Object Functions. Functions that can instantiate an instance will automatically get created with any provided arguments:
 
 ```javascript
-Hubble.set('do something', () => 'Hello world');
-
-// Retrieve the function
-let callback = Hubble.get('do something');
+Hubble.set('do something', (arg1, arg2) => console.log(arg1, arg2));
 
 // Or via method
-Hubble.DoSomething();
+Hubble.DoSomething('foo', 'bar');
 ```
 
 Here is am example of setting an instance as key / value pair. The same instance will be returned each time the key is retrieved:
@@ -109,6 +106,17 @@ let instance = Hubble.get('app', 1, 2);
 
 // Or directly via method
 let instance = Hubble.App(1, 2);
+```
+
+When setting a function as a key/value pair, if you require reference to underlying function itself (rather than it being called or instantiated), pass the `Hubble.IMPORT_AS_REF` to retrieve the function:
+
+```javascript
+Hubble.set('do something', (arg1, arg2) => console.log(arg1, arg2));
+
+// Or via method
+let callback = Hubble.DoSomething(Hubble.IMPORT_AS_REF);
+
+callback('foo', 'bar');
 ```
 
 ---

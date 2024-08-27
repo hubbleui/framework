@@ -139,9 +139,9 @@
         <ul>
             <li class="menu-item"><a  href="../../surfaces/paper/index.html">Paper</a></li>
             <li class="menu-item"><a  href="../../surfaces/cards/index.html">Cards</a></li>
-            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
             <li class="menu-item"><a  href="../../surfaces/drawer/index.html">Drawer</a></li>
             <li class="menu-item"><a  href="../../surfaces/frontdrop/index.html">Frontdrop</a></li>
+            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
         </ul>
     </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-navigation">
@@ -363,37 +363,59 @@
 <p>Pre-built masks are <code>creditcard</code>, <code>money</code>, <code>alpha-numeric</code>, <code>alpha-space</code>, <code>alpha-dash</code>, <code>alpha-numeric-dash</code>, <code>numeric</code>, and <code>numeric-decimal</code>.</p>
 <p>To mask a credit card, use the <code>.js-mask</code> class.</p>
 <div class="code-content-example">
-    <div class="form-field row floor-xxs">
-        <input class="js-mask" data-mask="creditcard" type="text" name="input_1" id="input_1" placeholder="**** **** **** ****">
-        <label for="input_1">Credit Card</label>
-    </div>
-    <div class="form-field row floor-xxs">
-        <input class="js-mask" data-mask="money" type="text" name="input_2" id="input_2" placeholder="44.43">
-        <label for="input_2">Money</label>
-    </div>
-    <div class="form-field row floor-xxs">
-        <input class="js-mask" data-mask="alpha-numeric" type="text" name="input_3" id="input_3" placeholder="Rocker_Man_91">
-        <label for="input_3">Alpha-numeric</label>
-    </div>
-    <div class="form-field row floor-xxs">
-        <input class="js-mask" data-mask="alpha-space" type="text" name="input_4" id="input_4" placeholder="Rocket Mab">
-        <label for="input_4">Alpha space</label>
-    </div>
-    <div class="form-field row floor-xxs">
-        <input class="js-mask" data-mask="alpha-dash" type="text" name="input_5" id="input_5" placeholder="Rocket-Man">
-        <label for="input_5">Alpha dash</label>
-    </div>
-    <div class="form-field row floor-xxs">
-        <input class="js-mask" data-mask="alpha-numeric-dash" type="text" name="input_6" id="input_6" placeholder="Rocket-Man">
-        <label for="input_6">Alpha-numeric dash</label>
-    </div>
-    <div class="form-field row floor-xxs">
-        <input class="js-mask" data-mask="numeric" type="text" name="input_7" id="input_7" placeholder="1234567">
-        <label for="input_7">numeric</label>
-    </div>
-    <div class="form-field row floor-xxs">
-        <input class="js-mask" data-mask="numeric-decimal" type="text" name="input_8" id="input_8" placeholder="332.43">
-        <label for="input_8">Numeric decimal</label>
+    <div class="flex-row align-cols-center flex-cols-12 flex-cols-md-6">
+        <div>
+            <div class="flex-row row-gaps-xs">
+                <div>
+                    <div class="form-field row">
+                        <input class="js-mask" data-mask="creditcard" type="text" name="input_1" id="input_1" placeholder="**** **** **** ****">
+                        <label for="input_1">Credit Card</label>
+                    </div>
+                </div>        
+                <div>
+                    <div class="form-field row">
+                        <input class="js-mask" data-mask="money" type="text" name="input_2" id="input_2" placeholder="44.43">
+                        <label for="input_2">Money</label>
+                    </div>
+                </div>        
+                <div>
+                    <div class="form-field row">
+                        <input class="js-mask" data-mask="alpha-numeric" type="text" name="input_3" id="input_3" placeholder="Rocker_Man_91">
+                        <label for="input_3">Alpha-numeric</label>
+                    </div>
+                </div>        
+                <div>
+                    <div class="form-field row">
+                        <input class="js-mask" data-mask="alpha-space" type="text" name="input_4" id="input_4" placeholder="Rocket Mab">
+                        <label for="input_4">Alpha space</label>
+                    </div>
+                </div>        
+                <div>
+                    <div class="form-field row">
+                        <input class="js-mask" data-mask="alpha-dash" type="text" name="input_5" id="input_5" placeholder="Rocket-Man">
+                        <label for="input_5">Alpha dash</label>
+                    </div>
+                </div>        
+                <div>
+                    <div class="form-field row">
+                        <input class="js-mask" data-mask="alpha-numeric-dash" type="text" name="input_6" id="input_6" placeholder="Rocket-Man">
+                        <label for="input_6">Alpha-numeric dash</label>
+                    </div>
+                </div>        
+                <div>
+                    <div class="form-field row">
+                        <input class="js-mask" data-mask="numeric" type="text" name="input_7" id="input_7" placeholder="1234567">
+                        <label for="input_7">numeric</label>
+                    </div>
+                </div>        
+                <div>
+                    <div class="form-field row">
+                        <input class="js-mask" data-mask="numeric-decimal" type="text" name="input_8" id="input_8" placeholder="332.43">
+                        <label for="input_8">Numeric decimal</label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <pre><code class="html language-html">&lt;!-- Credit card --&gt;
@@ -431,19 +453,36 @@
 <h3 id="regex">Regex</h3>
 <p>You can also pass your own custom RegExp to the <code>data-mask</code> attribute in format <code>regex(pattern)</code>. The regex should math allowed characters in the input.</p>
 <div class="code-content-example">
-    <div class="form-field row floor-xxs">
-        <input class="js-mask" data-mask="regex([\w\|\s])" type="text" name="input_9" id="input_9" placeholder="**** **** **** ****">
-        <label for="input_9">Words and Spaces</label>
-    </div>
+    <div class="flex-row align-cols-center flex-cols-12 flex-cols-md-6">
+        <div>
+            <div class="form-field row">
+                <input class="js-mask" data-mask="regex([\w\|\s])" type="text" name="input_9" id="input_9" placeholder="**** **** **** ****">
+                <label for="input_9">Words and Spaces</label>
+            </div>
+        </div>
+    </div>        
 </div>
+<pre><code class="html language-html">&lt;div class="form-field"&gt;
+    &lt;input class="js-mask" data-mask="regex([\w\|\s])" type="text" name="input_9" id="input_9" placeholder="**** **** **** ****"&gt;
+    &lt;label for="input_9"&gt;Words and Spaces&lt;/label&gt;
+&lt;/div&gt;</code></pre>
 <hr />
 <h3 id="formatting">Formatting</h3>
 <p>You can custom format any masked input using the <code>data-format</code> attribute. Formats should be structured using an <code>x</code> for input values and anything else you want to add</p>
-<p><div class="code-content-example"></p>
-<div class="form-field row floor-xxs">
-    <input class="js-mask" data-mask="numeric" data-format="xxxx--xxxx--xxxx--xxxx" type="text" name="input_10" id="input_10" placeholder="**** **** **** ****">
-    <label for="input_10">Custom Format</label>
+<div class="code-content-example">
+    <div class="flex-row align-cols-center flex-cols-12 flex-cols-md-6">
+        <div>
+            <div class="form-field row">
+                <input class="js-mask" data-mask="numeric" data-format="xxxx--xxxx--xxxx--xxxx" type="text" name="input_10" id="input_10" placeholder="**** **** **** ****">
+                <label for="input_10">Custom Format</label>
+            </div>
+        </div>
+    </div>
 </div>
+<pre><code class="html language-html">&lt;div class="form-field"&gt;
+    &lt;input class="js-mask" data-mask="numeric" data-format="xxxx--xxxx--xxxx--xxxx" type="text" name="input_10" id="input_10" placeholder="**** **** **** ****"&gt;
+    &lt;label for="input_10"&gt;Custom Format&lt;/label&gt;
+&lt;/div&gt;</code></pre>
 <hr />
 <h3 id="javascript-instantiation">JavaScript Instantiation</h3>
 <p>If you need to add a custom input mask using JavaScript, you can instantiate a mask via the <code>Container</code>.</p>
@@ -508,5 +547,6 @@ if (someEvent)
         </footer>
         <script src="../../../dist/js/hubble.bundle.js"></script>
         <script src="../../../dist/js/docs.js"></script>
+        <script type="text/javascript">Hubble.dom().refresh()</script>
     </body>
 </html>

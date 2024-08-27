@@ -8,7 +8,7 @@
  * @apram {mixed}        value       Property value
  */
 _.prototype.attr = function(DOMElement, name, value)
-{    
+{        
     // Get attribute
     // e.g attr(node, style)
     if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
@@ -88,11 +88,7 @@ _.prototype.attr = function(DOMElement, name, value)
 
             let style = this.is_string(value) ? this.css_to_object(value) : value;
 
-            this.each(style, (prop, value) =>
-            {
-                this.css(DOMElement, prop, value);
-                
-            });
+            this.each(style, (prop, value) => this.css(DOMElement, prop, value));
            
             break;
 
@@ -136,7 +132,6 @@ _.prototype.attr = function(DOMElement, name, value)
                         DOMElement.setAttribute(hyphenName, value);
 
                         DOMElement.dataset[this.lc_first(this.ltrim(camelName, 'data'))] = value;
-
                     }
 
                     break;

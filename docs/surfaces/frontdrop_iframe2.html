@@ -20,20 +20,21 @@
         <script src="../../dist/js/hubble.bundle.js"></script>
         <script src="../../dist/js/docs.js"></script>
         <script type="text/javascript">
+            const SKELETONS = 
+            [
+                { lines: 1, variant: 'block-h3' },
+                { lines: 6, variant: 'text-block' },
+            ];
             const frontdrop = Hubble.Frontdrop(
             {
-                keepEdge:        true,
-                state:           'collapsed',
-                title            : '&nbsp;',
-                content          : `<span class="skeleton skeleton-h5" style="width:150px"></span><div class="skeleton skeleton-block skeleton-wave" style="width: 100%; height: auto; aspect-ratio: 16 / 9;"></div>
-                        <div class="skeleton-text-block skeleton-lines">
-                            <div class="skeleton" style="width: 81%;"></div>
-                            <div class="skeleton" style="width: 84%;"></div>
-                            <div class="skeleton" style="width: 91%;"></div>
-                        </div>`
+                swipeable: true,
+                peekable: true,
+                overlay: 'dark',
+                state: 'collapsed',
+                callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
             });
-
-            document.querySelector('.js-trigger-fd').addEventListener('click', () => frontdrop.open());
+            document.querySelector('.js-trigger-fd').addEventListener('click', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
+            
         </script>
     </body>
 </html>

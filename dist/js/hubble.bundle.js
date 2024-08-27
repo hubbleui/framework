@@ -304,6 +304,8 @@ var Chain = function()
     const Inverse = function()
     {
         this._store = {};
+
+        this.IMPORT_AS_REF = 100;
     }
 
     /**
@@ -400,32 +402,34 @@ var Chain = function()
 
         let args = Array.prototype.slice.call(arguments).slice(1);
 
-        let valObj = this._store[key];
+        let storeObj = this._store[key];
 
         if (this.has(key))
         {
+            if (args[0] && args[0] === this.IMPORT_AS_REF) return storeObj.value;
+
             // Singletons
-            if (valObj.singleton)
+            if (storeObj.singleton)
             {
-                if (!valObj.instance)
+                if (!storeObj.instance)
                 {
-                    return valObj.singleton.apply(this, [key, ...args]);
+                    return storeObj.singleton.apply(this, [key, ...args]);
                 }
 
-                return valObj.instance;
+                return storeObj.instance;
             }
             // Constructorables
-            if (valObj.invokable)
+            if (storeObj.invokable)
             {
-                return this._newInstance(valObj.value, args);
+                return this._newInstance(storeObj.value, args);
             }
             // Functions
-            if (valObj.funcn)
+            if (storeObj.funcn)
             {
-                return valObj.value.apply(this, args);
+                return storeObj.value.apply(this, args);
             }
             // Intances and all other var types
-            return valObj.value;
+            return storeObj.value;
         }
     }
 
@@ -513,19 +517,19 @@ var Chain = function()
      */
     Inverse.prototype._singletonFunc = function(key)
     {
-        var valObj   = this._store[key];
-        var instance = valObj.invoked ? valObj.instance : null;
-        var args     = Array.prototype.slice.call(arguments).slice(1);
+        let storeObj = this._store[key];
+        let instance = storeObj.invoked ? storeObj.instance : null;
+        let args     = Array.prototype.slice.call(arguments).slice(1);
 
         if (!instance)
         {
-            instance         = this._newInstance(valObj.value, args);
-            valObj.function  = false;
-            valObj.invokable = false;
-            valObj.invoked   = true;
-            valObj.value     = null;
-            valObj.instance  = instance;
-            valObj.singleton = true;
+            instance           = this._newInstance(storeObj.value, args);
+            storeObj.function  = false;
+            storeObj.invokable = false;
+            storeObj.invoked   = true;
+            storeObj.value     = null;
+            storeObj.instance  = instance;
+            storeObj.singleton = true;
         }
 
         return instance;
@@ -598,20 +602,14 @@ var Chain = function()
     {
         isSingleton = typeof isSingleton === 'undefined' ? false : isSingleton;
 
-        var invokable   = this._isInvokable(mixedVar);
-        var invoked     = this._isInvoked(mixedVar);
-        var instance    = invoked && isSingleton ? mixedVar : null;
-        var isFunc      = this._is_func(mixedVar) && !invokable && !invoked && !isSingleton;
-        var singleton   = isSingleton ? this._singletonFunc : false;
+        let value       = mixedVar;
+        let invokable   = this._isInvokable(mixedVar);
+        let invoked     = this._isInvoked(mixedVar);
+        let instance    = invoked && isSingleton ? mixedVar : null;
+        let funcn       = this._is_func(mixedVar) && !invokable && !invoked && !isSingleton;
+        let singleton   = isSingleton ? this._singletonFunc : false;
 
-        return {
-            funcn     : isFunc,
-            invokable : invokable,
-            invoked   : invoked,
-            value     : mixedVar,
-            instance  : instance,
-            singleton : singleton,
-        };
+        return { funcn, invokable, invoked, value, instance, singleton };
     }
 
     /**
@@ -1145,9 +1143,9 @@ const CSS_EASINGS =
     // Defaults
     ease: 'ease',
     linear: 'linear',
-    easeIn: 'ease-in',
-    easeOut: 'ease-out',
-    easeInOut: 'ease-in-out',
+    easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+    easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+    easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
 
     // sine
     easeInSine: 'cubic-bezier(0.47, 0, 0.745, 0.715)',
@@ -1780,6 +1778,7 @@ _.prototype.__animate_js = function(DOMElement, options)
     this._callbackStart    = () => {};
     this._callbackComplete = () => {};
     this._callbackFail     = () => {};
+    this._callbackStep     = () => {};
 
     this.preProcessStartEndValues();
 
@@ -1806,9 +1805,11 @@ AnimateCss.prototype.start = function()
     {
         _this._callbackFail(_this.DOMElement);
 
-        _this.resotoreElement();
+        _this.stop();
 
     }, this.duration + 50 );
+
+    this._stepTimer = setInterval(() => this._callbackStep(), 16);
 
     this.applyEndValues();
 
@@ -1822,6 +1823,8 @@ AnimateCss.prototype.start = function()
 AnimateCss.prototype.stop = function()
 {
     clearTimeout(this._failTimer);
+
+    clearInterval(this._stepTimer);
 
     this.resotoreElement();
 
@@ -1872,8 +1875,13 @@ AnimateCss.prototype.transitionEnd = function(e)
 
     let prop = _THIS.css_prop_to_hyphen_case(e.propertyName);
 
-    // "background" doesn't support transitionend
-    if (prop === 'background-color' && !this.animatedProps['background-color']) prop = 'background';
+    // Convert to shorthand if needed
+    if (prop.includes('-'))
+    {
+        let shorthand = prop.split('-').shift();
+
+        if (this.animatedProps[shorthand]) prop = shorthand;
+    }
 
     let endVal = this.animatedProps[prop];
 
@@ -1885,6 +1893,8 @@ AnimateCss.prototype.transitionEnd = function(e)
     if (_THIS.is_empty(this.animatedProps))
     {        
         clearTimeout(this._failTimer);
+
+        clearInterval(this._stepTimer);
 
         this.resotoreElement();
 
@@ -1907,6 +1917,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
         // Cache start and fail callbacks
         if (option.start) this._callbackStart = option.start;
         if (option.fail) this._callbackFail = option.fail;
+        if (option.step) this._callbackStep = option.step;
 
         // Keep the longest callback
         if (option.duration >= this.duration && (option.callback || option.complete))
@@ -1923,7 +1934,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
         
         if (startValue === 'auto' || startValue === 'initial' || startValue === 'unset' || !startValue)
         {
-            this.options[i].from = _THIS.rendered_style(DOMElement, CSSProperty);
+            option.from = _THIS.rendered_style(DOMElement, CSSProperty);
         }
 
         if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
@@ -1932,7 +1943,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
 
             _THIS.css(DOMElement, CSSProperty, endValue);
 
-            this.options[i].to = _THIS.rendered_style(DOMElement, CSSProperty);
+            option.to = _THIS.rendered_style(DOMElement, CSSProperty);
 
             _THIS.css(DOMElement, CSSProperty, inlineStyle ? inlineStyle : false);
         }
@@ -1940,7 +1951,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
         this.animatedProps[CSSProperty] = endValue;
 
         this.stopValues[CSSProperty] = _THIS.inline_style(DOMElement, CSSProperty) || false;
-    
+
     }, this);
 }
 
@@ -2241,6 +2252,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
     let start    = () => {};
     let fail     = () => {};
     let complete = () => {};
+    let step     = () => {};
 
     this.each(optionSets, function(i, options)
     {
@@ -2256,6 +2268,13 @@ _.prototype.__animation_factory = function(DOMElement, opts)
             fail = options.fail;
 
             delete options.fail;
+        }
+
+        if (options.step)
+        {
+            step = options.step;
+
+            delete options.step;
         }
 
         // Store the maximum duration
@@ -2299,6 +2318,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
     optionSets[longestI].fail     = fail;
     optionSets[longestI].start    = start;
     optionSets[longestI].complete = complete;
+    optionSets[longestI].step     = step;
 
     return optionSets;
 }
@@ -2847,7 +2867,7 @@ _.prototype.map = function(obj, callback)
  * @apram {mixed}        value       Property value
  */
 _.prototype.attr = function(DOMElement, name, value)
-{    
+{        
     // Get attribute
     // e.g attr(node, style)
     if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
@@ -2927,11 +2947,7 @@ _.prototype.attr = function(DOMElement, name, value)
 
             let style = this.is_string(value) ? this.css_to_object(value) : value;
 
-            this.each(style, (prop, value) =>
-            {
-                this.css(DOMElement, prop, value);
-                
-            });
+            this.each(style, (prop, value) => this.css(DOMElement, prop, value));
            
             break;
 
@@ -2975,7 +2991,6 @@ _.prototype.attr = function(DOMElement, name, value)
                         DOMElement.setAttribute(hyphenName, value);
 
                         DOMElement.dataset[this.lc_first(this.ltrim(camelName, 'data'))] = value;
-
                     }
 
                     break;
@@ -3094,7 +3109,7 @@ _.prototype.css = function(el, property, value)
         }
         else
         {
-            if (value.includes('important'))
+            if (value.includes('important') || property.startsWith('--'))
             {
                 let styles = el.getAttribute('style');
 
@@ -3111,8 +3126,10 @@ _.prototype.css = function(el, property, value)
 
                 return;
             }
-
-            el.style[property] = value;
+            else
+            {
+                el.style[property] = value;    
+            }
         }
     }
 }
@@ -3212,7 +3229,7 @@ _.prototype.css_to_longhand = function(css)
 		/**
  * Concats longhand property to shorthand
  *
- * Note if values are not provide not all browsers will except inital
+ * Note if values are not provide not all browsers will except initial
  * for all properties in shorthand syntax
  * 
  * @access {private}
@@ -3260,7 +3277,6 @@ _.prototype.css_to_shorthand = function(css)
                         value += ` ${defaltVal} `;
                     }
                 });
-                
             }
             
         }, this);
@@ -3425,7 +3441,11 @@ _.prototype.inline_style = function(element, prop)
 
     prop = this.css_prop_to_hyphen_case(prop);
 
-    if (Object.hasOwn(elementStyle, prop))
+    if (prop.startsWith('--'))
+    {
+        return window.getComputedStyle(element).getPropertyValue(prop);
+    }
+    else if (Object.hasOwn(elementStyle, prop))
     {
         const val = elementStyle.getPropertyValue(elementStyle[prop]) || elementStyle[prop];
         
@@ -3481,6 +3501,8 @@ _.prototype.__computed_style = function(DOMElement, property)
     if (window.getComputedStyle)
     {
         let styles = window.getComputedStyle(DOMElement, null);
+
+        if (property && property.startsWith('--')) return styles.getPropertyValue(property);
 
         return !property ? styles : styles[property];
     }
@@ -4190,11 +4212,13 @@ _.prototype.has_class = function(DOMElement, className)
  * Aria hide an element
  *
  * @access {public}
- * @param  {DOMElement}   el Target DOM node
+ * @param  {DOMElement}   HTMLElement Target DOM node
  */
-_.prototype.hide_aria = function(el)
+_.prototype.hide_aria = function(HTMLElement)
 {
-    el.setAttribute("aria-hidden", 'true');
+    if (this.is_array(HTMLElement)) return this.each(HTMLElement, (i, el) => this.hide_aria(el));
+    
+    this.attr(HTMLElement, 'aria-hidden', 'true');
 }
 		/**
  * Check if an element is in current viewport
@@ -4610,7 +4634,7 @@ _.prototype.remove_from_dom = function(el)
  */
 _.prototype.scroll_pos = function(context)
 {
-    if (context)
+    if (context && this.is_htmlElement(context))
     {
         return {
             top: context.scrollTop,
@@ -4715,9 +4739,11 @@ _.prototype.find_all = function(selector, context)
  * @access {public}
  * @param  {DOMElement}   el Target DOM node
  */
-_.prototype.show_aria = function(el)
+_.prototype.show_aria = function(HTMLElement)
 {
-    el.setAttribute('aria-hidden', 'false');
+    if (this.is_array(HTMLElement)) return this.each(HTMLElement, (i, el) => this.show_aria(el));
+
+    this.attr(HTMLElement, 'aria-hidden', 'false');
 }
 
 		/**
@@ -7789,1849 +7815,6 @@ Container.singleton('_', _);
 
 
 // Utility
-(function()
-{
-    /**
-     * Helper instance
-     * 
-     * @var {object}
-     */
-    const Helper = Hubble._();
-
-    /**
-     * Default options
-     * 
-     * @var {object}
-     */
-    const DEFAULT_OPTIONS =
-    {
-        'speed'     : 500,
-        'easing'    : 'easeInOutCubic',
-        'updateURL' : true,
-    };
-
-    /**
-     * Normalises a url
-     *
-     * @access {private}
-     * @param  {string}  url The url to normalise
-     * @return {string}
-     */
-    function _normaliseUrl(url)
-    {
-        // If the url was set as local
-
-        // e.g www.foobar.com/foobar
-        // foobar.com/foobar
-        if (url.indexOf('http') < 0)
-        {
-            // Get the path
-            var path = url.indexOf('/') >= 0 ? url.substr(url.indexOf('/') + 1) : url;
-
-            // e.g www.foobar.com/foobar
-            if (url[0] === 'w')
-            {
-                var host = url.split('.com');
-
-                url = window.location.protocol + '//' + host[0] + '.com/' + path;
-            }
-            else
-            {
-                // foobar.com/foobar
-                if (url.indexOf('.com') !== -1)
-                {
-                    var host = url.split('.com');
-                    url = window.location.protocol + '//www.' + host[0] + '.com/' + path;
-                }
-                // /foobar/bar/
-                else
-                {
-                    url = window.location.origin + '/' + path;
-                }
-
-            }
-        }
-
-        return url;
-    }
-
-    /**
-     * Smooth scroll to an element or id
-     *
-     * @access {private}
-     */
-    function SmoothScroll(nodeOrId, options)
-    {
-        options = {...DEFAULT_OPTIONS, ...options};
-
-        let DOMElement = Helper.is_string(nodeOrId) ? Helper.$(nodeOrId) : nodeOrId;
-
-        if (!Helper.in_dom(DOMElement)) return;
-
-        let pos = Helper.coordinates(DOMElement).top;
-
-        let url = _normaliseUrl(window.location.href);
-
-        let isHashable = Helper.is_string(nodeOrId);
-
-        const complete = function()
-        {
-            window.location.hash = nodeOrId;
-        }
-
-        Helper.animate(window, { property : 'scrollTo', to: `0, ${pos}`,  easing: options.easing, duration: options.speed, callback: isHashable && options.updateURL ? complete : null});
-
-    };
-
-
-    // Load into Hubble DOM core
-    Hubble.set('SmoothScroll', SmoothScroll);
-
-}());
-
-/**
- * Cookie manager
- *
- * @see {https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie}
- * 
- */
-(function()
-{
-    /* Base64 Polyfill https://github.com/davidchambers/Base64.js */
-    ! function(e)
-    {
-        "use strict";
-        if ("object" == typeof exports && null != exports && "number" != typeof exports.nodeType) module.exports = e();
-        else if ("function" == typeof define && null != define.amd) define([], e);
-        else
-        {
-            var t = e(),
-                o = "undefined" != typeof self ? self : $.global;
-            "function" != typeof o.btoa && (o.btoa = t.btoa), "function" != typeof o.atob && (o.atob = t.atob)
-        }
-    }(function()
-    {
-        "use strict";
-        var f = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-
-        function c(e)
-        {
-            this.message = e
-        }
-        return (c.prototype = new Error).name = "InvalidCharacterError",
-        {
-            btoa: function(e)
-            {
-                for (var t, o, r = String(e), n = 0, a = f, i = ""; r.charAt(0 | n) || (a = "=", n % 1); i += a.charAt(63 & t >> 8 - n % 1 * 8))
-                {
-                    if (255 < (o = r.charCodeAt(n += .75))) throw new c("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
-                    t = t << 8 | o
-                }
-                return i
-            },
-            atob: function(e)
-            {
-                var t = String(e).replace(/[=]+$/, "");
-                if (t.length % 4 == 1) throw new c("'atob' failed: The string to be decoded is not correctly encoded.");
-                for (var o, r, n = 0, a = 0, i = ""; r = t.charAt(a++); ~r && (o = n % 4 ? 64 * o + r : r, n++ % 4) && (i += String.fromCharCode(255 & o >> (-2 * n & 6)))) r = f.indexOf(r);
-                return i
-            }
-        }
-    });
-
-    /**
-     * Cookie prefix
-     * 
-     * @var {string}
-     */
-    var _prefix = '_hb';
-
-    /**
-     * Module constructor
-     *
-     * @access {public}
-     * @constructor
-     {*} @return this
-     */
-    class Cookies
-    {
-        /**
-         * Set a cookie
-         *
-         * @access {public}
-         * @param  {string}    key      Cookie key
-         * @param  {string}    value    Cookie value
-         * @param  {int}    days     Cookie expiry in days (optional) (default when browser closes)
-         * @param  {string}    path     Cookie path (optional) (default "/")
-         * @param  {bool}   secure   Secure policy (optional) (default) (true)
-         * @param  {stringing} samesite Samesite policy (optional) (default) (true)
-         * @return {sting}
-         */
-        set(key, value, days, path, secure, samesite)
-        {
-            value = this._encodeCookieValue(value);
-            key = this._normaliseKey(key);
-            path = typeof path === 'undefined' ? '; path=/' : '; path=' + path;
-            secure = (typeof secure === 'undefined' || secure === true) && window.location.protocol === 'https:' ? '; secure' : '';
-            samesite = typeof samesite === 'undefined' ? '' : '; samesite=' + samesite;
-            var expires = expires = "; expires=" + this._normaliseExpiry(days | 365);
-
-            document.cookie = key + '=' + value + expires + path + secure + samesite;
-
-            return value;
-        }
-
-        /**
-         * Get a cookie
-         *
-         * @access {public}
-         * @param  {string} key Cookie key
-         * @return {mixed}
-         */
-        get(key)
-        {
-            key = this._normaliseKey(key);
-
-            var ca = document.cookie.split(';');
-
-            for (var i = 0; i < ca.length; i++)
-            {
-                var c = ca[i];
-
-                while (c.charAt(0) == ' ')
-                {
-                    c = c.substring(1);
-                }
-
-                if (c.indexOf(key) == 0)
-                {
-                    return this._decodeCookieValue(c.split('=').pop());
-                }
-            }
-
-            return false;
-        }
-
-        /**
-         * Remove a cookie
-         *
-         * @access {public}
-         * @param  {string} key Cookie to remove
-         */
-        remove(key)
-        {
-            key = this._normaliseKey(key);
-
-            document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        }
-
-        /**
-         * Normalise cookie expiry date
-         *
-         * @access {private}
-         * @param  {int}    days Days when cookie expires
-         * @return {sting}
-         */
-        _normaliseExpiry(days)
-        {
-            var date = new Date();
-
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-
-            return date.toUTCString();
-        }
-
-        /**
-         * Normalise cookie key
-         *
-         * @access {private}
-         * @param  {string} key Cookie key
-         * @return {sting}
-         */
-        _normaliseKey(key)
-        {
-            key = key.replace(/[^a-z0-9+]+/gi, '').toLowerCase();
-
-            return _prefix + key;
-        }
-
-        /**
-         * Encode cookie value
-         *
-         * @access {private}
-         * @param  {mixed}  value Value to encode
-         * @return {sting}
-         */
-        _encodeCookieValue(value)
-        {
-            try
-            {
-                value = this._base64_encode(JSON.stringify(value));
-            }
-            catch (e)
-            {
-                value = this._base64_encode(value);
-            }
-
-            return value;
-        }
-
-        /**
-         * Decode cookie value
-         *
-         * @access {private}
-         * @param  {string}  str Value to decode
-         * @return {mixed}
-         */
-        _decodeCookieValue(str)
-        {
-            var value = this._base64_decode(str);
-
-            try
-            {
-                value = JSON.parse(value);
-            }
-            catch (e)
-            {
-                return value;
-            }
-
-            return value;
-        }
-
-        /**
-         * Base64 encode
-         *
-         * @access {private}
-         * @param  {string} str String to encode
-         * @return {sting}
-         */
-        _base64_encode(str)
-        {
-            return btoa(this._toBinary(str)).replace(/=/g, '_');
-        }
-
-        /**
-         * Base64 decode
-         *
-         * @access {pubic}
-         * @param  {string} str String to decode
-         * @return {sting}
-         */
-        _base64_decode(str)
-        {
-            return this._fromBinary(atob(str.replace(/_/g, '=')));
-        }
-
-        /**
-         * From binary
-         *
-         * @access {prvate}
-         * @param  {string} binary String to decode
-         * @return {string}
-         */
-        _fromBinary(binary)
-        {
-            const bytes = new Uint8Array(binary.length);
-
-            for (var i = 0; i < bytes.length; i++)
-            {
-                bytes[i] = binary.charCodeAt(i);
-            }
-
-            return String.fromCharCode.apply(null, new Uint16Array(bytes.buffer));
-        }
-
-        /**
-         * To binary
-         *
-         * @access {pubic}
-         * @param  {string} string String to encode
-         * @return {sting}
-         */
-        _toBinary(string)
-        {
-            const codeUnits = new Uint16Array(string.length);
-
-            for (var i = 0; i < codeUnits.length; i++)
-            {
-                codeUnits[i] = string.charCodeAt(i);
-            }
-
-            return String.fromCharCode.apply(null, new Uint8Array(codeUnits.buffer));
-        }
-    }
-
-    // Register as DOM Module and invoke
-    Hubble.singleton('Cookies', Cookies);
-
-})();
-
-(function()
-{
-    /**
-     * Cached helper functions.
-     * 
-     * @var {functions}
-     */
-    const [add_event_listener, remove_event_listener, _map, is_regexp] = Hubble.import(['add_event_listener', 'remove_event_listener', 'map', 'is_regexp']).from('_');
-
-    /**
-     * Regex masks
-     * 
-     * @var {object}
-     */
-    const MASK_MAP = 
-    {
-        creditcard: /[0-9]/,
-        money: /[0-9.]/,
-        numeric: /[0-9]/,
-        numericdecimal: /[0-9.]/,
-        alphanumeric: /[A-z0-9-]/,
-        alphaspace: /[A-z ]/,
-        alphadash: /[A-z-]/,
-        alphanumericdash: /[A-z0-9-]/,
-    };
-
-    /**
-     * Credit card formatters.
-     * 
-     * @var {function}
-     */
-    const _format_464 = function(cc)
-    {
-        return [cc.substring(0,4),cc.substring(4,10),cc.substring(10,14)].join(' ').trim()
-    };
-    const _format_465 = function(cc)
-    {
-        return [cc.substring(0,4),cc.substring(4,10),cc.substring(10,15)].join(' ').trim()
-    };
-    const _format_4444 = function(cc)
-    {
-        return cc?cc.match(/[0-9]{1,4}/g).join(' '):''
-    };
-
-    /**
-     * Credit card formatting.
-     * 
-     * @var {object}
-     */
-    const _CARD_TYPES =
-    [
-        {'type':'visa','pattern':/^4/, 'format': _format_4444, 'maxlength': 19},
-        {'type':'master','pattern':/^((5[12345])|(2[2-7]))/, 'format': _format_4444, 'maxlength': 16},
-        {'type':'amex','pattern':/^3[47]/, 'format': _format_465, 'maxlength':15},
-        {'type':'jcb','pattern':/^35[2-8]/, 'format': _format_465, 'maxlength':19},
-        {'type':'maestro','pattern':/^(5018|5020|5038|5893|6304|6759|676[123])/, 'format': _format_4444, 'maxlength':19},
-        {'type':'discover','pattern':/^6[024]/, 'format': _format_4444, 'maxlength':19},
-        {'type':'instapayment','pattern':/^63[789]/, 'format': _format_4444, 'maxlength':16},
-        {'type':'diners_club','pattern':/^54/, 'format': _format_4444, 'maxlength':16},
-        {'type':'diners_club_international','pattern':/^36/, 'format': _format_464, 'maxlength':14},
-        {'type':'diners_club_carte_blanche','pattern':/^30[0-5]/, 'format': _format_464, 'maxlength':14}
-    ];    
-
-    /**
-     * InputMasker
-     *
-     */
-    class InputMasker
-    {
-        /**
-         * Module constructor
-         *
-         * @constructor
-         * @param       {DOMElement}  element  Input element
-         * @param       {string}      mask     Supported mask name or regex filter as string
-         * @param       {string}      format   Optional format e.g (xxxx-xxxx-xxxx-xxxx);
-         */
-        constructor(element, mask, format)
-        {
-            this.DOMElement = element;
-
-            this.maskRegexp = this._getMaskRegexp(mask);
-
-            this.format = !format ? null : this._buildFormatRegexp(format);
-
-            this.maskName = mask;
-
-            this.handler = function(){};
-
-            this._bind();
-
-            return this;
-        }
-
-        /**
-         * Disable the mask
-         *
-         * @access {public}
-         */
-        destroy()
-        {
-            remove_event_listener(this.DOMElement, 'input', this.handler);
-            remove_event_listener(this.DOMElement, 'paste', this.handler);
-        }
-
-        /**
-         * Binds input events.
-         *
-         * @access {private}
-         */
-        _bind()
-        {
-            var _this      = this;
-            var DOMElement = this.DOMElement;
-            var maskRegexp = this.maskRegexp;
-            var format     = this.format;
-            var isCC       = _this.maskName === 'creditcard';
-
-            const _handler = function(e)
-            {
-                e = e || window.event;
-
-                _this._handle(DOMElement, DOMElement.value, maskRegexp, isCC);
-            }
-
-            this.handler = _handler;
-
-            add_event_listener(this.DOMElement, 'input', _handler);
-            add_event_listener(this.DOMElement, 'paste', _handler);
-        }
-
-        /**
-         * Get or builds mask regexp.
-         *
-         * @access {private}
-         * @param  {string}  mask
-         * @return {RegExp}
-         */
-        _getMaskRegexp(mask)
-        {
-            if (is_regexp(mask)) return mask;
-            
-            let regexp = MASK_MAP[mask.replaceAll('-', '').toLowerCase()];
-
-            if (!regexp)
-            {
-                return new RegExp(mask);
-            }
-
-            return regexp;
-        }
-
-        /**
-         * Builds custom format values.
-         *
-         * @access {private}
-         * @param  {string}  format Formatting string
-         * @return {object}
-         */
-        _buildFormatRegexp(format)
-        {
-            let raw        = format;
-            let seperators = format.split('x').filter((x) => x !== '');
-            let regexp     = new RegExp(_map(format.split(/[^x]/), (i, x) => x.includes('x') ? `(.{0,${x.length}})` : false ).join(''));
-            let prefix     = format.startsWith('x') ? '' : seperators.shift();
-            let suffix     = format.endsWith('x') ? '' : seperators.pop();
-            let len        = (raw.length -suffix.length);
-
-            return { seperators, regexp, prefix, suffix, raw, len };
-        }
-        
-        /**
-         * Custom format function.
-         *
-         * @access {private}
-         * @param  {string}  str
-         * @return {str}
-         */
-        _formatFilter(str)
-        {
-            // Regex filter
-            str = _map(str.split(''), (x, char) => !this.maskRegexp.test(char) ? null : char ).join('');
-
-            // Ignore or no formatting
-            if (str === '' || !this.format) return str;
-
-            // Cache seperators
-            let { seperators, regexp, prefix, suffix, raw, len } = this.format;
-
-            let splits = _map(str.match(regexp).slice(1), (i, str) => str === '' ? false : str);
-            let mapped = _map(splits, function(i, match)
-            {
-                return i === 0 ? prefix + match : seperators[i-1] + match;
-                
-            }).join('');
-
-            if (mapped.length === len)
-            {
-                mapped += suffix;
-            }
-
-            return mapped;
-        }
-
-        /**
-         * Sepcial handler for creditcard
-         *
-         * @access {private}
-         */
-        _formatCC(cc)
-        {           
-            cc = cc.replaceAll(/[^0-9]/g, '');
-
-            for(var i in _CARD_TYPES)
-            {
-                const ct = _CARD_TYPES[i];
-
-                if (cc.match(ct.pattern))
-                {
-                    cc = cc.substring(0, ct.maxlength)
-                    
-                    return ct.format(cc);
-                }
-            }
-
-            cc = cc.substring(0,19);
-
-            return _format_4444(cc);
-        }
-
-        /**
-         * Handles input event
-         *
-         * @access {private}
-         * @param  {DOMElement} DOMElement
-         * @param  {string}     oldval     
-         * @param  {RegExp}     maskRegexp 
-         * @param  {bool}       isCC 
-         */
-        _handle(DOMElement, oldval, maskRegexp, isCC)
-        {
-            // Filter
-            let newVal = isCC ? this._formatCC(oldval) : this._formatFilter(oldval);
-
-            // Ignore no change
-            if (newVal == oldval) return;
-
-            // Set position and format
-            var pos          = DOMElement.selectionStart;
-            var before_caret = oldval.substring(0, pos);
-            before_caret     = isCC ? this._formatCC(oldval) : this._formatFilter(before_caret);
-            pos              = before_caret.length;
-            
-            DOMElement.value = newVal;
-            DOMElement.focus();
-            DOMElement.setSelectionRange(pos,pos);
-        }
-    }
-
-    // SET IN IOC
-    /*****************************************/
-    Hubble.set('InputMasker', InputMasker);
-
-}());
-
-/**
- * Modal
- *
- * The Modal class is a utility class used to
- * display a modal.
- *
- */
-(function()
-{
-    /**
-     * Helper functions
-     * 
-     * @var {Function}
-     */
-    const [add_class, add_event_listener, array_merge, closest, has_class, inner_HTML, remove_class, remove_from_dom] = Hubble.import(['add_class','add_event_listener','array_merge','closest','has_class','inner_HTML','remove_class','remove_from_dom']).from('_');
-
-    /**
-     * @var {obj}
-     */
-    var DEFALT_OPTIONS =
-    {
-        title: '',
-        message: '',
-        closeAnywhere: true,
-        customContent: null,
-
-        cancelBtn: null,
-        cancelClass: 'btn-danger',
-
-        confirmBtn: null,
-        confirmClass: '',
-        
-        overlay: 'dark',
-        extras: '',
-
-        callbackBuilt:    () => { },
-        callbackRender:   () => { },
-        callbackCanel:    () => { },
-        callbackConfirm:  () => { },
-        callbackClose:    () => { },
-        callbackValidate: () => true,
-    };
-
-    /**
-     * Module constructor
-     *
-     * @class
-     * @params {options} obj
-     * @access {public}
-     * @return {this}
-     */
-    class Modal
-    { 
-        constructor(options)
-        {
-            this._options = array_merge(DEFALT_OPTIONS, options);
-            this._modal = null;
-            this._overlay = null;
-
-            this._invoke();
-
-            return this;
-        }
-
-        /**
-         * Forced close
-         *
-         * @access {public}
-         */
-        close()
-        {
-            const _this = this;
-
-            add_class(this._overlay, 'transition-off');
-
-            remove_class(document.body, 'no-scroll');
-
-            setTimeout(function()
-            {
-                remove_from_dom(_this._overlay);
-                remove_from_dom(_this._modal);
-                remove_class(document.body, 'no-scroll');
-            }, 600);
-        }
-
-        /**
-         * After options have parsed invoke the modal
-         *
-         * @access {private}
-         */
-        _invoke()
-        {
-            // Build the modal
-            this._buildModal();
-
-            // Render the modal        
-            this._render();
-
-            // Add listeners
-            this._bindListeners();
-
-            return this;
-        }
-
-        /**
-         * Build the actual modal
-         *
-         * @access {private}
-         */
-        _buildModal()
-        {
-            var modal = document.createElement('DIV');
-            modal.className = 'modal-wrap';
-
-            var overlay = document.createElement('DIV');
-            overlay.className = 'modal-overlay ' + this._options['overlay'];
-
-            var content = '';
-
-            if (this._options.customContent)
-            {
-                modal.innerHTML = `<div class="modal-dialog"><div class="container-fluid"><div class="card js-modal-inner">${this._options.customContent}</div></div></div>`;
-            }
-            else
-            {
-                let closeButton   = this._options.cancelBtn  ? `<button type="button" class="btn btn btn-pure ${this._options.cancelClass}  js-modal-cancel">${this._options.cancelBtn}</button>` : '';
-                let confirmButton = this._options.confirmBtn ? `<button type="button" class="btn btn btn-pure ${this._options.confirmClass} js-modal-confirm">${this._options.confirmBtn}</button>` : '';
-
-                inner_HTML(modal, [
-                    '<div class="modal-dialog">',
-                        '<div class="container-fluid">',
-                            '<div class="card js-modal-inner">',
-                                '<div class="card-header">',
-                                    `<div class="card-header-content"><span class="card-title">${this._options.title}</span></div>`,
-                                '</div>',
-                                '<div class="card-block">',
-                                    `<p>${this._options.message}</p>`,
-                                '</div>',
-                                this._options.extras,
-                                '<div class="card-footer">',
-                                    `<div class="card-footer-content">${closeButton}${confirmButton}</div>`,
-                                '</div>',
-                            '</div>',
-                        '</div>',
-                    '</div>',
-                ]);
-            }
-
-            this._modal = modal;
-            this._overlay = overlay;
-            this._fireBuilt();
-        }
-
-        /**
-         * Render the modal
-         *
-         * @access {private}
-         */
-        _render()
-        {
-            var _this = this;
-            document.body.appendChild(this._overlay);
-            document.body.appendChild(this._modal);
-
-            this._modal.offsetHeight;
-
-            setTimeout(() => add_class(this._overlay, 'active'), 15);
-
-            this._fireRender();
-
-            add_class(document.body, 'no-scroll');
-        }
-
-        /**
-         * Bind event listeners inside the built modal
-         *
-         * @access {private}
-         */
-        _bindListeners()
-        {
-            var _this = this;
-
-            const closeAnywhere = _this._options.closeAnywhere;
-
-            const closeValidator = (e) =>
-            {
-                e = e || window.event;
-
-                e.preventDefault();
-
-                const clicked = e.target;
-
-                // Clicked cancel or confirm button
-                if (has_class(clicked, ['js-modal-confirm', 'js-modal-cancel']))
-                {
-                    if (_this._fireConfirmValidator())
-                    {
-                        if (has_class(clicked, 'js-modal-confirm'))
-                        {
-                            this._fireConfirm();
-                        }
-                        else
-                        {
-                            this._fireCancel();
-                        }
-
-                        _this.close();
-
-                        _this._fireClosed();
-                    }
-
-                    return;
-                }
-
-                if (closeAnywhere)
-                {                       
-                    if (!closest(clicked, '.js-modal-inner'))
-                    {
-                        _this.close();
-
-                        _this._fireClosed();
-                    }
-                }
-            }
-
-            add_event_listener(this._modal, 'click', closeValidator);
-            add_event_listener(this._overlay, 'click', closeValidator);
-            
-        }
-
-        /**
-         * Fire render event
-         *
-         * @access {private}
-         */
-        _fireRender()
-        {
-            this._options.callbackRender.call(null, this._modal);
-        }
-
-        /**
-         * Fire the closed event
-         *
-         * @access {private}
-         */
-        _fireClosed()
-        {
-            this._options.callbackClose.call(null, this._modal);
-        }
-
-        /**
-         * Fire the confirm event
-         *
-         * @access {private}
-         */
-        _fireConfirm()
-        {
-            this._options.callbackConfirm.call(null, this._modal);
-        }
-
-        /**
-         * Fire the confirm event
-         *
-         * @access {private}
-         */
-        _fireCancel()
-        {
-            this._options.callbackCanel.call(null, this._modal);
-        }
-
-        /**
-         * Fire the confirm validation
-         *
-         * @access {private}
-         */
-        _fireConfirmValidator()
-        {
-            return this._options.callbackValidate.call(null, this._modal);
-        }
-
-        /**
-         * Fire the built event
-         *
-         * @access {private}
-         */
-        _fireBuilt()
-        {
-            this._options.callbackBuilt.call(null, this._modal);
-        }
-    }
-
-    // Load into container 
-    Hubble.set('Modal', Modal);
-
-})();
-
-/**
- * drawer
- *
- * The drawer class is a utility class used to
- * display a drawer.
- *
- */
-(function()
-{
-    /**
-     * Helper functions
-     * 
-     * @var {Function}
-     */
-    const [find, find_all, each, dom_element, add_class, toggle_class, on, off, has_class, remove_class, remove_from_dom, css, height, preapend, scroll_pos] = Hubble.import(['find','find_all','each','dom_element','add_class','toggle_class','on','off','has_class','remove_class','remove_from_dom', 'css', 'height', 'preapend', 'scroll_pos']).from('_');
-
-    /**
-     * Default options
-     * 
-     * @var {obj}
-     */
-    var DEFAULT_OPTIONS =
-    {
-        // Content - can be a node, nodelist, or string of HTML
-        content: '',
-        
-        // Overlay color - dark, light, none,
-        overlay: 'dark',
-
-        // When true allows swiping on screen to hide/show
-        swipeable: false,
-
-        // When keepEdge is true, the default state to set "expanded"|"collapsed"
-        state: 'expanded',
-
-        // Where the drawer comes from - left,right,top,bottom
-        direction: 'left',
-
-        // Collapses to icon size
-        peekable: false,
-
-        // Push body
-        pushBody: false,
-
-        // State callbacks
-        callbackBuilt:    () => { },
-        callbackRender:   () => { },
-        callbackClose:    () => { },
-        callbackOpen:     () => { },
-        callbackValidate: () => true,
-    };
-
-    /**
-     * Closing arrow icons.
-     * 
-     * @var {obj}
-     */
-    const PUSH_ARROWS =
-    {
-        left: 'left',
-        right: 'right',
-        top: 'up',
-        bottom: 'down'
-    };
-
-    /**
-     * Swipe open/close directions.
-     * 
-     * @var {obj}
-     */
-    const SWIPE_DIRECTIONS =
-    {
-        left: ['swiperight', 'swipeleft'],
-        right: ['swipeleft', 'swiperight'],
-        top:  ['swipedown', 'swipeup'],
-        bottom: ['swipeup', 'swipedown'],
-    };
-
-    /**
-     * Don't double wrap body.
-     * 
-     * @var {boolean}
-     */
-    var WRAPPED_BODY = false;
-
-    /**
-     * Don't double wrap body.
-     * 
-     * @var {boolean}
-     */
-    var WRAPPED_DRAWERS = 0;
-
-    /**
-     * Module constructor
-     *
-     * @class
-     * @params {options} obj
-     * @access {public}
-     */
-    const Drawer = function(options)
-    { 
-        // Merge options
-        this._options = {...DEFAULT_OPTIONS, ...options};
-
-        if (!SWIPE_DIRECTIONS[this._options.direction]) throw new Error('Unsupported direction.');
-
-        // Save state
-        this._state = this._options.state;
-
-        // Animating
-        this._animating = false;
-
-        // Build the drawer
-        this._build();
-
-        // Render the drawer        
-        this._mount();
-
-        // Add listeners
-        this._bindListeners();
-
-        return this;
-    }
-
-    /**
-     * Destroy drawer.
-     *
-     * @access {public}
-     */
-    Drawer.prototype.destroy = function()
-    {
-        // Close
-        this.close();
-
-        // Remove gestures
-        this._gestures.destroy();
-
-        // Unwrap body
-        if (this._options.pushBody) this._unwrapBody();
-
-        // Remove from DOM and unbind
-        remove_from_dom(this._containerWrap);
-    }
-
-    /**
-     * Close drawer.
-     *
-     * @access {public}
-     */
-    Drawer.prototype.open = function()
-    {
-        // Don't open when animating or not already closed
-        if (this._state !== 'collapsed' || this._animating) return;
-
-        this._state = 'expanded';
-
-        this._animating = true;
-
-        remove_class(this._bodyWrap, 'disabled');
-
-        if (!this._options.pushBody) add_class(document.body, 'no-scroll');
-
-        remove_class(this._containerWrap, 'closed, closing');
-
-        add_class(this._containerWrap, 'expanded');
-
-        // Push body if necessary
-        if (this._options.pushBody && (this._options.direction === 'top' || this._options.direction === 'bottom')) this._pushBody();
-
-        on(this._containerWrap, 'transitionend', this._transitioned, this);
-    }
-
-    /**
-     * Completed opening / closing.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._transitioned = function()
-    {
-        // Multiple transitions
-        if (!this._animating) return;
-
-        this._animating = false;
-
-        // Opened
-        if (this._state === 'expanded')
-        {
-            this._makeCallback(this._options.callbackOpen);
-        }
-        // closed
-        else
-        {
-            remove_class(document.body, 'no-scroll');
-
-            add_class(this._containerWrap, 'closed');
-
-            remove_class(this._containerWrap, 'closing');
-
-            this._makeCallback(this._options.callbackClose);
-        }
-
-        off(this._containerWrap, 'transitionend', this._transitioned, this);
-    }
-
-    /**
-     * Open drawer.
-     *
-     * @access {public}
-     */
-    Drawer.prototype.close = function()
-    {        
-        if (this._state !== 'expanded' || this._animating) return;
-
-        this._animating = true;
-
-        this._state = 'collapsed';
-
-        add_class(this._containerWrap, 'closing');
-
-        remove_class(this._containerWrap, 'expanded');
-
-        if (this._options.pushBody && (this._options.direction === 'top' || this._options.direction === 'bottom')) this._pullBody();
-
-        on(this._containerWrap, 'transitionend', this._transitioned, this);
-    }
-
-    /**
-     * Build DOM Elements for drawer.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._build = function()
-    {
-        this._containerWrap = dom_element({tag: 'div', class: `js-drawer-container drawer-container drawer-${this._options.direction} ${this._options.pushBody ? 'push-body' : ''} ${this._options.peekable ? 'drawer-peekable' : null } overlay-${this._options.overlay}`});
-
-        let overlay = dom_element({tag: 'div', class: 'js-drawer-overlay drawer-overlay'});
-        let drawer   = dom_element({tag: 'div', class: 'js-drawer-wrap drawer-wrap'}, null, 
-            dom_element({tag: 'div', class: 'drawer-dialog js-drawer-dialog' }, null, this._options.content )
-        );
-
-        this._drawer     = drawer;
-        this._overlay    = overlay;
-        this._dialog     = find('.js-drawer-dialog', this._drawer);
-
-        if (this._options.pushBody)
-        {
-            let header = dom_element({tag: 'div', class: `flex-row-fluid align-cols-center-y drawer-header ${this._options.direction !== 'right' ? 'align-cols-right' : ''}`});
-            let closer = dom_element({tag: 'button', type: 'button', class: 'btn btn-pure btn-circle btn-xs close-btn'}, header, dom_element({tag: 'span', class: `fa fa-chevron-${PUSH_ARROWS[this._options.direction]}`}));
-            
-            this._options.direction === 'top' ? this._dialog.appendChild(header) : preapend(header, this._dialog);
-
-            on(closer, 'click', this._closeValidate, this);
-        }
-
-        this._makeCallback(this._options.callbackBuilt);
-    }
-
-    /**
-     * Mount and render the drawer.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._mount = function()
-    {
-        document.body.appendChild(this._containerWrap);
-
-        if (this._options.pushBody) this._wrapBody();
-
-        // Wrap body and set 'body to the body-wrap
-        // We also need to wrap everything so the drawer and body-wrap share the same CSS Variables
-        if (this._state === 'expanded')
-        {
-            this._state = 'collapsed';
-
-            if (!this._options.pushBody) this._containerWrap.appendChild(this._overlay);
-
-            this._containerWrap.appendChild(this._drawer);
-
-            setTimeout(() => this.open(), 5);
-
-            this._makeCallback(this._options.callbackRender);
-        }
-        // No transition, mount and closed
-        else
-        {
-            add_class(this._containerWrap, 'closed');
-
-            if (!this._options.pushBody) this._containerWrap.appendChild(this._overlay);
-
-            this._containerWrap.appendChild(this._drawer);
-        }
-    }
-
-    /**
-     * Wrap body when 'pushBody' true.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._wrapBody = function()
-    {
-        WRAPPED_DRAWERS++;
-
-        // Don't double-wrap body
-        if (WRAPPED_BODY)
-        {
-            // Disable other drawers
-            each(find_all('.js-drawer-wrap'), (i, drawer) => add_class(drawer, 'disabled'));
-
-            let classN = this._containerWrap.className;
-
-            this._containerWrap.parentNode.removeChild(this._containerWrap);
-
-            this._containerWrap = find('.js-drawer-container');
-
-            this._bodyWrap = find('.js-drawer-body-wrap');
-
-            this._containerWrap.className = classN;
-
-            return;
-        }
-
-        WRAPPED_BODY = true;
-
-        let pos = scroll_pos();
-
-        let content = find_all('body > *');
-
-        this._bodyWrap = dom_element({tag: 'div', class: 'js-drawer-body-wrap drawer-body-wrap'});
-
-        this._containerWrap.appendChild(this._bodyWrap);
-        
-        each(content, (i, node) => node !== this._containerWrap ? this._bodyWrap.appendChild(node) : null);
-
-        this._containerWrap.scrollTo(pos.left, pos.top);
-    }
-
-    /**
-     * Unwrap body when 'pushBody' true.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._unwrapBody = function()
-    {
-        if (!WRAPPED_BODY) return;
-
-        WRAPPED_DRAWERS--;
-
-        // Only unwrap if we're the last drawer using the container.
-        if (WRAPPED_DRAWERS <= 0)
-        {
-            let pos = scroll_pos(this._containerWrap);
-
-            let content = find_all('> *', this._bodyWrap);
-
-            each(content, (i, node) => document.body.appendChild(node));
-
-            document.body.removeChild(this._containerWrap);
-           
-            window.scrollTo(pos.left, pos.top);
-
-            WRAPPED_BODY = false;
-        }
-    }
-
-    /**
-     * Push body for "top" only.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._pushBody = function()
-    {
-        if (this._options.direction === 'top')
-        {
-            let h = height(this._drawer);
-
-            css(this._bodyWrap, 'margin-top', `${h}px`);
-        }
-    }
-
-    /**
-     * Pull body back.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._pullBody = function()
-    {
-        css(this._bodyWrap, 'margin', false);
-    }
-
-    /**
-     * Validate closing.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._closeValidate = function()
-    {
-        if (this._makeCallback(this._options.callbackValidate)) this.close();
-    }
-
-    /**
-     * Bind event listeners for drawer.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._bindListeners = function()
-    {
-        Hubble.dom().refresh(this._containerWrap);
-
-        on([this._overlay, this._dialog], 'click', this._closeValidate, this);
-
-        on(this._drawer, 'mousedown, mouseup, touchstart, touchend', () => toggle_class(this._drawer, 'cursor-down') );
-
-        this._gestures = Hubble.TinyGesture(this._options.swipeable ? window : this._drawer, { mouseSupport: true, velocityThreshold: 3, threshold: (type, self) => this._options.swipeable ? 20 : 3 });
-
-        let directions = SWIPE_DIRECTIONS[this._options.direction];
-
-        this._gestures.on(directions[0], (event) => this.open() );
-
-        this._gestures.on(directions[1], (event) => this._closeValidate() );
-    }
-
-    /**
-     * Fire callbacks.
-     *
-     * @access {private}
-     */
-    Drawer.prototype._makeCallback = function(callback)
-    {
-        if (callback) return callback(this._drawer);
-    }
-
-    // Load into container 
-    Hubble.set('Drawer', Drawer);
-
-})();
-
-/**
- * Modal
- *
- * The Modal class is a utility class used to
- * display a modal.
- *
- */
-(function()
-{
-    /**
-     * Helper functions
-     * 
-     * @var {Function}
-     */
-    const [find, dom_element, add_class, toggle_class, on, has_class, remove_class, remove_from_dom] = Hubble.import(['find','dom_element','add_class','toggle_class','on','has_class','remove_class','remove_from_dom']).from('_');
-
-    /**
-     * @var {obj}
-     */
-    var DEFAULT_OPTIONS =
-    {
-        // Title - string
-        title: '',
-
-        // Content - can be a node, nodelist, or string of HTML
-        content: '',
-
-        // Confirm button text or null + confirm button class
-        confirmBtn: null,
-        confirmClass: 'btn-primary',
-        
-        // Overlay color - "dark"| "light"
-        overlay: 'dark',
-
-        // Allows collapsing,expanding
-        keepEdge: false,
-
-        // When true allows swiping on screen to hide/show
-        swipeable: false,
-
-        // When keepEdge is true, the default state to set "expanded"|"collapsed"
-        state: 'expanded',
-
-        // State callbacks
-        callbackBuilt:    () => { },
-        callbackRender:   () => { },
-        callbackConfirm:  () => { },
-        callbackClose:    () => { },
-        callbackOpen:     () => { },
-        callbackValidate: () => true,
-    };
-
-    /**
-     * Module constructor
-     *
-     * @class
-     * @params {options} obj
-     * @access {public}
-     * @return {this}
-     */
-    const Frontdrop = function(options)
-    { 
-        // Merge options
-        this._options = {...DEFAULT_OPTIONS, ...options};
-
-        // Save state
-        this._state = this._options.state;
-
-        // Animating
-        this._animating = false;
-
-        // State timer
-        this._stateTimer = null;
-
-        // Build the modal
-        this._build();
-
-        // Render the modal        
-        this._mount();
-
-        // Add listeners
-        this._bindListeners();
-
-        return this;
-    }
-
-    /**
-     * Destroy
-     *
-     * @access {public}
-     */
-    Frontdrop.prototype.destroy = function()
-    {        
-        this.close();
-
-        this._gestures.destroy();
-
-        remove_from_dom(this._modal);
-
-        remove_from_dom(this._overlay);
-    }
-
-    /**
-     * Forced close
-     *
-     * @access {public}
-     */
-    Frontdrop.prototype.open = function()
-    {
-        if (this._state !== 'collapsed' || this._animating) return;
-
-        this._state = 'expanded';
-
-        this._animating = true;
-
-        clearTimeout(this._stateTimer);
-
-        remove_class([this._modal, this._overlay], 'closed, closing');
-
-        add_class([this._modal, this._overlay], 'expanded');
-
-        this._stateTimer = setTimeout(() =>
-        {
-            this._animating = false;
-
-            add_class(document.body, 'no-scroll');
-
-            this._makeCallback(this._options.callbackOpen);
-
-        }, 500);
-    }
-
-    /**
-     * Forced close
-     *
-     * @access {public}
-     */
-    Frontdrop.prototype.close = function(e)
-    {        
-        if (this._state !== 'expanded' || this._animating) return;
-
-        if ( (e && (e.target === this._overlay || e.target === this._dialog)) || typeof e === 'undefined')
-        {
-            this._animating = true;
-
-            clearTimeout(this._stateTimer);
-
-            this._state = 'collapsed';
-
-            add_class([this._modal, this._overlay], 'closing');
-
-            this._stateTimer = setTimeout(() =>
-            {
-                this._animating = false;
-
-                remove_class(document.body, 'no-scroll');
-
-                add_class([this._modal, this._overlay], 'closed');
-
-                remove_class([this._modal, this._overlay], 'closing, expanded');
-
-                this._makeCallback(this._options.callbackClose);
-
-            }, 500);
-        }
-    }
-
-    /**
-     * Build the frontdrop and overlay.
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._build = function()
-    {
-        let footer = this._options.confirmBtn ? dom_element({tag: 'div', class: 'card-footer'}, null, 
-            dom_element({tag: 'div', class: 'card-footer'}, null,
-                dom_element({tag: 'div', class: 'card-footer-content'}, null,
-                    dom_element({tag: 'div', class: 'container-fluid'}, null,
-                        dom_element({tag: 'button', type: 'button', class: `btn btn-block js-frontdrop-confirm ${this._options.confirmClass}`}, null, this._options.confirmBtn)
-                    )
-                )
-            )
-        ) : null;
-
-        let overlay = dom_element({tag: 'div', class: `frontdrop-overlay ${this._options.overlay}`});
-        let modal   = dom_element({tag: 'div', class: `frontdrop-wrap ${this._options.confirmBtn ? 'with-confirmation' : ''} ${this._options.keepEdge ? 'collapsible' : null }`}, null, 
-            dom_element({tag: 'div', class: 'frontdrop-dialog js-frontdrop-dialog' }, null, 
-                dom_element({tag: 'div', class: 'card js-frontdrop-inner'}, null,
-                [ 
-                    dom_element({tag: 'div', class: 'card-header'}, null,
-                        dom_element({tag: 'div', class: 'container-fluid'}, null, 
-                            dom_element({tag: 'div', class: 'card-header-content'}, null,
-                                dom_element({tag: 'card-title', class: 'card-title'}, null, this._options.title)
-                            )
-                        )
-                    ),
-                    dom_element({tag: 'div', class: 'card-block'}, null, 
-                        dom_element({tag: 'div', class: 'container-fluid'}, null, this._options.content)
-                    ),
-                    footer
-                ])
-            )
-        );
-
-        this._modal      = modal;
-        this._overlay    = overlay;
-        this._dialog     = find('.js-frontdrop-dialog', this._modal);
-        
-        this._makeCallback(this._options.callbackBuilt);
-    }
-
-    /**
-     * Render the modal
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._mount = function()
-    {
-        if (this._state === 'expanded')
-        {
-            document.body.appendChild(this._overlay);
-
-            document.body.appendChild(this._modal);
-
-            add_class(document.body, 'no-scroll');
-
-            this._modal.offsetHeight;
-
-            setTimeout(() =>
-            {
-                add_class(this._modal, 'expanded');
-
-                add_class(this._overlay, 'expanded');
-
-            }, 5);
-
-            this._makeCallback(this._options.callbackRender);
-        }
-        // No transition, mount and closed
-        else
-        {
-            add_class(this._modal, 'closed');
-
-            add_class(this._overlay, 'closed');
-
-            document.body.appendChild(this._overlay);
-
-            document.body.appendChild(this._modal);
-        }
-    }
-
-    /**
-     * Bind event listeners inside the built modal
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._closeValidate = function(e, clicked)
-    {
-        if (this._makeCallback(this._options.callbackValidate))
-        {
-            this._makeCallback(this._options.callbackConfirm);
-
-            this.close();
-        }
-    }
-
-    /**
-     * Bind event listeners inside the built modal
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._bindListeners = function()
-    {
-        Hubble.dom().refresh(this._modal);
-
-        if (this._options.confirmBtn) on(find('.js-frontdrop-confirm', this._modal), 'click', this._closeValidate, this);
-
-        on([this._overlay, this._dialog], 'click', this.close, this);
-
-        on(this._modal, 'mousedown, mouseup, touchstart, touchend', () => toggle_class(this._modal, 'cursor-down') );
-
-        this._gestures = Hubble.TinyGesture(this._options.swipeable ? window : this._modal, { mouseSupport: true, velocityThreshold: 3, threshold: (type, self) => this._options.swipeable ? 20 : 3 });
-
-        this._gestures.on('swipeup', (event) => this.open() );
-
-        this._gestures.on('swipedown', (event) => this.close() );
-    }
-
-    /**
-     * Fire render event
-     *
-     * @access {private}
-     */
-    Frontdrop.prototype._makeCallback = function(callback)
-    {
-        if (callback) return callback(this._modal);
-    }
-
-    // Load into container 
-    Hubble.set('Frontdrop', Frontdrop);
-
-})();
-
-(function()
-{
-    /**
-     * Helper functions
-     * 
-     * @var {Function}
-     */
-    const [$, add_class, add_event_listener, in_dom, remove_class, remove_from_dom, dom_element] = Hubble.import(['$','add_class','add_event_listener','in_dom','remove_class','remove_from_dom','dom_element']).from('_');
-
-    /**
-     * Default options
-     * 
-     * @var {array}
-     */
-    const DEFAULT_OPTIONS =
-    {
-        text:             '',
-        variant:          '',
-        icon:             '',
-        timeout:          6000,
-        btn:              false,
-        btnVariant:       'primary',
-        callbackOpen:     () => {},
-        callbackBtn:      () => {},
-        callbackDismiss:  () => {},
-        callbackValidate: () => { return true; }
-    };
-
-    /**
-     * Notification
-     *
-     * The Notification class is a utility class used to
-     * display a notification.
-     *
-     */
-    class Notification
-    {
-        /**
-         * Module constructor
-         *
-         * @params {options} obj
-         * @access {public}
-         * @return {this}
-         */
-        constructor(options)
-        {
-            this._DOMElementWrapper = $('.js-nofification-wrap');
-
-            if (!in_dom(this._DOMElementWrapper))
-            {
-                this._buildNotificationContainer();
-            }
-
-            this._invoke(options);
-
-            return this;
-        }
-
-        /**
-         * Build the notification container
-         *
-         * @access {private}
-         */
-        _buildNotificationContainer()
-        {
-            var wrap = document.createElement('DIV');
-
-            wrap.className = 'notification-wrap js-nofification-wrap';
-            
-            document.body.appendChild(wrap);
-            
-            this._DOMElementWrapper = $('.js-nofification-wrap');
-        }
-
-        /**
-         * Display the notification
-         *
-         * @params {options} obj
-         * @access {private}
-         */
-        _invoke(options)
-        {
-            options = {...DEFAULT_OPTIONS, ...options };
-
-            let notif = dom_element({tag: 'div', class: options.variant ? `msg msg-dense msg-${options.variant} animate-in` : `msg msg-dense animate-in` });
-            
-            if (options.icon)
-            {
-                dom_element({tag: 'div', class: 'msg-icon' }, notif, dom_element({tag: 'span', class: `fa fa-${options.icon}` }));
-            }
-
-            dom_element({tag: 'div', class: 'msg-body'}, notif, dom_element({tag: 'p', innerText: options.text }))
-
-            if (options.btn)
-            {
-                dom_element({tag: 'div', class: 'msg-btn' }, notif, dom_element({tag: 'button', class: `btn btn-pure btn-${options.btnVariant} btn-sm js-notif-btn`, innerText: options.btn }));
-            }
-            
-            add_class(this._DOMElementWrapper, 'active');
-
-            this._DOMElementWrapper.appendChild(notif);
-
-            options.callbackOpen.call(null, notif);
-
-            var _this = this;
-
-            const timer = setTimeout(function()
-            {
-                removefunction();
-
-            }, options.timeout);
-
-            const removefunction = () =>
-            {
-                if (options.callbackValidate.call(null, notif))
-                {
-                    clearTimeout(timer);
-
-                    _this._remove(notif);
-
-                    options.callbackDismiss.call(null, notif);
-                }
-            };
-
-            add_event_listener(notif, 'click', removefunction);
-
-            if (options.btn)
-            {
-                add_event_listener($('.js-notif-btn', notif), 'click', options.callbackBtn);
-                add_event_listener($('.js-notif-btn', notif), 'click', removefunction);
-            }
-        }
-
-        /**
-         * Remove a notification
-         *
-         * @params {DOMElement} node
-         * @access {private}
-         */
-        _remove(DOMElement)
-        {
-            const wrappper = this._DOMElementWrapper;
-
-            const removed = function()
-            {
-                remove_from_dom(DOMElement);
-
-                if (wrappper.children.length === 0)
-                {
-                    remove_class(wrappper, 'active');
-                }
-            }
-            
-            add_class(DOMElement, 'animate-out');
-            remove_class(DOMElement, 'animate-in');
-
-            setTimeout(removed, 300);
-        }
-    }
-
-    // Add to container
-    Hubble.set('Notification', Notification);
-
-})();
-
 /**
  * Ajax
  *
@@ -10558,341 +8741,6 @@ Container.singleton('_', _);
 
 })();
 
-
-(function()
-{
-    /**
-     * @var {Helper} obj
-     */
-    const Helper = Hubble._();
-
-    /**
-     * Validator functions
-     *
-     * @access {private}
-     * @return {boolean}
-     */
-    const VALIDATORS = 
-    {
-        email: function(value)
-        {
-            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(value);
-        },
-        name: function(value)
-        {
-            var re = /^[A-z _-]+$/;
-            return re.test(value);
-        },
-        numeric: function(value)
-        {
-            var re = /^[\d]+$/;
-            return re.test(value);
-        },
-        password: function(value)
-        {
-            var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
-            return re.test(value);
-        },
-        url: function(value)
-        {
-            re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
-            return re.test(value);
-        },
-        alpha: function(value)
-        {
-            var re = /^[A-z _-]+$/;
-            return re.test(value);
-        },
-        alphanumeric: function(value)
-        {
-            var re = /^[A-z0-9]+$/;
-            return re.test(value);
-        },
-        list: function(value)
-        {
-            var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
-
-            return re.test(value);
-        },
-        creditcard: function(value)
-        {
-            /*Amex Card: ^3[47][0-9]{13}$
-            BCGlobal: ^(6541|6556)[0-9]{12}$
-            Carte Blanche Card: ^389[0-9]{11}$
-            Diners Club Card: ^3(?:0[0-5]|[68][0-9])[0-9]{11}$
-            Discover Card: ^65[4-9][0-9]{13}|64[4-9][0-9]{13}|6011[0-9]{12}|(622(?:12[6-9]|1[3-9][0-9]|[2-8][0-9][0-9]|9[01][0-9]|92[0-5])[0-9]{10})$
-            Insta Payment Card: ^63[7-9][0-9]{13}$
-            JCB Card: ^(?:2131|1800|35\d{3})\d{11}$
-            KoreanLocalCard: ^9[0-9]{15}$
-            Laser Card: ^(6304|6706|6709|6771)[0-9]{12,15}$
-            Maestro Card: ^(5018|5020|5038|6304|6759|6761|6763)[0-9]{8,15}$
-            Mastercard: ^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$
-            Solo Card: ^(6334|6767)[0-9]{12}|(6334|6767)[0-9]{14}|(6334|6767)[0-9]{15}$
-            Switch Card: ^(4903|4905|4911|4936|6333|6759)[0-9]{12}|(4903|4905|4911|4936|6333|6759)[0-9]{14}|(4903|4905|4911|4936|6333|6759)[0-9]{15}|564182[0-9]{10}|564182[0-9]{12}|564182[0-9]{13}|633110[0-9]{10}|633110[0-9]{12}|633110[0-9]{13}$
-            Union Pay Card: ^(62[0-9]{14,17})$
-            Visa Card: ^4[0-9]{12}(?:[0-9]{3})?$
-            Visa Master Card: ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})$*/
-
-            var arr = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-            var ccNum = String(value).replace(/[- ]/g, '');
-
-            var
-                len = ccNum.length,
-                bit = 1,
-                sum = 0,
-                val;
-
-            while (len)
-            {
-                val = parseInt(ccNum.charAt(--len), 10);
-                sum += (bit ^= 1) ? arr[val] : val;
-            }
-
-            return sum && sum % 10 === 0;
-        },
-        minlength: function(value, min)
-        {
-            return value.length >= min;
-        },
-        maxlength: function(value, max)
-        {
-            return value.length <= max;
-        }
-    };
-
-    /**
-     * FormValidator
-     *
-     * This class is used to validate a form and 
-     * also apply and classes to display form results and input errors.
-     *
-     */
-    class FormValidator
-    {
-        /**
-         * Module constructor
-         *
-         * @class
-         * @param  {DOMElement} form
-         * @access {public}
-         * @return {this}
-         */
-        constructor(form)
-        {
-            // Save inputs
-            this._DOMElementForm = form;
-            this._DOMElementsFormFields = Helper.$All('.form-field', form);
-            this._inputs = Helper.form_inputs(form);
-
-            // Defaults
-            this._rulesIndex = [];
-            this._invalids   = [];
-            this._formObj    = {};
-
-            // Initialize
-            this._indexValidations();
-
-            return this;
-        }
-
-        // PUBLIC ACCESS
-
-        /**
-         *  Is the form valid?
-         *
-         * @access {public}
-         * @return {boolean}
-         */
-        isValid()
-        {
-            return this._validateForm();
-        }
-
-        /**
-         * Show invalid inputs
-         *
-         * @access {public}
-         */
-        showInvalid()
-        {
-            this._clearForm();
-
-            Helper.each(this._invalids, function(i, input)
-            {
-                var fieldWrap = Helper.closest(input, '.form-field');
-
-                if (Helper.in_dom(fieldWrap)) Helper.add_class(fieldWrap, 'danger');
-            });
-        }
-
-        /**
-         * Remove errored inputs
-         *
-         * @access {public}
-         */
-        clearInvalid()
-        {
-            this._clearForm();
-        }
-
-        /**
-         * Show form result
-         *
-         * @access {public}
-         */
-        showResult(result)
-        {
-            this._clearForm();
-
-            Helper.add_class(this._DOMElementForm, result);
-        }
-
-        /**
-         * Append a key/pair and return form obj
-         *
-         * @access {public}
-         * @return {obj}
-         */
-        append(key, value)
-        {
-            this._formObj[key] = value;
-
-            let form = this.form();
-
-            return {...form, ...this._formObj};
-        };
-
-        /**
-         * Get the form object
-         *
-         * @access {public}
-         * @return {obj}
-         */
-        form()
-        {
-            return Helper.form_values(this._DOMElementForm);
-        }
-
-        // PRIVATE FUNCTIONS
-
-        /**
-         * Index form inputs by name and rules
-         *
-         * @access {public}
-         */
-        _indexValidations()
-        {
-            Helper.each(this._inputs, function(i, input)
-            {
-                // No name
-                if (!input.name) return;
-
-                this._rulesIndex.push(
-                {
-                    node:       input,
-                    required:   Helper.bool(Helper.attr(input, 'data-js-required')),
-                    minlength:  Helper.attr(input, 'data-js-min-length'),
-                    maxlength:  Helper.attr(input, 'data-js-max-length'),
-                    validation: this._validationFunc(Helper.attr(input, 'data-js-validation')),
-                    valid:      true,
-                });
-
-            }, this);
-        }
-
-        /**
-         * Index form inputs by name and rules
-         *
-         * @access {public}
-         */
-        _validationFunc(name)
-        {
-            if (!name) return;
-
-            let key = name.replaceAll('-', '').toLowerCase();
-
-            if (!VALIDATORS[key]) throw new error(`Unsupported input validation [${name}].`)
-
-            return VALIDATORS[key];
-        }
-
-        /**
-         * Validate the form inputs
-         *
-         * @access {private}
-         * @return {boolean}
-         */
-        _validateForm()
-        {
-            this._invalids = [];
-            this._isValid  = true;
-
-            Helper.each(this._rulesIndex, function(i, ruleset)
-            {
-                let input = ruleset.node;
-                let value = Helper.input_value(ruleset.node);
-
-                // Skip radios, they don't have any validation
-                if (input.type === 'radio') return;
-                
-                if (ruleset.required && Helper.is_empty(value))
-                {
-                    this._devalidate(input);
-                }
-                else if (ruleset.minlength && !VALIDATORS.minlength.call(null, value, ruleset.minlength))
-                {
-                    this._devalidate(input);
-                }
-                else if (ruleset.maxlength && !VALIDATORS.maxlength.call(null, value, ruleset.maxlength))
-                {
-                    this._devalidate(input);
-                }
-                else if (Helper.is_callable(ruleset.validation) && !ruleset.validation.call(null, value))
-                {
-                    this._devalidate(input);
-                }
-
-            }, this);
-
-            return this._isValid;
-        }
-
-        /**
-         * Mark an input as not valid (internally)
-         *
-         * @access {private}
-         * @return {obj}
-         */
-        _devalidate(node)
-        {
-            this._isValid = false;
-
-            this._invalids.push(node);
-        }
-
-        /**
-         * Clear form result and input errors
-         *
-         * @access {private}
-         * @return {obj}
-         */
-        _clearForm()
-        {
-            // Remove the form result
-            Helper.remove_class(this._DOMElementForm, ['info', 'success', 'warning', 'danger']);
-
-            // Make all input elements 'valid' - i.e hide the error msg and styles.
-            Helper.remove_class(this._DOMElementsFormFields, ['info', 'success', 'warning', 'danger']);
-        }
-        
-    }
-
-    // Load into container
-    Hubble.set('FormValidator', FormValidator);
-
-})();
-
 (function()
 {
     /**
@@ -11587,8 +9435,1947 @@ Hubble.set('TinyGesture', TinyGesture);
 })();
 
 
+/**
+ * drawer
+ *
+ * The drawer class is a utility class used to
+ * display a drawer.
+ *
+ */
+(function()
+{
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, find_all, each, dom_element, add_class, toggle_class, on, off, has_class, remove_class, remove_from_dom, css, height, preapend, scroll_pos, animate_css, rendered_style] = Hubble.import(['find','find_all','each','dom_element','add_class','toggle_class','on','off','has_class','remove_class','remove_from_dom', 'css', 'height', 'preapend', 'scroll_pos', 'animate_css', 'rendered_style']).from('_');
 
-// DOM Module
+    /**
+     * Default options
+     * 
+     * @var {obj}
+     */
+    var DEFAULT_OPTIONS =
+    {
+        // Content - can be a node, nodelist, or string of HTML
+        content: '',
+        
+        // Overlay color - dark, light, none,
+        overlay: 'dark',
+
+        // Force overlay on persistent drawer
+        persistentOverlay: false,
+
+        // When true allows swiping on screen to hide/show
+        swipeable: false,
+
+        // When keepEdge is true, the default state to set "expanded"|"collapsed"
+        state: 'expanded',
+
+        // Where the drawer comes from - left,right,top,bottom
+        direction: 'left',
+
+        // Collapses to icon size
+        peekable: false,
+
+        // Adapt body body
+        persistent: false,
+
+        // Push body instead of changing width
+        pushbody: false,
+
+        // Animiation time
+        animationTime: 250,
+
+        // Animation easing
+        easing: 'easeOut',
+
+        // HTML initialized
+        fromHTML: false,
+        
+        // Additional classes to apply to wrapper
+        classes: '',
+
+        // Animate mounting
+        //animateOnMount
+
+        // State callbacks
+        callbackBuilt:    () => { },
+        callbackRender:   () => { },
+        callbackClose:    () => { },
+        callbackOpen:     () => { },
+        callbackValidate: () => true,
+    };
+
+    /**
+     * Closing arrow icons.
+     * 
+     * @var {obj}
+     */
+    const PUSH_ARROWS =
+    {
+        left: 'left',
+        right: 'right',
+        top: 'up',
+        bottom: 'down'
+    };
+
+    /**
+     * Swipe open/close directions.
+     * 
+     * @var {obj}
+     */
+    const SWIPE_DIRECTIONS =
+    {
+        left: ['swiperight', 'swipeleft'],
+        right: ['swipeleft', 'swiperight'],
+        top:  ['swipedown', 'swipeup'],
+        bottom: ['swipeup', 'swipedown'],
+    };
+
+    /**
+     * Don't double wrap body.
+     * 
+     * @var {boolean}
+     */
+    var WRAPPED_BODY = false;
+
+    /**
+     * Don't double wrap body.
+     * 
+     * @var {boolean}
+     */
+    var WRAPPED_DRAWERS = 0;
+
+    /**
+     * Module constructor
+     *
+     * @class
+     * @params {options} obj
+     * @access {public}
+     */
+    const Drawer = function(options)
+    { 
+        // Merge options
+        this._options = {...DEFAULT_OPTIONS, ...options};
+
+        if (!SWIPE_DIRECTIONS[this._options.direction]) throw new Error('Unsupported direction.');
+
+        if (this._options.peekable) this._options.persistent = true;
+
+        if (this._options.pushbody)
+        {
+            this._options.persistent = true;
+
+            this._options.peekable = false;
+        }
+
+        // Save state
+        this._state = this._options.state;
+
+        // Animating
+        this._animating = false;
+
+        // Already mounted?
+        this._mounted = false;
+
+        // Initial mount
+        this._animateOnMount = typeof this._options.animateOnMount === 'undefined' ? this._state === 'expanded' && !this._options.fromHTML : this._options.animateOnMount;
+
+        // Do we have an overlay
+        this._hasOverlay = !this._options.persistent || (this._options.persistent && this._options.persistentOverlay);
+
+        // Build the drawer
+        this._build();
+
+        // Render the drawer        
+        this._mount();
+
+        // Add listeners
+        this._bindListeners();
+
+        return this;
+    }
+
+    /**
+     * Is drawer open?
+     *
+     * @access {public}
+     * @return {Boolean}
+     */
+    Drawer.prototype.opened = function()
+    {
+        return this._state === 'expanded';
+    }
+
+    /**
+     * Is drawer closed?
+     *
+     * @access {public}
+     * @return {Boolean}
+     */
+    Drawer.prototype.closed = function()
+    {
+        return this._state === 'collapsed';
+    }
+
+    /**
+     * Is drawer open or closed?
+     *
+     * @access {public}
+     * @return {String}
+     */
+    Drawer.prototype.state = function()
+    {
+        return this._state;
+    }
+
+    /**
+     * Returns drawer direction.
+     *
+     * @access {public}
+     * @return {String}
+     */
+    Drawer.prototype.direction = function()
+    {
+        return this._options.direction;
+    }
+
+    /**
+     * Destroy drawer.
+     *
+     * @access {public}
+     */
+    Drawer.prototype.destroy = function()
+    {
+        // Close
+        this.close();
+
+        // Remove gestures
+        this._gestures.destroy();
+
+        // Unwrap body
+        if (this._options.persistent) this._unwrapBody();
+
+        if (WRAPPED_DRAWERS <= 0)
+        {
+            remove_from_dom(this._containerWrap);
+        }
+        else
+        {
+            if (this._hasOverlay) remove_from_dom(this._overlay);
+
+            remove_from_dom(this._drawer);
+        }
+    }
+
+    /**
+     * Close drawer.
+     *
+     * @access {public}
+     */
+    Drawer.prototype.open = function()
+    {
+        // Don't open when animating or not already closed
+        if (this._state !== 'collapsed' || this._animating) return;
+
+        this._animating = true;
+
+        remove_class(this._containerWrap, 'closed, closing');
+
+        add_class(this._containerWrap, 'opening');
+
+        remove_class(this._drawer, 'disabled');
+
+        this._animteDrawer();
+
+        if (this._hasOverlay)
+        {
+            add_class(document.body, 'no-scroll');
+
+            this._animateOverlay();
+        }
+
+        if (this._options.pushbody) add_class(document.body, 'no-scroll');
+
+        if (this._options.persistent) this._animateBody();
+
+        if (!this._mounted) this._toggleEnd();
+    }
+
+    /**
+     * Open drawer.
+     *
+     * @access {public}
+     */
+    Drawer.prototype.close = function()
+    {
+        if (this._state !== 'expanded' || this._animating) return;
+
+        this._animating = true;
+
+        add_class(this._containerWrap, 'closing');
+
+        remove_class(this._containerWrap, 'expanded, opening');
+
+        remove_class(document.body, 'no-scroll');
+
+        this._animteDrawer();
+
+        if (this._hasOverlay) this._animateOverlay();
+
+        if (this._options.persistent) this._animateBody();
+
+        if (!this._mounted) this._toggleEnd();
+    }
+
+    /**
+     * Wrap body when 'persistent' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._animteDrawer = function()
+    {
+        let peekable  = this._options.peekable;
+        let state     = this._state;
+        let direction = this._options.direction;
+        let duration  = this._options.animationTime;
+        let easing    = this._options.easing;
+        let property  = peekable ? (direction === 'left' || direction === 'right' ? 'width' : 'height') : 'transform';
+        let to        = peekable ? (state === 'collapsed' ? this._drawerSize : this._peekableSize) : 'translate3d(0px, 0px, 0px)';
+        let from      = peekable ? (state === 'collapsed' ? this._peekableSize : 'auto') : null;
+
+        if (peekable && state === 'collapsed' && (direction === 'top' || direction === 'bottom'))
+        {
+            to = this._drawerSize;
+        }
+
+        if (!peekable)
+        {
+            let x = (direction === 'left' || direction === 'right') ? (direction === 'left' ? '-105%' : '105%') : '0px';
+            let y = (direction === 'top' || direction === 'bottom') ? (direction === 'top' ? '-105%' : '105%') : '0px';
+            let tofrom = `translate3d(${x}, ${y}, 0px)`;
+
+            state === 'expanded' ? to = tofrom : from = tofrom;
+        }
+
+        (this._mounted || (!this._mounted && this._animateOnMount)) ? animate_css(this._drawer, {property, from, to, duration, easing, callback: () => this._toggleEnd() }) : css(this._drawer, property, to);
+    }
+
+    /**
+     * Wrap body when 'persistent' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._animateOverlay = function()
+    {
+        let duration  = this._options.animationTime;
+        let easing    = this._options.easing;
+        let property  = 'opacity';
+        let to        = this._state === 'collapsed' ? '1' : '0';
+        let from      = this._state === 'collapsed' ? '0' : '1';
+
+        (this._mounted || (!this._mounted && this._animateOnMount)) ? animate_css(this._overlay, {property, from, to, duration, easing }) : css(this._overlay, property, to);
+    }
+
+    /**
+     * Wrap body when 'persistent' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._animateBody = function()
+    {
+        if (!this._options.persistent) return;
+
+        let peekable  = this._options.peekable;
+        let state     = this._state;
+        let direction = this._options.direction;
+        let duration  = this._options.animationTime;
+        let easing    = this._options.easing;
+        let property  = 'margin';
+        let n = e =s = w = '0px';
+
+        if (direction === 'left')   w = state === 'collapsed' ? this._drawerSize  : (peekable ? this._peekableSize : '0px');
+        if (direction === 'right')  e = state === 'collapsed' ? this._drawerSize  : (peekable ? this._peekableSize : '0px');
+        if (direction === 'top')    n = state === 'collapsed' ? `${height(this._drawer)}px` : (peekable ? this._peekableSize : '0px');
+
+        let to = `${n} ${e} ${s} ${w}`;
+
+        if (this._options.pushbody)
+        {
+            property = 'transform';
+            to = 'translate3d(0px, 0px, 0px)';
+
+            if (state === 'collapsed')
+            {
+                let x = y = '0px';
+                if (e !== '0px') x = `-${e}`;
+                if (w !== '0px') x = w;
+                if (n !== '0px') y = n;
+                to = `translate3d(${x}, ${y}, 0px)`;
+            }
+        }
+
+        (this._mounted || (!this._mounted && this._animateOnMount)) ? animate_css(this._bodyWrap, {property, to, duration, easing }) : css(this._bodyWrap, property, to);
+    }
+
+    /**
+     * Completed opening / closing.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._toggleEnd = function()
+    {        
+        // Multiple transitions
+        if (!this._animating) return;
+
+        this._state = this._state === 'collapsed' ? 'expanded' : 'collapsed';
+
+        add_class(this._containerWrap, this._state === 'expanded' ? 'expanded' : 'closed');
+
+        remove_class(this._containerWrap, this._state === 'expanded' ? 'opening' : 'closing');
+
+        this._makeCallback(this._state === 'expanded' ? this._options.callbackOpen : this._options.callbackClose);
+
+        this._animating = false;
+    }
+
+    /**
+     * Build DOM Elements for drawer.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._build = function()
+    {
+        let container = dom_element({tag: 'div', class: `js-drawer-container drawer-container drawer-${this._options.direction} ${this._options.persistent ? 'persistent' : ''} ${this._options.peekable ? 'peekable' : null } overlay-${this._options.overlay} ${this._options.classes}`});
+        let overlay   = dom_element({tag: 'div', class: 'js-drawer-overlay drawer-overlay'}, !this._hasOverlay ? null : container);
+        let drawer    = dom_element({tag: 'div', class: 'js-drawer-wrap drawer-wrap'}, container, 
+            dom_element({tag: 'div', class: 'drawer-dialog js-drawer-dialog' }, null, this._options.content )
+        );
+
+        this._containerWrap = container;
+        this._drawer        = drawer;
+        this._overlay       = overlay;
+        this._dialog        = find('.js-drawer-dialog', this._drawer);
+
+        if (this._options.persistent)
+        {
+            let header = dom_element({tag: 'div', class: `flex-row-fluid align-cols-center-y drawer-header ${this._options.direction !== 'right' ? 'align-cols-right' : ''}`});
+            let closer = dom_element({tag: 'button', type: 'button', class: 'btn btn-pure btn-circle btn-xs close-btn'}, header, dom_element({tag: 'span', class: `fa fa-chevron-${PUSH_ARROWS[this._options.direction]}`}));
+            
+            this._options.direction === 'top' ? this._dialog.appendChild(header) : preapend(header, this._dialog);
+
+            on(closer, 'click', this._closeValidate, this);
+        }
+
+        this._makeCallback(this._options.callbackBuilt);
+    }
+
+    /**
+     * Mount and render the drawer.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._mount = function()
+    {
+        document.body.appendChild(this._containerWrap);
+
+        this._containerWrap.offsetHeight;
+
+        this._peekableSize = this._options.peekableSize || rendered_style(this._containerWrap, '--hb-drawer-size-peekable');
+        this._drawerSize   = this._options.drawerSize || rendered_style(this._containerWrap, '--hb-drawer-width');
+
+        if (this._options.persistent) this._wrapBody();
+
+        this._state = this._state === 'expanded' ? 'collapsed' : 'expanded';
+
+        this._state === 'collapsed' ? this.open() : this.close();
+
+        this._mounted = true;
+
+        this._makeCallback(this._options.callbackRender);
+    }
+
+    /**
+     * Wrap body when 'persistent' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._wrapBody = function()
+    {
+        WRAPPED_DRAWERS++;
+
+        // Don't double-wrap body
+        if (WRAPPED_BODY)
+        {
+            // Disable other drawers
+            each(find_all('.js-drawer-wrap'), (i, drawer) => add_class(drawer, 'disabled'));
+
+            let classN = this._containerWrap.className;
+
+            if (this._containerWrap.parentNode) this._containerWrap.parentNode.removeChild(this._containerWrap);
+
+            this._containerWrap = find('.js-drawer-container');
+
+            this._bodyWrap = find('.js-drawer-body-wrap');
+
+            this._containerWrap.className = classN;
+
+            this._containerWrap.appendChild(this._drawer);
+
+            return;
+        }
+
+        WRAPPED_BODY = true;
+
+        let pos = scroll_pos();
+
+        let content = find_all('body > *');
+
+        this._bodyWrap = dom_element({tag: 'div', class: 'js-drawer-body-wrap drawer-body-wrap'});
+
+        preapend(this._bodyWrap, this._containerWrap);
+        
+        each(content, (i, node) => node !== this._containerWrap ? this._bodyWrap.appendChild(node) : null);
+
+        this._containerWrap.scrollTo(pos.left, pos.top);
+    }
+
+    /**
+     * Unwrap body when 'persistent' true.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._unwrapBody = function()
+    {
+        if (!WRAPPED_BODY) return;
+
+        WRAPPED_DRAWERS--;
+
+        // Only unwrap if we're the last drawer using the container.
+        if (WRAPPED_DRAWERS <= 0)
+        {
+            let pos = scroll_pos(this._containerWrap);
+
+            let content = find_all('> *', this._bodyWrap);
+
+            each(content, (i, node) => document.body.appendChild(node));
+           
+            window.scrollTo(pos.left, pos.top);
+
+            WRAPPED_BODY = false;
+        }
+    }
+
+    /**
+     * Validate closing.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._closeValidate = function()
+    {
+        if (this._makeCallback(this._options.callbackValidate)) this.close();
+    }
+
+    /**
+     * Bind event listeners for drawer.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._bindListeners = function()
+    {
+        if (!this._options.fromHTML) Hubble.dom().refresh(this._containerWrap);
+
+        on(this._overlay, 'click', this._closeValidate, this);
+
+        let directions = SWIPE_DIRECTIONS[this._options.direction];
+
+        this._gestures = Hubble.TinyGesture(this._options.swipeable ? window : this._drawer, { mouseSupport: true, velocityThreshold: 3, threshold: (type, self) => this._options.swipeable ? 20 : 3 });
+
+        this._gestures.on(directions[0], () => this.open() );
+
+        this._gestures.on(directions[1], () => this._closeValidate() );
+    }
+
+    /**
+     * Fire callbacks.
+     *
+     * @access {private}
+     */
+    Drawer.prototype._makeCallback = function(callback)
+    {
+        if (callback) return callback(this._containerWrap, this._drawer, this._overlay, this._bodyWrap);
+    }
+
+    // Load into container 
+    Hubble.set('Drawer', Drawer);
+
+})();
+
+/**
+ * Modal
+ *
+ * The Modal class is a utility class used to
+ * display a modal.
+ *
+ */
+(function()
+{
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [on, find, dom_element, extend] = Hubble.import(['on','find','dom_element','extend']).from('_');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const Drawer = Hubble.Drawer(Hubble.IMPORT_AS_REF);
+
+    /**
+     * @var {obj}
+     */
+    var DEFAULT_OPTIONS =
+    {
+        // Content - can be a node, nodelist, or string of HTML
+        content: '',
+
+        // Confirm button text or null + confirm button class
+        confirmBtn: null,
+        confirmClass: '',
+        
+        // Overlay color - "dark"| "light"
+        overlay: 'dark',
+
+        // Allows collapsing,expanding
+        peekable: false,
+
+        // When true allows swiping on screen to hide/show
+        swipeable: false,
+
+        // When keepEdge is true, the default state to set "expanded"|"collapsed"
+        state: 'expanded',
+
+        // Private
+        animationTime: 225,
+        persistentOverlay: true,
+        direction: 'bottom',
+        classes: '',
+        persistent: false,
+
+        // State callbacks
+        callbackBuilt:    () => { },
+        callbackRender:   () => { },
+        callbackConfirm:  () => { },
+        callbackClose:    () => { },
+        callbackOpen:     () => { },
+        callbackValidate: () => true,
+    };
+
+    /**
+     * Module constructor
+     *
+     * @class
+     * @params {options} obj
+     * @access {public}
+     * @return {this}
+     */
+    const Frontdrop = function(options)
+    {
+        let classes = options.confirmBtn ? `frontdrop with-confirmation ${options.classes}` : `frontdrop ${options.classes}`;
+
+        options = {...DEFAULT_OPTIONS, ...options, classes};
+
+        let content = this._buildFD(options);
+
+        options = {...options, content};
+
+        this.super(options);
+
+        if (options.confirmBtn) on(find('.js-frontdrop-confirm', content), 'click', this._closeValidate, this);
+    }
+
+    /**
+     * Build the frontdrop and overlay.
+     *
+     * @access {private}
+     */
+    Frontdrop.prototype._buildFD = function(options)
+    {
+        let footer = options.confirmBtn ? dom_element({tag: 'div', class: 'card-footer'}, null, 
+            dom_element({tag: 'div', class: 'card-footer'}, null,
+                dom_element({tag: 'div', class: 'card-footer-content'}, null,
+                    dom_element({tag: 'div', class: 'container-fluid'}, null,
+                        dom_element({tag: 'button', type: 'button', class: `btn btn-block js-frontdrop-confirm ${options.confirmClass}`}, null, options.confirmBtn)
+                    )
+                )
+            )
+        ) : null;
+
+        return dom_element({tag: 'div', class: 'card js-frontdrop-inner'}, null,
+        [ 
+            dom_element({tag: 'div', class: 'card-header'}, null,
+                dom_element({tag: 'div', class: 'container-fluid'}, null, 
+                    dom_element({tag: 'div', class: 'card-header-content'}, null,
+                        dom_element({tag: 'div', class: 'card-title'}, null, options.title)
+                    )
+                )
+            ),
+            dom_element({tag: 'div', class: 'card-block'}, null, 
+                dom_element({tag: 'div', class: 'container-fluid'}, null, options.content)
+            ),
+            footer
+        ])
+    }
+
+    // Load into container 
+    Hubble.set('Frontdrop', extend(Drawer, Frontdrop));
+
+})();
+
+/**
+ * Modal
+ *
+ * The Modal class is a utility class used to
+ * display a modal.
+ *
+ */
+(function()
+{
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [on, find, dom_element, extend] = Hubble.import(['on','find','dom_element','extend']).from('_');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const Drawer = Hubble.Drawer(Hubble.IMPORT_AS_REF);
+
+    /**
+     * Module constructor
+     *
+     * @class
+     * @params {options} obj
+     * @access {public}
+     * @return {this}
+     */
+    const Backdrop = function(options)
+    {
+        let classes = !options.classes ? 'backdrop' : `backdrop ${options.classes}`;
+
+        let persistent = true;
+
+        options = {...options, classes, persistent };
+
+        this.super(options);
+    }
+
+    // Load into container 
+    Hubble.set('Backdrop', extend(Drawer, Backdrop));
+
+})();
+
+/**
+ * Modal
+ *
+ * The Modal class is a utility class used to
+ * display a Modal.
+ *
+ */
+(function()
+{
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, dom_element, add_class, on, off, remove_class, remove_from_dom, hide_aria, show_aria] = Hubble.import(['find','dom_element','add_class','on','off','remove_class','remove_from_dom','hide_aria','show_aria']).from('_');
+
+    /**
+     * Default options
+     * 
+     * @var {obj}
+     */
+    var DEFAULT_OPTIONS =
+    {
+        // Title
+        title: '',
+
+        // Content - can be a node, nodelist, or string of HTML
+        content: '',
+
+        // Additional classes to pass to modal
+        classes: '',
+
+        // Does not create card
+        custom: false,
+
+        // Click anywhere to close
+        closeAnywhere: true,
+
+        // Scroll 'content' or 'modal'
+        scroll: 'modal',
+
+        // Cancel btn
+        cancelBtn: null,
+        cancelClass: 'btn-danger btn-pure',
+
+        // Confirm btn
+        confirmBtn: null,
+        confirmClass: 'btn-pure',
+        
+        // Overlay color - dark, light, none,
+        overlay: 'dark',
+
+        // Default state when created/mounted set "open"|"closed"
+        state: 'open',
+
+        // Loaded from HTML DOM
+        fromHTML: false,
+
+        // State callbacks
+        callbackBuilt:    () => { },
+        callbackRender:   () => { },
+        callbackClose:    () => { },
+        callbackOpen:     () => { },
+        callbackValidate: () => true,
+    };
+
+    /**
+     * Module constructor
+     *
+     * @class
+     * @params {options} obj
+     * @access {public}
+     */
+    const Modal = function(options)
+    { 
+        // Merge options
+        this._options = {...DEFAULT_OPTIONS, ...options};
+
+        // Save state
+        this._state = this._options.state;
+
+        // Animating
+        this._animating = false;
+
+        // Build the Modal
+        this._build();
+
+        // Add listeners
+        this._bindListeners();
+
+        // Render the Modal        
+        this._mount();
+
+        return this;
+    }
+
+    /**
+     * Is Modal open?
+     *
+     * @access {public}
+     * @return {Boolean}
+     */
+    Modal.prototype.opened = function()
+    {
+        return this._state === 'open';
+    }
+
+    /**
+     * Is Modal closed?
+     *
+     * @access {public}
+     * @return {Boolean}
+     */
+    Modal.prototype.closed = function()
+    {
+        return this._state === 'closed';
+    }
+
+    /**
+     * Is Modal open or closed?
+     *
+     * @access {public}
+     * @return {String}
+     */
+    Modal.prototype.state = function()
+    {
+        return this._state;
+    }
+
+    /**
+     * Destroy Modal.
+     *
+     * @access {public}
+     */
+    Modal.prototype.destroy = function()
+    {
+        this.close();
+
+        remove_from_dom(this._modal);
+
+        remove_from_dom(this._overlay);
+    }
+
+    /**
+     * Close Modal.
+     *
+     * @access {public}
+     */
+    Modal.prototype.open = function()
+    {
+        // Don't open when animating or not already closed
+        if (this._state !== 'closed' || this._animating) return;
+
+        this._animating = true;
+
+        on(this._dialog, 'transitionend', this._toggleEnd, this);
+
+        remove_class([this._modal, this._overlay], 'closed, closing');
+
+        add_class([this._modal, this._overlay], 'opening');
+
+        if (this._options.overlay !== false) add_class(document.body, 'no-scroll');
+
+        show_aria([this._modal, this._overlay]);
+    }
+
+    /**
+     * Open Modal.
+     *
+     * @access {public}
+     */
+    Modal.prototype.close = function()
+    {
+        if (this._state !== 'open' || this._animating) return;
+
+        this._animating = true;
+
+        on(this._dialog, 'transitionend', this._toggleEnd, this);
+
+        remove_class([this._modal, this._overlay], 'opening, opened');
+
+        add_class([this._modal, this._overlay], 'closing');
+
+        remove_class(document.body, 'no-scroll');
+
+        hide_aria([this._modal, this._overlay]);
+
+        this._dialog.blur();
+    }
+
+    /**
+     * Completed opening / closing.
+     *
+     * @access {private}
+     */
+    Modal.prototype._toggleEnd = function()
+    {                
+        // Multiple transitions
+        if (!this._animating) return;
+
+        if (this._state === 'closed') this._dialog.focus();
+
+        this._state = this._state === 'closed' ? 'open' : 'closed';
+
+        remove_class([this._modal, this._overlay], this._state === 'open' ? 'opening' : 'closing');
+
+        add_class([this._modal, this._overlay], this._state === 'open' ? 'opened' : 'closed');
+
+        this._makeCallback(this._state === 'open' ? this._options.callbackOpen : this._options.callbackClose);
+
+        off(this._dialog, 'transitionend', this._toggleEnd, this);
+
+        this._animating = false;
+    }
+
+    /**
+     * Build DOM Elements for Modal.
+     *
+     * @access {private}
+     */
+    Modal.prototype._build = function()
+    {
+        this._cancelBtn  = this._options.cancelBtn  ? dom_element({tag: 'button', type: 'button', class: `btn ${this._options.cancelClass}`}, null, this._options.cancelBtn) : null; 
+        
+        this._confirmBtn = this._options.confirmBtn ? dom_element({tag: 'button', type: 'button', class: `btn ${this._options.confirmClass}`}, null, this._options.confirmBtn) : null;
+        
+        this._overlay = dom_element({tag: 'div', role: 'presentation', class: `modal-overlay closed overlay-${this._options.overlay} ${this._options.overlay === false ? 'disabled' : ''}`});
+        
+        this._modal    = dom_element({tag: 'div', role: 'presentation', tabindex: '-1', class: `modal-wrap closed scroll-${this._options.scroll} ${this._options.classes}`}, null, 
+        dom_element({tag: 'div', class: 'modal-dialog js-modal-dialog'}, null,
+            this._options.custom ? this._options.content : dom_element({tag: 'div', class: `card ${this._options.scroll === 'content' ? 'card-scrollable-content' : 'card-scrollable'} `}, null, 
+                [
+                    dom_element({tag: 'div', class: 'card-header'}, null, 
+                        dom_element({tag: 'div', class: 'card-header-content'}, null, 
+                            dom_element({tag: 'div', class: 'card-title'}, null, this._options.title)
+                        )
+                    ),
+                    dom_element({tag: 'div', class: 'card-block'}, null, this._options.content),
+                    (this._cancelBtn || this._confirmBtn ? 
+                        dom_element({tag: 'div', class: 'card-footer'}, null, [ dom_element({tag: 'div', class: 'card-footer-content'}, null, '&nbsp;'),
+                            dom_element({tag: 'div', class: 'card-footer-right'}, null, [ this._cancelBtn, this._confirmBtn ])]
+                        ) : null)
+                ])
+            )
+        );
+
+        this._dialog = find('.js-modal-dialog', this._modal);
+
+        this._makeCallback(this._options.callbackBuilt);
+    }
+
+    /**
+     * Mount and render the Modal.
+     *
+     * @access {private}
+     */
+    Modal.prototype._mount = function()
+    {
+        document.body.appendChild(this._overlay);
+
+        document.body.appendChild(this._modal);
+
+        this._modal.offsetHeight;
+
+        this._overlay.offsetHeight;
+
+        if (!this._options.fromHTML) Hubble.dom().refresh(this._modal);
+
+        if (this._state === 'open')
+        {
+            this._state = 'closed';
+
+            this.open();
+        }
+    }
+
+    /**
+     * Bind event listeners for Modal.
+     *
+     * @access {private}
+     */
+    Modal.prototype._bindListeners = function()
+    {
+        console.log(this._options.closeAnywhere);
+
+        if (this._options.closeAnywhere) on(this._modal, 'click', this._closeClick, this);
+
+        if (this._cancelBtn) on(this._cancelBtn, 'click', this._closeValidate, this);
+
+        if (this._confirmBtn) on(this._confirmBtn, 'click', this._closeValidate, this);
+    }
+
+    /**
+     * Validate closing.
+     *
+     * @access {private}
+     */
+    Modal.prototype._closeClick = function(e, clicked)
+    {
+        if (e.target === this._modal) this._closeValidate();
+    }
+
+    /**
+     * Validate closing.
+     *
+     * @access {private}
+     */
+    Modal.prototype._closeValidate = function()
+    {
+        if (this._makeCallback(this._options.callbackValidate)) this.close();
+    }
+
+    /**
+     * Fire callbacks.
+     *
+     * @access {private}
+     */
+    Modal.prototype._makeCallback = function(callback)
+    {
+        if (callback) return callback(this._modal, this._Modal, this._overlay, this._bodyWrap);
+    }
+
+    // Load into container 
+    Hubble.set('Modal', Modal);
+
+})();
+
+(function()
+{
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, add_class, on, in_dom, remove_class, remove_from_dom, dom_element] = Hubble.import(['find','add_class','on','in_dom','remove_class','remove_from_dom','dom_element']).from('_');
+
+    /**
+     * Default options
+     * 
+     * @var {array}
+     */
+    const DEFAULT_OPTIONS =
+    {
+        text:             '',
+        variant:          '',
+        icon:             '',
+        position:         'bottom',
+        timeout:          6000,
+        btn:              false,
+        btnVariant:       'primary',
+        callbackBuilt:    () => {},
+        callbackRender:   () => {},
+        callbackDismiss:  () => {},        
+        callbackValidate: () => { return true; }
+    };
+
+    /**
+     * Notification
+     *
+     * The Notification class is a utility class used to
+     * display a notification.
+     *
+     */
+    const Notification = function(options)
+    {
+        this._options = {...DEFAULT_OPTIONS, ...options };
+
+        this._buildNotificationContainer();
+
+        this._build();
+
+        this._render();
+
+        this._bindListeners();
+    }
+
+    /**
+     * Returns the notification element.
+     *
+     * @access {public}
+     */
+    Notification.prototype.domElement = function()
+    {
+        return this._notification;
+    }
+
+    /**
+     * Remove the notification.
+     *
+     * @access {public}
+     */
+    Notification.prototype.remove = function()
+    {
+        clearTimeout(this._timeout);
+
+        const wrappper = this._DOMElementWrapper;
+
+        add_class(this._notification, this._animateOutClass);
+        
+        remove_class(this._notification, this._animateInClass);
+
+        this._makeCallback(this._options.callbackDismiss);
+
+        setTimeout(() =>
+        {
+            if (wrappper.children.length === 0) remove_class(wrappper, 'active');
+
+            remove_from_dom(this._notification);
+
+        }, 300);
+    }
+
+    /**
+     * Build the notification container
+     *
+     * @access {private}
+     */
+    Notification.prototype._buildNotificationContainer = function()
+    {
+        this._wrapperClass = `.js-nofification-wrap.position-${this._options.position}`;
+
+        let wrapper = find(this._wrapperClass);
+
+        if (!wrapper)
+        {
+            wrapper = dom_element({tag: 'div', class: `notification-wrap position-${this._options.position} js-nofification-wrap`}, document.body);
+        }
+
+        this._DOMElementWrapper = wrapper;
+    }
+
+    /**
+     * Build the notification
+     *
+     * @access {private}
+     */
+    Notification.prototype._build = function()
+    {
+        options = this._options;
+
+        this._animateInClass = this._animateIn();
+
+        this._animateOutClass = this._animateOut();
+
+        let notif = dom_element({tag: 'div', class: options.variant ? `msg msg-dense msg-${options.variant} ${this._animateInClass}` : `msg msg-dense ${this._animateInClass}` });
+        
+        if (options.icon)
+        {
+            dom_element({tag: 'div', class: 'msg-icon' }, notif, dom_element({tag: 'span', class: `fa fa-${options.icon}` }));
+        }
+
+        dom_element({tag: 'div', class: 'msg-body'}, notif, dom_element({tag: 'p', innerHTML: options.text }))
+
+        if (options.btn)
+        {
+            this._btn = dom_element({tag: 'div', class: 'msg-btn' }, notif, dom_element({tag: 'button', class: `btn btn-pure btn-${options.btnVariant} btn-sm js-notif-btn`, innerText: options.btn }));
+        }
+
+        this._notification = notif;
+
+        this._makeCallback(this._options.callbackBuilt);
+    }
+
+    /**
+     * Build the notification
+     *
+     * @access {private}
+     */
+    Notification.prototype._animateIn = function()
+    {
+        if (this._options.position.includes('top')) return 'animate-in-down';
+
+        return 'animate-in-up';
+    }
+
+     /**
+     * Build the notification
+     *
+     * @access {private}
+     */
+    Notification.prototype._animateOut = function()
+    {
+        if (this._options.position.includes('top')) return 'animate-out-up';
+
+        return 'animate-out-down';
+    }
+
+    /**
+     * Render the notification.
+     *
+     * @access {private}
+     */
+    Notification.prototype._render = function()
+    {
+        add_class(this._DOMElementWrapper, 'active');
+
+        this._DOMElementWrapper.appendChild(this._notification);
+
+        this._notification.offsetHeight;
+
+        this._makeCallback(this._options.callbackRender);
+
+    }
+
+    /**
+     * Render the notification.
+     *
+     * @access {private}
+     */
+    Notification.prototype._removeValidate = function()
+    {
+        if (this._makeCallback(this._options.callbackValidate)) this.remove();
+    }
+
+    /**
+     * Render the notification.
+     *
+     * @access {private}
+     */
+    Notification.prototype._bindListeners = function()
+    {
+        if (this._options.timeout !== false)
+        {
+            this._timeout = setTimeout(() => this._removeValidate(), this._options.timeout);
+        }
+
+        on(this._notification, 'click', this._removeValidate, this);
+    }
+
+    /**
+     * Fire callbacks.
+     *
+     * @access {private}
+     */
+    Notification.prototype._makeCallback = function(callback,)
+    {
+        if (callback) return callback(this._notification);
+    }
+
+    // Add to container
+    Hubble.set('Notification', Notification);
+
+})();
+
+(function()
+{
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, in_dom, normalize_url, is_string, coordinates, animate] = Hubble.import(['find','in_dom','normalize_url','is_string','coordinates','animate']).from('_');
+    
+    /**
+     * Default options
+     * 
+     * @var {object}
+     */
+    const DEFAULT_OPTIONS =
+    {
+        'speed'     : 500,
+        'easing'    : 'easeInOutCubic',
+        'updateURL' : true,
+    };
+
+    /**
+     * Smooth scroll to an element or id
+     *
+     * @access {private}
+     */
+    function SmoothScroll(nodeOrId, options)
+    {
+        options = {...DEFAULT_OPTIONS, ...options};
+
+        let DOMElement = is_string(nodeOrId) ? find(nodeOrId) : nodeOrId;
+
+        if (!in_dom(DOMElement)) return;
+
+        let pos = coordinates(DOMElement).top;
+
+        let url = normalize_url(window.location.href);
+
+        let isHashable = is_string(nodeOrId);
+
+        const complete = function()
+        {
+            window.location.hash = nodeOrId;
+        }
+
+        animate(window, { property : 'scrollTo', to: `0, ${pos}`,  easing: options.easing, duration: options.speed, callback: isHashable && options.updateURL ? complete : null});
+    }
+
+
+    // Load into Hubble DOM core
+    Hubble.set('SmoothScroll', SmoothScroll);
+
+}());
+
+(function()
+{
+    /**
+     * Cached helper functions.
+     * 
+     * @var {functions}
+     */
+    const [on, off, _map, is_regexp] = Hubble.import(['on', 'off', 'map', 'is_regexp']).from('_');
+
+    /**
+     * Regex masks
+     * 
+     * @var {object}
+     */
+    const MASK_MAP = 
+    {
+        creditcard: /[0-9]/,
+        money: /[0-9.]/,
+        numeric: /[0-9]/,
+        numericdecimal: /[0-9.]/,
+        alphanumeric: /[A-z0-9-]/,
+        alphaspace: /[A-z ]/,
+        alphadash: /[A-z-]/,
+        alphanumericdash: /[A-z0-9-]/,
+    };
+
+    /**
+     * Credit card formatters.
+     * 
+     * @var {function}
+     */
+    const _format_464 = function(cc)
+    {
+        return [cc.substring(0,4),cc.substring(4,10),cc.substring(10,14)].join(' ').trim()
+    };
+    const _format_465 = function(cc)
+    {
+        return [cc.substring(0,4),cc.substring(4,10),cc.substring(10,15)].join(' ').trim()
+    };
+    const _format_4444 = function(cc)
+    {
+        return cc?cc.match(/[0-9]{1,4}/g).join(' '):''
+    };
+
+    /**
+     * Credit card formatting.
+     * 
+     * @var {object}
+     */
+    const _CARD_TYPES =
+    [
+        {'type':'visa','pattern':/^4/, 'format': _format_4444, 'maxlength': 19},
+        {'type':'master','pattern':/^((5[12345])|(2[2-7]))/, 'format': _format_4444, 'maxlength': 16},
+        {'type':'amex','pattern':/^3[47]/, 'format': _format_465, 'maxlength':15},
+        {'type':'jcb','pattern':/^35[2-8]/, 'format': _format_465, 'maxlength':19},
+        {'type':'maestro','pattern':/^(5018|5020|5038|5893|6304|6759|676[123])/, 'format': _format_4444, 'maxlength':19},
+        {'type':'discover','pattern':/^6[024]/, 'format': _format_4444, 'maxlength':19},
+        {'type':'instapayment','pattern':/^63[789]/, 'format': _format_4444, 'maxlength':16},
+        {'type':'diners_club','pattern':/^54/, 'format': _format_4444, 'maxlength':16},
+        {'type':'diners_club_international','pattern':/^36/, 'format': _format_464, 'maxlength':14},
+        {'type':'diners_club_carte_blanche','pattern':/^30[0-5]/, 'format': _format_464, 'maxlength':14}
+    ];
+
+    /**
+     * Component constructor.
+     *
+     * @constructor
+     * @param       {DOMElement}  element  Input element
+     * @param       {string}      mask     Supported mask name or regex filter as string
+     * @param       {string}      format   Optional format e.g (xxxx-xxxx-xxxx-xxxx);
+     */
+    const InputMasker = function(element, mask, format)
+    {
+        this.DOMElement = element;
+
+        this.maskRegexp = this._getMaskRegexp(mask);
+
+        this.format = !format ? null : this._buildFormatRegexp(format);
+
+        this.maskName = mask;
+
+        this.handler = function(){};
+
+        this._bind();
+
+    }
+
+    /**
+     * Disable the mask
+     *
+     * @access {public}
+     */
+    InputMasker.prototype.destroy = function()
+    {
+        off(this.DOMElement, 'input', this.handler);
+        off(this.DOMElement, 'paste', this.handler);
+    }
+
+    /**
+     * Binds input events.
+     *
+     * @access {private}
+     */
+    InputMasker.prototype._bind = function()
+    {
+        var _this      = this;
+        var DOMElement = this.DOMElement;
+        var maskRegexp = this.maskRegexp;
+        var format     = this.format;
+        var isCC       = _this.maskName === 'creditcard';
+
+        const _handler = function(e)
+        {
+            e = e || window.event;
+
+            _this._handle(DOMElement, DOMElement.value, maskRegexp, isCC);
+        }
+
+        this.handler = _handler;
+
+        on(this.DOMElement, 'input', _handler);
+        on(this.DOMElement, 'paste', _handler);
+    }
+
+    /**
+     * Get or builds mask regexp.
+     *
+     * @access {private}
+     * @param  {string}  mask
+     * @return {RegExp}
+     */
+    InputMasker.prototype._getMaskRegexp = function(mask)
+    {
+        if (is_regexp(mask)) return mask;
+        
+        let regexp = MASK_MAP[mask.replaceAll('-', '').toLowerCase()];
+
+        if (!regexp)
+        {
+            return new RegExp(mask);
+        }
+
+        return regexp;
+    }
+
+    /**
+     * Builds custom format values.
+     *
+     * @access {private}
+     * @param  {string}  format Formatting string
+     * @return {object}
+     */
+    InputMasker.prototype._buildFormatRegexp = function(format)
+    {
+        let raw        = format;
+        let seperators = format.split('x').filter((x) => x !== '');
+        let regexp     = new RegExp(_map(format.split(/[^x]/), (i, x) => x.includes('x') ? `(.{0,${x.length}})` : false ).join(''));
+        let prefix     = format.startsWith('x') ? '' : seperators.shift();
+        let suffix     = format.endsWith('x') ? '' : seperators.pop();
+        let len        = (raw.length -suffix.length);
+
+        return { seperators, regexp, prefix, suffix, raw, len };
+    }
+    
+    /**
+     * Custom format function.
+     *
+     * @access {private}
+     * @param  {string}  str
+     * @return {str}
+     */
+    InputMasker.prototype._formatFilter = function(str)
+    {
+        // Regex filter
+        str = _map(str.split(''), (x, char) => !this.maskRegexp.test(char) ? null : char ).join('');
+
+        // Ignore or no formatting
+        if (str === '' || !this.format) return str;
+
+        // Cache seperators
+        let { seperators, regexp, prefix, suffix, raw, len } = this.format;
+
+        let splits = _map(str.match(regexp).slice(1), (i, str) => str === '' ? false : str);
+        let mapped = _map(splits, function(i, match)
+        {
+            return i === 0 ? prefix + match : seperators[i-1] + match;
+            
+        }).join('');
+
+        if (mapped.length === len)
+        {
+            mapped += suffix;
+        }
+
+        return mapped;
+    }
+
+    /**
+     * Sepcial handler for creditcard
+     *
+     * @access {private}
+     */
+    InputMasker.prototype._formatCC = function(cc)
+    {           
+        cc = cc.replaceAll(/[^0-9]/g, '');
+
+        for(var i in _CARD_TYPES)
+        {
+            const ct = _CARD_TYPES[i];
+
+            if (cc.match(ct.pattern))
+            {
+                cc = cc.substring(0, ct.maxlength)
+                
+                return ct.format(cc);
+            }
+        }
+
+        cc = cc.substring(0,19);
+
+        return _format_4444(cc);
+    }
+
+    /**
+     * Handles input event
+     *
+     * @access {private}
+     * @param  {DOMElement} DOMElement
+     * @param  {string}     oldval     
+     * @param  {RegExp}     maskRegexp 
+     * @param  {bool}       isCC 
+     */
+    InputMasker.prototype._handle = function(DOMElement, oldval, maskRegexp, isCC)
+    {
+        // Filter
+        let newVal = isCC ? this._formatCC(oldval) : this._formatFilter(oldval);
+
+        // Ignore no change
+        if (newVal == oldval) return;
+
+        // Set position and format
+        var pos          = DOMElement.selectionStart;
+        var before_caret = oldval.substring(0, pos);
+        before_caret     = isCC ? this._formatCC(oldval) : this._formatFilter(before_caret);
+        pos              = before_caret.length;
+        
+        DOMElement.value = newVal;
+        DOMElement.focus();
+        DOMElement.setSelectionRange(pos,pos);
+    }
+
+    // SET IN IOC
+    Hubble.set('InputMasker', InputMasker);
+
+}());
+
+
+
+(function()
+{
+    /**
+     * @var {Helper} obj
+     */
+    const Helper = Hubble._();
+
+    /**
+     * Validator functions
+     *
+     * @access {private}
+     * @return {boolean}
+     */
+    const VALIDATORS = 
+    {
+        email: function(value)
+        {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(value);
+        },
+        name: function(value)
+        {
+            var re = /^[A-z _-]+$/;
+            return re.test(value);
+        },
+        numeric: function(value)
+        {
+            var re = /^[\d]+$/;
+            return re.test(value);
+        },
+        password: function(value)
+        {
+            var re = /^(?=.*[^a-zA-Z]).{6,40}$/;
+            return re.test(value);
+        },
+        url: function(value)
+        {
+            re = /^(www\.|[A-z]|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+            return re.test(value);
+        },
+        alpha: function(value)
+        {
+            var re = /^[A-z _-]+$/;
+            return re.test(value);
+        },
+        alphanumeric: function(value)
+        {
+            var re = /^[A-z0-9]+$/;
+            return re.test(value);
+        },
+        list: function(value)
+        {
+            var re = /^[-\w\s]+(?:,[-\w\s]*)*$/;
+
+            return re.test(value);
+        },
+        creditcard: function(value)
+        {
+            /*Amex Card: ^3[47][0-9]{13}$
+            BCGlobal: ^(6541|6556)[0-9]{12}$
+            Carte Blanche Card: ^389[0-9]{11}$
+            Diners Club Card: ^3(?:0[0-5]|[68][0-9])[0-9]{11}$
+            Discover Card: ^65[4-9][0-9]{13}|64[4-9][0-9]{13}|6011[0-9]{12}|(622(?:12[6-9]|1[3-9][0-9]|[2-8][0-9][0-9]|9[01][0-9]|92[0-5])[0-9]{10})$
+            Insta Payment Card: ^63[7-9][0-9]{13}$
+            JCB Card: ^(?:2131|1800|35\d{3})\d{11}$
+            KoreanLocalCard: ^9[0-9]{15}$
+            Laser Card: ^(6304|6706|6709|6771)[0-9]{12,15}$
+            Maestro Card: ^(5018|5020|5038|6304|6759|6761|6763)[0-9]{8,15}$
+            Mastercard: ^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$
+            Solo Card: ^(6334|6767)[0-9]{12}|(6334|6767)[0-9]{14}|(6334|6767)[0-9]{15}$
+            Switch Card: ^(4903|4905|4911|4936|6333|6759)[0-9]{12}|(4903|4905|4911|4936|6333|6759)[0-9]{14}|(4903|4905|4911|4936|6333|6759)[0-9]{15}|564182[0-9]{10}|564182[0-9]{12}|564182[0-9]{13}|633110[0-9]{10}|633110[0-9]{12}|633110[0-9]{13}$
+            Union Pay Card: ^(62[0-9]{14,17})$
+            Visa Card: ^4[0-9]{12}(?:[0-9]{3})?$
+            Visa Master Card: ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})$*/
+
+            var arr = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+            var ccNum = String(value).replace(/[- ]/g, '');
+
+            var
+                len = ccNum.length,
+                bit = 1,
+                sum = 0,
+                val;
+
+            while (len)
+            {
+                val = parseInt(ccNum.charAt(--len), 10);
+                sum += (bit ^= 1) ? arr[val] : val;
+            }
+
+            return sum && sum % 10 === 0;
+        },
+        minlength: function(value, min)
+        {
+            return value.length >= min;
+        },
+        maxlength: function(value, max)
+        {
+            return value.length <= max;
+        }
+    };
+
+    /**
+     * FormValidator
+     *
+     * This class is used to validate a form and 
+     * also apply and classes to display form results and input errors.
+     *
+     */
+    class FormValidator
+    {
+        /**
+         * Module constructor
+         *
+         * @class
+         * @param  {DOMElement} form
+         * @access {public}
+         * @return {this}
+         */
+        constructor(form)
+        {
+            // Save inputs
+            this._DOMElementForm = form;
+            this._DOMElementsFormFields = Helper.$All('.form-field', form);
+            this._inputs = Helper.form_inputs(form);
+
+            // Defaults
+            this._rulesIndex = [];
+            this._invalids   = [];
+            this._formObj    = {};
+
+            // Initialize
+            this._indexValidations();
+
+            return this;
+        }
+
+        // PUBLIC ACCESS
+
+        /**
+         *  Is the form valid?
+         *
+         * @access {public}
+         * @return {boolean}
+         */
+        isValid()
+        {
+            return this._validateForm();
+        }
+
+        /**
+         * Show invalid inputs
+         *
+         * @access {public}
+         */
+        showInvalid()
+        {
+            this._clearForm();
+
+            Helper.each(this._invalids, function(i, input)
+            {
+                var fieldWrap = Helper.closest(input, '.form-field');
+
+                if (Helper.in_dom(fieldWrap)) Helper.add_class(fieldWrap, 'danger');
+            });
+        }
+
+        /**
+         * Remove errored inputs
+         *
+         * @access {public}
+         */
+        clearInvalid()
+        {
+            this._clearForm();
+        }
+
+        /**
+         * Show form result
+         *
+         * @access {public}
+         */
+        showResult(result)
+        {
+            this._clearForm();
+
+            Helper.add_class(this._DOMElementForm, result);
+        }
+
+        /**
+         * Append a key/pair and return form obj
+         *
+         * @access {public}
+         * @return {obj}
+         */
+        append(key, value)
+        {
+            this._formObj[key] = value;
+
+            let form = this.form();
+
+            return {...form, ...this._formObj};
+        };
+
+        /**
+         * Get the form object
+         *
+         * @access {public}
+         * @return {obj}
+         */
+        form()
+        {
+            return Helper.form_values(this._DOMElementForm);
+        }
+
+        // PRIVATE FUNCTIONS
+
+        /**
+         * Index form inputs by name and rules
+         *
+         * @access {public}
+         */
+        _indexValidations()
+        {
+            Helper.each(this._inputs, function(i, input)
+            {
+                // No name
+                if (!input.name) return;
+
+                this._rulesIndex.push(
+                {
+                    node:       input,
+                    required:   Helper.bool(Helper.attr(input, 'data-js-required')),
+                    minlength:  Helper.attr(input, 'data-js-min-length'),
+                    maxlength:  Helper.attr(input, 'data-js-max-length'),
+                    validation: this._validationFunc(Helper.attr(input, 'data-js-validation')),
+                    valid:      true,
+                });
+
+            }, this);
+        }
+
+        /**
+         * Index form inputs by name and rules
+         *
+         * @access {public}
+         */
+        _validationFunc(name)
+        {
+            if (!name) return;
+
+            let key = name.replaceAll('-', '').toLowerCase();
+
+            if (!VALIDATORS[key]) throw new error(`Unsupported input validation [${name}].`)
+
+            return VALIDATORS[key];
+        }
+
+        /**
+         * Validate the form inputs
+         *
+         * @access {private}
+         * @return {boolean}
+         */
+        _validateForm()
+        {
+            this._invalids = [];
+            this._isValid  = true;
+
+            Helper.each(this._rulesIndex, function(i, ruleset)
+            {
+                let input = ruleset.node;
+                let value = Helper.input_value(ruleset.node);
+
+                // Skip radios, they don't have any validation
+                if (input.type === 'radio') return;
+                
+                if (ruleset.required && Helper.is_empty(value))
+                {
+                    this._devalidate(input);
+                }
+                else if (ruleset.minlength && !VALIDATORS.minlength.call(null, value, ruleset.minlength))
+                {
+                    this._devalidate(input);
+                }
+                else if (ruleset.maxlength && !VALIDATORS.maxlength.call(null, value, ruleset.maxlength))
+                {
+                    this._devalidate(input);
+                }
+                else if (Helper.is_callable(ruleset.validation) && !ruleset.validation.call(null, value))
+                {
+                    this._devalidate(input);
+                }
+
+            }, this);
+
+            return this._isValid;
+        }
+
+        /**
+         * Mark an input as not valid (internally)
+         *
+         * @access {private}
+         * @return {obj}
+         */
+        _devalidate(node)
+        {
+            this._isValid = false;
+
+            this._invalids.push(node);
+        }
+
+        /**
+         * Clear form result and input errors
+         *
+         * @access {private}
+         * @return {obj}
+         */
+        _clearForm()
+        {
+            // Remove the form result
+            Helper.remove_class(this._DOMElementForm, ['info', 'success', 'warning', 'danger']);
+
+            // Make all input elements 'valid' - i.e hide the error msg and styles.
+            Helper.remove_class(this._DOMElementsFormFields, ['info', 'success', 'warning', 'danger']);
+        }
+        
+    }
+
+    // Load into container
+    Hubble.set('FormValidator', FormValidator);
+
+})();
+
+
+// DOM Components
 (function()
 {
     /**
@@ -13800,6 +13587,476 @@ Hubble.set('TinyGesture', TinyGesture);
      * @var {class}
      */
     const [Component] = Hubble.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, each, is_undefined, attr, on, off, to_camel_case, extend] = Hubble.import(['find','each','is_undefined','attr','on','off','to_camel_case','extend']).from('_');
+
+    /**
+     * Available data attributes.
+     * 
+     * @var {Array}
+     */
+    const DATA_ATTRIBUTES = ['title','content','classes','custom','close-anywhere','scroll','cancel-btn','cancel-class','confirm-btn','confirm-class','overlay','state'];
+
+    /**
+     * Toggle active on lists
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Modal = function()
+    { 
+        this.modals = new Map;
+
+        this.super('.js-modal-trigger');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Modal.prototype.bind = function(node)
+    {            
+        let options = { fromHTML: true, state: 'closed' };
+
+        let elem;
+
+        each(DATA_ATTRIBUTES, (i, attribute) =>
+        {
+            let value = attr(node, `data-${attribute}`);
+
+            if (!is_undefined(value))
+            {
+                if (value === 'true' || value === 'false')value = value === 'true' ? true : false;
+
+                if (attribute === 'content' && value[0] === '#')
+                {
+                    elem = find(value);
+
+                    value = elem;
+                }
+
+                options[to_camel_case(attribute)] = value;
+            }
+        });
+
+        let modal = Hubble.Modal(options);
+
+        this.modals.set(node, modal);
+
+        on(node, 'click', this._toggle, this);
+
+        if (elem) elem.style = '';
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Modal.prototype.unbind = function(node)
+    {
+        let modal   = this.modals.get(node);
+        let content = attr(node, 'data-content');
+
+        if (content[0] === '#')
+        {
+            content = find(content);
+
+            content.style.display = 'none';
+
+            document.body.appendChild(content);
+        }
+
+        modal.destroy();
+
+        this.modals.delete(node);
+
+        off(node, 'click', this._toggle, this);
+    }
+
+    /**
+     * Toggle modal.
+     * 
+     * @access {private}
+     */
+    Modal.prototype._toggle = function(e, trigger)
+    { 
+        let modal = this.modals.get(trigger);
+
+        modal.closed() ? modal.open() : modal.close();
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Modal', extend(Component, Modal));
+
+}());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Hubble.get('Component');
+   
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, each, is_undefined, attr, on, off, to_camel_case, extend] = Hubble.import(['find','each','is_undefined','attr','on','off','to_camel_case','extend']).from('_');
+
+    /**
+     * Available data attributes.
+     * 
+     * @var {Array}
+     */
+    const DATA_ATTRIBUTES = ['content','overlay','persistent','peekable','swipeable','classes','state','easing','animation-time'];
+
+       /**
+     * Toggle active on lists
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Drawer = function()
+    { 
+        this.drawers = new Map;
+
+        this.super('.js-drawer-trigger');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Drawer.prototype.bind = function(node)
+    {            
+        let options = { fromHTML: true, state: 'collapsed' };
+
+        let elem;
+
+        each(DATA_ATTRIBUTES, (i, attribute) =>
+        {
+            let value = attr(node, `data-${attribute}`);
+
+            if (!is_undefined(value))
+            {
+                if (value === 'true' || value === 'false') value = value === 'true' ? true : false;
+
+                if (attribute === 'content' && value[0] === '#')
+                {
+                    elem = find(value);
+
+                    value = elem;
+                }
+
+                options[to_camel_case(attribute)] = value;
+            }
+        });
+
+        let drawer = Hubble.Drawer(options);
+
+        this.drawers.set(node, drawer);
+
+        on(node, 'click', this._toggle, this);
+
+        if (elem) elem.style = '';
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Drawer.prototype.unbind = function(node)
+    {
+        let drawer = this.drawers.get(node);
+
+        let content = attr(node, 'data-content');
+
+        if (content[0] === '#')
+        {
+            content = find(content);
+
+            content.style.display = 'none';
+
+            document.body.appendChild(content);
+        }
+
+        drawer.destroy();
+
+        this.drawers.delete(node);
+
+        off(node, 'click', this._toggle, this);
+    }
+
+    /**
+     * Toggle drawer.
+     * 
+     * @access {private}
+     */
+    Drawer.prototype._toggle = function(e, trigger)
+    { 
+        let drawer = this.drawers.get(trigger);
+
+        drawer.closed() ? drawer.open() : drawer.close();
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Drawer', extend(Component, Drawer));
+
+}());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Hubble.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, each, is_undefined, attr, on, off, to_camel_case, extend] = Hubble.import(['find','each','is_undefined','attr','on','off','to_camel_case','extend']).from('_');
+
+    /**
+     * Available data attributes.
+     * 
+     * @var {Array}
+     */
+    const DATA_ATTRIBUTES = ['content','overlay','persistent','peekable','swipeable','classes','state','easing','animation-time'];
+
+    /**
+     * Toggle active on lists
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Frontdrop = function()
+    { 
+        this.drawers = new Map;
+
+        this.super('.js-frontdrop-trigger');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Frontdrop.prototype.bind = function(node)
+    {            
+        let options = { fromHTML: true, state: 'collapsed' };
+
+        let elem;
+
+        each(DATA_ATTRIBUTES, (i, attribute) =>
+        {
+            let value = attr(node, `data-${attribute}`);
+
+            if (!is_undefined(value))
+            {
+                if (value === 'true' || value === 'false') value = value === 'true' ? true : false;
+
+                if (attribute === 'content' && value[0] === '#')
+                {
+                    elem = find(value);
+
+                    value = elem;
+                }
+
+                options[to_camel_case(attribute)] = value;
+            }
+        });
+
+        let frontdrop = Hubble.Frontdrop(options);
+
+        this.drawers.set(node, frontdrop);
+
+        on(node, 'click', this._toggle, this);
+
+        if (elem) elem.style = '';
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Frontdrop.prototype.unbind = function(node)
+    {
+        let frontdrop = this.drawers.get(node);
+
+        let content = attr(node, 'data-content');
+
+        if (content[0] === '#')
+        {
+            content = find(content);
+
+            content.style.display = 'none';
+
+            document.body.appendChild(content);
+        }
+
+        frontdrop.destroy();
+
+        this.drawers.delete(node);
+
+        off(node, 'click', this._toggle, this);
+    }
+
+    /**
+     * Toggle Frontdrop.
+     * 
+     * @access {private}
+     */
+    Frontdrop.prototype._toggle = function(e, trigger)
+    { 
+        let frontdrop = this.drawers.get(trigger);
+
+        frontdrop.closed() ? frontdrop.open() : frontdrop.close();
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Frontdrop', extend(Component, Frontdrop));
+
+}());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Hubble.get('Component');
+
+     /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, each, is_undefined, attr, on, off, to_camel_case, extend] = Hubble.import(['find','each','is_undefined','attr','on','off','to_camel_case','extend']).from('_');
+
+    /**
+     * Available data attributes.
+     * 
+     * @var {Array}
+     */
+    const DATA_ATTRIBUTES = ['title','content','classes','pushbody','swipeable','state','easing','animation-time'];
+
+    /**
+     * Toggle active on lists
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Backdrop = function()
+    { 
+        this.drawers = new Map;
+
+        this.super('.js-backdrop-trigger');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Backdrop.prototype.bind = function(node)
+    {            
+        let options = { fromHTML: true, state: 'collapsed' };
+
+        let elem;
+
+        each(DATA_ATTRIBUTES, (i, attribute) =>
+        {
+            let value = attr(node, `data-${attribute}`);
+
+            if (!is_undefined(value))
+            {
+                if (value === 'true' || value === 'false') value = value === 'true' ? true : false;
+
+                if (attribute === 'content' && value[0] === '#')
+                {
+                    elem = find(value);
+
+                    value = elem;
+                }
+
+                options[to_camel_case(attribute)] = value;
+            }
+        });
+
+        let backdrop = Hubble.Backdrop(options);
+
+        this.drawers.set(node, backdrop);
+
+        on(node, 'click', this._toggle, this);
+
+        if (elem) elem.style = '';
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Backdrop.prototype.unbind = function(node)
+    {
+        let backdrop = this.drawers.get(node);
+        let content = attr(node, 'data-content');
+
+        if (content[0] === '#')
+        {
+            content = find(content);
+
+            content.style.display = 'none';
+
+            document.body.appendChild(content);
+        }
+
+        backdrop.destroy();
+
+        this.drawers.delete(node);
+
+        off(node, 'click', this._toggle, this);
+    }
+
+    /**
+     * Toggle Backdrop.
+     * 
+     * @access {private}
+     */
+    Backdrop.prototype._toggle = function(e, trigger)
+    { 
+        let backdrop = this.drawers.get(trigger);
+
+        backdrop.closed() ? backdrop.open() : backdrop.close();
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Backdrop', extend(Component, Backdrop));
+
+}());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Hubble.get('Component');
     
     /**
      * Helper functions
@@ -14384,7 +14641,6 @@ Hubble.set('TinyGesture', TinyGesture);
      */
     TabNav.prototype._eventHandler = function(e, clicked)
     {
-        
         let nav         = closest(clicked, '.js-tab-nav');
         let activeClass = attr(nav, 'data-active-class') || 'active';
         let panel       = find(`[data-tab-panel=${attr(clicked, 'data-tab')}]`);
@@ -15121,8 +15377,6 @@ Hubble.set('TinyGesture', TinyGesture);
      */
     Ripple.prototype._startRipple  = function(e, wrapper)
     {
-        CLICKED = e.target;
-
         const _this = this;
 
         // Ignore disabled
@@ -15211,7 +15465,7 @@ Hubble.set('TinyGesture', TinyGesture);
 
         // Release listener
         document.addEventListener(releaseEvent, release);
-
+            
         preapend(ripple, wrapper);
     }
 

@@ -139,9 +139,9 @@
         <ul>
             <li class="menu-item"><a  href="../../surfaces/paper/index.html">Paper</a></li>
             <li class="menu-item"><a  href="../../surfaces/cards/index.html">Cards</a></li>
-            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
             <li class="menu-item"><a  href="../../surfaces/drawer/index.html">Drawer</a></li>
             <li class="menu-item"><a  href="../../surfaces/frontdrop/index.html">Frontdrop</a></li>
+            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
         </ul>
     </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-navigation">
@@ -352,116 +352,229 @@
 <hr />
 <ul>
 <li><a href="#example">Example</a></li>
+<li><a href="#content">Content</a></li>
+<li><a href="#scrollable">Scrollable</a></li>
+<li><a href="#customization">Customization</a></li>
+<li><a href="#callbacks">Callbacks</a></li>
+<li><a href="#methods">Methods</a></li>
 <li><a href="#options">Options</a></li>
+<li><a href="#html-initialization">HTML Initialization</a></li>
 <li><a href="#css-customization">CSS Customization</a></li>
 </ul>
 <hr />
 <h3 id="example">Example</h3>
-<p>To display a Modal, call the <code>Modal</code> module with your options via the <code>Container</code>.</p>
+<p>To display a Modal, call the <code>Modal</code> Component via Hubble's Container:</p>
 <div class="code-content-example">
-    <button class="js-modal-trigger-1 btn btn-primary">Show Modal</button>
-    <script type="text/javascript">
-        window.addEventListener('Hubble:ready', function()
-        {
-            document.querySelector('.js-modal-trigger-1').addEventListener('click', () => Hubble.Modal( {
-                title            : 'MAGA Country',
-                message          : 'Do you want to make America great again?',
-                cancelBtn        : 'Cancel',
-                confirmBtn       : 'MAGA',
-            }));
-        });
-    </script>
+    <div class="flex-row-fluid align-cols-center col-gaps-sm">
+        <button class="js-modal-trigger-1 btn">Basic Modal</button>
+    </div>
+</div>
+<pre><code class="javascript language-javascript">let modal = Hubble.Modal({
+    title            : 'Use X\'s location service?',
+    content          : 'Let X help apps determine location. This means sending anonymous location data to X, even when no apps are running.',
+    cancelBtn        : 'Disagree',
+    confirmBtn       : 'Agree',
+});</code></pre>
+<blockquote>
+  <p>The <code>content</code> option can be either a <code>String</code>, <code>HTMLElement</code>, <code>NodeList</code> or <code>Array</code></p>
+</blockquote>
+<script type="text/javascript">
+    window.addEventListener('Hubble:ready', function()
+    {
+        document.querySelector('.js-modal-trigger-1').addEventListener('click', () => Hubble.Modal( {
+            title            : 'Use X\'s location service?',
+            content          : 'Let X help apps determine location. This means sending anonymous location data to X, even when no apps are running.',
+            cancelBtn        : 'Disagree',
+            confirmBtn       : 'Agree',
+        }));
+    });
+</script>
+<hr />
+<h3 id="content">Content</h3>
+<p>By default the Modal will structure provided <code>content</code> and <code>title</code> into a card element. In cases where more customized content is needed, set <code>custom:true</code> in the options to create your own markup.</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center col-gaps-sm">
+        <button class="js-modal-trigger-2 btn">Custom Modal</button>
+    </div>
+</div>
+<pre><code class="javascript language-javascript">let modal = Hubble.Modal({
+    content: '...',
+    custom: true,
+    closeAnywhere: true
+});</code></pre>
+<script type="text/javascript">
+    window.addEventListener('Hubble:ready', function()
+    {
+        let content = `<div class="card col col-lg-4">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <div class="avatar">
+                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
+                    </div>
+                </div>
+                <div class="card-header-content p5">
+                    <div class="text-bold">The Don</div>
+                    <div class="color-gray font-italic">Make America Great Again</div>
+                </div>
+            </div>
+            <div class="card-media">
+                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
+            </div>
+            <div class="card-block">
+                <h4 class="card-title">This Is MAGA Country</h4>
+                <p>Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.</p>
+            </div>
+        </div>`;
+
+        document.querySelector('.js-modal-trigger-2').addEventListener('click', () => Hubble.Modal({
+            content : content,
+            custom: true,
+            closeAnywhere: true
+        }));
+    });
+</script>
+<hr />
+<h3 id="scrollable">Scrollable</h3>
+<p>When a Modal becomes too long for the user's viewport or device the content will scroll. By default the entire modal itself will scroll. You can customize this by setting the <code>scroll</code> option to either <code>modal</code> (default) or <code>content</code>.</p>
+<p>The example below shows the difference:</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center col-gaps-sm">
+        <button class="js-modal-trigger-3 btn">Scroll "modal"</button>
+        <button class="js-modal-trigger-4 btn">Scroll "content"</button>
+    </div>
+</div>
+<pre><code class="javascript language-javascript">let modal = Hubble.Modal({
+    title   : '...',
+    content : '...',
+    scrollable: 'modal',
+});</code></pre>
+<script type="text/javascript">
+window.addEventListener('Hubble:ready', function()
+{
+    let options = {
+        title            : 'Use X\'s location service?',
+        content          : 'Lorem ipsum officia dolore id incididunt in est ut amet reprehenderit non ut pariatur esse do dolore nisi ut ut veniam minim sed ut fugiat exercitation eiusmod duis laboris consectetur anim id quis proident proident qui laboris cillum velit in sit consequat mollit et elit ut esse minim sit et mollit dolore dolor est dolor ea exercitation aliqua officia tempor dolore sit nulla in qui est ut minim sit dolore commodo in dolor in sed exercitation duis labore anim ut sed in id consequat anim aliquip incididunt irure cupidatat nisi dolore in sunt ullamco qui commodo ut magna tempor ut eu in id mollit laboris excepteur irure sint et elit commodo cillum cillum nostrud dolor nulla sint nostrud veniam do aliquip consequat eiusmod fugiat officia dolor reprehenderit dolore eu dolor veniam sed dolor eu in mollit magna voluptate et ullamco incididunt esse esse aliquip ut elit nisi.Lorem ipsum proident cupidatat sed eiusmod est id occaecat eiusmod ut fugiat ut tempor ut esse exercitation sint est minim nulla in amet commodo dolore incididunt adipisicing est mollit tempor mollit tempor in non laboris officia proident reprehenderit fugiat adipisicing voluptate mollit labore cupidatat amet do non pariatur in id cupidatat deserunt sint tempor do dolor qui occaecat id cillum amet incididunt duis esse id incididunt ea duis voluptate nisi dolor proident consequat adipisicing elit ullamco sit eiusmod dolor excepteur sed ut officia sit pariatur ut incididunt ullamco excepteur pariatur in qui nulla excepteur ut veniam elit officia elit amet irure sed dolore dolore amet sit veniam incididunt commodo est sit mollit consequat sed cupidatat labore deserunt minim commodo dolore excepteur reprehenderit est labore est exercitation exercitation nostrud ad officia mollit consequat ea laborum et ullamco veniam cillum ad eiusmod veniam velit irure voluptate cillum quis anim enim voluptate in consectetur incididunt est proident nulla eiusmod excepteur et quis ea labore cillum nisi deserunt ad deserunt sed adipisicing sed dolore ut anim et duis sunt occaecat adipisicing.Mollit in commodo ut amet in nostrud id nostrud quis occaecat mollit ut mollit enim labore dolor nostrud occaecat sint non veniam sint do in consectetur excepteur magna nisi magna consectetur nisi enim ea ad occaecat veniam dolore fugiat exercitation tempor deserunt velit et ad proident deserunt adipisicing fugiat deserunt sint commodo tempor proident sint irure in ullamco dolore ex cillum quis sit in fugiat reprehenderit dolor mollit veniam nulla aliquip magna excepteur culpa veniam tempor amet do voluptate sint officia eiusmod est ut occaecat ea minim ut sunt quis enim est non veniam qui quis quis consequat qui do laborum nostrud cillum fugiat aute eu consectetur reprehenderit elit dolore dolore sint consequat non non ut esse laborum ut dolor in ea nostrud eiusmod duis aute irure dolor proident sit aliqua laboris qui labore ex aliquip cupidatat officia consectetur reprehenderit aliqua consectetur sunt cillum proident aute ullamco mollit ea consectetur mollit elit veniam dolor consectetur quis in est laborum sint nulla ad laborum in dolor dolor consectetur laborum id minim ut labore voluptate sit deserunt qui fugiat ullamco proident velit sunt ut ex occaecat.In consectetur cillum sed culpa nisi culpa consectetur amet laborum aute in cupidatat in consequat incididunt cupidatat tempor in laborum non mollit ex in sed duis duis sit veniam enim nisi dolore tempor adipisicing eu adipisicing veniam ea tempor sed ut aute est ullamco incididunt anim cillum esse nisi labore nostrud voluptate irure officia velit qui et eiusmod deserunt enim minim mollit proident culpa ut minim do velit eu ut enim ex nostrud eiusmod sunt esse consectetur cillum deserunt aliqua aute laboris sunt dolor voluptate excepteur ut ut qui velit aliquip et duis laborum eiusmod dolor aute aliqua ex velit dolor incididunt consequat do fugiat non tempor ut consectetur est do magna ad deserunt elit magna mollit eu laboris ad tempor occaecat fugiat laborum pariatur reprehenderit laborum sit enim cupidatat officia esse labore eu magna magna nostrud in ut nulla occaecat mollit laborum dolore labore fugiat.',
+        cancelBtn        : 'Disagree',
+        confirmBtn       : 'Agree',
+    };
+
+    document.querySelector('.js-modal-trigger-3').addEventListener('click', () => Hubble.Modal({...options, scroll: 'modal'}));
+    document.querySelector('.js-modal-trigger-4').addEventListener('click', () => Hubble.Modal({...options, scroll: 'content'}));
+});
+</script>
+<hr />
+<h3 id="customization">Customization</h3>
+<p>Modal positioning, sizing and animations are set via local CSS Variables on <code>.modal-wrap</code>. You can create a custom modal by either overriding the variables, or passing a custom modifier class to the <code>classes</code> option and then modifying the variables from there.</p>
+<p>The example below shows a simple example of a modal that slides in from the bottom of the page without an overlay element:</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center col-gaps-sm">
+        <button class="js-modal-trigger-5 btn">Custom modal</button>
+    </div>
+</div>
+<pre><code class="css language-css">.modal-wrap.custom-modal
+{
+    --hb-modal-transform-off: translate3d(0, 100%, 0);
+    --hb-modal-transition: opacity .125s ease, transform .225s ease;
+    align-items: flex-end;
+    padding-bottom: 50px;
+}</code></pre>
+<pre><code class="javascript language-javascript">let modal = Hubble.Modal({
+    title : 'Subscribe for $1?',
+    content : 'Subscribe for $1 and get all my posts for free!',
+    cancelBtn : 'Nah',
+    confirmBtn : 'YES!',
+    classes: 'custom-modal',
+    overlay: false,
+    closeAnywhere: false,
+});</code></pre>
+<style>
+    .modal-wrap.custom-modal
+    {
+        --hb-modal-transform-off: translate3d(0, 100%, 0);
+        --hb-modal-transition: opacity .125s ease, transform .225s ease;
+        --hb-modal-max-width: 450px;
+        align-items: flex-end;
+        padding-bottom: 30px;
+    }
+</style>
+<script type="text/javascript">
+    window.addEventListener('Hubble:ready', function()
+    {
+        document.querySelector('.js-modal-trigger-5').addEventListener('click', () => Hubble.Modal( {
+            title : 'Subscribe for $1?',
+            content : 'Subscribe for $1 and get all my posts for free!',
+            cancelBtn : 'Nah',
+            confirmBtn : 'YES!',
+            classes: 'custom-modal',
+            overlay: false,
+            closeAnywhere: false,
+        }));
+    });
+</script>
+<hr />
+<h3 id="callbacks">Callbacks</h3>
+<p>There are a number of callbacks available depending on what access you require. In the example below, the <code>callbackOpen</code> option is used to focus an input within the modal when it pops up:</p>
+<p>See the <a href="#options">Options Section</a> for a full list of callbacks.</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center col-gaps-sm">
+        <button class="js-modal-trigger-6 btn">Show form</button>
+    </div>
 </div>
 <pre><code class="javascript language-javascript">Hubble.Modal( {
-    title            : 'MAGA Country',
-    message          : 'Do you want to make America great again?',
-    cancelBtn        : 'Cancel',
-    confirmBtn       : 'MAGA',
+    title: 'Subscribe',
+    content: '....',
+    callbackOpen: (modal) =&gt; find('.js-modal-input', modal).focus(),
 });</code></pre>
-<p>If you want a custom modal with your own content, provide your own HTML as string via the <code>customContent</code> option. The content will be inserted into the modal modal:</p>
-<div class="code-content-example">
-    <button class="js-modal-trigger-2 btn btn-primary">Show Modal</button>
-    <script type="text/javascript">
-        window.addEventListener('Hubble:ready', function()
-        {
-            const card = `
-                <div class="card-header">
-                    <div class="card-header-left">
-                        <div class="avatar">
-                            <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../dist/img/trump-avatar.jpg">
-                        </div>
-                    </div>
-                    <div class="card-header-content p5">
-                        <div class="text-bold">The Don</div>
-                        <div class="color-gray font-italic">Make America Great Again</div>
-                    </div>
-                </div>
-                <div class="card-media">
-                    <img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../dist/img/trump-hero.jpg">
-                </div>
-                <div class="card-block">
-                    <h4 class="card-title">MAGA Country</h4>
-                    <p>Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.</p>
-                </div>
-            `;
-            document.querySelector('.js-modal-trigger-2').addEventListener('click', () => Hubble.Modal( {
-                customContent    : card,
-            }));
-        });
-    </script>
-</div>
-<pre><code class="javascript language-javascript">const card = `
-    &lt;div class="card-header"&gt;
-        &lt;div class="card-header-left"&gt;
-            &lt;div class="avatar"&gt;
-                &lt;img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../dist/img/trump-avatar.jpg"&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div class="card-header-content p5"&gt;
-            &lt;div class="text-bold"&gt;The Don&lt;/div&gt;
-            &lt;div class="color-gray font-italic"&gt;Make America Great Again&lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="card-media"&gt;
-        &lt;img class="img-responsive js-lazyload lazyload grayscale lazy-loaded" src="../../../dist/img/trump-hero.jpg"&gt;
-    &lt;/div&gt;
-    &lt;div class="card-block"&gt;
-        &lt;h4 class="card-title"&gt;MAGA Country&lt;/h4&gt;
-        &lt;p&gt;Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.&lt;/p&gt;
-    &lt;/div&gt;
-`;
-Hubble.Modal( { customContent : card });</code></pre>
-<p>Here's another example using options</p>
-<div class="code-content-example">
-    <button class="js-modal-trigger-3 btn btn-primary">Show Modal</button>
-    <script type="text/javascript">
-        window.addEventListener('Hubble:ready', function()
-        {
-            document.querySelector('.js-modal-trigger-3').addEventListener('click', () => Hubble.Modal( {
-                title            : 'MAGA Country',
-                message          : 'Do you want to make America great again?',
-                cancelBtn        : 'Cancel',
-                cancelClass      : 'btn btn-pure',
-                confirmBtn       : 'MAGA',
-                confirmClass     : 'btn btn-pure btn-primary',
-                overlay          : 'dark',
-                extras           : '<img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />',
-                callbackRender   : () => Hubble.dom().refresh('LazyLoad')
-            }));
-        });
-    </script>
-</div>
-<pre><code class="javascript language-javascript">Hubble.Modal( {
-    title            : 'MAGA Country',
-    message          : 'Do you want to make America great again?',
-    cancelBtn        : 'Cancel',
-    cancelClass      : 'btn btn-pure',
-    confirmBtn       : 'MAGA',
-    confirmClass     : 'btn btn-pure btn-primary',
-    overlay          : 'dark',
-    extras           : '&lt;img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" /&gt;',
-    callbackRender   : () =&gt; Hubble.dom().refresh('LazyLoad')
-});</code></pre>
+<script type="text/javascript">
+window.addEventListener('Hubble:ready', function()
+{
+    let [dom_element, find] = Hubble.import(['dom_element', 'find']).from('_');
+
+    let blurb = dom_element({tag: 'p', class: 'pole-xs pole-s', innerText: 'To subscribe to this website, please enter your email address here. We will send updates occasionally.'});
+
+    let form = dom_element({tag: 'div', class: 'form-field row underlined'}, null, [
+        dom_element({tag: 'input', name: 'email', type: 'email', placeholder: 'Your email address', class: 'js-modal-input'}),
+        dom_element({tag: 'label', for: 'email', innerText: 'Email'}),
+    ]);
+
+    document.querySelector('.js-modal-trigger-6').addEventListener('click', () => Hubble.Modal({
+        title: 'Subscribe',
+        content: [blurb, form],
+        cancelBtn : 'Cancel',
+        confirmBtn : 'Subscribe',
+        callbackOpen: (modal) => find('.js-modal-input', modal).focus(),
+    }));
+});
+</script>
+<hr />
+<h3 id="methods">Methods</h3>
+<p>Once a Modal instance is created, there are a few methods to interact with the modal:</p>
+<p>The <code>open</code> method will animate and open the modal:</p>
+<pre><code class="javascript language-javascript">modal.open();</code></pre>
+<p>The <code>close</code> method will animate and close the modal:</p>
+<pre><code class="javascript language-javascript">modal.close();</code></pre>
+<p>The <code>direction</code> method returns the modal state which will be either <code>closed</code> or <code>open</code>:</p>
+<pre><code class="javascript language-javascript">if (modal.state() === 'closed')
+{
+
+}</code></pre>
+<p>The <code>state</code> method returns the modal state which will be either <code>closed</code> or <code>open</code>:</p>
+<pre><code class="javascript language-javascript">if (modal.state() === 'closed')
+{
+
+}</code></pre>
+<p>The <code>opened</code> method returns <code>true</code> if the modal is open or <code>false</code> if not</p>
+<pre><code class="javascript language-javascript">if (modal.opened())
+{
+
+}</code></pre>
+<p>The <code>closed</code> method returns <code>true</code> if the modal is closed or <code>false</code> if not</p>
+<pre><code class="javascript language-javascript">if (modal.closed())
+{
+
+}</code></pre>
+<p>Finally the <code>destroy</code> method completely removes the modal from the DOM and all related event listeners:</p>
+<pre><code class="javascript language-javascript">modal.destroy()</code></pre>
 <hr />
 <h3 id="options">Options</h3>
 <p>There are a number of options for a modal depending on a given purpose. The table below outlines the available options:</p>
@@ -485,22 +598,36 @@ Hubble.Modal( { customContent : card });</code></pre>
 </tr>
 <tr>
 <td><code>message</code></td>
-<td><code>string</code></td>
-<td>Text to be displayed inside <code>.card-body &gt; p</code>.</td>
+<td><code>string</code>, <code>Array</code>, <code>Nodelist</code>, <code>HTMLElement</code></td>
+<td>Content to be displayed inside <code>.card-body &gt;</code>.</td>
 <td><code>no</code></td>
 <td><code>null</code></td>
 </tr>
 <tr>
-<td><code>extras</code></td>
+<td><code>classes</code></td>
 <td><code>string</code></td>
-<td>Optional extra content to be append inside <code>.card</code> after <code>.card-body</code></td>
+<td>Any additional classes to pass to the modal</td>
 <td><code>no</code></td>
 <td><code>null</code></td>
+</tr>
+<tr>
+<td><code>custom</code></td>
+<td><code>Boolean</code></td>
+<td>Creates an un-formatted modal based on <code>content</code></td>
+<td><code>no</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td><code>string</code></td>
+<td>Initial state when first created - <code>open</code> or <code>closed</code>.</td>
+<td><code>no</code></td>
+<td><code>open</code></td>
 </tr>
 <tr>
 <td><code>overlay</code></td>
-<td><code>string</code></td>
-<td>Either <code>light</code> or <code>dark</code></td>
+<td><code>string</code> <code>Boolean</code></td>
+<td>Either <code>light</code> , <code>dark</code> or <code>false</code>  if no overlay is wanted</td>
 <td><code>no</code></td>
 <td><code>dark</code></td>
 </tr>
@@ -510,13 +637,6 @@ Hubble.Modal( { customContent : card });</code></pre>
 <td>Modal can be closed by clicking anywhere outside of it.</td>
 <td><code>no</code></td>
 <td><code>true</code></td>
-</tr>
-<tr>
-<td><code>customContent</code></td>
-<td><code>string</code></td>
-<td>Optional custom string <code>html</code> content to build modal.</td>
-<td><code>no</code></td>
-<td><code>null</code></td>
 </tr>
 <tr>
 <td><code>cancelBtn</code></td>
@@ -544,7 +664,7 @@ Hubble.Modal( { customContent : card });</code></pre>
 <td><code>string</code></td>
 <td>Btn variant/context class for cancel btn. e.g <code>.btn-success</code>.</td>
 <td><code>no</code></td>
-<td><code>btn-primary</code></td>
+<td>``</td>
 </tr>
 <tr>
 <td><code>callbackBuilt</code></td>
@@ -561,9 +681,9 @@ Hubble.Modal( { customContent : card });</code></pre>
 <td><code>null</code></td>
 </tr>
 <tr>
-<td><code>callbackConfirm</code></td>
+<td><code>callbackOpen</code></td>
 <td><code>function</code></td>
-<td>Callback function to be called when confirm button is clicked.</td>
+<td>Callback function to be called when modal is opened.</td>
 <td><code>no</code></td>
 <td><code>null</code></td>
 </tr>
@@ -584,34 +704,52 @@ Hubble.Modal( { customContent : card });</code></pre>
 </tbody>
 </table>
 <hr />
+<h3 id="html-initialization">HTML Initialization</h3>
+<p>For basic use-cases where access to the underlying JavaScript is not required, Modals can be enabled through HTML markup via an anchor element with the <code>.js-modal-trigger</code> class.</p>
+<p>For basic HTML string content, simply use the <code>data-content</code> attribute with any required string content to populate the modal.</p>
+<p>For more complex requirements point to the id of a hidden target element element in the DOM with the <code>data-content</code> attribute. Remember to always include the <code>#</code> character before the ID as this differentiates it from it being interpenetrated as a string.</p>
+<p>All other options can be set through <code>data-attributes</code> on the anchor element in <code>hyphen-case</code>. For example to set the <code>closeAnywhere</code> option, you would set the <code>data-close-anywhere="true"</code> attribute.</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center pole-sm">
+        <button type="button" class="btn js-modal-trigger" data-confirm-btn="Confirm" data-content="#html-modal">Show Modal</button>
+        <div id="html-modal" style="display: none;"> 
+            <p>Let X help apps determine location. This means sending anonymous location data to X, even when no apps are running.</p>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;button type="button" class="btn js-modal-trigger" data-content="#my-modal"&gt;Toggle&lt;/button&gt;
+
+&lt;div id="my-modal"&gt;...&lt;/div&gt;</code></pre>
+<hr />
 <h3 id="css-customization">CSS Customization</h3>
 <p>Modals use a combination of both local CSS variables on <code>.modal-wrap</code>, <code>.modal-overlay</code> and Sass variables for enhanced component customization and styling.</p>
 <p>Customization via Sass can be made in the <code>src/scss/_config.scss</code> file in Hubble's source.</p>
 <pre><code class="file-path language-file-path">`src/scss/_config.scss`</code></pre>
-<pre><code class="sass language-sass">$modal-max-width:               680px !default;
+<pre><code class="scss language-scss">$modal-max-width:               680px !default;
+$modal-max-height:              80vh !default;
 $modal-shadow:                  3 !default; //0,1,2,3 
-$modal-overlay-bg:              var(--hb-white) !default;
-$modal-overlay-bg-dark:         var(--hb-black) !default;
-$modal-overlay-opacity:         0.8 !default;
+$modal-overlay-bg:              rgba(255, 255, 255, 0.8) !default;
+$modal-overlay-bg-dark:         rgba(0, 0, 0, 0.5) !default;
 $modal-title-size:              1.8rem !default;
-$modal-transition-on:           opacity .2s .3s ease, transform .3s .3s ease !default;
-$modal-transition-off:          opacity .4s  ease, transform .5s ease !default;
-$modal-overlay-transition-on:   opacity .5s ease !default;
-$modal-overlay-transition-off:  opacity .5s ease !default;</code></pre>
-<pre><code class="sass language-sass">.modal-wrap
+$modal-transform-on:            translate3d(0px, 0px, 0px) !default;
+$modal-transform-off:           translate3d(0px, -50px, 0px) !default;
+$modal-transition:              opacity .225s ease-out .225s, transform .225s ease-out .225s !default;
+$modal-overlay-transition:      opacity .225s ease-out !default;</code></pre>
+<pre><code class="file-path language-file-path">`src/scss/components/_modal.scss`</code></pre>
+<pre><code class="scss language-scss">.modal-wrap
 {
     --hb-modal-title-size: #{$modal-title-size};
-    --hb-modal-transition-on: #{$modal-transition-on};
-    --hb-modal-transition-off: #{$modal-transition-off};
+    --hb-modal-transition: #{$modal-transition};
     --hb-modal-max-width: #{$modal-max-width};
+    --hb-modal-max-height: #{$modal-max-height};
+    --hb-modal-transform-on: #{$modal-transform-on};
+    --hb-modal-transform-off: #{$modal-transform-off};
 }
 .modal-overlay
 {
     --hb-modal-overlay-bg: #{$modal-overlay-bg};
     --hb-modal-overlay-bg-dark: #{$modal-overlay-bg-dark};
-    --hb-modal-overlay-opacity: #{$modal-overlay-opacity};
-    --hb-modal-overlay-transition-on: #{$modal-overlay-transition-on};
-    --hb-modal-overlay-transition-off: #{$modal-overlay-transition-off};
+    --hb-modal-overlay-transition: #{$modal-overlay-transition};
 }</code></pre>
                     </article>
                 </div>
@@ -666,5 +804,6 @@ $modal-overlay-transition-off:  opacity .5s ease !default;</code></pre>
         </footer>
         <script src="../../../dist/js/hubble.bundle.js"></script>
         <script src="../../../dist/js/docs.js"></script>
+        <script type="text/javascript">Hubble.dom().refresh()</script>
     </body>
 </html>

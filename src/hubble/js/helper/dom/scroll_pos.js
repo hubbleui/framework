@@ -6,7 +6,7 @@
  */
 _.prototype.scroll_pos = function(context)
 {
-    if (context)
+    if (context && this.is_htmlElement(context))
     {
         return {
             top: context.scrollTop,

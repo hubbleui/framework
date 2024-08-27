@@ -148,8 +148,6 @@
      */
     Ripple.prototype._startRipple  = function(e, wrapper)
     {
-        CLICKED = e.target;
-
         const _this = this;
 
         // Ignore disabled
@@ -238,7 +236,7 @@
 
         // Release listener
         document.addEventListener(releaseEvent, release);
-
+            
         preapend(ripple, wrapper);
     }
 

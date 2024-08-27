@@ -206,6 +206,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
     let start    = () => {};
     let fail     = () => {};
     let complete = () => {};
+    let step     = () => {};
 
     this.each(optionSets, function(i, options)
     {
@@ -221,6 +222,13 @@ _.prototype.__animation_factory = function(DOMElement, opts)
             fail = options.fail;
 
             delete options.fail;
+        }
+
+        if (options.step)
+        {
+            step = options.step;
+
+            delete options.step;
         }
 
         // Store the maximum duration
@@ -264,6 +272,7 @@ _.prototype.__animation_factory = function(DOMElement, opts)
     optionSets[longestI].fail     = fail;
     optionSets[longestI].start    = start;
     optionSets[longestI].complete = complete;
+    optionSets[longestI].step     = step;
 
     return optionSets;
 }

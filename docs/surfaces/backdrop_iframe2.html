@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Documentation | Hubble UI</title>
+        <meta name="description" content="">
+        <script src="../../dist/js/hubble.lazyload.js"></script>
+        <link rel="stylesheet" href="../../dist/css/lazyload.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../dist/css/hubble-icons.css">
+        <link rel="stylesheet" href="../../dist/css/hubble.css">
+        <link rel="stylesheet" href="../../dist/css/docs.css">
+        <style type="text/css">
+            .backdrop.drawer-container
+            {
+                --hb-drawer-width: 70vw;
+            }
+            body,html
+            {
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="flex-row align-cols-center pole-md">
+                <p class="text-center">Swipe left or <br> right to open/close</p>
+            </div>
+        </div>
+        <script src="../../dist/js/hubble.bundle.js"></script>
+        <script src="../../dist/js/docs.js"></script>
+        <script type="text/javascript">
+            const drawer = Hubble.Backdrop(
+            {
+                swipeable:       true,
+                state:           'collapsed',
+                content          : `
+                <div class="gutter-xs">
+                    <div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"></div>
+                    <div class="skeleton-text-block skeleton-lines">
+                        <div class="skeleton" style="width: 71%;"></div>
+                        <div class="skeleton" style="width: 81%;"></div>
+                    </div>
+                    <div class="skeleton-text-block skeleton-lines">
+                        <div class="skeleton" style="width: 81%;"></div>
+                        <div class="skeleton" style="width: 84%;"></div>
+                        <div class="skeleton" style="width: 91%;"></div>
+                    </div>
+                </div>`
+            });
+        </script>
+    </body>
+</html>

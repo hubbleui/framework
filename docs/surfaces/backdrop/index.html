@@ -139,9 +139,9 @@
         <ul>
             <li class="menu-item"><a  href="../../surfaces/paper/index.html">Paper</a></li>
             <li class="menu-item"><a  href="../../surfaces/cards/index.html">Cards</a></li>
-            <li class="menu-item"><a class="active" href="../../surfaces/backdrop/index.html">Backdrop</a></li>
             <li class="menu-item"><a  href="../../surfaces/drawer/index.html">Drawer</a></li>
             <li class="menu-item"><a  href="../../surfaces/frontdrop/index.html">Frontdrop</a></li>
+            <li class="menu-item"><a class="active" href="../../surfaces/backdrop/index.html">Backdrop</a></li>
         </ul>
     </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-navigation">
@@ -347,7 +347,290 @@
                         <button type="button" class="btn btn-primary btn-lg btn-block js-doc-side-trigger"> Documentation Menu </button>
                     </div>
                     <article class="docs-body">
-                        
+                        <h1 id="backdrop">Backdrop</h1>
+<p>Backdrop provides access to an elevated surface providing additional app functionality such as filtering items, account access or displaying search results.</p>
+<hr />
+<ul>
+<li><a href="#example">Example</a></li>
+<li><a href="#push-body">Push body</a></li>
+<li><a href="#direction">Direction</a></li>
+<li><a href="#swipeable">Swipeable</a></li>
+<li><a href="#methods">Methods</a></li>
+<li><a href="#options">Options</a></li>
+<li><a href="#html-initialization">HTML Initialization</a></li>
+<li><a href="#css-customization">CSS Customization</a></li>
+</ul>
+<hr />
+<h3 id="example">Example</h3>
+<p>A Backdrop can be created via Hubble's Container with the <code>Backdrop</code> method:</p>
+<div class="code-content-example">
+    <button class="js-bd-trigger-1 btn">Show Backdrop</button>
+</div>
+<pre><code class="javascript language-javascript">const backdrop = Hubble.Backdrop( {
+    content : '...',
+});</code></pre>
+<script type="text/javascript">
+    const SKELETONS = 
+    [
+        { lines: 1, variant: 'block-h3' },
+        { lines: 6, variant: 'text-block' },
+        { lines: 1, variant: 'block-h4' },
+        { lines: 3, variant: 'text-block' },
+    ];
+    window.addEventListener('Hubble:ready', function()
+    {
+        let backdrop = Hubble.Backdrop(
+        {
+            callbackBuilt: (container, drawer, overlay) => {
+                let pad = Hubble._().dom_element({tag: 'div', class: 'pad-20',}, Hubble._().find('.js-drawer-dialog', container));
+                Hubble.Skeleton(pad, SKELETONS)
+            },
+            state: 'collapsed',
+        });
+
+        document.querySelector('.js-bd-trigger-1').addEventListener('click', () => backdrop.closed() ? backdrop.open() : backdrop.close());
+    });
+</script>
+<hr />
+<h3 id="push-body">Push Body</h3>
+<p>By default, the Backdrop element will adapt the dimensions of the body. You can change this to push the body content instead by passing <code>pushbody: true</code> in the options:</p>
+<div class="code-content-example">
+    <button class="js-bd-trigger-2 btn">Show Backdrop</button>
+</div>
+<pre><code class="javascript language-javascript">const backdrop = Hubble.Backdrop( {
+    content : '...',
+});</code></pre>
+<script type="text/javascript">
+    window.addEventListener('Hubble:ready', function()
+    {
+        let backdrop = Hubble.Backdrop(
+        {
+            callbackBuilt: (container, drawer, overlay) => {
+                let pad = Hubble._().dom_element({tag: 'div', class: 'pad-20',}, Hubble._().find('.js-drawer-dialog', container));
+                Hubble.Skeleton(pad, SKELETONS)
+            },
+            state: 'collapsed',
+            pushbody: true,
+        });
+
+        document.querySelector('.js-bd-trigger-2').addEventListener('click', () => backdrop.closed() ? backdrop.open() : backdrop.close());
+    });
+</script>
+<hr />
+<h3 id="direction">Direction</h3>
+<p>Drawer direction can be manged by passing <code>left|right|top|bottom</code> to  <code>direction</code> in the options.</p>
+<div class="code-content-example">
+    <div class="row" style="height: 300px">
+        <iframe src="../backdrop_iframe1.html"></iframe>
+    </div>
+</div>
+<pre><code class="javascript language-javascript">const drawer = Hubble.Drawer({
+    content : '&lt;ul&gt;...&lt;/ul&gt;',
+    direction: 'right'
+});</code></pre>
+<hr />
+<h3 id="swipeable">Swipeable</h3>
+<p>By default, the Backdrop element itself is Swipeable when expanded. You can make the a backdrop swipeable with on the window when open or closed by adding the <code>swipeable</code> option. This means you can open and close the backdrop by simply swiping up or down on the window itself at any time.</p>
+<div class="code-content-example">
+    <div class="iphone-case">
+        <iframe src="../backdrop_iframe2.html"></iframe>
+    </div>
+</div>
+<pre><code class="javascript language-javascript">const backdrop = Hubble.Backdrop({
+    content   : '...',
+    swipeable : true
+});</code></pre>
+<hr />
+<h3 id="methods">Methods</h3>
+<p>Once a Backdrop instance is created, there are a few methods to interact with the drawer:</p>
+<p>The <code>open</code> method will animate and open the drawer:</p>
+<pre><code class="javascript language-javascript">backdrop.open();</code></pre>
+<p>The <code>close</code> method will animate and close the drawer:</p>
+<pre><code class="javascript language-javascript">backdrop.close();</code></pre>
+<p>The <code>direction</code> method returns the drawer state which will be either <code>collapsed</code> or <code>expanded</code>:</p>
+<pre><code class="javascript language-javascript">if (backdrop.state() === 'collapsed')
+{
+
+}</code></pre>
+<p>The <code>state</code> method returns the drawer state which will be either <code>collapsed</code> or <code>expanded</code>:</p>
+<pre><code class="javascript language-javascript">if (backdrop.state() === 'collapsed')
+{
+
+}</code></pre>
+<p>The <code>opened</code> method returns <code>true</code> if the drawer is open or <code>false</code> if not</p>
+<pre><code class="javascript language-javascript">if (backdrop.opened())
+{
+
+}</code></pre>
+<p>The <code>closed</code> method returns <code>true</code> if the drawer is closed or <code>false</code> if not</p>
+<pre><code class="javascript language-javascript">if (backdrop.closed())
+{
+
+}</code></pre>
+<p>Finally the <code>destroy</code> method completely removes the drawer from the DOM and all related event listeners:</p>
+<pre><code class="javascript language-javascript">backdrop.destroy()</code></pre>
+<hr />
+<h3 id="options">Options</h3>
+<p>There are a number of options for a Backdrop depending on a given purpose. The table below outlines the available options:</p>
+<table>
+<thead>
+<tr>
+<th id="option_key">Option key</th>
+<th id="var_type">Var Type</th>
+<th id="behavior">Behavior</th>
+<th id="required">Required</th>
+<th id="default">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>content</code></td>
+<td><code>string</code> <code>array</code> <code>nodelist</code> <code>HTMLElement</code></td>
+<td>Content to be displayed inside the drawer</td>
+<td><code>no</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>pushBody</code></td>
+<td><code>Boolean</code></td>
+<td>Pushes body rather than adapting it's dimensions</td>
+<td><code>no</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>animateOnMount</code></td>
+<td><code>Boolean</code></td>
+<td>Enables animating on initial mount. Defaults to <code>true</code> when state is <code>expanded</code></td>
+<td><code>no</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>swipeable</code></td>
+<td><code>boolean</code></td>
+<td>Enables swipes on the window to open/close drawer</td>
+<td><code>no</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td><code>string</code></td>
+<td>Default state when first created can be either <code>collapsed</code> or <code>expanded</code></td>
+<td><code>no</code></td>
+<td><code>expanded</code></td>
+</tr>
+<tr>
+<td><code>easing</code></td>
+<td><code>string</code></td>
+<td>JavaScript easing pattern in <code>camelCase</code></td>
+<td><code>no</code></td>
+<td><code>easeOut</code></td>
+</tr>
+<tr>
+<td><code>animationTime</code></td>
+<td><code>Integer</code></td>
+<td>Animation duration in milliseconds.</td>
+<td><code>no</code></td>
+<td><code>250</code></td>
+</tr>
+<tr>
+<td><code>classes</code></td>
+<td><code>string</code></td>
+<td>Additional classes to pass to the drawer wrapper</td>
+<td><code>no</code></td>
+<td><code>dark</code></td>
+</tr>
+<tr>
+<td><code>callbackBuilt</code></td>
+<td><code>function</code></td>
+<td>Callback function to be called when drawer is first built but not rendered.</td>
+<td><code>no</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>callbackRender</code></td>
+<td><code>function</code></td>
+<td>Callback function to be called when drawer is first rendered into DOM.</td>
+<td><code>no</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>callbackOpen</code></td>
+<td><code>function</code></td>
+<td>Callback function to be called when drawer is opened.</td>
+<td><code>no</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>callbackClose</code></td>
+<td><code>function</code></td>
+<td>Callback function to be called when drawer is closed.</td>
+<td><code>no</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>callbackValidate</code></td>
+<td><code>function</code></td>
+<td>Callback function to validate if drawer can be closed. Must return boolean</td>
+<td><code>no</code></td>
+<td><code>null</code></td>
+</tr>
+</tbody>
+</table>
+<p>Note that all callbacks callbacks will receive the following arguments: <code>containerWrap, drawer, overlay, bodyWrap</code></p>
+<hr />
+<h3 id="html-initialization">HTML Initialization</h3>
+<p>For basic use-cases where access to the underlying JavaScript is not required, Backdrop can be enabled through HTML markup via an anchor element with the <code>.js-backdrop-trigger</code> class.</p>
+<p>For basic HTML string content, simply use the <code>data-content</code> attribute with any required string content to populate the Backdrop.</p>
+<p>For more complex requirements point to the id of a hidden target element element in the DOM with the <code>data-content</code> attribute. Remember to always include the <code>#</code> character before the ID as this differentiates it from it being interpenetrated as a string.</p>
+<p>All other options can be set through <code>data-attributes</code> on the anchor element in <code>hyphen-case</code>. For example to set the <code>closeAnywhere</code> option, you would set the <code>data-close-anywhere="true"</code> attribute.</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center pole-sm">
+        <button type="button" class="btn js-backdrop-trigger" data-content="#fd-content">Toggle</button>
+        <div id="fd-content"  class="pad-20" style="display: none;">
+            <div class="skeleton-text-block skeleton-lines">
+                <div class="skeleton" style="width: 81%;"></div>
+                <div class="skeleton" style="width: 74%;"></div>
+                <div class="skeleton" style="width: 78%;"></div>
+                <div class="skeleton" style="width: 81%;"></div>
+                <div class="skeleton" style="width: 74%;"></div>
+                <div class="skeleton" style="width: 78%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 91%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 91%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;button type="button" class="btn js-backdrop-trigger" data-content="fd-content"&gt;Toggle&lt;/button&gt;
+
+&lt;div id="fd-content"&gt;...&lt;/ul&gt;</code></pre>
+<hr />
+<h3 id="css-customization">CSS Customization</h3>
+<p>Backdrop use a combination of both local CSS variables and Sass variables on <code>.backdrop-wrap</code>, <code>.backdrop-overlay</code> for enhanced component customization and styling.</p>
+<p>Customization via Sass can be made in the <code>src/scss/_config.scss</code> file in Hubble's source.</p>
+<pre><code class="file-path language-file-path">`src/scss/_config.scss`</code></pre>
+<pre><code class="sass language-sass">$backdrop-height:               75vh !default;
+$backdrop-peekable-height:      50px !default;
+$backdrop-radius:               10px !default;
+$backdrop-overlay-bg:           rgba(255, 255, 255, 0.8) !default;
+$backdrop-overlay-bg-dark:      rgba(0, 0, 0, 0.5) !default;</code></pre>
+<pre><code class="file-path language-file-path">`src/scss/components/_backdrop.scss`</code></pre>
+<pre><code class="scss language-scss">.drawer-container.backdrop.drawer-bottom
+{
+    // Drawer
+    --hb-drawer-bg: #{$drawer-bg};
+    --hb-drawer-width: var(--hb-backdrop-height);
+    --hb-drawer-size-peekable: #{$backdrop-peekable-height};
+
+    // Overlay
+    --hb-drawer-overlay-bg: #{$backdrop-overlay-bg};
+    --hb-drawer-overlay-bg-dark: #{$backdrop-overlay-bg-dark};
+
+    // Backdrop
+    --hb-backdrop-height: #{$backdrop-height};
+    --hb-backdrop-radius: #{$backdrop-radius};
+}</code></pre>
                     </article>
                 </div>
             </div>
@@ -401,5 +684,6 @@
         </footer>
         <script src="../../../dist/js/hubble.bundle.js"></script>
         <script src="../../../dist/js/docs.js"></script>
+        <script type="text/javascript">Hubble.dom().refresh()</script>
     </body>
 </html>

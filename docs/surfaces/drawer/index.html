@@ -139,9 +139,9 @@
         <ul>
             <li class="menu-item"><a  href="../../surfaces/paper/index.html">Paper</a></li>
             <li class="menu-item"><a  href="../../surfaces/cards/index.html">Cards</a></li>
-            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
             <li class="menu-item"><a class="active" href="../../surfaces/drawer/index.html">Drawer</a></li>
             <li class="menu-item"><a  href="../../surfaces/frontdrop/index.html">Frontdrop</a></li>
+            <li class="menu-item"><a  href="../../surfaces/backdrop/index.html">Backdrop</a></li>
         </ul>
     </li>
     <li class="menu-item menu-item-title js-collapse " data-collapse-target="menu-navigation">
@@ -348,15 +348,17 @@
                     </div>
                     <article class="docs-body">
                         <h1 id="drawer">Drawer</h1>
-<p>Drawer is provides an provides access to an elevated a surface providing additional app functionality such as filtering items, account access or displaying search results.</p>
+<p>Drawer provides access to an elevated surface providing additional app functionality such as filtering items, account access or displaying search results.</p>
 <hr />
 <ul>
 <li><a href="#example">Example</a></li>
 <li><a href="#direction">Direction</a></li>
 <li><a href="#swipeable">Swipeable</a></li>
-<li><a href="#push-body">Push Body</a></li>
+<li><a href="#persistent">Persistent</a></li>
 <li><a href="#peekable">Peekable</a></li>
+<li><a href="#methods">Methods</a></li>
 <li><a href="#options">Options</a></li>
+<li><a href="#html-initialization">HTML Initialization</a></li>
 <li><a href="#css-customization">CSS Customization</a></li>
 </ul>
 <hr />
@@ -365,6 +367,9 @@
 <div class="code-content-example">
     <button class="js-dw-trigger-1 btn">Show Drawer</button>
     <script type="text/javascript">
+
+        const DRAWER_MENU = '<ul class="menu"><li><span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span><span class="item-body">Inbox</span><span class="item-right"><span class="label">4</span></span>  </li>  <li><span class="item-left"><span class="fa fa-flag color-gray-500"></span></span><span class="item-body">Flagged</span><span class="item-right"><span class="label">23</span></span>  </li>  <li><span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span><span class="item-body">Drafts</span><span class="item-right"><span class="label">3</span></span>  </li>  <li><span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span><span class="item-body">Sent</span><span class="item-right"><span class="status status-xs"></span></span>  </li>  <li><span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span><span class="item-body">Junk</span><span class="item-right"><span class="status status-xs status-warning"></span></span>  </li>  <li><span class="item-left"><span class="fa fa-trash color-gray-500"></span></span><span class="item-body">Trash</span><span class="item-right"><span class="status status-xs status-danger"></span></span>  </li> </ul>';
+
         window.addEventListener('Hubble:ready', function()
         {
             var drawer;
@@ -375,38 +380,7 @@
 
                 drawer = Hubble.Drawer(
                 {
-                    content : `<ul class="menu"> 
-                    <li>
-                        <span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span>
-                        <span class="item-body">Inbox</span>
-                        <span class="item-right"><span class="label">4</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-flag color-gray-500"></span></span>
-                        <span class="item-body">Flagged</span>
-                        <span class="item-right"><span class="label">23</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span>
-                        <span class="item-body">Drafts</span>
-                        <span class="item-right"><span class="label">3</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span>
-                        <span class="item-body">Sent</span>
-                        <span class="item-right"><span class="status status-xs"></span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span>
-                        <span class="item-body">Junk</span>
-                        <span class="item-right"><span class="status status-xs status-warning"></span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-trash color-gray-500"></span></span>
-                        <span class="item-body">Trash</span>
-                        <span class="item-right"><span class="status status-xs status-danger"></span></span>
-                    </li>
-                </ul>`
+                    content : DRAWER_MENU
                 });
             });
         });
@@ -443,38 +417,7 @@
             drawer = Hubble.Drawer(
             {
                 direction : btn.innerText.toLowerCase().trim(),
-                content          : `<ul class="menu"> 
-                    <li>
-                        <span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span>
-                        <span class="item-body">Inbox</span>
-                        <span class="item-right"><span class="label">4</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-flag color-gray-500"></span></span>
-                        <span class="item-body">Flagged</span>
-                        <span class="item-right"><span class="label">23</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span>
-                        <span class="item-body">Drafts</span>
-                        <span class="item-right"><span class="label">3</span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span>
-                        <span class="item-body">Sent</span>
-                        <span class="item-right"><span class="status status-xs"></span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span>
-                        <span class="item-body">Junk</span>
-                        <span class="item-right"><span class="status status-xs status-warning"></span></span>
-                    </li>
-                    <li>
-                        <span class="item-left"><span class="fa fa-trash color-gray-500"></span></span>
-                        <span class="item-body">Trash</span>
-                        <span class="item-right"><span class="status status-xs status-danger"></span></span>
-                    </li>
-                </ul>`,
+                content : DRAWER_MENU,
 
             });
         });
@@ -482,7 +425,8 @@
 </script>
 <hr />
 <h3 id="swipeable">Swipeable</h3>
-<p>By default, the Drawer element itself is Swipeable when expanded. You can make the a drawer swipeable with on the window when open or closed by adding the <code>swipeable</code> option. This means you can open and close the drawer by simply swiping up or down on the window itself at any time.</p>
+<p>By default, the Drawer element itself is Swipeable when expanded - meaning once it's opened, it can be swiped closed by swiping on the drawer in the opposite direction.</p>
+<p>You can make the drawer swipeable on the window element itself instead by adding the <code>swipeable</code> option. This means a drawer can opened or closed by simply swiping up/down/left/right on the window itself at any time.</p>
 <div class="code-content-example">
     <div class="iphone-case">
         <iframe src="../drawer_iframe1.html"></iframe>
@@ -493,22 +437,63 @@
     swipeable : true
 });</code></pre>
 <hr />
-<h3 id="push-body">Push Body</h3>
-<p>Persistent navigation drawers can toggle open or closed. The drawer sits on the same surface elevation as the main page content. Pass <code>pushBody</code> to the options when creating a drawer to enable it.</p>
+<h3 id="persistent">Persistent</h3>
+<p>Persistent navigation drawers can toggle open or closed and sits on the same surface elevation as the content. When the drawer opens or closes, the main page content is pushed or pulled adapts in width/height based on the drawer size.</p>
+<p>Drawer will automatically wrap and unwrap page content when the it is invoked or destroyed.</p>
 <div class="code-content-example">
-    <div class="row" style="height: 400px">
+    <div class="row" style="height: 450px">
         <iframe src="../drawer_iframe2.html"></iframe>
     </div>
 </div>
 <pre><code class="javascript language-javascript">const drawer = Hubble.Drawer({
     content   : '...',
-    pushBody : true,
+    persistent : true,
 });</code></pre>
 <hr />
 <h3 id="peekable">Peekable</h3>
+<p>On persistent left and right drawers, adding the <code>peekable</code> option, allows the drawer to collapse into a fixed width when closed. When expanded, it appears as the standard persistent navigation drawer.</p>
+<div class="code-content-example">
+    <div class="row" style="height: 450px">
+        <iframe src="../drawer_iframe3.html"></iframe>
+    </div>
+</div>
+<pre><code class="javascript language-javascript">const drawer = Hubble.Drawer({
+    content   : '...',
+    persistent : true,
+    peekable : true,
+});</code></pre>
+<hr />
+<h3 id="methods">Methods</h3>
+<p>Once a drawer instance is created, there are a few methods to interact with the drawer:</p>
+<p>The <code>open</code> method will animate and open the drawer:</p>
+<pre><code class="javascript language-javascript">drawer.open();</code></pre>
+<p>The <code>close</code> method will animate and close the drawer:</p>
+<pre><code class="javascript language-javascript">drawer.close();</code></pre>
+<p>The <code>direction</code> method returns the drawer state which will be either <code>collapsed</code> or <code>expanded</code>:</p>
+<pre><code class="javascript language-javascript">if (drawer.state() === 'collapsed')
+{
+
+}</code></pre>
+<p>The <code>state</code> method returns the drawer state which will be either <code>collapsed</code> or <code>expanded</code>:</p>
+<pre><code class="javascript language-javascript">if (drawer.state() === 'collapsed')
+{
+
+}</code></pre>
+<p>The <code>opened</code> method returns <code>true</code> if the drawer is open or <code>false</code> if not</p>
+<pre><code class="javascript language-javascript">if (drawer.opened())
+{
+
+}</code></pre>
+<p>The <code>closed</code> method returns <code>true</code> if the drawer is closed or <code>false</code> if not</p>
+<pre><code class="javascript language-javascript">if (drawer.closed())
+{
+
+}</code></pre>
+<p>Finally the <code>destroy</code> method completely removes the drawer from the DOM and all related event listeners:</p>
+<pre><code class="javascript language-javascript">drawer.destroy()</code></pre>
 <hr />
 <h3 id="options">Options</h3>
-<p>There are a number of options for a modal depending on a given purpose. The table below outlines the available options:</p>
+<p>Drawer initialization has a number of different options depending on the use-case. The table below outlines the available options:</p>
 <table>
 <thead>
 <tr>
@@ -521,39 +506,39 @@
 </thead>
 <tbody>
 <tr>
-<td><code>title</code></td>
-<td><code>string</code></td>
-<td>Text to be displayed inside <code>.card-title</code>.</td>
-<td><code>no</code></td>
-<td><code>null</code></td>
-</tr>
-<tr>
 <td><code>content</code></td>
 <td><code>string</code> <code>array</code> <code>nodelist</code> <code>HTMLElement</code></td>
-<td>Content to be displayed inside <code>.card-body &gt; *</code>.</td>
+<td>Content to be displayed inside the drawer</td>
 <td><code>no</code></td>
 <td><code>null</code></td>
 </tr>
 <tr>
-<td><code>overlay</code></td>
-<td><code>string</code></td>
-<td>Either <code>light</code> or <code>dark</code></td>
+<td><code>persistent</code></td>
+<td><code>Boolean</code></td>
+<td>Enables persistent drawer.</td>
 <td><code>no</code></td>
-<td><code>dark</code></td>
+<td><code>false</code></td>
 </tr>
 <tr>
-<td><code>confirmBtn</code></td>
-<td><code>string</code></td>
-<td>Inner text on confirm button. No confirm button will be rendered if not provided.</td>
+<td><code>peekable</code></td>
+<td><code>Boolean</code></td>
+<td>Enables peekable drawer.</td>
 <td><code>no</code></td>
-<td><code>null</code></td>
+<td><code>false</code></td>
 </tr>
 <tr>
-<td><code>confirmClass</code></td>
-<td><code>string</code></td>
-<td>Btn variant/context class for confirmation button. e.g <code>.btn-success</code>.</td>
+<td><code>animateOnMount</code></td>
+<td><code>Boolean</code></td>
+<td>Enables animating on initial mount. Defaults to <code>true</code> when state is <code>expanded</code></td>
 <td><code>no</code></td>
-<td>``</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>swipeable</code></td>
+<td><code>boolean</code></td>
+<td>Enables swipes on the window to open/close drawer</td>
+<td><code>no</code></td>
+<td><code>false</code></td>
 </tr>
 <tr>
 <td><code>state</code></td>
@@ -563,11 +548,32 @@
 <td><code>expanded</code></td>
 </tr>
 <tr>
-<td><code>swipeable</code></td>
-<td><code>boolean</code></td>
-<td>Enables up/down swipes on the window to open/close drawer</td>
+<td><code>overlay</code></td>
+<td><code>string</code></td>
+<td>Either <code>light</code> or <code>dark</code></td>
 <td><code>no</code></td>
-<td><code>false</code></td>
+<td><code>dark</code></td>
+</tr>
+<tr>
+<td><code>easing</code></td>
+<td><code>string</code></td>
+<td>JavaScript easing pattern in <code>camelCase</code></td>
+<td><code>no</code></td>
+<td><code>easeOut</code></td>
+</tr>
+<tr>
+<td><code>animationTime</code></td>
+<td><code>Integer</code></td>
+<td>Animation duration in milliseconds.</td>
+<td><code>no</code></td>
+<td><code>250</code></td>
+</tr>
+<tr>
+<td><code>classes</code></td>
+<td><code>string</code></td>
+<td>Additional classes to pass to the drawer wrapper</td>
+<td><code>no</code></td>
+<td><code>dark</code></td>
 </tr>
 <tr>
 <td><code>callbackBuilt</code></td>
@@ -580,13 +586,6 @@
 <td><code>callbackRender</code></td>
 <td><code>function</code></td>
 <td>Callback function to be called when drawer is first rendered into DOM.</td>
-<td><code>no</code></td>
-<td><code>null</code></td>
-</tr>
-<tr>
-<td><code>callbackConfirm</code></td>
-<td><code>function</code></td>
-<td>Callback function to be called when confirm button is clicked.</td>
 <td><code>no</code></td>
 <td><code>null</code></td>
 </tr>
@@ -613,34 +612,72 @@
 </tr>
 </tbody>
 </table>
+<p>Note that all callbacks callbacks will receive the following arguments: <code>containerWrap, drawer, overlay, bodyWrap</code></p>
+<hr />
+<h3 id="html-initialization">HTML Initialization</h3>
+<p>For basic use cases where access to the underlying JavaScript, Drawers can be enabled through HTML markup via an anchor element. Options can be set through <code>data-attributes</code> on the anchor element.</p>
+<p>To initialize a drawer, create an anchor element using the <code>.js-drawer-trigger</code> class, you can then point to the id of the target drawer element in the DOM via the <code>data-content</code> attribute. No other special markup is required.</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center pole-sm">
+        <button type="button" class="btn js-drawer-trigger" data-content="#menu">Toggle</button>
+        <ul id="menu" class="menu" style="display: none;"> 
+            <li>
+                <span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span>
+                <span class="item-body">Inbox</span>
+                <span class="item-right"><span class="label">4</span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-flag color-gray-500"></span></span>
+                <span class="item-body">Flagged</span>
+                <span class="item-right"><span class="label">23</span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span>
+                <span class="item-body">Drafts</span>
+                <span class="item-right"><span class="label">3</span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span>
+                <span class="item-body">Sent</span>
+                <span class="item-right"><span class="status status-xs"></span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span>
+                <span class="item-body">Junk</span>
+                <span class="item-right"><span class="status status-xs status-warning"></span></span>
+            </li>
+            <li>
+                <span class="item-left"><span class="fa fa-trash color-gray-500"></span></span>
+                <span class="item-body">Trash</span>
+                <span class="item-right"><span class="status status-xs status-danger"></span></span>
+            </li>
+        </ul>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;button type="button" class="btn js-drawer-trigger" data-content="#my-drawer"&gt;Toggle&lt;/button&gt;
+
+&lt;ul class="memu" id="my-drawer"&gt;...&lt;/ul&gt;</code></pre>
 <hr />
 <h3 id="css-customization">CSS Customization</h3>
 <p>Drawer use a combination of both local CSS variables and Sass variables on <code>.drawer-wrap</code>, <code>.drawer-overlay</code> for enhanced component customization and styling.</p>
 <p>Customization via Sass can be made in the <code>src/scss/_config.scss</code> file in Hubble's source.</p>
 <pre><code class="file-path language-file-path">`src/scss/_config.scss`</code></pre>
-<pre><code class="sass language-sass">$drawer-overlay-bg:           var(--hb-white) !default;
-$drawer-overlay-bg-dark:      var(--hb-black) !default;
-$drawer-overlay-opacity:      0.8 !default;
-$drawer-title-size:           1.8rem !default;
-$drawer-transition:           opacity .2s ease, transform .4s var(--hb-ease-out-expo) !default;
-$drawer-overlay-transition:   opacity .35s ease !default;
-$drawer-shadow:               0px -5px 10px 0px rgb(0 0 0 / 22%);
-$drawer-top:                  100px;</code></pre>
+<pre><code class="sass language-sass">$drawer-bg:                     var(--hb-white) !default;
+$drawer-width:                  230px !default;
+$drawer-size-peekable:          80px !default;
+$drawer-overlay-bg:             rgba(255, 255, 255, 0.8) !default;
+$drawer-overlay-bg-dark:        rgba(0, 0, 0, 0.5) !default;</code></pre>
 <pre><code class="file-path language-file-path">`src/scss/components/_drawer.scss`</code></pre>
-<pre><code class="sass language-sass">.drawer-overlay
+<pre><code class="sass language-sass">.drawer-container
 {
+    // Variables
+    --hb-drawer-bg: #{$drawer-bg};
+    --hb-drawer-width: #{$drawer-width};
+    --hb-drawer-size-peekable: #{$drawer-size-peekable};
+
+    // Overlay
     --hb-drawer-overlay-bg: #{$drawer-overlay-bg};
     --hb-drawer-overlay-bg-dark: #{$drawer-overlay-bg-dark};
-    --hb-drawer-overlay-opacity: #{$drawer-overlay-opacity};
-    --hb-drawer-overlay-transition: #{$drawer-overlay-transition};
-}
-.drawer-wrap
-{
-    --hb-drawer-title-size: #{$drawer-title-size};
-    --hb-drawer-transition: #{$drawer-transition};
-    --hb-drawer-shadow: #{$drawer-shadow};
-    --hb-drawer-top: #{$drawer-top};
-    --hb-drawer-edge-btm: #{calc(100% - 190px)};
 }</code></pre>
                     </article>
                 </div>
@@ -695,5 +732,6 @@ $drawer-top:                  100px;</code></pre>
         </footer>
         <script src="../../../dist/js/hubble.bundle.js"></script>
         <script src="../../../dist/js/docs.js"></script>
+        <script type="text/javascript">Hubble.dom().refresh()</script>
     </body>
 </html>

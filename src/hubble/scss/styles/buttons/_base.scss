@@ -193,10 +193,10 @@
 .btn-circle
 {
     --hb-btn-border-radius: 50%;
-    --hb-btn-padding-y: var(--hb-btn-font-size);
-    --hb-btn-padding-x: var(--hb-btn-font-size);
-    width: calc(var(--hb-btn-font-size) * 4);
-    height: calc(var(--hb-btn-font-size) * 4);
+    --hb-btn-padding-y: 0;
+    --hb-btn-padding-x: 0;
+    width: calc(var(--hb-btn-font-size) * 3);
+    height: calc(var(--hb-btn-font-size) * 3);
     
 }
 

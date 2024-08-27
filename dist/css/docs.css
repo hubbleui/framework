@@ -263,26 +263,8 @@ pre[class*="language-"] > code
     padding-top: 30px;
     padding-bottom: 30px;
 }
-body,
-html
-{
-    height: 100%;
-}
-.page-wrapper
-{
-    min-height: 100%;
-    margin-bottom: -600px;
-}
-.page-wrapper:after
-{
-    content: "";
-    display: block;
-}
-.page-wrapper:after,
-.site-footer
-{
-    height: 600px;
-}
+
+
 .docs-body hr
 {
     -webkit-box-sizing: content-box;

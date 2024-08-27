@@ -1,24 +1,26 @@
 .drawer-container
 {
-	// Drawer
+	// Variables
 	--hb-drawer-bg: #{$drawer-bg};
-	--hb-drawer-transition: #{$drawer-transition};
 	--hb-drawer-width: #{$drawer-width};
-	--hb-drawer-width-peekable: #{$drawer-width-peekable};
+	--hb-drawer-size-peekable: #{$drawer-size-peekable};
 
 	// Overlay
 	--hb-drawer-overlay-bg: #{$drawer-overlay-bg};
 	--hb-drawer-overlay-bg-dark: #{$drawer-overlay-bg-dark};
-	--hb-drawer-overlay-opacity: #{$drawer-overlay-opacity};
-	--hb-drawer-overlay-transition: #{$drawer-overlay-transition};
+
+	--hb-drawer-border-color: #{$drawer-border-color};
 
 	height: 100%;
     width: 100%;
 
+    // Drawer wrap
 	.drawer-wrap
 	{
 		top: var(--hb-drawer-top);
 		z-index: var(--hb-zindex-drawer);
+	    background-color: var(--hb-drawer-bg);
+
 		position: fixed;
 		width: 100%;
 		height: 100%;
@@ -27,28 +29,19 @@
 		align-items: flex-end;
 	    overflow: hidden;
 	    overflow-y: auto;
-	    transition: transform var(--hb-drawer-transition);
-	    background-color: var(--hb-drawer-bg);
 
-	    &.disabled
-	    {
-	    	display: none;
-	    }
-	    
+	    // Innner dialog
 		.drawer-dialog
 		{
 			width: 100%;
 			height: 100%;
 		}
 	}
+
+	// Body wrap
 	.drawer-body-wrap
 	{
-		transition: margin var(--hb-drawer-transition);
 		margin: 0;
-	}
-	.drawer-header
-	{
-		border-bottom: 1px solid var(--hb-gray-200);
 	}
 
 	// Shared positions
@@ -68,72 +61,68 @@
 		height: auto;
 	}
 
+	// Left
 	&.drawer-left
 	{
 		.drawer-wrap
 		{
-			--hb-peekable-size: #{calc( (var(--hb-drawer-width) - 150px) * -1)};
-			transform: translate3d(-105%, 0px, 0px);
 			left: 0;
-			box-shadow: 4px 0px 7px -1px rgb(0 0 0 / 30%);
+			box-shadow: 4px 0px 7px -1px rgb(0 0 0 / 20%);
 		}
-		&.push-body .drawer-wrap
+		&.persistent .drawer-wrap
 		{
-			border-right: 1px solid var(--hb-gray-200);
-		}
-		&.expanded .drawer-body-wrap
-		{
-			margin-left: var(--hb-drawer-width);
+			border-right: 1px solid var(--hb-drawer-border-color);
 		}
 	}
+
+	// Right
 	&.drawer-right
 	{
 		.drawer-wrap
 		{
-			transform: translate3d(105%, 0px, 0px);
 			right: 0;
-			box-shadow: -4px 0px 7px -1px rgb(0 0 0 / 30%);
+			box-shadow: -4px 0px 7px -1px rgb(0 0 0 / 20%);
 		}
-		&.push-body .drawer-wrap
+		&.persistent .drawer-wrap
 		{
-			border-left: 1px solid var(--hb-gray-200);
-		}
-		&.expanded .drawer-body-wrap
-		{
-			margin-right: var(--hb-drawer-width);
+			border-left: 1px solid var(--hb-drawer-border-color);
 		}
 	}
+
+	// Top
 	&.drawer-top
 	{
 		.drawer-wrap
 		{
-			transform: translate3d(0px, -105%, 0px);
 			top: 0;
-			box-shadow: 0px 4px 7px -1px rgb(0 0 0 / 30%);
+			box-shadow: 0px 4px 7px -1px rgb(0 0 0 / 20%);
 		}
-		&.push-body .drawer-wrap
+		&.persistent .drawer-wrap
 		{
-			border-bottom: 1px solid var(--hb-gray-200);
+			border-bottom: 1px solid var(--hb-drawer-border-color);
 			position: absolute;
 			top: 0;
 		}
 	}
+
+	// Bottom
 	&.drawer-bottom 
 	{
 		.drawer-wrap
 		{
-			transform: translate3d(0px, 105%, 0px);
 			bottom: 0;
-			box-shadow: 0px -4px 7px -1px rgb(0 0 0 / 30%);
+			box-shadow: 0px -4px 7px -1px rgb(0 0 0 / 20%);
 		}
-		&.push-body .drawer-wrap
+		&.persistent .drawer-wrap
 		{
-			border-top: 1px solid var(--hb-gray-200);
+			border-top: 1px solid var(--hb-drawer-border-color);
 			position: relative;
 			bottom: 0;
 		}
 	}
-	> .drawer-overlay
+
+	// Drawer overlay
+	.drawer-overlay
 	{
 		position: fixed;
 		width: 100%;
@@ -141,9 +130,7 @@
 		top: 0;
 		left: 0;
 		z-index: var(--hb-zindex-drawer);
-		transition: var(--hb-drawer-overlay-transition);
-		opacity: 0;
-		visibility: hidden;
+		visibility: visible;
 	}
 	&.overlay-dark .drawer-overlay
 	{
@@ -153,27 +140,13 @@
 	{
 		background-color: var(--hb-drawer-overlay-bg);
 	}
+	&.closed .drawer-overlay
+	{
+		visibility: hidden;
+	}
 
-	&.expanded
-	{
-		.drawer-wrap
-		{
-			transform: translate3d(0px, 0px, 0px);
-		}
-		.drawer-overlay
-		{
-			visibility: visible;
-			opacity: var(--hb-drawer-overlay-opacity);
-		}
-	}
-	&.closing
-	{
-		.drawer-overlay
-		{
-			visibility: visible;
-		}
-	}
-	&.closed:not(.push-body)
+	// Hide non-persistent drawers
+	&.closed:not(.persistent)
 	{
 		position: absolute;
 	  	width: 1px;
@@ -185,19 +158,40 @@
 	  	border: 0;
 	  	visibility: hidden;
 	}
-	&.push-body
+	&.closed.persistent:not(.peekable) .drawer-wrap
 	{
-		&.closed .drawer-wrap
+		display: none;
+	}
+
+	&.closed.peekable .drawer-wrap
+	{
+		overflow: hidden;
+	}
+
+	&.persistent .drawer-wrap
+	{
+		box-shadow: none;
+	}
+
+	// Header
+	.drawer-header
+	{
+		border-bottom: 1px solid var(--hb-drawer-border-color);
+		padding: 10px 0;
+
+		.close-btn
 		{
-			display: none;
-		}
-		.drawer-wrap
-		{
-			box-shadow: none;
-		}
-		.drawer-overlay
-		{
-			display: none;
+			visibility: hidden;
 		}
 	}
+	&.expanded .drawer-header .close-btn
+	{
+		visibility: visible;
+	}
+
+	// Hide disabled
+	.drawer-wrap.disabled
+    {
+    	display: none !important;
+    }
 }

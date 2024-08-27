@@ -12,7 +12,11 @@ _.prototype.inline_style = function(element, prop)
 
     prop = this.css_prop_to_hyphen_case(prop);
 
-    if (Object.hasOwn(elementStyle, prop))
+    if (prop.startsWith('--'))
+    {
+        return window.getComputedStyle(element).getPropertyValue(prop);
+    }
+    else if (Object.hasOwn(elementStyle, prop))
     {
         const val = elementStyle.getPropertyValue(elementStyle[prop]) || elementStyle[prop];
         

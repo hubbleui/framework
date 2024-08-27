@@ -1,7 +1,7 @@
 /**
  * Concats longhand property to shorthand
  *
- * Note if values are not provide not all browsers will except inital
+ * Note if values are not provide not all browsers will except initial
  * for all properties in shorthand syntax
  * 
  * @access {private}
@@ -49,7 +49,6 @@ _.prototype.css_to_shorthand = function(css)
                         value += ` ${defaltVal} `;
                     }
                 });
-                
             }
             
         }, this);

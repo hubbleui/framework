@@ -304,6 +304,41 @@
 	{
 		padding-top: 0;
 	}
+
+	// Scrollable body
+	&.card-scrollable-content
+	{
+		overflow: hidden;
+		flex-direction: column;
+		flex-wrap: nowrap;
+
+		> *
+		{
+			flex: 0 0 auto;
+		}
+
+		.card-block
+		{
+			position: relative;
+			flex: 1 1 auto;
+			overflow-y: auto;
+		}
+
+		.card-block + .card-footer
+		{
+			border-top: 1px solid var(--hb-card-border-color);
+			padding-top: var(--hb-card-spacer-y);
+		}
+
+		.card-header + .card-block
+		{
+			border-top: 1px solid var(--hb-card-border-color);
+		}
+	}
+	&.card.card-scrollable
+	{
+		overflow-y: auto;
+	}
 }
 
 @include media-breakpoint-up(md)
@@ -368,6 +403,10 @@
 			border-top-right-radius: var(--hb-card-border-radius);
 			border-bottom-right-radius: var(--hb-card-border-radius);
 		}
+	}
+	.form-field
+	{
+		--hb-input-bg: var(--hb-card-bg);
 	}
 	
 }

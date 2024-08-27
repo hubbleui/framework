@@ -25,6 +25,7 @@ const AnimateCss = function(DOMElement, options)
     this._callbackStart    = () => {};
     this._callbackComplete = () => {};
     this._callbackFail     = () => {};
+    this._callbackStep     = () => {};
 
     this.preProcessStartEndValues();
 
@@ -51,9 +52,11 @@ AnimateCss.prototype.start = function()
     {
         _this._callbackFail(_this.DOMElement);
 
-        _this.resotoreElement();
+        _this.stop();
 
     }, this.duration + 50 );
+
+    this._stepTimer = setInterval(() => this._callbackStep(), 16);
 
     this.applyEndValues();
 
@@ -67,6 +70,8 @@ AnimateCss.prototype.start = function()
 AnimateCss.prototype.stop = function()
 {
     clearTimeout(this._failTimer);
+
+    clearInterval(this._stepTimer);
 
     this.resotoreElement();
 
@@ -117,8 +122,13 @@ AnimateCss.prototype.transitionEnd = function(e)
 
     let prop = _THIS.css_prop_to_hyphen_case(e.propertyName);
 
-    // "background" doesn't support transitionend
-    if (prop === 'background-color' && !this.animatedProps['background-color']) prop = 'background';
+    // Convert to shorthand if needed
+    if (prop.includes('-'))
+    {
+        let shorthand = prop.split('-').shift();
+
+        if (this.animatedProps[shorthand]) prop = shorthand;
+    }
 
     let endVal = this.animatedProps[prop];
 
@@ -130,6 +140,8 @@ AnimateCss.prototype.transitionEnd = function(e)
     if (_THIS.is_empty(this.animatedProps))
     {        
         clearTimeout(this._failTimer);
+
+        clearInterval(this._stepTimer);
 
         this.resotoreElement();
 
@@ -152,6 +164,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
         // Cache start and fail callbacks
         if (option.start) this._callbackStart = option.start;
         if (option.fail) this._callbackFail = option.fail;
+        if (option.step) this._callbackStep = option.step;
 
         // Keep the longest callback
         if (option.duration >= this.duration && (option.callback || option.complete))
@@ -168,7 +181,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
         
         if (startValue === 'auto' || startValue === 'initial' || startValue === 'unset' || !startValue)
         {
-            this.options[i].from = _THIS.rendered_style(DOMElement, CSSProperty);
+            option.from = _THIS.rendered_style(DOMElement, CSSProperty);
         }
 
         if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
@@ -177,7 +190,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
 
             _THIS.css(DOMElement, CSSProperty, endValue);
 
-            this.options[i].to = _THIS.rendered_style(DOMElement, CSSProperty);
+            option.to = _THIS.rendered_style(DOMElement, CSSProperty);
 
             _THIS.css(DOMElement, CSSProperty, inlineStyle ? inlineStyle : false);
         }
@@ -185,7 +198,7 @@ AnimateCss.prototype.preProcessStartEndValues = function()
         this.animatedProps[CSSProperty] = endValue;
 
         this.stopValues[CSSProperty] = _THIS.inline_style(DOMElement, CSSProperty) || false;
-    
+
     }, this);
 }
 
