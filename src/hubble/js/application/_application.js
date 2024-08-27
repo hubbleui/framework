@@ -9,14 +9,14 @@
      */
     const Application = function()
     {
-        this.version_major = '1';
+        this.version_major = '0';
 
-        this.version_minor = '0';
+        this.version_minor = '1';
 
         this.version_patch = '0';
 
         this.version = `${this.version_major}.${this.version_minor}.${this.version_patch }`;
-    };
+    }
 
     /**
      * Called when the application is first initialized

@@ -10,6 +10,7 @@ Notifications are a handy `JavaScript` component for displaying messages to the.
 *   [Timeout](#timeout)
 *   [Methods](#methods)
 *	[Options](#options)
+*   [HTML Initialization](#html-initialization)
 *   [CSS Customization](#css-customization)
 
 ---
@@ -32,16 +33,13 @@ let notif = Hubble.Notification(
 ```
 
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
-    {
-        document.querySelector('.js-notif-trigger-1').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                text: 'Hello! I\'m a notification.',
-            });
-        });
-    });
+window.addEventListener('load', () =>
+    Hubble.DocsDemo('.js-notif-trigger-1', () =>
+        Hubble.Notification({
+            text  : `Hello! I'm a notification.`,
+        })
+    )
+);
 </script>
 
 ---
@@ -75,13 +73,15 @@ let notif = Hubble.Notification(
 ```
 
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
+window.addEventListener('load', () =>
+    Hubble.DocsDemo('.js-notif-triggers-pos', (e, trigger) =>
     {
-        Hubble._().on(Hubble._().find_all('.js-notif-triggers-pos'), 'click', (e, trigger) => Hubble.Notification({
+        Hubble.Notification({
             text: 'Hello! I\'m a notification.',
             position: trigger.innerText.trim()
-        }));
-    });
+        })
+    })
+);
 </script>
 
 ---
@@ -143,43 +143,31 @@ let notif4 = Hubble.Notification(
 ```
 
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
+window.addEventListener('load', () =>
+{
+    Hubble.DocsDemo('.js-notif-trigger-2', () => Hubble.Notification(
     {
-        document.querySelector('.js-notif-trigger-2').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                btn  : `Dismiss`,
-                text : `Hello! I'm a notification.`,
-            });
-        });
-        document.querySelector('.js-notif-trigger-3').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                icon : `bell`,
-                text : `Hello! I'm a notification.`,
-            });
-        });
-        document.querySelector('.js-notif-trigger-4').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                btn        : `Danger`,
-                btnVariant : `danger`,
-                text       : `Hello! I'm a notification.`,
-            });
-        });
-        document.querySelector('.js-notif-trigger-5').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                icon    : `check`,
-                variant : `success`, 
-                text    : `Hello! I'm a notification.`,
-            });
-        });
-    });
+        btn  : `Dismiss`,
+        text : `Hello! I'm a notification.`,
+    }));
+    Hubble.DocsDemo('.js-notif-trigger-3', () => Hubble.Notification(
+    {
+        icon : `bell`,
+        text : `Hello! I'm a notification.`,
+    }));
+    Hubble.DocsDemo('.js-notif-trigger-4', () => Hubble.Notification(
+    {
+        btn        : `Danger`,
+        btnVariant : `danger`,
+        text       : `Hello! I'm a notification.`,
+    }));
+    Hubble.DocsDemo('.js-notif-trigger-5', () => Hubble.Notification(
+    {
+        icon    : `check`,
+        variant : `success`, 
+        text    : `Hello! I'm a notification.`,
+    }));
+});
 </script>
 
 ---
@@ -210,32 +198,28 @@ let notif2 =Hubble.Notification(
 ```
 
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
+window.addEventListener('load', () =>
+{
+    Hubble.DocsDemo('.js-notif-trigger-6', () => Hubble.Notification(
     {
-        let [find, on] = Hubble.import(['find', 'on']).from('_');
+        text: 'Hello! You need to click me to dismiss.',
+        timeout: false,
+    }));
+   
+    Hubble.DocsDemo('.js-notif-trigger-7', function()
+    {
+        let start = 10;
+        let i     = 1;
+        let timer = setInterval(() => this._.find('.js-time', notif.domElement()).innerText = (start - i++), 1000);
 
-        document.querySelector('.js-notif-trigger-6').addEventListener('click', function()
+        let notif = Hubble.Notification(
         {
-            Hubble.Notification(
-            {
-                text: 'Hello! You need to click me to dismiss.',
-                timeout: false,
-            });
-        });
-        document.querySelector('.js-notif-trigger-7').addEventListener('click', function()
-        {
-            let start = 10;
-            let i     = 1;
-            let timer = setInterval(() => find('.js-time', notif.domElement()).innerText = (start - i++), 1000);
-
-            let notif = Hubble.Notification(
-            {
-                text: 'Hello! I\'ll disappear in <span class="js-time">10</span> seconds.',
-                timeout: 10000,
-                callbackDismiss: () => clearInterval(timer)
-            });
+            text: 'Hello! I\'ll disappear in <span class="js-time">10</span> seconds.',
+            timeout: 10000,
+            callbackDismiss: () => clearInterval(timer)
         });
     });
+});
 </script>
 
 ---
@@ -272,8 +256,6 @@ let notif = Hubble.Notification(
 });
 ```
 
-
-
 ---
 
 ### Options
@@ -294,6 +276,25 @@ The table below outlines the available options:
 | callbackValidate | `function`        | Callback function to validate if notification can be closed. Must return `boolean` | `no`     |
 
 All callback functions receive the notification `HTMLElement` as their parameter.
+
+
+---
+
+### HTML Initialization
+
+For basic use-cases where access to the underlying JavaScript is not required, Notifications can be enabled through HTML markup via an anchor element with the `.js-notification-trigger` class.
+
+All options can be set through `data-attributes` on the anchor element in `hyphen-case`. For example to set the `btnVariant` option, you would set the `data-btn-variant="btn-primary"` attribute.
+
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center pole-sm">
+        <button type="button" class="btn js-notification-trigger" data-text="Hello, I'm a notification!">Trigger notification</button>
+    </div>
+</div>
+
+```html
+<button type="button" class="btn js-notification-trigger" data-text="Hello, I'm a notification!">Trigger notification</button>
+```
 
 ---
 
@@ -331,4 +332,3 @@ $notif-shadow:                  3 !default;
     --hb-msg-color: var(--hb-notification-color);
 }
 ```
-

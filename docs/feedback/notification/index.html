@@ -357,6 +357,7 @@
 <li><a href="#timeout">Timeout</a></li>
 <li><a href="#methods">Methods</a></li>
 <li><a href="#options">Options</a></li>
+<li><a href="#html-initialization">HTML Initialization</a></li>
 <li><a href="#css-customization">CSS Customization</a></li>
 </ul>
 <hr />
@@ -372,16 +373,13 @@
     text  : `Hello! I'm a notification.`,
 });</code></pre>
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
-    {
-        document.querySelector('.js-notif-trigger-1').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                text: 'Hello! I\'m a notification.',
-            });
-        });
-    });
+window.addEventListener('load', () =>
+    Hubble.DocsDemo('.js-notif-trigger-1', () =>
+        Hubble.Notification({
+            text  : `Hello! I'm a notification.`,
+        })
+    )
+);
 </script>
 <hr />
 <h3 id="position">Position</h3>
@@ -406,13 +404,15 @@
     text  : `Hello! I'm a notification.`,
 });</code></pre>
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
+window.addEventListener('load', () =>
+    Hubble.DocsDemo('.js-notif-triggers-pos', (e, trigger) =>
     {
-        Hubble._().on(Hubble._().find_all('.js-notif-triggers-pos'), 'click', (e, trigger) => Hubble.Notification({
+        Hubble.Notification({
             text: 'Hello! I\'m a notification.',
             position: trigger.innerText.trim()
-        }));
-    });
+        })
+    })
+);
 </script>
 <hr />
 <h3 id="content">Content</h3>
@@ -465,43 +465,31 @@ let notif4 = Hubble.Notification(
     text    : `Hello! I'm a notification.`,
 });</code></pre>
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
+window.addEventListener('load', () =>
+{
+    Hubble.DocsDemo('.js-notif-trigger-2', () => Hubble.Notification(
     {
-        document.querySelector('.js-notif-trigger-2').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                btn  : `Dismiss`,
-                text : `Hello! I'm a notification.`,
-            });
-        });
-        document.querySelector('.js-notif-trigger-3').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                icon : `bell`,
-                text : `Hello! I'm a notification.`,
-            });
-        });
-        document.querySelector('.js-notif-trigger-4').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                btn        : `Danger`,
-                btnVariant : `danger`,
-                text       : `Hello! I'm a notification.`,
-            });
-        });
-        document.querySelector('.js-notif-trigger-5').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                icon    : `check`,
-                variant : `success`, 
-                text    : `Hello! I'm a notification.`,
-            });
-        });
-    });
+        btn  : `Dismiss`,
+        text : `Hello! I'm a notification.`,
+    }));
+    Hubble.DocsDemo('.js-notif-trigger-3', () => Hubble.Notification(
+    {
+        icon : `bell`,
+        text : `Hello! I'm a notification.`,
+    }));
+    Hubble.DocsDemo('.js-notif-trigger-4', () => Hubble.Notification(
+    {
+        btn        : `Danger`,
+        btnVariant : `danger`,
+        text       : `Hello! I'm a notification.`,
+    }));
+    Hubble.DocsDemo('.js-notif-trigger-5', () => Hubble.Notification(
+    {
+        icon    : `check`,
+        variant : `success`, 
+        text    : `Hello! I'm a notification.`,
+    }));
+});
 </script>
 <hr />
 <h3 id="timeout">Timeout</h3>
@@ -524,32 +512,28 @@ let notif2 =Hubble.Notification(
     timeout: 10000,
 });</code></pre>
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
+window.addEventListener('load', () =>
+{
+    Hubble.DocsDemo('.js-notif-trigger-6', () => Hubble.Notification(
     {
-        let [find, on] = Hubble.import(['find', 'on']).from('_');
+        text: 'Hello! You need to click me to dismiss.',
+        timeout: false,
+    }));
 
-        document.querySelector('.js-notif-trigger-6').addEventListener('click', function()
-        {
-            Hubble.Notification(
-            {
-                text: 'Hello! You need to click me to dismiss.',
-                timeout: false,
-            });
-        });
-        document.querySelector('.js-notif-trigger-7').addEventListener('click', function()
-        {
-            let start = 10;
-            let i     = 1;
-            let timer = setInterval(() => find('.js-time', notif.domElement()).innerText = (start - i++), 1000);
+    Hubble.DocsDemo('.js-notif-trigger-7', function()
+    {
+        let start = 10;
+        let i     = 1;
+        let timer = setInterval(() => this._.find('.js-time', notif.domElement()).innerText = (start - i++), 1000);
 
-            let notif = Hubble.Notification(
-            {
-                text: 'Hello! I\'ll disappear in <span class="js-time">10</span> seconds.',
-                timeout: 10000,
-                callbackDismiss: () => clearInterval(timer)
-            });
+        let notif = Hubble.Notification(
+        {
+            text: 'Hello! I\'ll disappear in <span class="js-time">10</span> seconds.',
+            timeout: 10000,
+            callbackDismiss: () => clearInterval(timer)
         });
     });
+});
 </script>
 <hr />
 <h3 id="methods">Methods</h3>
@@ -647,6 +631,16 @@ let notif2 =Hubble.Notification(
 </table>
 <p>All callback functions receive the notification <code>HTMLElement</code> as their parameter.</p>
 <hr />
+<h3 id="html-initialization">HTML Initialization</h3>
+<p>For basic use-cases where access to the underlying JavaScript is not required, Notifications can be enabled through HTML markup via an anchor element with the <code>.js-notification-trigger</code> class.</p>
+<p>All options can be set through <code>data-attributes</code> on the anchor element in <code>hyphen-case</code>. For example to set the <code>btnVariant</code> option, you would set the <code>data-btn-variant="btn-primary"</code> attribute.</p>
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center pole-sm">
+        <button type="button" class="btn js-notification-trigger" data-text="Hello, I'm a notification!">Trigger notification</button>
+    </div>
+</div>
+<pre><code class="html language-html">&lt;button type="button" class="btn js-notification-trigger" data-text="Hello, I'm a notification!"&gt;Trigger notification&lt;/button&gt;</code></pre>
+<hr />
 <h3 id="css-customization">CSS Customization</h3>
 <p>Notifications use a combination of both local CSS and Sass variable on <code>.notification-wrap</code> with nested variables on <code>.msg</code> for enhanced component customization and styling.</p>
 <p>For details on customizing message components, see the <a href="../message/index.html#css-customization">Message Documentation</a></p>
@@ -723,6 +717,5 @@ $notif-shadow:                  3 !default;</code></pre>
         </footer>
         <script src="../../../dist/js/hubble.bundle.js"></script>
         <script src="../../../dist/js/docs.js"></script>
-        <script type="text/javascript">Hubble.dom().refresh()</script>
     </body>
 </html>

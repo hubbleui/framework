@@ -29,9 +29,7 @@
      * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
      */
     const Notification = function()
-    { 
-        this.notifications = new Map;
-
+    {
         this.super('.js-notification-trigger');
     }
 
@@ -41,38 +39,7 @@
      */
     Notification.prototype.bind = function(node)
     {            
-        let options = { fromHTML: true };
-
-        let elem;
-
-        each(DATA_ATTRIBUTES, (i, attribute) =>
-        {
-            let value = attr(node, `data-${attribute}`);
-
-            if (!is_undefined(value))
-            {
-                if (value === 'true' || value === 'false') value = value === 'true' ? true : false;
-
-                if (attribute === 'timeout') value = parseInt(value);
-
-                if (attribute === 'content' && value[0] === '#')
-                {
-                    elem = find(value);
-
-                    value = elem;
-                }
-
-                options[to_camel_case(attribute)] = value;
-            }
-        });
-
-        let notification = Hubble.Notification(options);
-
-        this.notifications.set(node, notification);
-
-        on(node, 'click', this._toggle, this);
-
-        if (elem) elem.style = '';
+        on(node, 'click', this._show, this);
     }
 
     /**
@@ -81,23 +48,8 @@
      */
     Notification.prototype.unbind = function(node)
     {
-        let notification   = this.notifications.get(node);
-        let content = attr(node, 'data-content');
 
-        if (content[0] === '#')
-        {
-            content = find(content);
-
-            content.style.display = 'none';
-
-            document.body.appendChild(content);
-        }
-
-        notification.destroy();
-
-        this.notifications.delete(node);
-
-        off(node, 'click', this._toggle, this);
+        off(node, 'click', this._show, this);
     }
 
     /**
@@ -105,11 +57,25 @@
      * 
      * @access {private}
      */
-    Notification.prototype._toggle = function(e, trigger)
+    Notification.prototype._show = function(e, trigger)
     { 
-        let notification = this.notifications.get(trigger);
+        let options = { fromHTML: true };
 
-        notification.closed() ? notification.open() : notification.close();
+        each(DATA_ATTRIBUTES, (i, attribute) =>
+        {
+            let value = attr(trigger, `data-${attribute}`);
+
+            if (!is_undefined(value))
+            {
+                if (value === 'true' || value === 'false') value = value === 'true' ? true : false;
+
+                if (attribute === 'timeout') value = parseInt(value);
+
+                options[to_camel_case(attribute)] = value;
+            }
+        });
+
+        Hubble.Notification(options);
     }
 
     // Load into Hubble DOM core

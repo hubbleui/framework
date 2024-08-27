@@ -21,26 +21,9 @@ Drawer provides access to an elevated surface providing additional app functiona
 A Drawer can be created via Hubble's Container with the `Drawer` method:
 
 <div class="code-content-example">
-    <button class="js-dw-trigger-1 btn">Show Drawer</button>
-    <script type="text/javascript">
-        
-        const DRAWER_MENU = '<ul class="menu"><li><span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span><span class="item-body">Inbox</span><span class="item-right"><span class="label">4</span></span>  </li>  <li><span class="item-left"><span class="fa fa-flag color-gray-500"></span></span><span class="item-body">Flagged</span><span class="item-right"><span class="label">23</span></span>  </li>  <li><span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span><span class="item-body">Drafts</span><span class="item-right"><span class="label">3</span></span>  </li>  <li><span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span><span class="item-body">Sent</span><span class="item-right"><span class="status status-xs"></span></span>  </li>  <li><span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span><span class="item-body">Junk</span><span class="item-right"><span class="status status-xs status-warning"></span></span>  </li>  <li><span class="item-left"><span class="fa fa-trash color-gray-500"></span></span><span class="item-body">Trash</span><span class="item-right"><span class="status status-xs status-danger"></span></span>  </li> </ul>';
-
-	    window.addEventListener('Hubble:ready', function()
-	    {
-            var drawer;
-
-	        document.querySelector('.js-dw-trigger-1').addEventListener('click', () => 
-            {
-                if (drawer) return drawer.open();
-
-                drawer = Hubble.Drawer(
-                {
-                    content : DRAWER_MENU
-                });
-            });
-	    });
-    </script>
+    <div class="flex-row-fluid align-cols-center">
+        <button class="js-dw-trigger-1 btn">Show Drawer</button>
+    </div>
 </div>
 
 ```javascript
@@ -48,6 +31,21 @@ const drawer = Hubble.Drawer({
     content : '<ul>...</ul>',
 });
 ```
+
+<script type="text/javascript">
+const DRAWER_MENU = '<ul class="menu"><li><span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span><span class="item-body">Inbox</span><span class="item-right"><span class="label">4</span></span>  </li>  <li><span class="item-left"><span class="fa fa-flag color-gray-500"></span></span><span class="item-body">Flagged</span><span class="item-right"><span class="label">23</span></span>  </li>  <li><span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span><span class="item-body">Drafts</span><span class="item-right"><span class="label">3</span></span>  </li>  <li><span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span><span class="item-body">Sent</span><span class="item-right"><span class="status status-xs"></span></span>  </li>  <li><span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span><span class="item-body">Junk</span><span class="item-right"><span class="status status-xs status-warning"></span></span>  </li>  <li><span class="item-left"><span class="fa fa-trash color-gray-500"></span></span><span class="item-body">Trash</span><span class="item-right"><span class="status status-xs status-danger"></span></span>  </li> </ul>';
+window.addEventListener('load', () =>
+{
+    let drawer;
+
+    Hubble.DocsDemo('.js-dw-trigger-1', () =>
+    {
+        if (drawer) return drawer.open();
+
+        drawer = Hubble.Drawer({ content : DRAWER_MENU });
+    })
+});
+</script>
 
 ---
 
@@ -70,25 +68,18 @@ const drawer = Hubble.Drawer({
     direction: 'right'
 });
 ```
+<script type="text/javascript">
+window.addEventListener('load', () =>
+{
+    let drawer;
 
- <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
+    Hubble.DocsDemo('.js-dw-trigger-2, .js-dw-trigger-3, .js-dw-trigger-4, .js-dw-trigger-5', (e, btn) =>
     {
-        let btns = [Hubble._().find_all('.js-dw-trigger-2, .js-dw-trigger-3, .js-dw-trigger-4, .js-dw-trigger-5')]
-        let drawer;
+        if (drawer) drawer.destroy();
 
-        Hubble._().on(btns, 'click', (e, btn) => 
-        {                
-            if (drawer) drawer.destroy();
-
-            drawer = Hubble.Drawer(
-            {
-                direction : btn.innerText.toLowerCase().trim(),
-                content : DRAWER_MENU,
-        
-            });
-        });
-    });
+        drawer = Hubble.Drawer({ direction : btn.innerText.toLowerCase().trim(), content : DRAWER_MENU });
+    })
+});
 </script>
 
 ---

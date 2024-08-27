@@ -38,15 +38,17 @@ let modal = Hubble.Modal({
 > The `content` option can be either a `String`, `HTMLElement`, `NodeList` or `Array`
 
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
-    {
-        document.querySelector('.js-modal-trigger-1').addEventListener('click', () => Hubble.Modal( {
+window.addEventListener('load', () =>
+{
+    Hubble.DocsDemo('.js-modal-trigger-1', () => 
+        Hubble.Modal({
             title            : 'Use X\'s location service?',
             content          : 'Let X help apps determine location. This means sending anonymous location data to X, even when no apps are running.',
             cancelBtn        : 'Disagree',
             confirmBtn       : 'Agree',
-        }));
-    });
+        })
+    );
+});
 </script>
 
 ---
@@ -70,35 +72,35 @@ let modal = Hubble.Modal({
 ```
 
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
-    {
-        let content = `<div class="card col col-lg-4">
-            <div class="card-header">
-                <div class="card-header-left">
-                    <div class="avatar">
-                        <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
-                    </div>
-                </div>
-                <div class="card-header-content p5">
-                    <div class="text-bold">The Don</div>
-                    <div class="color-gray font-italic">Make America Great Again</div>
+window.addEventListener('load', () =>
+{
+    let content = `<div class="card col col-lg-4">
+        <div class="card-header">
+            <div class="card-header-left">
+                <div class="avatar">
+                    <img data-src="../../../dist/img/trump-avatar.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-avatar_thumb.jpg" />
                 </div>
             </div>
-            <div class="card-media">
-                <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
+            <div class="card-header-content p5">
+                <div class="text-bold">The Don</div>
+                <div class="color-gray font-italic">Make America Great Again</div>
             </div>
-            <div class="card-block">
-                <h4 class="card-title">This Is MAGA Country</h4>
-                <p>Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.</p>
-            </div>
-        </div>`;
-      
-        document.querySelector('.js-modal-trigger-2').addEventListener('click', () => Hubble.Modal({
-            content : content,
-            custom: true,
-            closeAnywhere: true
-        }));
-    });
+        </div>
+        <div class="card-media">
+            <img data-src="../../../dist/img/trump-hero.jpg" class="img-responsive js-lazyload lazyload grayscale" src="../../../dist/img/trump-hero_thumb.jpg" />
+        </div>
+        <div class="card-block">
+            <h4 class="card-title">This Is MAGA Country</h4>
+            <p>Veniam laboris do sit sunt dolore incididunt fugiat id enim ut ullamco enim deserunt fugiat.</p>
+        </div>
+    </div>`;
+
+    Hubble.DocsDemo('.js-modal-trigger-2', () => Hubble.Modal({
+        content : content,
+        custom: true,
+        closeAnywhere: true
+    }));
+});
 </script>
 
 ---
@@ -125,7 +127,7 @@ let modal = Hubble.Modal({
 ```
 
 <script type="text/javascript">
-window.addEventListener('Hubble:ready', function()
+window.addEventListener('load', () =>
 {
     let options = {
         title            : 'Use X\'s location service?',
@@ -134,8 +136,9 @@ window.addEventListener('Hubble:ready', function()
         confirmBtn       : 'Agree',
     };
 
-    document.querySelector('.js-modal-trigger-3').addEventListener('click', () => Hubble.Modal({...options, scroll: 'modal'}));
-    document.querySelector('.js-modal-trigger-4').addEventListener('click', () => Hubble.Modal({...options, scroll: 'content'}));
+    Hubble.DocsDemo('.js-modal-trigger-3', () => Hubble.Modal({...options, scroll: 'modal'}));
+   
+    Hubble.DocsDemo('.js-modal-trigger-4', () => Hubble.Modal({...options, scroll: 'content'}));
 });
 </script>
 
@@ -187,18 +190,18 @@ let modal = Hubble.Modal({
 </style>
 
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
-    {
-        document.querySelector('.js-modal-trigger-5').addEventListener('click', () => Hubble.Modal( {
-            title : 'Subscribe for $1?',
-            content : 'Subscribe for $1 and get all my posts for free!',
-            cancelBtn : 'Nah',
-            confirmBtn : 'YES!',
-            classes: 'custom-modal',
-            overlay: false,
-            closeAnywhere: false,
-        }));
-    });
+window.addEventListener('load', () =>
+{
+    Hubble.DocsDemo('.js-modal-trigger-5', () => Hubble.Modal({
+        title : 'Subscribe for $1?',
+        content : 'Subscribe for $1 and get all my posts for free!',
+        cancelBtn : 'Nah',
+        confirmBtn : 'YES!',
+        classes: 'custom-modal',
+        overlay: false,
+        closeAnywhere: false,
+    }));
+});
 </script>
 
 ---
@@ -224,24 +227,27 @@ Hubble.Modal( {
 ```
 
 <script type="text/javascript">
-window.addEventListener('Hubble:ready', function()
+window.addEventListener('load', () =>
 {
-    let [dom_element, find] = Hubble.import(['dom_element', 'find']).from('_');
+    const [dom_element] = Hubble.import(['dom_element']).from('_');
 
-    let blurb = dom_element({tag: 'p', class: 'pole-xs pole-s', innerText: 'To subscribe to this website, please enter your email address here. We will send updates occasionally.'});
+    const blurb = dom_element({tag: 'p', class: 'pole-xs pole-s', innerText: 'To subscribe to this website, please enter your email address here. We will send updates occasionally.'});
 
-    let form = dom_element({tag: 'div', class: 'form-field row underlined'}, null, [
+    const form = dom_element({tag: 'div', class: 'form-field row underlined'}, null, [
         dom_element({tag: 'input', name: 'email', type: 'email', placeholder: 'Your email address', class: 'js-modal-input'}),
         dom_element({tag: 'label', for: 'email', innerText: 'Email'}),
     ]);
-  
-    document.querySelector('.js-modal-trigger-6').addEventListener('click', () => Hubble.Modal({
-        title: 'Subscribe',
-        content: [blurb, form],
-        cancelBtn : 'Cancel',
-        confirmBtn : 'Subscribe',
-        callbackOpen: (modal) => find('.js-modal-input', modal).focus(),
-    }));
+
+    Hubble.DocsDemo('.js-modal-trigger-6', function()
+    {
+        Hubble.Modal({
+            title: 'Subscribe',
+            content: [blurb.cloneNode(true), form.cloneNode(true)],
+            cancelBtn : 'Cancel',
+            confirmBtn : 'Subscribe',
+            callbackOpen: (modal) => this._.find('.js-modal-input', modal).focus(),
+        })
+    });
 });
 </script>
 

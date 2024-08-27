@@ -46,6 +46,7 @@
 @import 'dom/Drawer.js';
 @import 'dom/Frontdrop.js';
 @import 'dom/Backdrop.js';
+@import 'dom/Notification.js';
 @import "dom/Pjax.js";
 @import 'dom/_collapse.js';
 @import 'dom/_lists.js';

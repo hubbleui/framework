@@ -671,16 +671,7 @@ table .big-code code
 }
 @media (min-width: 576px)
 {
-    .page-wrapper:after,
-    .site-footer
-    {
-        height: 300px;
-    }
-    .page-wrapper
-    {
-        min-height: 100%;
-        margin-bottom: -300px;
-    }
+    
     .site-footer
     {
         padding: 60px 0;

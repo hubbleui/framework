@@ -20,7 +20,9 @@ Backdrop provides access to an elevated surface providing additional app functio
 A Backdrop can be created via Hubble's Container with the `Backdrop` method:
 
 <div class="code-content-example">
-    <button class="js-bd-trigger-1 btn">Show Backdrop</button>
+    <div class="flex-row-fluid align-cols-center">
+        <button class="js-bd-trigger-1 btn">Show Backdrop</button>
+    </div>
 </div>
 
 ```javascript
@@ -30,28 +32,27 @@ const backdrop = Hubble.Backdrop( {
 ```
 
 <script type="text/javascript">
-    const SKELETONS = 
-    [
-        { lines: 1, variant: 'block-h3' },
-        { lines: 6, variant: 'text-block' },
-        { lines: 1, variant: 'block-h4' },
-        { lines: 3, variant: 'text-block' },
-    ];
-    window.addEventListener('Hubble:ready', function()
+const SKELETONS = 
+[
+    { lines: 1, variant: 'block-h3' },
+    { lines: 6, variant: 'text-block' },
+    { lines: 1, variant: 'block-h4' },
+    { lines: 3, variant: 'text-block' },
+];
+window.addEventListener('load', () =>
+{
+    let backdrop = Hubble.Backdrop(
     {
-        let backdrop = Hubble.Backdrop(
-        {
-            callbackBuilt: (container, drawer, overlay) => {
-                let pad = Hubble._().dom_element({tag: 'div', class: 'pad-20',}, Hubble._().find('.js-drawer-dialog', container));
-                Hubble.Skeleton(pad, SKELETONS)
-            },
-            state: 'collapsed',
-        });
-
-        document.querySelector('.js-bd-trigger-1').addEventListener('click', () => backdrop.closed() ? backdrop.open() : backdrop.close());
+        callbackBuilt: (container, drawer, overlay) => {
+            let pad = Hubble._().dom_element({tag: 'div', class: 'pad-20',}, Hubble._().find('.js-drawer-dialog', container));
+            Hubble.Skeleton(pad, SKELETONS)
+        },
+        state: 'collapsed',
     });
-</script>
 
+    Hubble.DocsDemo('.js-bd-trigger-1', () => backdrop.closed() ? backdrop.open() : backdrop.close());
+});
+</script>
 
 ---
 
@@ -60,7 +61,9 @@ const backdrop = Hubble.Backdrop( {
 By default, the Backdrop element will adapt the dimensions of the body. You can change this to push the body content instead by passing `pushbody: true` in the options:
 
 <div class="code-content-example">
-    <button class="js-bd-trigger-2 btn">Show Backdrop</button>
+    <div class="flex-row-fluid align-cols-center">
+        <button class="js-bd-trigger-2 btn">Show Backdrop</button>
+    </div>
 </div>
 
 ```javascript
@@ -70,20 +73,20 @@ const backdrop = Hubble.Backdrop( {
 ```
 
 <script type="text/javascript">
-    window.addEventListener('Hubble:ready', function()
+window.addEventListener('load', () =>
+{
+    let backdrop = Hubble.Backdrop(
     {
-        let backdrop = Hubble.Backdrop(
-        {
-            callbackBuilt: (container, drawer, overlay) => {
-                let pad = Hubble._().dom_element({tag: 'div', class: 'pad-20',}, Hubble._().find('.js-drawer-dialog', container));
-                Hubble.Skeleton(pad, SKELETONS)
-            },
-            state: 'collapsed',
-            pushbody: true,
-        });
-
-        document.querySelector('.js-bd-trigger-2').addEventListener('click', () => backdrop.closed() ? backdrop.open() : backdrop.close());
+        callbackBuilt: (container, drawer, overlay) => {
+            let pad = Hubble._().dom_element({tag: 'div', class: 'pad-20',}, Hubble._().find('.js-drawer-dialog', container));
+            Hubble.Skeleton(pad, SKELETONS)
+        },
+        state: 'collapsed',
+        pushbody: true,
     });
+
+    Hubble.DocsDemo('.js-bd-trigger-2', () => backdrop.closed() ? backdrop.open() : backdrop.close());
+});
 </script>
 
 ---

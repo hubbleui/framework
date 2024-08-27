@@ -103,13 +103,51 @@ Prism.languages.scss=Prism.languages.extend("css",{comment:{pattern:/(^|[^\\])(?
 }());
 
 /**
- * Expandable code
+ * DEMOS
  *
  */
 (function()
 {
-    
+	const [Component] = Hubble.get('Component');
 
-    
+	const [on, off, extend] = Hubble.import(['on','off','extend']).from('_');
+
+	let GUIID = 0;
+
+    const DemoComponent = function()
+    {
+        this.super(this.selector);
+    }
+
+    DemoComponent.prototype.bind = function(node)
+    {
+        on(node, 'click', this._handler, this);
+    }
+
+    DemoComponent.prototype.unbind = function(node)
+    {
+        off(node, 'click', this._handler, this);
+    }
+
+    DemoComponent.prototype._handler = function(e, node)
+    {
+        this.handler(e, node);
+    }
+
+    function docsDemo(selector, handler)
+   	{
+   		let demo = extend(Component, DemoComponent);
+
+   		demo.prototype.selector = selector;
+
+   		demo.prototype.handler = handler;
+
+   		demo.prototype._ = Hubble._();
+
+   		Hubble.Dom().register(`_DOCS_DEMO_${GUIID++}`, demo);
+   	}
+
+    Hubble.set('docsDemo', docsDemo);
+
 })();
 

@@ -281,8 +281,6 @@
      */
     Modal.prototype._bindListeners = function()
     {
-        console.log(this._options.closeAnywhere);
-
         if (this._options.closeAnywhere) on(this._modal, 'click', this._closeClick, this);
 
         if (this._cancelBtn) on(this._cancelBtn, 'click', this._closeValidate, this);

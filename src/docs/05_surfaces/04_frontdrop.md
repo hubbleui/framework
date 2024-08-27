@@ -20,26 +20,9 @@ Frontdrop provides access to an elevated surface providing additional app functi
 A Frontdrop can be created via Hubble's Container with the `Frontdrop` method:
 
 <div class="code-content-example">
-    <button class="js-fd-trigger-1 btn btn-primary">Show Frontdrop</button>
-    <script type="text/javascript">
-        const SKELETONS = 
-        [
-            { lines: 1, variant: 'block-h3' },
-            { lines: 6, variant: 'text-block' },
-            { lines: 1, variant: 'block-h4' },
-            { lines: 8, variant: 'text-block' },
-        ];
-	    window.addEventListener('Hubble:ready', function()
-	    {
-            let frontdrop = Hubble.Frontdrop(
-            {
-                callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
-                state: 'collapsed'
-            });
-
-	        document.querySelector('.js-fd-trigger-1').addEventListener('click', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
-	    });
-    </script>
+    <div class="flex-row-fluid align-cols-center">
+        <button class="js-fd-trigger-1 btn">Show Frontdrop</button>
+    </div>
 </div>
 
 ```javascript
@@ -48,6 +31,26 @@ const frontdrop = Hubble.Frontdrop( {
 });
 ```
 
+<script type="text/javascript">
+const SKELETONS = 
+[
+    { lines: 1, variant: 'block-h3' },
+    { lines: 6, variant: 'text-block' },
+    { lines: 1, variant: 'block-h4' },
+    { lines: 8, variant: 'text-block' },
+];
+window.addEventListener('load', () =>
+{
+    let frontdrop = Hubble.Frontdrop(
+    {
+        callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
+        state: 'collapsed'
+    });
+
+    Hubble.DocsDemo('.js-fd-trigger-1', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
+});
+</script>
+
 ---
 
 ### Confirm Button
@@ -55,20 +58,9 @@ const frontdrop = Hubble.Frontdrop( {
 Pass a text value to `confirmBtn` to add a persistent confirmation button a Frontdrop. Additionally, if the Frontdrop requires validation to be closed you can pass a callback to `callbackValidate` to run your own validation and validate if the Frontdrop should close.
 
 <div class="code-content-example">
-    <button class="js-fd-trigger-2 btn btn-primary">Show Frontdrop</button>
-    <script type="text/javascript">
-        window.addEventListener('Hubble:ready', function()
-        {
-            let frontdrop = Hubble.Frontdrop(
-            {
-                callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
-                state: 'collapsed',
-                confirmBtn: 'Confirm Choice',
-            });
-
-            document.querySelector('.js-fd-trigger-2').addEventListener('click', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
-        });
-    </script>
+    <div class="flex-row-fluid align-cols-center">
+        <button class="js-fd-trigger-2 btn">Show Frontdrop</button>
+    </div>
 </div>
 
 ```javascript
@@ -81,6 +73,20 @@ const frontdrop = Hubble.Frontdrop( {
     }
 });
 ```
+
+<script type="text/javascript">
+window.addEventListener('load', () =>
+{
+    let frontdrop = Hubble.Frontdrop(
+    {
+        callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
+        state: 'collapsed',
+        confirmBtn: 'Confirm Choice',
+    });
+
+    Hubble.DocsDemo('.js-fd-trigger-2', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
+});
+</script>
 
 ---
 

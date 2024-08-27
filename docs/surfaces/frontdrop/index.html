@@ -364,48 +364,39 @@
 <h3 id="example">Example</h3>
 <p>A Frontdrop can be created via Hubble's Container with the <code>Frontdrop</code> method:</p>
 <div class="code-content-example">
-    <button class="js-fd-trigger-1 btn btn-primary">Show Frontdrop</button>
-    <script type="text/javascript">
-        const SKELETONS = 
-        [
-            { lines: 1, variant: 'block-h3' },
-            { lines: 6, variant: 'text-block' },
-            { lines: 1, variant: 'block-h4' },
-            { lines: 8, variant: 'text-block' },
-        ];
-        window.addEventListener('Hubble:ready', function()
-        {
-            let frontdrop = Hubble.Frontdrop(
-            {
-                callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
-                state: 'collapsed'
-            });
-
-            document.querySelector('.js-fd-trigger-1').addEventListener('click', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
-        });
-    </script>
+    <div class="flex-row-fluid align-cols-center">
+        <button class="js-fd-trigger-1 btn">Show Frontdrop</button>
+    </div>
 </div>
 <pre><code class="javascript language-javascript">const frontdrop = Hubble.Frontdrop( {
     content : '...',
 });</code></pre>
+<script type="text/javascript">
+const SKELETONS = 
+[
+    { lines: 1, variant: 'block-h3' },
+    { lines: 6, variant: 'text-block' },
+    { lines: 1, variant: 'block-h4' },
+    { lines: 8, variant: 'text-block' },
+];
+window.addEventListener('load', () =>
+{
+    let frontdrop = Hubble.Frontdrop(
+    {
+        callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
+        state: 'collapsed'
+    });
+
+    Hubble.DocsDemo('.js-fd-trigger-1', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
+});
+</script>
 <hr />
 <h3 id="confirm-button">Confirm Button</h3>
 <p>Pass a text value to <code>confirmBtn</code> to add a persistent confirmation button a Frontdrop. Additionally, if the Frontdrop requires validation to be closed you can pass a callback to <code>callbackValidate</code> to run your own validation and validate if the Frontdrop should close.</p>
 <div class="code-content-example">
-    <button class="js-fd-trigger-2 btn btn-primary">Show Frontdrop</button>
-    <script type="text/javascript">
-        window.addEventListener('Hubble:ready', function()
-        {
-            let frontdrop = Hubble.Frontdrop(
-            {
-                callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
-                state: 'collapsed',
-                confirmBtn: 'Confirm Choice',
-            });
-
-            document.querySelector('.js-fd-trigger-2').addEventListener('click', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
-        });
-    </script>
+    <div class="flex-row-fluid align-cols-center">
+        <button class="js-fd-trigger-2 btn">Show Frontdrop</button>
+    </div>
 </div>
 <pre><code class="javascript language-javascript">const frontdrop = Hubble.Frontdrop( {
     content          : '...',
@@ -415,6 +406,19 @@
         return true;
     }
 });</code></pre>
+<script type="text/javascript">
+window.addEventListener('load', () =>
+{
+    let frontdrop = Hubble.Frontdrop(
+    {
+        callbackBuilt: (container, drawer, overlay) => Hubble.Skeleton(Hubble._().find('.card-block .container-fluid', container), SKELETONS),
+        state: 'collapsed',
+        confirmBtn: 'Confirm Choice',
+    });
+
+    Hubble.DocsDemo('.js-fd-trigger-2', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
+});
+</script>
 <hr />
 <h3 id="swipeable">Swipeable</h3>
 <p>By default, the Frontdrop element itself is Swipeable when expanded. You can make the a frontdrop swipeable with on the window when open or closed by adding the <code>swipeable</code> option. This means you can open and close the frontdrop by simply swiping up or down on the window itself at any time.</p>
@@ -683,6 +687,5 @@ $frontdrop-overlay-bg-dark:      rgba(0, 0, 0, 0.5) !default;</code></pre>
         </footer>
         <script src="../../../dist/js/hubble.bundle.js"></script>
         <script src="../../../dist/js/docs.js"></script>
-        <script type="text/javascript">Hubble.dom().refresh()</script>
     </body>
 </html>

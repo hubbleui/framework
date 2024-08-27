@@ -7157,14 +7157,14 @@ Container.singleton('_', _);
      */
     const Application = function()
     {
-        this.version_major = '1';
+        this.version_major = '0';
 
-        this.version_minor = '0';
+        this.version_minor = '1';
 
         this.version_patch = '0';
 
         this.version = `${this.version_major}.${this.version_minor}.${this.version_patch }`;
-    };
+    }
 
     /**
      * Called when the application is first initialized
@@ -10467,8 +10467,6 @@ Hubble.set('TinyGesture', TinyGesture);
      */
     Modal.prototype._bindListeners = function()
     {
-        console.log(this._options.closeAnywhere);
-
         if (this._options.closeAnywhere) on(this._modal, 'click', this._closeClick, this);
 
         if (this._cancelBtn) on(this._cancelBtn, 'click', this._closeValidate, this);
@@ -14046,6 +14044,91 @@ Hubble.set('TinyGesture', TinyGesture);
 
     // Load into Hubble DOM core
     Hubble.dom().register('Backdrop', extend(Component, Backdrop));
+
+}());
+
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = Hubble.get('Component');
+
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, each, is_undefined, attr, on, off, to_camel_case, extend] = Hubble.import(['find','each','is_undefined','attr','on','off','to_camel_case','extend']).from('_');
+
+    /**
+     * Available data attributes.
+     * 
+     * @var {Array}
+     */
+    const DATA_ATTRIBUTES = ['text','timeout','icon','btn','variant','btnVariant'];
+
+    /**
+     * Toggle active on lists
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.com/hubbleui/framework/master/LICENSE}
+     */
+    const Notification = function()
+    {
+        this.super('.js-notification-trigger');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Notification.prototype.bind = function(node)
+    {            
+        on(node, 'click', this._show, this);
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Notification.prototype.unbind = function(node)
+    {
+
+        off(node, 'click', this._show, this);
+    }
+
+    /**
+     * Toggle notification.
+     * 
+     * @access {private}
+     */
+    Notification.prototype._show = function(e, trigger)
+    { 
+        let options = { fromHTML: true };
+
+        each(DATA_ATTRIBUTES, (i, attribute) =>
+        {
+            let value = attr(trigger, `data-${attribute}`);
+
+            if (!is_undefined(value))
+            {
+                if (value === 'true' || value === 'false') value = value === 'true' ? true : false;
+
+                if (attribute === 'timeout') value = parseInt(value);
+
+                options[to_camel_case(attribute)] = value;
+            }
+        });
+
+        Hubble.Notification(options);
+    }
+
+    // Load into Hubble DOM core
+    Hubble.dom().register('Notification', extend(Component, Notification));
 
 }());
 
