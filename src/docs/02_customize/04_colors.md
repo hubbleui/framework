@@ -8,13 +8,13 @@ Hubble is supported by an extensive CSS color system for enhanced styling, compo
 	* [Usage](#theme-usage)
 *	[Grays](#grays)
 	* [Usage](#gray-usage)
-*	[Theme colors](#theme-colors)
+*	[Color Palette](#color-palette)
 	* [Usage](#theme-usage)
 * [Sass](#sass)
 	* [theme-colors](#theme-colors)
 	* [Palette](#pallette)
 	* [Shades](#shades)
-
+	
 ---
 
 ### Theme colors
@@ -101,9 +101,9 @@ All gray colors are available via Hubble's utility helper classes as `.bg-[name]
 
 ---
 
-### Theme colors
+### Color Palette
 
-Hubble comes with a palette of theme colors via both CSS ans Sass variables for changing theme colors, customizing components or building out custom UI components. The table below outlines theme colors:
+Hubble comes with a palette of colors via both CSS ans Sass variables for changing theme colors, customizing components or building out custom UI. The table below outlines theme colors:
 
 | Swatch                                                                           | CSS Variable              | Sass Variable   |
 |:--------------------------------------------------------------------------------:|---------------------------|-----------------|
@@ -141,7 +141,7 @@ Hubble comes with a palette of theme colors via both CSS ans Sass variables for 
 
 #### Usage<a id='theme-usage'></a>
 
-Theme colors are available through both Sass and CSS Variables. They are not available as a utility classes or palette shades unless defined as a "theme" color pre-complication
+Palette colors are available through both Sass and CSS Variables. They are not available as a utility classes or palette shades as CSS variables unless defined as a "theme" color pre-complication.
 
 Changing Hubble's core theme color via Sass is super simple:
 
@@ -163,7 +163,7 @@ Alternatively, you can change a theme by simply changing the CSS variable on `:r
 }
 ```
 
-Hubble uses a Sass function for gradients on theme colors to style the odd component, if changing the theme color via CSS you will also need to update these CSS variables:
+Hubble uses a Sass function for gradients on theme colors to style the odd component, if changing the theme color via CSS you should also update these CSS variables:
 
 ```css
 :root

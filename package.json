@@ -1,6 +1,6 @@
 {
     "name": "Hubble",
-    "version": "3.0.0",
+    "version": "0.1.0",
     "devDependencies": {
         "grunt": "^0.4.5",
         "grunt-autoprefixer": "^3.0.3",
@@ -19,8 +19,7 @@
         "grunt-svgmin": "^5.0.0",
         "grunt-text-replace": "^0.4.0"
     },
-    "dependencies": {
-        "jsdom": "^24.1.0",
-        "showdown": "^2.1.0"
+    "publishConfig": {
+      "@hubbleui/framework:registry": "https://npm.pkg.github.com"
     }
 }

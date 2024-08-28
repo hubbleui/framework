@@ -28,9 +28,8 @@
 @import 'utility/Modal.js';
 @import 'utility/Notification.js';
 @import 'utility/SmoothScroll.js';
-@import 'utility/_inputMasker.js';
-
-@import 'utility/_formValidator.js';
+@import 'utility/InputMasker.js';
+@import 'utility/FormValidator.js';
 
 // DOM Components
 @import 'dom/slider/Slider.js';
