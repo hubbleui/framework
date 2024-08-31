@@ -1,0 +1,29 @@
+@mixin _make-containers($curr-grid, $prev-grid: null)
+{
+    @if $curr-grid != null
+    {
+        .container-,
+        .container-fluid
+        {
+            --fbx-container-pad-l: var(--fbx-container-gutter-#{$curr-grid});
+            --fbx-container-pad-r: var(--fbx-container-gutter-#{$curr-grid});
+        }
+        .container
+        {
+            --fbx-container-max-width: var(--fbx-breakpoint-#{$curr-grid});
+        }
+    }
+    @else
+    {
+        // Containers
+        // containers are both fluid at xs screen size
+        // Fluid container always has a max width of the XL breakpoint
+        .container,
+        .container-fluid
+        {
+            --fbx-container-max-width: var(--fbx-breakpoint-xl);
+            --fbx-container-pad-l: var(--fbx-container-gutter-xs);
+            --fbx-container-pad-r: var(--fbx-container-gutter-xs);
+        }
+    }
+}

@@ -1,0 +1,47 @@
+@keyframes ripple
+{
+    to
+    {
+        transform: scale(2.5);
+    }
+}
+.ripple
+{
+    --fbx-ripple-color: #{$ripple-color};
+    position: absolute !important;
+    border-radius: 50% !important;
+    background: var(--fbx-ripple-color);
+    transform: scale(0);
+    animation: ripple 0.5s ease-out forwards;
+    z-index: 1;
+    opacity: 1;
+    transition: opacity .5s ease;
+
+    &.complete
+    {
+        opacity: 0;
+        transition: opacity .5s ease;
+    }
+}
+.btn .ripple
+{
+    z-index: unset;
+}
+
+// Colors
+.btn.btn-outline .ripple,
+.btn.btn-pure .ripple
+{
+    --fbx-ripple-color: currentColor;
+    opacity: 0.2;
+}
+.no-ripple .ripple
+{
+    display: none !important;
+}
+
+// IMPORTANT TO STOP BLOCKING CLICKS!!
+.ripple ~ *
+{
+    position: relative;
+}

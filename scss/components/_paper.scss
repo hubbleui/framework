@@ -1,0 +1,18 @@
+.paper
+{
+	--fbx-paper-bg: #{$paper-bg};
+	--fbx-paper-radius: #{$paper-radius};
+	--fbx-paper-border-color: #{$paper-flat-border};
+	
+	background-color: var(--fbx-paper-bg);
+
+	&.paper-rounded
+	{
+		border-radius: var(--fbx-paper-radius);
+	}
+	&.flat
+    {
+    	box-shadow: none;
+    	border: 1px solid var(--fbx-paper-border-color);
+    }
+}

@@ -1,0 +1,134 @@
+/* Container base */
+.container,
+.container-fluid
+{
+    --fbx-container-width: 100%;
+    --fbx-container-max-width: 100%;
+    --fbx-container-pad-l: 0;
+    --fbx-container-pad-r: 0;
+    max-width: var(--fbx-container-max-width);
+    width: var(--fbx-container-width);
+    padding-left: var(--fbx-container-pad-l);
+    padding-right: var(--fbx-container-pad-r);
+    margin-left: auto;
+    margin-right: auto;
+    @include _clearfix;
+}
+
+/* Row base */
+.row
+{
+    --fbx-row-width: 100%;
+    width: var(--fbx-row-width);
+    @include _clearfix;
+}
+
+/* Flex row base */
+.flex-row,
+.flex-row-fluid
+{
+    --fbx-flex-wrap: wrap;
+    --fbx-flex-direction: row;
+    --fbx-flex-col-gaps: 0px;
+    --fbx-flex-row-gaps: 0px;
+    flex: 1 0 100%;
+    display: flex;
+    flex-wrap: var(--fbx-flex-wrap);
+    flex-direction: var(--fbx-flex-direction);
+    column-gap: var(--fbx-flex-col-gaps);
+    row-gap: var(--fbx-flex-row-gaps);
+}
+
+/* Column base */
+.col,
+.flex-row > *
+{
+    --fbx-col-width: 0;
+    --fbx-col-push: initial;
+    --fbx-col-pull: initial;
+    float: left;
+    width: var(--fbx-col-width);
+    left: var(--fbx-col-pull);
+    right: var(--fbx-col-push);
+    @include _clearfix;
+}
+
+/* Flex column base */
+.flex-row > *
+{
+    --fbx-col-flex: 0 0 100%;
+    --fbx-col-width: 100%;
+}
+.flex-row-fluid > *:not([class*="col-"])
+{
+    --fbx-col-flex: 1 0 0%;
+    --fbx-col-width: 100%;
+}
+.flex-row > *,
+.flex-row-fluid > *
+{
+    flex: var(--fbx-col-flex);
+    width: var(--fbx-col-width);
+    max-width: var(--fbx-col-width);
+    float: none;
+    &:after
+    {
+        content: none;
+    }
+}
+.flex-row[class*="flex-cols-"] > *
+{
+    --fbx-col-flex: 1 0 0%;
+}
+.flex-row > *[class*="col-"]
+{
+    --fbx-col-flex: 1 0 var(--fbx-col-width);
+}
+// Not a column or a column with specific sizing
+.flex-row-fluid > *[class*="col-"],
+.flex-row-fluid > *:not([class*="col"])
+{
+    --fbx-col-flex: 0 0 auto;
+}
+.flex-row-fluid > *:not([class*="col"])
+{
+    --fbx-col-width: auto;
+}
+
+/* Gutters base */
+[class*="gutter-"],
+.no-gutter
+{
+    --fbx-gutter-l: initial;
+    --fbx-gutter-r: initial;
+    padding-left: var(--fbx-gutter-l);
+    padding-right: var(--fbx-gutter-r);
+}
+
+/* Flex gutters base */
+.flex-row > [class*="gutter-"],
+.flex-row > [class*="-gutter"],
+{
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: var(--fbx-gutter-l);
+    margin-right: var(--fbx-gutter-r);
+}
+
+
+/* Poles base */
+[class*="pole-"],
+.no-pole
+{
+    --fbx-pole-n: initial;
+    --fbx-pole-s: initial;
+    padding-top: var(--fbx-pole-n);
+    padding-bottom: var(--fbx-pole-s);
+}
+
+/* Push/pull base */
+[class*="-pull-"],
+[class*="-push-"]
+{
+    position: relative;
+}

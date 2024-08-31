@@ -1,0 +1,173 @@
+:root
+{
+    /*  Palette base colors */
+    @each $name, $color in $palette
+    {
+        --fbx-color-#{$name}: #{$color};
+    }
+
+    /* Palette base RGB */
+    --fbx-gray-rgb: #{_to-rgb-vals($gray)};
+
+    @each $name, $color in $palette
+    {
+        --fbx-color-#{$name}-rgb: #{_to-rgb-vals($color)};
+    }
+
+    /* Context shades */
+    @each $name, $colorVar in $contextsCSSVar
+    {
+        $color : map-get($palette, quote(_color-name-from-var($colorVar)));
+
+        /* #{$name} */
+        --fbx-theme-#{$name}-100: #{_lighter($color, 90%)};
+        --fbx-theme-#{$name}-200: #{_lighter($color, 80%)};
+        --fbx-theme-#{$name}-300: #{_lighter($color, 50%)};
+        --fbx-theme-#{$name}-400: #{_lighter($color, 35%)};
+        // Default is between 400 and 500 (i.e 450)
+        --fbx-theme-#{$name}-500: #{_darker($color, 5%)};
+        --fbx-theme-#{$name}-600: #{_darker($color, 20%)};
+        --fbx-theme-#{$name}-700: #{_darker($color, 25%)};
+        --fbx-theme-#{$name}-800: #{_darker($color, 30%)};
+        --fbx-theme-#{$name}-900: #{_darker($color, 40%)};
+    }
+    /* gray */
+    --fbx-gray-100: #{_lighter($gray, 90%)};
+    --fbx-gray-200: #{_lighter($gray, 80%)};
+    --fbx-gray-300: #{_lighter($gray, 50%)};
+    --fbx-gray-400: #{_lighter($gray, 35%)};
+    // Default is between 400 and 500 (i.e 450)
+    --fbx-gray-500: #{_darker($gray, 5%)};
+    --fbx-gray-600: #{_darker($gray, 20%)};
+    --fbx-gray-700: #{_darker($gray, 25%)};
+    --fbx-gray-800: #{_darker($gray, 30%)};
+    --fbx-gray-900: #{_darker($gray, 40%)};
+    /* Black */
+    --fbx-black-100: #{_lighter($black, 90%)};
+    --fbx-black-200: #{_lighter($black, 80%)};
+    --fbx-black-300: #{_lighter($black, 50%)};
+    --fbx-black-400: #{_lighter($black, 35%)};
+    // Default is between 400 and 500 (i.e 450)
+    --fbx-black-500: #{_darker($black, 5%)};
+    --fbx-black-600: #{_darker($black, 20%)};
+    --fbx-black-700: #{_darker($black, 25%)};
+    --fbx-black-800: #{_darker($black, 30%)};
+    --fbx-black-900: #{_darker($black, 40%)};
+    /* White */
+    --fbx-white-100: #{_lighter($white, 90%)};
+    --fbx-white-200: #{_lighter($white, 80%)};
+    --fbx-white-300: #{_lighter($white, 50%)};
+    --fbx-white-400: #{_lighter($white, 35%)};
+    // Default is between 400 and 500 (i.e 450)
+    --fbx-white-500: #{_darker($white, 5%)};
+    --fbx-white-600: #{_darker($white, 20%)};
+    --fbx-white-700: #{_darker($white, 25%)};
+    --fbx-white-800: #{_darker($white, 30%)};
+    --fbx-white-900: #{_darker($white, 40%)};
+
+
+    /* Contextual color assignments */
+    @each $name, $colorVar in $contextsCSSVar
+    {
+        /* #{$name} */
+        --fbx-theme-#{$name}: #{$colorVar};
+    }
+    /* Contextual RGB assignments */
+    @each $name, $colorVar in $contextsCSSVar
+    {
+        /* #{$name} */
+        --fbx-theme-#{$name}-rgb: var(--#{_var-to-str($colorVar)}-rgb);
+    }
+
+    /* Base Colors */
+    --fbx-white: #{$white};
+    --fbx-black: #{$black};
+    --fbx-gray: #{$gray};
+    --fbx-body-bg: #{$body-bg};
+    --fbx-body-color: #{$body-color};
+    --fbx-link-color: #{$link-color};
+    --fbx-link-color-hover: #{$link-color-hover};
+
+    /* Typeography */
+    /* Font stacks */
+    --fbx-font-sans-serif: #{$font-family-sans-serif};
+    --fbx-font-serif: #{$font-family-serif};
+    --fbx-font-monospace: #{$font-family-monospace};
+    --fbx-base-font-family: #{$base-font-family};
+    --fbx-base-font-size: #{$base-font-size};
+    --fbx-base-line-height: #{$base-line-height};
+    --fbx-base-font-weight: #{$base-font-weight};
+    --fbx-font-smoothing: #{$font-smoothing};
+    --fbx-p-text-spacer: #{$text-spacer};
+    /* Heading styles */
+    --fbx-font-headings: #{$font-family-headings};
+    --fbx-headings-line-height: #{$headings-line-height};
+    --fbx-headings-font-weight: #{$headings-font-weight};
+    --fbx-headings-spacer: #{$headings-spacer};
+    /* Headings sizes */
+    --fbx-text-size-h1: #{$text-size-h1};
+    --fbx-text-size-h2: #{$text-size-h2};
+    --fbx-text-size-h3: #{$text-size-h3};
+    --fbx-text-size-h4: #{$text-size-h4};
+    --fbx-text-size-h5: #{$text-size-h5};
+    --fbx-text-size-h6: #{$text-size-h6};
+    /* Paragraph sizes */
+    --fbx-text-size-p1: #{$text-size-p1};
+    --fbx-text-size-p2: #{$text-size-p2};
+    --fbx-text-size-p3: #{$text-size-p3};
+    --fbx-text-size-p4: #{$text-size-p4};
+    --fbx-text-size-p5: #{$text-size-p5};
+    --fbx-text-size-p6: #{$text-size-p6};
+
+    /* Raised Levels */
+    --fbx-raised-level-one: #{$raised-level-one};
+    --fbx-raised-level-two: #{$raised-level-two};
+    --fbx-raised-level-three: #{$raised-level-three};
+    --fbx-box-shadow-in: #{$box-shadow-in};
+
+    /* Misc */
+    --fbx-border-radius: 3px;
+
+    /* Grid */
+    /* Breakpoints */
+    @each $name, $breakpoint in $breakpoints
+    {
+        --fbx-breakpoint-#{$name}: #{$breakpoint};
+    }
+    /* Gutters */
+    @each $name, $gutter in $grid-gutters
+    {
+        --fbx-grid-gutter-#{$name}: #{$gutter};
+    }
+    /* Poles */
+    @each $name, $pole in $grid-poles
+    {
+        --fbx-grid-pole-#{$name}: #{$pole};
+    }
+    /* Container gutters */
+    @each $name, $cgutter in $container-gutters
+    {
+        --fbx-container-gutter-#{$name}: #{$cgutter};
+    }
+
+    /* Easings */
+    /* Easing functions */
+    @each $name, $easing in $easings
+    {
+        --fbx-#{$name}: #{$easing};
+    }
+    /* Easing times */
+    @each $name, $time in $easing-times
+    {
+        --fbx-ease-time-#{$name}: #{$time};
+    }
+    /* Base Easings */
+    --fbx-base-easing: #{$base-easing};
+    --fbx-base-easing-time: #{$base-easing-time};
+
+    /* Zindexs */
+    @each $name, $zindex in $zindexs
+    {
+        --fbx-zindex-#{$name}: #{$zindex};
+    }
+}

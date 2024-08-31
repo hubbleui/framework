@@ -1,0 +1,83 @@
+.fbx-darkmode:root
+{
+    --fbx-body-bg:    var(--fbx-black-900);
+    --fbx-body-color: var(--fbx-white);
+}
+
+
+.fbx-darkmode
+{
+	/* CARDS / PAPER */
+	.paper
+	{
+	    --fbx-paper-bg: var(--fbx-black-500);
+	    --fbx-paper-border-color: var(--fbx-black-600);
+	}
+	.card
+	{
+		--fbx-card-bg: var(--fbx-black-500);
+	    --fbx-card-bg-focus: var(--fbx-black-500);
+	    --fbx-card-color: var(--fbx-gray-300);
+	    --fbx-card-title-color: var(--fbx-white);
+	    --fbx-card-border-color: var(--fbx-black-600);
+	    --fbx-card-divider-color: var(--fbx-black-400);
+	}
+
+	/* TABLES */
+	.table
+	{
+	    --fbx-table-border-color: var(--fbx-black-500);
+	    --fbx-table-head-bg: var(--fbx-black-800);
+	    --fbx-table-head-color: var(--fbx-gray-400);
+	    --fbx-table-bg-alternate: rgba(0, 0, 0, 0.08);
+	}
+
+	/* BTN BASE */
+	.btn:not(.btn-primary):not(.btn-info):not(.btn-success):not(.btn-warning):not(.btn-danger):not(.btn-black):not(.btn-white)
+	{
+	    
+	    --fbx-btn-bg-color: var(--fbx-black-500);
+	    --fbx-btn-color: var(--fbx-white);
+	    --fbx-btn-loader-color: var(--fbx-btn-color);
+	    --fbx-btn-color-hover: var(--fbx-white);
+	    --fbx-btn-bg-color-hover: var(--fbx-black-600);
+	    --fbx-btn-color-active: var(--fbx-white);
+	    --fbx-btn-bg-color-active: var(--fbx-black-700);
+	}
+
+	/* DROPDOWN */
+	.drop-container
+	{
+	    --fbx-dropdown-bg: var(--fbx-black);
+	}
+	.menu
+	{
+	    --fbx-menu-color: var(--fbx-white);
+	    --fbx-menu-item-color-hover: var(--fbx-white);
+	    --fbx-menu-item-color-active: var(--fbx-theme-primary);
+	    --fbx-menu-item-color-selected: var(--fbx-theme-primary);
+	    --fbx-menu-item-bg-hover: var(--fbx-gray-900);
+	    --fbx-menu-item-bg-active: var(--fbx-gray-900);
+	    --fbx-menu-item-bg-selected: var(--fbx-gray-900);
+	    --fbx-menu-divider-color: var(--fbx-gray-600);
+	}
+
+	/* FORMS */
+	.form-field
+	{
+	    --fbx-input-bg: var(--fbx-body-bg);
+	    --fbx-input-color: var(--fbx-body-color);
+	    --fbx-input-color-label: var(--fbx-gray-400);
+	    --fbx-input-color-placeholder: var(--fbx-gray-900);
+	    --fbx-input-border-color: var(--fbx-black-400);
+
+	    --fbx-input-addon-bg: var(--fbx-black-500);
+	    --fbx-input-addon-color: var(--fbx-black-400);
+	    
+	    .input-addon
+	    {
+	    	border-color: var(--fbx-black-400);
+	    }
+	}
+}
+

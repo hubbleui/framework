@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Documentation | FrontBx UI</title>
+        <meta name="description" content="">
+        <script src="{{ASSET_PATH}}dist/js/frontbx.lazyload.js"></script>
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/lazyload.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/frontbx-icons.css">
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/frontbx.css">
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/docs.css">
+    </head>
+    <body>
+        <div class="flex-row-fluid align-cols-center pole-md">
+            <button class="btn js-trigger-fd">Open</button>
+        </div>
+        
+        <script src="{{ASSET_PATH}}dist/js/frontbx.bundle.js"></script>
+        <script src="{{ASSET_PATH}}dist/js/docs.js"></script>
+        <script type="text/javascript">
+            const SKELETONS = 
+            [
+                { lines: 1, variant: 'block-h3' },
+                { lines: 6, variant: 'text-block' },
+            ];
+            const frontdrop = FrontBx.Frontdrop(
+            {
+                swipeable: true,
+                peekable: true,
+                overlay: 'dark',
+                state: 'collapsed',
+                callbackBuilt: (container, drawer, overlay) => FrontBx.Skeleton(FrontBx._().find('.card-block .container-fluid', container), SKELETONS),
+            });
+            document.querySelector('.js-trigger-fd').addEventListener('click', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
+            
+        </script>
+    </body>
+</html>

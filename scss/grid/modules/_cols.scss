@@ -1,0 +1,31 @@
+@use "sass:math";
+@mixin _make-cols($curr-grid, $prev-grid: null)
+{
+    // colums
+    @for $i from 1 through 12
+    {
+        $colname : if($curr-grid == null, col-#{$i}, col-#{$curr-grid}-#{$i});
+
+        .#{$colname}
+        {
+            --fbx-col-width: #{unquote('#{math.div(100, 12) * $i}%')};
+        }
+    }
+
+    // Pushers / pullers
+    @for $i from 1 through 12
+    {
+        $pushcol : if($curr-grid == null, col-push-#{$i}, col-#{$curr-grid}-push-#{$i});
+
+        $pullcol : if($curr-grid == null, col-pull-#{$i}, col-#{$curr-grid}-pull-#{$i});
+
+        .#{$pushcol}
+        {
+            --fbx-col-push: #{unquote('#{math.div(100, 12) * $i}%')};
+        }
+        .#{$pullcol}
+        {
+            --fbx-col-pull: #{unquote('#{math.div(100, 12) * $i}%')};
+        }
+    }
+}

@@ -1,0 +1,15 @@
+.input-unstyled
+{
+	border: none;
+	outline: none;
+	box-shadow: none;
+    margin: 0;
+	padding: var(--fbx-input-pad-y) var(--fbx-input-pad-x);
+	display: inline-block;
+    font-size: var(--fbx-input-font-size);
+    font-weight: $text-normal;
+    line-height: var(--fbx-input-line-height);
+    color: var(--fbx-gray-700);
+    background-color: transparent;
+    transition: none
+}

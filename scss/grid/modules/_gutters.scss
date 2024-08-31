@@ -1,0 +1,38 @@
+@mixin _make-gutters($curr-grid, $prev-grid: null)
+{
+    @each $name, $size in $grid-gutters
+    {
+        $guttername : if($curr-grid == null, gutter-#{$name}, gutter-#{$curr-grid}-#{$name});
+
+        .#{$guttername}
+        {
+            --fbx-gutter-l: var(--fbx-grid-gutter-#{$name});
+            --fbx-gutter-r: var(--fbx-grid-gutter-#{$name});
+            
+        }
+    }
+
+    $Rname : if($curr-grid == null, gutter-r,  gutter-#{$curr-grid}-r);
+    $Lname : if($curr-grid == null, gutter-l,  gutter-#{$curr-grid}-l);
+    $Nname : if($curr-grid == null, no-gutter, no-gutter-#{$curr-grid});
+    $Aname : if($curr-grid == null, auto-gutter, auto-gutter-#{$curr-grid});
+
+    .#{$Aname}
+    {
+        --fbx-gutter-l: auto;
+        --fbx-gutter-r: auto;
+    }
+    .#{$Rname}
+    {
+        --fbx-gutter-l: 0px;
+    }
+    .#{$Lname}
+    {
+        --fbx-gutter-r: 0px;
+    }
+    .#{$Nname}
+    {
+        --fbx-gutter-l: 0px;
+        --fbx-gutter-r: 0px;
+    } 
+}

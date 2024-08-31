@@ -1,0 +1,174 @@
+@use "sass:math";
+// styles
+.checkbox
+{
+    display: inline-block;
+    position: relative;
+
+    --fbx-checkbox-size: #{$checkbox-size};
+    --fbx-checkbox-color: #{$checkbox-color};
+    --fbx-checkbox-label-color: #{$checkbox-label-color};
+    --fbx-checkbox-radius: #{$checkbox-radius};
+
+    height: var(--fbx-checkbox-size);
+    min-width: var(--fbx-checkbox-size);
+    line-height: var(--fbx-checkbox-size);
+    display: block;
+
+    // Click circle
+    &:before
+    {
+        content: '';
+        display: block;
+        position: absolute;
+        border-radius: 50%;
+        width: calc(var(--fbx-checkbox-size) * 1.85);
+        height: calc(var(--fbx-checkbox-size) * 1.85);
+        background-color:var(--fbx-checkbox-color);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity .15s $base-easing;
+    }
+
+    // Click label setup
+    label
+    {
+        display: inline-block;
+        cursor: pointer;
+        position: relative;
+        margin: 0;
+        padding: 0 0 0 var(--fbx-checkbox-size);
+        white-space: nowrap;
+        min-width: var(--fbx-checkbox-size);
+        height: var(--fbx-checkbox-size);
+        .toggle-on
+        {
+            display: none;
+        }
+        .toggle-off
+        {
+            display: inline-block;
+        }
+    }
+
+    // Fake square
+    label:before
+    {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: transparent;
+        border-radius: var(--fbx-checkbox-radius);
+        width: var(--fbx-checkbox-size);
+        height: var(--fbx-checkbox-size);
+        border: 2px solid var(--fbx-checkbox-color);
+        transition: border-width .15s ease-in-out;
+    }
+
+    // Checkmark
+    label:after
+    {
+        content: "\f00c";
+        @include glyph-icon;
+        display: inline-block;
+        position: absolute;
+        font-size: calc(var(--fbx-checkbox-size) * 0.8);
+        left: 2.5px;
+        top: 50%;
+        opacity: 0;
+        transform: translateY(-50%) scale(0);
+        color: var(--fbx-white);
+        text-align: center;
+        transition: transform .15s ease-in-out, opacity .15s ease-in-out;
+    }
+
+    // Hidecheckbox
+    input[type="checkbox"]
+    {
+        position: absolute;
+        visibility: hidden;
+        opacity: 0;
+        width: var(--fbx-checkbox-size);
+        height: var(--fbx-checkbox-size);
+        margin: 0;
+        padding: 0;
+    }
+
+    // Hover
+    &:hover:before
+    {
+        opacity: 0.2;
+    }
+
+    // Checked
+    input[type="checkbox"]:checked
+    {
+        // Fill square
+        + label:before
+        {
+            border-color: var(--fbx-checkbox-color);
+            border-width: calc(var(--fbx-checkbox-size) / 2);
+        }
+
+        // Show tick
+        + label:after
+        {
+            transform: translateY(-50%) scale(1);
+            transition: transform .15s ease-in-out, opacity .15s ease-in-out;
+            opacity: 1;
+        }
+
+        // Toggle text
+        +label
+        {
+            .toggle-on
+            {
+                display: inline-block;
+            }
+            .toggle-off
+            {
+                display: none;
+            }
+        }       
+    }
+
+    // Disabled
+    &.disabled label,
+    input[type="checkbox"]:disabled + label
+    {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    // Sizing
+    &.checkbox-sm
+    {
+        --fbx-checkbox-size: #{$checkbox-size * 0.75};
+    }
+    &.checkbox-md
+    {
+        --fbx-checkbox-size: #{$checkbox-size * 0.95};
+    }
+    &.checkbox-lg
+    {
+        --fbx-checkbox-size: #{$checkbox-size * 1.2};
+    }
+}
+
+// Variants
+@mixin _checkbox($color)
+{
+    --fbx-checkbox-color: #{$color};
+}
+
+@each $context, $colors in $contexts
+{    
+    .checkbox.checkbox-#{$context}
+    {
+        @include _checkbox( map-get($colors, "color") );
+    }
+}

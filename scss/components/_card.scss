@@ -1,0 +1,412 @@
+.card
+{
+	--fbx-card-bg:               #{$card-bg};
+	--fbx-card-bg-focus:         #{$card-bg-focus};
+	--fbx-card-color:            #{$card-color};
+	--fbx-card-title-color:      #{$card-title-color};
+	--fbx-card-line-height:      #{$card-line-height};
+	--fbx-card-border-radius:    #{$card-border-radius};
+	--fbx-card-border-width:     #{$card-border-width};
+	--fbx-card-border-color:     #{$card-border-color};
+	--fbx-card-box-shadow:       #{$card-box-shadow};
+	--fbx-card-box-shadow-hover: #{$card-box-shadow-hover};
+	--fbx-card-spacer-y:         #{$card-spacer-y};
+	--fbx-card-spacer-x:         #{$card-spacer-x};
+	--fbx-card-divider-color:    #{$card-divider-color};
+	--fbx-card-divider-size:     #{$card-divider-size};
+	--fbx-card-divier-space:     #{$card-divier-space};
+	--fbx-card-actions-spacer-y: #{$card-actions-spacer-y};
+	--fbx-card-actions-spacer-x: #{$card-actions-spacer-x};
+	--fbx-card-media-padding:    #{$card-media-padding};
+	--fbx-card-media-bg:         #{$card-media-bg};
+	--fbx-card-landscape-sm:     #{$card-landscape-img-sm};
+	--fbx-card-landscape-md:     #{$card-landscape-img-md};
+	--fbx-card-landscape-lg:     #{$card-landscape-img-lg};
+
+	position: relative;
+	display: flex;
+	width: 100%;
+	color: var(--fbx-card-color);
+	background-color: var(--fbx-card-bg);
+	border: var(--fbx-card-border-width) solid var(--fbx-card-border-color);
+	border-radius: var(--fbx-card-border-radius);
+	box-shadow: var(--fbx-card-box-shadow);
+    transition: box-shadow $base-easing-time $base-easing, background-color 0.15s $base-easing;
+
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+
+    > *
+    {
+    	flex: 0 0 100%;
+    	width: 100%;
+    	max-width: 100%;
+    }
+    > *:first-child
+    {
+    	align-self: flex-start;
+    }
+
+    > .card-footer:last-child,
+    > .card-media:last-child
+    {
+    	align-self: flex-end;
+    }
+    &.ripple-down > .card-footer:nth-last-child(2),
+    &.ripple-down > .card-media:nth-last-child(2),
+    {
+    	align-self: flex-end;
+    }
+
+    // Basic states 
+    &:hover,
+    &:focus
+    {
+        box-shadow: var(--fbx-card-box-shadow-hover);
+    }
+    &:active
+    {
+    	background-color: var(--fbx-card-bg-focus);
+    }
+    &.flat
+    {
+    	box-shadow: none;    	
+    }
+
+    // Primary actions
+    &.primary-action,
+    .primary-action
+    {
+    	cursor: pointer;
+    }
+
+    > :first-child,
+    > .primary-action:first-child > .card-media:first-child .bg-image,
+    > .primary-action:first-child > .card-media:first-child img,
+    > .primary-action:first-child > .card-media:first-child video,
+	> .card-media:first-child .bg-image,
+	> .card-media:first-child img,
+	> .card-media:first-child video
+	{
+		border-radius: 0;
+		border-top-left-radius: var(--fbx-card-border-radius);
+		border-top-right-radius: var(--fbx-card-border-radius);
+	}
+
+	> :last-child,
+	> .primary-action:last-child > .card-media:last-child .bg-image,
+	> .primary-action:last-child > .card-media:last-child img,
+    > .primary-action:last-child > .card-media:last-child video,
+    > .card-media:last-child .bg-image,
+	> .card-media:last-child img,
+	> .card-media:last-child video
+	{
+		border-radius: 0;
+		border-bottom-left-radius: var(--fbx-card-border-radius);
+		border-bottom-right-radius: var(--fbx-card-border-radius);
+	}
+
+    // Header
+    .card-header
+	{
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 0;
+		position: relative;
+		padding: var(--fbx-card-spacer-y) var(--fbx-card-spacer-x);
+		z-index: var(--fbx-zindex-dropdown);
+
+		.card-header-left,
+		.card-header-right
+		{
+			flex: 0 0 auto;
+			display: flex;
+		}
+		.card-header-left
+		{
+			margin-right: 16px;
+		}
+		.card-header-right
+		{
+			margin-left: 16px;
+		}
+		.card-header-content
+		{
+			flex: 1 1 auto;
+		}
+	}
+	.card-footer
+	{
+		display: flex;
+		align-items: center;
+		margin-bottom: 0;
+		position: relative;
+		padding: var(--fbx-card-spacer-y) var(--fbx-card-spacer-x);
+		z-index: var(--fbx-zindex-dropdown);
+
+		.card-footer-left,
+		.card-footer-right
+		{
+			flex: 0 0 auto;
+			display: flex;
+		}
+		.card-footer-left
+		{
+			margin-right: 16px;
+		}
+		.card-footer-right
+		{
+			margin-left: 16px;
+		}
+		.card-footer-content
+		{
+			flex: 1 1 auto;
+		}
+	}
+
+	// Title and text
+	.card-title,
+	.card-subtitle
+	{
+		font-weight: normal;
+		margin: 0;
+		padding: 0;
+	}
+	.card-title
+	{
+		font-size: 1.65rem;
+		line-height: 1.45;
+		color: var(--fbx-card-title-color);
+	}
+	.card-subtitle
+	{
+		line-height: 1.4;
+		color: var(--fbx-gray-600);
+	}
+	.card-divider
+	{
+	    height: var(--fbx-card-divider-size);
+	    background: var(--fbx-card-divider-color);
+	    border: 0;
+	    margin: var(--fbx-card-divier-space) 0;
+	}
+
+	.card-block
+	{
+		padding: var(--fbx-card-spacer-y) var(--fbx-card-spacer-x);
+	    word-wrap: break-word;
+
+		> p
+		{
+			margin: 0.5rem 0;
+		}
+
+	    > *
+	    {
+	        &:first-child
+	        {
+	            margin-top: 0 !important;
+	        }
+
+	        &:last-child
+	        {
+	            margin-bottom: 0 !important;
+	        }
+	    }
+	    > .card-divider
+	    {
+	    	margin: calc(var(--fbx-card-divier-space) * 2) 0;
+	    }
+	}
+
+	// Card media
+	.card-media
+	{
+		/* position: relative;
+		width: 100%;
+		height: auto;
+		margin: 0 auto;
+		display: block;
+		overflow: hidden; */
+	}
+	
+	&.card-landscape:not(.responsive)
+	{
+		align-items: stretch;
+		flex-flow: row wrap;
+
+		> *
+		{
+			flex: 1 0 0%;
+		}
+
+		.card-media
+		{
+			flex: 0 0 auto;
+			align-self: stretch;
+			position: relative;
+			overflow: hidden;
+			width: 180px;
+			
+			img, video
+			{
+				position: absolute;
+			    height: 110%;
+			    width: auto;
+			    top: 50%;
+			    left: 50%;
+			    transform: translate3d(-50%, -50%, 0);
+			}
+
+			&.media-sm
+			{
+				width: var(--fbx-card-landscape-sm);
+			}
+			&.media-md
+			{
+				width: var(--fbx-card-landscape-md);
+			}
+			&.media-lg
+			{
+				width: var(--fbx-card-landscape-lg);
+			}
+
+		}
+		
+		> :first-child,
+		> .card-media:first-child img,
+		> .card-media:first-child video
+		{
+			border-radius: 0;
+			border-top-left-radius: var(--fbx-card-border-radius);
+			border-bottom-left-radius: var(--fbx-card-border-radius);
+		}
+
+		> :last-child,
+		> .card-media:last-child img,
+		> .card-media:last-child video
+		{
+			border-radius: 0;
+			border-top-right-radius: var(--fbx-card-border-radius);
+			border-bottom-right-radius: var(--fbx-card-border-radius);
+		}
+	}
+
+	// Special paddings
+	.card-block + .card-footer
+	{
+		padding-top: 0;
+	}
+	.card-header + .card-block
+	{
+		padding-top: 0;
+	}
+
+	// Scrollable body
+	&.card-scrollable-content
+	{
+		overflow: hidden;
+		flex-direction: column;
+		flex-wrap: nowrap;
+
+		> *
+		{
+			flex: 0 0 auto;
+		}
+
+		.card-block
+		{
+			position: relative;
+			flex: 1 1 auto;
+			overflow-y: auto;
+		}
+
+		.card-block + .card-footer
+		{
+			border-top: 1px solid var(--fbx-card-border-color);
+			padding-top: var(--fbx-card-spacer-y);
+		}
+
+		.card-header + .card-block
+		{
+			border-top: 1px solid var(--fbx-card-border-color);
+		}
+	}
+	&.card.card-scrollable
+	{
+		overflow-y: auto;
+	}
+}
+
+@include media-breakpoint-up(md)
+{
+	.card.card-landscape.responsive
+	{
+		align-items: stretch;
+		flex-flow: row wrap;
+
+		> *
+		{
+			flex: 1 0 0%;
+		}
+
+		.card-media
+		{
+			flex: 0 0 auto;
+			align-self: stretch;
+			position: relative;
+			overflow: hidden;
+			width: 180px;
+			
+			img, video
+			{
+				position: absolute;
+			    height: 110%;
+			    width: auto;
+			    top: 50%;
+			    left: 50%;
+			    transform: translate3d(-50%, -50%, 0);
+			}
+
+			&.media-sm
+			{
+				width: var(--fbx-card-landscape-sm);
+			}
+			&.media-md
+			{
+				width: var(--fbx-card-landscape-md);
+			}
+			&.media-lg
+			{
+				width: var(--fbx-card-landscape-lg);
+			}
+
+		}
+		
+		> :first-child,
+		> .card-media:first-child img,
+		> .card-media:first-child video
+		{
+			border-radius: 0;
+			border-top-left-radius: var(--fbx-card-border-radius);
+			border-bottom-left-radius: var(--fbx-card-border-radius);
+		}
+
+		> :last-child,
+		> .card-media:last-child img,
+		> .card-media:last-child video
+		{
+			border-radius: 0;
+			border-top-right-radius: var(--fbx-card-border-radius);
+			border-bottom-right-radius: var(--fbx-card-border-radius);
+		}
+	}
+	.form-field
+	{
+		--fbx-input-bg: var(--fbx-card-bg);
+	}
+	
+}

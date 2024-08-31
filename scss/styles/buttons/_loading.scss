@@ -1,0 +1,20 @@
+.btn .loader
+{
+    --fbx-loader-color-one: var(--fbx-btn-loader-color);
+    --fbx-loader-color-two: rgba(0,0,0, 0.3);
+    --fbx-loader-size: calc((var(--fbx-btn-padding-y) * 2 + var(--fbx-btn-font-size)) / 1.5);
+    display: none;
+    position: absolute;
+    left: 8px;
+    top: calc(var(--fbx-btn-padding-y) /2);
+}
+.btn.with-loading.active
+{
+    padding-left: $btn-pad-x * 3;
+}
+.btn.active .loader
+{
+    display: inline-block;
+}
+
+

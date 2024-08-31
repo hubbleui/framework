@@ -1,0 +1,267 @@
+@use "sass:math";
+
+// Reset for unstyled buttons
+.btn-unstyled
+{
+    outline: none;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    &:focus
+    {
+        box-shadow: none;
+        outline: none;
+    }
+}
+.btn
+{
+    --fbx-btn-block: inline-block;
+    --fbx-btn-margin: 0;
+    --fbx-btn-font-weight: normal;
+    --fbx-btn-text-align: center;
+    --fbx-btn-position: relative;
+    --fbx-btn-overflow: hidden;
+    --fbx-btn-border: none;
+    --fbx-btn-width: auto;
+    --fbx-btn-border-radius: #{$border-radius};
+    --fbx-btn-font-size: #{$btn-font-size};
+    --fbx-btn-line-height: #{$btn-font-size};
+    --fbx-btn-bg-color: #{$btn-base-bg};
+    --fbx-btn-color: #{$btn-base-color};
+    --fbx-btn-font-weight: #{$btn-font-weight};
+    --fbx-btn-text-transform: #{$btn-text-transform};
+    --fbx-btn-white-space: nowrap;
+    --fbx-btn-vertical-align: middle;
+    --fbx-btn-cursor: pointer;
+    --fbx-btn-text-decoration: none;
+    --fbx-btn-transition: none;
+    --fbx-btn-padding-y: #{$btn-pad-y};
+    --fbx-btn-padding-x: #{$btn-pad-x};
+    --fbx-btn-letter-spacing: #{$btn-letter-spacing};
+    --fbx-btn-loader-color: var(--fbx-btn-color);
+    --fbx-btn-icon-size: #{$btn-icon-font-size};
+    --fbx-btn-icon-color: inherit;
+    --fbx-btn-box-shadow: none;
+
+    // Hover
+    --fbx-btn-color-hover: #{$btn-base-color-hover};
+    --fbx-btn-bg-color-hover: #{$btn-base-bg-hover};
+
+    // Active
+    --fbx-btn-color-active: #{$btn-base-color-active};
+    --fbx-btn-bg-color-active: #{$btn-base-bg-active};
+    
+    // Setup
+    font-weight: var(--fbx-btn-font-weight);
+    text-align: var(--fbx-btn-text-align);
+    position: var(--fbx-btn-position);
+    overflow: var(--fbx-btn-overflow);
+    border: var(--fbx-btn-border);
+    border-radius: var(--fbx-btn-border-radius);
+    font-size: var(--fbx-btn-font-size);
+    line-height: var(--fbx-btn-line-height);
+    background-color: var(--fbx-btn-bg-color);
+    color: var(--fbx-btn-color);
+    font-weight: var(--fbx-btn-font-weight);
+    text-transform: var(--fbx-btn-text-transform);
+    white-space: var(--fbx-btn-white-space);
+    vertical-align: var(--fbx-btn-vertical-align);
+    cursor: var(--fbx-btn-cursor);
+    text-decoration: var(--fbx-btn-text-decoration);
+    transition: var(--fbx-btn-transition);
+    padding: var(--fbx-btn-padding-y) var(--fbx-btn-padding-x);
+    letter-spacing: var(--fbx-btn-letter-spacing);
+    box-shadow: var(--fbx-btn-box-shadow);
+    width: var(--fbx-btn-width);
+    display: var(--fbx-btn-block);
+    
+    // Icon
+    .fa
+    {
+        --fbx-icon-size: var(--fbx-btn-icon-size);
+        display: inline !important; 
+        color: var(--fbx-btn-icon-color);
+        transition: color var(--fbx-ease-time-sm) $base-easing;
+        user-select: none;
+        vertical-align: middle;
+        line-height: 0.5;
+
+        // Pad text
+        &:after {
+            content: ' ';
+            font-size: 0px;
+            word-spacing: 7px;
+        }
+    }
+
+    // Caret
+    .caret-n,
+    .caret-s
+    {
+        margin-left: 7px;
+    }
+
+    &:hover,
+    &.hover
+    {
+        color: var(--fbx-btn-color-hover);
+        background-color: var(--fbx-btn-bg-color-hover);
+        --fbx-btn-icon-color: var(--fbx-btn-color-hover);
+    }
+    &:active,
+    &.active,
+    &.selected,
+    &.checked
+    {
+        color: var(--fbx-btn-color-active);
+        background-color: var(--fbx-btn-bg-color-active);
+        --fbx-btn-icon-color: var(--fbx-btn-color-active);
+        --fbx-btn-transition: #{background-color var(--fbx-ease-time-sm) $base-easing, color var(--fbx-ease-time-sm) $base-easing};
+        .fa
+        {
+            transition: color var(--fbx-ease-time-sm) $base-easing;
+        }
+    }    
+
+    // Hover/active/focus resets
+    &:hover,
+    &.hover,
+    &:active,
+    &.active,
+    &:focus,
+    &.focus
+    {
+        text-decoration: none;
+        outline: none;
+    }
+
+    // Disabled
+    &:disabled,
+    &.disabled,
+    &:disabled:hover,
+    &.disabled.hover,
+    &:disabled:active,
+    &:disabled.active,
+    &.disabled.selected,
+    &.disabled.checked,
+    &:disabled:focus,
+    &.disabled.focus
+    {
+        --fbx-btn-box-shadow: none;
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    // Flat
+    &.flat
+    {
+        --fbx-btn-box-shadow: none;
+    }
+}
+
+// Sizes
+.btn-xs
+{
+    --fbx-btn-padding-y: #{_minusPercent($btn-pad-y, 30)};
+    --fbx-btn-font-size: #{_minusPercent($btn-font-size, 15)};
+    --fbx-btn-icon-size: #{_minusPercent($btn-icon-font-size, 15)};
+}
+.btn-sm
+{
+    --fbx-btn-padding-y: #{_minusPercent($btn-pad-y, 20)};
+    --fbx-btn-font-size: #{_minusPercent($btn-font-size, 10)};
+    --fbx-btn-icon-size: #{_minusPercent($btn-icon-font-size, 15)};
+}
+.btn-lg
+{
+    --fbx-btn-padding-y: #{_addPercent($btn-pad-y, 20)};
+    --fbx-btn-font-size: #{_addPercent($btn-font-size, 10)};
+    --fbx-btn-icon-size: #{_addPercent($btn-icon-font-size, 10)};
+}
+.btn-xl
+{
+    --fbx-btn-padding-y: #{_addPercent($btn-pad-y, 25)};
+    --fbx-btn-font-size: #{_addPercent($btn-font-size, 20)};
+    --fbx-btn-icon-size: #{_addPercent($btn-icon-font-size, 20)};
+}
+
+// Circle default and sizes 
+.btn-circle
+{
+    --fbx-btn-border-radius: 50%;
+    --fbx-btn-padding-y: 0;
+    --fbx-btn-padding-x: 0;
+    width: calc(var(--fbx-btn-font-size) * 3);
+    height: calc(var(--fbx-btn-font-size) * 3);
+    
+}
+
+// Chip buttons
+.btn.btn-chip
+{
+    $chipsize: _minusPercent($btn-font-size, 37);
+
+    --fbx-btn-padding-y: #{$chipsize};
+    --fbx-btn-border-radius: 100px;
+
+    &.btn-xs
+    {
+        --fbx-btn-padding-y: #{_minusPercent($chipsize, 30)};
+        --fbx-btn-font-size: #{_minusPercent($btn-font-size, 10)};
+        --fbx-btn-icon-size: #{_minusPercent($btn-icon-font-size, 20)};
+    }
+    &.btn-sm
+    {
+        --fbx-btn-padding-y: #{_minusPercent($chipsize, 20)};
+        --fbx-btn-font-size: #{_minusPercent($btn-font-size, 5)};
+        --fbx-btn-icon-size: #{_minusPercent($btn-icon-font-size, 10)};
+    }
+    &.btn-lg
+    {
+        --fbx-btn-padding-y: #{_addPercent($chipsize, 20)};
+        --fbx-btn-font-size: #{_addPercent($btn-font-size, 5)};
+        --fbx-btn-icon-size: #{_addPercent($btn-icon-font-size, 10)};
+    }
+    &.btn-xl
+    {
+        --fbx-btn-padding-y: #{_addPercent($chipsize, 25)};
+        --fbx-btn-font-size: #{_addPercent($btn-font-size, 5)};
+        --fbx-btn-icon-size: #{_addPercent($btn-icon-font-size, 15)};
+    }
+
+    &.selected,
+    &.checked
+    {
+        color: var(--fbx-white);
+        background-color: var(--fbx-theme-primary);
+        --fbx-btn-icon-color: var(--fbx-white);
+        
+    }
+}
+
+
+// Block buttons
+.btn-block
+{
+    --fbx-btn-block: block;
+    --fbx-btn-width: 100%;
+}
+.btn-block + .btn-block
+{
+    margin-top: 5px;
+}
+
+// Override input buttons
+input[type="submit"],
+input[type="reset"],
+input[type="button"]
+{
+    &.btn-block
+    {
+        --fbx-btn-width: 100%;
+    }
+}

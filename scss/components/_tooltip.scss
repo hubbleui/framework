@@ -1,0 +1,186 @@
+[data-tooltip]:after
+{
+    content: attr(data-tooltip)!important;
+    font-family: var(--fbx-font-sans-serif);
+}
+.tooltipped
+{
+    --fbx-tooltip-bg: #{$tooltip-bg};
+    --fbx-tooltip-color: #{$tooltip-color};
+    --fbx-tooltip-font-size: #{$tooltip-font-size};
+    --fbx-tooltip-font-weight: #{$tooltip-font-weight};
+    --fbx-tooltip-line-height: #{$tooltip-line-height};
+    --fbx-tooltip-radius: #{$tooltip-radius};
+    --fbx-tooltip-pad-y: #{$tooltip-pad-y};
+    --fbx-tooltip-pad-x: #{$tooltip-pad-x};
+    --fbx-tooltop-target-space: #{$tooltop-target-space};
+    --fbx-tooltop-target-space-neg: #{$tooltop-target-space-neg};
+
+    position: relative;
+    overflow: visible!important;
+    
+    // Body
+    &:after
+    {
+        position: absolute;
+        display: none;
+        border-radius: var(--fbx-tooltip-radius);
+        color: var(--fbx-tooltip-color);
+        padding: var(--fbx-tooltip-pad-y) var(--fbx-tooltip-pad-x);
+        font-size: var(--fbx-tooltip-font-size) !important;
+        z-index: var(--fbx-zindex-tooltip);
+        font-weight: var(--fbx-tooltip-font-weight);
+        line-height: var(--fbx-tooltip-line-height);
+        text-align: center;
+        text-decoration: none;
+        text-shadow: none;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: break-word;
+        white-space: pre;
+        pointer-events: none;
+        background-color: var(--fbx-tooltip-bg);
+        zoom:101%;
+        @include _font-smooth();
+    }
+    // Trianlge
+    &:before
+    {
+        position: absolute;
+        z-index: var(--fbx-zindex-tooltip);
+        display: none;
+        width: 0;
+        height: 0;
+        color: var(--fbx-tooltip-bg);
+        pointer-events: none;
+        content: "";
+        border: 5px solid transparent;
+    }
+    &:hover:after,
+    &:hover:before
+    {
+        display: inline-block;
+        text-decoration: none
+    }
+    &.no-arrow:before,
+    &.no-arrow:hover:before,
+    {
+        display: none;
+    }
+
+    &.tooltipped-s:before,
+    &.tooltipped-se:before,
+    &.tooltipped-sw:before
+    {
+        border-bottom-color: var(--fbx-tooltip-bg);
+        top: auto;
+        bottom: var(--fbx-tooltop-target-space-neg);
+    }
+
+    &.tooltipped-s:after,
+    &.tooltipped-se:after,
+    &.tooltipped-sw:after
+    {
+        top: 100%;
+        margin-top: var(--fbx-tooltop-target-space);
+    }
+
+    &.tooltipped-s:before
+    {
+        right: 50%;
+        margin-right: var(--fbx-tooltop-target-space-neg);
+    }
+
+    &.tooltipped-s:after
+    {
+        right: 50%;
+        transform: translateX(50%)
+    }
+
+    &.tooltipped-ne:before,
+    &.tooltipped-se:before
+    {
+        right: 6px
+    }
+
+    &.tooltipped-ne:after,
+    &.tooltipped-se:after
+    {
+        right: 0
+    }
+
+    &.tooltipped-nw:before,
+    &.tooltipped-sw:before
+    {
+        left: 6px
+    }
+
+    &.tooltipped-nw:after,
+    &.tooltipped-sw:after
+    {
+        left: 0
+    }
+
+    &.tooltipped-n:before,
+    &.tooltipped-ne:before,
+    &.tooltipped-nw:before
+    {
+        top: var(--fbx-tooltop-target-space-neg);;
+        border-top-color: var(--fbx-tooltip-bg);
+        bottom: auto
+    }
+
+    &.tooltipped-n:after,
+    &.tooltipped-ne:after,
+    &.tooltipped-nw:after
+    {
+        bottom: 99.9%;
+        margin-bottom: var(--fbx-tooltop-target-space);
+    }
+
+    &.tooltipped-n:before
+    {
+        right: 50%;
+        margin-right: var(--fbx-tooltop-target-space-neg);
+    }
+
+    &.tooltipped-n:after
+    {
+        right: 50%;
+        transform: translateX(50%)
+    }
+
+    &.tooltipped-e:after,
+    &.tooltipped-w:after
+    {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &.tooltipped-e:after
+    {
+        left: 100%;
+        margin-left: var(--fbx-tooltop-target-space);
+    }
+    &.tooltipped-e:before
+    {
+        top: 50%;
+        right: var(--fbx-tooltop-target-space-neg);
+        bottom: 50%;
+        margin-top: var(--fbx-tooltop-target-space-neg);
+        border-right-color: var(--fbx-tooltip-bg)
+    }
+    &.tooltipped-w:after
+    {
+        right: 100%;
+        margin-right: var(--fbx-tooltop-target-space);
+    }
+    &.tooltipped-w:before
+    {
+        top: 50%;
+        bottom: 50%;
+        left: -6px;
+        margin-top: var(--fbx-tooltop-target-space-neg);
+        border-left-color: var(--fbx-tooltip-bg)
+    }
+}

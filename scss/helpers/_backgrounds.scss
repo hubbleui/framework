@@ -1,0 +1,12 @@
+.bg-transparent   { background-color: transparent}
+.bg-gray          { background-color: var(--fbx-gray) }
+@for $i from 1 through 9
+{
+    .bg-gray-#{$i}00 { background-color: var(--fbx-gray-#{$i}00) }
+}
+@each $context, $colors in $contexts
+{    
+    $color : map-get($colors, 'color');
+
+    .bg-#{$context} { background-color: $color }
+}

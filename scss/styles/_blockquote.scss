@@ -1,0 +1,54 @@
+.bq, blockquote[class*="bq-"]
+{
+    --fbx-bq-bg: #{$bq-bg};
+    --fbx-bq-radius: #{$bq-radius};
+    --fbx-bq-pad-y: #{$bq-pad-y};
+    --fbx-bq-pad-x: #{$bq-pad-x};
+
+    margin: 0 0 1em;
+    border-radius: var(--fbx-bq-radius);
+    padding: var(--fbx-bq-pad-y) var(--fbx-bq-pad-x);
+    color: var(--fbx-bq-color);
+    background-color: var(--fbx-bq-bg);
+
+    p
+    {
+        padding: 0;
+        color: rgba(0, 0, 0, 0.57);
+    }
+    a
+    {
+        font-weight: $text-bold;
+        color: rgba(0, 0, 0, 0.6);
+    }
+    code,
+    pre
+    {
+        border: none;
+        color: var(--fbx-white);
+        background-color: rgba(0, 0, 0, 0.3);            
+    }
+    > footer
+    {
+        display: block;
+        font-size: 85%;
+        line-height: 1.42857143;
+        color: rgba(0, 0, 0, 0.8);
+        & :before
+        {
+            content: '\2014 \00A0';
+        }
+    }
+    >:last-child
+    {
+        margin-bottom: 0;
+    }
+
+    @each $context, $colors in $contexts
+    {    
+        &.bq-#{$context}
+        {
+            --fbx-bq-bg: var(--fbx-#{_color-name-from-var(map-get($colors, "color"))-400});
+        }
+    }
+}

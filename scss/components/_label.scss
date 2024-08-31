@@ -1,0 +1,44 @@
+// Labels
+.label
+{
+    --fbx-label-font-size: #{$label-font-size};
+    --fbx-label-font-weight: #{$label-font-weight};
+    --fbx-label-color: #{$label-color};
+    --fbx-label-bg: #{$label-bg};
+    --fbx-label-pad-y: #{$label-pad-y};
+    --fbx-label-pad-x: #{$label-pad-x};
+    --fbx-label-radius: #{$label-radius};
+    
+    text-align: center;
+    display: inline;
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: var(--fbx-label-radius);
+    background-color: var(--fbx-label-bg);
+    color: var(--fbx-label-color);
+    font-size: var(--fbx-label-font-size);
+    font-weight: var(--fbx-label-font-weight);
+    padding: var(--fbx-label-pad-y) var(--fbx-label-pad-x);
+    
+    &:hover
+    {
+        text-decoration: none !important;
+    }
+
+    @each $context, $colors in $contexts
+    {
+        &.label-#{$context}
+        {
+            --fbx-label-color: #{map-get($colors, "contrast")};
+            --fbx-label-bg: #{map-get($colors, "color")}
+        }
+    }
+
+    &.label-outline
+    {
+        --fbx-label-color: var(--fbx-label-bg);
+        background-color: transparent;
+        border: 1px solid;
+    }
+}

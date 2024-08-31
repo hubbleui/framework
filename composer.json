@@ -1,0 +1,28 @@
+{
+  "name": "frontbx/ui",
+  "description": "Front-end framework for developing responsive, mobile first projects on the web.",
+  "keywords": [
+    "css",
+    "js",
+    "sass",
+    "mobile-first",
+    "responsive",
+    "front-end",
+    "framework",
+    "web"
+  ],
+  "homepage": "https://frontbxui.github.io/",
+  "authors": [
+    {
+      "name": "Joe J. Howard",
+      "email": "josephbhoward@icloud.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/frontbx/ui/issues"
+  },
+  "license": "MIT",
+  "replace": {
+    "frontbx/ui": "self.version"
+  }
+}

@@ -1,0 +1,121 @@
+.tab-nav
+{
+    --fbx-tab-nav-color: #{$tab-nav-color};
+    --fbx-tab-nav-color-active: #{$tab-nav-color-active};
+    --fbx-tab-nav-color-highlight: #{$tab-nav-color-highlight};
+    --fbx-tab-nav-divider-color: #{$tab-nav-divider-color};
+    --fbx-tab-nav-font-size: #{$tab-nav-font-size};
+    --fbx-tab-nav-font-weight: #{$tab-nav-font-weight};
+    --fbx-tab-nav-font-weight-active: #{$tab-nav-font-weight-active};
+    --fbx-tab-nav-border-radius: #{$tab-nav-border-radius};
+    --fbx-tab-nav-pad-y: #{$tab-nav-pad-y};
+    --fbx-tab-nav-pad-x: #{$tab-nav-pad-x};
+
+    padding: 0;
+    margin: 0;
+    margin-bottom: 10px;
+    height: 41px;
+    border-bottom: 1px solid var(--fbx-tab-nav-divider-color);
+    list-style: none;
+    display: flex;
+
+    > li
+    {
+        display: inline-block;
+        margin: 0;
+
+        
+
+        &:last-of-type
+        {
+            padding-right:0;
+        }
+        > *:not(button)
+        {
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            border-bottom: 2px solid;
+            min-width: 64px;
+            background-color: transparent;
+            border-color: transparent;
+            font-weight: var(--fbx-tab-nav-font-weight);
+            color: var(--fbx-tab-nav-color);
+            font-size: var(--fbx-tab-nav-font-size);
+            padding: var(--fbx-tab-nav-pad-y) var(--fbx-tab-nav-pad-x);
+            &:hover,
+            &.hover
+            {
+                border-color: var(--fbx-tab-nav-color);
+            }
+            &:active,
+            &.active
+            {
+                border-color: var(--fbx-tab-nav-color-highlight);
+                --fbx-tab-nav-color: var(--fbx-tab-nav-color-active);
+                --fbx-tab-nav-font-weight: var(--fbx-tab-nav-font-weight-active);
+            }
+            &.inline-block
+            {
+                display: inline-block;
+            }
+        }
+    }
+    // Bordered
+    &.tab-border
+    {
+        > li
+        {
+            padding-right: 0.6rem;
+        }
+        > li a
+        {
+            border: 1px solid;
+            border-color: var(--fbx-tab-nav-divider-color);
+            border-bottom: 1px solid transparent;
+            border-radius: var(--fbx-tab-nav-border-radius);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            &:hover,
+            &.hover
+            {
+            }
+            &.active,
+            &.active:hover
+            {
+                border-bottom: 1px solid var(--fbx-body-bg);
+                background-color: var(--fbx-body-bg);
+                color: var(--fbx-tab-nav-color-highlight);
+            }
+            
+        }
+    }
+    // Centered
+    &.tab-centered
+    {
+        text-align: center;
+        justify-content: center;
+    }
+}
+// Panels
+.tab-panels .tab-panel
+{
+    --fbx-tab-transition: #{$tab-transition};
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: var(--fbx-tab-transition);
+}
+.tab-panels .tab-panel.active
+{
+    visibility: visible;
+    opacity: 1;
+    height: auto;
+}
+
+
+
+
+
+

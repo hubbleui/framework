@@ -1,0 +1,122 @@
+.menu
+{
+    --fbx-menu-bg: #{$menu-bg};
+    --fbx-menu-color: #{$menu-color};
+    --fbx-menu-font-size: #{$menu-font-size};
+    --fbx-menu-item-color-hover: #{$menu-item-color-hover};
+    --fbx-menu-item-color-active: #{$menu-item-color-active};
+    --fbx-menu-item-color-selected: #{$menu-item-color-selected};
+    --fbx-menu-item-bg: #{$menu-item-bg};
+    --fbx-menu-item-bg-hover: #{$menu-item-bg-hover};
+    --fbx-menu-item-bg-active: #{$menu-item-bg-active};
+    --fbx-menu-item-bg-selected: #{$menu-item-bg-selected};
+    --fbx-menu-item-pad-y: #{$menu-item-pad-y};
+    --fbx-menu-item-pad-x: #{$menu-item-pad-x};
+    --fbx-menu-divider-color: #{$menu-divider-color};
+    --fbx-menu-divider-space: #{$menu-divider-space};
+
+
+    list-style: none;
+    margin: 0;
+    background-color: var(--fbx-menu-bg);
+    color: var(--fbx-menu-color);
+    padding: var(--fbx-menu-item-pad-y) 0px;
+    font-size: var(--fbx-menu-font-size);
+
+    > *
+    {
+        margin: 0;
+        padding: var(--fbx-menu-item-pad-y) var(--fbx-menu-item-pad-x);
+        background-color: var(--fbx-menu-item-bg);
+        column-gap: var(--fbx-menu-item-pad-x);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        .item-left,
+        .item-right
+        {
+            flex: 0 0 auto;
+            display: flex;
+        }
+        .item-body
+        {
+            flex: 1 1 auto;
+        }
+        a,a:hover
+        {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        &:hover,
+        &.hover
+        {
+            background-color: var(--fbx-menu-item-bg-hover);
+            color: var(--fbx-menu-item-color-hover);
+        }
+        &.active
+        {
+            background-color: var(--fbx-menu-item-bg-active);
+            color: var(--fbx-menu-item-color-active);
+        }
+        &.selected
+        {
+            background-color: var(--fbx-menu-item-bg-selected);
+            color: var(--fbx-menu-item-color-selected);
+        }
+        &.disabled,&.disabled:hover
+        {
+            background-color: var(--fbx-menu-item-bg);
+            color: var(--fbx-menu-color);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    // Overflow
+    &.menu-ellipsis
+    {
+        > *
+        {
+            @include _ellipsis;
+            
+            .item-body
+            {
+                min-width: 0;
+                @include _ellipsis;
+            }
+        }
+    }
+    
+    // Header and divider
+    .menu-header
+    {
+        font-weight: $text-bold;
+        padding: 0px var(--fbx-menu-item-pad-x) var(--fbx-menu-item-pad-y) var(--fbx-menu-item-pad-x);
+        border-bottom: 1px solid var(--fbx-menu-divider-color);
+    }
+    .menu-divider
+    {
+        padding: var(--fbx-menu-divider-space) 0 0 0;
+        margin: 0 0 var(--fbx-menu-divider-space) 0;
+        border-bottom: 1px solid var(--fbx-menu-divider-color);
+    }
+    .menu-header:hover,
+    .menu-divider:hover
+    {
+        background-color: var(--fbx-menu-item-bg);
+        color: var(--fbx-menu-color);
+    }
+
+    // Dense
+    &.menu-dense
+    {
+        --fbx-menu-font-size: #{_minusPercent($menu-font-size, 5)};
+        --fbx-menu-item-pad-y: #{_minusPercent($menu-item-pad-y, 60)};
+        --fbx-menu-item-pad-x: #{_minusPercent($menu-item-pad-x, 20)};
+        --fbx-menu-divider-space: #{_minusPercent($menu-divider-space, 40)};
+    }
+
+}

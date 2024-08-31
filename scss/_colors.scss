@@ -1,0 +1,382 @@
+@use "sass:map";
+
+// Base colors
+$gray-100 : _lighter($gray, 90%);
+$gray-200 : _lighter($gray, 18%);
+$gray-300 : _lighter($gray, 50%);
+$gray-400 : _lighter($gray, 35%);
+$gray-500 : _darker($gray, 5%);
+$gray-600 : _darker($gray, 20%);
+$gray-700 : _darker($gray, 25%);
+$gray-800 : _darker($gray, 30%);
+$gray-900 : _darker($gray, 40%);
+
+$teal-100 : _lighter($teal, 90%);
+$teal-200 : _lighter($teal, 80%);
+$teal-300 : _lighter($teal, 50%);
+$teal-400 : _lighter($teal, 35%);
+$teal-500 : _darker($teal, 5%);
+$teal-600 : _darker($teal, 20%);
+$teal-700 : _darker($teal, 25%);
+$teal-800 : _darker($teal, 30%);
+$teal-900 : _darker($teal, 40%);
+
+$turquoise-100 : _lighter($turquoise, 90%);
+$turquoise-200 : _lighter($turquoise, 80%);
+$turquoise-300 : _lighter($turquoise, 50%);
+$turquoise-400 : _lighter($turquoise, 35%);
+$turquoise-500 : _darker($turquoise, 5%);
+$turquoise-600 : _darker($turquoise, 20%);
+$turquoise-700 : _darker($turquoise, 25%);
+$turquoise-800 : _darker($turquoise, 30%);
+$turquoise-900 : _darker($turquoise, 40%);
+
+$greensea-100 : _lighter($greensea, 90%);
+$greensea-200 : _lighter($greensea, 80%);
+$greensea-300 : _lighter($greensea, 50%);
+$greensea-400 : _lighter($greensea, 35%);
+$greensea-500 : _darker($greensea, 5%);
+$greensea-600 : _darker($greensea, 20%);
+$greensea-700 : _darker($greensea, 25%);
+$greensea-800 : _darker($greensea, 30%);
+$greensea-900 : _darker($greensea, 40%);
+
+$emerland-100 : _lighter($emerland, 90%);
+$emerland-200 : _lighter($emerland, 80%);
+$emerland-300 : _lighter($emerland, 50%);
+$emerland-400 : _lighter($emerland, 35%);
+$emerland-500 : _darker($emerland, 5%);
+$emerland-600 : _darker($emerland, 20%);
+$emerland-700 : _darker($emerland, 25%);
+$emerland-800 : _darker($emerland, 30%);
+$emerland-900 : _darker($emerland, 40%);
+
+$nephritis-100 : _lighter($nephritis, 90%);
+$nephritis-200 : _lighter($nephritis, 80%);
+$nephritis-300 : _lighter($nephritis, 50%);
+$nephritis-400 : _lighter($nephritis, 35%);
+$nephritis-500 : _darker($nephritis, 5%);
+$nephritis-600 : _darker($nephritis, 20%);
+$nephritis-700 : _darker($nephritis, 25%);
+$nephritis-800 : _darker($nephritis, 30%);
+$nephritis-900 : _darker($nephritis, 40%);
+
+$babyblue-100 : _lighter($babyblue, 90%);
+$babyblue-200 : _lighter($babyblue, 80%);
+$babyblue-300 : _lighter($babyblue, 50%);
+$babyblue-400 : _lighter($babyblue, 35%);
+$babyblue-500 : _darker($babyblue, 5%);
+$babyblue-600 : _darker($babyblue, 20%);
+$babyblue-700 : _darker($babyblue, 25%);
+$babyblue-800 : _darker($babyblue, 30%);
+$babyblue-900 : _darker($babyblue, 40%);
+
+$peterrive-100 : _lighter($peterrive, 90%);
+$peterrive-200 : _lighter($peterrive, 80%);
+$peterrive-300 : _lighter($peterrive, 50%);
+$peterrive-400 : _lighter($peterrive, 35%);
+$peterrive-500 : _darker($peterrive, 5%);
+$peterrive-600 : _darker($peterrive, 20%);
+$peterrive-700 : _darker($peterrive, 25%);
+$peterrive-800 : _darker($peterrive, 30%);
+$peterrive-900 : _darker($peterrive, 40%);
+
+$belizehol-100 : _lighter($belizehol, 90%);
+$belizehol-200 : _lighter($belizehol, 80%);
+$belizehol-300 : _lighter($belizehol, 50%);
+$belizehol-400 : _lighter($belizehol, 35%);
+$belizehol-500 : _darker($belizehol, 5%);
+$belizehol-600 : _darker($belizehol, 20%);
+$belizehol-700 : _darker($belizehol, 25%);
+$belizehol-800 : _darker($belizehol, 30%);
+$belizehol-900 : _darker($belizehol, 40%);
+
+$amethyst-100 : _lighter($amethyst, 90%);
+$amethyst-200 : _lighter($amethyst, 80%);
+$amethyst-300 : _lighter($amethyst, 50%);
+$amethyst-400 : _lighter($amethyst, 35%);
+$amethyst-500 : _darker($amethyst, 5%);
+$amethyst-600 : _darker($amethyst, 20%);
+$amethyst-700 : _darker($amethyst, 25%);
+$amethyst-800 : _darker($amethyst, 30%);
+$amethyst-900 : _darker($amethyst, 40%);
+
+$wisteria-100 : _lighter($wisteria, 90%);
+$wisteria-200 : _lighter($wisteria, 80%);
+$wisteria-300 : _lighter($wisteria, 50%);
+$wisteria-400 : _lighter($wisteria, 35%);
+$wisteria-500 : _darker($wisteria, 5%);
+$wisteria-600 : _darker($wisteria, 20%);
+$wisteria-700 : _darker($wisteria, 25%);
+$wisteria-800 : _darker($wisteria, 30%);
+$wisteria-900 : _darker($wisteria, 40%);
+
+$wetasphalt-100 : _lighter($wetasphalt, 90%);
+$wetasphalt-200 : _lighter($wetasphalt, 80%);
+$wetasphalt-300 : _lighter($wetasphalt, 50%);
+$wetasphalt-400 : _lighter($wetasphalt, 35%);
+$wetasphalt-500 : _darker($wetasphalt, 5%);
+$wetasphalt-600 : _darker($wetasphalt, 20%);
+$wetasphalt-700 : _darker($wetasphalt, 25%);
+$wetasphalt-800 : _darker($wetasphalt, 30%);
+$wetasphalt-900 : _darker($wetasphalt, 40%);
+
+$midnightblue-100 : _lighter($midnightblue, 90%);
+$midnightblue-200 : _lighter($midnightblue, 80%);
+$midnightblue-300 : _lighter($midnightblue, 50%);
+$midnightblue-400 : _lighter($midnightblue, 35%);
+$midnightblue-500 : _darker($midnightblue, 5%);
+$midnightblue-600 : _darker($midnightblue, 20%);
+$midnightblue-700 : _darker($midnightblue, 25%);
+$midnightblue-800 : _darker($midnightblue, 30%);
+$midnightblue-900 : _darker($midnightblue, 40%);
+
+$sunflower-100 : _lighter($sunflower, 90%);
+$sunflower-200 : _lighter($sunflower, 80%);
+$sunflower-300 : _lighter($sunflower, 50%);
+$sunflower-400 : _lighter($sunflower, 35%);
+$sunflower-500 : _darker($sunflower, 5%);
+$sunflower-600 : _darker($sunflower, 20%);
+$sunflower-700 : _darker($sunflower, 25%);
+$sunflower-800 : _darker($sunflower, 30%);
+$sunflower-900 : _darker($sunflower, 40%);
+
+$orange-100 : _lighter($orange, 90%);
+$orange-200 : _lighter($orange, 80%);
+$orange-300 : _lighter($orange, 50%);
+$orange-400 : _lighter($orange, 35%);
+$orange-500 : _darker($orange, 5%);
+$orange-600 : _darker($orange, 20%);
+$orange-700 : _darker($orange, 25%);
+$orange-800 : _darker($orange, 30%);
+$orange-900 : _darker($orange, 40%);
+
+$carrot-100 : _lighter($carrot, 90%);
+$carrot-200 : _lighter($carrot, 80%);
+$carrot-300 : _lighter($carrot, 50%);
+$carrot-400 : _lighter($carrot, 35%);
+$carrot-500 : _darker($carrot, 5%);
+$carrot-600 : _darker($carrot, 20%);
+$carrot-700 : _darker($carrot, 25%);
+$carrot-800 : _darker($carrot, 30%);
+$carrot-900 : _darker($carrot, 40%);
+
+$salmon-100 : _lighter($salmon, 90%);
+$salmon-200 : _lighter($salmon, 80%);
+$salmon-300 : _lighter($salmon, 50%);
+$salmon-400 : _lighter($salmon, 35%);
+$salmon-500 : _darker($salmon, 5%);
+$salmon-600 : _darker($salmon, 20%);
+$salmon-700 : _darker($salmon, 25%);
+$salmon-800 : _darker($salmon, 30%);
+$salmon-900 : _darker($salmon, 40%);
+
+$pumpkin-100 : _lighter($pumpkin, 90%);
+$pumpkin-200 : _lighter($pumpkin, 80%);
+$pumpkin-300 : _lighter($pumpkin, 50%);
+$pumpkin-400 : _lighter($pumpkin, 35%);
+$pumpkin-500 : _darker($pumpkin, 5%);
+$pumpkin-600 : _darker($pumpkin, 20%);
+$pumpkin-700 : _darker($pumpkin, 25%);
+$pumpkin-800 : _darker($pumpkin, 30%);
+$pumpkin-900 : _darker($pumpkin, 40%);
+
+$alizarin-100 : _lighter($alizarin, 90%);
+$alizarin-200 : _lighter($alizarin, 80%);
+$alizarin-300 : _lighter($alizarin, 50%);
+$alizarin-400 : _lighter($alizarin, 35%);
+$alizarin-500 : _darker($alizarin, 5%);
+$alizarin-600 : _darker($alizarin, 20%);
+$alizarin-700 : _darker($alizarin, 25%);
+$alizarin-800 : _darker($alizarin, 30%);
+$alizarin-900 : _darker($alizarin, 40%);
+
+$pomegranate-100 : _lighter($pomegranate, 90%);
+$pomegranate-200 : _lighter($pomegranate, 80%);
+$pomegranate-300 : _lighter($pomegranate, 50%);
+$pomegranate-400 : _lighter($pomegranate, 35%);
+$pomegranate-500 : _darker($pomegranate, 5%);
+$pomegranate-600 : _darker($pomegranate, 20%);
+$pomegranate-700 : _darker($pomegranate, 25%);
+$pomegranate-800 : _darker($pomegranate, 30%);
+$pomegranate-900 : _darker($pomegranate, 40%);
+
+$clouds-100 : _lighter($clouds, 90%);
+$clouds-200 : _lighter($clouds, 80%);
+$clouds-300 : _lighter($clouds, 50%);
+$clouds-400 : _lighter($clouds, 35%);
+$clouds-500 : _darker($clouds, 5%);
+$clouds-600 : _darker($clouds, 20%);
+$clouds-700 : _darker($clouds, 25%);
+$clouds-800 : _darker($clouds, 30%);
+$clouds-900 : _darker($clouds, 40%);
+
+$silver-100 : _lighter($silver, 90%);
+$silver-200 : _lighter($silver, 80%);
+$silver-300 : _lighter($silver, 50%);
+$silver-400 : _lighter($silver, 35%);
+$silver-500 : _darker($silver, 5%);
+$silver-600 : _darker($silver, 20%);
+$silver-700 : _darker($silver, 25%);
+$silver-800 : _darker($silver, 30%);
+$silver-900 : _darker($silver, 40%);
+
+$concrete-100 : _lighter($concrete, 90%);
+$concrete-200 : _lighter($concrete, 80%);
+$concrete-300 : _lighter($concrete, 50%);
+$concrete-400 : _lighter($concrete, 35%);
+$concrete-500 : _darker($concrete, 5%);
+$concrete-600 : _darker($concrete, 20%);
+$concrete-700 : _darker($concrete, 25%);
+$concrete-800 : _darker($concrete, 30%);
+$concrete-900 : _darker($concrete, 40%);
+
+$asbestos-100 : _lighter($asbestos, 90%);
+$asbestos-200 : _lighter($asbestos, 80%);
+$asbestos-300 : _lighter($asbestos, 50%);
+$asbestos-400 : _lighter($asbestos, 35%);
+$asbestos-500 : _darker($asbestos, 5%);
+$asbestos-600 : _darker($asbestos, 20%);
+$asbestos-700 : _darker($asbestos, 25%);
+$asbestos-800 : _darker($asbestos, 30%);
+$asbestos-900 : _darker($asbestos, 40%);
+
+$neongreen-100 : _lighter($neongreen, 90%);
+$neongreen-200 : _lighter($neongreen, 80%);
+$neongreen-300 : _lighter($neongreen, 50%);
+$neongreen-400 : _lighter($neongreen, 35%);
+$neongreen-500 : _darker($neongreen, 5%);
+$neongreen-600 : _darker($neongreen, 20%);
+$neongreen-700 : _darker($neongreen, 25%);
+$neongreen-800 : _darker($neongreen, 30%);
+$neongreen-900 : _darker($neongreen, 40%);
+
+$skyblue-100 : _lighter($skyblue, 90%);
+$skyblue-200 : _lighter($skyblue, 80%);
+$skyblue-300 : _lighter($skyblue, 50%);
+$skyblue-400 : _lighter($skyblue, 35%);
+$skyblue-500 : _darker($skyblue, 5%);
+$skyblue-600 : _darker($skyblue, 20%);
+$skyblue-700 : _darker($skyblue, 25%);
+$skyblue-800 : _darker($skyblue, 30%);
+$skyblue-900 : _darker($skyblue, 40%);
+
+$beetroot-100 : _lighter($beetroot, 90%);
+$beetroot-200 : _lighter($beetroot, 80%);
+$beetroot-300 : _lighter($beetroot, 50%);
+$beetroot-400 : _lighter($beetroot, 35%);
+$beetroot-500 : _darker($beetroot, 5%);
+$beetroot-600 : _darker($beetroot, 20%);
+$beetroot-700 : _darker($beetroot, 25%);
+$beetroot-800 : _darker($beetroot, 30%);
+$beetroot-900 : _darker($beetroot, 40%);
+
+$hotpink-100 : _lighter($hotpink, 90%);
+$hotpink-200 : _lighter($hotpink, 80%);
+$hotpink-300 : _lighter($hotpink, 50%);
+$hotpink-400 : _lighter($hotpink, 35%);
+$hotpink-500 : _darker($hotpink, 5%);
+$hotpink-600 : _darker($hotpink, 20%);
+$hotpink-700 : _darker($hotpink, 25%);
+$hotpink-800 : _darker($hotpink, 30%);
+$hotpink-900 : _darker($hotpink, 40%);
+
+$pineapple-100 : _lighter($pineapple, 90%);
+$pineapple-200 : _lighter($pineapple, 80%);
+$pineapple-300 : _lighter($pineapple, 50%);
+$pineapple-400 : _lighter($pineapple, 35%);
+$pineapple-500 : _darker($pineapple, 5%);
+$pineapple-600 : _darker($pineapple, 20%);
+$pineapple-700 : _darker($pineapple, 25%);
+$pineapple-800 : _darker($pineapple, 30%);
+$pineapple-900 : _darker($pineapple, 40%);
+
+$coralred-100 : _lighter($coralred, 90%);
+$coralred-200 : _lighter($coralred, 80%);
+$coralred-300 : _lighter($coralred, 50%);
+$coralred-400 : _lighter($coralred, 35%);
+$coralred-500 : _darker($coralred, 5%);
+$coralred-600 : _darker($coralred, 20%);
+$coralred-700 : _darker($coralred, 25%);
+$coralred-800 : _darker($coralred, 30%);
+$coralred-900 : _darker($coralred, 40%);
+
+$ash-100 : _lighter($ash, 90%);
+$ash-200 : _lighter($ash, 18%);
+$ash-300 : _lighter($ash, 50%);
+$ash-400 : _lighter($ash, 35%);
+$ash-500 : _darker($ash, 5%);
+$ash-600 : _darker($ash, 20%);
+$ash-700 : _darker($ash, 25%);
+$ash-800 : _darker($ash, 30%);
+$ash-900 : _darker($ash, 40%);
+
+$palette:
+(
+    'teal':                     $teal,
+    'turquoise':                $turquoise,
+    'greensea':                 $greensea,
+    'emerland':                 $emerland,
+    'nephritis':                $nephritis,
+    'babyblue':                 $babyblue,
+    'peterrive':                $peterrive,
+    'belizehol':                $belizehol,
+    'amethyst':                 $amethyst,
+    'wisteria':                 $wisteria,
+    'wetasphalt':               $wetasphalt,
+    'midnightblue':             $midnightblue,
+    'sunflower':                $sunflower,
+    'orange':                   $orange,
+    'carrot':                   $carrot,
+    'salmon':                   $salmon,
+    'pumpkin':                  $pumpkin,
+    'alizarin':                 $alizarin,
+    'pomegranate':              $pomegranate,
+    'clouds':                   $clouds,
+    'silver':                   $silver,
+    'concrete':                 $concrete,
+    'asbestos':                 $asbestos,
+
+    // Neons
+    'neongreen':                $neongreen,
+    'skyblue':                  $skyblue,
+    'beetroot':                 $beetroot,
+    'hotpink':                  $hotpink,
+    'pineapple':                $pineapple,
+    'coralred':                 $coralred,
+    'ash':                      $ash,
+
+    // Gray
+    'gray':                     $gray,
+    'black':                    $black,
+    'white':                    $white,
+
+) !default;
+
+// Contexts
+// This map is used to generate color loops for applying context classes
+// to things like buttons, badges, labels etc...
+$contexts:
+(
+    'primary':                  ('contrast' : var(--fbx-white), 'color': var(--fbx-theme-primary)),
+    'secondary':                ('contrast' : var(--fbx-white), 'color': var(--fbx-theme-secondary)),
+    'info':                     ('contrast' : var(--fbx-white), 'color': var(--fbx-theme-info)),
+    'success':                  ('contrast' : var(--fbx-white), 'color': var(--fbx-theme-success)),
+    'warning':                  ('contrast' : var(--fbx-white), 'color': var(--fbx-theme-warning)),
+    'danger':                   ('contrast' : var(--fbx-white), 'color': var(--fbx-theme-danger)),
+    'white':                    ('contrast' : var(--fbx-theme-primary), 'color': var(--fbx-color-white)),
+    'black':                    ('contrast' : var(--fbx-color-white), 'color': var(--fbx-color-black)),
+) !default;
+
+// Contexts
+// This map is used to generate color loops for applying context classes
+// to things like buttons, badges, labels etc...
+$contextsCSSVar:
+(
+    'primary':                  $theme-primary,
+    'secondary':                $theme-secondary,
+    'info':                     $theme-info,
+    'success':                  $theme-success,
+    'warning':                  $theme-warning,
+    'danger':                   $theme-danger,
+) !default;

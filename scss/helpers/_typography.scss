@@ -1,0 +1,33 @@
+// Fonts
+.sans-serif   { font-family: var(--fbx-font-sans-serif) }
+.monospace    { font-family: var(--fbx-font-monospace) }
+.serif        { font-family: var(--fbx-font-serif) }
+.heading-font { font-family: var(--fbx-font-headings) }
+
+// Font Weights
+.text-lightest { font-weight: $text-lightest }
+.text-light    { font-weight: $text-light }
+.text-normal   { font-weight: $text-normal }
+.text-bold     { font-weight: $text-bold }
+.text-bolder   { font-weight: $text-bolder }
+.text-boldest  { font-weight: $text-boldest }
+
+// Font Styles
+.font-italic    { font-style: italic }
+.font-ellipses  { @include _ellipsis() }
+.font-strike    { text-decoration: line-through }
+
+// Text Modifications
+.uppercase          { text-transform: uppercase }
+.lowercase          { text-transform: lowercase }
+.capitalize         { text-transform: capitalize }
+.underline          { text-decoration: underline }
+.no-text-decoration { text-decoration: none }
+
+// Text Alignments
+.text-left    { text-align: left }
+.text-right   { text-align: right }
+.text-center  { text-align: center }
+
+// Misc
+.nowrap       { white-space: nowrap }

@@ -1,0 +1,12 @@
+.color-transparent   { color: transparent}
+.color-gray          {color: var(--fbx-gray)}
+@for $i from 1 through 9
+{
+    .color-gray-#{$i}00 { color: var(--fbx-gray-#{$i}00) }
+}
+@each $context, $colors in $contexts
+{    
+    $color : map-get($colors, 'color');
+
+    .color-#{$context} { color: $color}
+}

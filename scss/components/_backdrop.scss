@@ -1,0 +1,52 @@
+.drawer-container.backdrop
+{
+	// Drawer
+	--fbx-drawer-bg: #{$backdrop-bg};
+	--fbx-drawer-width: #{$backdrop-width};
+	--fbx-drawer-size-peekable: #{$backdrop-size-peekable};
+	--fbx-backdrop-color: #{$backdrop-color};
+	--fbx-drawer-border-color: transparent;
+
+	.drawer-header
+	{
+		.close-btn,.close-btn:hover, .close-btn .fa,.close-btn:hover .fa
+		{
+			color: inherit;
+		}
+	}
+
+	.drawer-wrap
+	{
+		color: var(--fbx-backdrop-color);
+
+		.skeleton
+		{
+	    	--fbx-skeleton-bg-1: rgba(255, 255, 255, 0.5);
+    		--fbx-skeleton-bg-2: rgba(255, 255, 255, 1);
+	    }
+	}
+	
+	&.drawer-left .drawer-wrap
+	{
+		box-shadow: inset -21px 0px 9px -15px rgb(0 0 0 / 18%);
+		border-right: none;
+	}
+	&.drawer-right .drawer-wrap
+	{
+		box-shadow: inset 21px 0px 9px -15px rgb(0 0 0 / 18%);
+		border-left: none;
+	}
+	&.drawer-top .drawer-wrap
+	{
+		box-shadow: inset 0px -21px 9px -15px rgb(0 0 0 / 18%);
+		border-bottom: none;
+	}
+	&.drawer-bottom .drawer-wrap
+	{
+		box-shadow: inset 0px 21px 9px -15px rgb(0 0 0 / 18%);
+		border-top: none;
+	}
+}
+
+
+    

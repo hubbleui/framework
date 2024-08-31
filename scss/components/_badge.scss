@@ -1,0 +1,44 @@
+.badge
+{
+    --fbx-badge-size: #{$badge-size};
+    --fbx-badge-color: var(--fbx-white);
+    --fbx-badge-bg: var(--fbx-gray);
+    font-size: calc(var(--fbx-badge-size) * 2);
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+    border-radius: calc(var(--fbx-badge-size) * 2);
+    min-width: calc(var(--fbx-badge-size) * 3);
+    min-height: calc(var(--fbx-badge-size) * 3);
+    line-height: var(--fbx-badge-size);
+    padding: var(--fbx-badge-size);
+    color: var(--fbx-badge-color);
+    background-color: var(--fbx-badge-bg);
+
+    @each $context, $colors in $contexts
+    {
+        &.badge-#{$context}
+        {
+            --fbx-badge-color: #{map-get($colors, "contrast")};
+            --fbx-badge-bg: #{map-get($colors, "color")}
+        }
+    }
+}
+
+// In buttons
+.btn.with-badge
+{
+    overflow: visible !important;
+    position: relative;
+
+    .badge
+    {
+        position: absolute;
+        top: -9px;
+        right: -7px;
+    }
+    .ripple
+    {
+        display: none !important;
+    }
+}

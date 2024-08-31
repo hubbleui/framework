@@ -1,0 +1,99 @@
+.slider
+{
+	--fbx-slider-bg: #{$slider-bg};
+	--fbx-slider-dots-color: #{$slider-dots-color};
+	--fbx-slider-dots-color-active: #{$slider-dots-color-active};
+	--fbx-slider-dots-size: #{$slider-dots-size};
+	--fbx-slider-nav-btn-size: #{$slider-nav-btn-size};
+	--fbx-slider-nav-btn-color: #{$slider-nav-btn-color};
+	--fbx-slider-nav-btn-color-hover: #{$slider-nav-btn-color-hover};
+	--fbx-slider-slides-gap: #{$slider-slides-gap};
+	--fbx-slider-slide-width: #{$slider-slide-width};
+
+	width: 100%;
+	background-color: var(--fbx-slider-bg);
+	overflow: hidden;
+    position: relative;
+
+    &.draggable
+    {
+    	user-select: none;
+    	cursor: move;
+	    cursor: -webkit-grab;
+	    cursor: grab;
+
+    	&.pointer-down 
+    	{
+    		cursor: -webkit-grabbing;
+		    cursor: grabbing;
+    	}
+    }
+
+	.slider-viewport
+	{
+		column-gap: var(--fbx-slider-slides-gap);
+		display: flex;
+		flex-flow: row nowrap;
+		align-items: center;
+		justify-content: flex-start;
+		position: relative;
+		left: 0;
+	}
+
+	.slider-viewport > *
+	{
+		width: var(--fbx-slider-slide-width);
+		max-width: var(--fbx-slider-slide-width);
+		flex: 0 0 100%;
+	}
+	.slider-viewport > .slide-group
+	{
+		display: flex;
+	}
+
+	.slider-control
+	{
+		--fbx-btn-color: var(--fbx-slider-nav-btn-color);
+		--fbx-btn-color-hover: var(--fbx-slider-nav-btn-color);
+		position: absolute;
+		height: 100%;
+		top: 0;
+
+		&.control-right
+		{
+			right: 0;
+		}
+		&.control-left
+		{
+			left: 0;
+		}
+		.fa
+		{
+			--fbx-icon-size: var(--fbx-slider-nav-btn-size);
+		}
+		&:hover .fa
+		{
+			color: var(--fbx-slider-nav-btn-color-hover);
+		}
+	}
+
+	.slider-dots
+	{
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    column-gap: 15px;
+	    padding: 15px 0;
+
+		.slider-dot
+		{
+			--fbx-btn-bg-color: var(--fbx-slider-dots-color);
+			--fbx-btn-bg-color-hover: var(--fbx-slider-dots-color);
+			--fbx-btn-bg-color-active: var(--fbx-slider-dots-color-active);
+			--fbx-btn-font-size: var(--fbx-slider-dots-size);
+		}
+	}
+}

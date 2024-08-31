@@ -1,0 +1,296 @@
+/* Skeleton keyframes */
+@keyframes skeleton-pulse
+{
+	0%
+	{
+    	background-color: var(--fbx-skeleton-bg-1);
+  	}
+  	50%
+  	{
+    	background-color: var(--fbx-skeleton-bg-2);
+  	}
+  	100%
+  	{
+    	background-color: var(--fbx-skeleton-bg-1);
+  	}
+}
+@keyframes skeleton-wave
+{
+	0%
+	{
+		transform: translateX(-100%);
+	}
+	100%
+	{
+		transform: translateX(100%);
+	}
+}
+
+/* Skeleton setup */
+.skeleton
+{
+	--fbx-skeleton-bg-1: #{$skeleton-bg-1};
+	--fbx-skeleton-bg-2: #{$skeleton-bg-2};
+	--fbx-bg-animation: #{1s ease-in-out infinite normal none running skeleton-pulse};
+	--fbx-skeleton-width: 100%;
+	--fbx-skeleton-height: 100%;
+	--fbx-skeleton-radius: 0;
+	--fbx-skeleton-margin: 0;
+	--fbx-skeleton-display: block;
+
+    display: var(--fbx-skeleton-display);
+    width: var(--fbx-skeleton-width);
+    height: var(--fbx-skeleton-height);
+    border-radius: var(--fbx-skeleton-radius);
+	animation: var(--fbx-bg-animation);
+	background: var(--fbx-skeleton-bg-1);
+	margin: var(--fbx-skeleton-margin);
+	opacity: 0.3;
+	transition: opacity .5s ease;
+
+	// button 
+	&.skeleton-btn
+	{
+		--fbx-skeleton-radius: #{$skeleton-text-radius};
+		--fbx-skeleton-height: #{ ($btn-pad-y * 2) + $btn-font-size };
+		--fbx-skeleton-width: #{($btn-pad-x * 7)};
+		--fbx-skeleton-display: inline-block;
+	}
+
+	// Input 
+	&.skeleton-input
+	{
+		--fbx-skeleton-radius: #{$skeleton-text-radius};
+		--fbx-skeleton-height: #{ ($input-pad-y * 2.8) + $input-font-size };
+		--fbx-skeleton-width: 100%;
+		--fbx-skeleton-display: inline-block;
+	}
+
+	// Rounded
+	&.skeleton-rounded
+	{
+		--fbx-skeleton-radius: #{$skeleton-text-radius};
+	}
+
+	// Circle 
+	&.skeleton-circle
+	{
+		--fbx-skeleton-radius: 50%;
+		--fbx-skeleton-width: 6rem;
+		--fbx-skeleton-height: 6rem;
+		--fbx-skeleton-display: inline-block;
+
+		&.circle-sm
+		{
+			--fbx-skeleton-width: 3rem;
+			--fbx-skeleton-height: 3rem;
+		}
+		&.circle-md
+		{
+			--fbx-skeleton-width: 4rem;
+			--fbx-skeleton-height: 4rem;
+		}
+		&.circle-lg
+		{
+			--fbx-skeleton-width: 7rem;
+			--fbx-skeleton-height: 7rem;
+		}
+	}
+	
+	// Wave
+    &.skeleton-wave
+    {
+    	position: relative;
+    	overflow: hidden;
+    	--fbx-bg-animation: none;
+
+    	&:after
+    	{
+    		content: "";
+    		position: absolute;
+    		display: block;
+    		width: 150%;
+    		height: 100%;
+    		animation: 1s ease-in-out infinite normal none running skeleton-wave;
+	    	background-image: linear-gradient(90deg, transparent, var(--fbx-skeleton-bg-2),transparent);
+		    background-repeat: no-repeat;
+		    background-position: center center;
+		    bottom: 0;
+		    top: 0;
+		    left: 0;
+		    right: 0;
+		    opacity: 0.8;
+		    transform: translateX(-100%);
+		}
+    }
+
+    // Text lines
+    &.skeleton-h1, &.skeleton-h2, &.skeleton-h3, &.skeleton-h4, &.skeleton-h5, &.skeleton-h6, &.skeleton-text
+    {
+    	--fbx-skeleton-width: 100%;
+    	--fbx-skeleton-radius: #{$skeleton-text-radius};
+    	background: transparent;
+    	overflow: hidden;
+    	position: relative;
+    	animation: none;
+    	padding: 0.2em 0 0 0;
+
+    	&:after
+    	{
+    		content: "";
+    		width: 100%;
+    		height: 100%;
+    		position: absolute;
+    		border-radius: var(--fbx-skeleton-radius);
+    		background: var(--fbx-skeleton-bg-1);
+    		animation: var(--fbx-bg-animation);
+    		height: 0.8em;
+    	}
+    }
+
+    // Text line spacing
+    &.skeleton-text
+    {
+    	font-size: var(--fbx-base-font-size);
+    	padding-top: 0.4em;
+    	--fbx-skeleton-height: calc(1.4em * var(--fbx-base-line-height));
+    }
+
+    // Darker headings + headings spacing
+    &.skeleton-h1, &.skeleton-h2, &.skeleton-h3, &.skeleton-h4, &.skeleton-h5, &.skeleton-h6
+    {
+    	opacity: 0.5;
+    	--fbx-skeleton-height: calc(1.2em + var(--fbx-headings-spacer));
+    }
+    
+    &.skeleton-h1
+    {
+    	font-size: var(--fbx-text-size-h1);
+    }
+    &.skeleton-h2
+    {
+    	font-size: var(--fbx-text-size-h2);
+    }
+    &.skeleton-h3
+    {
+    	font-size: var(--fbx-text-size-h3);
+    }
+    &.skeleton-h4
+    {
+    	font-size: var(--fbx-text-size-h4);
+    }
+    &.skeleton-h5
+    {
+    	font-size: var(--fbx-text-size-h5);
+    }
+    &.skeleton-h6
+    {
+    	font-size: var(--fbx-text-size-h6);
+    }
+}
+
+/* Skeleton text blocks */
+.skeleton-text-block
+{
+	--fbx-txt-font-size: var(--fbx-base-font-size);
+	--fbx-txt-height: 0.8em;
+	--fbx-txt-m-bottom: var(--fbx-p-text-spacer);
+	--fbx-txt-lhight: var(--fbx-base-line-height);
+	--fbx-txt-ttl-height: calc(1em * var(--fbx-txt-lhight));
+	--fbx-txt-lhight-px: calc(var(--fbx-txt-ttl-height) - var(--fbx-txt-height));
+
+	display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    font-size: var(--fbx-txt-font-size);
+    padding-top: calc(var(--fbx-txt-lhight-px) / 2);
+    padding-bottom: calc((var(--fbx-txt-lhight-px) / 2) + var(--fbx-txt-m-bottom));
+  	row-gap: var(--fbx-txt-lhight-px);
+  	column-gap: 6px;
+
+  	&.text-right
+  	{
+  		flex-direction: row-reverse;
+  	}
+  	&.skeleton-lines
+  	{
+  		flex-direction: column;
+  	}
+
+	.skeleton
+	{
+		--fbx-skeleton-radius: #{$skeleton-text-radius};
+		--fbx-skeleton-height: 0.8em;
+		--fbx-skeleton-width: 100%;
+		--fbx-skeleton-margin: 0;
+		max-width: var(--fbx-skeleton-width);
+    	flex: 0 0 auto;
+
+    	// Fallback for long paragraphs
+    	&:nth-child(odd)
+    	{
+    		--fbx-skeleton-width: 60%;
+    	}
+    	&:nth-child(even)
+    	{
+    		--fbx-skeleton-width: 85%;
+    	}
+	}
+}
+
+.skeleton-text-block-h1,.skeleton-text-block-h2,.skeleton-text-block-h3,.skeleton-text-block-h4,.skeleton-text-block-h5,.skeleton-text-block-h6
+{
+	--fbx-txt-m-bottom: var(--fbx-headings-spacer);
+	--fbx-txt-lhight: var(--fbx-headings-line-height);
+}
+
+// Heading blocks
+.skeleton-text-block-h1
+{
+	--fbx-txt-font-size: var(--fbx-text-size-h1);
+}
+.skeleton-text-block-h2
+{
+	font-size: var(--fbx-text-size-h2);
+}
+.skeleton-text-block-h3
+{
+	--fbx-txt-font-size: var(--fbx-text-size-h3);
+}
+.skeleton-text-block-h4
+{
+	--fbx-txt-font-size: var(--fbx-text-size-h4);
+}
+.skeleton-text-block-h5
+{
+	--fbx-txt-font-size: var(--fbx-text-size-h5);
+	
+}
+.skeleton-text-block-h6
+{
+	--fbx-txt-font-size: var(--fbx-text-size-h6);
+}
+
+// swapping content
+.skeleton-swapping-content
+{
+	position: relative;
+
+	.swapping-content-wrapper
+	{
+		position: absolute;
+    	top: 50%;
+    	left: 50%;
+    	transform: translate3d(-50%, -50%, 0px);
+    	opacity: 0;
+    	width: 100%;
+	}
+	.swapping-content-wrapper.fragment
+	{
+		position: absolute;
+    	top: 0;
+    	left: 0;
+    	transform: none;
+	}
+
+}

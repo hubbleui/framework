@@ -1,0 +1,293 @@
+// Headings
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6
+{
+    font-family: var(--fbx-font-headings);
+    font-weight: var(--fbx-headings-font-weight);
+    margin: 0 0 var(--fbx-headings-spacer) 0;
+    font-style: normal;
+
+    // Overflow on tiny screens
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+@include media-breakpoint-up(sm)
+{
+    h1, h2, h3, h4, h5, h6,
+    .h1, .h2, .h3, .h4, .h5, .h6
+    {
+        word-wrap: initial;
+        overflow-wrap: initial;
+    }
+}
+
+h1, .h1
+{ 
+    font-size: var(--fbx-text-size-h1);
+    line-height: var(--fbx-headings-line-height);
+}
+h2, .h2
+{ 
+    font-size: var(--fbx-text-size-h2);
+    line-height: var(--fbx-headings-line-height);
+}
+h3, .h3
+{ 
+    font-size: var(--fbx-text-size-h3);
+    line-height: var(--fbx-headings-line-height);
+}
+h4, .h4
+{ 
+    font-size: var(--fbx-text-size-h4);
+    line-height: var(--fbx-headings-line-height);
+}
+h5, .h5
+{ 
+    font-size: var(--fbx-text-size-h5);
+    line-height: var(--fbx-headings-line-height);
+}
+h6, .h6
+{ 
+    font-size: var(--fbx-text-size-h6);
+    line-height: var(--fbx-headings-line-height);
+}
+
+// Text sizes
+// Paragraph
+p
+{
+    margin: 0 0 var(--fbx-p-text-spacer) 0;
+    font-size: var(--fbx-base-font-size);
+    line-height: var(--fbx-base-line-height);
+}
+.p1
+{
+    font-size: var(--fbx-text-size-p1);
+    line-height: calc(var(--fbx-text-size-p1) * 1.45);
+}
+.p2
+{
+    font-size: var(--fbx-text-size-p2);
+    line-height: calc(var(--fbx-text-size-p2) * 1.45);
+}
+.p3
+{
+    font-size: var(--fbx-text-size-p3);
+    line-height: calc(var(--fbx-text-size-p3) * 1.45);
+}
+.p4
+{
+    font-size: var(--fbx-text-size-p4);
+    line-height: calc(var(--fbx-text-size-p4) * 1.45);
+}
+.p5
+{
+    font-size: var(--fbx-text-size-p5);
+    line-height: calc(var(--fbx-text-size-p5) * 1.45);
+}
+.p6
+{
+    font-size: var(--fbx-text-size-p6);
+    line-height: calc(var(--fbx-text-size-p6) * 1.45);
+}
+
+// Bold and Italics
+b,
+strong,
+.strong
+{
+    font-weight: $text-bold;
+}
+em,
+.em
+{
+    font-style: italic;
+}
+
+// Small
+small,
+.small
+{
+  font-size: 80%;
+  font-weight: normal;
+}
+
+// Horizontal rules
+hr,
+.hr
+{
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 1px;
+    border: 0;
+    margin-top: 1em;
+}
+
+// Abbreviation
+abbr[title], .abbr[title]
+{ border-bottom: 1px dotted; }
+
+// Definition
+dfn
+{ font-style: italic; }
+
+// Mark
+mark,
+.mark
+{
+    background: yellow;
+    color: var(--fbx-black);
+}
+
+// Sub and Sup
+sub,
+.sub,
+sup,
+.sup
+{
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+sup, .sup
+{ top: -0.5em; }
+sub, .sub
+{ bottom: -0.25em; }
+
+// Del
+del, .del
+{ text-decoration: line-through; }
+
+// address
+address,
+.address
+{
+    font-family: var(--fbx-base-font-family);
+    font-weight: var(--fbx-base-font-weight);
+    line-height: var(--fbx-base-line-height);
+    color:       var(--fbx-body-color);
+    font-size:   var(--fbx-base-font-size);
+    margin: 0 0 1rem 0;
+}
+
+// Sample
+samp
+{
+    font-size: 85%;
+}
+
+blockquote:not([class])
+{
+    padding: 0 1em;
+    color: var(--fbx-gray);
+    border-left: 0.25em solid var(--fbx-gray-300);
+
+    >
+    {
+        :first-child
+        {
+            margin-top: 0;
+        }
+
+        :last-child
+        {
+            margin-bottom: 0;
+        }
+    }
+}
+
+// Basic list styling
+ul, ol
+{
+    padding-left: 2em;
+}
+ol
+{
+    &.no-list
+    {
+        padding: 0;
+        list-style-type: none;
+    }
+    &[type="az"]
+    {
+        list-style-type: lower-alpha;
+    }
+    &[type="AZ"]
+    {
+        list-style-type: upper-alpha;
+    }
+    &[type="1"]
+    {
+        list-style-type: decimal;
+    }
+}
+
+div > ol:not([type])
+{
+    list-style-type: decimal;
+}
+
+ul
+{
+    ul, ol
+    {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+ol
+{
+    ol, ul
+    {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+li
+{
+    > p
+    {
+        margin-top: 1.6rem;
+    }
+
+    + li
+    {
+        margin-top: 0.25em;
+    }
+}
+
+
+// Very basic code/pre
+code, pre
+{
+    font-family: var(--fbx-font-monospace);
+    line-height: var(--fbx-base-line-height);
+    font-size: 1.2rem;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: initial;
+    -moz-osx-font-smoothing: initial;
+    background-color: var(--fbx-gray-200);
+    border-radius: var(--fbx-border-radius);
+    border: 1px solid var(--fbx-gray-200);
+}
+code
+{
+    padding: .2rem .4rem;
+    color: crimson;
+}
+pre
+{
+    padding: 1.5rem 2rem;
+    overflow: auto;
+    color: var(--fbx-black);
+}
+pre > code
+{
+    color: var(--fbx-black);
+    border: none;
+    background-color: transparent;
+}

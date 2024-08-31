@@ -1,0 +1,153 @@
+.notification-wrap
+{
+	--fbx-notification-max-width: #{$notification-max-width};
+	--fbx-notification-bg: #{$notification-bg};
+	--fbx-notification-color: #{$notification-color};
+	z-index: var(--fbx-zindex-notification);
+	width: 100%;
+	position: fixed;
+	display: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    row-gap: 10px;
+    padding-left:  map-get($container-gutters, xs);
+    padding-right: map-get($container-gutters, xs);
+	
+	&.active
+	{
+		display: flex;
+	}
+	.msg
+	{
+		--fbx-msg-bg: var(--fbx-notification-bg);
+	    --fbx-msg-color: var(--fbx-notification-color);
+	    width: 100%;
+		cursor: pointer;
+		@include raised($notification-shadow);
+	}
+
+	&.position-top,
+	&.position-bottom
+	{
+		left: 0;
+	    right: 0;
+	    margin: 0 auto;
+	}
+
+	&.position-left,
+	&.position-right
+	{
+		top: 50%;
+    	transform: translateY(-50%);
+	}
+
+	&.position-top,
+	&.position-top-left,
+	&.position-top-right
+	{
+		top: 5px;
+	}
+	&.position-bottom,
+	&.position-bottom-left,
+	&.position-bottom-right
+	{
+		bottom: 5px;
+	}
+
+	&.position-top-left,
+	&.position-left,
+	&.position-bottom-left
+	{
+		left: 0;
+	}
+	&.position-top-right,
+	&.position-right,
+	&.position-bottom-right
+	{
+		right: 0;
+	}
+}
+
+@include media-breakpoint-up(sm)
+{
+	.notification-wrap
+	{
+		max-width: var(--fbx-notification-max-width);
+	}
+}
+
+@keyframes fadeInUp
+{
+	from
+  	{
+    	opacity: 0;
+    	transform: translate3d(0, 100%, 0);
+  	}
+
+  	to
+  	{
+    	opacity: 1;
+    	transform: translate3d(0px, 0px, 0px);
+  	}
+}
+@keyframes fadeInDown
+{
+	from
+  	{
+    	opacity: 0;
+    	transform: translate3d(0, -100%, 0);
+  	}
+  	to
+  	{
+    	opacity: 1;
+    	transform: translate3d(0px, 0px, 0px);
+  	}
+}
+
+@keyframes fadeOutDown
+{
+	from
+  	{
+    	opacity: 1;
+    	transform: translate3d(0px, 0px, 0px);
+  	}
+
+  	to
+  	{
+    	opacity: 0;
+    	transform: translate3d(0, 100%, 0);
+  	}
+}
+
+@keyframes fadeOutUp
+{
+	from
+  	{
+    	opacity: 1;
+    	transform: translate3d(0px, 0px, 0px);
+  	}
+
+  	to
+  	{
+    	opacity: 0;
+    	transform: translate3d(0, -100%, 0);
+  	}
+}
+
+.animate-in-up
+{
+	animation: fadeInUp .25s ease forwards;
+}
+.animate-in-down
+{
+	animation: fadeInDown .25s ease forwards;
+}
+.animate-out-down
+{
+	animation: fadeOutDown .25s ease-in-out forwards;
+}
+.animate-out-up
+{
+	animation: fadeOutUp .25s ease-in-out forwards;
+}
+

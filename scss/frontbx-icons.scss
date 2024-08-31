@@ -1,0 +1,13 @@
+// Variables
+@import 'variables';
+@import 'icons/local';
+@import 'icons/external';
+
+@if $local-icons != 'true'
+{
+	@include _external-icons;
+}
+@else
+{
+	@include _local-icons;
+}

@@ -1,0 +1,123 @@
+.popover
+{
+    --fbx-popover-max-width: #{$popover-max-width};
+    --fbx-popover-shadow: #{$popover-shadow};
+    --fbx-popover-font-size: #{$popover-font-size};
+    --fbx-popover-title-size: #{$popover-title-size};
+    --fbx-popover-radius: #{$popover-radius};
+    --fbx-popover-pad-y: #{$popover-pad-y};
+    --fbx-popover-pad-x: #{$popover-pad-x};
+
+    --fbx-popover-bg-light: #{$popover-bg-light};
+    --fbx-popover-color-light: #{$popover-color-light};
+    --fbx-popover-title-color-light: #{$popover-title-color-light};
+    --fbx-popover-title-border-light: #{$popover-title-border-light};
+
+    --fbx-popover-bg-dark: #{$popover-bg-dark};
+    --fbx-popover-color-dark: #{$popover-color-dark};
+    --fbx-popover-title-color-dark: #{$popover-title-color-dark};
+    --fbx-popover-title-border-dark: #{$popover-title-border-dark};
+
+    --fbx-popover-bg: none;
+    --fbx-popover-color: none;
+    --fbx-popover-title-color: none;
+    --fbx-popover-title-border: none;
+    position: absolute;
+    font-size: var(--fbx-popover-font-size);
+    border-radius: var(--fbx-popover-radius);
+    max-width: var(--fbx-popover-max-width);
+    box-shadow: var(--fbx-popover-shadow);
+    @include raise(--fbx-popover-shadow, $popover-shadow, $black);
+    background-color: var(--fbx-popover-bg);
+    color: var(--fbx-popover-color);
+    z-index: var(--fbx-zindex-popover);
+
+    .popover-title
+    {
+        font-size: var(--fbx-popover-title-size);
+        color: var(--fbx-popover-title-color);
+        border-bottom: var(--fbx-popover-title-border);
+        border-top-left-radius: var(--fbx-popover-radius);
+        border-top-right-radius: var(--fbx-popover-radius);
+        margin-bottom: 0;
+        padding: var(--fbx-popover-pad-y) var(--fbx-popover-pad-x);
+    }
+    .popover-content
+    {
+        padding: var(--fbx-popover-pad-y) var(--fbx-popover-pad-x);
+    }
+    
+    // Themes
+    &.dark
+    {
+        --fbx-popover-bg: var(--fbx-popover-bg-dark);
+        --fbx-popover-color: var(--fbx-popover-color-dark);
+        --fbx-popover-title-color: var(--fbx-popover-title-color-dark);
+        --fbx-popover-title-border: var(--fbx-popover-title-border-dark);
+    }
+    &.light
+    {
+        --fbx-popover-bg: var(--fbx-popover-bg-light);
+        --fbx-popover-color: var(--fbx-popover-color-light);
+        --fbx-popover-title-color: var(--fbx-popover-title-color-light);
+        --fbx-popover-title-border: var(--fbx-popover-title-border-light);
+    }
+    p
+    {
+        padding: 0;
+        font-size: var(--fbx-popover-font-size);
+        &:last-child
+        {
+            margin-bottom: 0;
+        }
+    }
+    .close-btn
+    {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        right: 0;
+        width: 35px;
+        height: 35px;
+    }
+}
+
+// Animations
+@keyframes popoverfade
+{
+    from
+    {
+        opacity: 0;
+    }
+
+    to
+    {
+        opacity: 1;
+    }
+}
+@keyframes popoverpop
+{
+    from
+    {
+        opacity: 0;
+        transform: scale3d(.3, .3, .3);
+    }
+    50%
+    {
+        opacity: 1;
+    }
+}
+
+.popover-fade
+{
+    animation-name: popoverfade;
+    animation-duration: .3s;
+    animation-fill-mode: both;
+}
+
+.popover-pop
+{
+    animation-name: popoverpop;
+    animation-duration: .1s;
+    animation-fill-mode: both;
+}

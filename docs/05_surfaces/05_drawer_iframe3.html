@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Documentation | FrontBx UI</title>
+        <meta name="description" content="">
+        <script src="{{ASSET_PATH}}dist/js/frontbx.lazyload.js"></script>
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/lazyload.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/frontbx-icons.css">
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/frontbx.css">
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/docs.css">
+        <style type="text/css">
+            :root
+            {
+                --hb-body-bg: var(--hb-white);
+            }
+            .drawer-container
+            {
+                --hb-drawer-width: 300px;
+                --hb-drawer-size-peekable: 80px;
+            }
+            .menu
+            {
+                --hb-menu-item-pad-y: 15px;
+                --hb-menu-item-pad-x: 30px;
+                --hb-menu-font-size: 1.5rem;
+            }
+            .menu > *
+            {
+                column-gap: 38px;
+            }
+            
+            .menu .fa
+            {
+                --hb-icon-size: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="pad-20">
+            <div class="flex-row-fluid align-cols-center-y pole-sm">
+                <button class="js-dw-trigger btn">Open</button>
+            </div>
+            <div class="skeleton-text-block skeleton-lines">
+                <div class="skeleton" style="width: 81%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 91%;"></div>
+                <div class="skeleton" style="width: 71%;"></div>
+                <div class="skeleton" style="width: 81%;"></div>
+            </div>
+            <div class="skeleton-text-block skeleton-lines">
+                <div class="skeleton" style="width: 81%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 91%;"></div>
+            </div>
+        </div>
+        <script src="{{ASSET_PATH}}dist/js/frontbx.bundle.js"></script>
+        <script src="{{ASSET_PATH}}dist/js/docs.js"></script>
+        <script type="text/javascript">
+    
+            let btn = FrontBx._().find('.js-dw-trigger');
+
+            let drawer = FrontBx.Drawer(
+            {
+                persistent    : true,
+                peekable      : true,
+                direction     : 'left',
+                state         : 'collapsed',
+                callbackClose : () => open = false,
+                content          : `
+                <ul class="menu"> 
+                    <li>
+                        <span class="item-left"><span class="fa fa-inbox color-gray-500"></span></span>
+                        <span class="item-body">Inbox</span>
+                        <span class="item-right"><span class="label">4</span></span>
+                    </li>
+                    <li>
+                        <span class="item-left"><span class="fa fa-flag color-gray-500"></span></span>
+                        <span class="item-body">Flagged</span>
+                        <span class="item-right"><span class="label">23</span></span>
+                    </li>
+                    <li>
+                        <span class="item-left"><span class="fa fa-note-sticky color-gray-500"></span></span>
+                        <span class="item-body">Drafts</span>
+                        <span class="item-right"><span class="label">3</span></span>
+                    </li>
+                    <li>
+                        <span class="item-left"><span class="fa fa-paper-plane color-gray-500"></span></span>
+                        <span class="item-body">Sent</span>
+                        <span class="item-right"><span class="status status-xs"></span></span>
+                    </li>
+                    <li>
+                        <span class="item-left"><span class="fa fa-circle-minus color-gray-500"></span></span>
+                        <span class="item-body">Junk</span>
+                        <span class="item-right"><span class="status status-xs status-warning"></span></span>
+                    </li>
+                    <li>
+                        <span class="item-left"><span class="fa fa-trash color-gray-500"></span></span>
+                        <span class="item-body">Trash</span>
+                        <span class="item-right"><span class="status status-xs status-danger"></span></span>
+                    </li>
+                </ul>`
+        
+            });
+
+            FrontBx._().on(btn, 'click', (e, btn) => drawer.state() === 'expanded' ? drawer.close() : drawer.open());
+        </script>
+
+    </body>
+</html>

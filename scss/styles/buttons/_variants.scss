@@ -1,0 +1,122 @@
+@use "sass:map";
+
+// Standard buttons
+@mixin button($color, $background)
+{
+    $basename : _color-name-from-var($background);
+    
+    // Base
+    --fbx-btn-color: #{$color};
+    --fbx-btn-bg-color: #{$background};
+
+    // Hover
+    --fbx-btn-bg-color-hover: var(--fbx-#{$basename}-500);
+
+    // Active
+    --fbx-btn-color-active: #{$color};
+    --fbx-btn-bg-color-active: var(--fbx-#{$basename}-600);
+    --fbx-btn-box-shadow-active: none;
+
+    // Loader / Icon
+    --fbx-btn-loader-color: #{$color};
+    --fbx-btn-color-hover: #{$color};
+
+    &.selected,
+    &.checked
+    {
+        color: #{$color};
+        background-color: var(--fbx-#{$basename}-600);
+    }
+}
+
+// Outline buttons
+@mixin button-outline($color)
+{
+    $basename : _var-to-str($color);
+    
+    // Base
+    --fbx-btn-color: #{$color};
+    --fbx-btn-bg-color: transparent;
+    --fbx-btn-border:  1px solid #{$color};
+    --fbx-btn-box-shadow: none;
+
+    // Hover
+    --fbx-btn-color-hover: #{$color};
+    --fbx-btn-bg-color-hover: #{rgba(var(--#{$basename}-rgb), 0.05)};
+
+    // Active
+    --fbx-btn-color-active: #{$color};
+    --fbx-btn-bg-color-active: #{rgba(var(--#{$basename}-rgb), 0.1)};
+
+    // Icon / Loader
+    --fbx-btn-loader-color: #{$color};
+
+    &.selected,
+    &.checked
+    {
+        --fbx-btn-border:  1px solid #{rgba(var(--#{$basename}-rgb), 0.6)};
+    }
+}
+
+// Pure buttons
+@mixin button-pure($color)
+{
+    $basename : _var-to-str($color);
+
+    // Base
+    --fbx-btn-color: #{$color};
+    --fbx-btn-bg-color :transparent;
+    --fbx-btn-box-shadow: none;
+
+    // Hover
+    --fbx-btn-color-hover: #{$color};
+    --fbx-btn-bg-color-hover: #{rgba(var(--#{$basename}-rgb), 0.1)};
+    
+    // Active
+    --fbx-btn-color-active: #{$color};
+    --fbx-btn-bg-color-active: #{rgba(var(--#{$basename}-rgb), 0.2)};
+
+    // Icon / Loader
+    --fbx-btn-loader-color: #{$color};
+}
+
+// Color variants
+@each $context, $colors in $contexts
+{    
+    .btn.btn-#{$context}
+    {
+        @include button( map-get($colors, "contrast"), map-get($colors, "color"));
+    }
+}
+
+// Outline variants
+.btn.btn-outline
+{
+    @include button-outline( var(--fbx-gray) );
+
+    &.selected,
+    &.checked
+    {
+        --fbx-btn-border:  1px solid var(--fbx-theme-primary);
+    }
+}
+@each $context, $colors in $contexts
+{    
+    .btn.btn-#{$context}.btn-outline
+    {
+        @include button-outline( map-get($colors, "color") );
+    }
+}
+
+// Pure variants
+.btn.btn-pure
+{
+    @include button-pure( var(--fbx-gray) );
+}
+@each $context, $colors in $contexts
+{
+    .btn.btn-#{$context}.btn-pure
+    {
+        @include button-pure( map-get($colors, "color") );
+    }
+}

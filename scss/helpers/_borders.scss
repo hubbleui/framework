@@ -1,0 +1,24 @@
+// Reset
+.no-border              { border: 0; }
+
+// Color inheritance
+.border-s               {border-bottom: 1px solid;}
+.border-n               {border-top:    1px solid;}
+.border-e               {border-left:   1px solid;}
+.border-w               {border-right:  1px solid;}
+
+// Color specific
+.border-gray            {border-color: var(--fbx-gray)}
+@for $i from 1 through 9
+{
+    .border-gray-#{$i}00 { border-color: var(--fbx-gray-#{$i}00) }
+}
+@each $context, $colors in $contexts
+{    
+    $color : map-get($colors, 'color');
+
+    .border-#{$context} { border-color: $color}
+}
+
+// Radius
+.border-radius           { border-radius: var(--fbx-border-radius); }

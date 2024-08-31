@@ -1,0 +1,13 @@
+@mixin _make-flex-gutters($curr-grid, $prev-grid: null)
+{
+    @if $curr-grid == null
+    {
+        .flex-row > *[class*="gutter-"],
+        .flex-row > *[class*="-gutter"]
+        {
+            //width: calc( (var(--fbx-col-width) - var(--fbx-gutter-l)) - var(--fbx-gutter-r));
+            //flex: 1 0 calc( (var(--fbx-col-width) - var(--fbx-gutter-l)) - var(--fbx-gutter-r));
+            --fbx-col-flex: 1 0 0%;
+        }
+    }
+}

@@ -1,0 +1,573 @@
+// Prebuilt colors to choose a theme from
+// Flat colors
+$teal:                          #7de3b5 !default;
+$turquoise:                     #1abc9c !default;
+$greensea:                      #16a085 !default;
+$emerland:                      #2ecc71 !default;
+$nephritis:                     #27ae60 !default;
+$babyblue:                      #b0e2fe !default;
+$peterrive:                     #3498db !default;
+$belizehol:                     #2980b9 !default;
+$amethyst:                      #9b59b6 !default;
+$wisteria:                      #8e44ad !default;
+$wetasphalt:                    #34495e !default;
+$midnightblue:                  #2c3e50 !default;
+$sunflower:                     #f1c40f !default;
+$orange:                        #f39c12 !default;
+$carrot:                        #e67e22 !default;
+$salmon:                        #ed5d81 !default;
+$pumpkin:                       #d35400 !default;
+$alizarin:                      #e74c3c !default;
+$pomegranate:                   #c0392b !default;
+$clouds:                        #ecf0f1 !default;
+$silver:                        #bdc3c7 !default;
+$concrete:                      #95a5a6 !default;
+$asbestos:                      #7f8c8d !default;
+
+// Neons
+$neongreen:                     #2bf877 !default;
+$skyblue:                       #73dcff !default;
+$beetroot:                      #c349ff !default;
+$hotpink:                       #ff2eaa !default;
+$pineapple:                     #fff224 !default;
+$coralred:                      #ff3a24 !default;
+$ash:                           #838c92 !default;
+
+// Basic colors
+$white:                         #FFFFFF !default;
+$black:                         #323232 !default;
+$gray:                          #9597a0 !default;
+
+// Contexts
+$theme-primary:                 var(--fbx-color-hotpink)     !default;
+$theme-secondary:               var(--fbx-color-salmon)      !default;
+$theme-success:                 var(--fbx-color-emerland)    !default;
+$theme-info:                    var(--fbx-color-skyblue)     !default;
+$theme-warning:                 var(--fbx-color-sunflower)   !default;
+$theme-danger:                  var(--fbx-color-coralred)    !default;
+
+@import 'colors';
+
+// Load and host icons locally?
+$local-icons:					'true' !default;
+$icons-url:						'../fonts/' !default;
+
+// Basic element coloring
+$body-bg:                       #fafafa !default;
+$body-color:                    #1d1d1d !default;
+$link-color:                    var(--fbx-theme-primary) !default;
+$link-color-hover:              var(--fbx-theme-primary-500) !default;
+
+// Global font families
+$font-family-sans-serif:        -apple-system, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !default;
+$font-family-serif:             Georgia, "Times New Roman", Times, serif !default;
+$font-family-monospace:         Menlo, Monaco, Consolas, "Courier New", monospace !default;
+$base-font-family:              var(--fbx-font-sans-serif) !default;
+$font-family-headings:          var(--fbx-font-sans-serif) !default;
+
+// Default font weights
+$text-lightest:                 100 !default;
+$text-light:                    300 !default;
+$text-normal:                   400 !default;
+$text-bold:                     500 !default;
+$text-bolder:                   600 !default;
+$text-boldest:                  900 !default;
+
+// Global base font styles
+$base-font-size:                1.45rem !default;
+$base-line-height:              1.8 !default;
+$base-font-weight:              $text-normal !default;
+$font-smoothing:                true !default;
+
+// Headings sizes
+$text-size-h1:                  ($base-font-size * 3.1) !default;
+$text-size-h2:                  ($base-font-size * 2.6) !default;
+$text-size-h3:                  ($base-font-size * 2.2) !default;
+$text-size-h4:                  ($base-font-size * 1.6) !default;
+$text-size-h5:                  ($base-font-size * 1.2) !default;
+$text-size-h6:                  $base-font-size !default;
+
+// Paragraph sizes
+$text-spacer:                   1em !default;
+$text-size-p1:                  ($base-font-size * 1.8) !default;
+$text-size-p2:                  ($base-font-size * 1.4) !default;
+$text-size-p3:                  ($base-font-size * 1.1) !default;
+$text-size-p4:                  ($base-font-size * 0.9) !default;
+$text-size-p5:                  ($base-font-size * 0.8) !default;
+$text-size-p6:                  ($base-font-size * 0.7) !default;
+
+// Heading styles
+$headings-font-weight:          $text-bold !default;
+$headings-line-height:          1.2 !default;
+$headings-spacer:               0.75em !default;
+
+// Icon sizes
+$icon-size:                     16px !default;
+$icon-xs:                       16px !default;
+$icon-md:                       20px !default;
+$icon-lg:                       30px !default;
+$icon-xl:                       45px !default;
+$icon-xxl:                      50px !default;
+
+// Base aesthetics
+$border-radius:                 3px !default;
+
+// Grid breakpoints
+$breakpoint-xs:                 0 !default;
+$breakpoint-sm:                 576px !default;
+$breakpoint-md:                 768px !default;
+$breakpoint-lg:                 992px !default;
+$breakpoint-xl:                 1200px !default;
+
+// Base transitions
+$base-easing:                   cubic-bezier(0, 0, 0.2, 1) !default;
+$base-easing-time:              var(--fbx-ease-time-sm) !default;
+
+// Raised levels
+$raised-level-one:              rgba(0, 0, 0, 0.2) 0px 2px 1px -1px, rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 0px 1px 3px 0px !default;
+$raised-level-two:              rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px !default;
+$raised-level-three:            rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px !default;
+$box-shadow-in:                 inset 0 5px 8px -2px rgba(0,0,0,.13) !default;
+
+// Button
+$btn-text-transform:            none !default;
+$btn-pad-x:                     1.6rem !default;
+$btn-pad-y:                     1.4rem !default;
+$btn-font-size:                 1.4rem !default;
+$btn-font-weight:               $text-bold !default;
+$btn-letter-spacing:            0 !default;
+
+$btn-base-bg:                   var(--fbx-gray-200);
+$btn-base-color:                var(--fbx-gray-700);
+
+$btn-base-bg-hover:             var(--fbx-gray-300);
+$btn-base-color-hover:          var(--fbx-gray-700);
+
+$btn-base-bg-active:            var(--fbx-gray-400);
+$btn-base-color-active:         var(--fbx-gray-700);
+
+$btn-xs-pad-x:                  _minusPercent($btn-pad-x, 30) !default;
+$btn-xs-pad-y:                  _minusPercent($btn-pad-y, 30) !default;
+
+$btn-sm-pad-x:                  _minusPercent($btn-pad-x, 20) !default;
+$btn-sm-pad-y:                  _minusPercent($btn-pad-y, 20) !default;
+
+$btn-lg-pad-x:                  _addPercent($btn-pad-x, 30) !default;
+$btn-lg-pad-y:                  _addPercent($btn-pad-y, 30) !default;
+
+$btn-xl-pad-x:                  _addPercent($btn-pad-x, 50) !default;
+$btn-xl-pad-y:                  _addPercent($btn-pad-y, 50) !default;
+
+$circle-btn-font-size:          2.0rem !default;
+
+$btn-icon-font-size:            20px !default;
+
+$btn-group-radius:              var(--fbx-border-radius) !default;
+
+// Lists
+$list-bg:						var(--fbx-white) !default;
+$list-color:					var(--fbx-gray-700) !default;
+$list-font-size:				1.3rem !default;
+$list-item-bg:                  transparent !default;
+$list-item-color-hover:         var(--fbx-gray-700) !default;
+$list-item-color-active:        var(--fbx-gray-700) !default;
+$list-item-color-selected:      var(--fbx-white) !default;
+$list-item-bg-hover:            var(--fbx-gray-200) !default;
+$list-item-bg-active:           var(--fbx-theme-info-100) !default;
+$list-item-bg-selected:         var(--fbx-theme-info) !default;
+$list-item-pad-y:               10px !default;
+$list-item-pad-x:               12px !default;
+$list-divider-color:            var(--fbx-gray-200) !default;
+$list-divider-space:            5px;
+
+// Dropdown
+$dropdown-border-radius:        var(--fbx-border-radius) !default;
+$dropdown-min-width:            160px !default;
+$dropdown-max-width:            250px !default;
+$dropdown-height:               300px !default;
+$dropdown-shadow-level:         2 !default;
+$dropdown-bg:                   var(--fbx-white) !default;
+
+// Menu
+$menu-bg:						var(--fbx-white) !default;
+$menu-color:					var(--fbx-gray-700) !default;
+$menu-font-size:				1.3rem !default;
+$menu-item-bg:                  transparent !default;
+$menu-item-color-hover:         var(--fbx-gray-700) !default;
+$menu-item-color-active:        var(--fbx-gray-700) !default;
+$menu-item-color-selected:      var(--fbx-white) !default;
+$menu-item-bg-hover:            var(--fbx-gray-200) !default;
+$menu-item-bg-active:           var(--fbx-theme-info-100) !default;
+$menu-item-bg-selected:         var(--fbx-theme-info) !default;
+$menu-item-pad-y:               10px !default;
+$menu-item-pad-x:               12px !default;
+$menu-divider-color:            var(--fbx-gray-200) !default;
+$menu-divider-space:            5px;
+
+// Inline elements
+$badge-size:                    7px !default;
+
+// Table
+$table-font-size:               1.3rem !default;
+$table-bg:                      transparent !default;
+$table-bg-hover:                rgba(0, 0, 0, 0.08) !default;
+$table-bg-alternate:            rgba(0, 0, 0, 0.08) !default;
+$table-color:                   inherit !default;
+$table-cell-pad-y:              1.2rem !default;
+$table-cell-pad-x:              1.8rem !default;
+$table-border-color:            var(--fbx-gray-200) !default;
+$table-head-bg:                 var(--fbx-gray-200) !default;
+$table-head-color:              var(--fbx-gray-900) !default;
+$table-head-weight:             $text-bold !default;
+$table-caption-color:           var(--fbx-gray) !default;
+$table-selected-color:          var(--fbx-white) !default;
+$table-selected-bg:             var(--fbx-theme-info) !default;
+
+
+// Messages
+$msg-bg:                        var(--fbx-black) !default;
+$msg-color:                     var(--fbx-white) !default;
+$msg-icon-color:                var(--fbx-theme-primary) !default;
+$msg-spacer-y:                  3rem !default;
+$msg-spacer-x:                  2rem !default;
+$msg-font-size:                 1.4rem !default;
+$msg-icon-font-size:			1.6rem !default;
+$msg-border-radius:             var(--fbx-border-radius) !default;
+
+
+// Modals
+$modal-max-width:               680px !default;
+$modal-max-height:              80vh !default;
+$modal-shadow:                  3 !default; //0,1,2,3 
+$modal-overlay-bg:              rgba(255, 255, 255, 0.8) !default;
+$modal-overlay-bg-dark:         rgba(0, 0, 0, 0.5) !default;
+$modal-title-size:              1.8rem !default;
+$modal-transform-on:            translate3d(0px, 0px, 0px) !default;
+$modal-transform-off:           translate3d(0px, -50px, 0px) !default;
+$modal-transition:              opacity .225s ease-out .225s, transform .225s ease-out .225s !default;
+$modal-overlay-transition:      opacity .225s ease-out !default;
+
+
+// Drawer
+$drawer-bg:						var(--fbx-white) !default;
+$drawer-width:                  230px !default;
+$drawer-size-peekable:          80px !default;
+$drawer-overlay-bg:             rgba(255, 255, 255, 0.8) !default;
+$drawer-overlay-bg-dark:        rgba(0, 0, 0, 0.5) !default;
+$drawer-border-color:    		var(--fbx-gray-200) !default;
+
+// Frontdrop
+$frontdrop-height:               75vh !default;
+$frontdrop-peekable-height:      50px !default;
+$frontdrop-radius:               10px !default;
+$frontdrop-overlay-bg:           rgba(255, 255, 255, 0.8) !default;
+$frontdrop-overlay-bg-dark:      rgba(0, 0, 0, 0.5) !default;
+
+// Backdrop
+$backdrop-bg:					 var(--fbx-gray-700) !default;
+$backdrop-color:				 var(--fbx-white) !default;
+$backdrop-width:                 230px !default;
+$backdrop-size-peekable:         80px !default;
+
+// Paper
+$paper-bg:                      var(--fbx-white) !default;
+$paper-radius:                  var(--fbx-border-radius) !default;
+$paper-flat-border:             var(--fbx-gray-300) !default;
+
+// Card
+$card-bg:                       var(--fbx-white) !default;
+$card-bg-focus:                 var(--fbx-white) !default;
+$card-color:                    var(--fbx-gray-900) !default;
+$card-title-color:              var(--fbx-body-color) !default;
+$card-line-height:              1.8 !default;
+$card-border-radius:            var(--fbx-border-radius) !default;
+$card-border-width:             0 !default;
+$card-border-color:             var(--fbx-gray-200) !default;
+$card-box-shadow:               var(--fbx-raised-level-two) !default;
+$card-box-shadow-hover:         var(--fbx-raised-level-two) !default;
+$card-spacer-y:                 1.2rem !default;
+$card-spacer-x:                 1.6rem !default;
+$card-divider-color:            var(--fbx-gray-300) !default;
+$card-divider-size:             1px !default;
+$card-divier-space:             1rem !default;
+$card-actions-spacer-y:         2rem !default;
+$card-actions-spacer-x:         0.5rem !default;
+$card-media-padding:            0 !default;
+$card-media-bg:                 var(--fbx-gray-100) !default;
+$card-landscape-img-sm:         80px !default;
+$card-landscape-img-md:         150px !default;
+$card-landscape-img-lg:         300px !default;
+
+// Inputs
+$input-font-size:               1.5rem !default;
+$input-line-height:             1.5rem !default;
+$input-pad-y:                   1.5rem !default;
+$input-pad-x:                   1.6rem !default;
+$input-bg:                      var(--fbx-body-bg) !default;
+$input-bg-focus:                var(--fbx-body-bg) !default;
+$input-color:                   var(--fbx-body-color) !default;
+$input-color-label:             var(--fbx-gray-400) !default;
+$input-color-placeholder:       var(--fbx-gray-300) !default;
+$input-border-color:            var(--fbx-gray-400) !default;
+$input-radius:                  var(--fbx-border-radius) !default;
+$input-focus-theme:             var(--fbx-theme-info) !default;
+$input-border-size-n:           1px !default;
+$input-border-size-e:           1px !default;
+$input-border-size-s:           1px !default;
+$input-border-size-w:           1px !default;
+$input-addon-bg:                var(--fbx-gray-100) !default;
+$input-addon-color:             var(--fbx-gray-400) !default;
+
+// Checkbox
+$checkbox-size:                 20px !default;
+$checkbox-color:                var(--fbx-gray) !default;
+$checkbox-label-color:          var(--fbx-gray) !default;
+$checkbox-radius:               2px !default;
+
+// Radio
+$radio-size:                    20px !default;
+$radio-color:                   var(--fbx-gray) !default;
+$radio-label-color:             var(--fbx-gray) !default;
+
+// Switch
+$switch-size:                   20px !default;
+$switch-track-color-off:        var(--fbx-gray-300) !default;
+$switch-track-color-on:         var(--fbx-gray-300) !default;
+$switch-knob-color-off:         var(--fbx-white) !default;
+$switch-knob-color-on:          var(--fbx-gray) !default;
+
+// Progress
+$progress-size:                 10px !default;
+$progress-radius:               var(--fbx-border-radius) !default;
+$progress-bg:                   var(--fbx-gray-200) !default;
+$progress-color:                var(--fbx-gray) !default;
+$progress-gradient:             linear-gradient(to right,  #b0e2fe 0%,#b0b2fb 100%);
+
+// Tabs
+$tab-nav-color:                 var(--fbx-gray-700) !default;
+$tab-nav-color-active:          var(--fbx-body-color) !default;
+$tab-nav-color-highlight:       var(--fbx-theme-primary) !default;
+$tab-nav-divider-color:         var(--fbx-gray-200) !default;
+$tab-nav-font-size:             1.3rem !default;
+$tab-nav-font-weight:           $text-normal !default;
+$tab-nav-font-weight-active:    $text-bold !default;
+$tab-nav-border-radius:         var(--fbx-border-radius) !default;
+$tab-nav-pad-y:                 0.8rem !default;
+$tab-nav-pad-x:                 0.4rem !default;
+$tab-transition:                $base-easing-time $base-easing !default;
+
+// Lazyloading / images
+$lazyload-start-opacity:        0.6 !default;
+$lazyload-end-opacity:          1 !default;
+$lazyload-start-blur:           5px !default;
+$lazyload-end-blur:             0px !default;
+$lazyload-start-grayscale:      1 !default;
+$lazyload-end-grayscale:        0 !default;
+$lazyload-transition:           opacity 1s cubic-bezier(0.4, 0.0, 0.2, 1), filter 1s cubic-bezier(0.4, 0.0, 0.2, 1);
+$lazyload-falback-bg:           #d0d4d9;
+
+// Slider
+$slider-bg:                     transparent !default;
+$slider-dots-color:             var(--fbx-white) !default;
+$slider-dots-color-active:      var(--fbx-theme-primary) !default;
+$slider-dots-size:              3px !default;
+$slider-nav-btn-size:           25px !default;
+$slider-nav-btn-color:          var(--fbx-white) !default;
+$slider-nav-btn-color-hover:    var(--fbx-theme-primary) !default;
+$slider-slides-gap:				20px;
+$slider-slide-width:			66%;
+
+// Tooltips
+$tooltip-bg:                    var(--fbx-gray-900) !default;
+$tooltip-color:                 var(--fbx-white) !default;
+$tooltip-font-size:             11px !default;
+$tooltip-font-weight:           $text-bold !default;
+$tooltip-line-height:           20px !default;
+$tooltip-radius:                var(--fbx-border-radius) !default;
+$tooltip-pad-y:                 2px !default;
+$tooltip-pad-x:                 8px !default;
+$tooltop-target-space:          5px !default;
+$tooltop-target-space-neg:      -5px !default;
+
+// Avatar
+$avatar-size:                   40px !default;
+$avatar-bg:                     var(--fbx-gray-200) !default;
+$avatar-text-color:             inherit !default;
+
+// Nprogress
+$nprogress-color:               var(--fbx-theme-primary) !default;
+
+// Popovers
+$popover-max-width:             270px !default;
+$popover-shadow:                2 !default; // 0,1,2,3
+$popover-font-size:             1.2rem !default;
+$popover-title-size:            1.2rem !default;
+$popover-radius:                var(--fbx-border-radius) !default;
+$popover-pad-y:                 1rem !default;
+$popover-pad-x:                 1.5rem !default;
+
+$popover-bg-light:              var(--fbx-white) !default;     
+$popover-color-light:           var(--fbx-gray-600) !default;
+$popover-title-color-light:     var(--fbx-gray-700) !default;
+$popover-title-border-light:    1px solid var(--fbx-gray-300) !default;
+
+$popover-bg-dark:               var(--fbx-black) !default;
+$popover-color-dark:            var(--fbx-gray-400) !default;
+$popover-title-color-dark:      var(--fbx-white) !default;
+$popover-title-border-dark:     1px solid var(--fbx-gray-400) !default;
+
+// Labels
+$label-font-size:               1.1rem !default;
+$label-font-weight:             $text-bolder !default;
+$label-color:                   var(--fbx-white) !default;
+$label-bg:                      var(--fbx-gray-300) !default;
+$label-pad-y:                   4px !default;
+$label-pad-x:                   6px !default;
+$label-radius:                  var(--fbx-border-radius) !default;
+
+// Status
+$status-size:                   14px !default;
+$status-color:                  var(--fbx-gray-300) !default;
+
+// Blockquotes
+$bq-bg:                         var(--fbx-gray-200) !default;
+$bq-radius:                     var(--fbx-border-radius) !default;
+$bq-pad-y:                      2rem !default;
+$bq-pad-x:                      2rem !default;
+
+// Notifications
+$notification-max-width:        450px;
+$notification-bg:               var(--fbx-black) !default;
+$notification-color:            var(--fbx-white) !default;
+$notification-shadow:           3 !default;
+
+// Hamburger
+$hamburger-color:               var(--fbx-body-color) !default;
+$hamburger-color-active:        var(--fbx-theme-primary) !default;
+
+// Loading animations
+$loader-color1:                 var(--fbx-gray) !default;
+$loader-color2:                 var(--fbx-gray-300) !default;
+$loader-size:                   30px !default;
+
+// Ripple
+$ripple-color:                  rgba(0, 0, 0, 0.15) !default;
+
+// Scrollbars
+$scrollbar-size:                0.8rem !default;
+$scrollbar-transition:          background-color .05s linear !default;
+$scrollbar-track-color:         rgba(0, 0, 0, 0.07) !default;
+$scrollbar-track-hover:         rgba(0, 0, 0, 0.07) !default;
+$scrollbar-track-active:        rgba(0, 0, 0, 0.07) !default;
+
+$scrollbar-handle-color:        rgba(0, 0, 0, 0.2) !default;
+$scrollbar-handle-hover:        rgba(0, 0, 0, 0.3) !default;
+$scrollbar-handle-active:       rgba(0, 0, 0, 0.35) !default;
+
+// Skeleton
+$skeleton-bg-1:                 rgba(0, 0, 0, 0.2) !default;
+$skeleton-bg-2:                 rgba(0, 0, 0, 0.4) !default;
+$skeleton-text-radius:          var(--fbx-border-radius) !default;
+
+// Responsive breakpoints
+$breakpoints:
+(
+    'xs':                       $breakpoint-xs,
+    'sm':                       $breakpoint-sm,
+    'md':                       $breakpoint-md,
+    'lg':                       $breakpoint-lg,
+    'xl':                       $breakpoint-xl,
+) !default;
+
+// Grid gutters
+$grid-gutters:
+(
+    'xxs':                      0.5rem,
+    'xs':                       1rem,
+    'sm':                       2.0rem,
+    'md':                       2.5rem,
+    'lg':                       3.0rem,
+    'xl':                       3.5rem,
+) !default;
+
+// Grid poles
+$grid-poles:
+(
+    'xxs':                      0.5rem,
+    'xs':                       1rem,
+    'sm':                       3.0rem,
+    'md':                       6.0rem,
+    'lg':                       8.0rem,
+    'xl':                       10.0rem,
+) !default;
+
+// Container gutters
+$container-gutters:
+(
+    'xxs':                      0.5rem,
+    'xs':                       1rem,
+    'sm':                       3.0rem,
+    'md':                       3.0rem,
+    'lg':                       3.0rem,
+    'xl':                       3.0rem,
+) !default;
+
+// Easings
+$easings:
+(
+    'ease-in-sine':             'cubic-bezier(0.47, 0, 0.745, 0.715)',
+    'ease-out-sine':            'cubic-bezier(0.39, 0.575, 0.565, 1)',
+    'ease-in-out-sine':         'cubic-bezier(0.445, 0.05, 0.55, 0.95)',
+
+    'ease-in-quad':             'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
+    'ease-out-quad':            'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    'ease-in-out-quad':         'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+
+    'ease-in-cubic':            'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
+    'ease-out-cubic':           'cubic-bezier(0.215, 0.61, 0.355, 1)',
+    'ease-in-out-cubic':        'cubic-bezier(0.645, 0.045, 0.355, 1)',
+
+    'ease-in-quart':            'cubic-bezier(0.895, 0.03, 0.685, 0.22)',
+    'ease-out-quart':           'cubic-bezier(0.165, 0.84, 0.44, 1)',
+    'ease-in-out-quart':        'cubic-bezier(0.77, 0, 0.175, 1)',
+
+    'ease-in-quint':            'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
+    'ease-out-quint':           'cubic-bezier(0.23, 1, 0.32, 1)',
+    'ease-in-out-quint':        'cubic-bezier(0.86, 0, 0.07, 1)',
+
+    'ease-in-expo':             'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
+    'ease-out-expo':            'cubic-bezier(0.19, 1, 0.22, 1)',
+    'ease-in-out-expo':         'cubic-bezier(1, 0, 0, 1)',
+
+    'ease-in-circ':             'cubic-bezier(0.6, 0.04, 0.98, 0.335)',
+    'ease-out-circ':            'cubic-bezier(0.075, 0.82, 0.165, 1)',
+    'ease-in-out-circ':         'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
+
+    'ease-in-back':             'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
+    'ease-out-back':            'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+    'ease-in-out-back':         'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+
+) !default;
+
+// Easing times
+$easing-times:
+(
+    'xs':                       0.1s,
+    'sm':                       0.3s,
+    'md':                       0.5s,
+    'lg':                       1s,
+    'xl':                       3s,
+) !default;
+
+// Zindexs
+$zindexs:
+(
+    'backdrop':                 100,
+    'tooltip':                  200,
+    'popover':                  300,
+    'dropdown':                 400,
+    'drawer':                   500,
+    'frontdrop':                600,
+    'notification':             700,
+    'modal':                    800,
+) !default;

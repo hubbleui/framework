@@ -1,0 +1,139 @@
+.list
+{
+    --fbx-list-bg: #{$list-bg};
+    --fbx-list-color: #{$list-color};
+    --fbx-list-font-size: #{$list-font-size};
+    --fbx-list-item-color-hover: #{$list-item-color-hover};
+    --fbx-list-item-color-active: #{$list-item-color-active};
+    --fbx-list-item-color-selected: #{$list-item-color-selected};
+    --fbx-list-item-bg: #{$list-item-bg};
+    --fbx-list-item-bg-hover: #{$list-item-bg-hover};
+    --fbx-list-item-bg-active: #{$list-item-bg-active};
+    --fbx-list-item-bg-selected: #{$list-item-bg-selected};
+    --fbx-list-item-pad-y: #{$list-item-pad-y};
+    --fbx-list-item-pad-x: #{$list-item-pad-x};
+    --fbx-list-divider-color: #{$list-divider-color};
+    --fbx-list-divider-space: #{$list-divider-space};
+
+
+    list-style: none;
+    margin: 0;
+    background-color: var(--fbx-list-bg);
+    color: var(--fbx-list-color);
+    padding: var(--fbx-list-item-pad-y) 0px;
+    font-size: var(--fbx-list-font-size);
+
+    > *
+    {
+        margin: 0;
+        padding: var(--fbx-list-item-pad-y) var(--fbx-list-item-pad-x);
+        background-color: var(--fbx-list-item-bg);
+        column-gap: var(--fbx-list-item-pad-x);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+
+        .item-left,
+        .item-right
+        {
+            flex: 0 0 auto;
+            display: flex;
+            position: relative;
+        }
+        .item-body
+        {
+            flex: 1 1 auto;
+        }
+        a,a:hover
+        {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        &:hover,
+        &.hover
+        {
+            background-color: var(--fbx-list-item-bg-hover);
+            color: var(--fbx-list-item-color-hover);
+        }
+        &.active
+        {
+            background-color: var(--fbx-list-item-bg-active);
+            color: var(--fbx-list-item-color-active);
+        }
+        &.selected
+        {
+            background-color: var(--fbx-list-item-bg-selected);
+            color: var(--fbx-list-item-color-selected);
+            .item-title
+            {
+            	color: var(--fbx-list-item-color-selected);
+            }
+        }
+        &.disabled,&.disabled:hover
+        {
+            background-color: var(--fbx-list-item-bg);
+            color: var(--fbx-list-color);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .item-title
+        {
+        	color: var(--fbx-body-color);
+        	font-weight: $text-bold;
+        }
+    }
+
+    // Overflow
+    &.list-ellipsis
+    {
+        > *
+        {
+            @include _ellipsis;
+            
+            .item-body
+            {
+                min-width: 0;
+                @include _ellipsis;
+
+                > *
+                {
+                	@include _ellipsis;
+                }
+            }
+        }
+    }
+    
+    // Header and divider
+    .list-header
+    {
+        font-weight: $text-bold;
+        padding: 0px var(--fbx-list-item-pad-x) var(--fbx-list-item-pad-y) var(--fbx-list-item-pad-x);
+        border-bottom: 1px solid var(--fbx-list-divider-color);
+    }
+    .list-divider
+    {
+        padding: var(--fbx-list-divider-space) 0 0 0;
+        margin: 0 0 var(--fbx-list-divider-space) 0;
+        border-bottom: 1px solid var(--fbx-list-divider-color);
+    }
+    .list-header:hover,
+    .list-divider:hover
+    {
+        background-color: var(--fbx-list-item-bg);
+        color: var(--fbx-list-color);
+    }
+
+    // Dense
+    &.list-dense
+    {
+        --fbx-list-font-size: #{_minusPercent($list-font-size, 3)};
+        --fbx-list-item-pad-y: #{_minusPercent($list-item-pad-y, 40)};
+        --fbx-list-item-pad-x: #{_minusPercent($list-item-pad-x, 10)};
+        --fbx-list-divider-space: #{_minusPercent($list-divider-space, 30)};
+    }
+
+}

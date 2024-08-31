@@ -1,0 +1,119 @@
+.switch
+{
+    --fbx-switch-size :#{$switch-size};
+    --fbx-switch-track-color-off :#{$switch-track-color-off};
+    --fbx-switch-track-color-on :#{$switch-track-color-on};
+    --fbx-switch-knob-color-off :#{$switch-knob-color-off};
+    --fbx-switch-knob-color-on :#{$switch-knob-color-on};
+
+    input[type=checkbox]
+    {
+        display: none;
+
+        + label
+        {
+            position: relative;
+            display: inline-block;
+            padding-left: calc(var(--fbx-switch-size) * 2.3);
+            cursor: pointer;
+            &:before, 
+            &:after
+            {
+                content: "";
+                position: absolute;
+                margin: 0;
+                top: 50%;
+                outline: none;
+                transform: translate(0, -50%);
+                transition: all 0.15s ease-in-out;
+            }
+            &:before
+            {
+                background-color: var(--fbx-switch-track-color-off);
+                left: 1px;
+                width: calc(var(--fbx-switch-size) * 1.7);
+                height: calc(var(--fbx-switch-size) * 0.7);;
+                border-radius: 8px;
+            }
+            &:after
+            {
+                left: 0;
+                width: var(--fbx-switch-size);
+                height: var(--fbx-switch-size);
+                background-color: var(--fbx-switch-knob-color-off);
+                border-radius: 50%;
+                box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084);
+            }
+            .toggle-on
+            {
+                display: none;
+            }
+            .toggle-off
+            {
+                display: inline-block;
+            }
+        }
+        &:checked + label
+        {
+            &:before
+            {
+                background-color: var(--fbx-switch-track-color-on);
+            }
+            &:after
+            {
+                background-color: var(--fbx-switch-knob-color-on);
+                transform: translate(80%, -50%);
+            }
+            .toggle-on
+            {
+                display: inline-block;
+            }
+            .toggle-off
+            {
+                display: none;
+            }
+        }
+    }
+
+    // Disabled
+    &.disabled label,
+    input[type="checkbox"]:disabled + label
+    {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+     // Sizing
+    &.switch-sm
+    {
+        --fbx-switch-size: #{$switch-size * 0.75};
+    }
+    &.switch-md
+    {
+        --fbx-switch-size: #{$switch-size * 0.95};
+    }
+    &.switch-lg
+    {
+        --fbx-switch-size: #{$switch-size * 1.2};
+    }
+}
+
+// Variants
+// Variants
+@mixin _checkbox($color)
+{
+    $light: _color-name-from-var($color) + '-200';
+    $medium: _color-name-from-var($color) + '-300';
+
+    --fbx-switch-track-color-off:  var(--fbx-#{$light});
+    --fbx-switch-track-color-on: var(--fbx-#{$medium});
+    --fbx-switch-knob-color-on :#{$color};
+
+}
+
+@each $context, $colors in $contexts
+{    
+    .switch.switch-#{$context}
+    {
+        @include _checkbox( map-get($colors, "color") );
+    }
+}

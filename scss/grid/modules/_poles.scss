@@ -1,0 +1,31 @@
+@mixin _make-poles($curr-grid, $prev-grid: null)
+{
+    @each $name, $size in $grid-poles
+    {
+        $polename : if($curr-grid == null, pole-#{$name}, pole-#{$curr-grid}-#{$name});
+
+        .#{$polename}
+        {
+            --fbx-pole-s: var(--fbx-grid-pole-#{$name});
+            --fbx-pole-n: var(--fbx-grid-pole-#{$name});
+        }
+    }
+
+    $Nname : if($curr-grid == null, pole-n,  pole-#{$curr-grid}-n);
+    $Sname : if($curr-grid == null, pole-s,  pole-#{$curr-grid}-s);
+    $Ename : if($curr-grid == null, no-pole, no-pole-#{$curr-grid});
+
+    .#{$Nname}
+    {
+        --fbx-pole-s: 0px;
+    }
+    .#{$Sname}
+    {
+        --fbx-pole-n: 0px;
+    }
+    .#{$Ename}
+    {
+        --fbx-pole-s: 0px;
+        --fbx-pole-n: 0px;
+    }
+}

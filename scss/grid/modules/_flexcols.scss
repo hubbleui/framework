@@ -1,0 +1,14 @@
+@use "sass:math";
+@mixin _make-flex-cols($curr-grid, $prev-grid: null)
+{
+    // colums
+    @for $i from 1 through 12
+    {
+        $colname : if($curr-grid == null, col-#{$i}, col-#{$curr-grid}-#{$i});
+
+        .flex-row > .#{$colname}
+        {
+            --fbx-col-width: #{unquote('#{math.div(100, 12) * $i}%')};
+        }
+    }
+}

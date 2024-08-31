@@ -1,0 +1,38 @@
+.progress-bar
+{
+    --fbx-progress-size: #{$progress-size};
+    --fbx-progress-radius: #{$progress-radius};
+    --fbx-progress-bg: #{$progress-bg};
+    --fbx-progress-color: #{$progress-color};
+
+    display: block;
+    overflow: hidden;
+    width: 100%;
+    border-radius: var(--fbx-progress-radius);
+    height: var(--fbx-progress-size);
+    background-color: var(--fbx-progress-bg);
+
+    .progress
+    {
+        float: left;
+        height: 100%;
+        width: 100%;
+        position: relative;
+        width: 0;
+        background: var(--fbx-progress-color);
+    }
+
+    @each $context, $colors in $contexts
+    {    
+        &.progress-#{$context}
+        {
+            --fbx-progress-color: #{map-get($colors, "color")};
+        }
+    }
+
+    &.progress-gradient .progress
+    {
+        --fbx-progress-color: #{$progress-gradient};
+    }
+}
+

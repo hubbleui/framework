@@ -1,0 +1,34 @@
+.status
+{
+	--fbx-status-color: #{$status-color};
+	--fbx-status-size: #{$status-size};
+	width: var(--fbx-status-size);
+	height: var(--fbx-status-size);
+	display: inline-block;
+	border-radius: 50%;
+	background-color: var(--fbx-status-color);
+
+    @each $context, $colors in $contexts
+    {
+        &.status-#{$context}
+        {
+            --fbx-status-color: #{map-get($colors, "color")};
+        }
+    }
+    &.status-xs
+    {
+    	--fbx-status-size: #{_minusPercent($status-size, 50)}
+    }
+    &.status-sm
+    {
+    	--fbx-status-size: #{_minusPercent($status-size, 30)}
+    }
+    &.status-lg
+    {
+    	--fbx-status-size: #{_addPercent($status-size, 30)}
+    }
+    &.status-xl
+    {
+    	--fbx-status-size: #{_addPercent($status-size, 50)}
+    }
+}

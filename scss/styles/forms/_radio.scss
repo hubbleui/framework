@@ -1,0 +1,172 @@
+@use "sass:math";
+// styles
+.radio
+{
+    display: inline-block;
+    position: relative;
+
+    --fbx-radio-size: #{$radio-size};
+    --fbx-radio-color: #{$radio-color};
+    --fbx-radio-label-color: #{$radio-label-color};
+
+    height: var(--fbx-radio-size);
+    min-width: var(--fbx-radio-size);
+    line-height: var(--fbx-radio-size);
+
+    // Click circle
+    &:before
+    {
+        content: '';
+        display: block;
+        position: absolute;
+        border-radius: 50%;
+        width: calc(var(--fbx-radio-size) * 2);
+        height: calc(var(--fbx-radio-size) * 2);
+        background-color:var(--fbx-radio-color);
+        top: 50%;
+        left: calc( (var(--fbx-radio-size) / 2) * -1);
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: opacity .15s $base-easing;
+    }
+
+    // Click label setup
+    label
+    {
+        display: inline-block;
+        cursor: pointer;
+        position: relative;
+        margin: 0;
+        padding: 0 0 0 calc(var(--fbx-radio-size) * 1.2);
+        white-space: nowrap;
+        min-width: var(--fbx-radio-size);
+        height: var(--fbx-radio-size);
+        .toggle-on
+        {
+            display: none;
+        }
+        .toggle-off
+        {
+            display: inline-block;
+        }
+    }
+
+    // Fake circle
+    label:before
+    {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: transparent;
+        border-radius: 50%;
+        width: var(--fbx-radio-size);
+        height: var(--fbx-radio-size);
+        border: 2px solid var(--fbx-radio-color);
+        transition: border-width .15s ease-in-out;
+    }
+
+    // Inner dot
+    label:after
+    {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        top: 50%;
+        left: calc(var(--fbx-radio-size) / 4);
+        background-color: var(--fbx-white);
+        border-radius: 50%;
+        width: calc(var(--fbx-radio-size) / 2);
+        height: calc(var(--fbx-radio-size) / 2);
+        transform: translateY(-50%) scale(0);
+        opacity: 0;
+        transition: transform .15s ease-in-out, opacity .15s ease-in-out;
+    }
+
+    // Hideradio
+    input[type="radio"]
+    {
+        position: absolute;
+        visibility: hidden;
+        opacity: 0;
+        width: var(--fbx-radio-size);
+        height: var(--fbx-radio-size);
+        margin: 0;
+        padding: 0;
+    }
+
+    // Hover
+    &:hover:before
+    {
+        opacity: 0.2;
+    }
+
+    // Checked
+    input[type="radio"]:checked
+    {
+        // Fill square
+        + label:before
+        {
+            border-color: var(--fbx-radio-color);
+            border-width: calc(var(--fbx-radio-size) / 2);
+        }
+
+        // Show inner dot
+        + label:after
+        {
+            transform: translateY(-50%) scale(1.0);
+            opacity: 1;
+            transition: transform .15s ease-in-out, opacity .15s ease-in-out;
+        }
+
+        // Toggle text
+        +label
+        {
+            .toggle-on
+            {
+                display: inline-block;
+            }
+            .toggle-off
+            {
+                display: none;
+            }
+        }       
+    }
+
+    // Disabled
+    &.disabled label,
+    input[type="radio"]:disabled + label
+    {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    // Sizing
+    &.radio-sm
+    {
+        --fbx-radio-size: #{$radio-size * 0.75};
+    }
+    &.radio-md
+    {
+        --fbx-radio-size: #{$radio-size * 0.95};
+    }
+    &.radio-lg
+    {
+        --fbx-radio-size: #{$radio-size * 1.2};
+    }
+}
+
+// Variants
+@mixin _radio($color)
+{
+    --fbx-radio-color: #{$color};
+}
+
+@each $context, $colors in $contexts
+{    
+    .radio.radio-#{$context}
+    {
+        @include _radio( map-get($colors, "color") );
+    }
+}

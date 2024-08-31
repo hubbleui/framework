@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Documentation | FrontBx UI</title>
+        <meta name="description" content="">
+        <script src="../../../dist/js/frontbx.lazyload.js"></script>
+        <link rel="stylesheet" href="../../../dist/css/lazyload.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../dist/css/frontbx-icons.css">
+        <link rel="stylesheet" href="../../../dist/css/frontbx.css">
+        <link rel="stylesheet" href="../../../dist/css/docs.css">
+    </head>
+    <body>
+        <div class="flex-row-fluid align-cols-center pole-md">
+            <p>Swipe or down to open/close</p>
+        </div>
+        
+        <script src="../../../dist/js/frontbx.bundle.js"></script>
+        <script src="../../../dist/js/docs.js"></script>
+        <script type="text/javascript">
+            const SKELETONS = 
+            [
+                { lines: 2, variant: 'block-h4' },
+                { lines: 6, variant: 'text-block' },
+            ];
+            const frontdrop = FrontBx.Frontdrop(
+            {
+                swipeable:       true,
+                state:           'expanded',
+                callbackBuilt: (container, drawer, overlay) => FrontBx.Skeleton(FrontBx._().find('.card-block .container-fluid', container), SKELETONS),
+            });
+        </script>
+    </body>
+</html>

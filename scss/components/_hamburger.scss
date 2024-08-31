@@ -1,0 +1,48 @@
+// Hamburger
+.hamburger
+{
+    --fbx-hamburger-color: #{$hamburger-color};
+    --fbx-hamburger-color-active: #{$hamburger-color-active};
+    margin: 0;
+    overflow: hidden;
+    background-color: transparent;
+    display: inline-block;
+    padding: 10px;
+    height: 35px;
+    width: 40px;
+
+    @include button-unstyled();
+    
+    .hamburger-bun,
+    .hamburger-patty
+    {
+        display: block;
+        background-color: var(--fbx-hamburger-color);
+        width: 20px;
+        height: 1px;
+        margin: 0 auto 6px;
+        transition: $base-easing-time $base-easing;
+    }
+    &.active .hamburger-bun,
+    &.active .hamburger-patty
+    {
+        background-color: var(--fbx-hamburger-color-active);
+        position: relative;
+    }
+    &.active .hamburger-bun--top
+    {
+        top: 6px;
+        transform: rotate(45deg)
+    }
+    &.active .hamburger-patty
+    {
+        top: -1px;
+        transform: rotate(45deg);
+        opacity: 0
+    }
+    &.active .hamburger-bun--btm
+    {
+        bottom: 8px;
+        transform: rotate(-45deg)
+    }
+}

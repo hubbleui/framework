@@ -1,0 +1,122 @@
+.modal-wrap
+{
+	--fbx-modal-title-size: #{$modal-title-size};
+	--fbx-modal-transition: #{$modal-transition};
+	--fbx-modal-max-width: #{$modal-max-width};
+	--fbx-modal-max-height: #{$modal-max-height};
+	--fbx-modal-transform-on: #{$modal-transform-on};
+	--fbx-modal-transform-off: #{$modal-transform-off};
+
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	z-index: var(--fbx-zindex-modal);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	.modal-dialog
+	{
+		opacity: 1;
+		height: auto;
+		transform: translate3d(0px, 0px, 0px);
+		transition: var(--fbx-modal-transition);
+		max-height: var(--fbx-modal-max-height);
+
+	    .card
+		{
+			max-width: var(--fbx-modal-max-width);
+			@include raised($modal-shadow);
+		}
+	}
+	.container-fluid
+	{
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.card-header
+	{
+		h4
+		{
+			font-size: var(--fbx-modal-title-size);
+		}
+	}
+
+	&.scroll-modal
+	{
+		.modal-dialog
+		{
+			overflow-y: auto;
+		}
+	}
+	&.scroll-content
+	{
+		.modal-dialog
+		{
+			overflow: hidden;
+			height: 100%;
+		}
+		.card
+		{
+			max-height: 100%;
+    		overflow: hidden;
+		}
+	}
+}
+
+.modal-overlay
+{
+	--fbx-modal-overlay-bg: #{$modal-overlay-bg};
+	--fbx-modal-overlay-bg-dark: #{$modal-overlay-bg-dark};
+	--fbx-modal-overlay-transition: #{$modal-overlay-transition};
+	z-index: var(--fbx-zindex-modal);
+	transition: var(--fbx-modal-overlay-transition);
+	transform: var(--fbx-modal-transform-on);
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	visibility: visible;
+	opacity: 1;
+	
+
+	&.overlay-dark
+	{
+		background-color: var(--fbx-modal-overlay-bg-dark);
+	}
+	&.overlay-light
+	{
+		background-color: var(--fbx-modal-overlay-bg);
+	}
+	&.disabled
+	{
+		display: none !important;
+	}
+}
+
+.modal-overlay.closed, .modal-overlay.closing,
+.modal-wrap.closed .modal-dialog, .modal-wrap.closing .modal-dialog
+{
+	opacity: 0;
+	transition: var(--fbx-modal-overlay-transition);
+	transition-delay: 0s;
+
+}
+.modal-wrap.closed .modal-dialog, .modal-wrap.closing .modal-dialog
+{
+	transform: var(--fbx-modal-transform-off);
+	transition: var(--fbx-modal-transition);
+	transition-delay: 0s;
+}
+
+.modal-overlay.closed, 
+.modal-wrap.closed
+{
+	visibility: hidden;
+}
+

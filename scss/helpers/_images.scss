@@ -1,0 +1,72 @@
+.img-responsive
+{
+    display: block;
+    width: 100%;
+    height: auto;
+    outline: none;
+}
+
+.ratio-img, .bg-image
+{
+    --fbx-aspect-ratio: 1/1;
+    --fbx-width: 100%;
+    --fbx-height: auto;
+    width: var(--fbx-width);
+    height: var(--fbx-height);
+}
+.bg-image
+{
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+.ratio-img
+{
+    position: relative;
+    overflow: hidden;
+
+    > img
+    {
+        position: absolute;
+        width: auto;
+        height: 100%;
+        left: 50%;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0px);
+    }
+
+    @include _clearfix;
+}
+
+// Square
+.ratio-1-1  { --fbx-aspect-ratio: 1/1;  }
+
+// Landscape
+.ratio-3-2  { --fbx-aspect-ratio: 3/2;  }
+.ratio-4-3  { --fbx-aspect-ratio: 4/3;  }
+.ratio-5-3  { --fbx-aspect-ratio: 5/3;  }
+.ratio-5-4  { --fbx-aspect-ratio: 5/4;  }
+.ratio-16-9 { --fbx-aspect-ratio: 16/9;  }
+
+// Portrait
+.ratio-2-3  { --fbx-aspect-ratio: 2/3;  }
+.ratio-3-4  { --fbx-aspect-ratio: 3/4;  }
+.ratio-3-5  { --fbx-aspect-ratio: 3/5;  }
+.ratio-4-5  { --fbx-aspect-ratio: 4/5;  }
+.ratio-9-16 { --fbx-aspect-ratio: 9/16;  }
+
+.ratio-img, .bg-image
+{
+    padding-top: calc(100% / (var(--fbx-aspect-ratio)));
+}
+@supports (aspect-ratio: 1/1)
+{
+    .ratio-img, .bg-image
+    {
+        padding-top: 0;
+        aspect-ratio: var(--fbx-aspect-ratio);
+    }
+}
+
+
+

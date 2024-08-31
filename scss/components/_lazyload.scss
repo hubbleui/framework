@@ -1,0 +1,38 @@
+.lazyload
+{
+    --fbx-lazyload-start-opacity: #{$lazyload-start-opacity};
+    --fbx-lazyload-end-opacity: #{$lazyload-end-opacity};
+    --fbx-lazyload-start-blur: #{$lazyload-start-blur};
+    --fbx-lazyload-end-blur: #{$lazyload-end-blur};
+    --fbx-lazyload-start-grayscale: #{$lazyload-start-grayscale};
+    --fbx-lazyload-end-grayscale: #{$lazyload-end-grayscale};
+    --fbx-lazyload-transition: #{$lazyload-transition};
+    --fbx-lazyload-falback-bg: #{$lazyload-falback-bg};
+
+    opacity: var(--fbx-lazyload-start-opacity);
+    filter: var(--fbx-lazyload-start-blur);
+    transition: var(--fbx-lazyload-transition);
+    transform: translate3d(0,0,0);
+
+    &.grayscale
+    {
+        filter: grayscale(var(--fbx-lazyload-start-grayscale)) blur(var(--fbx-lazyload-start-blur));
+    }
+    
+    &.lazy-loading
+    {
+        filter: grayscale(var(--fbx-lazyload-end-grayscale)) blur(var(--fbx-lazyload-end-blur));
+        opacity: var(--fbx-lazyload-end-opacity);
+    }
+    &.lazy-loaded
+    {
+        filter: none;
+        opacity: unset;
+    }
+    &.failed
+    {
+        background-color: var(--fbx-lazyload-falback-bg);
+        padding: 30%;
+        background-size: 40%;
+    }
+}

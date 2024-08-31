@@ -1,0 +1,129 @@
+// Message color variants
+.msg
+{
+    --fbx-msg-bg: #{$msg-bg};
+    --fbx-msg-color: #{$msg-color};
+    --fbx-msg-icon-color: #{$msg-icon-color};
+    --fbx-msg-spacer-y: #{$msg-spacer-y};
+    --fbx-msg-spacer-x: #{$msg-spacer-x};
+    --fbx-msg-border-radius: #{$msg-border-radius};
+    --fbx-msg-font-size: #{$msg-font-size};
+    --fbx-msg-icon-font-size: #{$msg-icon-font-size};
+
+    border-radius: var(--fbx-msg-border-radius);
+    background-color: var(--fbx-msg-bg);
+    color: var(--fbx-msg-color);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    
+    .msg-icon .fa
+    {
+       color: var(--fbx-msg-icon-color);
+       position: relative;
+
+        &:after
+        {
+            background-color: var(--fbx-msg-icon-color);
+            opacity: 0.2;
+        }
+    }
+
+    .msg-icon,
+    .msg-btn
+    {
+        flex: 0 0 auto;
+        display: flex;
+    }
+    .msg-body
+    {
+        flex: 1 1 auto;
+    }
+
+    // Message Icon
+    .msg-icon
+    {
+        text-align: center;
+        padding: 0 var(--fbx-msg-spacer-x);
+        .fa
+        {
+            display: inline-block;
+            font-size: var(--fbx-msg-icon-font-size);
+            width: 40px;
+            height: 40px;
+            line-height: 41px;
+
+            &:after
+            {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+            }
+        }
+    }
+
+    // Message Body
+    .msg-body
+    {
+        padding: var(--fbx-msg-spacer-y) var(--fbx-msg-spacer-x);
+
+        p
+        {
+            font-size: var(--fbx-msg-font-size);
+            margin: 0;
+            a
+            {
+                color: rgba(0,0,0,0.3);
+                &:hover
+                {
+                    color: rgba(0,0,0,0.5);
+                }
+            }
+        }
+    }
+    .msg-btn
+    {
+        padding: 0 var(--fbx-msg-spacer-x);
+        white-space: nowrap;
+    }
+    .msg-icon + .msg-body
+    {
+        padding: var(--fbx-msg-spacer-y) var(--fbx-msg-spacer-x) var(--fbx-msg-spacer-y) 0px;
+    }
+    .msg-body + .msg-btn
+    {
+        padding-left: 0;
+    }
+
+    // Dense
+    &.msg-dense
+    {
+        --fbx-msg-spacer-y: #{_minusPercent($msg-spacer-y, 50)};
+        --fbx-msg-spacer-x: #{_minusPercent($msg-spacer-x, 10)};
+        --fbx-msg-font-size: #{_minusPercent($msg-font-size, 5)};
+        
+        .fa
+        {
+            display: inline-block;
+            font-size: 16px;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+        }
+    }
+
+    // Variants
+    @each $context, $colors in $contexts
+    {    
+        &.msg-#{$context}
+        {
+            --fbx-msg-icon-color: #{map-get($colors, "color")};
+        }
+    }
+}

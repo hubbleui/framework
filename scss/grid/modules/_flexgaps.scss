@@ -1,0 +1,26 @@
+@mixin _make-flex-gaps($curr-grid, $prev-grid: null)
+{
+    @each $name, $size in $grid-gutters
+    {
+        $gapName : if($curr-grid == null, col-gaps-#{$name}, col-gaps-#{$curr-grid}-#{$name});
+
+        .#{$gapName}
+        {
+            --fbx-flex-col-gaps: var(--fbx-grid-gutter-#{$name});
+        }
+        .flex-row.#{$gapName} > *
+        {
+            --fbx-col-flex: 1 0 calc(var(--fbx-col-width) - var(--fbx-grid-gutter-#{$name}));
+        }
+    }
+    
+    @each $name, $size in $grid-poles
+    {
+        $gapName : if($curr-grid == null, row-gaps-#{$name}, row-gaps-#{$curr-grid}-#{$name});
+
+        .#{$gapName}
+        {
+            --fbx-flex-row-gaps: var(--fbx-grid-pole-#{$name});;
+        }
+    }
+}

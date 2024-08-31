@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Documentation | FrontBx UI</title>
+        <meta name="description" content="">
+        <script src="../../../dist/js/frontbx.lazyload.js"></script>
+        <link rel="stylesheet" href="../../../dist/css/lazyload.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../dist/css/frontbx-icons.css">
+        <link rel="stylesheet" href="../../../dist/css/frontbx.css">
+        <link rel="stylesheet" href="../../../dist/css/docs.css">
+        <style type="text/css">
+            :root
+            {
+                --hb-body-bg: var(--hb-white);
+            }
+            .drawer-container
+            {
+                --hb-drawer-width: 170px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="pad-20">
+            <div class="flex-row-fluid align-cols-center col-gaps-xs row-gaps-xs pole-sm">
+                <button class="js-dw-trigger btn">Left</button>
+                <button class="js-dw-trigger btn">Right</button>
+                <button class="js-dw-trigger btn">Top</button>
+                <button class="js-dw-trigger btn">Bottom</button>
+            </div>
+            <div class="skeleton-text-block skeleton-lines">
+                <div class="skeleton" style="width: 81%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 91%;"></div>
+                <div class="skeleton" style="width: 71%;"></div>
+                <div class="skeleton" style="width: 81%;"></div>
+            </div>
+            <div class="skeleton-text-block skeleton-lines">
+                <div class="skeleton" style="width: 81%;"></div>
+                <div class="skeleton" style="width: 84%;"></div>
+                <div class="skeleton" style="width: 91%;"></div>
+            </div>
+        </div>
+        <script src="../../../dist/js/frontbx.bundle.js"></script>
+        <script src="../../../dist/js/docs.js"></script>
+        <script type="text/javascript">
+    
+            let btns = FrontBx._().find_all('.js-dw-trigger');
+
+            let drawer;
+
+            FrontBx._().on(btns, 'click', (e, btn) => 
+            {          
+                let direction = btn.innerText.toLowerCase().trim();
+
+                if (drawer)
+                {
+                    if (drawer.direction() === direction)
+                    {
+                        if (drawer.state() === 'expanded')
+                        {
+                            return drawer.close();
+                        }
+                        else
+                        {
+                            return drawer.open();
+                        }
+                    }
+
+                    drawer.destroy();
+                }
+
+                drawer = FrontBx.Drawer(
+                {
+                    persistent: true,
+                    direction: direction,
+                    content: `
+                        <div class="gutter-xs pole-sm">
+                            <div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"></div>
+                            <div class="skeleton-text-block skeleton-lines">
+                                <div class="skeleton" style="width: 71%;"></div>
+                                <div class="skeleton" style="width: 81%;"></div>
+                            </div>
+                            <div class="skeleton-text-block skeleton-lines">
+                                <div class="skeleton" style="width: 81%;"></div>
+                                <div class="skeleton" style="width: 84%;"></div>
+                                <div class="skeleton" style="width: 91%;"></div>
+                            </div>
+                        </div>`
+            
+                });
+            });
+        </script>
+
+    </body>
+</html>

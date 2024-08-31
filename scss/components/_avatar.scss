@@ -1,0 +1,88 @@
+.avatar
+{
+	--fbx-avatar-bg: #{$avatar-bg};
+	--fbx-avatar-text-color: #{$avatar-text-color};
+	--fbx-avatar-size: #{$avatar-size};
+
+	width: var(--fbx-avatar-size);
+	height: var(--fbx-avatar-size);
+	color: var(--fbx-avatar-text-color);
+	background-color: var(--fbx-avatar-bg);
+	border-radius: 50%;
+	display: inline-block;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	position: relative;
+
+	img
+	{
+		display: block;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		border-radius: 50%;
+	}
+	video
+	{
+		display: block;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		border-radius: 50%;
+	}
+	.status
+	{
+		position: absolute;
+		top: -1px;
+		right: -1px;
+		box-shadow: var(--fbx-raised-level-three);
+	}
+	.badge
+	{
+		--fbx-badge-size: 6px;
+		position: absolute;
+		top: -3px;
+		right: -3px;
+		box-shadow: var(--fbx-raised-level-three);
+	}
+
+	// Colors
+	@each $context, $colors in $contexts
+    {
+        &.avatar-#{$context}
+        {
+            --fbx-avatar-bg: #{map-get($colors, "color")};
+            --fbx-avatar-text-color: #{map-get($colors, "contrast")};
+        }
+    }
+
+	// Sizing
+	&.avatar-xs
+	{
+		--fbx-avatar-size: #{ _minusPercent($avatar-size, 20) };
+		font-size: 80%;
+	}
+	&.avatar-sm
+	{
+		--fbx-avatar-size: #{ _minusPercent($avatar-size, 10)};
+		font-size: 90%;
+	}
+	&.avatar-md
+	{
+		--fbx-avatar-size: #{_addPercent($avatar-size, 20)};
+		font-size: 120%;
+	}
+	&.avatar-lg
+	{
+		--fbx-avatar-size: #{_addPercent($avatar-size, 30)};
+		font-size: 130%;
+	}
+	&.avatar-xl
+	{
+		--fbx-avatar-size: #{_addPercent($avatar-size, 50)};
+		font-size: 140%;
+	}
+}

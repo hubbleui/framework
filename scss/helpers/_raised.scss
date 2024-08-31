@@ -1,0 +1,19 @@
+// Raised
+.raised-1
+{
+    box-shadow: var(--fbx-raised-level-one);
+}
+.raised-2
+{
+    box-shadow: var(--fbx-raised-level-two);
+}
+.raised-3
+{
+    box-shadow: var(--fbx-raised-level-three);
+}
+.flat,
+.flat:hover,
+.flat:active
+{
+    box-shadow: none !important;
+}
