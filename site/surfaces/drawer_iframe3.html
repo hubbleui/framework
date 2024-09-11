@@ -5,27 +5,25 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Documentation | FrontBx UI</title>
         <meta name="description" content="">
-        <script src="../../../dist/js/frontbx.lazyload.js"></script>
-        <link rel="stylesheet" href="../../../dist/css/lazyload.css">
+        <script src="../../../dist/js/frontbx-lazyload.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../../../dist/css/frontbx-icons.css">
-        <link rel="stylesheet" href="../../../dist/css/frontbx.css">
-        <link rel="stylesheet" href="../../../dist/css/docs.css">
+        <link rel="stylesheet" href="../../../dist/css/frontbx.bundle.min.css">
+        <link rel="stylesheet" href="../../../dist/css/docs.min.css">
         <style type="text/css">
             :root
             {
-                --hb-body-bg: var(--hb-white);
+                --fbx-body-bg: var(--fbx-white);
             }
             .drawer-container
             {
-                --hb-drawer-width: 300px;
-                --hb-drawer-size-peekable: 80px;
+                --fbx-drawer-width: 300px;
+                --fbx-drawer-size-peekable: 80px;
             }
             .menu
             {
-                --hb-menu-item-pad-y: 15px;
-                --hb-menu-item-pad-x: 30px;
-                --hb-menu-font-size: 1.5rem;
+                --fbx-menu-item-pad-y: 15px;
+                --fbx-menu-item-pad-x: 30px;
+                --fbx-menu-font-size: 1.5rem;
             }
             .menu > *
             {
@@ -34,7 +32,7 @@
             
             .menu .fa
             {
-                --hb-icon-size: 20px;
+                --fbx-icon-size: 20px;
             }
         </style>
     </head>
@@ -57,12 +55,9 @@
                 <div class="skeleton" style="width: 91%;"></div>
             </div>
         </div>
-        <script src="../../../dist/js/frontbx.bundle.js"></script>
-        <script src="../../../dist/js/docs.js"></script>
+        <script src="../../../dist/js/frontbx.bundle.min.js"></script>
+        <script src="../../../dist/js/frontbx-docs.min.js"></script>
         <script type="text/javascript">
-    
-            let btn = FrontBx._().find('.js-dw-trigger');
-
             let drawer = FrontBx.Drawer(
             {
                 persistent    : true,
@@ -106,7 +101,7 @@
         
             });
 
-            FrontBx._().on(btn, 'click', (e, btn) => drawer.state() === 'expanded' ? drawer.close() : drawer.open());
+            FrontBx.DocsDemo('.js-dw-trigger', () => drawer.state() === 'expanded' ? drawer.close() : drawer.open());
         </script>
 
     </body>

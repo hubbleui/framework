@@ -14,11 +14,17 @@
 }
 .caret-s
 {
-    vertical-align: -2px;
     border-bottom-color: transparent;
 }
 .caret-n
 {
-    vertical-align: 2px;
     border-top-color: transparent;
+}
+.btn > .caret-s
+{
+    vertical-align: -2px;
+}
+.btn > .caret-n
+{
+    vertical-align: 2px;
 }

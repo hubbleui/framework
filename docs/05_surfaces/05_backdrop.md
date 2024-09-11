@@ -276,17 +276,17 @@ $backdrop-overlay-bg-dark:      rgba(0, 0, 0, 0.5) !default;
 .drawer-container.backdrop.drawer-bottom
 {
     // Drawer
-    --hb-drawer-bg: #{$drawer-bg};
-    --hb-drawer-width: var(--hb-backdrop-height);
-    --hb-drawer-size-peekable: #{$backdrop-peekable-height};
+    --fbx-drawer-bg: #{$drawer-bg};
+    --fbx-drawer-width: var(--fbx-backdrop-height);
+    --fbx-drawer-size-peekable: #{$backdrop-peekable-height};
 
     // Overlay
-    --hb-drawer-overlay-bg: #{$backdrop-overlay-bg};
-    --hb-drawer-overlay-bg-dark: #{$backdrop-overlay-bg-dark};
+    --fbx-drawer-overlay-bg: #{$backdrop-overlay-bg};
+    --fbx-drawer-overlay-bg-dark: #{$backdrop-overlay-bg-dark};
 
     // Backdrop
-    --hb-backdrop-height: #{$backdrop-height};
-    --hb-backdrop-radius: #{$backdrop-radius};
+    --fbx-backdrop-height: #{$backdrop-height};
+    --fbx-backdrop-radius: #{$backdrop-radius};
 }
 ```
 

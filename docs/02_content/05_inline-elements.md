@@ -112,9 +112,9 @@ You can customize the size or color of any badge using local CSS variables on `.
 ```sass
 .my-badge
 {
-	--hb-badge-size: 12px;
-	--hb-badge-color: var(--hb-white);
-	--hb-badge-bg: var(--hb-color-teal);
+	--fbx-badge-size: 12px;
+	--fbx-badge-color: var(--fbx-white);
+	--fbx-badge-bg: var(--fbx-color-teal);
 }
 ```
 
@@ -157,8 +157,8 @@ You can customize the size or color of any status using local CSS variables on `
 ```sass
 .my-status
 {
-	--hb-status-size: 12px;
-	--hb-badge-color: var(--hb-color-teal);
+	--fbx-status-size: 12px;
+	--fbx-badge-color: var(--fbx-color-teal);
 }
 ```
 

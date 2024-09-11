@@ -11,6 +11,13 @@
     padding: 0;
     margin: 0;
     color: inherit;
+    cursor: pointer;
+    line-height: 1;
+    text-decoration: none;
+    &:hover
+    {
+        text-decoration: none;
+    }
     &:focus
     {
         box-shadow: none;
@@ -80,7 +87,7 @@
     display: var(--fbx-btn-block);
     
     // Icon
-    .fa
+    .fa, .fa-brands
     {
         --fbx-icon-size: var(--fbx-btn-icon-size);
         display: inline !important; 
@@ -121,7 +128,7 @@
         background-color: var(--fbx-btn-bg-color-active);
         --fbx-btn-icon-color: var(--fbx-btn-color-active);
         --fbx-btn-transition: #{background-color var(--fbx-ease-time-sm) $base-easing, color var(--fbx-ease-time-sm) $base-easing};
-        .fa
+        .fa, .fa-brands
         {
             transition: color var(--fbx-ease-time-sm) $base-easing;
         }

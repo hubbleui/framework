@@ -39,7 +39,7 @@ $black:                         #323232 !default;
 $gray:                          #9597a0 !default;
 
 // Contexts
-$theme-primary:                 var(--fbx-color-hotpink)     !default;
+$theme-primary:                 var(--fbx-color-beetroot)     !default;
 $theme-secondary:               var(--fbx-color-salmon)      !default;
 $theme-success:                 var(--fbx-color-emerland)    !default;
 $theme-info:                    var(--fbx-color-skyblue)     !default;
@@ -110,7 +110,7 @@ $icon-xl:                       45px !default;
 $icon-xxl:                      50px !default;
 
 // Base aesthetics
-$border-radius:                 3px !default;
+$border-radius:                 5px !default;
 
 // Grid breakpoints
 $breakpoint-xs:                 0 !default;
@@ -181,7 +181,7 @@ $list-divider-color:            var(--fbx-gray-200) !default;
 $list-divider-space:            5px;
 
 // Dropdown
-$dropdown-border-radius:        var(--fbx-border-radius) !default;
+$dropdown-border-radius:        5px !default;
 $dropdown-min-width:            160px !default;
 $dropdown-max-width:            250px !default;
 $dropdown-height:               300px !default;
@@ -192,15 +192,21 @@ $dropdown-bg:                   var(--fbx-white) !default;
 $menu-bg:						var(--fbx-white) !default;
 $menu-color:					var(--fbx-gray-700) !default;
 $menu-font-size:				1.3rem !default;
+$menu-font-weight:				$text-normal !default;
+$menu-radius:                   var(--fbx-border-radius) !default;
+$menu-container-padding:        3px !default;
 $menu-item-bg:                  transparent !default;
 $menu-item-color-hover:         var(--fbx-gray-700) !default;
-$menu-item-color-active:        var(--fbx-gray-700) !default;
+$menu-item-color-active:        var(--fbx-theme-primary) !default;
+$menu-item-color-checked:       var(--fbx-white) !default;
 $menu-item-color-selected:      var(--fbx-white) !default;
-$menu-item-bg-hover:            var(--fbx-gray-200) !default;
-$menu-item-bg-active:           var(--fbx-theme-info-100) !default;
-$menu-item-bg-selected:         var(--fbx-theme-info) !default;
+$menu-item-bg-hover:            var(--fbx-theme-primary-100) !default;
+$menu-item-bg-active:           var(--fbx-theme-primary-200) !default;
+$menu-item-bg-selected:         var(--fbx-theme-primary) !default;
+$menu-item-bg-checked:          var(--fbx-theme-primary) !default;
 $menu-item-pad-y:               10px !default;
 $menu-item-pad-x:               12px !default;
+$menu-item-v-space:             2px !default;
 $menu-divider-color:            var(--fbx-gray-200) !default;
 $menu-divider-space:            5px;
 
@@ -453,21 +459,27 @@ $loader-size:                   30px !default;
 // Ripple
 $ripple-color:                  rgba(0, 0, 0, 0.15) !default;
 
-// Scrollbars
-$scrollbar-size:                0.8rem !default;
-$scrollbar-transition:          background-color .05s linear !default;
-$scrollbar-track-color:         rgba(0, 0, 0, 0.07) !default;
-$scrollbar-track-hover:         rgba(0, 0, 0, 0.07) !default;
-$scrollbar-track-active:        rgba(0, 0, 0, 0.07) !default;
-
-$scrollbar-handle-color:        rgba(0, 0, 0, 0.2) !default;
-$scrollbar-handle-hover:        rgba(0, 0, 0, 0.3) !default;
-$scrollbar-handle-active:       rgba(0, 0, 0, 0.35) !default;
-
 // Skeleton
 $skeleton-bg-1:                 rgba(0, 0, 0, 0.2) !default;
 $skeleton-bg-2:                 rgba(0, 0, 0, 0.4) !default;
 $skeleton-text-radius:          var(--fbx-border-radius) !default;
+
+// Navbar
+$navbar-padding-x: 				0;
+$navbar-padding-y: 				2rem;
+$navbar-color: 					var(--fbx-white);
+$navbar-logo-size:				40px;
+
+// Nav menu
+$nav-link-padding-x: 			1rem;
+$nav-link-padding-y: 			0.5rem;
+$nav-link-font-size: 			1.4rem;
+$nav-link-icon-size: 			1.6rem;
+$nav-link-font-weight: 			$text-bolder;
+$nav-link-color: 				rgba(255,255,255,0.95);
+$nav-link-hover-color: 			var(--fbx-white);
+$nav-link-active-color: 		var(--fbx-white);
+
 
 // Responsive breakpoints
 $breakpoints:
@@ -566,8 +578,9 @@ $zindexs:
     'tooltip':                  200,
     'popover':                  300,
     'dropdown':                 400,
-    'drawer':                   500,
-    'frontdrop':                600,
-    'notification':             700,
-    'modal':                    800,
+    'navbar':                   500,
+    'drawer':                   600,
+    'frontdrop':                700,
+    'notification':             800,
+    'modal':                    900,
 ) !default;

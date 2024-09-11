@@ -272,6 +272,15 @@
 }
 
 // size specific
+.btn-unstyled + .drop-menu
+{
+    &.drop-s,
+    &.drop-se,
+    &.drop-sw
+    {
+        top: ($btn-font-size * 2.5);
+    }
+}
 .btn-xs + .drop-menu
 {
     &.drop-s,
@@ -286,8 +295,7 @@
     &.drop-s,
     &.drop-se,
     &.drop-sw
-   
-   {
+    {
         top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) - 0.5;
     }
 }
@@ -306,8 +314,7 @@
     &.drop-s,
     &.drop-se,
     &.drop-sw
-   
-   {
+    {
         top: ($btn-pad-y * 2 ) + ($btn-font-size * 2) + 1.5;
     }
 }

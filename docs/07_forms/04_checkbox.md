@@ -240,10 +240,10 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 src/scss/styles/forms/_checkbox.scss
 ```
 ```sass
---hb-checkbox-size: #{$checkbox-size};
---hb-checkbox-color: #{$checkbox-color};
---hb-checkbox-label-color: #{$checkbox-label-color};
---hb-checkbox-radius: #{$checkbox-radius};
+--fbx-checkbox-size: #{$checkbox-size};
+--fbx-checkbox-color: #{$checkbox-color};
+--fbx-checkbox-label-color: #{$checkbox-label-color};
+--fbx-checkbox-radius: #{$checkbox-radius};
 
 ```
 
@@ -254,8 +254,8 @@ src/scss/_config.scss
 ```
 ```sass
 $checkbox-size:                 2rem !default;
-$checkbox-color:                var(--hb-gray) !default;
-$checkbox-label-color:          var(--hb-gray) !default;
+$checkbox-color:                var(--fbx-gray) !default;
+$checkbox-label-color:          var(--fbx-gray) !default;
 $checkbox-radius:               2px !default;
 ```
 

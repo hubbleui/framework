@@ -1,4 +1,6 @@
-// Polyfills
+// Core
+// polyfills
+// polyfills
 /**
  * A fix to allow you to use window.location.origin consistently
  *
@@ -8,7 +10,6 @@ if (!window.location.origin)
 {
     window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
 }
-
 /*
  * Custom events 
  *
@@ -34,7 +35,6 @@ if (!window.location.origin)
     window.CustomEvent = CustomEvent;
 
 })();
-
 /**
  * debounce and throttle methods
  * 
@@ -197,8 +197,9 @@ if (!window.location.origin)
 
 }());
 
-// Container
-(function(window)
+
+// container
+(function()
 {
     /**
      * JS IoC Container
@@ -554,6504 +555,6492 @@ if (!window.location.origin)
 
         window.Container = container;
     }
-
-})(window);
-
-// Helper
-(function()
-{
-	// Standard
-	const NULL_TAG = '[object Null]';
-	const UNDEF_TAG = '[object Undefined]';
-	const BOOL_TAG = '[object Boolean]';
-	const STRING_TAG = '[object String]';
-	const NUMBER_TAG = '[object Number]';
-	const FUNC_TAG = '[object Function]';
-	const ARRAY_TAG = '[object Array]';
-	const ARGS_TAG = '[object Arguments]';
-	const NODELST_TAG = '[object NodeList]';
-	const OBJECT_TAG = '[object Object]';
-	const DATE_TAG = '[object Date]';
-	
-	// Unusual
-	const SET_TAG = '[object Set]';
-	const MAP_TAG = '[object Map]';
-	const REGEXP_TAG = '[object RegExp]';
-	const SYMBOL_TAG = '[object Symbol]';
-	
-	// Array buffer
-	const ARRAY_BUFFER_TAG = '[object ArrayBuffer]';
-	const DATAVIEW_TAG = '[object DataView]';
-	const FLOAT32_TAG = '[object Float32Array]';
-	const FLOAT64_TAG = '[object Float64Array]';
-	const INT8_TAG = '[object Int8Array]';
-	const INT16_TAG = '[object Int16Array]';
-	const INT32_TAG = '[object Int32Array]';
-	const UINT8_TAG = '[object Uint8Array]';
-	const UINT8CLAMPED_TAG = '[object Uint8ClampedArray]';
-	const UINT16_TAG = '[object Uint16Array]';
-	const UINT32_TAG = '[object Uint32Array]';
-	
-	// Non-cloneable
-	const ERROR_TAG = '[object Error]';
-	const WEAKMAP_TAG = '[object WeakMap]';
-	
-	// Arrayish _tags
-	const ARRAYISH_TAGS = [ARRAY_TAG, ARGS_TAG, NODELST_TAG];
-	
-	// Object.prototype.toString
-	const TO_STR = Object.prototype.toString;
-	
-	// Array.prototype.slice
-	const TO_ARR = Array.prototype.slice;
-	
-	// Regex for HTMLElement types
-	const HTML_REGXP = /^\[object HTML\w*Element\]$/;
-	
-	// Empty object
-	const EMPTY_OBJ_KEYS = Object.getOwnPropertyNames(Object.getPrototypeOf({}));
-	
-	
-	/**
-	 * List of shorthand properties and their longhand equivalents
-	 *
-	 * @var {object}
-	 */
-	const SHORTHAND_PROPS =
-	{
-	    // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
-	    'list-style': ['-type', '-position', '-image'],
-	    'margin': ['-top', '-right', '-bottom', '-left'],
-	    'outline': ['-width', '-style', '-color'],
-	    'padding': ['-top', '-right', '-bottom', '-left'],
-	
-	    // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
-	    'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
-	    'border': ['-width', '-style', '-color'],
-	    'border-color': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
-	    'border-style': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
-	    'border-width': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
-	    'border-top': ['-width', '-style', '-color'],
-	    'border-right': ['-width', '-style', '-color'],
-	    'border-bottom': ['-width', '-style', '-color'],
-	    'border-left': ['-width', '-style', '-color'],
-	    'border-radius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
-	    'border-image': ['-source', '-slice', '-width', '-outset', '-repeat'],
-	
-	    // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
-	    'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
-	    'font-variant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
-	
-	    // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
-	    'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
-	    'mask-border': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
-	
-	    // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
-	    'columns': ['column-width', 'column-count'],
-	    'column-rule': ['-width', '-style', '-color'],
-	
-	    // CSS Speech Module: http://www.w3.org/TR/css3-speech/
-	    'cue': ['-before', '-after'],
-	    'pause': ['-before', '-after'],
-	    'rest': ['-before', '-after'],
-	
-	    // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
-	    'text-decoration': ['-line', '-style', '-color'],
-	    'text-emphasis': ['-style', '-color'],
-	
-	    // CSS Animations (WD): http://www.w3.org/TR/css3-animations
-	    'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
-	
-	    // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
-	    'transition': ['-property', '-duration', '-timing-function', '-delay'],
-	
-	    // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
-	    'flex': ['-grow', '-shrink', '-basis'],
-	};
-	
-	/**
-	 * List of shorthand properties and their longhand equivalents
-	 *
-	 * @var {object}
-	 */
-	const SHORTHAND_DEFAULTS = 
-	{
-	    '-width' : '0',
-	    '-height' : '0',
-	    '-top' : '0',
-	    '-left' : '0',
-	    '-bottom' : '0',
-	    '-duration' : '0s',
-	    '-delay' : '0s',
-	    '-grow' : '1' ,
-	    '-shrink' : '1' ,
-	    '-iteration-count' : '1',
-	    '-timing-function' : 'linear',
-	    '-transition-property' : 'all',
-	    '-fill-mode': 'none',
-	    '-emphasis' : 'none',
-	    '-color' : 'none',
-	    '-decoration' : 'none',
-	    '-direction' : 'normal',
-	    '-play-state' : 'running',
-	};
-	
-	/**
-	 * CSS Transform value counts
-	 *
-	 * @var {object}
-	 */
-	const CSS_TRANSFORM_VALUES_COUNT = 
-	{
-	    perspective: 1,
-	    skewY: 1,
-	    translateY: 1,
-	    translateZ: 1,
-	    scaleY: 1,
-	    scaleZ: 1,
-	    rotateX: 1,
-	    rotateY: 1,
-	    rotateZ: 1,
-	    translateX: 1,
-	    skewX: 1,
-	    scaleX: 1,
-	    rotate: 1,
-	
-	    skew: 2,
-	    translate: 2,
-	    scale: 2,
-	
-	    translate3d: 3,
-	    scale3d: 3,
-	    rotate3d: 3,
-	
-	    matrix: 6,
-	    matrix3d: 16
-	};
-	
-	const CSS_3D_TRANSFORM_DEFAULTS =
-	{
-	    'translate3d' : ['0','0','0'],
-	    'scale3d'     : ['1','1','1'],
-	    'rotate3d'    : ['0','0','1','0'],
-	    'skew'        : ['0', '0'],
-	};
-	
-	const CSS_3D_TRANSFORM_MAP_KEYS =
-	{
-	    x: 0,
-	    y: 1,
-	    z: 3
-	};
-	
-	/* USED FOR css_to_px */
-	const CSS_PIXELS_PER_INCH = 96;
-	const CSS_RELATIVE_UNITS  = {
-	    // Relative to the font-size of the element (2em means 2 times the size of the current font)
-	    'em' : 16,
-	
-	    // Relative to the x-height of the current font (rarely used)
-	    'ex' : 7.15625,
-	
-	    // Relative to the width of the "0" (zero)
-	    'ch' : 8,
-	
-	    // Relative to font-size of the root element
-	    'rem' : 16,
-	
-	    // Relative to 1% of the width of the viewport
-	    'vw' : 1,
-	
-	    // Relative to 1% of the height of the viewport
-	    'vh' : 1,
-	
-	    // Relative to 1% of viewport's* smaller dimension
-	    // If the viewport height is smaller than the width, 
-	    // the value of 1vmin will be equal to 1% of the viewport height.
-	    // Similarly, if the viewport width is smaller than the height, the value of 1vmin will be equal to 1% of the viewport width.
-	    'vmin' : 765,
-	    'vmax' : 1200,
-	
-	    // Relative to the parent element
-	    '%' : 16
-	}
-	const CSS_ABSOLUTE_UNITS =
-	{
-	    'in': CSS_PIXELS_PER_INCH,
-	    'cm': CSS_PIXELS_PER_INCH / 2.54,
-	    'mm': CSS_PIXELS_PER_INCH / 25.4,
-	    'pt': CSS_PIXELS_PER_INCH / 72,
-	    'pc': CSS_PIXELS_PER_INCH / 6,
-	    'px': 1
-	}
-	
-	
-	/**
-	 * Cached CSS propery cases.
-	 *
-	 * @var {object}
-	 */
-	const CSS_PROP_TO_HYPHEN_CASES = {};
-	const CSS_PROP_TO_CAMEL_CASES  = {};
-	// Current clone map (stops recursive cloning between array/objects)
-	
-	/**
-	 * Default options.
-	 * 
-	 * @var {object}
-	 */
-	const ANIMATION_DEFAULT_OPTIONS =
-	{
-	    // Options
-	    //'property', 'from', 'to', 'callback', 'complete', 'start', 'fail'
-	    easing:               'ease',
-	    duration:              500,
-	    fps:                   60, // (16ms)
-	};
-	
-	 /**
-	 * Allowed Options.
-	 * 
-	 * @var {array}
-	 */
-	const ANIMATION_ALLOWED_OPTIONS = ['property', 'from', 'to', 'duration', 'easing', 'callback'];
-	
-	/**
-	 * Allowed Options.
-	 * 
-	 * @var {array}
-	 */
-	const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ...ANIMATION_ALLOWED_OPTIONS];
-	
-	/**
-	 * Currently animating animations.
-	 * 
-	 * @var {array}
-	 */
-	const ANIMATING = [];
-	
-	
-	/**
-	 * Math Contstansts.
-	 * 
-	 * @var {mixed}
-	 */
-	const POW  = Math.pow;
-	const SQRT = Math.sqrt;
-	const SIN  = Math.sin;
-	const COS  = Math.cos;
-	const PI   = Math.PI;
-	const C1   = 1.70158;
-	const C2   = C1 * 1.525;
-	const c3   = C1 + 1;
-	const C4   = (2 * PI) / 3;
-	const C5   = (2 * PI) / 4.5;
-	
-	/**
-	 * bounceOut function.
-	 * 
-	 * @var {function}
-	 */
-	const bounceOut = function (x)
-	{
-	    const n1 = 7.5625;
-	    const d1 = 2.75;
-	
-	    if (x < 1 / d1)
-	    {
-	        return n1 * x * x;
-	    }
-	    else if (x < 2 / d1)
-	    {
-	        return n1 * (x -= 1.5 / d1) * x + 0.75;
-	    }
-	    else if (x < 2.5 / d1)
-	    {
-	        return n1 * (x -= 2.25 / d1) * x + 0.9375;
-	    }
-	    else
-	    {
-	        return n1 * (x -= 2.625 / d1) * x + 0.984375;
-	    }
-	};
-	
-	/**
-	 * Easing functions.
-	 * 
-	 * @var {object}
-	 */
-	const ANIMATION_EASING_FUNCTIONS = 
-	{
-	    linear: (x) => x,
-	    ease: function (x)
-	    {
-	        return x < 0.5 ? 4 * x * x * x : 1 - POW(-2 * x + 2, 3) / 2;
-	    },
-	    easeIn: function (x)
-	    {
-	        return 1 - COS((x * PI) / 2);
-	    },
-	    easeOut: function (x)
-	    {
-	        return SIN((x * PI) / 2);
-	    },
-	    easeInOut: function (x)
-	    {
-	        return -(COS(PI * x) - 1) / 2;
-	    },
-	    easeInQuad: function (x)
-	    {
-	        return x * x;
-	    },
-	    easeOutQuad: function (x)
-	    {
-	        return 1 - (1 - x) * (1 - x);
-	    },
-	    easeInOutQuad: function (x)
-	    {
-	        return x < 0.5 ? 2 * x * x : 1 - POW(-2 * x + 2, 2) / 2;
-	    },
-	    easeInCubic: function (x)
-	    {
-	        return x * x * x;
-	    },
-	    easeOutCubic: function (x)
-	    {
-	        return 1 - POW(1 - x, 3);
-	    },
-	    easeInOutCubic: function (x)
-	    {
-	        return x < 0.5 ? 4 * x * x * x : 1 - POW(-2 * x + 2, 3) / 2;
-	    },
-	    easeInQuart: function (x)
-	    {
-	        return x * x * x * x;
-	    },
-	    easeOutQuart: function (x)
-	    {
-	        return 1 - POW(1 - x, 4);
-	    },
-	    easeInOutQuart: function (x)
-	    {
-	        return x < 0.5 ? 8 * x * x * x * x : 1 - POW(-2 * x + 2, 4) / 2;
-	    },
-	    easeInQuint: function (x)
-	    {
-	        return x * x * x * x * x;
-	    },
-	    easeOutQuint: function (x)
-	    {
-	        return 1 - POW(1 - x, 5);
-	    },
-	    easeInOutQuint: function (x)
-	    {
-	        return x < 0.5 ? 16 * x * x * x * x * x : 1 - POW(-2 * x + 2, 5) / 2;
-	    },
-	    easeInSine: function (x)
-	    {
-	        return 1 - COS((x * PI) / 2);
-	    },
-	    easeOutSine: function (x)
-	    {
-	        return SIN((x * PI) / 2);
-	    },
-	    easeInOutSine: function (x)
-	    {
-	        return -(COS(PI * x) - 1) / 2;
-	    },
-	    easeInExpo: function (x)
-	    {
-	        return x === 0 ? 0 : POW(2, 10 * x - 10);
-	    },
-	    easeOutExpo: function (x)
-	    {
-	        return x === 1 ? 1 : 1 - POW(2, -10 * x);
-	    },
-	    easeInOutExpo: function (x)
-	    {
-	        return x === 0
-	            ? 0
-	            : x === 1
-	            ? 1
-	            : x < 0.5
-	            ? POW(2, 20 * x - 10) / 2
-	            : (2 - POW(2, -20 * x + 10)) / 2;
-	    },
-	    easeInCirc: function (x)
-	    {
-	        return 1 - SQRT(1 - POW(x, 2));
-	    },
-	    easeOutCirc: function (x)
-	    {
-	        return SQRT(1 - POW(x - 1, 2));
-	    },
-	    easeInOutCirc: function (x)
-	    {
-	        return x < 0.5
-	            ? (1 - SQRT(1 - POW(2 * x, 2))) / 2
-	            : (SQRT(1 - POW(-2 * x + 2, 2)) + 1) / 2;
-	    },
-	    easeInBack: function (x)
-	    {
-	        return c3 * x * x * x - C1 * x * x;
-	    },
-	    easeOutBack: function (x)
-	    {
-	        return 1 + c3 * POW(x - 1, 3) + C1 * POW(x - 1, 2);
-	    },
-	    easeInOutBack: function (x)
-	    {
-	        return x < 0.5
-	            ? (POW(2 * x, 2) * ((C2 + 1) * 2 * x - C2)) / 2
-	            : (POW(2 * x - 2, 2) * ((C2 + 1) * (x * 2 - 2) + C2) + 2) / 2;
-	    },
-	    easeInElastic: function (x)
-	    {
-	        return x === 0
-	            ? 0
-	            : x === 1
-	            ? 1
-	            : -POW(2, 10 * x - 10) * SIN((x * 10 - 10.75) * C4);
-	    },
-	    easeOutElastic: function (x)
-	    {
-	        return x === 0
-	            ? 0
-	            : x === 1
-	            ? 1
-	            : POW(2, -10 * x) * SIN((x * 10 - 0.75) * C4) + 1;
-	    },
-	    easeInOutElastic: function (x)
-	    {
-	        return x === 0
-	            ? 0
-	            : x === 1
-	            ? 1
-	            : x < 0.5
-	            ? -(POW(2, 20 * x - 10) * SIN((20 * x - 11.125) * C5)) / 2
-	            : (POW(2, -20 * x + 10) * SIN((20 * x - 11.125) * C5)) / 2 + 1;
-	    },
-	    easeInBounce: function (x)
-	    {
-	        return 1 - bounceOut(1 - x);
-	    },
-	    easeOutBounce: bounceOut,
-	    easeInOutBounce: function (x)
-	    {
-	        return x < 0.5
-	            ? (1 - bounceOut(1 - 2 * x)) / 2
-	            : (1 + bounceOut(2 * x - 1)) / 2;
-	    },
-	};
-	
-	const CSS_EASINGS = 
-	{
-	    // Defaults
-	    ease: 'ease',
-	    linear: 'linear',
-	    easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
-	    easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
-	    easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
-	
-	    // sine
-	    easeInSine: 'cubic-bezier(0.47, 0, 0.745, 0.715)',
-	    easeOutSine: 'cubic-bezier(0.39, 0.575, 0.565, 1)',
-	    easeInOutSine: 'cubic-bezier(0.445, 0.05, 0.55, 0.95)',
-	
-	    // Quad
-	    easeInQuad: 'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
-	    easeOutQuad: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-	    easeInOutQuad: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
-	
-	    // Cubic
-	    easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
-	    easeOutCubic: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
-	    easeInOutCubic: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-	
-	    // Queart
-	    easeInQuart: 'cubic-bezier(0.895, 0.03, 0.685, 0.22)',
-	    easeOutQuart: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
-	    easeInOutQuart: 'cubic-bezier(0.77, 0, 0.175, 1)',
-	
-	    // Quint
-	    easeInQuint: 'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
-	    easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1)',
-	    easeInOutQuint: 'cubic-bezier(0.86, 0, 0.07, 1)',
-	
-	    // Expo
-	    easeInExpo: 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
-	    easeOutExpo: 'cubic-bezier(0.19, 1, 0.22, 1)',
-	    easeInOutExpo: 'cubic-bezier(1, 0, 0, 1)',
-	
-	    // Circ
-	    easeInCirc: 'cubic-bezier(0.6, 0.04, 0.98, 0.335)',
-	    easeOutCirc: 'cubic-bezier(0.075, 0.82, 0.165, 1)',
-	    easeInOutCirc: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
-	
-	    // Back
-	    easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
-	    easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-	    easeInOutBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-	};
-	
-	/**
-	 * Array of HTML events
-	 *
-	 * @var {array}
-	 */
-	const DOC_EVENTS = Object.getOwnPropertyNames(document).concat(Object.getOwnPropertyNames(Object.getPrototypeOf(Object.getPrototypeOf(document)))).concat(Object.getOwnPropertyNames(Object.getPrototypeOf(window))).filter(function(i){return !i.indexOf('on')&&(document[i]==null||typeof document[i]=='function');}).filter(function(elem, pos, self){return self.indexOf(elem) == pos;}).map((x) => x.replace('on', '').toLowerCase());
-	/**
-	 * Boolean attributes
-	 *
-	 * @var {array}
-	 */
-	const BOOLEAN_ATTRS = 
-	[
-		'allowfullscreen',
-		'async',
-		'autofocus',
-		'autoplay',
-		'checked',
-		'controls',
-		'default',
-		'defer',
-		'disabled',
-		'formnovalidate',
-		'inert',
-		'ismap',
-		'itemscope',
-		'loop',
-		'multiple',
-		'muted',
-		'nomodule',
-		'novalidate',
-		'open',
-		'playsinline',
-		'readonly',
-		'required',
-		'reversed',
-		'selected'
-	];
-	
-	/**
-	 * Property attributes
-	 *
-	 * @var {array}
-	 */
-	const PROP_ATTRIBUTES = ['href', 'list', 'form', 'tabIndex', 'download'];
-	
-	/**
-	 * JavaScript helper library
-	 *
-	 * @author    {Joe J. Howard}
-	 * @copyright {Joe J. Howard}
-	 * @license   {https://github.com/kanso-cms/cms/blob/master/LICENSE}
-	 */
-	
-	var _THIS = null;
-	
-	const _ = function()
-	{
-	    this.version = "1.0.0";
-	
-	    this.author = "Joe Howard";
-	
-	    this.browser = false;
-	
-	    this._events = {};
-	
-	    this._guid = 1;
-	
-	    _THIS = this;
-	}
-	
-	_.prototype._guidgen = function()
-	{
-	    return `__${this._guid++}`;
-	}
-		const AnimateJS = function(DOMElement, options)
-		{
-		    this.DOMElement = DOMElement;
-		
-		    this.options = options;
-		
-		    this.keyframes = [];
-		
-		    this.currentKeyframe = 0;
-		
-		    this.duration = options.duration;
-		
-		    this.intervalDelay = Math.floor(1000 / options.fps);
-		
-		    this.keyFrameCount = Math.floor(this.duration / this.intervalDelay) + 1;
-		
-		    this.easing = options.easing;
-		
-		    this.CSSProperty = options.property;
-		
-		    this.isTransform = this.CSSProperty.toLowerCase().includes('transform');
-		
-		    this.isScroll = this.CSSProperty.toLowerCase().replace('-', '') === 'scrollto' && DOMElement === window;
-		
-		    this.isColor = options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb');
-		
-		    this.clearAnimating(DOMElement);
-		
-		    this.parseOptions();
-		
-		    this.generateKeyframes();
-		
-		    this.stopped = true;
-		
-		    return this;
-		}
-		
-		AnimateJS.prototype.clearAnimating = function(DOMElement)
-		{
-		    const CSSprop = this.CSSProperty;
-		
-		    _THIS.each(ANIMATING, function(i, animation)
-		    {
-		        if (animation.CSSProperty === CSSprop && animation.DOMElement === DOMElement)
-		        {
-		            animation.stop();
-		
-		            ANIMATING.splice(i, 1);
-		
-		            return false;
-		        }
-		    });
-		}
-		
-		AnimateJS.prototype.start = function()
-		{
-		    if (this.keyFrameCount === 0) return;
-		
-		    this.stopped = false;
-		
-		    if (!this.isScroll) this.clearTransitions();
-		
-		    if (this.options.start) this.options.start(this.DOMElement);
-		
-		    const loop = () =>
-		    {        
-		        if (this.stopped) return;
-		
-		        this._applyKeyframe(this.keyframes.shift());
-		
-		        if (this.keyframes.length === 0)
-		        {            
-		            this._complete();
-		
-		            return;
-		        }
-		
-		        setTimeout(loop, this.intervalDelay);
-		    }
-		
-		    loop();
-		
-		    this._failTimer = setTimeout(() =>
-		    {            
-		        if (this.options.fail) this.options.fail(this.DOMElement);
-		
-		    }, this.duration + 50 );
-		
-		    ANIMATING.push(this);
-		
-		    return this;
-		}
-		
-		AnimateJS.prototype._applyKeyframe = function(keyframe)
-		{
-		    if (!keyframe) return;
-		
-		    let prop = Object.keys(keyframe)[0];
-		
-		    this.isScroll ? window.scrollTo(keyframe[0], keyframe[1]) : _THIS.css(this.DOMElement, prop, keyframe[prop]);
-		}
-		
-		AnimateJS.prototype._complete = function()
-		{
-		    clearTimeout(this._failTimer);
-		
-		    _THIS.each(ANIMATING, (i, animation) =>
-		    {
-		        if (animation === this)
-		        {
-		            ANIMATING.splice(i, 1);
-		
-		            return false;
-		        }
-		    });
-		
-		    let DOMElement = this.DOMElement;
-		
-		    if (this.options.complete) this.options.complete(DOMElement);
-		
-		    if (this.options.callback) this.options.callback(DOMElement);
-		
-		    if (!this.isScroll) _THIS.css(DOMElement, 'transition', this._pre_transition );
-		}
-		
-		AnimateJS.prototype.stop = function()
-		{
-		    this.stopped = true;
-		
-		    clearTimeout(this._failTimer);
-		
-		    return this;
-		}
-		
-		AnimateJS.prototype.parseOptions = function()
-		{
-		    if (this.isScroll)
-		    {
-		        this.parseScrollOptions();
-		    }
-		    else if (this.isTransform)
-		    {
-		        this.parseTransformOptions();
-		    }
-		    else if (this.isColor)
-		    {
-		        this.parseColorOptions();
-		    }
-		    else
-		    {
-		        this.parseDefaultOptions();
-		    }
-		}
-		
-		AnimateJS.prototype.parseScrollOptions = function()
-		{
-		    if (!this.options.to.includes(','))
-		    {
-		        throw new Error('Invalid scroll value. Animating scroll should be provided as [Y, X].');
-		    }
-		
-		    // We ignore 'from'
-		    let startY = window.scrollY;
-		    let startX = window.scrollX;
-		    let endX   = parseInt(this.options.to.split(',').shift().trim());
-		    let endY   = parseInt(this.options.to.split(',').pop().trim());
-		    let distX  = Math.abs(endX < startX ? (startX - endX) : (endX - startX))
-		    let distY  = Math.abs(endY < startY ? (startY - endY) : (endY - startY))
-		
-		    this.startValue    = [startX, startY];
-		    this.endValue      = [endX, endY];
-		    this.backAnimation = [endX < startX, endY < startY];
-		    this.distance      = [distX, distY] ;
-		    this.CSSunits      = '';
-		}
-		
-		AnimateJS.prototype.parseDefaultOptions = function()
-		{
-		    var startVal = _THIS.is_undefined(this.options.from) ? _THIS.rendered_style(this.DOMElement, this.CSSProperty) : this.options.from;
-		    var endVal   = this.options.to;
-		
-		    // We need to set the end value, then remove it and re-apply any inline styles if they
-		    // existed
-		    if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset')
-		    {
-		        let prevStyle = _THIS.inline_style(this.DOMElement, this.CSSProperty);
-		
-		        _THIS.css(this.DOMElement, this.CSSProperty, endVal);
-		        
-		        endVal = _THIS.rendered_style(this.DOMElement, this.CSSProperty);
-		        
-		        _THIS.css(this.DOMElement, this.CSSProperty, prevStyle ? prevStyle : false);
-		    }
-		
-		    // From auto
-		    if (startVal === 'auto' || startVal === 'initial')
-		    {
-		        startVal = _THIS.rendered_style(this.DOMElement, this.CSSProperty);
-		    }
-		
-		    var startUnit = _THIS.css_value_unit(startVal);
-		    var endUnit   = _THIS.css_value_unit(endVal);
-		
-		    if (startUnit !== endUnit && this.CSSProperty !== 'opacity')
-		    {
-		        if (startUnit !== 'px')
-		        {
-		            startVal  = _THIS.css_to_px(startVal + startUnit, this.DOMElement, this.CSSProperty);
-		            startUnit = 'px';
-		        }
-		        if (endUnit !== 'px')
-		        {
-		            endVal  = _THIS.css_to_px(this.options.to, this.DOMElement, this.CSSProperty);
-		            endUnit = 'px';
-		        }
-		    }
-		
-		    startVal = _THIS.css_unit_value(startVal);
-		    endVal   = _THIS.css_unit_value(endVal);
-		
-		    this.startValue    = _THIS.css_unit_value(startVal);
-		    this.endValue      = _THIS.css_unit_value(endVal);
-		    this.backAnimation = endVal < startVal;
-		    this.distance      = Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal));
-		    this.CSSunits      = endUnit;
-		}
-		
-		AnimateJS.prototype.parseTransformOptions = function()
-		{
-		    var DOMElement    = this.DOMElement;
-		    var startValues   = _THIS.css_transform_props(DOMElement, false);
-		    var endValues     = _THIS.css_transform_props(this.options.to, false);
-		
-		    // If a start value was specified it gets overwritten as the transform
-		    // property is singular
-		    if (this.options.from)
-		    {
-		        startValues = _THIS.css_transform_props(this.options.from);
-		    }
-		
-		    this.CSSProperty    = [];
-		    this.startValue     = [];
-		    this.endValue       = [];
-		    this.CSSunits       = [];
-		    this.backAnimation  = [];
-		    this.distance       = [];
-		    this.baseTransforms = _THIS.is_empty(startValues) ? '' : _THIS.join_obj(_THIS.map(startValues, (prop, val) => !endValues[prop] ? val : false), '(', ') ', false, false);
-		
-		    _THIS.each(endValues, function(propAxis, valueStr)
-		    {
-		        var startValStr        = !startValues[propAxis] ? (propAxis.includes('scale') ? '1' : '0') : startValues[propAxis];
-		        var startVal           = _THIS.css_unit_value(startValStr);
-		        var endVal             = _THIS.css_unit_value(valueStr);
-		        var startUnit          = _THIS.css_value_unit(startValStr);
-		        var endUnit            = _THIS.css_value_unit(valueStr);
-		        var CSSpropertyUnits   = endUnit;
-		
-		        if (startUnit !== endUnit)
-		        {
-		            // 0 no need to convert
-		            if (_THIS.is_empty(startUnit))
-		            {
-		                startUnit = endUnit;
-		            }
-		            else
-		            {
-		                if (startUnit !== 'px') startVal = _THIS.css_to_px(startVal + startUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
-		                if (endUnit !== 'px') endVal = _THIS.css_to_px(endVal + endUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
-		                CSSpropertyUnits = 'px';
-		            }
-		        }
-		
-		        this.CSSProperty.push(propAxis);
-		        this.CSSunits.push(endUnit);
-		        this.endValue.push(endVal);
-		        this.startValue.push(startVal);
-		        this.backAnimation.push(endVal < startVal);
-		        this.distance.push(Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal)));
-		
-		    }, this);
-		}
-		
-		AnimateJS.prototype.parseColorOptions = function()
-		{
-		    this.startValue = this.sanitizeColor(this.options.from || _THIS.rendered_style(this.DOMElement, this.CSSProperty));
-		    this.endValue   = this.sanitizeColor(this.options.to);
-		}
-		
-		/**
-		 * Sanitize the start and end colors to RGB arrays.
-		 * 
-		 * @param  {string} color  hex or rgb color as as string
-		 * @return {array}
-		 */
-		AnimateJS.prototype.sanitizeColor = function(color)
-		{
-		    if (color.startsWith('rgb('))
-		    {
-		        return color.split(' ', 3).map((x) => parseInt(x.replaceAll(/[^\d+]/g, '')));
-		    }
-		    else if (color.length === 7 )
-		    {
-		        let rgb = [];
-		
-		        color.match(/#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i).forEach((item) =>
-		        {
-		            if (item.length === 2)
-		            {
-		                const color = parseInt(item, 16);
-		
-		                rgb.push(color);
-		            }
-		        });
-		
-		        return rgb;
-		    }
-		}
-		
-		AnimateJS.prototype.generateKeyframes = function()
-		{    
-		    if (_THIS.is_equal(this.startValue, this.endValue))
-		    {
-		        this.keyFrameCount = 0;
-		
-		        return;
-		    }
-		
-		    if (this.isScroll)
-		    {
-		        _THIS.for(this.keyFrameCount, function(index)
-		        {
-		            let x = this.generateKeyframe(index, 0);
-		            let y = this.generateKeyframe(index, 1);
-		
-		            this.keyframes.push([x, y]);
-		                            
-		        }, this);
-		
-		        // Fallback
-		        this.keyframes.push([this.endValue[0], this.endValue[1]]);
-		
-		        return;
-		    }
-		
-		    if (this.isTransform)
-		    {
-		        _THIS.for(this.endValue, function(transformIndex)
-		        {
-		            _THIS.for(this.keyFrameCount, function(index)
-		            {
-		                this.keyframes.push(this.generateKeyframe(index, transformIndex));
-		                
-		            }, this);
-		            
-		        }, this);
-		
-		        return;
-		    }
-		
-		    _THIS.for(this.keyFrameCount, function(index)
-		    {
-		        this.keyframes.push(this.generateKeyframe(index));
-		        
-		    }, this);
-		
-		    // Failsafe
-		    if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== `${this.endValue}${this.CSSunits}`)
-		    {
-		        this.keyframes.push({[this.CSSProperty]: `${this.endValue}${this.CSSunits}`});
-		    }
-		}
-		
-		AnimateJS.prototype.generateKeyframe = function(index, transformIndex)
-		{
-		    if (this.isColor)
-		    {
-		        const change = this.tween(this.easing, (index / this.keyFrameCount));
-		        
-		        return { [this.CSSProperty]: this.mixColors(this.startValue, this.endValue, change) };
-		    }
-		    
-		    const backAnimation = this.isTransform || this.isScroll ? this.backAnimation[transformIndex] : this.backAnimation;
-		
-		    const startValue = this.isTransform || this.isScroll ? this.startValue[transformIndex] : this.startValue;
-		
-		    const distance = this.isTransform || this.isScroll ? this.distance[transformIndex] : this.distance;
-		
-		    const change = (distance * this.tween(this.easing, (index / this.keyFrameCount)));
-		
-		    const keyVal = this.roundNumber(backAnimation ? startValue - change : startValue + change, this.CSSProperty === 'opacity' ? 5 : 1);
-		
-		    var property = this.isTransform ? 'transform' : this.CSSProperty;
-		
-		    var prefix  = this.isTransform ? `${this.CSSProperty[transformIndex]}(` : '';
-		
-		    var suffix  = this.isTransform ? `${this.CSSunits[transformIndex]})` : this.CSSunits;
-		    
-		    var keyframe = { [property]:  `${prefix}${keyVal}${suffix}` };
-		    
-		    if (this.isScroll)
-		    {
-		        return keyVal;
-		    }
-		
-		    if (this.isTransform && _THIS.is_undefined(this.keyframes[index]))
-		    {
-		        keyframe[property] = `${this.baseTransforms} ${keyframe[property]}`.trim();
-		    }
-		
-		    return keyframe;
-		}
-		
-		/**
-		 * Mix 2 colors.
-		 * 
-		 * @param  {array}  color1 RGB color array
-		 * @param  {array}  color2 RGB color array
-		 * @param  {number} blend % between 0 and 1
-		 * @return {string} 
-		 */
-		AnimateJS.prototype.mixColors = function(color1RGB, color2RGB, blend)
-		{
-		    function linearInterpolation(y1, y2, x)
-		    {
-		        return Math.round(x * (y2 - y1) + y1);
-		    }
-		    
-		    const colorRGB  = [];
-		
-		    color1RGB.forEach((c1, index) =>
-		    {
-		        const mixedColor = linearInterpolation(c1, color2RGB[index], blend);
-		
-		        colorRGB.push(mixedColor);
-		    });
-		
-		    return 'rgb(' + colorRGB + ')';
-		}
-		
-		/**
-		 * Calculate the easing pattern.
-		 * 
-		 * @private
-		 * @link    {https://gist.github.com/gre/1650294}
-		 * @param   {String} type Easing pattern
-		 * @param   {Number} time Time animation should take to complete
-		 * @returns {Number}
-		 */
-		AnimateJS.prototype.clearTransitions = function()
-		{        
-		    var CSSProperty    = this.isTransform ? 'transform' : this.CSSProperty;
-		    var transitions    = _THIS.css_transition_props(this.DOMElement);
-		    var css_transition = _THIS.inline_style(this.DOMElement, 'transition'); 
-		
-		    if (_THIS.is_empty(transitions) || !transitions[CSSProperty]) return;
-		
-		    transitions[CSSProperty] = '0s linear 0s';
-		
-		    _THIS.css(this.DOMElement, 'transition', _THIS.join_obj(transitions, ' ', ', '));
-		
-		    this._pre_transition = !css_transition ? false : css_transition;
-		}
-		
-		AnimateJS.prototype.roundNumber = (n, dp) => 
-		{
-		    const h = +('1'.padEnd(dp + 1, '0')) // 10 or 100 or 1000 or etc
-		
-		    return Math.round(n * h) / h;
-		}
-		
-		/**
-		 * Calculate the easing pattern.
-		 * 
-		 * @private
-		 * @link    {https://gist.github.com/gre/1650294}
-		 * @param   {String} type Easing pattern
-		 * @param   {Number} time Time animation should take to complete
-		 * @returns {Number}
-		 */
-		AnimateJS.prototype.tween = function(type, time)
-		{
-		    return ANIMATION_EASING_FUNCTIONS[type].call(null, time) || time;
-		}
-		
-		_.prototype.__animate_js = function(DOMElement, options)
-		{
-		    return (new AnimateJS(DOMElement, options)).start();
-		}
-		const AnimateCss = function(DOMElement, options)
-		{     
-		    // Domeleement   
-		    this.DOMElement = DOMElement;
-		
-		    // Options
-		    this.options = options;
-		
-		    // Props to animate
-		    this.animatedProps = {};
-		
-		    // Pre animation transitions to restore
-		    this.preAnimatedTransitions = {};
-		
-		    // Cache stopvalues
-		    this.stopValues = {};
-		
-		    // Fail timer
-		    this._failTimer = null;
-		    
-		    // Max duration
-		    this.duration  = 0;
-		    
-		    // Callbacks
-		    this._callbackStart    = () => {};
-		    this._callbackComplete = () => {};
-		    this._callbackFail     = () => {};
-		    this._callbackStep     = () => {};
-		
-		    this.preProcessStartEndValues();
-		
-		    return this;
-		};
-		
-		/**
-		 * Start animation.
-		 *
-		 */
-		AnimateCss.prototype.start = function()
-		{
-		    this._callbackStart(this.DOMElement);
-		
-		    this.applyStartValues();
-		
-		    this.applyTransitions();
-		
-		    _THIS.add_event_listener(this.DOMElement, 'transitionend', this.transitionEnd, this);
-		
-		    let _this = this;
-		
-		    this._failTimer = setTimeout(() =>
-		    {
-		        _this._callbackFail(_this.DOMElement);
-		
-		        _this.stop();
-		
-		    }, this.duration + 50 );
-		
-		    this._stepTimer = setInterval(() => this._callbackStep(), 16);
-		
-		    this.applyEndValues();
-		
-		    return this;
-		}
-		
-		/**
-		 * Stop animation.
-		 *
-		 */
-		AnimateCss.prototype.stop = function()
-		{
-		    clearTimeout(this._failTimer);
-		
-		    clearInterval(this._stepTimer);
-		
-		    this.resotoreElement();
-		
-		    _THIS.css(this.DOMElement, this.stopValues);
-		}
-		
-		/**
-		 * Stop animation and destroy.
-		 *
-		 */
-		AnimateCss.prototype.destory = function()
-		{
-		    this.stop();
-		
-		    this.animatedProps = {};
-		
-		    this.preAnimatedTransitions = {};
-		}
-		
-		/**
-		 * On transition end.
-		 * 
-		 * Note if a multiple animation properties wer supplied
-		 * we only want to call the callback once when all transitions
-		 * have completed.
-		 *
-		 * @param  {Event} e transitionEnd event
-		 */
-		AnimateCss.prototype.resotoreElement = function()
-		{
-		    _THIS.css(this.DOMElement, 'transition', this.preAnimatedTransitions);
-		
-		    _THIS.remove_event_listener(this.DOMElement, 'transitionend', this.transitionEnd, this);
-		}
-		
-		/**
-		 * On transition end.
-		 * 
-		 * Note if a multiple animation properties wer supplied
-		 * we only want to call the callback once when all transitions
-		 * have completed.
-		 *
-		 * @param  {Event} e transitionEnd event
-		 */
-		AnimateCss.prototype.transitionEnd = function(e)
-		{
-		    e = e || window.event;
-		
-		    let prop = _THIS.css_prop_to_hyphen_case(e.propertyName);
-		
-		    // Convert to shorthand if needed
-		    if (prop.includes('-'))
-		    {
-		        let shorthand = prop.split('-').shift();
-		
-		        if (this.animatedProps[shorthand]) prop = shorthand;
-		    }
-		
-		    let endVal = this.animatedProps[prop];
-		
-		    // Change inline style back to auto
-		    if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset') _THIS.css(this.DOMElement, prop, endVal);
-		
-		    delete this.animatedProps[prop];
-		    
-		    if (_THIS.is_empty(this.animatedProps))
-		    {        
-		        clearTimeout(this._failTimer);
-		
-		        clearInterval(this._stepTimer);
-		
-		        this.resotoreElement();
-		
-		        this._callbackComplete(this.DOMElement);
-		    }
-		}
-		
-		/**
-		 * Checks for "auto" transtions.
-		 * 
-		 */
-		AnimateCss.prototype.preProcessStartEndValues = function()
-		{
-		    var DOMElement = this.DOMElement;
-		    
-		    // We need to set the end value explicitly as these values will not
-		    // transition with CSS
-		    _THIS.each(this.options, function(i, option)
-		    {
-		        // Cache start and fail callbacks
-		        if (option.start) this._callbackStart = option.start;
-		        if (option.fail) this._callbackFail = option.fail;
-		        if (option.step) this._callbackStep = option.step;
-		
-		        // Keep the longest callback
-		        if (option.duration >= this.duration && (option.callback || option.complete))
-		        {
-		            this._callbackComplete = (option.callback || option.complete);
-		        }
-		
-		        // Store the maximum duration
-		        if (option.duration >= this.duration) this.duration = option.duration;
-		
-		        let startValue  = option.from;
-		        let endValue    = option.to;
-		        let CSSProperty = option.property;
-		        
-		        if (startValue === 'auto' || startValue === 'initial' || startValue === 'unset' || !startValue)
-		        {
-		            option.from = _THIS.rendered_style(DOMElement, CSSProperty);
-		        }
-		
-		        if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
-		        {
-		            let inlineStyle = _THIS.inline_style(DOMElement, CSSProperty);
-		
-		            _THIS.css(DOMElement, CSSProperty, endValue);
-		
-		            option.to = _THIS.rendered_style(DOMElement, CSSProperty);
-		
-		            _THIS.css(DOMElement, CSSProperty, inlineStyle ? inlineStyle : false);
-		        }
-		
-		        this.animatedProps[CSSProperty] = endValue;
-		
-		        this.stopValues[CSSProperty] = _THIS.inline_style(DOMElement, CSSProperty) || false;
-		
-		    }, this);
-		}
-		
-		/**
-		 * Apply start values.
-		 * 
-		 */
-		AnimateCss.prototype.applyStartValues = function()
-		{
-		    var styles = {};
-		
-		    _THIS.each(this.options, function(i, option)
-		    {
-		        styles[option.property] = option.from;
-		    });
-		
-		    if (!_THIS.is_empty(styles)) _THIS.css(this.DOMElement, styles);
-		}
-		
-		/**
-		 * Apply animation transitions.
-		 * 
-		 */
-		AnimateCss.prototype.applyTransitions = function()
-		{
-		    let transitions = _THIS.css_transition_props(this.DOMElement);
-		
-		    this.preAnimatedTransitions  = _THIS.inline_style(this.DOMElement, 'transition') || false;
-		
-		    _THIS.each(this.options, function(i, option)
-		    {
-		        // Setup and convert duration from MS to seconds
-		        let property = option.property;
-		        let duration = (option.duration / 1000);
-		        let easing   = CSS_EASINGS[option.easing] || 'ease';
-		
-		        // Set the transition for the property
-		        // in our merged obj
-		        transitions[property] = `${duration}s ${easing}`;
-		
-		    }, this);
-		
-		    _THIS.css(this.DOMElement, 'transition', _THIS.join_obj(transitions, ' ', ', '));
-		}
-		
-		/**
-		 * Apply animation end values.
-		 * 
-		 */
-		AnimateCss.prototype.applyEndValues = function()
-		{
-		    let styles = {};
-		
-		    _THIS.each(this.options, function(i, option)
-		    {
-		        styles[option.property] = option.to;
-		
-		    }, this);
-		
-		    _THIS.css(this.DOMElement, styles);
-		}
-		
-		/**
-		 * CSS Animation.
-		 *
-		 * @access {private}
-		 * @param  {DOMElement}     DOMElement          Target DOM node
-		 * @param  {object}   options             Options object
-		 * @param  {string}   options.property    CSS property
-		 * @param  {mixed}    options.from        Start value
-		 * @param  {mixed}    options.to          Ending value
-		 * @param  {int}      options.duration    Animation duration in MS
-		 * @param  {string}   options.easing      Easing function in camelCase
-		 * @param  {function} options.callback    Callback to apply when animation ends (optional)
-		 * Options can be provided three ways:
-		 * 
-		 * 1. Flat object with single property
-		 *      animate(el, { height: '500px', easing 'easeOut' })
-		 * 
-		 * 2. Flat Object with multiple properties 
-		 *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
-		 *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
-		 * 
-		 * 3. Multi object with different options per property
-		 *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
-		 * 
-		 */
-		_.prototype.__animate_css = function(DOMElement, options)
-		{    
-		    return new AnimateCss(DOMElement, options).start();
-		}
-		
-		/**
-		 * Animate JS
-		 *
-		 * @access {public}
-		 * @param  {DOMElement} DOMElement                  Target DOM node
-		 * @param  {object}     options             Options object
-		 * @param  {string}     options.property    CSS property
-		 * @param  {mixed}      options.from        Start value
-		 * @param  {mixed}      options.to          Ending value
-		 * @param  {int}        options.duration    Animation duration in MS
-		 * @param  {string}     options.easing      Easing function in camelCase
-		 * @param  {function}   options.callback    Callback to apply when animation ends (optional)
-		 * @return {array}
-		 * Options can be provided three ways:
-		 * 
-		 * 1. Flat object with single property
-		 *      animate(el, { height: '500px', easing 'easeOut' })
-		 * 
-		 * 2. Flat Object with multiple properties 
-		 *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
-		 *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
-		 * 
-		 * 3. Multi object with different options per property
-		 *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
-		 * 
-		 */
-		_.prototype.animate = function(DOMElement, options)
-		{    
-		    const animationSet = [];
-		
-		    const Animation = function()
-		    {
-		        return this;
-		    };
-		
-		    Animation.prototype.start = function()
-		    {
-		        for (var i = 0; i < animationSet.length; i++)
-		        {
-		            animationSet[i].start();
-		        }
-		    };
-		
-		    Animation.prototype.stop = function()
-		    {
-		        for (var i = 0; i < animationSet.length; i++)
-		        {
-		            animationSet[i].stop(true);
-		        }
-		    };
-		
-		    Animation.prototype.destory = function()
-		    {
-		        for (var i = 0; i < animationSet.length; i++)
-		        {
-		            animationSet[i].destory();
-		        }
-		
-		        animationSet = [];
-		    };
-		
-		    const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
-		
-		    const AnimationInstance = new Animation;
-		
-		    this.each(factoryOptions, function(i, opts)
-		    {
-		        animationSet.push(this.__animate_js(DOMElement, opts));
-		
-		    }, this);
-		
-		    return AnimationInstance;
-		}
-		
-		/**
-		 * Animate CSS
-		 *
-		 * @access {public}
-		 * @param  {DOMElement} DOMElement                  Target DOM node
-		 * @param  {object}     options             Options object
-		 * @param  {string}     options.property    CSS property
-		 * @param  {mixed}      options.from        Start value
-		 * @param  {mixed}      options.to          Ending value
-		 * @param  {int}        options.duration    Animation duration in MS
-		 * @param  {string}     options.easing      Easing function in camelCase
-		 * @param  {function}   options.callback    Callback to apply when animation ends (optional)
-		 * @return {array}
-		 * Options can be provided three ways:
-		 * 
-		 * 1. Flat object with single property
-		 *      animate(el, { height: '500px', easing 'easeOut' })
-		 * 
-		 * 2. Flat Object with multiple properties 
-		 *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
-		 *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
-		 * 
-		 * 3. Multi object with different options per property
-		 *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
-		 * 
-		 */
-		_.prototype.animate_css = function(DOMElement, options)
-		{
-		    let cssAnimation;
-		
-		    const Animation = function()
-		    {
-		        return this;
-		    };
-		
-		    Animation.prototype.start = function()
-		    {
-		        cssAnimation.start();
-		    };
-		
-		    Animation.prototype.stop = function()
-		    {
-		        cssAnimation.stop(true);
-		    };
-		
-		    Animation.prototype.destory = function()
-		    {
-		        cssAnimation.destory(true);
-		    };
-		
-		    const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
-		
-		    cssAnimation = this.__animate_css(DOMElement, factoryOptions);
-		    
-		    return new Animation;
-		}
-		
-		/**
-		 * Animation factory.
-		 *
-		 * @access {private}
-		 * @param  {DOMElement} DOMElement                  Target DOM node
-		 * @param  {object}     options             Options object
-		 * @param  {string}     options.property    CSS property
-		 * @param  {mixed}      options.from        Start value
-		 * @param  {mixed}      options.to          Ending value
-		 * @param  {int}        options.duration    Animation duration in MS
-		 * @param  {string}     options.easing      Easing function in camelCase
-		 * @param  {function}   options.callback    Callback to apply when animation ends (optional)
-		 * @return {array}
-		 * Options can be provided three ways:
-		 * 
-		 * 1. Flat object with single property
-		 *      animate(el, { height: '500px', easing 'easeOut' })
-		 * 
-		 * 2. Flat Object with multiple properties 
-		 *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
-		 *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
-		 * 
-		 * 3. Multi object with different options per property
-		 *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
-		 * 
-		 */
-		_.prototype.__animation_factory = function(DOMElement, opts)
-		{
-		    var optionSets = [];
-		
-		    this.each(opts, function(key, val)
-		    {
-		        // animation_factory('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
-		        if (key === 'property')
-		        {
-		            var options = { ...ANIMATION_DEFAULT_OPTIONS, ...opts};
-		
-		            options.FROM_FACTORY = true;
-		            options.property     = this.css_prop_to_hyphen_case(val);
-		            options.el           = DOMElement;
-		            optionSets.push(options);
-		
-		            // break
-		            return false;
-		        }
-		        else if (!this.in_array(key, ANIMATION_ALLOWED_OPTIONS))
-		        {
-		            // Only worth adding if the property is valid
-		            var camelProp = this.css_prop_to_camel_case(key);
-		            
-		            if (!this.is_undefined(document.body.style[camelProp]))
-		            {
-		                var isObjSet = this.is_object(val);
-		                var toMerge  = isObjSet ? val : opts;
-		                var options  = { ...ANIMATION_DEFAULT_OPTIONS, ...toMerge};
-		                
-		                // animation_factory('foo', { height: '100px', opacity: 0 } );
-		                if (!isObjSet)
-		                {
-		                    options.to = val;
-		                }
-		
-		                // animation_factory('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
-		                options.FROM_FACTORY = true;
-		                options.property     = this.css_prop_to_hyphen_case(key);
-		                options.el           = DOMElement;
-		                optionSets.push(options);
-		            }
-		        }
-		    }, this);
-		
-		    // Santize callbacks
-		    let longest  = 0;
-		    let longestI = 0;
-		    let start    = () => {};
-		    let fail     = () => {};
-		    let complete = () => {};
-		    let step     = () => {};
-		
-		    this.each(optionSets, function(i, options)
-		    {
-		        if (options.start)
-		        {
-		            start = options.start;
-		
-		            delete options.start;
-		        }
-		
-		        if (options.fail)
-		        {
-		            fail = options.fail;
-		
-		            delete options.fail;
-		        }
-		
-		        if (options.step)
-		        {
-		            step = options.step;
-		
-		            delete options.step;
-		        }
-		
-		        // Store the maximum duration
-		        if (options.duration >= longest)
-		        {
-		            if ((options.callback || options.complete)) complete = (options.callback || options.complete);
-		
-		            delete options.callback;
-		
-		            delete options.complete;
-		
-		            longest = options.duration;
-		
-		            longestI = i;
-		        }
-		
-		        // Not nessaray, but sanitize out redundant options
-		        options = this.map(options, function(key, val)
-		        {
-		            return this.in_array(key, ANIMATION_FILTER_OPTIONS) ? val : false;
-		
-		        }, this);
-		
-		        // Sanitize to/from to strings
-		        if (this.array_has('to', options)) options.to = options.to + '';
-		        if (this.array_has('from', options)) options.from = options.from + '';
-		
-		        if (!ANIMATION_EASING_FUNCTIONS[options.easing]) options.easing = 'ease';
-		
-		        options.FROM_FACTORY = true;
-		
-		        optionSets[i] = options;
-		
-		    }, this);
-		
-		    if (this.is_empty(optionSets))
-		    {
-		        console.error('Animation Error: Either no CSS property(s) was provided or the provided property(s) is unsupported.');
-		    }
-		
-		    optionSets[longestI].fail     = fail;
-		    optionSets[longestI].start    = start;
-		    optionSets[longestI].complete = complete;
-		    optionSets[longestI].step     = step;
-		
-		    return optionSets;
-		}
-		/**
-		 * Recursively delete from array/object.
-		 *
-		 * @param   {array}        keys    Keys in search order
-		 * @param   {object|array} object  Object to get from
-		 * @returns {mixed}
-		 */
-		_.prototype.__array_delete_recursive = function(keys, object)
-		{
-		    var key = keys.shift();
-		
-		    var islast = keys.length === 0;
-		
-		    if (islast)
-		    {
-		        if (TO_STR.call(object) === '[object Array]')
-		        {
-		            object.splice(key, 1);
-		        }
-		        else
-		        {
-		            delete object[key];
-		        }
-		    }
-		
-		    if (!object[key])
-		    {
-		        return false;
-		    }
-		
-		    return this.__array_delete_recursive(keys, object[key]);
-		}
-		
-		/**
-		 * Recursively search from array/object.
-		 *
-		 * @param   {array}        keys    Keys in search order
-		 * @param   {object|array} object  Object to get from
-		 * @returns {mixed}
-		 */
-		_.prototype.__array_get_recursive = function(keys, object)
-		{
-		    var key = keys.shift();
-		    var islast = keys.length === 0;
-		
-		    if (islast)
-		    {
-		        return object[key];
-		    }
-		
-		    if (!object[key])
-		    {
-		        return undefined;
-		    }
-		
-		    return this.__array_get_recursive(keys, object[key]);
-		}
-		
-		/**
-		 * Recursively set array/object.
-		 *
-		 * @param {array}          keys     Keys in search order
-		 * @param {mixed}          value    Value to set
-		 * @param {object|array}   object   Object to get from
-		 * @param {string|number}  nextKey  Next key to set
-		 */
-		_.prototype.__array_set_recursive = function(keys, value, object, nextKey)
-		{
-		    var key = keys.shift();
-		    var islast = keys.length === 0;
-		    var lastObj = object;
-		    object = !nextKey ? object : object[nextKey];
-		
-		    // Trying to set a value on nested array that doesn't exist
-		    if (!['object', 'function'].includes(typeof object))
-		    {
-		        throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
-		    }
-		
-		    if (!object[key])
-		    {
-		        // Trying to put object key into an array
-		        if (TO_STR.call(object) === '[object Array]' && typeof key === 'string')
-		        {
-		            var converted = Object.assign({}, object);
-		
-		            lastObj[nextKey] = converted;
-		
-		            object = converted;
-		        }
-		
-		        if (keys[0] && typeof keys[0] === 'string')
-		        {
-		            object[key] = {};
-		        }
-		        else
-		        {
-		            object[key] = [];
-		        }
-		    }
-		
-		    if (islast)
-		    {
-		        object[key] = value;
-		
-		        return;
-		    }
-		
-		    this.__array_set_recursive(keys, value, object, key);
-		}
-		
-		/**
-		 * Segments an array/object path using from "dot.notation" into an array of keys in order.
-		 *
-		 * @param   {string}  path Path to parse
-		 * @returns {array}
-		 */
-		_.prototype.__array_key_segment = function(path)
-		{
-		    var result = [];
-		    var segments = path.split('.');
-		
-		    for (var i = 0; i < segments.length; i++)
-		    {
-		        var segment = segments[i];
-		
-		        if (!segment.includes('['))
-		        {
-		            result.push(segment);
-		
-		            continue;
-		        }
-		
-		        var subSegments = segment.split('[');
-		
-		        for (var j = 0; j < subSegments.length; j++)
-		        {
-		            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
-		            {
-		                result.push(parseInt(subSegments[j].replace(']')));
-		            }
-		            else if (subSegments[j] !== '')
-		            {
-		                result.push(subSegments[j])
-		            }
-		        }
-		    }
-		
-		    return result;
-		}
-		
-		/**
-		 * Recursively delete from array/object.
-		 *
-		 * @param   {array}        keys    Keys in search order
-		 * @param   {object|array} object  Object to get from
-		 * @returns {mixed}
-		 */
-		_.prototype.__array_delete_recursive = function(keys, object)
-		{
-		    var key = keys.shift();
-		
-		    var islast = keys.length === 0;
-		
-		    if (islast)
-		    {
-		        if (TO_STR.call(object) === '[object Array]')
-		        {
-		            object.splice(key, 1);
-		        }
-		        else
-		        {
-		            delete object[key];
-		        }
-		    }
-		
-		    if (!object[key])
-		    {
-		        return false;
-		    }
-		
-		    return this.__array_delete_recursive(keys, object[key]);
-		}
-		/**
-		 * Deletes from an array/object using dot/bracket notation.
-		 *
-		 * @param   {string}        path   Path to delete
-		 * @param   {object|array}  object Object to delete from
-		 * @returns {object|array}
-		 */
-		_.prototype.array_delete = function(path, object)
-		{
-		    this.__array_delete_recursive(this.__array_key_segment(path), object);
-		
-		    return object;
-		}
-		/**
-		 * Filters empty array entries and returns new array
-		 *
-		 * @param   {object|array}  object Object to delete from
-		 * @returns {object|array}
-		 */
-		_.prototype.array_filter = function(arr)
-		{
-		    let isArr = this.is_array(arr);
-		
-		    let ret = isArr ? [] : {};
-		
-		    this.each(arr, function(i, val)
-		    {
-		        if (!this.is_empty(val))
-		        {
-		            isArr ? ret.push(val) : ret[i] = val;
-		        }
-		        
-		    }, this);
-		
-		    return ret;
-		}
-		/**
-		 * Gets an from an array/object using dot/bracket notation.
-		 *
-		 * @param   {string}        path    Path to get
-		 * @param   {object|array}  object  Object to get from
-		 * @returns {mixed}
-		 */
-		_.prototype.array_get = function(path, object)
-		{
-		    return this.__array_get_recursive(this.__array_key_segment(path), object);
-		}
-		
-		
-		/**
-		 * Checks if array/object contains path using dot/bracket notation.
-		 *
-		 * e.g array_has('foo.bar.baz[0]', obj)
-		 * 
-		 * @param   {string}        path   Path to check
-		 * @param   {object|array}  object Object to check on
-		 * @returns {boolean}
-		 */
-		_.prototype.array_has = function(path, object)
-		{
-		    return !this.is_undefined(this.array_get(path, object));
-		}
-		/**
-		 * Merges multiple objects or arrays into the original.
-		 *
-		 * @param   {object|array} First array then any number of array or objects to merge into
-		 * @returns {object|array}
-		 */
-		_.prototype.array_merge = function()
-		{
-		    let args = TO_ARR.call(arguments);
-		
-		    if (args.length === 0)
-		    {
-		        throw new Error('Nothing to merge.');
-		    }
-		    else if (args.length === 1)
-		    {
-		        return args[1];
-		    }
-		
-		    var clone = false;
-		
-		    // Clone deep
-		    this.each(args, function(i, arg)
-		    {
-		        if (arg = 'CLONE_FLAG_TRUE')
-		        {
-		            clone = true;
-		
-		            return false;
-		        }
-		    });
-		
-		    let first = args.shift();
-		    let fType = this.is_array(first) ? 'array' : 'obj';
-		
-		    this.each(args, function(i, arg)
-		    {
-		        if (!this.is_array(arg) && !this.is_object(arg))
-		        {
-		            throw new Error('Arguments must be an array or object.');
-		        }
-		
-		        first = fType === 'array' ? [...first, ...arg] : {...first, ...arg};
-		
-		    }, this);
-		
-		    return first;
-		}
-		/**
-		 * Set a key using dot/bracket notation on an object or array.
-		 *
-		 * @param   {string}       path   Path to set
-		 * @param   {mixed}        value  Value to set
-		 * @param   {object|array} object Object to set into
-		 * @returns {object|array}
-		 */
-		_.prototype.array_set = function(path, value, object)
-		{
-		    this.__array_set_recursive(this.__array_key_segment(path), value, object);
-		
-		    return object;
-		}
-		/**
-		 * Removes duplicates and returns new array.
-		 *
-		 * @param   {array} arr Array to run
-		 * @returns {array}
-		 */
-		_.prototype.array_unique = function(arr)
-		{
-		    return arr.filter((value, index, self) => self.indexOf(value) === index);
-		}
-		/**
-		 * Checks if element is last element in array or object.
-		 *
-		 * @access {public}
-		 * @param  {string} needle    The value to search for
-		 * @param  {array}  haystack  The target array to index
-		 * @param  {bool}   strict    Strict comparison (optional) (default false)
-		 * @return {bool}
-		 * 
-		 */
-		_.prototype.is_array_last = function(needle, haystack, strict)
-		{
-		    strict = this.is_undefined(strict) ? false : strict;
-		
-		    let last = TO_STR.call(haystack) === '[object Array]' ? haystack[haystack.length -1] : haystack[Object.keys(haystack).pop()];
-		    
-		    return this.is_equal(needle, last, strict);
-		}
-		/**
-		 * Foreach loop
-		 * 
-		 * @access {public}
-		 * @param  {object}  obj       The target object to loop over
-		 * @param  {closure} callback  Callback to apply to each iteration
-		 * @param  {array}   args      Array of params to apply to callback (optional) (default null)
-		 */
-		_.prototype.each = function(obj, callback)
-		{
-		    if (typeof obj !== 'object' || obj === null) return;
-		
-		    let isArray = TO_STR.call(obj) === '[object Array]';
-		    let i       = 0;
-		    let keys    = isArray ? null : Object.keys(obj);
-		    let len     = isArray ? obj.length : keys.length;
-		    let args    = TO_ARR.call(arguments).slice(2);
-		    let ret     = isArray ? [] : {};
-		    let key;
-		    let val;
-		    let clbkVal;
-		
-		    // Applies the value of "this" to the callback as the array or object provided
-		    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
-		
-		    // Applies this arg as first extra arg if provided
-		    // otherwise falls back to the array or object provided
-		    // Removes "this" from args to callback
-		    var thisArg = this.is_empty(args) ? obj : args[0];
-		    args        = !this.is_empty(args) ? args.slice(1) : null;
-		    args        = this.is_empty(args) ? null : args;
-		
-		    if (TO_STR.call(args) === '[object Array]')
-		    {
-		        for (; i < len; i++)
-		        {
-		            key   = isArray ? i : keys[i];
-		            val   = isArray ? obj[i] : obj[key];
-		            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
-		
-		            if (clbkVal === false)
-		            {
-		                break;
-		            }
-		        }
-		
-		        // A special, fast, case for the most common use of each (no extra args provided)
-		    }
-		    else
-		    {
-		        for (; i < len; i++)
-		        {
-		            key   = isArray ? i : keys[i];
-		            val   = isArray ? obj[i] : obj[key];
-		            clbkVal = callback.call(thisArg, key, val);
-		
-		            if (clbkVal === false)
-		            {
-		                break;
-		            }
-		        }
-		    }
-		
-		    return obj;
-		}
-		
-		_.prototype.foreach = function()
-		{
-		    return this.each.apply(this, arguments);
-		}
-		
-		/**
-		 * For loop with count
-		 * 
-		 * @access {public}
-		 * @param  {object}  obj       The target object to loop over
-		 * @param  {closure} callback  Callback to apply to each iteration
-		 * @param  {array}   args      Array of params to apply to callback (optional) (default null)
-		 */
-		_.prototype.for = function(count, callback)
-		{
-		    var args = TO_ARR.call(arguments);
-		
-		    args[0] = Array.from(Array(count).keys());
-		
-		    return this.each.apply(this, args);
-		}
-		
-		
-		/**
-		 * Checks if an array contains a value
-		 *
-		 * @access {public}
-		 * @param  {string} needle    The value to search for
-		 * @param  {array}  haystack  The target array to index
-		 * @param  {bool}   strict    Strict comparison (optional) (default false)
-		 * @return {bool}
-		 * 
-		 */
-		_.prototype.in_array = function(needle, haystack, strict)
-		{
-		    strict = this.is_undefined(strict) ? false : strict;
-		    
-		    if (!strict) return haystack.includes(needle);
-		
-		    let ret = false;
-		
-		    this.each(haystack, function(k, v)
-		    {
-		        ret = this.is_equal(needle, v, strict);
-		
-		        if (ret) return false;
-		
-		    }, this);
-		
-		    return ret;
-		}
-		/**
-		 * Map.
-		 *  
-		 * return undefined to break loop, true to keep, false to reject
-		 * 
-		 * @param   {array|object}  obj
-		 * @param   {function}      callback
-		 * @param   {array|mixed}   args      If single arg provided gets apllied as this to callback, otherwise args apllied to callback
-		 * @returns {array|object}
-		 */
-		_.prototype.map = function(obj, callback)
-		{
-		    if (typeof obj !== 'object' || obj === null) return;
-		
-		    let isArray = TO_STR.call(obj) === '[object Array]';
-		    let i       = 0;
-		    let keys    = isArray ? null : Object.keys(obj);
-		    let len     = isArray ? obj.length : keys.length;
-		    let args    = TO_ARR.call(arguments).slice(2);
-		    let ret     = isArray ? [] : {};
-		    let key;
-		    let val;
-		    let clbkVal;
-		
-		    // Applies the value of "this" to the callback as the array or object provided
-		    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
-		
-		    // Applies this arg as first extra arg if provided
-		    // otherwise falls back to the array or object provided
-		    // Removes "this" from args to callback
-		    var thisArg = this.is_empty(args) ? obj : args[0];
-		    args        = !this.is_empty(args) ? args.slice(1) : null;
-		    args        = this.is_empty(args) ? null : args;
-		
-		    if (TO_STR.call(args) === '[object Array]')
-		    {
-		        for (; i < len; i++)
-		        {
-		            key   = isArray ? i : keys[i];
-		            val   = isArray ? obj[i] : obj[key];
-		            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
-		
-		            if (clbkVal === false)
-		            {
-		                continue;
-		            }
-		            else if (typeof clbkVal === 'undefined')
-		            {
-		                break;
-		            }
-		            else
-		            {
-		                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
-		            }
-		        }
-		
-		        // A special, fast, case for the most common use of each (no extra args provided)
-		    }
-		    else
-		    {
-		        for (; i < len; i++)
-		        {
-		            key   = isArray ? i : keys[i];
-		            val   = isArray ? obj[i] : obj[key];
-		            clbkVal = callback.call(thisArg, key, val);
-		
-		            if (clbkVal === false)
-		            {
-		                continue;
-		            }
-		            else if (typeof clbkVal === 'undefined')
-		            {
-		                break;
-		            }
-		            else
-		            {
-		                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
-		            }
-		        }
-		    }
-		
-		    return ret;
-		}
-		/**
-		 * Set, get or remove DOM attribute.
-		 *
-		 * No third arg returns attribute value, third arg set to null or false removes attribute.
-		 * 
-		 * @param {HTMLElement}  DOMElement  Dom node
-		 * @param {string}       name        Property name
-		 * @apram {mixed}        value       Property value
-		 */
-		_.prototype.attr = function(DOMElement, name, value)
-		{        
-		    // Get attribute
-		    // e.g attr(node, style)
-		    if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
-		    {
-		        return this.__get_attribute(DOMElement, name);
-		    }
-		
-		    // attr(node, {foo : 'bar', baz: 'bar'})
-		    if (this.is_object(name))
-		    {
-		        this.each(name, function(prop, value)
-		        {
-		            this.attr(DOMElement, prop, value);
-		
-		        }, this);
-		
-		        return;
-		    }
-		
-		    // Set or remove attibute.
-		    switch (name)
-		    {
-		        // innerHTML
-		        case 'innerHTML':
-		            DOMElement.innerHTML = !value ? '' : value;
-		            break;
-		
-		        // innerText
-		        case 'innerText':
-		            DOMElement.innerText = !value ? '' : value;
-		            break;
-		
-		        // Children
-		        case 'children':
-		
-		            this.each(DOMElement.children, function(node)
-		            {
-		                this.remove_from_dom(node);
-		            
-		            }, this);
-		
-		            this.each(value, function(node)
-		            {
-		                DOMElement.appendChild(node);
-		            });
-		
-		            break;
-		
-		        // Class
-		        case 'class':
-		        case 'className':
-		
-		            // Cleanup classname
-		            value = this.is_string(value) ? this.replace(value, ['undefined', 'null', 'false', 'true'], '').replace(/\s\s+/g, ' ').trim() : value;
-		
-		            if (this.is_empty(value))
-		            {
-		                DOMElement.removeAttribute('class');
-		            }
-		            else
-		            {
-		                DOMElement.className = value;
-		            }
-		
-		            break;
-		
-		        // Style
-		        case 'style':
-		
-		            // remove all styles completely
-		            if (this.is_empty(value))
-		            {
-		                DOMElement.removeAttribute('style');
-		            }
-		
-		            DOMElement.style = '';
-		
-		            let style = this.is_string(value) ? this.css_to_object(value) : value;
-		
-		            this.each(style, (prop, value) => this.css(DOMElement, prop, value));
-		           
-		            break;
-		
-		        // Events / attributes
-		        default:
-		
-		            // Events
-		            if (name[0] === 'o' && name[1] === 'n')
-		            {
-		                var evt = name.slice(2).toLowerCase();
-		
-		                // Remove old listeners
-		                this.remove_event_listener(DOMElement, evt);
-		
-		                // Add new listener if one provided
-		                if (value)
-		                {
-		                    this.add_event_listener(DOMElement, evt, value);
-		                }
-		            }
-		            // All other node attributes
-		            else
-		            {
-		                let isData     = name.startsWith('data');
-		                let isAria     = name.startsWith('aria');
-		                let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
-		                let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
-		                let isEmpty    = this.is_empty(value);
-		
-		                // Special data
-		                if (isData)
-		                {
-		                    if (isEmpty)
-		                    {
-		                        DOMElement.removeAttribute(hyphenName);
-		
-		                        delete DOMElement.dataset[this.lc_first(this.ltrim(camelName, 'data'))];
-		                    }
-		                    else
-		                    {
-		                        DOMElement.setAttribute(hyphenName, value);
-		
-		                        DOMElement.dataset[this.lc_first(this.ltrim(camelName, 'data'))] = value;
-		                    }
-		
-		                    break;
-		                }
-		
-		                // Special booleans
-		                if (this.in_array(name, BOOLEAN_ATTRS))
-		                {
-		                    DOMElement[name] = isEmpty ? '' : value;
-		
-		                    if (isEmpty) DOMElement.removeAttribute(name);
-		
-		                    break;
-		                }
-		
-		                if (!PROP_ATTRIBUTES.includes(camelName))
-		                {
-		                    try
-		                    {                        
-		                        DOMElement[camelName] = isEmpty ? '' : value;
-		
-		                    } catch (e) {}
-		                }
-		
-		                if (isEmpty)
-		                {
-		                    DOMElement.removeAttribute(hyphenName);
-		                }
-		                else
-		                {
-		                    DOMElement.setAttribute(hyphenName, value);
-		                }
-		            }
-		
-		            break;
-		    }
-		}
-		
-		/**
-		 * Simple get html attribute.
-		 *
-		 * No third arg returns attribute value, third arg set to null or false removes attribute.
-		 * 
-		 * @access {private}
-		 * @param  {HTMLElement}      DOMElement  Dom node
-		 * @param  {string}           name        Property name
-		 * @return {string|undefined}
-		 */
-		_.prototype.__get_attribute = function(DOMElement, name)
-		{
-		    if (name.startsWith('data'))
-		    {
-		        name = name.startsWith('data-') ? this.to_camel_case(name.substring(5)) : name.substring(4);
-		
-		        return DOMElement.dataset[name];
-		    }
-		
-		    // Special booleans
-		    if (this.in_array(name, BOOLEAN_ATTRS))
-		    {
-		        if (DOMElement[name] === '' || DOMElement[name] === 'true' || DOMElement[name] === true) return true;
-		
-		        return DOMElement[name] === 'false' || !DOMElement[name] ? false : true;
-		    }
-		
-		    let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
-		    let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
-		    let retCamel   = DOMElement[camelName];
-		    let retAttr    = DOMElement.getAttribute(hyphenName);
-		
-		    return retAttr === null || this.is_undefined(retAttr) ? retCamel : retAttr;
-		}
-		
-		
-		/**
-		 * Set, get or remove CSS value(s) on element.
-		 * 
-		 * Note that this will only return inline styles, use 'rendered_style' for
-		 * currently displayed styles.
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el     Target DOM node
-		 * @param  {string|object} Assoc array of property->value or string property
-		 * @example {Helper.css(node,} { display : 'none' });
-		 * @example {Helper.css(node,} 'display', 'none');
-		 */
-		_.prototype.css = function(el, property, value)
-		{
-		    // If their is no value and property is an object
-		    if (this.is_object(property))
-		    {
-		        this.each(property, function(prop, val)
-		        {
-		            this.css(el, prop, val);
-		
-		        }, this);
-		    }
-		    else
-		    {
-		        // Getting not settings
-		        if (this.is_undefined(value))
-		        {
-		            return this.inline_style(el, property);
-		        }
-		        // Value is either null or false we remove
-		        else if (this.is_null(value) || value === false)
-		        {
-		            if (el.style.removeProperty)
-		            {
-		                el.style.removeProperty(property);
-		            }
-		            else
-		            {
-		                el.style.removeAttribute(property);
-		            }
-		        }
-		        else
-		        {
-		            if (value.includes('important') || property.startsWith('--'))
-		            {
-		                let styles = el.getAttribute('style');
-		
-		                if (styles && styles.includes(property))
-		                {
-		                    let re = new RegExp(`${property}\s?:[^;]+;?`, 'g');
-		
-		                    styles = styles.replace(re, '').trim();
-		                }
-		                
-		                styles = !styles ? `${property}:${value}` : `${this.rtrim(styles, ';')};${property}:${value}`;
-		
-		                el.setAttribute('style', styles);
-		
-		                return;
-		            }
-		            else
-		            {
-		                el.style[property] = value;    
-		            }
-		        }
-		    }
-		}
-		/**
-		 * Converts CSS property to camel case.
-		 *
-		 * @access {public}
-		 * @param  {string} prop Property to convert
-		 * @retirm {string}
-		 */
-		_.prototype.css_prop_to_camel_case = function(prop)
-		{
-		    if (!prop.includes('-')) return prop;
-		
-		    let camelProp = this.to_camel_case(prop);
-		
-		    if (this.in_array(prop, Object.keys(CSS_PROP_TO_CAMEL_CASES)))
-		    {
-		        return CSS_PROP_TO_CAMEL_CASES[prop];
-		    }
-		
-		    // First char is always lowercase
-		    let ret = camelProp.charAt(0).toLowerCase() + camelProp.slice(1);
-		
-		    CSS_PROP_TO_CAMEL_CASES[prop] = ret;
-		
-		    return ret;
-		}
-		/**
-		 * Converts CSS property to hyphen case.
-		 *
-		 * @access {public}
-		 * @param  {string} prop Property to convert
-		 * @retirm {string}
-		 */
-		_.prototype.css_prop_to_hyphen_case = function(prop)
-		{
-		    if (!/[A-Z]/.test(prop)) return prop;
-		    
-		    if (this.in_array(prop, Object.keys(CSS_PROP_TO_HYPHEN_CASES)))
-		    {
-		        return CSS_PROP_TO_HYPHEN_CASES[prop];
-		    }
-		
-		    var hyphenProp = this.camel_case_to_hyphen(prop);
-		
-		    if (hyphenProp.startsWith('webkit-') || hyphenProp.startsWith('moz-') || hyphenProp.startsWith('ms-') || hyphenProp.startsWith('o-'))
-		    {
-		        hyphenProp = '-' + hyphenProp;
-		    }
-		
-		    CSS_PROP_TO_CAMEL_CASES[prop] = hyphenProp;
-		
-		    return hyphenProp;
-		}
-		/**
-		 * Expand shorthand property to longhand properties 
-		 *
-		 * @access {private}
-		 * @param  {string}  CSS rules
-		 * @return {object}
-		 */
-		_.prototype.css_to_longhand = function(css)
-		{
-		    var ret    = {};
-		    var values = this.css_to_object(css);
-		
-		    this.each(values, function(prop, value)
-		    {
-		        if (SHORTHAND_PROPS.hasOwnProperty(prop))
-		        {
-		            var splits  = value.split(' ').map( (x) => x.trim());
-		            var dfault  = prop === 'margin' || prop === 'padding' ? '0' : 'initial';
-		
-		            this.each(SHORTHAND_PROPS[prop], function(i, longhand)
-		            {
-		                // Object is setup so that if it starts with a '-'
-		                // then it gets concatenated to the oridional prop
-		                // e.g 'background' -> '-image'
-		                longhand = longhand.startsWith('-') ? prop + longhand : longhand;
-		
-		                // otherwise it gets replaced
-		                // e.g 'border-color' -> 'border-top-color', 'border-right-color'... etc
-		                ret[longhand] = this.is_undefined(splits[i]) ? dfault : splits[i];
-		
-		            }, this);
-		        }
-		        else
-		        {
-		            ret[prop] = value;
-		        }
-		
-		    }, this);
-		
-		    return ret;
-		}
-		/**
-		 * Concats longhand property to shorthand
-		 *
-		 * Note if values are not provide not all browsers will except initial
-		 * for all properties in shorthand syntax
-		 * 
-		 * @access {private}
-		 * @param  {string}  CSS rules
-		 * @return {object}
-		 */
-		_.prototype.css_to_shorthand = function(css)
-		{
-		    const needsFilling = ['margin', 'padding', 'transition', 'animation'];
-		    var ret            = {};
-		    var styles         = this.css_to_object(css);
-		
-		    // 'margin': ['-top', '-right', '-bottom', '-left'],
-		    this.each(SHORTHAND_PROPS, function(property, longhands)
-		    {
-		        var value       = '';
-		        var matched     = false;
-		        var needsDefault = this.in_array(property, needsFilling) || property.includes('border');
-		
-		        this.each(longhands, function(i, longhand)
-		        {
-		            longhand = longhand.startsWith('-') ? property + longhand : longhand;
-		
-		            var suppliedVal = styles[longhand];
-		
-		            if (!this.is_undefined(suppliedVal))
-		            {
-		                matched = true;
-		                // Colors get flatted
-		                if (longhand.includes('-color'))
-		                {
-		                    value = suppliedVal;
-		                }
-		                else
-		                {
-		                    value += suppliedVal + ' ';
-		                }
-		            }
-		            else if (needsDefault)
-		            {
-		                this.each(SHORTHAND_DEFAULTS, function(matcher, defaltVal)
-		                {
-		                    if (longhand.includes(matcher))
-		                    {
-		                        value += ` ${defaltVal} `;
-		                    }
-		                });
-		            }
-		            
-		        }, this);
-		
-		        if (!this.is_empty(value) && matched) ret[property] = value.trim();
-		        
-		    }, this);
-		
-		    return ret;
-		}
-		/**
-		 * Converts string styles into an object
-		 *
-		 * @param  {string} styles CSS
-		 * @return {object}
-		 */
-		_.prototype.css_to_object = function(styles)
-		{
-		    var ret = {};
-		
-		    const nested_regex = /([^\{]+\{)([\s\S]+?\})(\s*\})/g;
-		
-		    const css_regex = /([^{]+\s*\{\s*)([^}]+)(\s*\}\s*)/g;
-		
-		    if (styles.includes('{'))
-		    {
-		        var nestedStyles = [...css.matchAll(nested_regex)];
-		    }
-		
-		    this.each(styles.split(/;(?=(?:[^"]*"[^"]*")*[^"]*$)/g), function(i, rule)
-		    {
-		        var style = rule.split(':');
-		
-		        if (style.length >= 2)
-		        {
-		            var prop = style.shift().trim();
-		            var val  = style.join(':').trim();
-		
-		            ret[prop] = val;
-		        }
-		    }, this);
-		
-		    return ret;
-		}
-		/**
-		 * Get CSS property.
-		 * 
-		 * @param  {string} value CSS value (e.g "12px")
-		 * @return {Number}
-		 */
-		_.prototype.css_unit_value = function(value)
-		{
-		    value = value + '';
-		
-		    if (this.is_numeric(value))
-		    {
-		        return parseFloat(value);
-		    }
-		
-		    if (this.is_empty(value))
-		    {
-		        return 0;
-		    }
-		
-		    return parseFloat(value.replaceAll(/[^0-9-.]/g, ''));
-		}
-		
-		/**
-		 * Get CSS property unit.
-		 * 
-		 * @param  {string} value CSS value (e.g "12px")
-		 * @return {string}
-		 */
-		_.prototype.css_value_unit = function(value)
-		{
-		    value = value + '';
-		
-		    return value.split(/[0-9]/).pop().replaceAll(/[^a-z%]/g, '').trim();
-		}
-		
-		/**
-		 * Converts CSS units to px.
-		 * 
-		 * @param  {String}     value      CSS value (e.g "12rem")
-		 * @param  {DomElement} DOMElement CSS value (optional) (used to relative units)
-		 * @param  {String}     property   CSS property (optional) (used for % unit)
-		 * @return {Number}
-		 */
-		_.prototype.css_to_px = function(valueStr, DOMElement, property)
-		{
-		    valueStr = valueStr + '';
-		    
-		    if (valueStr.includes('calc')) return valueStr;
-		
-		    var unit  = this.css_value_unit(valueStr);
-		    var value = this.css_unit_value(valueStr);
-		
-		    if (valueStr.includes('px')) return value;
-		
-		    if (!this.is_undefined(CSS_ABSOLUTE_UNITS[unit]))
-		    {
-		        return (value * CSS_ABSOLUTE_UNITS[unit]);
-		    }
-		
-		    if (!this.is_undefined(CSS_RELATIVE_UNITS[unit]))
-		    {
-		        if (unit === 'em' || unit === 'ex' || 'unit' === 'ch')
-		        {
-		            if (!DOMElement) return value * CSS_RELATIVE_UNITS[unit];
-		            let psize = this.css_unit_value(this.rendered_style(DOMElement.parentNode, 'font-size'));
-		            if (unit === 'em') return value * psize;
-		            if (unit === 'ex') return value * (psize / 1.8);
-		            if (unit === 'ch') return value * (psize / 2);
-		            if (unit === '%')  return value * psize;
-		        }
-		        else if (unit === '%')
-		        {
-		            if (!DOMElement) return value * CSS_RELATIVE_UNITS[unit];
-		            if (!property) property = 'height';
-		            
-		            let psize = this.css_unit_value(this.rendered_style(DOMElement, property));
-		
-		            return psize * (value / 100);
-		        }
-		        else if (unit === 'rem')
-		        {
-		            // font sizes are always returned in px with JS
-		            return value * this.css_unit_value(this.rendered_style(document.documentElement, 'font-size'));
-		        }
-		        else if (unit === 'vw')
-		        {
-		            return this.width(window) * (value / 100);
-		        }
-		        else if (unit === 'vh')
-		        {
-		            return this.height(window) * (value / 100);
-		        }
-		        else if (unit === 'vmin' || unit === 'vmax')
-		        {
-		            let w = this.width(window);
-		            let h = this.height(window);
-		            let m = unit === 'vmin' ? Math.min(w, h) : Math.max(w, h)
-		
-		            return m * (value / 100);
-		        }
-		    }
-		
-		    return value;
-		}
-		
-		/**
-		 * Get an element's inline style if it exists
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @param  {string} prop CSS property to check
-		 * @return {string}
-		 */
-		_.prototype.inline_style = function(element, prop)
-		{
-		    const elementStyle = element.style;
-		
-		    prop = this.css_prop_to_hyphen_case(prop);
-		
-		    if (prop.startsWith('--'))
-		    {
-		        return window.getComputedStyle(element).getPropertyValue(prop);
-		    }
-		    else if (Object.hasOwn(elementStyle, prop))
-		    {
-		        const val = elementStyle.getPropertyValue(elementStyle[prop]) || elementStyle[prop];
-		        
-		        return val === '' ? undefined : val;
-		    }
-		}
-		/**
-		 * Remove inline css style
-		 * 
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @param  {string} prop CSS property to removes
-		 */
-		_.prototype.remove_style = function(el, prop)
-		{
-		    if (typeof prop === 'undefined')
-		    {
-		        DOMElement.removeAttribute('style');
-		
-		        return;
-		    }
-		
-		    this.css(el, prop);
-		}
-		/**
-		 * Get the element's computed style on a property
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @param  {string} prop CSS property to check (in camelCase) (optional)
-		 * @return {mixed}
-		 */
-		_.prototype.rendered_style = function(DOMElement, property)
-		{
-		    if (property.includes('ransform'))
-		    {
-		        return this.css_transform_props(DOMElement, true);
-		    }
-		
-		    return this.__computed_style(DOMElement, property);
-		}
-		
-		/**
-		 * Get the elements computed style.
-		 *
-		 * @access {private}
-		 * @param  {DOMElement}          el   Target element
-		 * @param  {string}        prop CSS property to check (in camelCase) (optional)
-		 * @return {string|object}
-		 */
-		_.prototype.__computed_style = function(DOMElement, property)
-		{
-		    if (window.getComputedStyle)
-		    {
-		        let styles = window.getComputedStyle(DOMElement, null);
-		
-		        if (property && property.startsWith('--')) return styles.getPropertyValue(property);
-		
-		        return !property ? styles : styles[property];
-		    }
-		    else if (DOMElement.currentStyle)
-		    {
-		        let styles = DOMElement.currentStyle;
-		
-		        return !property ? styles : styles[property];
-		    }
-		
-		    return '';
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		/**
-		 * Returns an object of CSS transitions by transition property as keys.
-		 *
-		 * @param  {node|string} DOMElement  Target element or transition value string
-		 * @return {object}
-		 */
-		_.prototype.css_transition_props = function(DOMElement)
-		{
-		    if (!DOMElement) return {};
-		    var transitions   = {};
-		    var transitionVal = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transition');
-		
-		    // No transition
-		    if (!transitionVal || transitionVal.startsWith('all 0s ease 0s') || transitionVal === 'none' || transitionVal === 'unset' || transitionVal === 'auto')
-		    {
-		        return transitions;
-		    }
-		
-		    let transitionSplit = transitionVal.includes('cubic-bezier') ? '' : transitionVal.trim().split(',');
-		
-		    if (transitionVal.includes('cubic-bezier'))
-		    {
-		        let map      = [];
-		        let inBezier = false;
-		        let block    = '';
-		        let char;
-		
-		        this.for(transitionVal.length, function(i)
-		        {
-		            char = transitionVal[i];
-		
-		            if (char === '(') inBezier = true;
-		            if (char === ')') inBezier = false;
-		
-		            if (char === ',' && !inBezier)
-		            {
-		                map.push(block.trim());
-		                block = '';
-		
-		                // next
-		                return;
-		            }
-		
-		            block += char;
-		
-		            if (i === transitionVal.length -1) map.push(block.trim());
-		        });
-		
-		        transitionSplit = map;
-		    }
-		
-		    this.each(transitionSplit, function(i, transition)
-		    {
-		        transition = transition.trim();
-		
-		        // Variants of all
-		        if (transition[0] === '.' || transition.startsWith('all ') ||  this.is_numeric(transition[0]))
-		        {
-		            transitions.all = transition.replace('all ', '');
-		
-		            return false;
-		        }
-		
-		        var prop = transition.split(' ', 4).shift();
-		
-		        transitions[prop] = transition.replace(prop, '').trim();
-		
-		    }, this);
-		
-		    return transitions;
-		}
-		/**
-		 * Returns an object of CSS transforms by property as keys or transforms as string.
-		 *
-		 * @param  {node|string} DOMElement     Target element or transition value string
-		 * @param  {bool}        returnAsString Returns transforms as string (optional) (default true)
-		 * @return {object}
-		 */
-		_.prototype.css_transform_props = function(DOMElement, returnAsString)
-		{
-		    if (this.is_string(DOMElement))
-		    {
-		        return this.__un_css_matrix(DOMElement, returnAsString);
-		    }
-		
-		    returnAsString = this.is_undefined(returnAsString) ? true : returnAsString;
-		
-		    let styles = this.__computed_style(DOMElement, 'transform');
-		
-		    // If element is set to "display:none" only inline transforms will show up
-		    // so we check those first
-		    let inline   = this.inline_style(DOMElement, 'transform');
-		    let emptys   = [undefined, '', 'none', 'unset', 'initial', 'inherit'];
-		
-		    // Has inline styles - inline do not need to converted
-		    if (!emptys.includes(inline))
-		    {
-		        return returnAsString ? inline : this.__un_css_matrix(inline, false);
-		    }
-		
-		    // If element is hiddien we need to display it quickly
-		    // to get the CSS defined transform prop to be renderd
-		    let inlineDisplay = this.inline_style(DOMElement, 'display');
-		    let cssDisplay    = this.rendered_style(DOMElement, 'display');
-		    let isHidden      = cssDisplay === 'none';
-		
-		    // Re-get transform value
-		    if (isHidden)
-		    {
-		        this.css(DOMElement, 'display', 'unset');
-		
-		        styles = this.__computed_style(DOMElement, 'transform');
-		    }
-		
-		    // Doesn't have stylesheet styles
-		    if (this.in_array(styles, emptys))
-		    {
-		        styles = styles === 'none' || styles === undefined ? '' : styles;
-		    }
-		
-		    // Empty return
-		    if (!styles)
-		    {
-		        return returnAsString ? '' : {};
-		    }
-		
-		    // revert matrix
-		    styles = this.__un_css_matrix(DOMElement, returnAsString);
-		    
-		    // Revert back origional styles
-		    if (isHidden)
-		    {
-		        this.css(DOMElement, 'display', !inlineDisplay ? false : inlineDisplay);
-		    }
-		
-		    return returnAsString ? styles : styles;
-		}
-		
-		/**
-		 * Converts an element's matrix transform value back to component transforms
-		 *
-		 * @access {private}
-		 * @param  {DOMElement}   DOMElement     Target element
-		 * @param  {bool}   returnAsString Returns string
-		 * @return {string|object}
-		 */
-		_.prototype.__un_css_matrix = function(DOMElement, returnAsString)
-		{
-		    if (!this.is_string(DOMElement))
-		    {
-		        if (!DOMElement.computedStyleMap)
-		        {
-		            return returnAsString ? '' : {};
-		        }
-		
-		        var computedTransforms = DOMElement.computedStyleMap().get('transform');
-		
-		        var transforms = Array.prototype.slice.call(computedTransforms).map( (x) => x.toString() ).sort().reverse();
-		    }
-		    else
-		    {
-		        var transforms = DOMElement.split(')');
-		    }
-		
-		    const axisMap = ['X', 'Y', 'Z'];
-		
-		    const ret = {};
-		
-		    this.each(transforms, function(i, transform)
-		    {
-		        if (transform.trim() === '') return;
-		
-		        var split    = transform.split('(');
-		        var bsName   = split[0].replace('3d', '');
-		        var prop     = split.shift().trim();
-		        var value    = split.pop().trim().replace(')', '');
-		        var values   = value.split(',').map((x) => x.trim());
-		        var lastChar = prop.slice(-1);
-		
-		        if (prop === 'perspective')
-		        {
-		            ret.perspective = value;
-		
-		            return;
-		        }
-		        
-		        this.each(values, function(i, val)
-		        {
-		            if (i > 2) return false;
-		
-		            let defltVal = prop.includes('scale') ? 1 : 0;
-		            let axisProp = !axisMap.includes(lastChar) ? `${bsName}${axisMap[i]}` : bsName;
-		
-		            if (prop === 'rotate')
-		            {
-		                ret.rotateZ = val;
-		            }
-		            else if (prop === 'rotate3d')
-		            {
-		                if (parseFloat(val) !== defltVal)
-		                {
-		                    ret[axisProp] = values[values.length - 1];
-		                }
-		            }
-		            else if (parseFloat(val) === defltVal && ret[axisProp])
-		            {
-		                return;
-		            }
-		            else
-		            {
-		                ret[axisProp] = val;
-		            }
-		        });
-		
-		    }, this);
-		
-		    if (returnAsString)
-		    {
-		        return !this.is_empty(ret) ? this.join_obj(ret, '(', ') ') + ')' : '';
-		    }
-		    
-		    return ret;
-		}
-		/**
-		 * Returns an object of CSS transitions by transition property as keys.
-		 *
-		 * @param  {string} transforms A CSS transform value e.g translateY(300px) 
-		 * @return {object}
-		 */
-		_.prototype.css_to_3d_transform = function(transformsStr)
-		{        
-		    var transforms = {};
-		
-		    var _this = this;
-		
-		    /**
-		     * Get value number
-		     * 
-		     * @private
-		     */
-		    var getPropValue = function(value)
-		    {
-		        if (_this.is_numeric(value))
-		        {
-		            return parseFloat(value);
-		        }
-		
-		        if (_this.is_empty(value))
-		        {
-		            return 0;
-		        }
-		
-		        return parseFloat(value.replaceAll(/[^0-9-.]/g, ''));
-		    }
-		
-		    if (transformsStr.includes('matrix'))
-		    {
-		        return transformsStr;
-		    }
-		
-		    // Split into object
-		    this.each(transformsStr.trim().split(')'), function(i, transform)
-		    {
-		        transform = transform.trim();
-		
-		        if (transform === '') return;
-		
-		        transform      = transform.split('(');
-		        var prop       = transform.shift().trim();
-		        var value      = transform.pop().trim();
-		        var values     = value.split(',').map((x) => x.trim());
-		        var valueCount = CSS_TRANSFORM_VALUES_COUNT[prop];
-		
-		        if (prop === 'perspective')
-		        {
-		            transforms.perspective = values[0];
-		        }
-		        else if (valueCount === 1 || valueCount === 2)
-		        {
-		            var initialVal = prop === 'scale' ? 1 : 0;
-		            var name3d     = valueCount === 1 ? `${prop.slice(0,-1)}3d` : `${prop}3d`;
-		                name3d     = name3d.includes('skew') ? 'skew' : name3d;
-		                name3d     = name3d === 'rotat3d' ? 'rotate3d' : name3d;
-		            var key        = CSS_3D_TRANSFORM_MAP_KEYS[prop.slice(-1).toLowerCase()];
-		            
-		            if (this.is_empty(transforms[name3d]))
-		            {
-		                transforms[name3d] = CSS_3D_TRANSFORM_DEFAULTS[name3d];
-		            }
-		            
-		            if (prop === 'rotate')
-		            {
-		                transforms.rotate3d[3] = values[0];
-		            }
-		            else
-		            {
-		                this.each(values, function(i, value)
-		                {
-		                    var compValue = parseFloat(value.replaceAll(/[^0-9]-/g, ''));
-		
-		                    if (getPropValue(value) !== initialVal)
-		                    {
-		                        transforms[name3d][!key ? i : key] = value;
-		                    }
-		                });
-		            }
-		        }
-		        else 
-		        {
-		            transforms[prop] = values;
-		        }
-		
-		    }, this);
-		
-		    return transforms;
-		}
-		/**
-		 * Add a css class or list of classes
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}         DOMElement Target element
-		 * @param  {array|string} className  Class name(s) to add
-		 */
-		_.prototype.add_class = function(DOMElement, className)
-		{    
-		    if (this.is_array(DOMElement))
-		    {
-		        this.each(DOMElement, (i, _DOMElement) =>  this.add_class(_DOMElement, className));
-		
-		        return this;
-		    }
-		
-		    if (this.is_array(className))
-		    {
-		        this.each(className, (i, _className) =>  this.add_class(DOMElement, _className));
-		    
-		        return this;
-		    }
-		
-		    if (className.includes(','))
-		    {
-		        this.each(this.array_filter(className.split(',')), (i, _className) => this.add_class(DOMElement, _className));
-		    
-		        return this;
-		    }
-		
-		    if (className.includes('.'))
-		    {
-		        this.each(this.array_filter(className.split('.')), (i, _className) => this.add_class(DOMElement, _className));
-		    
-		        return this;
-		    }
-		
-		    className = className.trim();
-		
-		    if (className[0] === '.') className = className.slice(1);
-		
-		    DOMElement.classList.add(className);
-		
-		    return this;
-		}
-		/**
-		 * Closest parent node by type/class or array of either
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @param  {string} type Node type to find
-		 * @return {node\null}
-		 */
-		_.prototype.closest = function(el, type)
-		{
-		    // Type is class
-		    if (this.is_array(type))
-		    {
-		        for (var i = 0; i < type.length; i++)
-		        {
-		            var response = this.closest(el, type[i]);
-		
-		            if (response)
-		            {
-		                return response;
-		            }
-		        }
-		
-		        return null;
-		    }
-		
-		    // Type is class
-		    if (this.is_htmlElement(type))
-		    {
-		        if (el === type) return true;
-		        
-		        let ret = false;
-		
-		        this.traverse_up(el, (parent) =>
-		        {
-		            if (parent === type)
-		            {
-		                ret = true;
-		
-		                return true;
-		            }
-		        });
-		
-		        return ret;
-		    }
-		
-		    if (type[0] === '.')
-		    {
-		        return this.closest_class(el, type);
-		    }
-		
-		    type = type.toLowerCase();
-		
-		    if (typeof el === 'undefined')
-		    {
-		        return null;
-		    }
-		
-		    if (el.nodeName.toLowerCase() === type)
-		    {
-		        return el;
-		    }
-		
-		    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type)
-		    {
-		        return el.parentNode;
-		    }
-		
-		    var parent = el.parentNode;
-		
-		    while (parent !== document.body && typeof parent !== "undefined" && parent !== null)
-		    {
-		        parent = parent.parentNode;
-		
-		        if (parent && parent.nodeName.toLowerCase() === type)
-		        {
-		            return parent;
-		        }
-		    }
-		
-		
-		    return null;
-		}
-		
-		/**
-		 * Closest parent node by class
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @param  {string} clas Node class to find
-		 * @return {node\null}
-		 */
-		_.prototype.closest_class = function(el, clas)
-		{    
-		    // Type is class
-		    if (this.is_array(clas))
-		    {
-		        for (var i = 0; i < clas.length; i++)
-		        {
-		            var response = this.closest_class(el, clas[i]);
-		
-		            if (response)
-		            {
-		                return response;
-		            }
-		        }
-		
-		        return null;
-		    }
-		
-		    if (this.has_class(el, clas))
-		    {
-		        return el;
-		    }
-		
-		    if (this.has_class(el.parentNode, clas))
-		    {
-		        return el.parentNode;
-		    }
-		
-		    var parent = el.parentNode;
-		
-		    if (parent === window.document)
-		    {
-		        return null;
-		    }
-		
-		    while (parent !== document.body)
-		    {
-		        if (this.has_class(parent, clas))
-		        {
-		            return parent;
-		        }
-		
-		        if (parent === null || typeof parent === 'undefined')
-		        {
-		            return null;
-		        }
-		
-		        parent = parent.parentNode;
-		    }
-		
-		    return null;
-		}
-		/**
-		 * Get an element's absolute coordinates
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el Target element
-		 * @return {object}
-		 */
-		_.prototype.coordinates = function(DOMElement)
-		{
-		    // If element is hiddien we need to display it quickly
-		    var inlineDisplay = this.inline_style(DOMElement, 'display');
-		    var hidden        = this.rendered_style(DOMElement, 'display');
-		    
-		    if (hidden === 'none')
-		    {
-		        // If the element was "display:none" with an inline
-		        // style, remove the inline display so it defaults to
-		        // whatever styles are set on in through stylesheet
-		        if (inlineDisplay)
-		        {
-		            this.css(DOMElement, 'display', false);
-		        }
-		        // Otherwise set it to unset
-		        else
-		        {
-		            this.css(DOMElement, 'display', 'unset');
-		        }
-		    }
-		
-		    var box        = DOMElement.getBoundingClientRect();
-		    var body       = document.body;
-		    var docEl      = document.documentElement;
-		    var scrollTop  = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-		    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-		    var clientTop  = docEl.clientTop || body.clientTop || 0;
-		    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-		    var borderL    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
-		    var borderR    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
-		    var borderT    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
-		    var borderB    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
-		    var top        = box.top + scrollTop - clientTop - borderT - borderB;
-		    var left       = box.left + scrollLeft - clientLeft + borderL - borderR;
-		    var width      = parseFloat(this.rendered_style(DOMElement, "width"));
-		    var height     = parseFloat(this.rendered_style(DOMElement, "height"));
-		
-		    if (inlineDisplay)
-		    {
-		        this.css(DOMElement, 'display', inlineDisplay);
-		    }
-		    else
-		    {
-		        this.css(DOMElement, 'display', false);
-		    }
-		    
-		    return {
-		        top: top,
-		        left: left,
-		        right: left + width,
-		        bottom: top + height,
-		        height: height,
-		        width: width,
-		    };
-		}
-		/**
-		 * Get all first level children
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @return {node\null}
-		 */
-		_.prototype.first_children = function(el)
-		{
-		    return this.$All('> *', el);
-		}
-		/**
-		 * Get all input elements from a form
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   form Target element
-		 * @return {array}
-		 */
-		_.prototype.form_inputs = function(form)
-		{
-		    return this.$All('input, textarea, select', form);
-		}
-		/**
-		 * Get an array of name/value objects for all inputs in a form
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   form Target element
-		 * @return {array}
-		 */
-		_.prototype.form_values = function(form)
-		{
-		    var inputs = this.form_inputs(form);
-		    var ret    = {};
-		    
-		    this.each(inputs, function(i, input)
-		    {
-		        let name = input.name;
-		
-		        if (input.type === 'radio')
-		        {
-		            if (this.attr(input, 'checked')) ret[name] = this.input_value(input);
-		        }
-		        else if (input.type === 'checkbox')
-		        {
-		            ret[name] = this.attr(input, 'checked');
-		        }
-		        else
-		        {
-		            ret[name] = this.input_value(input);
-		        }
-		        if (name.includes('[]'))
-		        {
-		            if (!ret[name] || !this.is_array(ret[name]))
-		            {
-		                ret[name] = [];
-		            }
-		
-		            ret[name].push(this.input_value(input));
-		        }
-		
-		    }, this);
-		   
-		    return ret;
-		}
-		/**
-		 * Check if a node has a class
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}         el         Target element
-		 * @param  {string|array} className  Class name(s) to check for
-		 * @return {bool}
-		 */
-		_.prototype.has_class = function(DOMElement, className)
-		{
-		    let ret = false;
-		
-		    if (this.is_array(className))
-		    {
-		        this.each(className, (i, _className) => { if (this.has_class(DOMElement, _className)) ret = true; return false; });
-		        
-		        return ret;
-		    }
-		
-		    if (className.includes(','))
-		    {
-		        this.each(this.array_filter(className.split(',')), (i, _className) => { if (this.has_class(DOMElement, _className)) ret = true; return false; });
-		    
-		        return ret;
-		    }
-		
-		    if (className.includes('.'))
-		    {
-		        let count = className.split('.').length;
-		
-		        if (count >= 3)
-		        {
-		            this.each(this.array_filter(className.split('.')), (i, _className) => { ret = this.has_class(DOMElement, _className); if (!ret) return false; });
-		
-		            return ret;
-		        }
-		    }
-		
-		    className = className.trim();
-		
-		    if (className[0] === '.') className = className.slice(1);
-		
-		    return DOMElement.classList.contains(className);
-		}
-		/**
-		 * Aria hide an element
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   HTMLElement Target DOM node
-		 */
-		_.prototype.hide_aria = function(HTMLElement)
-		{
-		    if (this.is_array(HTMLElement)) return this.each(HTMLElement, (i, el) => this.hide_aria(el));
-		    
-		    this.attr(HTMLElement, 'aria-hidden', 'true');
-		}
-		/**
-		 * Check if an element is in current viewport
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el Target DOM node
-		 * @return {bool}
-		 */
-		_.prototype.in_viewport = function(el)
-		{
-		    var rect = el.getBoundingClientRect();
-		
-		    return (
-		        rect.top >= 0 &&
-		        rect.left >= 0 &&
-		        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
-		        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
-		    );
-		}
-		/**
-		 * Replace or append a node's innerHTML
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   DOMElement  Target element
-		 * @param  {string} content     Target content
-		 * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
-		 */
-		_.prototype.inner_HTML = function(DOMElement, content, append)
-		{
-		    content = this.is_array(content) ? content.join("\n") : content;
-		
-		    if (append)
-		    {
-		        DOMElement.innerHTML += content;
-		    }
-		    else
-		    {
-		        this.clear_event_listeners(DOMElement, true);
-		
-		        DOMElement.innerHTML = content;
-		    }
-		
-		    this.trigger_event(DOMElement, `FrontBx:dom:mutate`);
-		
-		    this.trigger_event(window, `FrontBx:dom:mutate`, { DOMElement: DOMElement });
-		}
-		/**
-		 * Replaces element's innerText without destroying childnodes
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @param  {string} text Text to replace
-		 */
-		_.prototype.inner_Text = function(el, text)
-		{
-		    if (el.childNodes[0])
-		    {
-		        el.childNodes[0].nodeValue = text;
-		    }
-		}
-		/**
-		 * Gets an input element's value
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   input Target element
-		 * @return {mixed}
-		 */
-		_.prototype.input_value = function(input)
-		{
-		    if (input.type == "number" || this.is_numeric(input.value))
-		    {
-		        return input.value.includes('.') ? parseInt(input.value) : parseFloat(input.value);
-		    }
-		    if (input.type == "select")
-		    {
-		        return input.options[input.selectedIndex].value;
-		    }
-		    if (input.type == "file")
-		    {
-		        if (input.multiple == true)
-		        {
-		            return input.files;
-		        }
-		
-		        return input.files[0];
-		    }
-		
-		    return input.value;
-		}
-		/**
-		 * Create and insert a new node
-		 *
-		 * @param {object} options
-		 */
-		_.prototype.dom_element = function(options, appendTo, innerHTMLOrChildren)
-		{    
-		    // dom_element(null, wrappper, content);
-		    if (!options && appendTo && innerHTMLOrChildren)
-		    {
-		        this._recursive_dom_element(innerHTMLOrChildren, appendTo);
-		
-		        return appendTo;
-		    }
-		
-		    if (!options.tag) throw new Error('Element tag not provided.');
-		
-		    let node = document.createElement(options.tag);
-		
-		    delete options.tag;
-		
-		    this.attr(node, options);
-		
-		    if (innerHTMLOrChildren)
-		    {
-		        this._recursive_dom_element(innerHTMLOrChildren, node);
-		    }
-		
-		    if (appendTo)
-		    {
-		        appendTo.appendChild(node);
-		    }
-		
-		    return node;
-		}
-		
-		_.prototype._recursive_dom_element = function(mixedVar, parent)
-		{
-		    if (this.is_htmlElement(mixedVar))
-		    {
-		        parent.appendChild(mixedVar);
-		    }
-		    else if (this.is_array(mixedVar))
-		    {
-		        this.each(this.array_filter(mixedVar), (i, child) =>
-		        {
-		            this._recursive_dom_element(child, parent);
-		        }); 
-		    }
-		    else if (this.is_object(mixedVar))
-		    {
-		        this.dom_element(mixedVar, node);
-		    }
-		    else
-		    {
-		        parent.innerHTML += mixedVar;
-		    }
-		}
-		
-		
-		/**
-		 * Traverse nextSibling untill type or class or array of either
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @param  {string} type Target node type
-		 * @return {node\null}
-		 */
-		_.prototype.next = function(el, type)
-		{
-		    // Type is class
-		    if (this.is_array(type))
-		    {
-		        for (var i = 0; i < type.length; i++)
-		        {
-		            var response = this.next(el, type[i]);
-		
-		            if (response)
-		            {
-		                return response;
-		            }
-		        }
-		
-		        return null;
-		    }
-		
-		    if (type[0] === '.')
-		    {
-		        return this.next_untill_class(el, type);
-		    }
-		
-		    type = type.toLowerCase();
-		
-		    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type)
-		    {
-		        return el.nextSibling;
-		    }
-		    var next = el.nextSibling;
-		
-		    while (next !== document.body && typeof next !== "undefined" && next !== null)
-		    {
-		        next = next.nextSibling;
-		
-		        if (next && next.nodeName.toLowerCase() === type)
-		        {
-		            return next;
-		        }
-		    }
-		
-		    return null;
-		}
-		/**
-		 * Traverse nextSibling untill class type or class or array of either
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el        Target element
-		 * @param  {string} className Target node classname
-		 * @return {node\null}
-		 */
-		_.prototype.next_untill_class = function(el, className)
-		{
-		    if (className[0] === '.')
-		    {
-		        className = className.substring(1);
-		    }
-		
-		    if (el.nextSibling && this.has_class(el.nextSibling, className))
-		    {
-		        return el.nextSibling;
-		    }
-		
-		    var next = el.nextSibling;
-		
-		    while (next !== document.body && typeof next !== "undefined" && next !== null)
-		    {
-		        if (next && this.has_class(next, className))
-		        {
-		            return next;
-		        }
-		
-		        next = next.nextSibling;
-		
-		    }
-		
-		    return null;
-		}
-		/**
-		 * Inserts node as first child
-		 *
-		 * @access {public}
-		 * @param  {DOMElement} node     New node to insert
-		 * @param  {DOMElement} wrapper  Parent to preappend new node into
-		 * @return {DOMElement}
-		 */
-		_.prototype.preapend = function(node, wrapper)
-		{
-		    wrapper.insertBefore(node, wrapper.firstChild);
-		
-		    return node;
-		}
-		/**
-		 * Traverse previousSibling untill type
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @param  {string} type Target node type
-		 * @return {node\null}
-		 */
-		_.prototype.previous = function(el, type)
-		{
-		    // Type is class
-		    if (this.is_array(type))
-		    {
-		        for (var i = 0; i < type.length; i++)
-		        {
-		            var response = this.previous(el, type[i]);
-		
-		            if (response)
-		            {
-		                return response;
-		            }
-		        }
-		
-		        return null;
-		    }
-		
-		    if (type[0] === '.')
-		    {
-		        return this.previous_untill_class(el, type);
-		    }
-		
-		    type = type.toLowerCase();
-		    if (el.previousSibling && el.previousSibling.nodeName.toLowerCase() === type) return el.previousSibling;
-		    var prev = el.previousSibling;
-		    while (prev !== document.body && typeof prev !== "undefined" && prev !== null)
-		    {
-		        prev = prev.previousSibling;
-		        if (prev && prev.nodeName.toLowerCase() === type)
-		        {
-		            return prev;
-		        }
-		    }
-		    return null;
-		}
-		/**
-		 * Traverse previousSibling untill class
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el        Target element
-		 * @param  {string} className Target node classname
-		 * @return {node\null}
-		 */
-		_.prototype.previous_untill_class = function(el, className)
-		{
-		    if (className[0] === '.')
-		    {
-		        className = className.substring(1);
-		    }
-		
-		    if (el.previousSibling && this.has_class(el.previousSibling, className))
-		    {
-		        return el.previousSibling;
-		    }
-		
-		    var prev = el.previousSibling;
-		
-		    while (prev !== document.body && typeof prev !== "undefined" && prev !== null)
-		    {
-		        prev = prev.previousSibling;
-		
-		        if (prev && this.has_class(prev, className))
-		        {
-		            return prev;
-		        }
-		    }
-		
-		    return null;
-		}
-		/**
-		 * Remove a css class or list of classes
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}         DOMElement Target element
-		 * @param  {array|string} className  Class name(s) to remove
-		 */
-		_.prototype.remove_class = function(DOMElement, className)
-		{
-		    if (this.is_array(DOMElement))
-		    {
-		        this.each(DOMElement, (i, _DOMElement) =>  this.remove_class(_DOMElement, className));
-		
-		        return this;
-		    }
-		
-		    if (this.is_array(className))
-		    {
-		        this.each(className, (i, _className) =>  this.remove_class(DOMElement, _className));
-		    
-		        return this;
-		    }
-		
-		    if (className.includes(','))
-		    {
-		        this.each(this.array_filter(className.split(',')), (i, _className) => this.remove_class(DOMElement, _className));
-		    
-		        return this;
-		    }
-		
-		    if (className.includes('.'))
-		    {
-		        this.each(this.array_filter(className.split('.')), (i, _className) => this.remove_class(DOMElement, _className));
-		    
-		        return this;
-		    }
-		
-		    className = className.trim();
-		
-		    if (className[0] === '.') className = className.slice(1);
-		
-		    DOMElement.classList.remove(className);
-		
-		    return this;
-		}
-		/**
-		 * Remove an element from the DOM
-		 *
-		 * This function also removes all attached event listeners
-		 * 
-		 * @access {public}
-		 * @param  {DOMElement}   el Target element
-		 */
-		_.prototype.remove_from_dom = function(el)
-		{
-		    if (this.is_array(el))
-		    {
-		        return this.each(el, (i, DOMElement) => this.remove_from_dom(DOMElement));
-		    }
-		
-		    if (this.in_dom(el))
-		    {
-		        el.parentNode.removeChild(el);
-		
-		        var children = this.$All('*', el).reverse();
-		
-		        for (var i = 0, len = children.length; i < len; i++)
-		        {
-		            this.remove_event_listener(children[i]);
-		
-		            this.trigger_event(children[i], `FrontBx:dom:remove`);
-		        }
-		
-		        this.remove_event_listener(el);
-		
-		        this.trigger_event(el, `FrontBx:dom:remove`);
-		
-		        this.trigger_event(window, `FrontBx:dom:remove`, { DOMElement: el });
-		    }
-		}
-		/**
-		 * Get the current document scroll position
-		 *
-		 * @access {private}
-		 * @return {obj}
-		 */
-		_.prototype.scroll_pos = function(context)
-		{
-		    if (context && this.is_htmlElement(context))
-		    {
-		        return {
-		            top: context.scrollTop,
-		            left: context.scrollLeft
-		        };
-		    }
-		
-		    var doc  = document.documentElement;
-		    var top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-		    var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-		    
-		    return {
-		        top: top,
-		        left: left
-		    };
-		}
-		/**
-		 * Select single node by selector
-		 *
-		 * @access {public}
-		 * @param  {string} selector CSS selector
-		 * @param  {DOMElement}   context (optional) (default document)
-		 * @return {DOMElement}
-		 */
-		_.prototype.$ = function(selector, context)
-		{
-		    context = (typeof context === 'undefined' ? document : context);
-		
-		    let fchild = selector.trim().substring(0, 1) === '>';
-		    let multi  = selector.includes(',');
-		
-		    // Fast
-		    if (!fchild && !multi) return context.querySelector(selector);
-		
-		    if (multi) selector = selector.replaceAll(/,\s?>/g, ', :scope >');
-		    
-		    if (fchild) selector = `:scope ${selector}`;
-		
-		    return context.querySelector(selector);
-		}
-		
-		/**
-		 * "$" Alias
-		 *
-		 */
-		_.prototype.find = function(selector, context)
-		{
-		    return this.$(selector, context);
-		}
-		
-		/**
-		 * Select and return all nodes by selector
-		 *
-		 * @access {public}
-		 * @param  {string} selector CSS selector
-		 * @param  {DOMElement}   context (optional) (default document)
-		 * @return {DOMElement}
-		 */
-		_.prototype.$All = function(selector, context, includeContextEl)
-		{
-		    context = (typeof context === 'undefined' ? document : context);
-		
-		    includeContextEl = (typeof includeContextEl === 'undefined' ? false : includeContextEl && context !== document);
-		
-		    let fchild = selector.trim().substring(0, 1) === '>';
-		    let multi  = selector.includes(',');
-		    let deleteParent = false;
-		
-		    if (includeContextEl)
-		    {
-		        if (!hasParent)
-		        {
-		            parent = document.createElement('div');
-		            parent.appendChild(context);
-		            deleteParent = true;
-		        }
-		
-		        context = context.parentNode;
-		    }
-		
-		    if (multi)  selector = selector.replaceAll(/,\s?>/g, ', :scope >');
-		    if (fchild) selector = `:scope ${selector}`;
-		
-		    let ret = TO_ARR.call(context.querySelectorAll(selector));
-		
-		    if (deleteParent) context.parentNode.removeChild(context);
-		
-		    return ret;
-		}
-		
-		/**
-		 * "$All" Alias
-		 *
-		 */
-		_.prototype.find_all = function(selector, context)
-		{
-		    return this.$All(selector, context);
-		}
-		/**
-		 * Aria show an element
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el Target DOM node
-		 */
-		_.prototype.show_aria = function(HTMLElement)
-		{
-		    if (this.is_array(HTMLElement)) return this.each(HTMLElement, (i, el) => this.show_aria(el));
-		
-		    this.attr(HTMLElement, 'aria-hidden', 'false');
-		}
-		
-		/**
-		 * Toogle a classname
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}         el         Target element
-		 * @param  {string}       className  Class name to toggle
-		 */
-		_.prototype.toggle_class = function(DOMElement, className)
-		{    
-		    if (this.has_class(DOMElement, className))
-		    {
-		        this.remove_class(DOMElement, className);
-		    }
-		    else
-		    {
-		        this.add_class(DOMElement, className);
-		    }
-		}
-		/**
-		 * Triggers an event on an element
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   DOMElement   Target element
-		 * @param  {string}       eventName    Event name
-		 * @param  {mixed}        data         Extra data to pass to custom events 
-		 */
-		_.prototype.trigger_event = function(DOMElement, eventName, data)
-		{
-		    if (this.in_array(eventName.toLowerCase(), DOC_EVENTS))
-		    {
-		        if ('createEvent' in document)
-		        {
-		            var evt = document.createEvent('HTMLEvents');
-		
-		            evt.initEvent(eventName, false, true);
-		
-		            DOMElement.dispatchEvent(evt);
-		        }
-		        else
-		        {
-		            DOMElement.fireEvent(eventName);
-		        }
-		    }
-		    else
-		    {
-		        // Actual object
-		        if (!this.is_constructed(data) && this.is_object(data))
-		        {
-		            data = { ...{ DOMElement: DOMElement, name: eventName }, ...data};
-		        }
-		        else
-		        {
-		            data = { DOMElement: DOMElement, name: eventName, state: data };
-		        }
-		
-		        const event = new CustomEvent(eventName, { detail: data });
-		
-		        DOMElement.dispatchEvent(event);
-		
-		        if (eventName.includes(':'))
-		        {
-		            var events = eventName.split(':').slice(0, -1);
-		            var base   = events.shift();
-		            var count  = events.length + 1;
-		
-		            this.for(count, function(i)
-		            {
-		                let subevent = i === (count -1) ? base : `${base}:${events.join(':')}`;
-		
-		                data.name = eventName;
-		
-		                const evt = new CustomEvent(subevent, { detail: data });
-		
-		                DOMElement.dispatchEvent(evt);
-		
-		                events.pop();
-		            });
-		        }
-		    }
-		}
-		/**
-		 * Closest parent node by type/class or array of either
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @param  {string} type Node type to find
-		 * @return {node\null}
-		 */
-		_.prototype.traverse_up = function(DOMElement, callback, origional)
-		{    
-		    origional = typeof origional === "undefined" ? DOMElement : origional;
-		
-		    // Stop on document
-		    if (DOMElement === document || typeof DOMElement === "undefined" || DOMElement === null) return;
-		
-		    if (callback(DOMElement))
-		    {
-		        return origional;
-		    }
-		
-		    var parent = DOMElement.parentNode;
-		
-		    return this.traverse_up(parent, callback, origional);
-		}
-		
-		_.prototype.traverse_down = function(DOMElement, callback)
-		{
-		}
-		
-		_.prototype.traverse_next = function(DOMElement, callback)
-		{
-		}
-		
-		_.prototype.traverse_prev = function(DOMElement, callback)
-		{
-		}
-		
-		/**
-		 * Get an element's actual width in px
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   DOMElement Target element
-		 * @return {object}
-		 */
-		_.prototype.width = function(DOMElement)
-		{
-			if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement ) return Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-		
-		    return this.css_unit_value(this.rendered_style(DOMElement, 'width'));
-		}
-		/**
-		 * Get an element's actual height in px
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   DOMElement Target element
-		 * @return {object}
-		 */
-		_.prototype.height = function(DOMElement)
-		{
-		    if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement) return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-		
-		    return this.css_unit_value(this.rendered_style(DOMElement, 'height'));
-		}
-		/**
-		 * Returns nth child
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @return {node\null}
-		 */
-		_.prototype.nth_child = function(el, n)
-		{
-		    let children = this.first_children(el);
-		
-		    if (children[n]) return children[n];
-		}
-		/**
-		 * Returns nth position from siblings
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}   el   Target element
-		 * @return {node\null}
-		 */
-		_.prototype.nth_siblings = function(DOMElement)
-		{
-		    let children = this.first_children(DOMElement.parentNode);
-		
-		    for (var i = 0; i < children.length; i++)
-		    {
-		        if (children[i] === DOMElement) return i;
-		    }
-		
-		    return 0;
-		}
-		/**
-		 * Add an event listener
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}    element    The target DOM node
-		 * @param  {string}        eventName  Event type
-		 * @param  {closure}       handler    Callback event
-		 * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
-		 * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
-		 */
-		_.prototype.on = function()
-		{
-		    return this.add_event_listener(...arguments);
-		}
-		
-		/**
-		 * Add an event listener
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}    element    The target DOM node
-		 * @param  {string}        eventName  Event type
-		 * @param  {closure}       handler    Callback event
-		 * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
-		 * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
-		 */
-		_.prototype.add_event_listener = function(DOMElement, eventName, handler)
-		{    
-		    var args = TO_ARR.call(arguments);
-		
-		    // Multiple elements
-		    if (this.is_array(DOMElement))
-		    {
-		        var baseArgs = args.slice(1);
-		
-		        this.each(DOMElement, function(i, el)
-		        {            
-		            this.add_event_listener.apply(this, [el, ...baseArgs]);
-		
-		        }, this);
-		    }
-		    else
-		    {
-		        // If event has a comma or is an array we're doing multiple events
-		        if (this.is_array(eventName) || eventName.includes(','))
-		        {
-		            let eventsArr = this.is_array(eventName) ? eventName : eventName.split(',').map((x) => x.trim()).filter((x) => x !== '');
-		
-		            this.each(eventsArr, function(i, event)
-		            {
-		                args[1] = event;
-		
-		                this.add_event_listener.apply(this, args);
-		                
-		            }, this);
-		
-		            return;
-		        }
-		
-		        // If array of arguments is provided, "this" will always be the first
-		        // argument provided
-		        // However the first and second argument passed to the callback will always the event object and the element
-		        // e.g. add_event_listener(el, 'click', callback, ['baz', 'foo', 'bar']) -> callback(e, el, foo, bar) this = 'baz'
-		
-		        // Remove element, eventName, handler from args
-		        let argsNormal = this.__normaliseListenerArgs(DOMElement, args);
-		
-		        this.__addListener(DOMElement, eventName, handler, argsNormal.thisArg, argsNormal.args, argsNormal.pushFirst);
-		    }
-		}
-		
-		/**
-		 * Nomralize event listener args
-		 * 
-		 * @param  {DOMElement}    DOMElement   The target DOM node
-		 * @param  {array}         args         Args passed to add_event_listener or remove_event_listener
-		 */
-		_.prototype.__normaliseListenerArgs = function(DOMElement, args)
-		{
-		    // Remove DOMElement, eventName, handler
-		    args = args.slice(3);
-		
-		    // Default "this" to the dom element
-		    let thisArg   = DOMElement;
-		    let pushFirst = false;
-		
-		    // Push first
-		    if (!this.is_empty(args))
-		    {
-		        thisArg   = args.shift();
-		        pushFirst = this.bool(args.shift());
-		    }
-		
-		    return {args, thisArg, pushFirst};
-		}
-		
-		/**
-		 * Adds a listener to the element
-		 *
-		 * @access {private}
-		 * @param  {DOMElement}    element    The target DOM node
-		 * @param  {string}  eventName  Event type
-		 * @param  {closure} handler    Callback event
-		 * @param  {bool}    data Use capture (optional) (defaul false)
-		 */
-		_.prototype.__addListener = function(element, eventName, callback, thisArg, args, pushFirst)
-		{
-		    // Apply GUID to element and callback
-		    element.guid = element.guid || (element.guid = this._guidgen());
-		    callback.guid    = callback.guid || (callback.guid = this._guidgen());
-		
-		    let hasHandler = true;
-		    let guid       = element.guid;
-		
-		    // Make sure an array for event type exists
-		    if (!this._events[guid])
-		    {
-		        hasHandler = false;
-		
-		        this._events[guid] = {};
-		    }
-		
-		    if (!this._events[guid][eventName])
-		    {
-		        hasHandler = false;
-		
-		        this._events[guid][eventName] = [];
-		    }
-		
-		    // Push the details to the events object
-		    const handlerObj = {callback, thisArg, args, element};
-		    
-		    pushFirst ? this._events[guid][eventName].unshift(handlerObj) : this._events[guid][eventName].push(handlerObj);
-		
-		    if (!hasHandler)
-		    {
-		        element.addEventListener(eventName, this.__event_dispatcher);
-		    }
-		}
-		
-		/**
-		 * Event dispatcher
-		 *
-		 * @access {private}
-		 * @param  {eventObject}  e  
-		 */
-		_.prototype.__event_dispatcher = function(e)
-		{
-		    e = e || window.event;
-		
-		    let DOMElement = this;
-		
-		    let guid = DOMElement.guid;
-		
-		    if (!guid) return;
-		
-		    let callbacks =  _THIS._events[guid][e.type] || [];
-		
-		    _THIS.each(callbacks, (i, handler) =>
-		    {        
-		        if (handler)
-		        {
-		            let handled = handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]);
-		
-		            if (handled === false || handled === null)
-		            {
-		                e.preventDefault();
-		
-		                e.stopPropagation();
-		
-		                if (handled === null) return false;
-		            }
-		        }
-		    });
-		}
-		
-		/**
-		 * Removes all event listeners registered by the library
-		 *
-		 * @access {public}
-		 */
-		_.prototype.clear_event_listeners = function(DOMElement, onlyChildren)
-		{
-		    DOMElement = this.is_undefined(DOMElement) ? document : DOMElement;
-		
-		    onlyChildren = this.is_undefined(onlyChildren) ? false : onlyChildren;
-		
-		    if (DOMElement !== document)
-		    {
-		        let children = this.find_all('*', DOMElement).reverse();
-		
-		        this.each(children, (i, child) => this.off(child));
-		
-		        if (!onlyChildren) this.off(DOMElement);
-		        
-		        return;
-		    }
-		
-		    var events = this._events;
-		
-		    let _this = this;
-		
-		    _this.each(this._events, (guid, types) =>
-		    {
-		        _this.each(types, (type, callbacks) =>
-		        {
-		            let DOMElement = callbacks[0].element;
-		            
-		            _this.__remove_listener(DOMElement, type);
-		        });
-		    });
-		
-		    this._events = {};
-		
-		
-		
-		}
-		/**
-		 * Removes all event listeners registered by the library on nodes
-		 * that are no longer part of the DOM tree
-		 *
-		 * @access {public}
-		 */
-		_.prototype.collect_garbage = function()
-		{
-		    let _this = this;
-		
-		    _this.each(this._events, (guid, types) =>
-		    {
-		        var cleared = false;
-		
-		        _this.each(types, (type, callbacks) =>
-		        {
-		            let DOMElement = callbacks[0].element;
-		
-		            if (!this.in_dom(DOMElement))
-		            {
-		                cleared = true;
-		
-		                _this.__remove_listener(DOMElement, type);
-		            }
-		        });
-		
-		        if (cleared) delete this._events[guid];
-		    });
-		}
-		/**
-		 * Removes event listeners on a DOM node
-		 *
-		 * If no element given, all attached event listeners are returned.
-		 * If no event name is given, all attached event listeners are returned on provided element.
-		 * If single arguement is provided and arg is a string, e.g 'click', all events of that type are returned
-		 * 
-		 * @access {public}
-		 * @param  {mixed}   element    The target DOM node
-		 * @param  {string}  eventName  Event type
-		 * @return {array}
-		 */
-		_.prototype.event_listeners = function(DOMElement, eventName)
-		{
-		    var args = TO_ARR.call(arguments);
-		    var ret  = [];
-		
-		    // No args, return all events
-		    if (args.length === 0)
-		    {
-		        this.each(this._events, function(guid, types)
-		        {
-		            this.each(types, function(type, callbacks)
-		            {
-		                let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
-		
-		                ret = [...ret, ...summary];
-		            });
-		
-		        }, this);
-		
-		        return ret;
-		    }
-		    
-		    // eventListeners(node) or
-		    // eventListeners('click')
-		    else if (args.length === 1)
-		    {
-		        // eventListeners('click')
-		        if (this.is_string(DOMElement))
-		        {   
-		            this.each(this._events, function(guid, types)
-		            {
-		                this.each(types, function(type, callbacks)
-		                {
-		                    if (type === DOMElement)
-		                    {
-		                        let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
-		
-		                        ret = [...ret, ...summary];
-		                    }
-		                });
-		
-		            }, this);
-		
-		            return ret;
-		        }
-		        
-		        // eventListeners(node)
-		        let guid = DOMElement.guid;
-		
-		        if (!guid || !this._events[guid]) return ret;
-		
-		        this.each(this._events[guid], function(type, callbacks)
-		        {
-		            let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
-		
-		            ret = [...ret, ...summary];
-		
-		        }, this);
-		
-		        return ret;
-		    }
-		
-		    // eventListeners(node)
-		    let guid = DOMElement.guid;
-		
-		    if (!guid || !this._events[guid] || !this._events[guid][eventName]) return ret;
-		
-		    this.each(this._events[guid][eventName], function(i, details)
-		    {
-		        ret.push({ el: details.element, callback: details.callback, type: eventName });
-		
-		    }, this);
-		
-		    return ret;
-		}
-		/**
-		 * Add an event listener
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}    element    The target DOM node
-		 * @param  {string}        eventName  Event type
-		 * @param  {closure}       handler    Callback event
-		 * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
-		 * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
-		 */
-		_.prototype.off = function()
-		{
-		    return this.remove_event_listener(...arguments);
-		}
-		
-		/**
-		 * Remove an event listener
-		 *
-		 * @access {public}
-		 * @param  {DOMElement}    element    The target DOM node
-		 * @param  {string}        eventName  Event type
-		 * @param  {closure}       handler    Callback event
-		 * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
-		 * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
-		 */
-		_.prototype.remove_event_listener = function(DOMElement, eventName, handler)
-		{
-		    var args = TO_ARR.call(arguments);
-		
-		    if (this.is_array(DOMElement))
-		    {
-		        var baseArgs = args.slice(1);
-		
-		        this.each(DOMElement, function(i, el)
-		        {            
-		            this.remove_event_listener.apply(this, [el, ...baseArgs]);
-		        
-		        }, this);
-		    }
-		    else
-		    {
-		        // If the eventName name was not provided - remove all event handlers on element
-		        if (!eventName)
-		        {
-		            return this.__remove_element_listeners(DOMElement);
-		        }
-		
-		        // If event has a comma or is an array we're doing multiple events
-		        if (this.is_array(eventName) || eventName.includes(','))
-		        {
-		            let eventsArr = this.is_array(eventName) ? eventName : eventName.split(',').map((x) => x.trim()).filter((x) => x !== '');
-		
-		            this.each(eventsArr, function(i, event)
-		            {
-		                args[1] = event;
-		
-		                this.remove_event_listener.apply(this, args);
-		                
-		            }, this);
-		
-		            return;
-		        }
-		
-		        // If the callback was not provided - remove all events of the type on the element
-		        if (!handler)
-		        {
-		            return this.__remove_element_type_listeners(DOMElement, eventName);
-		        }
-		        
-		        let guid = DOMElement.guid;
-		
-		        // Nothing to remove
-		        if (!guid) return;
-		
-		        let handlers = this.array_get(`${guid}.${eventName}`, this._events);
-		
-		        // Nothing to remove
-		        if (!handlers) return;
-		
-		        // Loop stored events and match node, event name, handler, use capture
-		        this.each(handlers, function(i, _handler)
-		        {            
-		            if (_handler.callback.guid === handler.guid || this.is_equal(_handler.callback, handler))
-		            {
-		                this._events[guid][eventName].splice(i, 1);
-		
-		                if (this.is_empty(this._events[guid][eventName]))
-		                {
-		                    delete this._events[guid][eventName];
-		
-		                    this.__remove_listener(DOMElement, eventName);
-		                }
-		
-		                if (this.is_empty(this._events[guid]))
-		                {
-		                    delete this._events[guid];
-		                }
-		                
-		                // Break only remove first
-		                return false;
-		            } 
-		        
-		        }, this);
-		    }
-		}
-		
-		/**
-		 * Removes all registered event listeners on an element
-		 *
-		 * @access {private}
-		 * @param  {DOMElement} DOMElement Target node element
-		 */
-		_.prototype.__remove_element_listeners = function(DOMElement)
-		{
-		    let guid = DOMElement.guid;
-		
-		    if (!guid) return;
-		
-		    if (this._events[guid])
-		    {
-		        this.each(this._events[guid], function(type, callbacks)
-		        {
-		            this.__remove_listener(DOMElement, type);
-		            
-		        }, this);
-		    }
-		
-		    delete this._events[guid];
-		}
-		
-		/**
-		 * Removes all registered event listeners of a specific type on an element
-		 *
-		 * @access {private}
-		 * @param  {DOMElement} DOMElement Target node element
-		 * @param  {string}     type       Event listener type
-		 */
-		_.prototype.__remove_element_type_listeners = function(DOMElement, type)
-		{
-		    let guid = DOMElement.guid;
-		
-		    if (!guid) return;
-		
-		    // Make sure an array for event type exists
-		    if (this._events[guid] && this._events[guid][type])
-		    {
-		        delete this._events[guid][type];
-		
-		        this.__remove_listener(DOMElement, type);
-		
-		        if (this.is_empty(this._events[guid]))
-		        {
-		            delete this._events[guid];
-		        }
-		    }
-		}
-		
-		/**
-		 * Removes a listener from the element
-		 *
-		 * @access {private}
-		 * @param  {DOMElement} DOMElement The target DOM node
-		 * @param  {string}     eventType  Event type
-		 * @param  {closure}    handler    Callback event
-		 * @param  {bool}       useCapture Use capture (optional) (defaul false)
-		 */
-		_.prototype.__remove_listener = function(DOMElement, eventType)
-		{    
-		    DOMElement.removeEventListener(eventType, this.__event_dispatcher);
-		}
-		
-		/**
-		 * Is this a mobile user agent?
-		 *
-		 * @return {bool}
-		 */
-		_.prototype.is_retina = function()
-		{
-		    var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
-		                      (min--moz-device-pixel-ratio: 1.5),\
-		                      (-o-min-device-pixel-ratio: 3/2),\
-		                      (min-resolution: 1.5dppx)";
-		
-		    if (window.devicePixelRatio > 1)
-		    {
-		        return true;
-		    }
-		
-		    if (window.matchMedia && window.matchMedia(mediaQuery).matches)
-		    {
-		        return true;
-		    }
-		
-		    return false;
-		}
-		
-		/**
-		 * Parse url
-		 *
-		 * @param  {string}    str       The URL to parse. Invalid characters are replaced by _.
-		 * @return {object}
-		 */
-		_.prototype.parse_url = function(str)
-		{
-		    var ret = {};
-		    var url = new URL(str);
-		
-		    if (url.search)
-		    {
-		        var queries = url.search.substring(1).split('&');
-		        var qret    = {};
-		        
-		        this.each(queries, function(i, query)
-		        {
-		            if (query.includes('='))
-		            {
-		                var set   = query.split('=');
-		                var key   = decodeURI(set[0].trim());
-		                var val   = true;
-		
-		                if (set.length === 2)
-		                {
-		                    val = set[1].trim();
-		                }
-		
-		                if (key !== '' && val !== '')
-		                {
-		                    qret[key] = val;
-		                }
-		            }
-		            else
-		            {
-		                qret[query] = true;
-		            }
-		        });
-		
-		        url.query = qret;
-		    }
-		
-		    return url;
-		}
-		/**
-		 * Gets url query
-		 *
-		 * @access {public}
-		 * @param  {string}  name String query to get (optional)
-		 * @return {object|string}
-		 */
-		_.prototype.url_query = function(name)
-		{
-		    var results = {};
-		
-		    if (window.location.search !== '')
-		    {
-		        var params = window.location.search.substring(1).split('&');
-		
-		        for (var i = 0; i < params.length; i++)
-		        {
-		            if (!params[i].includes('='))
-		            {
-		                continue;
-		            }
-		
-		            var split = params[i].split('=');
-		
-		            results[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
-		        }
-		    }
-		
-		    // No param return all url query
-		    if (typeof name === 'undefined')
-		    {
-		        return results;
-		    }
-		
-		    name = decodeURIComponent(name);
-		
-		    if (name in results)
-		    {
-		        return results[name];
-		    }
-		
-		    return false;
-		}
-		/**
-		 * Normalises a url
-		 *
-		 * @access {public}
-		 * @param  {string}  url The url to normalise
-		 * @return {string}
-		 */
-		_.prototype.normalize_url = function(url)
-		{
-		    // Remove www.
-		    if (url.startsWith('www.') || url.includes('//www.')) url = url.replace('www.', '');
-		
-		    // Back dirs
-		    if (url.startsWith('../'))
-		    {
-		        let paths = this.parse_url(this.trim(window.location.href, '/')).pathname.split('/');
-		
-		        if (!this.is_empty(paths))
-		        {
-		            // Remove file
-		            if (paths.slice(-1).includes('.')) paths.pop();
-		
-		            let backs = url.split('../').length;
-		
-		            this.for(backs, () => paths.pop());
-		
-		            url = '/' + this.trim(`${paths.join('/')}/${url.replace(/\.\.\//g, '')}`, '/');
-		        }
-		    }
-		
-		    // Local
-		    if (url[0] === '/') url = window.location.origin + url;
-		
-		    // Add protocol
-		    if (!url.startsWith('https') && !url.startsWith('http')) url = `${window.location.protocol}//${url}`;
-		
-		    return url;
-		}
-		/**
-		 * Clones any variables
-		 * 
-		 * @param   {mixed}  mixed_var
-		 * @param   {mixed}  context   Context to bind functions
-		 * @returns {mixed}
-		 */
-		_.prototype.clone_deep = function(mixed_var, context)
-		{
-		    return this.__clone_var(mixed_var, this.is_undefined(context) ? mixed_var : context);
-		}
-		
-		/**
-		 * Clone's variable with context.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to clone
-		 * @param   {mixed}  context    Context when cloning recursive objects and arrays.
-		 * @returns {mixed}
-		 */
-		_.prototype.__clone_var = function(mixed_var, context)
-		{
-		    let tag = this.var_type(mixed_var);
-		
-		    switch (tag)
-		    {
-		        case OBJECT_TAG:
-		            return this.__clone_obj(mixed_var, context);
-		
-		        case ARRAY_TAG:
-		        case NODELST_TAG:
-		        case ARGS_TAG:
-		            return this.__clone_array(mixed_var, context);
-		
-		        case FUNC_TAG:
-		            return this.__clone_func(mixed_var, context);
-		
-		        case NULL_TAG:
-		            return null;
-		
-		        case UNDEF_TAG:
-		            return;
-		
-		        case BOOL_TAG:
-		            return mixed_var === true ? true : false;
-		
-		        case STRING_TAG:
-		            return mixed_var.slice();
-		
-		        case NUMBER_TAG:
-		            let n = mixed_var;
-		            return n;
-		
-		        case REGEXP_TAG:
-		            return this.__clone_RegExp(mixed_var, context);
-		
-		        case SYMBOL_TAG:
-		            return this.__clone_symbol(mixed_var);
-		
-		        case DATE_TAG:
-		            return this.__clone_date(mixed_var);
-		
-		        case SET_TAG:
-		            return this.__clone_set(mixed_var, context);
-		
-		        case MAP_TAG:
-		            return this.__clone_map(mixed_var, context);
-		
-		        case ARRAY_BUFFER_TAG:
-		            return this.__clone_array_buffer(mixed_var);
-		
-		        case DATAVIEW_TAG:
-		            return this.__clone_data_view(mixed_var);
-		
-		        case ARRAY_BUFFER_TAG:
-		            return this.__clone_buffer(mixed_var);
-		
-		        case FLOAT32_TAG:
-		        case FLOAT64_TAG:
-		        case INT8_TAG:
-		        case INT16_TAG:
-		        case INT32_TAG:
-		        case UINT8_TAG:
-		        case UINT8CLAMPED_TAG:
-		        case UINT16_TAG:
-		        case UINT32_TAG:
-		            return this.__clone_typed_array(object);
-		
-		        case ERROR_TAG:
-		        case WEAKMAP_TAG:
-		            return {};
-		    }
-		
-		    return mixed_var;
-		}
-		
-		/**
-		 * Clones an object
-		 * 
-		 * @param   {object}  obj
-		 * @returns {object}
-		 */
-		_.prototype.__clone_obj = function(obj, context)
-		{
-		    // Shallow keys
-		    let keys = this.object_props(obj);
-		    let ret  = {};
-		
-		    // Empty object
-		    if (keys.length === 0 || this.is_empty(obj))
-		    {
-		        return ret;
-		    }
-		
-		    this.each(keys, function(i, key)
-		    {
-		        ret[key] = this.clone_deep(obj[key], context);
-		
-		    }, this);
-		
-		    // Clone prototypes
-		    let protos = this.prototypes(obj);
-		
-		    if (protos.length >= 1)
-		    {
-		        let curr = ret;
-		
-		        while(protos.length > 0)
-		        {
-		            let proto        = protos.shift();
-		            let clone        = this.clone_deep(proto, context);
-		            clone.constrctor = this.clone_deep(proto.constructor, context);
-		            
-		            Object.setPrototypeOf(curr, clone);
-		            
-		            curr = clone;
-		        }
-		    }
-		
-		    return ret;
-		}
-		
-		/**
-		 * Clones a function
-		 * 
-		 * @param   {function}  function
-		 * @param   {mixed}     context   Context to bind function
-		 * @returns {function}
-		 */
-		_.prototype.__clone_func = function(func, context)
-		{
-		    return this.bind(func, context);
-		}
-		
-		/**
-		 * Clones an array
-		 * 
-		 * @param   {array}  arr
-		 * @returns {array}
-		 */
-		_.prototype.__clone_array = function(arr, context)
-		{
-		    let ret = [];
-		
-		    this.each(arr, function(i, val)
-		    {
-		        ret[i] = this.clone_deep(val, context);
-		    
-		    }, this);
-		
-		    return ret;
-		}
-		
-		_.prototype.__clone_date = function(d)
-		{
-		    let r = new Date();
-		
-		    r.setTime(d.getTime());
-		
-		    return r;
-		}
-		
-		_.prototype.__clone_symbol = function(symbol)
-		{
-		    return Object(Symbol.prototype.valueOf.call(symbol));
-		}
-		
-		_.prototype.__clone_RegExp = function(regexp)
-		{
-		    let reFlags = /\w*$/;
-		
-		    let result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
-		
-		    result.lastIndex = regexp.lastIndex;
-		
-		    return result;
-		}
-		
-		_.prototype.__clone_map = function(m, context)
-		{
-		    const ret = new Map();
-		
-		    m.this.each((v, k) =>
-		    {
-		        ret.set(k, this.clone_deep(v, context));
-		    
-		    }, this);
-		
-		    return ret;
-		}
-		
-		_.prototype.__clone_set = function(s, context)
-		{
-		    const ret = new Set();
-		
-		    s.this.each((val, k) =>
-		    {
-		        ret.add(k, this.clone_deep(v, context));
-		    
-		    }, this);
-		
-		    return ret;
-		}
-		
-		_.prototype.__clone_array_buffer = function(arrayBuffer)
-		{
-		    const result = new arrayBuffer.constructor(arrayBuffer.byteLength)
-		
-		    new Uint8Array(result).set(new Uint8Array(arrayBuffer));
-		
-		    return result;
-		}
-		
-		_.prototype.__clone_data_view = function(dataView)
-		{
-		    const buffer = this.__clone_array_buffer(dataView.buffer);
-		
-		    return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
-		}
-		
-		/**
-		 * Creates a clone of `buffer`.
-		 *
-		 * @param   {Buffer}   buffer   The buffer to clone.
-		 * @param   {boolean} [isDeep]  Specify a deep clone.
-		 * @returns {Buffer}   Returns  the cloned buffer.
-		 */
-		_.prototype.__clone_buffer = function(buffer)
-		{
-		    const length = buffer.length;
-		
-		    const result = allocUnsafe ? allocUnsafe(length) : new buffer.constructor(length);
-		
-		    buffer.copy(result);
-		
-		    return result;
-		}
-		
-		/**
-		 * Creates a clone of `typedArray`.
-		 *
-		 * @private
-		 * @param {Object} typedArray The typed array to clone.
-		 * @param {boolean} [isDeep] Specify a deep clone.
-		 * @returns {Object} Returns the cloned typed array.
-		 */
-		_.prototype.__clone_typed_array = function(typedArray)
-		{
-		    const buffer = this.__clone_array_buffer(typedArray.buffer);
-		
-		    return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
-		}
-		
-		/**
-		 * Binds a function so that it can be identified.
-		 * 
-		 * @param   {function}  func    Function to bind
-		 * @param   {mixed}     context Context to bind "this"
-		 * @returns {function}
-		 */
-		_.prototype.bind = function(func, context)
-		{
-		    context = typeof context === 'undefined' ? window : context;
-		
-		    const bound = function()
-		    {
-		        return func.apply(context, arguments);
-		    }
-		
-		    Object.defineProperty(bound, 'name', { value: func.name });
-		
-		    bound.__isBound      = true;
-		    bound.__boundContext = context;
-		    bound.__origional    = func;
-		
-		    return bound;
-		}
-		/**
-		 * Creates a new object in 'dot.notation'
-		 * 
-		 * @param   {Object} obj Object
-		 * @returns {Object} 
-		 */
-		_.prototype.dotify = function(obj)
-		{
-		    var res = {};
-		
-		    function recurse(obj, current)
-		    {
-		        for (var key in obj)
-		        {
-		            var value = obj[key];
-		            var newKey = (current ? current + '.' + key : key); // joined key with dot
-		
-		            if (value && typeof value === 'object' && !(value instanceof Date))
-		            {
-		                recurse(value, newKey); // it's a nested object, so do it again
-		            }
-		            else
-		            {
-		                res[newKey] = value; // it's not an object, so set the property
-		            }
-		        }
-		    }
-		
-		    recurse(obj);
-		
-		    return res;
-		}
-		/**
-		 * Extends a function with prototype inheritance.
-		 *
-		 * @param   {function}           superType    Base function to extend
-		 * @param   {function}           subType  Function to get extended.
-		 * @param   {undefined|boolean}  callSuper   If true "subType" is treated as a constructor and the superType / any nested prototypes will get instantiated. (default true)
-		 * @returns {function}
-		 */
-		_.prototype.extend = function(base, extension)
-		{
-		    const _this = this;
-		
-		    function proxySuper(superFn, fn)
-		    {
-		        return function()
-		        {
-		            var tmp = this.super;
-		            
-		            this.super = superFn;
-		            
-		            var ret = fn.apply(this, arguments);
-		            
-		            this.super = tmp;
-		
-		            return ret;
-		        }
-		    }
-		
-		    function Class() {}
-		
-		    Class.extend = function(protoProps)
-		    {
-		        var parent = this, _super = parent.prototype, child;
-		
-		        if (protoProps && protoProps.hasOwnProperty('constructor'))
-		        {
-		            child = proxySuper(parent, protoProps.constructor);
-		            
-		            delete protoProps.constructor; // remove constructor
-		        }
-		        else
-		        {
-		            child = function()
-		            {
-		                parent.apply(this, arguments);
-		            };
-		        }
-		
-		        var prototype = Object.create(parent.prototype,
-		        {
-		            constructor:
-		            {
-		                value: child,
-		                enumerable: false,
-		                writable: true,
-		                configurable: true
-		            }
-		        });
-		
-		        for (var name in protoProps)
-		        {
-		            prototype[name] = _this.is_function(protoProps[name]) && _this.is_function(_super[name]) && /\bsuper\b/.test(protoProps[name])
-		            ? proxySuper(_super[name], protoProps[name]) : protoProps[name];
-		        }
-		
-		        child.prototype = prototype;
-		        child.extend = Class.extend;
-		
-		        return child;
-		    };
-		
-		    if (this.var_type(base) !== this.var_type(extension)) throw new Error('Extended variables need to be the same type.');
-		
-		    if (this.is_object(base)) return this.extend_obj(base, extension);
-		
-		    const baseProto   = base.prototype;
-		    const extendProto = extension.prototype;
-		
-		    if (!baseProto.hasOwnProperty('constructor')) baseProto['constructor'] = base;
-		   
-		    if (!extendProto.hasOwnProperty('constructor')) extendProto['constructor'] = extension;
-		    
-		    var b = Class.extend(baseProto);
-		
-		    var e = b.extend(extendProto);
-		
-		    Object.defineProperty(e, 'name', { value: extension.name, writable: false });
-		
-		    return e;
-		}
-		
-		/**
-		 * Extends a function with prototype inheritance.
-		 *
-		 * @param   {function}           superType    Base function to extend
-		 * @param   {function}           subType  Function to get extended.
-		 * @param   {undefined|boolean}  callSuper   If true "subType" is treated as a constructor and the superType / any nested prototypes will get instantiated. (default true)
-		 * @returns {function}
-		 */
-		_.prototype.extend_obj = function(base, extension)
-		{
-		    const extProto  = this.prototypes(extension);
-		    const baseProto = this.prototypes(base);
-		
-		    // Plain objects
-		    if (this.is_empty(extProto) && this.is_empty(baseProto)) return {...base, ...extension};
-		
-		    const newProto = new (function() {});
-		    
-		    Object.setPrototypeOf(newProto, base);
-		
-		    this.each(extProto, (i, proto) =>
-		    {
-		        this.each(proto, (k, v) =>
-		        {
-		            newProto[k] = v;
-		        })
-		
-		    }, this);
-		
-		    Object.defineProperty(newProto, 'name', { value: 'Class', writable: false });
-		
-		    Object.setPrototypeOf(extension, newProto);
-		
-		    return extension;
-		}
-		
-		
-		/**
-		 * Joins an object into a string
-		 * 
-		 * @param   {Object} obj       Object
-		 * @param   {string} seperator Seperator Between key & value
-		 * @param   {string} glue      Glue between value and next key
-		 * @returns {string} 
-		 */
-		_.prototype.join_obj = function(obj, seperator, glue, recursive, trimLast)
-		{
-		    seperator = this.is_undefined(seperator) ? '' : seperator;
-		    glue      = this.is_undefined(glue) ? '' : glue;
-		    recursive = this.is_undefined(recursive) ? false : recursive;
-		    trimLast  = this.is_undefined(trimLast)  ? true : trimLast;
-		    
-		    var ret = '';
-		
-		    this.each(obj, function(key, val)
-		    {
-		        if (this.is_object(val))
-		        {
-		            val = recursive ? '{' + this.join_obj(val, seperator, glue, recursive, trimLast) + '}' : {};
-		        }
-		        else if (this.is_array(val))
-		        {
-		            val = recursive ? this.join_obj(val, seperator, glue, recursive, trimLast) : val.join(', ').replaceAll('[object Object]', '{}');
-		        }
-		        else
-		        {            
-		            val = `${val}`;
-		        }
-		
-		        ret += `${glue}${key}${seperator}${val}`;
-		
-		    }, this);
-		
-		    if (ret === `${glue}${seperator}` || ret.trim() === '') return '';
-		
-		    return trimLast ? this.rtrim(this.ltrim(ret, glue), seperator) : this.ltrim(ret, glue).trim() + glue;
-		}
-		/**
-		 * Deep merge two objects.
-		 * 
-		 * @param   {object} target
-		 * @param   {object} ...sources
-		 * @returns {object}
-		 */
-		_.prototype.merge_deep = function()
-		{
-		    let args = TO_ARR.call(arguments);
-		
-		    // No args
-		    if (args.length === 0)
-		    {
-		        throw new Error('Nothing to merge.');
-		    }
-		    // Single arg
-		    else if (args.length === 1)
-		    {
-		        return args[1];
-		    }
-		
-		    // Must be an object
-		    if (!this.is_object(args[0]))
-		    {
-		        throw new Error('Arguments must be an object.');
-		    }
-		
-		    // Remove first and cache
-		    let first = args.shift();
-		
-		    this.each(args, function(i, arg)
-		    {
-		        if (!this.is_object(arg))
-		        {
-		            throw new Error('Arguments must be an object.');
-		        }
-		
-		        let cloned = this.clone_deep(arg, first);
-		
-		        this.each(cloned, function(k, v)
-		        {
-		            first[k] = v;
-		        });
-		        
-		    }, this);
-		
-		    return first;
-		}
-		/**
-		 * Returns object properties and methods as array of keys.
-		 * 
-		 * @param   {mixed}    mixed_var    Variable to test
-		 * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
-		 * @returns {array}
-		 */
-		_.prototype.object_props = function(mixed_var, deep)
-		{
-		    if (!mixed_var) return [];
-		
-		    deep = typeof deep === 'undefined' ? false : deep;
-		
-		    let keys = Object.keys(mixed_var);
-		
-		    let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
-		
-		    if (deep)
-		    {
-		        keys = [...keys, ...this.object_props(proto, true)];
-		    }
-		    
-		    return this.array_unique(keys);
-		}
-		
-		
-		/**
-		 * Returns an array of prototypes
-		 * 
-		 * @param   {mixed}    mixed_var    Variable to test
-		 * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
-		 * @returns {array}
-		 */
-		_.prototype.prototypes = function(mixed_var)
-		{
-		    let ret = [];
-		
-		    if (!mixed_var) return ret;
-		
-		    const _this = this;
-		
-		    const recursive = function(obj)
-		    {
-		        let proto = obj.prototype || Object.getPrototypeOf(obj);
-		
-		        // No prototype
-		        if (!proto) return;
-		
-		        // Prototype is native object
-		        let protokeys = Object.getOwnPropertyNames(proto);
-		
-		        if (protokeys.filter(x => !EMPTY_OBJ_KEYS.includes(x)).length === 0) return;
-		
-		        ret.push(proto);
-		
-		        recursive(proto);
-		    }
-		
-		    recursive(mixed_var);
-		
-		    return ret;
-		}
-		
-		
-		/**
-		 * Returns object properties and methods as array of keys.
-		 * 
-		 * @param   {mixed}    mixed_var    Variable to test
-		 * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
-		 * @returns {array}
-		 */
-		_.prototype.flatten_obj = function(obj, deep)
-		{
-		    deep = typeof deep === 'undefined' ? false : deep;
-		
-		    var ret = {};
-		
-		    this.each(obj, (k,v) => ret[k] = v);
-		   
-		    if (deep)
-		    {
-		        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
-		
-		        ret = {...ret, ...this.flatten_obj(proto, true)};
-		    }
-		    
-		    return ret;
-		}
-		_.prototype.camel_case_to_hyphen = function(str)
-		{
-		    if (str === str.toLowerCase()) return str;
-		    
-		    return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1-$2$3').toLowerCase();
-		}
-		/**
-		 * Json encode
-		 * 
-		 * @param  {mixed} str String JSON
-		 * @return {object|false}
-		 */
-		_.prototype.json_decode = function(str)
-		{
-		    var obj;
-		    try
-		    {
-		        obj = JSON.parse(str);
-		    }
-		    catch (e)
-		    {
-		        return false;
-		    }
-		    return obj;
-		}
-		/**
-		 * Json encode
-		 * 
-		 * @param  {mixed} str String JSON
-		 * @return {object|false}
-		 */
-		_.prototype.json_encode = function(str)
-		{
-		    var obj;
-		    try
-		    {
-		        obj = JSON.stringify(str);
-		    }
-		    catch (e)
-		    {
-		        return false;
-		    }
-		    return obj;
-		}
-		/**
-		 * Left trim string 
-		 * 
-		 * @param  {str}           str
-		 * @return {array|string} charlist (optional)
-		 */
-		_.prototype.ltrim = function(str, charlist)
-		{
-		    // Special fast cases
-		    if (!charlist) return str.trimStart();
-		
-		    if (this.is_string(charlist))
-		    {
-		        return str.slice(0, charlist.length) === charlist ? str.replace(charlist, '') : str;
-		    }
-		
-		    var ret = str;
-		
-		    this.each(charlist, function(i, char)
-		    {
-		        if (str.slice(0, char.length) === char)
-		        {
-		            ret = str.replace(char, '');
-		            
-		            // break            
-		            return false;
-		        }
-		
-		    }, this);
-		
-		    return ret;
-		}
-		
-		
-		/**
-		 * Make a random string
-		 *
-		 * @param  {int}    length String length
-		 * @return {string}
-		 */
-		_.prototype.makeid = function(length)
-		{
-		    var text = "";
-		    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-		
-		    for (var i = 0; i < length; i++)
-		    {
-		        text += possible.charAt(Math.floor(Math.random() * possible.length))
-		    }
-		
-		    return text;
-		}
-		/**
-		 * Left trim string 
-		 * 
-		 * @param  {str}           str
-		 * @return {array|string} charlist (optional)
-		 */
-		_.prototype.rtrim = function(str, charlist)
-		{
-		    if (!charlist) return str.trimEnd();
-		
-		    if (this.is_string(charlist))
-		    {
-		        let len = charlist.length; 
-		
-		        return str.slice(-len) === charlist ? str.slice(0, -len) : str;
-		    }
-		
-		    var ret = str;
-		
-		    this.each(charlist, function(i, chars)
-		    {
-		        var len = chars.length;
-		
-		        if (str.slice(-len) === chars)
-		        {
-		            ret = str.slice(0, -len);
-		
-		            return false;
-		        }
-		
-		    }, this);
-		
-		    return ret;
-		}
-		_.prototype.to_camel_case = function(str)
-		{
-		    
-		    str = str.trim();
-		
-		    // Shouldn't be changed
-		    if (!str.includes(' ') && !str.includes('-') && /[A-Z]/.test(str))
-		    {
-		        return str;
-		    }
-		
-		    return str.toLowerCase().replace(/['"]/g, '').replace(/\W+/g, ' ').replace(/ (.)/g, function($1)
-		    {
-		        return $1.toUpperCase();
-		    })
-		    .replace(/ /g, '');
-		}
-		/**
-		 * Left and right trim string.
-		 * 
-		 * @param  {str}           str
-		 * @return {array|string} charlist (optional)
-		 */
-		_.prototype.trim = function(str, charlist)
-		{
-		    if (!charlist) return str.trim();
-		
-		    return this.rtrim(this.ltrim(str, charlist), charlist);
-		}
-		/* Capatalize first letter */
-		_.prototype.uc_first = function(string)
-		{
-		    return string.charAt(0).toUpperCase() + string.slice(1);
-		}
-		/* Capatalize first letter of all words */
-		_.prototype.ucwords = function(str)
-		{
-		    return (str + '').replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1)
-		    {
-		        return $1.toUpperCase();
-		    });
-		}
-		_.prototype.lc_first = function(string)
-		{
-		    return string.charAt(0).toLowerCase() + string.slice(1);
-		}
-		/**
-		 * String replace
-		 * 
-		 * @param  {str}           str
-		 * @return {array|string} charlist (optional)
-		 */
-		_.prototype.replace = function(str, charlist, value)
-		{
-		    if (this.is_string(charlist) || this.is_regexp(charlist))
-		    {
-		        return str.replaceAll(charlist, value)
-		    }
-		
-		    this.each(charlist, function(i, char)
-		    {
-		        str = str.replaceAll(char, value);
-		
-		    }, this);
-		
-		    return str;
-		}
-		
-		
-		/**
-		 * Checks if variable should be considered "true" or "false" using "common sense".
-		 * 
-		 * @param   {mixed} mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.bool = function(mixed_var)
-		{
-		    mixed_var = (typeof mixed_var === 'undefined' ? false : mixed_var);
-		
-		    if (this.is_bool(mixed_var))
-		    {
-		        return mixed_var;
-		    }
-		
-		    if (this.is_number(mixed_var))
-		    {
-		        return mixed_var > 0;
-		    }
-		
-		    if (this.is_array(mixed_var))
-		    {
-		        return mixed_var.length > 0;
-		    }
-		
-		    if (this.is_object(mixed_var))
-		    {
-		        return Object.keys(mixed_var).length > 0;
-		    }
-		
-		    if (this.is_string(mixed_var))
-		    {
-		        mixed_var = mixed_var.toLowerCase().trim();
-		
-		        if (mixed_var === 'false')
-		        {
-		            return false;
-		        }
-		        if (mixed_var === 'true')
-		        {
-		            return true;
-		        }
-		        if (mixed_var === 'on')
-		        {
-		            return true;
-		        }
-		        if (mixed_var === 'off')
-		        {
-		            return false;
-		        }
-		        if (mixed_var === 'undefined')
-		        {
-		            return false;
-		        }
-		        if (this.is_numeric(mixed_var))
-		        {
-		            return Number(mixed_var) > 0;
-		        }
-		        if (mixed_var === '')
-		        {
-		            return false;
-		        }
-		    }
-		
-		    return false;
-		}
-		
-		/**
-		 * Returns function / class name
-		 *
-		 * @param   {mixed}  mixed_var Variable to evaluate
-		 * @returns {string}
-		 */
-		_.prototype.callable_name = function(mixed_var)
-		{
-		    if (this.is_callable(mixed_var))
-		    {
-		        return mixed_var.name;
-		    }
-		    else if (this.is_object(mixed_var))
-		    {
-		        return mixed_var.constructor.name;
-		    }
-		}
-		/**
-		 * Count
-		 *
-		 * @access {public}
-		 * @param  {mixed}  mixed_var Variable to count
-		 * @return {int}
-		 */
-		_.prototype.count = function(mixed_var)
-		{
-		    return this.size(mixed_var);
-		}
-		/**
-		 * Checks if HtmlElement is in current DOM
-		 *
-		 * @param   {HTMLElement}  element  Element to check
-		 * @returns {boolean}
-		 */
-		_.prototype.in_dom = function(element)
-		{
-		    if (element === window || element === document || element === document.body || element === document.documentElement)
-		    {
-		        return true;
-		    }
-		
-		    if (!this.is_htmlElement(element))
-		    {
-		        return false;
-		    }
-		
-		    let ret = false;
-		
-		    this.traverse_up(element, function(node)
-		    {
-		        if (node === document.body || node === document.documentElement)
-		        {
-		            ret = true;
-		
-		            return true;
-		        }
-		
-		        return false;
-		    });
-		
-		    return ret;
-		}
-		/**
-		 * Is args array.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_args = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === ARGS_TAG;
-		}
-		/**
-		 * Is array.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_array = function(mixed_var, strict)
-		{
-		    strict = typeof strict === 'undefined' ? false : strict;
-		
-		    let type = this.var_type(mixed_var);
-		
-		    return !strict ? ARRAYISH_TAGS.includes(type) : type === ARRAY_TAG;
-		}
-		/**
-		 * Is bool.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_bool = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === BOOL_TAG;
-		}
-		/**
-		 * Is Array buffer.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_buffer = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === ARRAY_BUFFER_TAG;
-		}
-		/**
-		 * Is variable a function / constructor.
-		 *
-		 * @param   {mixed}  mixed_var  Variable to check
-		 * @returns {boolean}
-		 */
-		_.prototype.is_callable = function(mixed_var)
-		{
-		    return this.is_function(mixed_var);
-		}
-		/**
-		 * Checks if variable is a class declaration or extends a class and/or constructable function.
-		 *
-		 * @param   {mixed}                        mixed_var  Variable to evaluate
-		 * @oaram   {string} | undefined | boolean} classname  Classname or strict if boolean provided
-		 * @param   {boolean}                      strict     If "true" only returns true on ES6 classes (default "false")
-		 * @returns {boolean}
-		 */
-		_.prototype.is_class = function(mixed_var, classname, strict)
-		{
-		    // this.is_class(foo, true)
-		    if (classname === true || classname === false)
-		    {
-		        strict = classname;
-		        classname = null;
-		    }
-		    // this.is_class(foo, 'Bar') || this.is_class(foo, 'Bar', false)
-		    else
-		    {
-		        strict = typeof strict === 'undefined' ? false : strict;
-		    }
-		
-		    if (typeof mixed_var !== 'function' || !this.is_constructable(mixed_var))
-		    {
-		        return false;
-		    }
-		
-		    let isES6 = /^\s*class\s+\w+/.test(mixed_var.toString());
-		
-		    if (classname)
-		    {
-		        if (!isES6 && strict)
-		        {
-		            return false;
-		        }
-		
-		        if (mixed_var.name === classname || mixed_var.prototype.constructor.name === classname)
-		        {
-		            return true;
-		        }
-		
-		        let protos = [];
-		        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
-		        let ret = false;
-		
-		        while (proto && proto.constructor)
-		        {
-		            // recursive stopper
-		            if (protos.includes.proto)
-		            {
-		                break;
-		            }
-		
-		            protos.push(proto);
-		
-		            if (proto.constructor.name === classname)
-		            {
-		                ret = true;
-		
-		                break;
-		            }
-		
-		            proto = proto.prototype || Object.getPrototypeOf(proto);
-		        }
-		
-		        return ret;
-		    }
-		
-		    // ES6 class declaration depending on strict
-		
-		    return strict ? isES6 : this.is_constructable(mixed_var);
-		}
-		/**
-		 * Checks if variable is construable.
-		 *
-		 * @param   {mixed}  mixed_var  Variable to evaluate
-		 * @returns {boolean}
-		 */
-		_.prototype.is_constructable = function(mixed_var)
-		{
-		    // Not a function
-		    if (typeof mixed_var !== 'function' || mixed_var === null)
-		    {
-		        return false;
-		    }
-		
-		    // Strict ES6 class
-		    if (/^\s*class\s+\w+/.test(mixed_var.toString()))
-		    {
-		        return true;
-		    }
-		
-		    // Native arrow functions
-		    if (!mixed_var.prototype || !mixed_var.prototype.constructor)
-		    {
-		        return false;
-		    }
-		
-		    // If prototype is empty 
-		    return this.object_props(mixed_var, true).length > 0;
-		}
-		/**
-		 * Checks if variable is constructed object function.
-		 *
-		 * @param   {mixed}  mixed_var  Variable to evaluate
-		 * @returns {boolean}
-		 */
-		_.prototype.is_constructed = function(mixed_var)
-		{
-		    if (typeof mixed_var === 'object' && mixed_var.constructor && typeof mixed_var.constructor === 'function')
-		    {
-		        var constr = mixed_var.constructor.toString().trim();
-		        
-		        return constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class ') ;
-		    }
-		
-		    return false;
-		}
-		/**
-		 * Is dataView obj.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_dataview = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === DATAVIEW_TAG;
-		}
-		/**
-		 * Is date object.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_date = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === DATE_TAG;
-		}
-		/**
-		 * Is empty
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_empty = function(mixed_var)
-		{
-		    if (mixed_var === false || mixed_var === null || (typeof mixed_var === 'undefined'))
-		    {
-		        return true;
-		    }
-		    else if (this.is_array(mixed_var))
-		    {
-		        return mixed_var.length === null || mixed_var.length <= 0;
-		    }
-		    else if (this.is_object(mixed_var))
-		    {
-		        if (Object.keys(mixed_var).length > 0) return false;
-		
-		        if (this.prototypes(mixed_var).length > 0) return false;
-		
-		        return true;
-		    }
-		    else if (this.is_string(mixed_var))
-		    {
-		        return mixed_var.trim() === '';
-		    }
-		    else if (this.is_number(mixed_var))
-		    {
-		        return isNaN(mixed_var);
-		    }
-		    else if (this.is_function(mixed_var))
-		    {
-		        return false;
-		    }
-		
-		    return false;
-		}
-		/**
-		 * Deep check for equal
-		 * 
-		 * @param   {mixed}  a
-		 * @param   {mixed}  b
-		 * @param   {bool}   strict Strict comparison (optional) (default false)
-		 * @returns {bool}
-		 * 
-		 *  * Note that strict set to true would return false in the following:
-		 *  is_equal ({ foo : 'bar'}, { foo : 'bar'});
-		 */
-		_.prototype.is_equal = function(a, b, strict)
-		{    
-		    strict = this.is_undefined(strict) ? false : strict;
-		
-		    if ((typeof a) !== (typeof b))
-		    {
-		        return false;
-		    }
-		    else if (this.is_string(a) || this.is_number(a) || this.is_bool(a) || this.is_null(a) || this.is_htmlElement(a))
-		    {
-		        return a === b;
-		    }
-		    else if (this.is_function(a))
-		    {        
-		        return strict ? a === b : this.__is_equal_func(a, b);
-		    }
-		    else if (this.is_array(a) || this.is_object(b))
-		    {
-		        if (strict)
-		        {
-		            if (a !== b || this.is_array(a) && !this.is_array(b))
-		            {
-		                return false;
-		            }
-		            
-		            return true;
-		        }
-		        
-		        return this.__is_equal_traverseable(a, b);
-		    }
-		
-		    return true;
-		}
-		
-		/**
-		 * Checks if two functions are equal
-		 * 
-		 * @param   {function}  a
-		 * @param   {function}  b
-		 * @returns {boolean}
-		 */
-		_.prototype.__is_equal_func = function(a, b)
-		{
-		    // Functions have the same name
-		    if (a.name === b.name)
-		    {
-		        // If the functions were bound or cloned by the library they can technically still be equal
-		        if (a.__isBound)
-		        {
-		            if (!b.__isBound) return false;
-		
-		            if (!this.is_equal(a.__boundContext, b.__boundContext)) return false;
-		            
-		            if (!this.is_equal(a.__origional, b.__origional)) return false;
-		        }
-		
-		        // Check string
-		        if (a.toString() !== b.toString()) return false;
-		
-		        // Prototypes are different
-		        if (!this.__is_equal_protos(a, b)) return false;
-		
-		        return true;
-		    }
-		
-		    return false;
-		}
-		
-		/**
-		 * Checks if object prototypes are equal
-		 * 
-		 * @param   {array} | object}  a
-		 * @param   {array} | object}  b
-		 * @returns {boolean}
-		 */
-		_.prototype.__is_equal_protos = function(a, b)
-		{
-		    // Check the prototypes
-		    let aProtos = this.prototypes(a);
-		    let bProtos = this.prototypes(b);
-		
-		    if (aProtos.length !== bProtos.length) return false;
-		
-		    if (aProtos.length === 0 && bProtos.length === 0) return true;
-		
-		    let ret = true;
-		
-		    this.each(aProtos, (i, proto) =>
-		    {                
-		        if (!this.is_equal(proto, bProtos[i]))
-		        {
-		            ret = false;
-		
-		            return false;
-		        }
-		
-		    }, this);
-		
-		    return ret;
-		}
-		
-		
-		/**
-		 * Checks if traversable's are equal
-		 * 
-		 * @param   {array} | object}  a
-		 * @param   {array} | object}  b
-		 * @returns {boolean}
-		 */
-		_.prototype.__is_equal_traverseable = function(a, b)
-		{
-		    if (this.size(a) !== this.size(b))
-		    {
-		        return false;
-		    }
-		
-		    let ret = true;
-		
-		    this.each(a, function(i, val)
-		    {
-		        if (!this.is_equal(val, b[i]))
-		        {
-		            ret = false;
-		
-		            return false;
-		        }
-		    }, this);
-		
-		    if (!ret) return false;
-		
-		    if (this.is_object(a)) return this.__is_equal_protos(a, b);
-		
-		    return ret;
-		}
-		
-		/**
-		 * Is function.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_function = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === FUNC_TAG;
-		}
-		/**
-		 * Checks if variable is HTMLElement.
-		 *
-		 * @param   {mixed}  mixed_var  Variable to evaluate
-		 * @returns {boolean}
-		 */
-		_.prototype.is_htmlElement = function(mixed_var)
-		{
-		    if (mixed_var && mixed_var.nodeType)
-		    {
-		        let type = this.var_type(mixed_var);
-		
-		        return HTML_REGXP.test(type) || type === '[object HTMLDocument]' || type === '[object Text]';
-		    }
-		
-		    return false;
-		}
-		/**
-		 * Is valid JSON
-		 * 
-		 * @param  {mixed} str String JSON
-		 * @return {object|false}
-		 */
-		_.prototype.is_json = function(str)
-		{
-		    var obj;
-		    try
-		    {
-		        obj = JSON.parse(str);
-		    }
-		    catch (e)
-		    {
-		        return false;
-		    }
-		    return obj;
-		}
-		
-		
-		/**
-		 * Is Map.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_map = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === MAP_TAG;
-		}
-		/**
-		 * Is node type.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @param   {string} tag        Tag to compare
-		 * @returns {boolean}
-		 */
-		_.prototype.is_node_type = function(mixed_var, tag)
-		{
-		    return mixed_var.tagName.toUpperCase() === tag.toUpperCase();
-		}
-		
-		/**
-		 * Is nodelist.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_nodelist = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === NODELST_TAG;
-		}
-		/**
-		 * Is null.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_null = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === NULL_TAG;
-		}
-		/**
-		 * Is number.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_number = function(mixed_var)
-		{
-		    return !isNaN(mixed_var) && this.var_type(mixed_var) === NUMBER_TAG;
-		}
-		/**
-		 * Is string.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_numeric = function(mixed_var)
-		{
-		    if (this.is_number(mixed_var))
-		    {
-		        return true;
-		    }
-		    else if (this.is_string(mixed_var))
-		    {
-		        return /^-?(0|[1-9]\d*)(\.\d+)?$/.test(mixed_var.trim());
-		    }
-		
-		    return false;
-		}
-		/**
-		 * Checks if variable is an object.
-		 *
-		 * @param   {mixed}  mixed_var Variable to evaluate
-		 * @returns {boolean}
-		 */
-		_.prototype.is_object = function(mixed_var)
-		{
-		    return mixed_var !== null && this.var_type(mixed_var) === OBJECT_TAG;
-		}
-		/**
-		 * Is regexp.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_regexp = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === REGEXP_TAG;
-		}
-		/**
-		 * Is Set.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_set = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === SET_TAG;
-		}
-		/**
-		 * Is string.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_string = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === STRING_TAG;
-		}
-		/**
-		 * Is Symbol.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_symbol = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === SYMBOL_TAG;
-		}
-		/**
-		 * Is undefined.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {boolean}
-		 */
-		_.prototype.is_undefined = function(mixed_var)
-		{
-		    return this.var_type(mixed_var) === UNDEF_TAG;
-		}
-		/**
-		 * Returns array/object/string/number size.
-		 * 
-		 * @param   {mixed}  mixed_var  Variable to test
-		 * @returns {number}
-		 */
-		_.prototype.size = function(mixed_var)
-		{
-		    if (this.is_string(mixed_var) || this.is_array(mixed_var))
-		    {
-		        return mixed_var.length;
-		    }
-		    else if (this.is_number(mixed_var))
-		    {
-		        return mixed_var;
-		    }
-		    else if (this.is_bool(mixed_var))
-		    {
-		        return mixed_var === true ? 1 : -1;
-		    }
-		    else(this.is_object(mixed_var))
-		    {
-		        return Object.keys(mixed_var).length;
-		    }
-		
-		    return 1;
-		}
-		
-		/**
-		 * Gets the `toStringTag` of `value`.
-		 *
-		 * @public
-		 * @param {*} value The value to query.
-		 * @returns {string} Returns the `toStringTag`.
-		 */
-		_.prototype.var_type = function(value)
-		{
-		    if (value == null)
-		    {
-		        return value === undefined ? '[object Undefined]' : '[object Null]'
-		    }
-		
-		    return TO_STR.call(value);
-		}
-	// Destructor
-	_.prototype.destruct = function()
-	{
-	    this.clear_event_listeners();
-	}
-	
-	Container.singleton('_', _);
+    
 })();
 
+// Utils
+// Standard
+const NULL_TAG = '[object Null]';
+const UNDEF_TAG = '[object Undefined]';
+const BOOL_TAG = '[object Boolean]';
+const STRING_TAG = '[object String]';
+const NUMBER_TAG = '[object Number]';
+const FUNC_TAG = '[object Function]';
+const ARRAY_TAG = '[object Array]';
+const ARGS_TAG = '[object Arguments]';
+const NODELST_TAG = '[object NodeList]';
+const OBJECT_TAG = '[object Object]';
+const DATE_TAG = '[object Date]';
 
-// FrontBx core
+// Unusual
+const SET_TAG = '[object Set]';
+const MAP_TAG = '[object Map]';
+const REGEXP_TAG = '[object RegExp]';
+const SYMBOL_TAG = '[object Symbol]';
+
+// Array buffer
+const ARRAY_BUFFER_TAG = '[object ArrayBuffer]';
+const DATAVIEW_TAG = '[object DataView]';
+const FLOAT32_TAG = '[object Float32Array]';
+const FLOAT64_TAG = '[object Float64Array]';
+const INT8_TAG = '[object Int8Array]';
+const INT16_TAG = '[object Int16Array]';
+const INT32_TAG = '[object Int32Array]';
+const UINT8_TAG = '[object Uint8Array]';
+const UINT8CLAMPED_TAG = '[object Uint8ClampedArray]';
+const UINT16_TAG = '[object Uint16Array]';
+const UINT32_TAG = '[object Uint32Array]';
+
+// Non-cloneable
+const ERROR_TAG = '[object Error]';
+const WEAKMAP_TAG = '[object WeakMap]';
+
+// Arrayish _tags
+const ARRAYISH_TAGS = [ARRAY_TAG, ARGS_TAG, NODELST_TAG];
+
+// Object.prototype.toString
+const TO_STR = Object.prototype.toString;
+
+// Array.prototype.slice
+const TO_ARR = Array.prototype.slice;
+
+// Regex for HTMLElement types
+const HTML_REGXP = /^\[object HTML\w*Element\]$/;
+
+// Empty object
+const EMPTY_OBJ_KEYS = Object.getOwnPropertyNames(Object.getPrototypeOf({}));
+/**
+ * List of shorthand properties and their longhand equivalents
+ *
+ * @var {object}
+ */
+const SHORTHAND_PROPS =
+{
+    // CSS 2.1: http://www.w3.org/TR/CSS2/propidx.html
+    'list-style': ['-type', '-position', '-image'],
+    'margin': ['-top', '-right', '-bottom', '-left'],
+    'outline': ['-width', '-style', '-color'],
+    'padding': ['-top', '-right', '-bottom', '-left'],
+
+    // CSS Backgrounds and Borders Module Level 3: http://www.w3.org/TR/css3-background/
+    'background': ['-image', '-position', '-size', '-repeat', '-origin', '-clip', '-attachment', '-color'],
+    'border': ['-width', '-style', '-color'],
+    'border-color': ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'],
+    'border-style': ['border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'],
+    'border-width': ['border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'],
+    'border-top': ['-width', '-style', '-color'],
+    'border-right': ['-width', '-style', '-color'],
+    'border-bottom': ['-width', '-style', '-color'],
+    'border-left': ['-width', '-style', '-color'],
+    'border-radius': ['border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius'],
+    'border-image': ['-source', '-slice', '-width', '-outset', '-repeat'],
+
+    // CSS Fonts Module Level 3: http://www.w3.org/TR/css3-fonts/
+    'font': ['-style', '-variant', '-weight', '-stretch', '-size', 'line-height', '-family'],
+    'font-variant': ['-ligatures', '-alternates', '-caps', '-numeric', '-east-asian'],
+
+    // CSS Masking Module Level 1: http://www.w3.org/TR/css-masking/
+    'mask': ['-image', '-mode', '-position', '-size', '-repeat', '-origin', '-clip'],
+    'mask-border': ['-source', '-slice', '-width', '-outset', '-repeat', '-mode'],
+
+    // CSS Multi-column Layout Module: http://www.w3.org/TR/css3-multicol/
+    'columns': ['column-width', 'column-count'],
+    'column-rule': ['-width', '-style', '-color'],
+
+    // CSS Speech Module: http://www.w3.org/TR/css3-speech/
+    'cue': ['-before', '-after'],
+    'pause': ['-before', '-after'],
+    'rest': ['-before', '-after'],
+
+    // CSS Text Decoration Module Level 3: http://www.w3.org/TR/css-text-decor-3/
+    'text-decoration': ['-line', '-style', '-color'],
+    'text-emphasis': ['-style', '-color'],
+
+    // CSS Animations (WD): http://www.w3.org/TR/css3-animations
+    'animation': ['-name', '-duration', '-timing-function', '-delay', '-iteration-count', '-direction', '-fill-mode', '-play-state'],
+
+    // CSS Transitions (WD): http://www.w3.org/TR/css3-transitions/
+    'transition': ['-property', '-duration', '-timing-function', '-delay'],
+
+    // CSS Flexible Box Layout Module Level 1 (WD): http://www.w3.org/TR/css3-flexbox/
+    'flex': ['-grow', '-shrink', '-basis'],
+};
+
+/**
+ * List of shorthand properties and their longhand equivalents
+ *
+ * @var {object}
+ */
+const SHORTHAND_DEFAULTS = 
+{
+    '-width' : '0',
+    '-height' : '0',
+    '-top' : '0',
+    '-left' : '0',
+    '-bottom' : '0',
+    '-duration' : '0s',
+    '-delay' : '0s',
+    '-grow' : '1' ,
+    '-shrink' : '1' ,
+    '-iteration-count' : '1',
+    '-timing-function' : 'linear',
+    '-transition-property' : 'all',
+    '-fill-mode': 'none',
+    '-emphasis' : 'none',
+    '-color' : 'none',
+    '-decoration' : 'none',
+    '-direction' : 'normal',
+    '-play-state' : 'running',
+};
+
+/**
+ * CSS Transform value counts
+ *
+ * @var {object}
+ */
+const CSS_TRANSFORM_VALUES_COUNT = 
+{
+    perspective: 1,
+    skewY: 1,
+    translateY: 1,
+    translateZ: 1,
+    scaleY: 1,
+    scaleZ: 1,
+    rotateX: 1,
+    rotateY: 1,
+    rotateZ: 1,
+    translateX: 1,
+    skewX: 1,
+    scaleX: 1,
+    rotate: 1,
+
+    skew: 2,
+    translate: 2,
+    scale: 2,
+
+    translate3d: 3,
+    scale3d: 3,
+    rotate3d: 3,
+
+    matrix: 6,
+    matrix3d: 16
+};
+
+const CSS_3D_TRANSFORM_DEFAULTS =
+{
+    'translate3d' : ['0','0','0'],
+    'scale3d'     : ['1','1','1'],
+    'rotate3d'    : ['0','0','1','0'],
+    'skew'        : ['0', '0'],
+};
+
+const CSS_3D_TRANSFORM_MAP_KEYS =
+{
+    x: 0,
+    y: 1,
+    z: 3
+};
+
+/* USED FOR css_to_px */
+const CSS_PIXELS_PER_INCH = 96;
+const CSS_RELATIVE_UNITS  = {
+    // Relative to the font-size of the element (2em means 2 times the size of the current font)
+    'em' : 16,
+
+    // Relative to the x-height of the current font (rarely used)
+    'ex' : 7.15625,
+
+    // Relative to the width of the "0" (zero)
+    'ch' : 8,
+
+    // Relative to font-size of the root element
+    'rem' : 16,
+
+    // Relative to 1% of the width of the viewport
+    'vw' : 1,
+
+    // Relative to 1% of the height of the viewport
+    'vh' : 1,
+
+    // Relative to 1% of viewport's* smaller dimension
+    // If the viewport height is smaller than the width, 
+    // the value of 1vmin will be equal to 1% of the viewport height.
+    // Similarly, if the viewport width is smaller than the height, the value of 1vmin will be equal to 1% of the viewport width.
+    'vmin' : 765,
+    'vmax' : 1200,
+
+    // Relative to the parent element
+    '%' : 16
+}
+const CSS_ABSOLUTE_UNITS =
+{
+    'in': CSS_PIXELS_PER_INCH,
+    'cm': CSS_PIXELS_PER_INCH / 2.54,
+    'mm': CSS_PIXELS_PER_INCH / 25.4,
+    'pt': CSS_PIXELS_PER_INCH / 72,
+    'pc': CSS_PIXELS_PER_INCH / 6,
+    'px': 1
+}
+
+
+/**
+ * Cached CSS propery cases.
+ *
+ * @var {object}
+ */
+const CSS_PROP_TO_HYPHEN_CASES = {};
+const CSS_PROP_TO_CAMEL_CASES  = {};
+// Current clone map (stops recursive cloning between array/objects)
+
+/**
+ * Default options.
+ * 
+ * @var {object}
+ */
+const ANIMATION_DEFAULT_OPTIONS =
+{
+    // Options
+    //'property', 'from', 'to', 'callback', 'complete', 'start', 'fail'
+    easing:               'ease',
+    duration:              500,
+    fps:                   60, // (16ms)
+};
+
+ /**
+ * Allowed Options.
+ * 
+ * @var {array}
+ */
+const ANIMATION_ALLOWED_OPTIONS = ['property', 'from', 'to', 'duration', 'easing', 'callback'];
+
+/**
+ * Allowed Options.
+ * 
+ * @var {array}
+ */
+const ANIMATION_FILTER_OPTIONS = [ ...Object.keys(ANIMATION_DEFAULT_OPTIONS), ...ANIMATION_ALLOWED_OPTIONS];
+
+/**
+ * Currently animating animations.
+ * 
+ * @var {array}
+ */
+const ANIMATING = [];
+
+
+/**
+ * Math Contstansts.
+ * 
+ * @var {mixed}
+ */
+const POW  = Math.pow;
+const SQRT = Math.sqrt;
+const SIN  = Math.sin;
+const COS  = Math.cos;
+const PI   = Math.PI;
+const C1   = 1.70158;
+const C2   = C1 * 1.525;
+const c3   = C1 + 1;
+const C4   = (2 * PI) / 3;
+const C5   = (2 * PI) / 4.5;
+
+/**
+ * bounceOut function.
+ * 
+ * @var {function}
+ */
+const bounceOut = function (x)
+{
+    const n1 = 7.5625;
+    const d1 = 2.75;
+
+    if (x < 1 / d1)
+    {
+        return n1 * x * x;
+    }
+    else if (x < 2 / d1)
+    {
+        return n1 * (x -= 1.5 / d1) * x + 0.75;
+    }
+    else if (x < 2.5 / d1)
+    {
+        return n1 * (x -= 2.25 / d1) * x + 0.9375;
+    }
+    else
+    {
+        return n1 * (x -= 2.625 / d1) * x + 0.984375;
+    }
+};
+
+/**
+ * Easing functions.
+ * 
+ * @var {object}
+ */
+const ANIMATION_EASING_FUNCTIONS = 
+{
+    linear: (x) => x,
+    ease: function (x)
+    {
+        return x < 0.5 ? 4 * x * x * x : 1 - POW(-2 * x + 2, 3) / 2;
+    },
+    easeIn: function (x)
+    {
+        return 1 - COS((x * PI) / 2);
+    },
+    easeOut: function (x)
+    {
+        return SIN((x * PI) / 2);
+    },
+    easeInOut: function (x)
+    {
+        return -(COS(PI * x) - 1) / 2;
+    },
+    easeInQuad: function (x)
+    {
+        return x * x;
+    },
+    easeOutQuad: function (x)
+    {
+        return 1 - (1 - x) * (1 - x);
+    },
+    easeInOutQuad: function (x)
+    {
+        return x < 0.5 ? 2 * x * x : 1 - POW(-2 * x + 2, 2) / 2;
+    },
+    easeInCubic: function (x)
+    {
+        return x * x * x;
+    },
+    easeOutCubic: function (x)
+    {
+        return 1 - POW(1 - x, 3);
+    },
+    easeInOutCubic: function (x)
+    {
+        return x < 0.5 ? 4 * x * x * x : 1 - POW(-2 * x + 2, 3) / 2;
+    },
+    easeInQuart: function (x)
+    {
+        return x * x * x * x;
+    },
+    easeOutQuart: function (x)
+    {
+        return 1 - POW(1 - x, 4);
+    },
+    easeInOutQuart: function (x)
+    {
+        return x < 0.5 ? 8 * x * x * x * x : 1 - POW(-2 * x + 2, 4) / 2;
+    },
+    easeInQuint: function (x)
+    {
+        return x * x * x * x * x;
+    },
+    easeOutQuint: function (x)
+    {
+        return 1 - POW(1 - x, 5);
+    },
+    easeInOutQuint: function (x)
+    {
+        return x < 0.5 ? 16 * x * x * x * x * x : 1 - POW(-2 * x + 2, 5) / 2;
+    },
+    easeInSine: function (x)
+    {
+        return 1 - COS((x * PI) / 2);
+    },
+    easeOutSine: function (x)
+    {
+        return SIN((x * PI) / 2);
+    },
+    easeInOutSine: function (x)
+    {
+        return -(COS(PI * x) - 1) / 2;
+    },
+    easeInExpo: function (x)
+    {
+        return x === 0 ? 0 : POW(2, 10 * x - 10);
+    },
+    easeOutExpo: function (x)
+    {
+        return x === 1 ? 1 : 1 - POW(2, -10 * x);
+    },
+    easeInOutExpo: function (x)
+    {
+        return x === 0
+            ? 0
+            : x === 1
+            ? 1
+            : x < 0.5
+            ? POW(2, 20 * x - 10) / 2
+            : (2 - POW(2, -20 * x + 10)) / 2;
+    },
+    easeInCirc: function (x)
+    {
+        return 1 - SQRT(1 - POW(x, 2));
+    },
+    easeOutCirc: function (x)
+    {
+        return SQRT(1 - POW(x - 1, 2));
+    },
+    easeInOutCirc: function (x)
+    {
+        return x < 0.5
+            ? (1 - SQRT(1 - POW(2 * x, 2))) / 2
+            : (SQRT(1 - POW(-2 * x + 2, 2)) + 1) / 2;
+    },
+    easeInBack: function (x)
+    {
+        return c3 * x * x * x - C1 * x * x;
+    },
+    easeOutBack: function (x)
+    {
+        return 1 + c3 * POW(x - 1, 3) + C1 * POW(x - 1, 2);
+    },
+    easeInOutBack: function (x)
+    {
+        return x < 0.5
+            ? (POW(2 * x, 2) * ((C2 + 1) * 2 * x - C2)) / 2
+            : (POW(2 * x - 2, 2) * ((C2 + 1) * (x * 2 - 2) + C2) + 2) / 2;
+    },
+    easeInElastic: function (x)
+    {
+        return x === 0
+            ? 0
+            : x === 1
+            ? 1
+            : -POW(2, 10 * x - 10) * SIN((x * 10 - 10.75) * C4);
+    },
+    easeOutElastic: function (x)
+    {
+        return x === 0
+            ? 0
+            : x === 1
+            ? 1
+            : POW(2, -10 * x) * SIN((x * 10 - 0.75) * C4) + 1;
+    },
+    easeInOutElastic: function (x)
+    {
+        return x === 0
+            ? 0
+            : x === 1
+            ? 1
+            : x < 0.5
+            ? -(POW(2, 20 * x - 10) * SIN((20 * x - 11.125) * C5)) / 2
+            : (POW(2, -20 * x + 10) * SIN((20 * x - 11.125) * C5)) / 2 + 1;
+    },
+    easeInBounce: function (x)
+    {
+        return 1 - bounceOut(1 - x);
+    },
+    easeOutBounce: bounceOut,
+    easeInOutBounce: function (x)
+    {
+        return x < 0.5
+            ? (1 - bounceOut(1 - 2 * x)) / 2
+            : (1 + bounceOut(2 * x - 1)) / 2;
+    },
+};
+
+const CSS_EASINGS = 
+{
+    // Defaults
+    ease: 'ease',
+    linear: 'linear',
+    easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+    easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+    easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+
+    // sine
+    easeInSine: 'cubic-bezier(0.47, 0, 0.745, 0.715)',
+    easeOutSine: 'cubic-bezier(0.39, 0.575, 0.565, 1)',
+    easeInOutSine: 'cubic-bezier(0.445, 0.05, 0.55, 0.95)',
+
+    // Quad
+    easeInQuad: 'cubic-bezier(0.55, 0.085, 0.68, 0.53)',
+    easeOutQuad: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    easeInOutQuad: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)',
+
+    // Cubic
+    easeInCubic: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
+    easeOutCubic: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+    easeInOutCubic: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+
+    // Queart
+    easeInQuart: 'cubic-bezier(0.895, 0.03, 0.685, 0.22)',
+    easeOutQuart: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+    easeInOutQuart: 'cubic-bezier(0.77, 0, 0.175, 1)',
+
+    // Quint
+    easeInQuint: 'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
+    easeOutQuint: 'cubic-bezier(0.23, 1, 0.32, 1)',
+    easeInOutQuint: 'cubic-bezier(0.86, 0, 0.07, 1)',
+
+    // Expo
+    easeInExpo: 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
+    easeOutExpo: 'cubic-bezier(0.19, 1, 0.22, 1)',
+    easeInOutExpo: 'cubic-bezier(1, 0, 0, 1)',
+
+    // Circ
+    easeInCirc: 'cubic-bezier(0.6, 0.04, 0.98, 0.335)',
+    easeOutCirc: 'cubic-bezier(0.075, 0.82, 0.165, 1)',
+    easeInOutCirc: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)',
+
+    // Back
+    easeInBack: 'cubic-bezier(0.6, -0.28, 0.735, 0.045)',
+    easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+    easeInOutBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+};
+
+/**
+ * Array of HTML events
+ *
+ * @var {array}
+ */
+const DOC_EVENTS = Object.getOwnPropertyNames(document).concat(Object.getOwnPropertyNames(Object.getPrototypeOf(Object.getPrototypeOf(document)))).concat(Object.getOwnPropertyNames(Object.getPrototypeOf(window))).filter(function(i){return !i.indexOf('on')&&(document[i]==null||typeof document[i]=='function');}).filter(function(elem, pos, self){return self.indexOf(elem) == pos;}).map((x) => x.replace('on', '').toLowerCase());
+/**
+ * Boolean attributes
+ *
+ * @var {array}
+ */
+const BOOLEAN_ATTRS = 
+[
+	'allowfullscreen',
+	'async',
+	'autofocus',
+	'autoplay',
+	'checked',
+	'controls',
+	'default',
+	'defer',
+	'disabled',
+	'formnovalidate',
+	'inert',
+	'ismap',
+	'itemscope',
+	'loop',
+	'multiple',
+	'muted',
+	'nomodule',
+	'novalidate',
+	'open',
+	'playsinline',
+	'readonly',
+	'required',
+	'reversed',
+	'selected'
+];
+
+/**
+ * Property attributes
+ *
+ * @var {array}
+ */
+const PROP_ATTRIBUTES = ['href', 'list', 'form', 'tabIndex', 'download'];
+
+(function()
+{
+    var _THIS = null;
+
+    const _ = function()
+    {
+        this.version = "1.0.0";
+
+        this.author = "Joe Howard";
+
+        this.browser = false;
+
+        this._events = {};
+
+        this._guid = 1;
+
+        _THIS = this;
+    }
+
+    _.prototype._guidgen = function()
+    {
+        return `__${this._guid++}`;
+    }
+const AnimateJS = function(DOMElement, options)
+{
+    this.DOMElement = DOMElement;
+
+    this.options = options;
+
+    this.keyframes = [];
+
+    this.currentKeyframe = 0;
+
+    this.duration = options.duration;
+
+    this.intervalDelay = Math.floor(1000 / options.fps);
+
+    this.keyFrameCount = Math.floor(this.duration / this.intervalDelay) + 1;
+
+    this.easing = options.easing;
+
+    this.CSSProperty = options.property;
+
+    this.isTransform = this.CSSProperty.toLowerCase().includes('transform');
+
+    this.isScroll = this.CSSProperty.toLowerCase().replace('-', '') === 'scrollto' && DOMElement === window;
+
+    this.isColor = options.property.includes('color') || options.to.startsWith('#') || options.to.startsWith('rgb');
+
+    this.clearAnimating(DOMElement);
+
+    this.parseOptions();
+
+    this.generateKeyframes();
+
+    this.stopped = true;
+
+    return this;
+}
+
+AnimateJS.prototype.clearAnimating = function(DOMElement)
+{
+    const CSSprop = this.CSSProperty;
+
+    _THIS.each(ANIMATING, function(i, animation)
+    {
+        if (animation.CSSProperty === CSSprop && animation.DOMElement === DOMElement)
+        {
+            animation.stop();
+
+            ANIMATING.splice(i, 1);
+
+            return false;
+        }
+    });
+}
+
+AnimateJS.prototype.start = function()
+{
+    if (this.keyFrameCount === 0) return;
+
+    this.stopped = false;
+
+    if (!this.isScroll) this.clearTransitions();
+
+    if (this.options.start) this.options.start(this.DOMElement);
+
+    const loop = () =>
+    {        
+        if (this.stopped) return;
+
+        this._applyKeyframe(this.keyframes.shift());
+
+        if (this.keyframes.length === 0)
+        {            
+            this._complete();
+
+            return;
+        }
+
+        setTimeout(loop, this.intervalDelay);
+    }
+
+    loop();
+
+    this._failTimer = setTimeout(() =>
+    {            
+        if (this.options.fail) this.options.fail(this.DOMElement);
+
+    }, this.duration + 50 );
+
+    ANIMATING.push(this);
+
+    return this;
+}
+
+AnimateJS.prototype._applyKeyframe = function(keyframe)
+{
+    if (!keyframe) return;
+
+    let prop = Object.keys(keyframe)[0];
+
+    this.isScroll ? window.scrollTo(keyframe[0], keyframe[1]) : _THIS.css(this.DOMElement, prop, keyframe[prop]);
+}
+
+AnimateJS.prototype._complete = function()
+{
+    clearTimeout(this._failTimer);
+
+    _THIS.each(ANIMATING, (i, animation) =>
+    {
+        if (animation === this)
+        {
+            ANIMATING.splice(i, 1);
+
+            return false;
+        }
+    });
+
+    let DOMElement = this.DOMElement;
+
+    if (this.options.complete) this.options.complete(DOMElement);
+
+    if (this.options.callback) this.options.callback(DOMElement);
+
+    if (!this.isScroll) _THIS.css(DOMElement, 'transition', this._pre_transition );
+}
+
+AnimateJS.prototype.stop = function()
+{
+    this.stopped = true;
+
+    clearTimeout(this._failTimer);
+
+    return this;
+}
+
+AnimateJS.prototype.parseOptions = function()
+{
+    if (this.isScroll)
+    {
+        this.parseScrollOptions();
+    }
+    else if (this.isTransform)
+    {
+        this.parseTransformOptions();
+    }
+    else if (this.isColor)
+    {
+        this.parseColorOptions();
+    }
+    else
+    {
+        this.parseDefaultOptions();
+    }
+}
+
+AnimateJS.prototype.parseScrollOptions = function()
+{
+    if (!this.options.to.includes(','))
+    {
+        throw new Error('Invalid scroll value. Animating scroll should be provided as [Y, X].');
+    }
+
+    // We ignore 'from'
+    let startY = window.scrollY;
+    let startX = window.scrollX;
+    let endX   = parseInt(this.options.to.split(',').shift().trim());
+    let endY   = parseInt(this.options.to.split(',').pop().trim());
+    let distX  = Math.abs(endX < startX ? (startX - endX) : (endX - startX))
+    let distY  = Math.abs(endY < startY ? (startY - endY) : (endY - startY))
+
+    this.startValue    = [startX, startY];
+    this.endValue      = [endX, endY];
+    this.backAnimation = [endX < startX, endY < startY];
+    this.distance      = [distX, distY] ;
+    this.CSSunits      = '';
+}
+
+AnimateJS.prototype.parseDefaultOptions = function()
+{
+    var startVal = _THIS.is_undefined(this.options.from) ? _THIS.rendered_style(this.DOMElement, this.CSSProperty) : this.options.from;
+    var endVal   = this.options.to;
+
+    // We need to set the end value, then remove it and re-apply any inline styles if they
+    // existed
+    if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset')
+    {
+        let prevStyle = _THIS.inline_style(this.DOMElement, this.CSSProperty);
+
+        _THIS.css(this.DOMElement, this.CSSProperty, endVal);
+        
+        endVal = _THIS.rendered_style(this.DOMElement, this.CSSProperty);
+        
+        _THIS.css(this.DOMElement, this.CSSProperty, prevStyle ? prevStyle : false);
+    }
+
+    // From auto
+    if (startVal === 'auto' || startVal === 'initial')
+    {
+        startVal = _THIS.rendered_style(this.DOMElement, this.CSSProperty);
+    }
+
+    var startUnit = _THIS.css_value_unit(startVal);
+    var endUnit   = _THIS.css_value_unit(endVal);
+
+    if (startUnit !== endUnit && this.CSSProperty !== 'opacity')
+    {
+        if (startUnit !== 'px')
+        {
+            startVal  = _THIS.css_to_px(startVal + startUnit, this.DOMElement, this.CSSProperty);
+            startUnit = 'px';
+        }
+        if (endUnit !== 'px')
+        {
+            endVal  = _THIS.css_to_px(this.options.to, this.DOMElement, this.CSSProperty);
+            endUnit = 'px';
+        }
+    }
+
+    startVal = _THIS.css_unit_value(startVal);
+    endVal   = _THIS.css_unit_value(endVal);
+
+    this.startValue    = _THIS.css_unit_value(startVal);
+    this.endValue      = _THIS.css_unit_value(endVal);
+    this.backAnimation = endVal < startVal;
+    this.distance      = Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal));
+    this.CSSunits      = endUnit;
+}
+
+AnimateJS.prototype.parseTransformOptions = function()
+{
+    var DOMElement    = this.DOMElement;
+    var startValues   = _THIS.css_transform_props(DOMElement, false);
+    var endValues     = _THIS.css_transform_props(this.options.to, false);
+
+    // If a start value was specified it gets overwritten as the transform
+    // property is singular
+    if (this.options.from)
+    {
+        startValues = _THIS.css_transform_props(this.options.from);
+    }
+
+    this.CSSProperty    = [];
+    this.startValue     = [];
+    this.endValue       = [];
+    this.CSSunits       = [];
+    this.backAnimation  = [];
+    this.distance       = [];
+    this.baseTransforms = _THIS.is_empty(startValues) ? '' : _THIS.join_obj(_THIS.map(startValues, (prop, val) => !endValues[prop] ? val : false), '(', ') ', false, false);
+
+    _THIS.each(endValues, function(propAxis, valueStr)
+    {
+        var startValStr        = !startValues[propAxis] ? (propAxis.includes('scale') ? '1' : '0') : startValues[propAxis];
+        var startVal           = _THIS.css_unit_value(startValStr);
+        var endVal             = _THIS.css_unit_value(valueStr);
+        var startUnit          = _THIS.css_value_unit(startValStr);
+        var endUnit            = _THIS.css_value_unit(valueStr);
+        var CSSpropertyUnits   = endUnit;
+
+        if (startUnit !== endUnit)
+        {
+            // 0 no need to convert
+            if (_THIS.is_empty(startUnit))
+            {
+                startUnit = endUnit;
+            }
+            else
+            {
+                if (startUnit !== 'px') startVal = _THIS.css_to_px(startVal + startUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                if (endUnit !== 'px') endVal = _THIS.css_to_px(endVal + endUnit, DOMElement, propAxis.includes('Y') ? 'height' : 'width');
+                CSSpropertyUnits = 'px';
+            }
+        }
+
+        this.CSSProperty.push(propAxis);
+        this.CSSunits.push(endUnit);
+        this.endValue.push(endVal);
+        this.startValue.push(startVal);
+        this.backAnimation.push(endVal < startVal);
+        this.distance.push(Math.abs(endVal < startVal ? (startVal - endVal) : (endVal - startVal)));
+
+    }, this);
+}
+
+AnimateJS.prototype.parseColorOptions = function()
+{
+    this.startValue = this.sanitizeColor(this.options.from || _THIS.rendered_style(this.DOMElement, this.CSSProperty));
+    this.endValue   = this.sanitizeColor(this.options.to);
+}
+
+/**
+ * Sanitize the start and end colors to RGB arrays.
+ * 
+ * @param  {string} color  hex or rgb color as as string
+ * @return {array}
+ */
+AnimateJS.prototype.sanitizeColor = function(color)
+{
+    if (color.startsWith('rgb('))
+    {
+        return color.split(' ', 3).map((x) => parseInt(x.replaceAll(/[^\d+]/g, '')));
+    }
+    else if (color.length === 7 )
+    {
+        let rgb = [];
+
+        color.match(/#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i).forEach((item) =>
+        {
+            if (item.length === 2)
+            {
+                const color = parseInt(item, 16);
+
+                rgb.push(color);
+            }
+        });
+
+        return rgb;
+    }
+}
+
+AnimateJS.prototype.generateKeyframes = function()
+{    
+    if (_THIS.is_equal(this.startValue, this.endValue))
+    {
+        this.keyFrameCount = 0;
+
+        return;
+    }
+
+    if (this.isScroll)
+    {
+        _THIS.for(this.keyFrameCount, function(index)
+        {
+            let x = this.generateKeyframe(index, 0);
+            let y = this.generateKeyframe(index, 1);
+
+            this.keyframes.push([x, y]);
+                            
+        }, this);
+
+        // Fallback
+        this.keyframes.push([this.endValue[0], this.endValue[1]]);
+
+        return;
+    }
+
+    if (this.isTransform)
+    {
+        _THIS.for(this.endValue, function(transformIndex)
+        {
+            _THIS.for(this.keyFrameCount, function(index)
+            {
+                this.keyframes.push(this.generateKeyframe(index, transformIndex));
+                
+            }, this);
+            
+        }, this);
+
+        return;
+    }
+
+    _THIS.for(this.keyFrameCount, function(index)
+    {
+        this.keyframes.push(this.generateKeyframe(index));
+        
+    }, this);
+
+    // Failsafe
+    if (this.keyframes[this.keyFrameCount -1][this.CSSProperty] !== `${this.endValue}${this.CSSunits}`)
+    {
+        this.keyframes.push({[this.CSSProperty]: `${this.endValue}${this.CSSunits}`});
+    }
+}
+
+AnimateJS.prototype.generateKeyframe = function(index, transformIndex)
+{
+    if (this.isColor)
+    {
+        const change = this.tween(this.easing, (index / this.keyFrameCount));
+        
+        return { [this.CSSProperty]: this.mixColors(this.startValue, this.endValue, change) };
+    }
+    
+    const backAnimation = this.isTransform || this.isScroll ? this.backAnimation[transformIndex] : this.backAnimation;
+
+    const startValue = this.isTransform || this.isScroll ? this.startValue[transformIndex] : this.startValue;
+
+    const distance = this.isTransform || this.isScroll ? this.distance[transformIndex] : this.distance;
+
+    const change = (distance * this.tween(this.easing, (index / this.keyFrameCount)));
+
+    const keyVal = this.roundNumber(backAnimation ? startValue - change : startValue + change, this.CSSProperty === 'opacity' ? 5 : 1);
+
+    var property = this.isTransform ? 'transform' : this.CSSProperty;
+
+    var prefix  = this.isTransform ? `${this.CSSProperty[transformIndex]}(` : '';
+
+    var suffix  = this.isTransform ? `${this.CSSunits[transformIndex]})` : this.CSSunits;
+    
+    var keyframe = { [property]:  `${prefix}${keyVal}${suffix}` };
+    
+    if (this.isScroll)
+    {
+        return keyVal;
+    }
+
+    if (this.isTransform && _THIS.is_undefined(this.keyframes[index]))
+    {
+        keyframe[property] = `${this.baseTransforms} ${keyframe[property]}`.trim();
+    }
+
+    return keyframe;
+}
+
+/**
+ * Mix 2 colors.
+ * 
+ * @param  {array}  color1 RGB color array
+ * @param  {array}  color2 RGB color array
+ * @param  {number} blend % between 0 and 1
+ * @return {string} 
+ */
+AnimateJS.prototype.mixColors = function(color1RGB, color2RGB, blend)
+{
+    function linearInterpolation(y1, y2, x)
+    {
+        return Math.round(x * (y2 - y1) + y1);
+    }
+    
+    const colorRGB  = [];
+
+    color1RGB.forEach((c1, index) =>
+    {
+        const mixedColor = linearInterpolation(c1, color2RGB[index], blend);
+
+        colorRGB.push(mixedColor);
+    });
+
+    return 'rgb(' + colorRGB + ')';
+}
+
+/**
+ * Calculate the easing pattern.
+ * 
+ * @private
+ * @link    {https://gist.github.com/gre/1650294}
+ * @param   {String} type Easing pattern
+ * @param   {Number} time Time animation should take to complete
+ * @returns {Number}
+ */
+AnimateJS.prototype.clearTransitions = function()
+{        
+    var CSSProperty    = this.isTransform ? 'transform' : this.CSSProperty;
+    var transitions    = _THIS.css_transition_props(this.DOMElement);
+    var css_transition = _THIS.inline_style(this.DOMElement, 'transition'); 
+
+    if (_THIS.is_empty(transitions) || !transitions[CSSProperty]) return;
+
+    transitions[CSSProperty] = '0s linear 0s';
+
+    _THIS.css(this.DOMElement, 'transition', _THIS.join_obj(transitions, ' ', ', '));
+
+    this._pre_transition = !css_transition ? false : css_transition;
+}
+
+AnimateJS.prototype.roundNumber = (n, dp) => 
+{
+    const h = +('1'.padEnd(dp + 1, '0')) // 10 or 100 or 1000 or etc
+
+    return Math.round(n * h) / h;
+}
+
+/**
+ * Calculate the easing pattern.
+ * 
+ * @private
+ * @link    {https://gist.github.com/gre/1650294}
+ * @param   {String} type Easing pattern
+ * @param   {Number} time Time animation should take to complete
+ * @returns {Number}
+ */
+AnimateJS.prototype.tween = function(type, time)
+{
+    return ANIMATION_EASING_FUNCTIONS[type].call(null, time) || time;
+}
+
+_.prototype.__animate_js = function(DOMElement, options)
+{
+    return (new AnimateJS(DOMElement, options)).start();
+}
+const AnimateCss = function(DOMElement, options)
+{     
+    // Domeleement   
+    this.DOMElement = DOMElement;
+
+    // Options
+    this.options = options;
+
+    // Props to animate
+    this.animatedProps = {};
+
+    // Pre animation transitions to restore
+    this.preAnimatedTransitions = {};
+
+    // Cache stopvalues
+    this.stopValues = {};
+
+    // Fail timer
+    this._failTimer = null;
+    
+    // Max duration
+    this.duration  = 0;
+    
+    // Callbacks
+    this._callbackStart    = () => {};
+    this._callbackComplete = () => {};
+    this._callbackFail     = () => {};
+    this._callbackStep     = () => {};
+
+    this.preProcessStartEndValues();
+
+    return this;
+};
+
+/**
+ * Start animation.
+ *
+ */
+AnimateCss.prototype.start = function()
+{
+    this._callbackStart(this.DOMElement);
+
+    this.applyStartValues();
+
+    this.applyTransitions();
+
+    _THIS.add_event_listener(this.DOMElement, 'transitionend', this.transitionEnd, this);
+
+    let _this = this;
+
+    this._failTimer = setTimeout(() =>
+    {
+        _this._callbackFail(_this.DOMElement);
+
+        _this.stop();
+
+    }, this.duration + 50 );
+
+    this._stepTimer = setInterval(() => this._callbackStep(), 16);
+
+    this.applyEndValues();
+
+    return this;
+}
+
+/**
+ * Stop animation.
+ *
+ */
+AnimateCss.prototype.stop = function()
+{
+    clearTimeout(this._failTimer);
+
+    clearInterval(this._stepTimer);
+
+    this.resotoreElement();
+
+    _THIS.css(this.DOMElement, this.stopValues);
+}
+
+/**
+ * Stop animation and destroy.
+ *
+ */
+AnimateCss.prototype.destory = function()
+{
+    this.stop();
+
+    this.animatedProps = {};
+
+    this.preAnimatedTransitions = {};
+}
+
+/**
+ * On transition end.
+ * 
+ * Note if a multiple animation properties wer supplied
+ * we only want to call the callback once when all transitions
+ * have completed.
+ *
+ * @param  {Event} e transitionEnd event
+ */
+AnimateCss.prototype.resotoreElement = function()
+{
+    _THIS.css(this.DOMElement, 'transition', this.preAnimatedTransitions);
+
+    _THIS.remove_event_listener(this.DOMElement, 'transitionend', this.transitionEnd, this);
+}
+
+/**
+ * On transition end.
+ * 
+ * Note if a multiple animation properties wer supplied
+ * we only want to call the callback once when all transitions
+ * have completed.
+ *
+ * @param  {Event} e transitionEnd event
+ */
+AnimateCss.prototype.transitionEnd = function(e)
+{
+    e = e || window.event;
+
+    let prop = _THIS.css_prop_to_hyphen_case(e.propertyName);
+
+    // Convert to shorthand if needed
+    if (prop.includes('-'))
+    {
+        let shorthand = prop.split('-').shift();
+
+        if (this.animatedProps[shorthand]) prop = shorthand;
+    }
+
+    let endVal = this.animatedProps[prop];
+
+    // Change inline style back to auto
+    if (endVal === 'auto' || endVal === 'initial' || endVal === 'unset') _THIS.css(this.DOMElement, prop, endVal);
+
+    delete this.animatedProps[prop];
+    
+    if (_THIS.is_empty(this.animatedProps))
+    {        
+        clearTimeout(this._failTimer);
+
+        clearInterval(this._stepTimer);
+
+        this.resotoreElement();
+
+        this._callbackComplete(this.DOMElement);
+    }
+}
+
+/**
+ * Checks for "auto" transtions.
+ * 
+ */
+AnimateCss.prototype.preProcessStartEndValues = function()
+{
+    var DOMElement = this.DOMElement;
+    
+    // We need to set the end value explicitly as these values will not
+    // transition with CSS
+    _THIS.each(this.options, function(i, option)
+    {
+        // Cache start and fail callbacks
+        if (option.start) this._callbackStart = option.start;
+        if (option.fail) this._callbackFail = option.fail;
+        if (option.step) this._callbackStep = option.step;
+
+        // Keep the longest callback
+        if (option.duration >= this.duration && (option.callback || option.complete))
+        {
+            this._callbackComplete = (option.callback || option.complete);
+        }
+
+        // Store the maximum duration
+        if (option.duration >= this.duration) this.duration = option.duration;
+
+        let startValue  = option.from;
+        let endValue    = option.to;
+        let CSSProperty = option.property;
+        
+        if (startValue === 'auto' || startValue === 'initial' || startValue === 'unset' || !startValue)
+        {
+            option.from = _THIS.rendered_style(DOMElement, CSSProperty);
+        }
+
+        if (endValue === 'auto' || endValue === 'initial' || endValue === 'unset')
+        {
+            let inlineStyle = _THIS.inline_style(DOMElement, CSSProperty);
+
+            _THIS.css(DOMElement, CSSProperty, endValue);
+
+            option.to = _THIS.rendered_style(DOMElement, CSSProperty);
+
+            _THIS.css(DOMElement, CSSProperty, inlineStyle ? inlineStyle : false);
+        }
+
+        this.animatedProps[CSSProperty] = endValue;
+
+        this.stopValues[CSSProperty] = _THIS.inline_style(DOMElement, CSSProperty) || false;
+
+    }, this);
+}
+
+/**
+ * Apply start values.
+ * 
+ */
+AnimateCss.prototype.applyStartValues = function()
+{
+    var styles = {};
+
+    _THIS.each(this.options, function(i, option)
+    {
+        styles[option.property] = option.from;
+    });
+
+    if (!_THIS.is_empty(styles)) _THIS.css(this.DOMElement, styles);
+}
+
+/**
+ * Apply animation transitions.
+ * 
+ */
+AnimateCss.prototype.applyTransitions = function()
+{
+    let transitions = _THIS.css_transition_props(this.DOMElement);
+
+    this.preAnimatedTransitions  = _THIS.inline_style(this.DOMElement, 'transition') || false;
+
+    _THIS.each(this.options, function(i, option)
+    {
+        // Setup and convert duration from MS to seconds
+        let property = option.property;
+        let duration = (option.duration / 1000);
+        let easing   = CSS_EASINGS[option.easing] || 'ease';
+
+        // Set the transition for the property
+        // in our merged obj
+        transitions[property] = `${duration}s ${easing}`;
+
+    }, this);
+
+    _THIS.css(this.DOMElement, 'transition', _THIS.join_obj(transitions, ' ', ', '));
+}
+
+/**
+ * Apply animation end values.
+ * 
+ */
+AnimateCss.prototype.applyEndValues = function()
+{
+    let styles = {};
+
+    _THIS.each(this.options, function(i, option)
+    {
+        styles[option.property] = option.to;
+
+    }, this);
+
+    _THIS.css(this.DOMElement, styles);
+}
+
+/**
+ * CSS Animation.
+ *
+ * @access {private}
+ * @param  {DOMElement}     DOMElement          Target DOM node
+ * @param  {object}   options             Options object
+ * @param  {string}   options.property    CSS property
+ * @param  {mixed}    options.from        Start value
+ * @param  {mixed}    options.to          Ending value
+ * @param  {int}      options.duration    Animation duration in MS
+ * @param  {string}   options.easing      Easing function in camelCase
+ * @param  {function} options.callback    Callback to apply when animation ends (optional)
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+_.prototype.__animate_css = function(DOMElement, options)
+{    
+    return new AnimateCss(DOMElement, options).start();
+}
+
+/**
+ * Animate JS
+ *
+ * @access {public}
+ * @param  {DOMElement} DOMElement                  Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
+ * @return {array}
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+_.prototype.animate = function(DOMElement, options)
+{    
+    const animationSet = [];
+
+    const Animation = function()
+    {
+        return this;
+    };
+
+    Animation.prototype.start = function()
+    {
+        for (var i = 0; i < animationSet.length; i++)
+        {
+            animationSet[i].start();
+        }
+    };
+
+    Animation.prototype.stop = function()
+    {
+        for (var i = 0; i < animationSet.length; i++)
+        {
+            animationSet[i].stop(true);
+        }
+    };
+
+    Animation.prototype.destory = function()
+    {
+        for (var i = 0; i < animationSet.length; i++)
+        {
+            animationSet[i].destory();
+        }
+
+        animationSet = [];
+    };
+
+    const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
+
+    const AnimationInstance = new Animation;
+
+    this.each(factoryOptions, function(i, opts)
+    {
+        animationSet.push(this.__animate_js(DOMElement, opts));
+
+    }, this);
+
+    return AnimationInstance;
+}
+
+/**
+ * Animate CSS
+ *
+ * @access {public}
+ * @param  {DOMElement} DOMElement                  Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
+ * @return {array}
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+_.prototype.animate_css = function(DOMElement, options)
+{
+    let cssAnimation;
+
+    const Animation = function()
+    {
+        return this;
+    };
+
+    Animation.prototype.start = function()
+    {
+        cssAnimation.start();
+    };
+
+    Animation.prototype.stop = function()
+    {
+        cssAnimation.stop(true);
+    };
+
+    Animation.prototype.destory = function()
+    {
+        cssAnimation.destory(true);
+    };
+
+    const factoryOptions = !options.FROM_FACTORY ? this.__animation_factory(DOMElement, options) : options;
+
+    cssAnimation = this.__animate_css(DOMElement, factoryOptions);
+    
+    return new Animation;
+}
+
+/**
+ * Animation factory.
+ *
+ * @access {private}
+ * @param  {DOMElement} DOMElement                  Target DOM node
+ * @param  {object}     options             Options object
+ * @param  {string}     options.property    CSS property
+ * @param  {mixed}      options.from        Start value
+ * @param  {mixed}      options.to          Ending value
+ * @param  {int}        options.duration    Animation duration in MS
+ * @param  {string}     options.easing      Easing function in camelCase
+ * @param  {function}   options.callback    Callback to apply when animation ends (optional)
+ * @return {array}
+ * Options can be provided three ways:
+ * 
+ * 1. Flat object with single property
+ *      animate(el, { height: '500px', easing 'easeOut' })
+ * 
+ * 2. Flat Object with multiple properties 
+ *      Note this way you can only animate from the existing rendered element style (you cannot provide a 'from' value)
+ *      animate(el, { height: '500px', width: '500px', easing 'easeOut' })
+ * 
+ * 3. Multi object with different options per property
+ *      animate(el, { height:{ from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+ * 
+ */
+_.prototype.__animation_factory = function(DOMElement, opts)
+{
+    var optionSets = [];
+
+    this.each(opts, function(key, val)
+    {
+        // animation_factory('foo', { property : 'left', from : '-300px', to: '0',  easing: 'easeInOutElastic', duration: 3000} );
+        if (key === 'property')
+        {
+            var options = { ...ANIMATION_DEFAULT_OPTIONS, ...opts};
+
+            options.FROM_FACTORY = true;
+            options.property     = this.css_prop_to_hyphen_case(val);
+            options.el           = DOMElement;
+            optionSets.push(options);
+
+            // break
+            return false;
+        }
+        else if (!this.in_array(key, ANIMATION_ALLOWED_OPTIONS))
+        {
+            // Only worth adding if the property is valid
+            var camelProp = this.css_prop_to_camel_case(key);
+            
+            if (!this.is_undefined(document.body.style[camelProp]))
+            {
+                var isObjSet = this.is_object(val);
+                var toMerge  = isObjSet ? val : opts;
+                var options  = { ...ANIMATION_DEFAULT_OPTIONS, ...toMerge};
+                
+                // animation_factory('foo', { height: '100px', opacity: 0 } );
+                if (!isObjSet)
+                {
+                    options.to = val;
+                }
+
+                // animation_factory('foo', { height: { from: '100px', to: '500px', easing: 'easeInOutElastic'}, opacity:{ to: 0, easing: 'linear'} } );
+                options.FROM_FACTORY = true;
+                options.property     = this.css_prop_to_hyphen_case(key);
+                options.el           = DOMElement;
+                optionSets.push(options);
+            }
+        }
+    }, this);
+
+    // Santize callbacks
+    let longest  = 0;
+    let longestI = 0;
+    let start    = () => {};
+    let fail     = () => {};
+    let complete = () => {};
+    let step     = () => {};
+
+    this.each(optionSets, function(i, options)
+    {
+        if (options.start)
+        {
+            start = options.start;
+
+            delete options.start;
+        }
+
+        if (options.fail)
+        {
+            fail = options.fail;
+
+            delete options.fail;
+        }
+
+        if (options.step)
+        {
+            step = options.step;
+
+            delete options.step;
+        }
+
+        // Store the maximum duration
+        if (options.duration >= longest)
+        {
+            if ((options.callback || options.complete)) complete = (options.callback || options.complete);
+
+            delete options.callback;
+
+            delete options.complete;
+
+            longest = options.duration;
+
+            longestI = i;
+        }
+
+        // Not nessaray, but sanitize out redundant options
+        options = this.map(options, function(key, val)
+        {
+            return this.in_array(key, ANIMATION_FILTER_OPTIONS) ? val : false;
+
+        }, this);
+
+        // Sanitize to/from to strings
+        if (this.array_has('to', options)) options.to = options.to + '';
+        if (this.array_has('from', options)) options.from = options.from + '';
+
+        if (!ANIMATION_EASING_FUNCTIONS[options.easing]) options.easing = 'ease';
+
+        options.FROM_FACTORY = true;
+
+        optionSets[i] = options;
+
+    }, this);
+
+    if (this.is_empty(optionSets))
+    {
+        console.error('Animation Error: Either no CSS property(s) was provided or the provided property(s) is unsupported.');
+    }
+
+    optionSets[longestI].fail     = fail;
+    optionSets[longestI].start    = start;
+    optionSets[longestI].complete = complete;
+    optionSets[longestI].step     = step;
+
+    return optionSets;
+}
+/**
+ * Recursively delete from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+_.prototype.__array_delete_recursive = function(keys, object)
+{
+    var key = keys.shift();
+
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        if (TO_STR.call(object) === '[object Array]')
+        {
+            object.splice(key, 1);
+        }
+        else
+        {
+            delete object[key];
+        }
+    }
+
+    if (!object[key])
+    {
+        return false;
+    }
+
+    return this.__array_delete_recursive(keys, object[key]);
+}
+
+/**
+ * Recursively search from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+_.prototype.__array_get_recursive = function(keys, object)
+{
+    var key = keys.shift();
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        return object[key];
+    }
+
+    if (!object[key])
+    {
+        return undefined;
+    }
+
+    return this.__array_get_recursive(keys, object[key]);
+}
+
+/**
+ * Recursively set array/object.
+ *
+ * @param {array}          keys     Keys in search order
+ * @param {mixed}          value    Value to set
+ * @param {object|array}   object   Object to get from
+ * @param {string|number}  nextKey  Next key to set
+ */
+_.prototype.__array_set_recursive = function(keys, value, object, nextKey)
+{
+    var key = keys.shift();
+    var islast = keys.length === 0;
+    var lastObj = object;
+    object = !nextKey ? object : object[nextKey];
+
+    // Trying to set a value on nested array that doesn't exist
+    if (!['object', 'function'].includes(typeof object))
+    {
+        throw new Error('Invalid dot notation. Cannot set key "' + key + '" on "' + JSON.stringify(lastObj) + '[' + nextKey + ']"');
+    }
+
+    if (!object[key])
+    {
+        // Trying to put object key into an array
+        if (TO_STR.call(object) === '[object Array]' && typeof key === 'string')
+        {
+            var converted = Object.assign({}, object);
+
+            lastObj[nextKey] = converted;
+
+            object = converted;
+        }
+
+        if (keys[0] && typeof keys[0] === 'string')
+        {
+            object[key] = {};
+        }
+        else
+        {
+            object[key] = [];
+        }
+    }
+
+    if (islast)
+    {
+        object[key] = value;
+
+        return;
+    }
+
+    this.__array_set_recursive(keys, value, object, key);
+}
+
+/**
+ * Segments an array/object path using from "dot.notation" into an array of keys in order.
+ *
+ * @param   {string}  path Path to parse
+ * @returns {array}
+ */
+_.prototype.__array_key_segment = function(path)
+{
+    var result = [];
+    var segments = path.split('.');
+
+    for (var i = 0; i < segments.length; i++)
+    {
+        var segment = segments[i];
+
+        if (!segment.includes('['))
+        {
+            result.push(segment);
+
+            continue;
+        }
+
+        var subSegments = segment.split('[');
+
+        for (var j = 0; j < subSegments.length; j++)
+        {
+            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(subSegments[j][0]))
+            {
+                result.push(parseInt(subSegments[j].replace(']')));
+            }
+            else if (subSegments[j] !== '')
+            {
+                result.push(subSegments[j])
+            }
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Recursively delete from array/object.
+ *
+ * @param   {array}        keys    Keys in search order
+ * @param   {object|array} object  Object to get from
+ * @returns {mixed}
+ */
+_.prototype.__array_delete_recursive = function(keys, object)
+{
+    var key = keys.shift();
+
+    var islast = keys.length === 0;
+
+    if (islast)
+    {
+        if (TO_STR.call(object) === '[object Array]')
+        {
+            object.splice(key, 1);
+        }
+        else
+        {
+            delete object[key];
+        }
+    }
+
+    if (!object[key])
+    {
+        return false;
+    }
+
+    return this.__array_delete_recursive(keys, object[key]);
+}
+/**
+ * Deletes from an array/object using dot/bracket notation.
+ *
+ * @param   {string}        path   Path to delete
+ * @param   {object|array}  object Object to delete from
+ * @returns {object|array}
+ */
+_.prototype.array_delete = function(path, object)
+{
+    this.__array_delete_recursive(this.__array_key_segment(path), object);
+
+    return object;
+}
+/**
+ * Filters empty array entries and returns new array
+ *
+ * @param   {object|array}  object Object to delete from
+ * @returns {object|array}
+ */
+_.prototype.array_filter = function(arr)
+{
+    let isArr = this.is_array(arr);
+
+    let ret = isArr ? [] : {};
+
+    this.each(arr, function(i, val)
+    {
+        if (!this.is_empty(val))
+        {
+            isArr ? ret.push(val) : ret[i] = val;
+        }
+        
+    }, this);
+
+    return ret;
+}
+/**
+ * Gets an from an array/object using dot/bracket notation.
+ *
+ * @param   {string}        path    Path to get
+ * @param   {object|array}  object  Object to get from
+ * @returns {mixed}
+ */
+_.prototype.array_get = function(path, object)
+{
+    return this.__array_get_recursive(this.__array_key_segment(path), object);
+}
+
+
+/**
+ * Checks if array/object contains path using dot/bracket notation.
+ *
+ * e.g array_has('foo.bar.baz[0]', obj)
+ * 
+ * @param   {string}        path   Path to check
+ * @param   {object|array}  object Object to check on
+ * @returns {boolean}
+ */
+_.prototype.array_has = function(path, object)
+{
+    return !this.is_undefined(this.array_get(path, object));
+}
+/**
+ * Merges multiple objects or arrays into the original.
+ *
+ * @param   {object|array} First array then any number of array or objects to merge into
+ * @returns {object|array}
+ */
+_.prototype.array_merge = function()
+{
+    let args = TO_ARR.call(arguments);
+
+    if (args.length === 0)
+    {
+        throw new Error('Nothing to merge.');
+    }
+    else if (args.length === 1)
+    {
+        return args[1];
+    }
+
+    var clone = false;
+
+    // Clone deep
+    this.each(args, function(i, arg)
+    {
+        if (arg = 'CLONE_FLAG_TRUE')
+        {
+            clone = true;
+
+            return false;
+        }
+    });
+
+    let first = args.shift();
+    let fType = this.is_array(first) ? 'array' : 'obj';
+
+    this.each(args, function(i, arg)
+    {
+        if (!this.is_array(arg) && !this.is_object(arg))
+        {
+            throw new Error('Arguments must be an array or object.');
+        }
+
+        first = fType === 'array' ? [...first, ...arg] : {...first, ...arg};
+
+    }, this);
+
+    return first;
+}
+/**
+ * Set a key using dot/bracket notation on an object or array.
+ *
+ * @param   {string}       path   Path to set
+ * @param   {mixed}        value  Value to set
+ * @param   {object|array} object Object to set into
+ * @returns {object|array}
+ */
+_.prototype.array_set = function(path, value, object)
+{
+    this.__array_set_recursive(this.__array_key_segment(path), value, object);
+
+    return object;
+}
+/**
+ * Removes duplicates and returns new array.
+ *
+ * @param   {array} arr Array to run
+ * @returns {array}
+ */
+_.prototype.array_unique = function(arr)
+{
+    return arr.filter((value, index, self) => self.indexOf(value) === index);
+}
+/**
+ * Checks if element is last element in array or object.
+ *
+ * @access {public}
+ * @param  {string} needle    The value to search for
+ * @param  {array}  haystack  The target array to index
+ * @param  {bool}   strict    Strict comparison (optional) (default false)
+ * @return {bool}
+ * 
+ */
+_.prototype.is_array_last = function(needle, haystack, strict)
+{
+    strict = this.is_undefined(strict) ? false : strict;
+
+    let last = TO_STR.call(haystack) === '[object Array]' ? haystack[haystack.length -1] : haystack[Object.keys(haystack).pop()];
+    
+    return this.is_equal(needle, last, strict);
+}
+/**
+ * Foreach loop
+ * 
+ * @access {public}
+ * @param  {object}  obj       The target object to loop over
+ * @param  {closure} callback  Callback to apply to each iteration
+ * @param  {array}   args      Array of params to apply to callback (optional) (default null)
+ */
+_.prototype.each = function(obj, callback)
+{
+    if (typeof obj !== 'object' || obj === null) return;
+
+    let isArray = TO_STR.call(obj) === '[object Array]';
+    let i       = 0;
+    let keys    = isArray ? null : Object.keys(obj);
+    let len     = isArray ? obj.length : keys.length;
+    let args    = TO_ARR.call(arguments).slice(2);
+    let ret     = isArray ? [] : {};
+    let key;
+    let val;
+    let clbkVal;
+
+    // Applies the value of "this" to the callback as the array or object provided
+    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
+
+    // Applies this arg as first extra arg if provided
+    // otherwise falls back to the array or object provided
+    // Removes "this" from args to callback
+    var thisArg = this.is_empty(args) ? obj : args[0];
+    args        = !this.is_empty(args) ? args.slice(1) : null;
+    args        = this.is_empty(args) ? null : args;
+
+    if (TO_STR.call(args) === '[object Array]')
+    {
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
+
+            if (clbkVal === false)
+            {
+                break;
+            }
+        }
+
+        // A special, fast, case for the most common use of each (no extra args provided)
+    }
+    else
+    {
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.call(thisArg, key, val);
+
+            if (clbkVal === false)
+            {
+                break;
+            }
+        }
+    }
+
+    return obj;
+}
+
+_.prototype.foreach = function()
+{
+    return this.each.apply(this, arguments);
+}
+
+/**
+ * For loop with count
+ * 
+ * @access {public}
+ * @param  {object}  obj       The target object to loop over
+ * @param  {closure} callback  Callback to apply to each iteration
+ * @param  {array}   args      Array of params to apply to callback (optional) (default null)
+ */
+_.prototype.for = function(count, callback)
+{
+    var args = TO_ARR.call(arguments);
+
+    args[0] = Array.from(Array(count).keys());
+
+    return this.each.apply(this, args);
+}
+
+
+/**
+ * Checks if an array contains a value
+ *
+ * @access {public}
+ * @param  {string} needle    The value to search for
+ * @param  {array}  haystack  The target array to index
+ * @param  {bool}   strict    Strict comparison (optional) (default false)
+ * @return {bool}
+ * 
+ */
+_.prototype.in_array = function(needle, haystack, strict)
+{
+    strict = this.is_undefined(strict) ? false : strict;
+    
+    if (!strict) return haystack.includes(needle);
+
+    let ret = false;
+
+    this.each(haystack, function(k, v)
+    {
+        ret = this.is_equal(needle, v, strict);
+
+        if (ret) return false;
+
+    }, this);
+
+    return ret;
+}
+/**
+ * Map.
+ *  
+ * return undefined to break loop, true to keep, false to reject
+ * 
+ * @param   {array|object}  obj
+ * @param   {function}      callback
+ * @param   {array|mixed}   args      If single arg provided gets apllied as this to callback, otherwise args apllied to callback
+ * @returns {array|object}
+ */
+_.prototype.map = function(obj, callback)
+{
+    if (typeof obj !== 'object' || obj === null) return;
+
+    let isArray = TO_STR.call(obj) === '[object Array]';
+    let i       = 0;
+    let keys    = isArray ? null : Object.keys(obj);
+    let len     = isArray ? obj.length : keys.length;
+    let args    = TO_ARR.call(arguments).slice(2);
+    let ret     = isArray ? [] : {};
+    let key;
+    let val;
+    let clbkVal;
+
+    // Applies the value of "this" to the callback as the array or object provided
+    //var thisArg = typeof args !== 'undefined' && TO_STR.call(args) !== '[object Array]' ? args : obj;
+
+    // Applies this arg as first extra arg if provided
+    // otherwise falls back to the array or object provided
+    // Removes "this" from args to callback
+    var thisArg = this.is_empty(args) ? obj : args[0];
+    args        = !this.is_empty(args) ? args.slice(1) : null;
+    args        = this.is_empty(args) ? null : args;
+
+    if (TO_STR.call(args) === '[object Array]')
+    {
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.apply(thisArg, this.array_merge([key, val], args));
+
+            if (clbkVal === false)
+            {
+                continue;
+            }
+            else if (typeof clbkVal === 'undefined')
+            {
+                break;
+            }
+            else
+            {
+                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
+            }
+        }
+
+        // A special, fast, case for the most common use of each (no extra args provided)
+    }
+    else
+    {
+        for (; i < len; i++)
+        {
+            key   = isArray ? i : keys[i];
+            val   = isArray ? obj[i] : obj[key];
+            clbkVal = callback.call(thisArg, key, val);
+
+            if (clbkVal === false)
+            {
+                continue;
+            }
+            else if (typeof clbkVal === 'undefined')
+            {
+                break;
+            }
+            else
+            {
+                isArray ? ret.push(clbkVal) : ret[key] = clbkVal;
+            }
+        }
+    }
+
+    return ret;
+}
+/**
+ * Set, get or remove DOM attribute.
+ *
+ * No third arg returns attribute value, third arg set to null or false removes attribute.
+ * 
+ * @param {HTMLElement}  DOMElement  Dom node
+ * @param {string}       name        Property name
+ * @apram {mixed}        value       Property value
+ */
+_.prototype.attr = function(DOMElement, name, value)
+{        
+    // Get attribute
+    // e.g attr(node, style)
+    if ((TO_ARR.call(arguments)).length === 2 && this.is_string(name))
+    {
+        return this.__get_attribute(DOMElement, name);
+    }
+
+    // attr(node, {foo : 'bar', baz: 'bar'})
+    if (this.is_object(name))
+    {
+        this.each(name, function(prop, value)
+        {
+            this.attr(DOMElement, prop, value);
+
+        }, this);
+
+        return;
+    }
+
+    // Set or remove attibute.
+    switch (name)
+    {
+        // innerHTML
+        case 'innerHTML':
+            DOMElement.innerHTML = !value ? '' : value;
+            break;
+
+        // innerText
+        case 'innerText':
+            DOMElement.innerText = !value ? '' : value;
+            break;
+
+        // Children
+        case 'children':
+
+            this.each(DOMElement.children, function(node)
+            {
+                this.remove_from_dom(node);
+            
+            }, this);
+
+            this.each(value, function(node)
+            {
+                DOMElement.appendChild(node);
+            });
+
+            break;
+
+        // Class
+        case 'class':
+        case 'className':
+
+            // Cleanup classname
+            value = this.is_string(value) ? this.replace(value, ['undefined', 'null', 'false', 'true'], '').replace(/\s\s+/g, ' ').trim() : value;
+
+            if (this.is_empty(value))
+            {
+                DOMElement.removeAttribute('class');
+            }
+            else
+            {
+                DOMElement.className = value;
+            }
+
+            break;
+
+        // Style
+        case 'style':
+
+            // remove all styles completely
+            if (this.is_empty(value))
+            {
+                DOMElement.removeAttribute('style');
+            }
+
+            DOMElement.style = '';
+
+            let style = this.is_string(value) ? this.css_to_object(value) : value;
+
+            this.each(style, (prop, value) => this.css(DOMElement, prop, value));
+           
+            break;
+
+        // Events / attributes
+        default:
+
+            // Events
+            if (name[0] === 'o' && name[1] === 'n')
+            {
+                var evt = name.slice(2).toLowerCase();
+
+                // Remove old listeners
+                this.remove_event_listener(DOMElement, evt);
+
+                // Add new listener if one provided
+                if (value)
+                {
+                    this.add_event_listener(DOMElement, evt, value);
+                }
+            }
+            // All other node attributes
+            else
+            {
+                let isData     = name.startsWith('data');
+                let isAria     = name.startsWith('aria');
+                let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
+                let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
+                let isEmpty    = this.is_empty(value);
+
+                // Special data
+                if (isData)
+                {
+                    if (isEmpty)
+                    {
+                        DOMElement.removeAttribute(hyphenName);
+
+                        delete DOMElement.dataset[this.lc_first(this.ltrim(camelName, 'data'))];
+                    }
+                    else
+                    {
+                        DOMElement.setAttribute(hyphenName, value);
+
+                        DOMElement.dataset[this.lc_first(this.ltrim(camelName, 'data'))] = value;
+                    }
+
+                    break;
+                }
+
+                // Special booleans
+                if (this.in_array(name, BOOLEAN_ATTRS))
+                {
+                    DOMElement[name] = isEmpty ? '' : value;
+
+                    if (isEmpty) DOMElement.removeAttribute(name);
+
+                    break;
+                }
+
+                if (!PROP_ATTRIBUTES.includes(camelName))
+                {
+                    try
+                    {                        
+                        DOMElement[camelName] = isEmpty ? '' : value;
+
+                    } catch (e) {}
+                }
+
+                if (isEmpty)
+                {
+                    DOMElement.removeAttribute(hyphenName);
+                }
+                else
+                {
+                    DOMElement.setAttribute(hyphenName, value);
+                }
+            }
+
+            break;
+    }
+}
+
+/**
+ * Simple get html attribute.
+ *
+ * No third arg returns attribute value, third arg set to null or false removes attribute.
+ * 
+ * @access {private}
+ * @param  {HTMLElement}      DOMElement  Dom node
+ * @param  {string}           name        Property name
+ * @return {string|undefined}
+ */
+_.prototype.__get_attribute = function(DOMElement, name)
+{
+    if (name.startsWith('data'))
+    {
+        name = name.startsWith('data-') ? this.to_camel_case(name.substring(5)) : name.substring(4);
+
+        return DOMElement.dataset[name];
+    }
+
+    // Special booleans
+    if (this.in_array(name, BOOLEAN_ATTRS))
+    {
+        if (DOMElement[name] === '' || DOMElement[name] === 'true' || DOMElement[name] === true) return true;
+
+        return DOMElement[name] === 'false' || !DOMElement[name] ? false : true;
+    }
+
+    let camelName  = name.includes('-') ? this.to_camel_case(name) : name;
+    let hyphenName = name.includes('-') ? name : this.camel_case_to_hyphen(name);
+    let retCamel   = DOMElement[camelName];
+    let retAttr    = DOMElement.getAttribute(hyphenName);
+
+    return retAttr === null || this.is_undefined(retAttr) ? retCamel : retAttr;
+}
+/**
+ * Set, get or remove CSS value(s) on element.
+ * 
+ * Note that this will only return inline styles, use 'rendered_style' for
+ * currently displayed styles.
+ *
+ * @access {public}
+ * @param  {DOMElement}   el     Target DOM node
+ * @param  {string|object} Assoc array of property->value or string property
+ * @example {Helper.css(node,} { display : 'none' });
+ * @example {Helper.css(node,} 'display', 'none');
+ */
+_.prototype.css = function(el, property, value)
+{
+    // If their is no value and property is an object
+    if (this.is_object(property))
+    {
+        this.each(property, function(prop, val)
+        {
+            this.css(el, prop, val);
+
+        }, this);
+    }
+    else
+    {
+        // Getting not settings
+        if (this.is_undefined(value))
+        {
+            return this.inline_style(el, property);
+        }
+        // Value is either null or false we remove
+        else if (this.is_null(value) || value === false)
+        {
+            if (el.style.removeProperty)
+            {
+                el.style.removeProperty(property);
+            }
+            else
+            {
+                el.style.removeAttribute(property);
+            }
+        }
+        else
+        {
+            if (value.includes('important') || property.startsWith('--'))
+            {
+                let styles = el.getAttribute('style');
+
+                if (styles && styles.includes(property))
+                {
+                    let re = new RegExp(`${property}\s?:[^;]+;?`, 'g');
+
+                    styles = styles.replace(re, '').trim();
+                }
+                
+                styles = !styles ? `${property}:${value}` : `${this.rtrim(styles, ';')};${property}:${value}`;
+
+                el.setAttribute('style', styles);
+
+                return;
+            }
+            else
+            {
+                el.style[property] = value;    
+            }
+        }
+    }
+}
+/**
+ * Converts CSS property to camel case.
+ *
+ * @access {public}
+ * @param  {string} prop Property to convert
+ * @retirm {string}
+ */
+_.prototype.css_prop_to_camel_case = function(prop)
+{
+    if (!prop.includes('-')) return prop;
+
+    let camelProp = this.to_camel_case(prop);
+
+    if (this.in_array(prop, Object.keys(CSS_PROP_TO_CAMEL_CASES)))
+    {
+        return CSS_PROP_TO_CAMEL_CASES[prop];
+    }
+
+    // First char is always lowercase
+    let ret = camelProp.charAt(0).toLowerCase() + camelProp.slice(1);
+
+    CSS_PROP_TO_CAMEL_CASES[prop] = ret;
+
+    return ret;
+}
+/**
+ * Converts CSS property to hyphen case.
+ *
+ * @access {public}
+ * @param  {string} prop Property to convert
+ * @retirm {string}
+ */
+_.prototype.css_prop_to_hyphen_case = function(prop)
+{
+    if (!/[A-Z]/.test(prop)) return prop;
+    
+    if (this.in_array(prop, Object.keys(CSS_PROP_TO_HYPHEN_CASES)))
+    {
+        return CSS_PROP_TO_HYPHEN_CASES[prop];
+    }
+
+    var hyphenProp = this.camel_case_to_hyphen(prop);
+
+    if (hyphenProp.startsWith('webkit-') || hyphenProp.startsWith('moz-') || hyphenProp.startsWith('ms-') || hyphenProp.startsWith('o-'))
+    {
+        hyphenProp = '-' + hyphenProp;
+    }
+
+    CSS_PROP_TO_CAMEL_CASES[prop] = hyphenProp;
+
+    return hyphenProp;
+}
+/**
+ * Expand shorthand property to longhand properties 
+ *
+ * @access {private}
+ * @param  {string}  CSS rules
+ * @return {object}
+ */
+_.prototype.css_to_longhand = function(css)
+{
+    var ret    = {};
+    var values = this.css_to_object(css);
+
+    this.each(values, function(prop, value)
+    {
+        if (SHORTHAND_PROPS.hasOwnProperty(prop))
+        {
+            var splits  = value.split(' ').map( (x) => x.trim());
+            var dfault  = prop === 'margin' || prop === 'padding' ? '0' : 'initial';
+
+            this.each(SHORTHAND_PROPS[prop], function(i, longhand)
+            {
+                // Object is setup so that if it starts with a '-'
+                // then it gets concatenated to the oridional prop
+                // e.g 'background' -> '-image'
+                longhand = longhand.startsWith('-') ? prop + longhand : longhand;
+
+                // otherwise it gets replaced
+                // e.g 'border-color' -> 'border-top-color', 'border-right-color'... etc
+                ret[longhand] = this.is_undefined(splits[i]) ? dfault : splits[i];
+
+            }, this);
+        }
+        else
+        {
+            ret[prop] = value;
+        }
+
+    }, this);
+
+    return ret;
+}
+/**
+ * Concats longhand property to shorthand
+ *
+ * Note if values are not provide not all browsers will except initial
+ * for all properties in shorthand syntax
+ * 
+ * @access {private}
+ * @param  {string}  CSS rules
+ * @return {object}
+ */
+_.prototype.css_to_shorthand = function(css)
+{
+    const needsFilling = ['margin', 'padding', 'transition', 'animation'];
+    var ret            = {};
+    var styles         = this.css_to_object(css);
+
+    // 'margin': ['-top', '-right', '-bottom', '-left'],
+    this.each(SHORTHAND_PROPS, function(property, longhands)
+    {
+        var value       = '';
+        var matched     = false;
+        var needsDefault = this.in_array(property, needsFilling) || property.includes('border');
+
+        this.each(longhands, function(i, longhand)
+        {
+            longhand = longhand.startsWith('-') ? property + longhand : longhand;
+
+            var suppliedVal = styles[longhand];
+
+            if (!this.is_undefined(suppliedVal))
+            {
+                matched = true;
+                // Colors get flatted
+                if (longhand.includes('-color'))
+                {
+                    value = suppliedVal;
+                }
+                else
+                {
+                    value += suppliedVal + ' ';
+                }
+            }
+            else if (needsDefault)
+            {
+                this.each(SHORTHAND_DEFAULTS, function(matcher, defaltVal)
+                {
+                    if (longhand.includes(matcher))
+                    {
+                        value += ` ${defaltVal} `;
+                    }
+                });
+            }
+            
+        }, this);
+
+        if (!this.is_empty(value) && matched) ret[property] = value.trim();
+        
+    }, this);
+
+    return ret;
+}
+/**
+ * Converts string styles into an object
+ *
+ * @param  {string} styles CSS
+ * @return {object}
+ */
+_.prototype.css_to_object = function(styles)
+{
+    var ret = {};
+
+    const nested_regex = /([^\{]+\{)([\s\S]+?\})(\s*\})/g;
+
+    const css_regex = /([^{]+\s*\{\s*)([^}]+)(\s*\}\s*)/g;
+
+    if (styles.includes('{'))
+    {
+        var nestedStyles = [...css.matchAll(nested_regex)];
+    }
+
+    this.each(styles.split(/;(?=(?:[^"]*"[^"]*")*[^"]*$)/g), function(i, rule)
+    {
+        var style = rule.split(':');
+
+        if (style.length >= 2)
+        {
+            var prop = style.shift().trim();
+            var val  = style.join(':').trim();
+
+            ret[prop] = val;
+        }
+    }, this);
+
+    return ret;
+}
+/**
+ * Get CSS property.
+ * 
+ * @param  {string} value CSS value (e.g "12px")
+ * @return {Number}
+ */
+_.prototype.css_unit_value = function(value)
+{
+    value = value + '';
+
+    if (this.is_numeric(value))
+    {
+        return parseFloat(value);
+    }
+
+    if (this.is_empty(value))
+    {
+        return 0;
+    }
+
+    return parseFloat(value.replaceAll(/[^0-9-.]/g, ''));
+}
+
+/**
+ * Get CSS property unit.
+ * 
+ * @param  {string} value CSS value (e.g "12px")
+ * @return {string}
+ */
+_.prototype.css_value_unit = function(value)
+{
+    value = value + '';
+
+    return value.split(/[0-9]/).pop().replaceAll(/[^a-z%]/g, '').trim();
+}
+
+/**
+ * Converts CSS units to px.
+ * 
+ * @param  {String}     value      CSS value (e.g "12rem")
+ * @param  {DomElement} DOMElement CSS value (optional) (used to relative units)
+ * @param  {String}     property   CSS property (optional) (used for % unit)
+ * @return {Number}
+ */
+_.prototype.css_to_px = function(valueStr, DOMElement, property)
+{
+    valueStr = valueStr + '';
+    
+    if (valueStr.includes('calc')) return valueStr;
+
+    var unit  = this.css_value_unit(valueStr);
+    var value = this.css_unit_value(valueStr);
+
+    if (valueStr.includes('px')) return value;
+
+    if (!this.is_undefined(CSS_ABSOLUTE_UNITS[unit]))
+    {
+        return (value * CSS_ABSOLUTE_UNITS[unit]);
+    }
+
+    if (!this.is_undefined(CSS_RELATIVE_UNITS[unit]))
+    {
+        if (unit === 'em' || unit === 'ex' || 'unit' === 'ch')
+        {
+            if (!DOMElement) return value * CSS_RELATIVE_UNITS[unit];
+            let psize = this.css_unit_value(this.rendered_style(DOMElement.parentNode, 'font-size'));
+            if (unit === 'em') return value * psize;
+            if (unit === 'ex') return value * (psize / 1.8);
+            if (unit === 'ch') return value * (psize / 2);
+            if (unit === '%')  return value * psize;
+        }
+        else if (unit === '%')
+        {
+            if (!DOMElement) return value * CSS_RELATIVE_UNITS[unit];
+            if (!property) property = 'height';
+            
+            let psize = this.css_unit_value(this.rendered_style(DOMElement, property));
+
+            return psize * (value / 100);
+        }
+        else if (unit === 'rem')
+        {
+            // font sizes are always returned in px with JS
+            return value * this.css_unit_value(this.rendered_style(document.documentElement, 'font-size'));
+        }
+        else if (unit === 'vw')
+        {
+            return this.width(window) * (value / 100);
+        }
+        else if (unit === 'vh')
+        {
+            return this.height(window) * (value / 100);
+        }
+        else if (unit === 'vmin' || unit === 'vmax')
+        {
+            let w = this.width(window);
+            let h = this.height(window);
+            let m = unit === 'vmin' ? Math.min(w, h) : Math.max(w, h)
+
+            return m * (value / 100);
+        }
+    }
+
+    return value;
+}
+
+/**
+ * Get an element's inline style if it exists
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} prop CSS property to check
+ * @return {string}
+ */
+_.prototype.inline_style = function(element, prop)
+{
+    const elementStyle = element.style;
+
+    prop = this.css_prop_to_hyphen_case(prop);
+
+    if (prop.startsWith('--'))
+    {
+        return window.getComputedStyle(element).getPropertyValue(prop);
+    }
+    else if (Object.hasOwn(elementStyle, prop))
+    {
+        const val = elementStyle.getPropertyValue(elementStyle[prop]) || elementStyle[prop];
+        
+        return val === '' ? undefined : val;
+    }
+}
+/**
+ * Remove inline css style
+ * 
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} prop CSS property to removes
+ */
+_.prototype.remove_style = function(el, prop)
+{
+    if (typeof prop === 'undefined')
+    {
+        DOMElement.removeAttribute('style');
+
+        return;
+    }
+
+    this.css(el, prop);
+}
+/**
+ * Get the element's computed style on a property
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} prop CSS property to check (in camelCase) (optional)
+ * @return {mixed}
+ */
+_.prototype.rendered_style = function(DOMElement, property)
+{
+    if (property.includes('ransform'))
+    {
+        return this.css_transform_props(DOMElement, true);
+    }
+
+    return this.__computed_style(DOMElement, property);
+}
+
+/**
+ * Get the elements computed style.
+ *
+ * @access {private}
+ * @param  {DOMElement}          el   Target element
+ * @param  {string}        prop CSS property to check (in camelCase) (optional)
+ * @return {string|object}
+ */
+_.prototype.__computed_style = function(DOMElement, property)
+{
+    if (window.getComputedStyle)
+    {
+        let styles = window.getComputedStyle(DOMElement, null);
+
+        if (property && property.startsWith('--')) return styles.getPropertyValue(property);
+
+        return !property ? styles : styles[property];
+    }
+    else if (DOMElement.currentStyle)
+    {
+        let styles = DOMElement.currentStyle;
+
+        return !property ? styles : styles[property];
+    }
+
+    return '';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Returns an object of CSS transitions by transition property as keys.
+ *
+ * @param  {node|string} DOMElement  Target element or transition value string
+ * @return {object}
+ */
+_.prototype.css_transition_props = function(DOMElement)
+{
+    if (!DOMElement) return {};
+    var transitions   = {};
+    var transitionVal = this.is_string(DOMElement) ? DOMElement : this.rendered_style(DOMElement, 'transition');
+
+    // No transition
+    if (!transitionVal || transitionVal.startsWith('all 0s ease 0s') || transitionVal === 'none' || transitionVal === 'unset' || transitionVal === 'auto')
+    {
+        return transitions;
+    }
+
+    let transitionSplit = transitionVal.includes('cubic-bezier') ? '' : transitionVal.trim().split(',');
+
+    if (transitionVal.includes('cubic-bezier'))
+    {
+        let map      = [];
+        let inBezier = false;
+        let block    = '';
+        let char;
+
+        this.for(transitionVal.length, function(i)
+        {
+            char = transitionVal[i];
+
+            if (char === '(') inBezier = true;
+            if (char === ')') inBezier = false;
+
+            if (char === ',' && !inBezier)
+            {
+                map.push(block.trim());
+                block = '';
+
+                // next
+                return;
+            }
+
+            block += char;
+
+            if (i === transitionVal.length -1) map.push(block.trim());
+        });
+
+        transitionSplit = map;
+    }
+
+    this.each(transitionSplit, function(i, transition)
+    {
+        transition = transition.trim();
+
+        // Variants of all
+        if (transition[0] === '.' || transition.startsWith('all ') ||  this.is_numeric(transition[0]))
+        {
+            transitions.all = transition.replace('all ', '');
+
+            return false;
+        }
+
+        var prop = transition.split(' ', 4).shift();
+
+        transitions[prop] = transition.replace(prop, '').trim();
+
+    }, this);
+
+    return transitions;
+}
+/**
+ * Returns an object of CSS transforms by property as keys or transforms as string.
+ *
+ * @param  {node|string} DOMElement     Target element or transition value string
+ * @param  {bool}        returnAsString Returns transforms as string (optional) (default true)
+ * @return {object}
+ */
+_.prototype.css_transform_props = function(DOMElement, returnAsString)
+{
+    if (this.is_string(DOMElement))
+    {
+        return this.__un_css_matrix(DOMElement, returnAsString);
+    }
+
+    returnAsString = this.is_undefined(returnAsString) ? true : returnAsString;
+
+    let styles = this.__computed_style(DOMElement, 'transform');
+
+    // If element is set to "display:none" only inline transforms will show up
+    // so we check those first
+    let inline   = this.inline_style(DOMElement, 'transform');
+    let emptys   = [undefined, '', 'none', 'unset', 'initial', 'inherit'];
+
+    // Has inline styles - inline do not need to converted
+    if (!emptys.includes(inline))
+    {
+        return returnAsString ? inline : this.__un_css_matrix(inline, false);
+    }
+
+    // If element is hiddien we need to display it quickly
+    // to get the CSS defined transform prop to be renderd
+    let inlineDisplay = this.inline_style(DOMElement, 'display');
+    let cssDisplay    = this.rendered_style(DOMElement, 'display');
+    let isHidden      = cssDisplay === 'none';
+
+    // Re-get transform value
+    if (isHidden)
+    {
+        this.css(DOMElement, 'display', 'unset');
+
+        styles = this.__computed_style(DOMElement, 'transform');
+    }
+
+    // Doesn't have stylesheet styles
+    if (this.in_array(styles, emptys))
+    {
+        styles = styles === 'none' || styles === undefined ? '' : styles;
+    }
+
+    // Empty return
+    if (!styles)
+    {
+        return returnAsString ? '' : {};
+    }
+
+    // revert matrix
+    styles = this.__un_css_matrix(DOMElement, returnAsString);
+    
+    // Revert back origional styles
+    if (isHidden)
+    {
+        this.css(DOMElement, 'display', !inlineDisplay ? false : inlineDisplay);
+    }
+
+    return returnAsString ? styles : styles;
+}
+
+/**
+ * Converts an element's matrix transform value back to component transforms
+ *
+ * @access {private}
+ * @param  {DOMElement}   DOMElement     Target element
+ * @param  {bool}   returnAsString Returns string
+ * @return {string|object}
+ */
+_.prototype.__un_css_matrix = function(DOMElement, returnAsString)
+{
+    if (!this.is_string(DOMElement))
+    {
+        if (!DOMElement.computedStyleMap)
+        {
+            return returnAsString ? '' : {};
+        }
+
+        var computedTransforms = DOMElement.computedStyleMap().get('transform');
+
+        var transforms = Array.prototype.slice.call(computedTransforms).map( (x) => x.toString() ).sort().reverse();
+    }
+    else
+    {
+        var transforms = DOMElement.split(')');
+    }
+
+    const axisMap = ['X', 'Y', 'Z'];
+
+    const ret = {};
+
+    this.each(transforms, function(i, transform)
+    {
+        if (transform.trim() === '') return;
+
+        var split    = transform.split('(');
+        var bsName   = split[0].replace('3d', '');
+        var prop     = split.shift().trim();
+        var value    = split.pop().trim().replace(')', '');
+        var values   = value.split(',').map((x) => x.trim());
+        var lastChar = prop.slice(-1);
+
+        if (prop === 'perspective')
+        {
+            ret.perspective = value;
+
+            return;
+        }
+        
+        this.each(values, function(i, val)
+        {
+            if (i > 2) return false;
+
+            let defltVal = prop.includes('scale') ? 1 : 0;
+            let axisProp = !axisMap.includes(lastChar) ? `${bsName}${axisMap[i]}` : bsName;
+
+            if (prop === 'rotate')
+            {
+                ret.rotateZ = val;
+            }
+            else if (prop === 'rotate3d')
+            {
+                if (parseFloat(val) !== defltVal)
+                {
+                    ret[axisProp] = values[values.length - 1];
+                }
+            }
+            else if (parseFloat(val) === defltVal && ret[axisProp])
+            {
+                return;
+            }
+            else
+            {
+                ret[axisProp] = val;
+            }
+        });
+
+    }, this);
+
+    if (returnAsString)
+    {
+        return !this.is_empty(ret) ? this.join_obj(ret, '(', ') ') + ')' : '';
+    }
+    
+    return ret;
+}
+/**
+ * Returns an object of CSS transitions by transition property as keys.
+ *
+ * @param  {string} transforms A CSS transform value e.g translateY(300px) 
+ * @return {object}
+ */
+_.prototype.css_to_3d_transform = function(transformsStr)
+{        
+    var transforms = {};
+
+    var _this = this;
+
+    /**
+     * Get value number
+     * 
+     * @private
+     */
+    var getPropValue = function(value)
+    {
+        if (_this.is_numeric(value))
+        {
+            return parseFloat(value);
+        }
+
+        if (_this.is_empty(value))
+        {
+            return 0;
+        }
+
+        return parseFloat(value.replaceAll(/[^0-9-.]/g, ''));
+    }
+
+    if (transformsStr.includes('matrix'))
+    {
+        return transformsStr;
+    }
+
+    // Split into object
+    this.each(transformsStr.trim().split(')'), function(i, transform)
+    {
+        transform = transform.trim();
+
+        if (transform === '') return;
+
+        transform      = transform.split('(');
+        var prop       = transform.shift().trim();
+        var value      = transform.pop().trim();
+        var values     = value.split(',').map((x) => x.trim());
+        var valueCount = CSS_TRANSFORM_VALUES_COUNT[prop];
+
+        if (prop === 'perspective')
+        {
+            transforms.perspective = values[0];
+        }
+        else if (valueCount === 1 || valueCount === 2)
+        {
+            var initialVal = prop === 'scale' ? 1 : 0;
+            var name3d     = valueCount === 1 ? `${prop.slice(0,-1)}3d` : `${prop}3d`;
+                name3d     = name3d.includes('skew') ? 'skew' : name3d;
+                name3d     = name3d === 'rotat3d' ? 'rotate3d' : name3d;
+            var key        = CSS_3D_TRANSFORM_MAP_KEYS[prop.slice(-1).toLowerCase()];
+            
+            if (this.is_empty(transforms[name3d]))
+            {
+                transforms[name3d] = CSS_3D_TRANSFORM_DEFAULTS[name3d];
+            }
+            
+            if (prop === 'rotate')
+            {
+                transforms.rotate3d[3] = values[0];
+            }
+            else
+            {
+                this.each(values, function(i, value)
+                {
+                    var compValue = parseFloat(value.replaceAll(/[^0-9]-/g, ''));
+
+                    if (getPropValue(value) !== initialVal)
+                    {
+                        transforms[name3d][!key ? i : key] = value;
+                    }
+                });
+            }
+        }
+        else 
+        {
+            transforms[prop] = values;
+        }
+
+    }, this);
+
+    return transforms;
+}
+/**
+ * Add a css class or list of classes
+ *
+ * @access {public}
+ * @param  {DOMElement}         DOMElement Target element
+ * @param  {array|string} className  Class name(s) to add
+ */
+_.prototype.add_class = function(DOMElement, className)
+{    
+    if (this.is_array(DOMElement))
+    {
+        this.each(DOMElement, (i, _DOMElement) =>  this.add_class(_DOMElement, className));
+
+        return this;
+    }
+
+    if (this.is_array(className))
+    {
+        this.each(className, (i, _className) =>  this.add_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    if (className.includes(','))
+    {
+        this.each(this.array_filter(className.split(',')), (i, _className) => this.add_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    if (className.includes('.'))
+    {
+        this.each(this.array_filter(className.split('.')), (i, _className) => this.add_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    className = className.trim();
+
+    if (className[0] === '.') className = className.slice(1);
+
+    DOMElement.classList.add(className);
+
+    return this;
+}
+/**
+ * Closest parent node by type/class or array of either
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} type Node type to find
+ * @return {node\null}
+ */
+_.prototype.closest = function(el, type)
+{
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.closest(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    // Type is class
+    if (this.is_htmlElement(type))
+    {
+        if (el === type) return true;
+        
+        let ret = false;
+
+        this.traverse_up(el, (parent) =>
+        {
+            if (parent === type)
+            {
+                ret = true;
+
+                return true;
+            }
+        });
+
+        return ret;
+    }
+
+    if (type[0] === '.')
+    {
+        return this.closest_class(el, type);
+    }
+
+    type = type.toLowerCase();
+
+    if (typeof el === 'undefined')
+    {
+        return null;
+    }
+
+    if (el.nodeName.toLowerCase() === type)
+    {
+        return el;
+    }
+
+    if (el.parentNode && el.parentNode.nodeName.toLowerCase() === type)
+    {
+        return el.parentNode;
+    }
+
+    var parent = el.parentNode;
+
+    while (parent !== document.body && typeof parent !== "undefined" && parent !== null)
+    {
+        parent = parent.parentNode;
+
+        if (parent && parent.nodeName.toLowerCase() === type)
+        {
+            return parent;
+        }
+    }
+
+
+    return null;
+}
+
+/**
+ * Closest parent node by class
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} clas Node class to find
+ * @return {node\null}
+ */
+_.prototype.closest_class = function(el, clas)
+{    
+    // Type is class
+    if (this.is_array(clas))
+    {
+        for (var i = 0; i < clas.length; i++)
+        {
+            var response = this.closest_class(el, clas[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (this.has_class(el, clas))
+    {
+        return el;
+    }
+
+    if (this.has_class(el.parentNode, clas))
+    {
+        return el.parentNode;
+    }
+
+    var parent = el.parentNode;
+
+    if (parent === window.document)
+    {
+        return null;
+    }
+
+    while (parent !== document.body)
+    {
+        if (this.has_class(parent, clas))
+        {
+            return parent;
+        }
+
+        if (parent === null || typeof parent === 'undefined')
+        {
+            return null;
+        }
+
+        parent = parent.parentNode;
+    }
+
+    return null;
+}
+/**
+ * Get an element's absolute coordinates
+ *
+ * @access {public}
+ * @param  {DOMElement}   el Target element
+ * @return {object}
+ */
+_.prototype.coordinates = function(DOMElement)
+{
+    // If element is hiddien we need to display it quickly
+    var inlineDisplay = this.inline_style(DOMElement, 'display');
+    var hidden        = this.rendered_style(DOMElement, 'display');
+    
+    if (hidden === 'none')
+    {
+        // If the element was "display:none" with an inline
+        // style, remove the inline display so it defaults to
+        // whatever styles are set on in through stylesheet
+        if (inlineDisplay)
+        {
+            this.css(DOMElement, 'display', false);
+        }
+        // Otherwise set it to unset
+        else
+        {
+            this.css(DOMElement, 'display', 'unset');
+        }
+    }
+
+    var box        = DOMElement.getBoundingClientRect();
+    var body       = document.body;
+    var docEl      = document.documentElement;
+    var scrollTop  = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+    var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+    var clientTop  = docEl.clientTop || body.clientTop || 0;
+    var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+    var borderL    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
+    var borderR    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
+    var borderT    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
+    var borderB    = parseInt(this.rendered_style(DOMElement, 'border-top-width'));
+    var top        = box.top + scrollTop - clientTop - borderT - borderB;
+    var left       = box.left + scrollLeft - clientLeft + borderL - borderR;
+    var width      = parseFloat(this.rendered_style(DOMElement, "width"));
+    var height     = parseFloat(this.rendered_style(DOMElement, "height"));
+
+    if (inlineDisplay)
+    {
+        this.css(DOMElement, 'display', inlineDisplay);
+    }
+    else
+    {
+        this.css(DOMElement, 'display', false);
+    }
+    
+    return {
+        top: top,
+        left: left,
+        right: left + width,
+        bottom: top + height,
+        height: height,
+        width: width,
+    };
+}
+/**
+ * Get all first level children
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @return {node\null}
+ */
+_.prototype.first_children = function(el)
+{
+    return this.$All('> *', el);
+}
+/**
+ * Get all input elements from a form
+ *
+ * @access {public}
+ * @param  {DOMElement}   form Target element
+ * @return {array}
+ */
+_.prototype.form_inputs = function(form)
+{
+    return this.$All('input, textarea, select', form);
+}
+/**
+ * Get an array of name/value objects for all inputs in a form
+ *
+ * @access {public}
+ * @param  {DOMElement}   form Target element
+ * @return {array}
+ */
+_.prototype.form_values = function(form)
+{
+    var inputs = this.form_inputs(form);
+    var ret    = {};
+    
+    this.each(inputs, function(i, input)
+    {
+        let name = input.name;
+
+        if (input.type === 'radio')
+        {
+            if (this.attr(input, 'checked')) ret[name] = this.input_value(input);
+        }
+        else if (input.type === 'checkbox')
+        {
+            ret[name] = this.attr(input, 'checked');
+        }
+        else
+        {
+            ret[name] = this.input_value(input);
+        }
+        if (name.includes('[]'))
+        {
+            if (!ret[name] || !this.is_array(ret[name]))
+            {
+                ret[name] = [];
+            }
+
+            ret[name].push(this.input_value(input));
+        }
+
+    }, this);
+   
+    return ret;
+}
+/**
+ * Check if a node has a class
+ *
+ * @access {public}
+ * @param  {DOMElement}         el         Target element
+ * @param  {string|array} className  Class name(s) to check for
+ * @return {bool}
+ */
+_.prototype.has_class = function(DOMElement, className)
+{
+    let ret = false;
+
+    if (this.is_array(className))
+    {
+        this.each(className, (i, _className) => { if (this.has_class(DOMElement, _className)) ret = true; return false; });
+        
+        return ret;
+    }
+
+    if (className.includes(','))
+    {
+        this.each(this.array_filter(className.split(',')), (i, _className) => { if (this.has_class(DOMElement, _className)) ret = true; return false; });
+    
+        return ret;
+    }
+
+    if (className.includes('.'))
+    {
+        let count = className.split('.').length;
+
+        if (count >= 3)
+        {
+            this.each(this.array_filter(className.split('.')), (i, _className) => { ret = this.has_class(DOMElement, _className); if (!ret) return false; });
+
+            return ret;
+        }
+    }
+
+    className = className.trim();
+
+    if (className[0] === '.') className = className.slice(1);
+
+    return DOMElement.classList.contains(className);
+}
+/**
+ * Aria hide an element
+ *
+ * @access {public}
+ * @param  {DOMElement}   HTMLElement Target DOM node
+ */
+_.prototype.hide_aria = function(HTMLElement)
+{
+    if (this.is_array(HTMLElement)) return this.each(HTMLElement, (i, el) => this.hide_aria(el));
+    
+    this.attr(HTMLElement, 'aria-hidden', 'true');
+}
+/**
+ * Check if an element is in current viewport
+ *
+ * @access {public}
+ * @param  {DOMElement}   el Target DOM node
+ * @return {bool}
+ */
+_.prototype.in_viewport = function(el)
+{
+    var rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+}
+/**
+ * Replace or append a node's innerHTML
+ *
+ * @access {public}
+ * @param  {DOMElement}   DOMElement  Target element
+ * @param  {string} content     Target content
+ * @param  {bool}   append      Append innerHTML or replace (optional) (default false)
+ */
+_.prototype.inner_HTML = function(DOMElement, content, append)
+{
+    content = this.is_array(content) ? content.join("\n") : content;
+
+    if (append)
+    {
+        DOMElement.innerHTML += content;
+    }
+    else
+    {
+        this.clear_event_listeners(DOMElement, true);
+
+        DOMElement.innerHTML = content;
+    }
+
+    this.trigger_event(DOMElement, `FrontBx:dom:mutate`);
+
+    this.trigger_event(window, `FrontBx:dom:mutate`, { DOMElement: DOMElement });
+}
+/**
+ * Replaces element's innerText without destroying childnodes
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} text Text to replace
+ */
+_.prototype.inner_Text = function(el, text)
+{
+    if (el.childNodes[0])
+    {
+        el.childNodes[0].nodeValue = text;
+    }
+}
+/**
+ * Gets an input element's value
+ *
+ * @access {public}
+ * @param  {DOMElement}   input Target element
+ * @return {mixed}
+ */
+_.prototype.input_value = function(input)
+{
+    if (input.type == "number" || this.is_numeric(input.value))
+    {
+        return input.value.includes('.') ? parseInt(input.value) : parseFloat(input.value);
+    }
+    if (input.type == "select")
+    {
+        return input.options[input.selectedIndex].value;
+    }
+    if (input.type == "file")
+    {
+        if (input.multiple == true)
+        {
+            return input.files;
+        }
+
+        return input.files[0];
+    }
+
+    return input.value;
+}
+/**
+ * Create and insert a new node
+ *
+ * @param {object} options
+ */
+_.prototype.dom_element = function(options, appendTo, innerHTMLOrChildren)
+{    
+    // dom_element(null, wrappper, content);
+    if (!options && appendTo && innerHTMLOrChildren)
+    {
+        this._recursive_dom_element(innerHTMLOrChildren, appendTo);
+
+        return appendTo;
+    }
+
+    if (!options.tag) throw new Error('Element tag not provided.');
+
+    let node = document.createElement(options.tag);
+
+    delete options.tag;
+
+    this.attr(node, options);
+
+    if (innerHTMLOrChildren)
+    {
+        this._recursive_dom_element(innerHTMLOrChildren, node);
+    }
+
+    if (appendTo)
+    {
+        appendTo.appendChild(node);
+    }
+
+    return node;
+}
+
+_.prototype._recursive_dom_element = function(mixedVar, parent)
+{
+    if (this.is_htmlElement(mixedVar))
+    {
+        parent.appendChild(mixedVar);
+    }
+    else if (this.is_array(mixedVar))
+    {
+        this.each(this.array_filter(mixedVar), (i, child) =>
+        {
+            this._recursive_dom_element(child, parent);
+        }); 
+    }
+    else if (this.is_object(mixedVar))
+    {
+        this.dom_element(mixedVar, node);
+    }
+    else
+    {
+        parent.innerHTML += mixedVar;
+    }
+}
+
+
+/**
+ * Traverse nextSibling untill type or class or array of either
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} type Target node type
+ * @return {node\null}
+ */
+_.prototype.next = function(el, type)
+{
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.next(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this.next_untill_class(el, type);
+    }
+
+    type = type.toLowerCase();
+
+    if (el.nextSibling && el.nextSibling.nodeName.toLowerCase() === type)
+    {
+        return el.nextSibling;
+    }
+    var next = el.nextSibling;
+
+    while (next !== document.body && typeof next !== "undefined" && next !== null)
+    {
+        next = next.nextSibling;
+
+        if (next && next.nodeName.toLowerCase() === type)
+        {
+            return next;
+        }
+    }
+
+    return null;
+}
+/**
+ * Traverse nextSibling untill class type or class or array of either
+ *
+ * @access {public}
+ * @param  {DOMElement}   el        Target element
+ * @param  {string} className Target node classname
+ * @return {node\null}
+ */
+_.prototype.next_untill_class = function(el, className)
+{
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+
+    if (el.nextSibling && this.has_class(el.nextSibling, className))
+    {
+        return el.nextSibling;
+    }
+
+    var next = el.nextSibling;
+
+    while (next !== document.body && typeof next !== "undefined" && next !== null)
+    {
+        if (next && this.has_class(next, className))
+        {
+            return next;
+        }
+
+        next = next.nextSibling;
+
+    }
+
+    return null;
+}
+/**
+ * Inserts node as first child
+ *
+ * @access {public}
+ * @param  {DOMElement} node     New node to insert
+ * @param  {DOMElement} wrapper  Parent to preappend new node into
+ * @return {DOMElement}
+ */
+_.prototype.preapend = function(node, wrapper)
+{
+    wrapper.insertBefore(node, wrapper.firstChild);
+
+    return node;
+}
+/**
+ * Traverse previousSibling untill type
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} type Target node type
+ * @return {node\null}
+ */
+_.prototype.previous = function(el, type)
+{
+    // Type is class
+    if (this.is_array(type))
+    {
+        for (var i = 0; i < type.length; i++)
+        {
+            var response = this.previous(el, type[i]);
+
+            if (response)
+            {
+                return response;
+            }
+        }
+
+        return null;
+    }
+
+    if (type[0] === '.')
+    {
+        return this.previous_untill_class(el, type);
+    }
+
+    type = type.toLowerCase();
+    if (el.previousSibling && el.previousSibling.nodeName.toLowerCase() === type) return el.previousSibling;
+    var prev = el.previousSibling;
+    while (prev !== document.body && typeof prev !== "undefined" && prev !== null)
+    {
+        prev = prev.previousSibling;
+        if (prev && prev.nodeName.toLowerCase() === type)
+        {
+            return prev;
+        }
+    }
+    return null;
+}
+/**
+ * Traverse previousSibling untill class
+ *
+ * @access {public}
+ * @param  {DOMElement}   el        Target element
+ * @param  {string} className Target node classname
+ * @return {node\null}
+ */
+_.prototype.previous_untill_class = function(el, className)
+{
+    if (className[0] === '.')
+    {
+        className = className.substring(1);
+    }
+
+    if (el.previousSibling && this.has_class(el.previousSibling, className))
+    {
+        return el.previousSibling;
+    }
+
+    var prev = el.previousSibling;
+
+    while (prev !== document.body && typeof prev !== "undefined" && prev !== null)
+    {
+        prev = prev.previousSibling;
+
+        if (prev && this.has_class(prev, className))
+        {
+            return prev;
+        }
+    }
+
+    return null;
+}
+/**
+ * Remove a css class or list of classes
+ *
+ * @access {public}
+ * @param  {DOMElement}         DOMElement Target element
+ * @param  {array|string} className  Class name(s) to remove
+ */
+_.prototype.remove_class = function(DOMElement, className)
+{
+    if (this.is_array(DOMElement))
+    {
+        this.each(DOMElement, (i, _DOMElement) =>  this.remove_class(_DOMElement, className));
+
+        return this;
+    }
+
+    if (this.is_array(className))
+    {
+        this.each(className, (i, _className) =>  this.remove_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    if (className.includes(','))
+    {
+        this.each(this.array_filter(className.split(',')), (i, _className) => this.remove_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    if (className.includes('.'))
+    {
+        this.each(this.array_filter(className.split('.')), (i, _className) => this.remove_class(DOMElement, _className));
+    
+        return this;
+    }
+
+    className = className.trim();
+
+    if (className[0] === '.') className = className.slice(1);
+
+    DOMElement.classList.remove(className);
+
+    return this;
+}
+/**
+ * Remove an element from the DOM
+ *
+ * This function also removes all attached event listeners
+ * 
+ * @access {public}
+ * @param  {DOMElement}   el Target element
+ */
+_.prototype.remove_from_dom = function(el)
+{
+    if (this.is_array(el))
+    {
+        return this.each(el, (i, DOMElement) => this.remove_from_dom(DOMElement));
+    }
+
+    if (this.in_dom(el))
+    {
+        el.parentNode.removeChild(el);
+
+        var children = this.$All('*', el).reverse();
+
+        for (var i = 0, len = children.length; i < len; i++)
+        {
+            this.remove_event_listener(children[i]);
+
+            this.trigger_event(children[i], `FrontBx:dom:remove`);
+        }
+
+        this.remove_event_listener(el);
+
+        this.trigger_event(el, `FrontBx:dom:remove`);
+
+        this.trigger_event(window, `FrontBx:dom:remove`, { DOMElement: el });
+    }
+}
+/**
+ * Get the current document scroll position
+ *
+ * @access {private}
+ * @return {obj}
+ */
+_.prototype.scroll_pos = function(context)
+{
+    if (context && this.is_htmlElement(context))
+    {
+        return {
+            top: context.scrollTop,
+            left: context.scrollLeft
+        };
+    }
+
+    var doc  = document.documentElement;
+    var top  = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+    var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+    
+    return {
+        top: top,
+        left: left
+    };
+}
+/**
+ * Select single node by selector
+ *
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {DOMElement}   context (optional) (default document)
+ * @return {DOMElement}
+ */
+_.prototype.$ = function(selector, context)
+{
+    context = (typeof context === 'undefined' ? document : context);
+
+    let fchild = selector.trim().substring(0, 1) === '>';
+    let multi  = selector.includes(',');
+
+    // Fast
+    if (!fchild && !multi) return context.querySelector(selector);
+
+    if (multi) selector = selector.replaceAll(/,\s?>/g, ', :scope >');
+    
+    if (fchild) selector = `:scope ${selector}`;
+
+    return context.querySelector(selector);
+}
+
+/**
+ * "$" Alias
+ *
+ */
+_.prototype.find = function(selector, context)
+{
+    return this.$(selector, context);
+}
+
+/**
+ * Select and return all nodes by selector
+ *
+ * @access {public}
+ * @param  {string} selector CSS selector
+ * @param  {DOMElement}   context (optional) (default document)
+ * @return {DOMElement}
+ */
+_.prototype.$All = function(selector, context, includeContextEl)
+{
+    context = (typeof context === 'undefined' ? document : context);
+
+    includeContextEl = (typeof includeContextEl === 'undefined' ? false : includeContextEl && context !== document);
+
+    let fchild = selector.trim().substring(0, 1) === '>';
+    let multi  = selector.includes(',');
+    let deleteParent = false;
+
+    if (includeContextEl)
+    {
+        if (!hasParent)
+        {
+            parent = document.createElement('div');
+            parent.appendChild(context);
+            deleteParent = true;
+        }
+
+        context = context.parentNode;
+    }
+
+    if (multi)  selector = selector.replaceAll(/,\s?>/g, ', :scope >');
+    if (fchild) selector = `:scope ${selector}`;
+
+    let ret = TO_ARR.call(context.querySelectorAll(selector));
+
+    if (deleteParent) context.parentNode.removeChild(context);
+
+    return ret;
+}
+
+/**
+ * "$All" Alias
+ *
+ */
+_.prototype.find_all = function(selector, context)
+{
+    return this.$All(selector, context);
+}
+/**
+ * Aria show an element
+ *
+ * @access {public}
+ * @param  {DOMElement}   el Target DOM node
+ */
+_.prototype.show_aria = function(HTMLElement)
+{
+    if (this.is_array(HTMLElement)) return this.each(HTMLElement, (i, el) => this.show_aria(el));
+
+    this.attr(HTMLElement, 'aria-hidden', 'false');
+}
+
+/**
+ * Toogle a classname
+ *
+ * @access {public}
+ * @param  {DOMElement}         el         Target element
+ * @param  {string}       className  Class name to toggle
+ */
+_.prototype.toggle_class = function(DOMElement, className)
+{    
+    if (this.has_class(DOMElement, className))
+    {
+        this.remove_class(DOMElement, className);
+    }
+    else
+    {
+        this.add_class(DOMElement, className);
+    }
+}
+/**
+ * Triggers an event on an element
+ *
+ * @access {public}
+ * @param  {DOMElement}   DOMElement   Target element
+ * @param  {string}       eventName    Event name
+ * @param  {mixed}        data         Extra data to pass to custom events 
+ */
+_.prototype.trigger_event = function(DOMElement, eventName, data)
+{
+    if (this.in_array(eventName.toLowerCase(), DOC_EVENTS))
+    {
+        if ('createEvent' in document)
+        {
+            var evt = document.createEvent('HTMLEvents');
+
+            evt.initEvent(eventName, false, true);
+
+            DOMElement.dispatchEvent(evt);
+        }
+        else
+        {
+            DOMElement.fireEvent(eventName);
+        }
+    }
+    else
+    {
+        // Actual object
+        if (!this.is_constructed(data) && this.is_object(data))
+        {
+            data = { ...{ DOMElement: DOMElement, name: eventName }, ...data};
+        }
+        else
+        {
+            data = { DOMElement: DOMElement, name: eventName, state: data };
+        }
+
+        const event = new CustomEvent(eventName, { detail: data });
+
+        DOMElement.dispatchEvent(event);
+
+        if (eventName.includes(':'))
+        {
+            var events = eventName.split(':').slice(0, -1);
+            var base   = events.shift();
+            var count  = events.length + 1;
+
+            this.for(count, function(i)
+            {
+                let subevent = i === (count -1) ? base : `${base}:${events.join(':')}`;
+
+                data.name = eventName;
+
+                const evt = new CustomEvent(subevent, { detail: data });
+
+                DOMElement.dispatchEvent(evt);
+
+                events.pop();
+            });
+        }
+    }
+}
+/**
+ * Closest parent node by type/class or array of either
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @param  {string} type Node type to find
+ * @return {node\null}
+ */
+_.prototype.traverse_up = function(DOMElement, callback, origional)
+{    
+    origional = typeof origional === "undefined" ? DOMElement : origional;
+
+    // Stop on document
+    if (DOMElement === document || typeof DOMElement === "undefined" || DOMElement === null) return;
+
+    if (callback(DOMElement))
+    {
+        return origional;
+    }
+
+    var parent = DOMElement.parentNode;
+
+    return this.traverse_up(parent, callback, origional);
+}
+
+_.prototype.traverse_down = function(DOMElement, callback)
+{
+}
+
+_.prototype.traverse_next = function(DOMElement, callback)
+{
+}
+
+_.prototype.traverse_prev = function(DOMElement, callback)
+{
+}
+
+/**
+ * Get an element's actual width in px
+ *
+ * @access {public}
+ * @param  {DOMElement}   DOMElement Target element
+ * @return {object}
+ */
+_.prototype.width = function(DOMElement)
+{
+	if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement ) return Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+
+    return this.css_unit_value(this.rendered_style(DOMElement, 'width'));
+}
+/**
+ * Get an element's actual height in px
+ *
+ * @access {public}
+ * @param  {DOMElement}   DOMElement Target element
+ * @return {object}
+ */
+_.prototype.height = function(DOMElement)
+{
+    if (DOMElement === window || DOMElement === document || DOMElement === document.documentElement) return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+    return this.css_unit_value(this.rendered_style(DOMElement, 'height'));
+}
+/**
+ * Returns nth child
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @return {node\null}
+ */
+_.prototype.nth_child = function(el, n)
+{
+    let children = this.first_children(el);
+
+    if (children[n]) return children[n];
+}
+/**
+ * Returns nth position from siblings
+ *
+ * @access {public}
+ * @param  {DOMElement}   el   Target element
+ * @return {node\null}
+ */
+_.prototype.nth_siblings = function(DOMElement)
+{
+    let children = this.first_children(DOMElement.parentNode);
+
+    for (var i = 0; i < children.length; i++)
+    {
+        if (children[i] === DOMElement) return i;
+    }
+
+    return 0;
+}
+/**
+ * Add an event listener
+ *
+ * @access {public}
+ * @param  {DOMElement}    element    The target DOM node
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
+ */
+_.prototype.on = function()
+{
+    return this.add_event_listener(...arguments);
+}
+
+/**
+ * Add an event listener
+ *
+ * @access {public}
+ * @param  {DOMElement}    element    The target DOM node
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
+ */
+_.prototype.add_event_listener = function(DOMElement, eventName, handler)
+{    
+    var args = TO_ARR.call(arguments);
+
+    // Multiple elements
+    if (this.is_array(DOMElement))
+    {
+        var baseArgs = args.slice(1);
+
+        this.each(DOMElement, function(i, el)
+        {            
+            this.add_event_listener.apply(this, [el, ...baseArgs]);
+
+        }, this);
+    }
+    else
+    {
+        // If event has a comma or is an array we're doing multiple events
+        if (this.is_array(eventName) || eventName.includes(','))
+        {
+            let eventsArr = this.is_array(eventName) ? eventName : eventName.split(',').map((x) => x.trim()).filter((x) => x !== '');
+
+            this.each(eventsArr, function(i, event)
+            {
+                args[1] = event;
+
+                this.add_event_listener.apply(this, args);
+                
+            }, this);
+
+            return;
+        }
+
+        // If array of arguments is provided, "this" will always be the first
+        // argument provided
+        // However the first and second argument passed to the callback will always the event object and the element
+        // e.g. add_event_listener(el, 'click', callback, ['baz', 'foo', 'bar']) -> callback(e, el, foo, bar) this = 'baz'
+
+        // Remove element, eventName, handler from args
+        let argsNormal = this.__normaliseListenerArgs(DOMElement, args);
+
+        this.__addListener(DOMElement, eventName, handler, argsNormal.thisArg, argsNormal.args, argsNormal.pushFirst);
+    }
+}
+
+/**
+ * Nomralize event listener args
+ * 
+ * @param  {DOMElement}    DOMElement   The target DOM node
+ * @param  {array}         args         Args passed to add_event_listener or remove_event_listener
+ */
+_.prototype.__normaliseListenerArgs = function(DOMElement, args)
+{
+    // Remove DOMElement, eventName, handler
+    args = args.slice(3);
+
+    // Default "this" to the dom element
+    let thisArg   = DOMElement;
+    let pushFirst = false;
+
+    // Push first
+    if (!this.is_empty(args))
+    {
+        thisArg   = args.shift();
+        pushFirst = this.bool(args.shift());
+    }
+
+    return {args, thisArg, pushFirst};
+}
+
+/**
+ * Adds a listener to the element
+ *
+ * @access {private}
+ * @param  {DOMElement}    element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @param  {closure} handler    Callback event
+ * @param  {bool}    data Use capture (optional) (defaul false)
+ */
+_.prototype.__addListener = function(element, eventName, callback, thisArg, args, pushFirst)
+{
+    // Apply GUID to element and callback
+    element.guid = element.guid || (element.guid = this._guidgen());
+    callback.guid    = callback.guid || (callback.guid = this._guidgen());
+
+    let hasHandler = true;
+    let guid       = element.guid;
+
+    // Make sure an array for event type exists
+    if (!this._events[guid])
+    {
+        hasHandler = false;
+
+        this._events[guid] = {};
+    }
+
+    if (!this._events[guid][eventName])
+    {
+        hasHandler = false;
+
+        this._events[guid][eventName] = [];
+    }
+
+    // Push the details to the events object
+    const handlerObj = {callback, thisArg, args, element};
+    
+    pushFirst ? this._events[guid][eventName].unshift(handlerObj) : this._events[guid][eventName].push(handlerObj);
+
+    if (!hasHandler)
+    {
+        element.addEventListener(eventName, this.__event_dispatcher);
+    }
+}
+
+/**
+ * Event dispatcher
+ *
+ * @access {private}
+ * @param  {eventObject}  e  
+ */
+_.prototype.__event_dispatcher = function(e)
+{
+    e = e || window.event;
+
+    let DOMElement = this;
+
+    let guid = DOMElement.guid;
+
+    if (!guid) return;
+
+    let callbacks =  _THIS._events[guid][e.type] || [];
+
+    _THIS.each(callbacks, (i, handler) =>
+    {        
+        if (handler)
+        {
+            let handled = handler.callback.apply(handler.thisArg, [e, DOMElement, ...handler.args]);
+
+            if (handled === false || handled === null)
+            {
+                e.preventDefault();
+
+                e.stopPropagation();
+
+                if (handled === null) return false;
+            }
+        }
+    });
+}
+
+/**
+ * Removes all event listeners registered by the library
+ *
+ * @access {public}
+ */
+_.prototype.clear_event_listeners = function(DOMElement, onlyChildren)
+{
+    DOMElement = this.is_undefined(DOMElement) ? document : DOMElement;
+
+    onlyChildren = this.is_undefined(onlyChildren) ? false : onlyChildren;
+
+    if (DOMElement !== document)
+    {
+        let children = this.find_all('*', DOMElement).reverse();
+
+        this.each(children, (i, child) => this.off(child));
+
+        if (!onlyChildren) this.off(DOMElement);
+        
+        return;
+    }
+
+    var events = this._events;
+
+    let _this = this;
+
+    _this.each(this._events, (guid, types) =>
+    {
+        _this.each(types, (type, callbacks) =>
+        {
+            let DOMElement = callbacks[0].element;
+            
+            _this.__remove_listener(DOMElement, type);
+        });
+    });
+
+    this._events = {};
+
+
+
+}
+/**
+ * Removes all event listeners registered by the library on nodes
+ * that are no longer part of the DOM tree
+ *
+ * @access {public}
+ */
+_.prototype.collect_garbage = function()
+{
+    let _this = this;
+
+    _this.each(this._events, (guid, types) =>
+    {
+        var cleared = false;
+
+        _this.each(types, (type, callbacks) =>
+        {
+            let DOMElement = callbacks[0].element;
+
+            if (!this.in_dom(DOMElement))
+            {
+                cleared = true;
+
+                _this.__remove_listener(DOMElement, type);
+            }
+        });
+
+        if (cleared) delete this._events[guid];
+    });
+}
+/**
+ * Removes event listeners on a DOM node
+ *
+ * If no element given, all attached event listeners are returned.
+ * If no event name is given, all attached event listeners are returned on provided element.
+ * If single arguement is provided and arg is a string, e.g 'click', all events of that type are returned
+ * 
+ * @access {public}
+ * @param  {mixed}   element    The target DOM node
+ * @param  {string}  eventName  Event type
+ * @return {array}
+ */
+_.prototype.event_listeners = function(DOMElement, eventName)
+{
+    var args = TO_ARR.call(arguments);
+    var ret  = [];
+
+    // No args, return all events
+    if (args.length === 0)
+    {
+        this.each(this._events, function(guid, types)
+        {
+            this.each(types, function(type, callbacks)
+            {
+                let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
+
+                ret = [...ret, ...summary];
+            });
+
+        }, this);
+
+        return ret;
+    }
+    
+    // eventListeners(node) or
+    // eventListeners('click')
+    else if (args.length === 1)
+    {
+        // eventListeners('click')
+        if (this.is_string(DOMElement))
+        {   
+            this.each(this._events, function(guid, types)
+            {
+                this.each(types, function(type, callbacks)
+                {
+                    if (type === DOMElement)
+                    {
+                        let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
+
+                        ret = [...ret, ...summary];
+                    }
+                });
+
+            }, this);
+
+            return ret;
+        }
+        
+        // eventListeners(node)
+        let guid = DOMElement.guid;
+
+        if (!guid || !this._events[guid]) return ret;
+
+        this.each(this._events[guid], function(type, callbacks)
+        {
+            let summary = callbacks.map( (details) => ({ el: details.element, callback: details.callback, type: type }) );
+
+            ret = [...ret, ...summary];
+
+        }, this);
+
+        return ret;
+    }
+
+    // eventListeners(node)
+    let guid = DOMElement.guid;
+
+    if (!guid || !this._events[guid] || !this._events[guid][eventName]) return ret;
+
+    this.each(this._events[guid][eventName], function(i, details)
+    {
+        ret.push({ el: details.element, callback: details.callback, type: eventName });
+
+    }, this);
+
+    return ret;
+}
+/**
+ * Add an event listener
+ *
+ * @access {public}
+ * @param  {DOMElement}    element    The target DOM node
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
+ */
+_.prototype.off = function()
+{
+    return this.remove_event_listener(...arguments);
+}
+
+/**
+ * Remove an event listener
+ *
+ * @access {public}
+ * @param  {DOMElement}    element    The target DOM node
+ * @param  {string}        eventName  Event type
+ * @param  {closure}       handler    Callback event
+ * @param  {array}         args       Args to pass to handler (first array element gets set to "this")
+ * @param  {boolean}       pushfirst  If boolean (true) is provided, pushes callback to first in stack (default false)
+ */
+_.prototype.remove_event_listener = function(DOMElement, eventName, handler)
+{
+    var args = TO_ARR.call(arguments);
+
+    if (this.is_array(DOMElement))
+    {
+        var baseArgs = args.slice(1);
+
+        this.each(DOMElement, function(i, el)
+        {            
+            this.remove_event_listener.apply(this, [el, ...baseArgs]);
+        
+        }, this);
+    }
+    else
+    {
+        // If the eventName name was not provided - remove all event handlers on element
+        if (!eventName)
+        {
+            return this.__remove_element_listeners(DOMElement);
+        }
+
+        // If event has a comma or is an array we're doing multiple events
+        if (this.is_array(eventName) || eventName.includes(','))
+        {
+            let eventsArr = this.is_array(eventName) ? eventName : eventName.split(',').map((x) => x.trim()).filter((x) => x !== '');
+
+            this.each(eventsArr, function(i, event)
+            {
+                args[1] = event;
+
+                this.remove_event_listener.apply(this, args);
+                
+            }, this);
+
+            return;
+        }
+
+        // If the callback was not provided - remove all events of the type on the element
+        if (!handler)
+        {
+            return this.__remove_element_type_listeners(DOMElement, eventName);
+        }
+        
+        let guid = DOMElement.guid;
+
+        // Nothing to remove
+        if (!guid) return;
+
+        let handlers = this.array_get(`${guid}.${eventName}`, this._events);
+
+        // Nothing to remove
+        if (!handlers) return;
+
+        // Loop stored events and match node, event name, handler, use capture
+        this.each(handlers, function(i, _handler)
+        {            
+            if (_handler.callback.guid === handler.guid || this.is_equal(_handler.callback, handler))
+            {
+                this._events[guid][eventName].splice(i, 1);
+
+                if (this.is_empty(this._events[guid][eventName]))
+                {
+                    delete this._events[guid][eventName];
+
+                    this.__remove_listener(DOMElement, eventName);
+                }
+
+                if (this.is_empty(this._events[guid]))
+                {
+                    delete this._events[guid];
+                }
+                
+                // Break only remove first
+                return false;
+            } 
+        
+        }, this);
+    }
+}
+
+/**
+ * Removes all registered event listeners on an element
+ *
+ * @access {private}
+ * @param  {DOMElement} DOMElement Target node element
+ */
+_.prototype.__remove_element_listeners = function(DOMElement)
+{
+    let guid = DOMElement.guid;
+
+    if (!guid) return;
+
+    if (this._events[guid])
+    {
+        this.each(this._events[guid], function(type, callbacks)
+        {
+            this.__remove_listener(DOMElement, type);
+            
+        }, this);
+    }
+
+    delete this._events[guid];
+}
+
+/**
+ * Removes all registered event listeners of a specific type on an element
+ *
+ * @access {private}
+ * @param  {DOMElement} DOMElement Target node element
+ * @param  {string}     type       Event listener type
+ */
+_.prototype.__remove_element_type_listeners = function(DOMElement, type)
+{
+    let guid = DOMElement.guid;
+
+    if (!guid) return;
+
+    // Make sure an array for event type exists
+    if (this._events[guid] && this._events[guid][type])
+    {
+        delete this._events[guid][type];
+
+        this.__remove_listener(DOMElement, type);
+
+        if (this.is_empty(this._events[guid]))
+        {
+            delete this._events[guid];
+        }
+    }
+}
+
+/**
+ * Removes a listener from the element
+ *
+ * @access {private}
+ * @param  {DOMElement} DOMElement The target DOM node
+ * @param  {string}     eventType  Event type
+ * @param  {closure}    handler    Callback event
+ * @param  {bool}       useCapture Use capture (optional) (defaul false)
+ */
+_.prototype.__remove_listener = function(DOMElement, eventType)
+{    
+    DOMElement.removeEventListener(eventType, this.__event_dispatcher);
+}
+
+/**
+ * Is this a mobile user agent?
+ *
+ * @return {bool}
+ */
+_.prototype.is_retina = function()
+{
+    var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
+                      (min--moz-device-pixel-ratio: 1.5),\
+                      (-o-min-device-pixel-ratio: 3/2),\
+                      (min-resolution: 1.5dppx)";
+
+    if (window.devicePixelRatio > 1)
+    {
+        return true;
+    }
+
+    if (window.matchMedia && window.matchMedia(mediaQuery).matches)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Parse url
+ *
+ * @param  {string}    str       The URL to parse. Invalid characters are replaced by _.
+ * @return {object}
+ */
+_.prototype.parse_url = function(str)
+{
+    var ret = {};
+    var url = new URL(str);
+
+    if (url.search)
+    {
+        var queries = url.search.substring(1).split('&');
+        var qret    = {};
+        
+        this.each(queries, function(i, query)
+        {
+            if (query.includes('='))
+            {
+                var set   = query.split('=');
+                var key   = decodeURI(set[0].trim());
+                var val   = true;
+
+                if (set.length === 2)
+                {
+                    val = set[1].trim();
+                }
+
+                if (key !== '' && val !== '')
+                {
+                    qret[key] = val;
+                }
+            }
+            else
+            {
+                qret[query] = true;
+            }
+        });
+
+        url.query = qret;
+    }
+
+    return url;
+}
+/**
+ * Gets url query
+ *
+ * @access {public}
+ * @param  {string}  name String query to get (optional)
+ * @return {object|string}
+ */
+_.prototype.url_query = function(name)
+{
+    var results = {};
+
+    if (window.location.search !== '')
+    {
+        var params = window.location.search.substring(1).split('&');
+
+        for (var i = 0; i < params.length; i++)
+        {
+            if (!params[i].includes('='))
+            {
+                continue;
+            }
+
+            var split = params[i].split('=');
+
+            results[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
+        }
+    }
+
+    // No param return all url query
+    if (typeof name === 'undefined')
+    {
+        return results;
+    }
+
+    name = decodeURIComponent(name);
+
+    if (name in results)
+    {
+        return results[name];
+    }
+
+    return false;
+}
+/**
+ * Normalises a url
+ *
+ * @access {public}
+ * @param  {string}  url The url to normalise
+ * @return {string}
+ */
+_.prototype.normalize_url = function(url)
+{
+    // Remove www.
+    if (url.startsWith('www.') || url.includes('//www.')) url = url.replace('www.', '');
+
+    // Back dirs
+    if (url.startsWith('../'))
+    {
+        let paths = this.parse_url(this.trim(window.location.href, '/')).pathname.split('/');
+
+        if (!this.is_empty(paths))
+        {
+            // Remove file
+            if (paths.slice(-1).includes('.')) paths.pop();
+
+            let backs = url.split('../').length;
+
+            this.for(backs, () => paths.pop());
+
+            url = '/' + this.trim(`${paths.join('/')}/${url.replace(/\.\.\//g, '')}`, '/');
+        }
+    }
+
+    // Local
+    if (url[0] === '/') url = window.location.origin + url;
+
+    // Add protocol
+    if (!url.startsWith('https') && !url.startsWith('http')) url = `${window.location.protocol}//${url}`;
+
+    return url;
+}
+/**
+ * Clones any variables
+ * 
+ * @param   {mixed}  mixed_var
+ * @param   {mixed}  context   Context to bind functions
+ * @returns {mixed}
+ */
+_.prototype.clone_deep = function(mixed_var, context)
+{
+    return this.__clone_var(mixed_var, this.is_undefined(context) ? mixed_var : context);
+}
+
+/**
+ * Clone's variable with context.
+ * 
+ * @param   {mixed}  mixed_var  Variable to clone
+ * @param   {mixed}  context    Context when cloning recursive objects and arrays.
+ * @returns {mixed}
+ */
+_.prototype.__clone_var = function(mixed_var, context)
+{
+    let tag = this.var_type(mixed_var);
+
+    switch (tag)
+    {
+        case OBJECT_TAG:
+            return this.__clone_obj(mixed_var, context);
+
+        case ARRAY_TAG:
+        case NODELST_TAG:
+        case ARGS_TAG:
+            return this.__clone_array(mixed_var, context);
+
+        case FUNC_TAG:
+            return this.__clone_func(mixed_var, context);
+
+        case NULL_TAG:
+            return null;
+
+        case UNDEF_TAG:
+            return;
+
+        case BOOL_TAG:
+            return mixed_var === true ? true : false;
+
+        case STRING_TAG:
+            return mixed_var.slice();
+
+        case NUMBER_TAG:
+            let n = mixed_var;
+            return n;
+
+        case REGEXP_TAG:
+            return this.__clone_RegExp(mixed_var, context);
+
+        case SYMBOL_TAG:
+            return this.__clone_symbol(mixed_var);
+
+        case DATE_TAG:
+            return this.__clone_date(mixed_var);
+
+        case SET_TAG:
+            return this.__clone_set(mixed_var, context);
+
+        case MAP_TAG:
+            return this.__clone_map(mixed_var, context);
+
+        case ARRAY_BUFFER_TAG:
+            return this.__clone_array_buffer(mixed_var);
+
+        case DATAVIEW_TAG:
+            return this.__clone_data_view(mixed_var);
+
+        case ARRAY_BUFFER_TAG:
+            return this.__clone_buffer(mixed_var);
+
+        case FLOAT32_TAG:
+        case FLOAT64_TAG:
+        case INT8_TAG:
+        case INT16_TAG:
+        case INT32_TAG:
+        case UINT8_TAG:
+        case UINT8CLAMPED_TAG:
+        case UINT16_TAG:
+        case UINT32_TAG:
+            return this.__clone_typed_array(object);
+
+        case ERROR_TAG:
+        case WEAKMAP_TAG:
+            return {};
+    }
+
+    return mixed_var;
+}
+
+/**
+ * Clones an object
+ * 
+ * @param   {object}  obj
+ * @returns {object}
+ */
+_.prototype.__clone_obj = function(obj, context)
+{
+    // Shallow keys
+    let keys = this.object_props(obj);
+    let ret  = {};
+
+    // Empty object
+    if (keys.length === 0 || this.is_empty(obj))
+    {
+        return ret;
+    }
+
+    this.each(keys, function(i, key)
+    {
+        ret[key] = this.clone_deep(obj[key], context);
+
+    }, this);
+
+    // Clone prototypes
+    let protos = this.prototypes(obj);
+
+    if (protos.length >= 1)
+    {
+        let curr = ret;
+
+        while(protos.length > 0)
+        {
+            let proto        = protos.shift();
+            let clone        = this.clone_deep(proto, context);
+            clone.constrctor = this.clone_deep(proto.constructor, context);
+            
+            Object.setPrototypeOf(curr, clone);
+            
+            curr = clone;
+        }
+    }
+
+    return ret;
+}
+
+/**
+ * Clones a function
+ * 
+ * @param   {function}  function
+ * @param   {mixed}     context   Context to bind function
+ * @returns {function}
+ */
+_.prototype.__clone_func = function(func, context)
+{
+    return this.bind(func, context);
+}
+
+/**
+ * Clones an array
+ * 
+ * @param   {array}  arr
+ * @returns {array}
+ */
+_.prototype.__clone_array = function(arr, context)
+{
+    let ret = [];
+
+    this.each(arr, function(i, val)
+    {
+        ret[i] = this.clone_deep(val, context);
+    
+    }, this);
+
+    return ret;
+}
+
+_.prototype.__clone_date = function(d)
+{
+    let r = new Date();
+
+    r.setTime(d.getTime());
+
+    return r;
+}
+
+_.prototype.__clone_symbol = function(symbol)
+{
+    return Object(Symbol.prototype.valueOf.call(symbol));
+}
+
+_.prototype.__clone_RegExp = function(regexp)
+{
+    let reFlags = /\w*$/;
+
+    let result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
+
+    result.lastIndex = regexp.lastIndex;
+
+    return result;
+}
+
+_.prototype.__clone_map = function(m, context)
+{
+    const ret = new Map();
+
+    m.this.each((v, k) =>
+    {
+        ret.set(k, this.clone_deep(v, context));
+    
+    }, this);
+
+    return ret;
+}
+
+_.prototype.__clone_set = function(s, context)
+{
+    const ret = new Set();
+
+    s.this.each((val, k) =>
+    {
+        ret.add(k, this.clone_deep(v, context));
+    
+    }, this);
+
+    return ret;
+}
+
+_.prototype.__clone_array_buffer = function(arrayBuffer)
+{
+    const result = new arrayBuffer.constructor(arrayBuffer.byteLength)
+
+    new Uint8Array(result).set(new Uint8Array(arrayBuffer));
+
+    return result;
+}
+
+_.prototype.__clone_data_view = function(dataView)
+{
+    const buffer = this.__clone_array_buffer(dataView.buffer);
+
+    return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
+}
+
+/**
+ * Creates a clone of `buffer`.
+ *
+ * @param   {Buffer}   buffer   The buffer to clone.
+ * @param   {boolean} [isDeep]  Specify a deep clone.
+ * @returns {Buffer}   Returns  the cloned buffer.
+ */
+_.prototype.__clone_buffer = function(buffer)
+{
+    const length = buffer.length;
+
+    const result = allocUnsafe ? allocUnsafe(length) : new buffer.constructor(length);
+
+    buffer.copy(result);
+
+    return result;
+}
+
+/**
+ * Creates a clone of `typedArray`.
+ *
+ * @private
+ * @param {Object} typedArray The typed array to clone.
+ * @param {boolean} [isDeep] Specify a deep clone.
+ * @returns {Object} Returns the cloned typed array.
+ */
+_.prototype.__clone_typed_array = function(typedArray)
+{
+    const buffer = this.__clone_array_buffer(typedArray.buffer);
+
+    return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
+}
+
+/**
+ * Binds a function so that it can be identified.
+ * 
+ * @param   {function}  func    Function to bind
+ * @param   {mixed}     context Context to bind "this"
+ * @returns {function}
+ */
+_.prototype.bind = function(func, context)
+{
+    context = typeof context === 'undefined' ? window : context;
+
+    const bound = function()
+    {
+        return func.apply(context, arguments);
+    }
+
+    Object.defineProperty(bound, 'name', { value: func.name });
+
+    bound.__isBound      = true;
+    bound.__boundContext = context;
+    bound.__origional    = func;
+
+    return bound;
+}
+/**
+ * Creates a new object in 'dot.notation'
+ * 
+ * @param   {Object} obj Object
+ * @returns {Object} 
+ */
+_.prototype.dotify = function(obj)
+{
+    var res = {};
+
+    function recurse(obj, current)
+    {
+        for (var key in obj)
+        {
+            var value = obj[key];
+            var newKey = (current ? current + '.' + key : key); // joined key with dot
+
+            if (value && typeof value === 'object' && !(value instanceof Date))
+            {
+                recurse(value, newKey); // it's a nested object, so do it again
+            }
+            else
+            {
+                res[newKey] = value; // it's not an object, so set the property
+            }
+        }
+    }
+
+    recurse(obj);
+
+    return res;
+}
+/**
+ * Extends a function with prototype inheritance.
+ *
+ * @param   {function}           superType    Base function to extend
+ * @param   {function}           subType  Function to get extended.
+ * @param   {undefined|boolean}  callSuper   If true "subType" is treated as a constructor and the superType / any nested prototypes will get instantiated. (default true)
+ * @returns {function}
+ */
+_.prototype.extend = function(base, extension)
+{
+    const _this = this;
+
+    function proxySuper(superFn, fn)
+    {
+        return function()
+        {
+            var tmp = this.super;
+            
+            this.super = superFn;
+            
+            var ret = fn.apply(this, arguments);
+            
+            this.super = tmp;
+
+            return ret;
+        }
+    }
+
+    function Class() {}
+
+    Class.extend = function(protoProps)
+    {
+        var parent = this, _super = parent.prototype, child;
+
+        if (protoProps && protoProps.hasOwnProperty('constructor'))
+        {
+            child = proxySuper(parent, protoProps.constructor);
+            
+            delete protoProps.constructor; // remove constructor
+        }
+        else
+        {
+            child = function()
+            {
+                parent.apply(this, arguments);
+            };
+        }
+
+        var prototype = Object.create(parent.prototype,
+        {
+            constructor:
+            {
+                value: child,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+
+        for (var name in protoProps)
+        {
+            prototype[name] = _this.is_function(protoProps[name]) && _this.is_function(_super[name]) && /\bsuper\b/.test(protoProps[name])
+            ? proxySuper(_super[name], protoProps[name]) : protoProps[name];
+        }
+
+        child.prototype = prototype;
+        child.extend = Class.extend;
+
+        return child;
+    };
+
+    if (this.var_type(base) !== this.var_type(extension)) throw new Error('Extended variables need to be the same type.');
+
+    if (this.is_object(base)) return this.extend_obj(base, extension);
+
+    const baseProto   = base.prototype;
+    const extendProto = extension.prototype;
+
+    if (!baseProto.hasOwnProperty('constructor')) baseProto['constructor'] = base;
+   
+    if (!extendProto.hasOwnProperty('constructor')) extendProto['constructor'] = extension;
+    
+    var b = Class.extend(baseProto);
+
+    var e = b.extend(extendProto);
+
+    Object.defineProperty(e, 'name', { value: extension.name, writable: false });
+
+    return e;
+}
+
+/**
+ * Extends a function with prototype inheritance.
+ *
+ * @param   {function}           superType    Base function to extend
+ * @param   {function}           subType  Function to get extended.
+ * @param   {undefined|boolean}  callSuper   If true "subType" is treated as a constructor and the superType / any nested prototypes will get instantiated. (default true)
+ * @returns {function}
+ */
+_.prototype.extend_obj = function(base, extension)
+{
+    const extProto  = this.prototypes(extension);
+    const baseProto = this.prototypes(base);
+
+    // Plain objects
+    if (this.is_empty(extProto) && this.is_empty(baseProto)) return {...base, ...extension};
+
+    const newProto = new (function() {});
+    
+    Object.setPrototypeOf(newProto, base);
+
+    this.each(extProto, (i, proto) =>
+    {
+        this.each(proto, (k, v) =>
+        {
+            newProto[k] = v;
+        })
+
+    }, this);
+
+    Object.defineProperty(newProto, 'name', { value: 'Class', writable: false });
+
+    Object.setPrototypeOf(extension, newProto);
+
+    return extension;
+}
+
+
+/**
+ * Joins an object into a string
+ * 
+ * @param   {Object} obj       Object
+ * @param   {string} seperator Seperator Between key & value
+ * @param   {string} glue      Glue between value and next key
+ * @returns {string} 
+ */
+_.prototype.join_obj = function(obj, seperator, glue, recursive, trimLast)
+{
+    seperator = this.is_undefined(seperator) ? '' : seperator;
+    glue      = this.is_undefined(glue) ? '' : glue;
+    recursive = this.is_undefined(recursive) ? false : recursive;
+    trimLast  = this.is_undefined(trimLast)  ? true : trimLast;
+    
+    var ret = '';
+
+    this.each(obj, function(key, val)
+    {
+        if (this.is_object(val))
+        {
+            val = recursive ? '{' + this.join_obj(val, seperator, glue, recursive, trimLast) + '}' : {};
+        }
+        else if (this.is_array(val))
+        {
+            val = recursive ? this.join_obj(val, seperator, glue, recursive, trimLast) : val.join(', ').replaceAll('[object Object]', '{}');
+        }
+        else
+        {            
+            val = `${val}`;
+        }
+
+        ret += `${glue}${key}${seperator}${val}`;
+
+    }, this);
+
+    if (ret === `${glue}${seperator}` || ret.trim() === '') return '';
+
+    return trimLast ? this.rtrim(this.ltrim(ret, glue), seperator) : this.ltrim(ret, glue).trim() + glue;
+}
+/**
+ * Deep merge two objects.
+ * 
+ * @param   {object} target
+ * @param   {object} ...sources
+ * @returns {object}
+ */
+_.prototype.merge_deep = function()
+{
+    let args = TO_ARR.call(arguments);
+
+    // No args
+    if (args.length === 0)
+    {
+        throw new Error('Nothing to merge.');
+    }
+    // Single arg
+    else if (args.length === 1)
+    {
+        return args[1];
+    }
+
+    // Must be an object
+    if (!this.is_object(args[0]))
+    {
+        throw new Error('Arguments must be an object.');
+    }
+
+    // Remove first and cache
+    let first = args.shift();
+
+    this.each(args, function(i, arg)
+    {
+        if (!this.is_object(arg))
+        {
+            throw new Error('Arguments must be an object.');
+        }
+
+        let cloned = this.clone_deep(arg, first);
+
+        this.each(cloned, function(k, v)
+        {
+            first[k] = v;
+        });
+        
+    }, this);
+
+    return first;
+}
+/**
+ * Returns object properties and methods as array of keys.
+ * 
+ * @param   {mixed}    mixed_var    Variable to test
+ * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+ * @returns {array}
+ */
+_.prototype.object_props = function(mixed_var, deep)
+{
+    if (!mixed_var) return [];
+
+    deep = typeof deep === 'undefined' ? false : deep;
+
+    let keys = Object.keys(mixed_var);
+
+    let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+
+    if (deep)
+    {
+        keys = [...keys, ...this.object_props(proto, true)];
+    }
+    
+    return this.array_unique(keys);
+}
+
+
+/**
+ * Returns an array of prototypes
+ * 
+ * @param   {mixed}    mixed_var    Variable to test
+ * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+ * @returns {array}
+ */
+_.prototype.prototypes = function(mixed_var)
+{
+    let ret = [];
+
+    if (!mixed_var) return ret;
+
+    const _this = this;
+
+    const recursive = function(obj)
+    {
+        let proto = obj.prototype || Object.getPrototypeOf(obj);
+
+        // No prototype
+        if (!proto) return;
+
+        // Prototype is native object
+        let protokeys = Object.getOwnPropertyNames(proto);
+
+        if (protokeys.filter(x => !EMPTY_OBJ_KEYS.includes(x)).length === 0) return;
+
+        ret.push(proto);
+
+        recursive(proto);
+    }
+
+    recursive(mixed_var);
+
+    return ret;
+}
+
+
+/**
+ * Returns object properties and methods as array of keys.
+ * 
+ * @param   {mixed}    mixed_var    Variable to test
+ * @param   {boolean}  withMethods  Return methods and props (optional) (default "true")
+ * @returns {array}
+ */
+_.prototype.flatten_obj = function(obj, deep)
+{
+    deep = typeof deep === 'undefined' ? false : deep;
+
+    var ret = {};
+
+    this.each(obj, (k,v) => ret[k] = v);
+   
+    if (deep)
+    {
+        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+
+        ret = {...ret, ...this.flatten_obj(proto, true)};
+    }
+    
+    return ret;
+}
+_.prototype.camel_case_to_hyphen = function(str)
+{
+    if (str === str.toLowerCase()) return str;
+    
+    return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1-$2$3').toLowerCase();
+}
+/**
+ * Json encode
+ * 
+ * @param  {mixed} str String JSON
+ * @return {object|false}
+ */
+_.prototype.json_decode = function(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.parse(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+/**
+ * Json encode
+ * 
+ * @param  {mixed} str String JSON
+ * @return {object|false}
+ */
+_.prototype.json_encode = function(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.stringify(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+/**
+ * Left trim string 
+ * 
+ * @param  {str}           str
+ * @return {array|string} charlist (optional)
+ */
+_.prototype.ltrim = function(str, charlist)
+{
+    // Special fast cases
+    if (!charlist) return str.trimStart();
+
+    if (this.is_string(charlist))
+    {
+        return str.slice(0, charlist.length) === charlist ? str.replace(charlist, '') : str;
+    }
+
+    var ret = str;
+
+    this.each(charlist, function(i, char)
+    {
+        if (str.slice(0, char.length) === char)
+        {
+            ret = str.replace(char, '');
+            
+            // break            
+            return false;
+        }
+
+    }, this);
+
+    return ret;
+}
+
+
+/**
+ * Make a random string
+ *
+ * @param  {int}    length String length
+ * @return {string}
+ */
+_.prototype.makeid = function(length)
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    for (var i = 0; i < length; i++)
+    {
+        text += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+
+    return text;
+}
+/**
+ * Left trim string 
+ * 
+ * @param  {str}           str
+ * @return {array|string} charlist (optional)
+ */
+_.prototype.rtrim = function(str, charlist)
+{
+    if (!charlist) return str.trimEnd();
+
+    if (this.is_string(charlist))
+    {
+        let len = charlist.length; 
+
+        return str.slice(-len) === charlist ? str.slice(0, -len) : str;
+    }
+
+    var ret = str;
+
+    this.each(charlist, function(i, chars)
+    {
+        var len = chars.length;
+
+        if (str.slice(-len) === chars)
+        {
+            ret = str.slice(0, -len);
+
+            return false;
+        }
+
+    }, this);
+
+    return ret;
+}
+_.prototype.to_camel_case = function(str)
+{
+    
+    str = str.trim();
+
+    // Shouldn't be changed
+    if (!str.includes(' ') && !str.includes('-') && /[A-Z]/.test(str))
+    {
+        return str;
+    }
+
+    return str.toLowerCase().replace(/['"]/g, '').replace(/\W+/g, ' ').replace(/ (.)/g, function($1)
+    {
+        return $1.toUpperCase();
+    })
+    .replace(/ /g, '');
+}
+/**
+ * Left and right trim string.
+ * 
+ * @param  {str}           str
+ * @return {array|string} charlist (optional)
+ */
+_.prototype.trim = function(str, charlist)
+{
+    if (!charlist) return str.trim();
+
+    return this.rtrim(this.ltrim(str, charlist), charlist);
+}
+/* Capatalize first letter */
+_.prototype.uc_first = function(string)
+{
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+/* Capatalize first letter of all words */
+_.prototype.ucwords = function(str)
+{
+    return (str + '').replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1)
+    {
+        return $1.toUpperCase();
+    });
+}
+_.prototype.lc_first = function(string)
+{
+    return string.charAt(0).toLowerCase() + string.slice(1);
+}
+/**
+ * String replace
+ * 
+ * @param  {str}           str
+ * @return {array|string} charlist (optional)
+ */
+_.prototype.replace = function(str, charlist, value)
+{
+    if (this.is_string(charlist) || this.is_regexp(charlist))
+    {
+        return str.replaceAll(charlist, value)
+    }
+
+    this.each(charlist, function(i, char)
+    {
+        str = str.replaceAll(char, value);
+
+    }, this);
+
+    return str;
+}
+
+
+/**
+ * Checks if variable should be considered "true" or "false" using "common sense".
+ * 
+ * @param   {mixed} mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.bool = function(mixed_var)
+{
+    mixed_var = (typeof mixed_var === 'undefined' ? false : mixed_var);
+
+    if (this.is_bool(mixed_var))
+    {
+        return mixed_var;
+    }
+
+    if (this.is_number(mixed_var))
+    {
+        return mixed_var > 0;
+    }
+
+    if (this.is_array(mixed_var))
+    {
+        return mixed_var.length > 0;
+    }
+
+    if (this.is_object(mixed_var))
+    {
+        return Object.keys(mixed_var).length > 0;
+    }
+
+    if (this.is_string(mixed_var))
+    {
+        mixed_var = mixed_var.toLowerCase().trim();
+
+        if (mixed_var === 'false')
+        {
+            return false;
+        }
+        if (mixed_var === 'true')
+        {
+            return true;
+        }
+        if (mixed_var === 'on')
+        {
+            return true;
+        }
+        if (mixed_var === 'off')
+        {
+            return false;
+        }
+        if (mixed_var === 'undefined')
+        {
+            return false;
+        }
+        if (this.is_numeric(mixed_var))
+        {
+            return Number(mixed_var) > 0;
+        }
+        if (mixed_var === '')
+        {
+            return false;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Returns function / class name
+ *
+ * @param   {mixed}  mixed_var Variable to evaluate
+ * @returns {string}
+ */
+_.prototype.callable_name = function(mixed_var)
+{
+    if (this.is_callable(mixed_var))
+    {
+        return mixed_var.name;
+    }
+    else if (this.is_object(mixed_var))
+    {
+        return mixed_var.constructor.name;
+    }
+}
+/**
+ * Count
+ *
+ * @access {public}
+ * @param  {mixed}  mixed_var Variable to count
+ * @return {int}
+ */
+_.prototype.count = function(mixed_var)
+{
+    return this.size(mixed_var);
+}
+/**
+ * Checks if HtmlElement is in current DOM
+ *
+ * @param   {HTMLElement}  element  Element to check
+ * @returns {boolean}
+ */
+_.prototype.in_dom = function(element)
+{
+    if (element === window || element === document || element === document.body || element === document.documentElement)
+    {
+        return true;
+    }
+
+    if (!this.is_htmlElement(element))
+    {
+        return false;
+    }
+
+    let ret = false;
+
+    this.traverse_up(element, function(node)
+    {
+        if (node === document.body || node === document.documentElement)
+        {
+            ret = true;
+
+            return true;
+        }
+
+        return false;
+    });
+
+    return ret;
+}
+/**
+ * Is args array.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_args = function(mixed_var)
+{
+    return this.var_type(mixed_var) === ARGS_TAG;
+}
+/**
+ * Is array.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_array = function(mixed_var, strict)
+{
+    strict = typeof strict === 'undefined' ? false : strict;
+
+    let type = this.var_type(mixed_var);
+
+    return !strict ? ARRAYISH_TAGS.includes(type) : type === ARRAY_TAG;
+}
+/**
+ * Is bool.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_bool = function(mixed_var)
+{
+    return this.var_type(mixed_var) === BOOL_TAG;
+}
+/**
+ * Is Array buffer.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_buffer = function(mixed_var)
+{
+    return this.var_type(mixed_var) === ARRAY_BUFFER_TAG;
+}
+/**
+ * Is variable a function / constructor.
+ *
+ * @param   {mixed}  mixed_var  Variable to check
+ * @returns {boolean}
+ */
+_.prototype.is_callable = function(mixed_var)
+{
+    return this.is_function(mixed_var);
+}
+/**
+ * Checks if variable is a class declaration or extends a class and/or constructable function.
+ *
+ * @param   {mixed}                        mixed_var  Variable to evaluate
+ * @oaram   {string} | undefined | boolean} classname  Classname or strict if boolean provided
+ * @param   {boolean}                      strict     If "true" only returns true on ES6 classes (default "false")
+ * @returns {boolean}
+ */
+_.prototype.is_class = function(mixed_var, classname, strict)
+{
+    // this.is_class(foo, true)
+    if (classname === true || classname === false)
+    {
+        strict = classname;
+        classname = null;
+    }
+    // this.is_class(foo, 'Bar') || this.is_class(foo, 'Bar', false)
+    else
+    {
+        strict = typeof strict === 'undefined' ? false : strict;
+    }
+
+    if (typeof mixed_var !== 'function' || !this.is_constructable(mixed_var))
+    {
+        return false;
+    }
+
+    let isES6 = /^\s*class\s+\w+/.test(mixed_var.toString());
+
+    if (classname)
+    {
+        if (!isES6 && strict)
+        {
+            return false;
+        }
+
+        if (mixed_var.name === classname || mixed_var.prototype.constructor.name === classname)
+        {
+            return true;
+        }
+
+        let protos = [];
+        let proto = mixed_var.prototype || Object.getPrototypeOf(mixed_var);
+        let ret = false;
+
+        while (proto && proto.constructor)
+        {
+            // recursive stopper
+            if (protos.includes.proto)
+            {
+                break;
+            }
+
+            protos.push(proto);
+
+            if (proto.constructor.name === classname)
+            {
+                ret = true;
+
+                break;
+            }
+
+            proto = proto.prototype || Object.getPrototypeOf(proto);
+        }
+
+        return ret;
+    }
+
+    // ES6 class declaration depending on strict
+
+    return strict ? isES6 : this.is_constructable(mixed_var);
+}
+/**
+ * Checks if variable is construable.
+ *
+ * @param   {mixed}  mixed_var  Variable to evaluate
+ * @returns {boolean}
+ */
+_.prototype.is_constructable = function(mixed_var)
+{
+    // Not a function
+    if (typeof mixed_var !== 'function' || mixed_var === null)
+    {
+        return false;
+    }
+
+    // Strict ES6 class
+    if (/^\s*class\s+\w+/.test(mixed_var.toString()))
+    {
+        return true;
+    }
+
+    // Native arrow functions
+    if (!mixed_var.prototype || !mixed_var.prototype.constructor)
+    {
+        return false;
+    }
+
+    // If prototype is empty 
+    return this.object_props(mixed_var, true).length > 0;
+}
+/**
+ * Checks if variable is constructed object function.
+ *
+ * @param   {mixed}  mixed_var  Variable to evaluate
+ * @returns {boolean}
+ */
+_.prototype.is_constructed = function(mixed_var)
+{
+    if (typeof mixed_var === 'object' && mixed_var.constructor && typeof mixed_var.constructor === 'function')
+    {
+        var constr = mixed_var.constructor.toString().trim();
+        
+        return constr.startsWith('function (') || constr.startsWith('function(') || constr.startsWith('function Object(') || constr.startsWith('class ') ;
+    }
+
+    return false;
+}
+/**
+ * Is dataView obj.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_dataview = function(mixed_var)
+{
+    return this.var_type(mixed_var) === DATAVIEW_TAG;
+}
+/**
+ * Is date object.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_date = function(mixed_var)
+{
+    return this.var_type(mixed_var) === DATE_TAG;
+}
+/**
+ * Is empty
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_empty = function(mixed_var)
+{
+    if (mixed_var === false || mixed_var === null || (typeof mixed_var === 'undefined'))
+    {
+        return true;
+    }
+    else if (this.is_array(mixed_var))
+    {
+        return mixed_var.length === null || mixed_var.length <= 0;
+    }
+    else if (this.is_object(mixed_var))
+    {
+        if (Object.keys(mixed_var).length > 0) return false;
+
+        if (this.prototypes(mixed_var).length > 0) return false;
+
+        return true;
+    }
+    else if (this.is_string(mixed_var))
+    {
+        return mixed_var.trim() === '';
+    }
+    else if (this.is_number(mixed_var))
+    {
+        return isNaN(mixed_var);
+    }
+    else if (this.is_function(mixed_var))
+    {
+        return false;
+    }
+
+    return false;
+}
+/**
+ * Deep check for equal
+ * 
+ * @param   {mixed}  a
+ * @param   {mixed}  b
+ * @param   {bool}   strict Strict comparison (optional) (default false)
+ * @returns {bool}
+ * 
+ *  * Note that strict set to true would return false in the following:
+ *  is_equal ({ foo : 'bar'}, { foo : 'bar'});
+ */
+_.prototype.is_equal = function(a, b, strict)
+{    
+    strict = this.is_undefined(strict) ? false : strict;
+
+    if ((typeof a) !== (typeof b))
+    {
+        return false;
+    }
+    else if (this.is_string(a) || this.is_number(a) || this.is_bool(a) || this.is_null(a) || this.is_htmlElement(a))
+    {
+        return a === b;
+    }
+    else if (this.is_function(a))
+    {        
+        return strict ? a === b : this.__is_equal_func(a, b);
+    }
+    else if (this.is_array(a) || this.is_object(b))
+    {
+        if (strict)
+        {
+            if (a !== b || this.is_array(a) && !this.is_array(b))
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        return this.__is_equal_traverseable(a, b);
+    }
+
+    return true;
+}
+
+/**
+ * Checks if two functions are equal
+ * 
+ * @param   {function}  a
+ * @param   {function}  b
+ * @returns {boolean}
+ */
+_.prototype.__is_equal_func = function(a, b)
+{
+    // Functions have the same name
+    if (a.name === b.name)
+    {
+        // If the functions were bound or cloned by the library they can technically still be equal
+        if (a.__isBound)
+        {
+            if (!b.__isBound) return false;
+
+            if (!this.is_equal(a.__boundContext, b.__boundContext)) return false;
+            
+            if (!this.is_equal(a.__origional, b.__origional)) return false;
+        }
+
+        // Check string
+        if (a.toString() !== b.toString()) return false;
+
+        // Prototypes are different
+        if (!this.__is_equal_protos(a, b)) return false;
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Checks if object prototypes are equal
+ * 
+ * @param   {array} | object}  a
+ * @param   {array} | object}  b
+ * @returns {boolean}
+ */
+_.prototype.__is_equal_protos = function(a, b)
+{
+    // Check the prototypes
+    let aProtos = this.prototypes(a);
+    let bProtos = this.prototypes(b);
+
+    if (aProtos.length !== bProtos.length) return false;
+
+    if (aProtos.length === 0 && bProtos.length === 0) return true;
+
+    let ret = true;
+
+    this.each(aProtos, (i, proto) =>
+    {                
+        if (!this.is_equal(proto, bProtos[i]))
+        {
+            ret = false;
+
+            return false;
+        }
+
+    }, this);
+
+    return ret;
+}
+
+
+/**
+ * Checks if traversable's are equal
+ * 
+ * @param   {array} | object}  a
+ * @param   {array} | object}  b
+ * @returns {boolean}
+ */
+_.prototype.__is_equal_traverseable = function(a, b)
+{
+    if (this.size(a) !== this.size(b))
+    {
+        return false;
+    }
+
+    let ret = true;
+
+    this.each(a, function(i, val)
+    {
+        if (!this.is_equal(val, b[i]))
+        {
+            ret = false;
+
+            return false;
+        }
+    }, this);
+
+    if (!ret) return false;
+
+    if (this.is_object(a)) return this.__is_equal_protos(a, b);
+
+    return ret;
+}
+
+/**
+ * Is function.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_function = function(mixed_var)
+{
+    return this.var_type(mixed_var) === FUNC_TAG;
+}
+/**
+ * Checks if variable is HTMLElement.
+ *
+ * @param   {mixed}  mixed_var  Variable to evaluate
+ * @returns {boolean}
+ */
+_.prototype.is_htmlElement = function(mixed_var)
+{
+    if (mixed_var && mixed_var.nodeType)
+    {
+        let type = this.var_type(mixed_var);
+
+        return HTML_REGXP.test(type) || type === '[object HTMLDocument]' || type === '[object Text]';
+    }
+
+    return false;
+}
+/**
+ * Is valid JSON
+ * 
+ * @param  {mixed} str String JSON
+ * @return {object|false}
+ */
+_.prototype.is_json = function(str)
+{
+    var obj;
+    try
+    {
+        obj = JSON.parse(str);
+    }
+    catch (e)
+    {
+        return false;
+    }
+    return obj;
+}
+
+
+/**
+ * Is Map.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_map = function(mixed_var)
+{
+    return this.var_type(mixed_var) === MAP_TAG;
+}
+/**
+ * Is node type.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @param   {string} tag        Tag to compare
+ * @returns {boolean}
+ */
+_.prototype.is_node_type = function(mixed_var, tag)
+{
+    return mixed_var.tagName.toUpperCase() === tag.toUpperCase();
+}
+
+/**
+ * Is nodelist.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_nodelist = function(mixed_var)
+{
+    return this.var_type(mixed_var) === NODELST_TAG;
+}
+/**
+ * Is null.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_null = function(mixed_var)
+{
+    return this.var_type(mixed_var) === NULL_TAG;
+}
+/**
+ * Is number.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_number = function(mixed_var)
+{
+    return !isNaN(mixed_var) && this.var_type(mixed_var) === NUMBER_TAG;
+}
+/**
+ * Is string.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_numeric = function(mixed_var)
+{
+    if (this.is_number(mixed_var))
+    {
+        return true;
+    }
+    else if (this.is_string(mixed_var))
+    {
+        return /^-?(0|[1-9]\d*)(\.\d+)?$/.test(mixed_var.trim());
+    }
+
+    return false;
+}
+/**
+ * Checks if variable is an object.
+ *
+ * @param   {mixed}  mixed_var Variable to evaluate
+ * @returns {boolean}
+ */
+_.prototype.is_object = function(mixed_var)
+{
+    return mixed_var !== null && this.var_type(mixed_var) === OBJECT_TAG;
+}
+/**
+ * Is regexp.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_regexp = function(mixed_var)
+{
+    return this.var_type(mixed_var) === REGEXP_TAG;
+}
+/**
+ * Is Set.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_set = function(mixed_var)
+{
+    return this.var_type(mixed_var) === SET_TAG;
+}
+/**
+ * Is string.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_string = function(mixed_var)
+{
+    return this.var_type(mixed_var) === STRING_TAG;
+}
+/**
+ * Is Symbol.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_symbol = function(mixed_var)
+{
+    return this.var_type(mixed_var) === SYMBOL_TAG;
+}
+/**
+ * Is undefined.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {boolean}
+ */
+_.prototype.is_undefined = function(mixed_var)
+{
+    return this.var_type(mixed_var) === UNDEF_TAG;
+}
+/**
+ * Returns array/object/string/number size.
+ * 
+ * @param   {mixed}  mixed_var  Variable to test
+ * @returns {number}
+ */
+_.prototype.size = function(mixed_var)
+{
+    if (this.is_string(mixed_var) || this.is_array(mixed_var))
+    {
+        return mixed_var.length;
+    }
+    else if (this.is_number(mixed_var))
+    {
+        return mixed_var;
+    }
+    else if (this.is_bool(mixed_var))
+    {
+        return mixed_var === true ? 1 : -1;
+    }
+    else(this.is_object(mixed_var))
+    {
+        return Object.keys(mixed_var).length;
+    }
+
+    return 1;
+}
+
+/**
+ * Gets the `toStringTag` of `value`.
+ *
+ * @public
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+_.prototype.var_type = function(value)
+{
+    if (value == null)
+    {
+        return value === undefined ? '[object Undefined]' : '[object Null]'
+    }
+
+    return TO_STR.call(value);
+}
+// Destructor
+_.prototype.destruct = function()
+{
+    this.clear_event_listeners();
+}
+
+Container.singleton('_', _);
+
+})();
+
+// frontbx core
 (function()
 {
     /**
@@ -7095,7 +7084,7 @@ if (!window.location.origin)
         return this.Dom();
     }
 
-    Container._().trigger_event(window, 'FrontBx:loading', this);
+    Container._().trigger_event(window, 'FrontBx:loading');
 
     const app = Container._().extend(Container, new Application);
 
@@ -7106,13 +7095,21 @@ if (!window.location.origin)
     // Set global
     window.FrontBx = app;
 
-    console.log(app);
-
 })();
 (function()
-{    
+{
+    /**
+     * Utility functions
+     *
+     * @var {Function}
+     */
     const [each, trigger_event, collect_garbage, is_undefined, is_string, is_htmlElement] = FrontBx.import(['each', 'trigger_event', 'collect_garbage', 'is_undefined', 'is_string', 'is_htmlElement']).from('_');
 
+    /**
+     * Prefix for container.
+     *
+     * @var {String}
+     */
     const KEYPREFIX = 'HB_DOM:';
 
     /**
@@ -7128,7 +7125,7 @@ if (!window.location.origin)
 
         this.components = [];
     }
-    
+
     /**
      * Boot Dom
      *
@@ -7252,7 +7249,7 @@ if (!window.location.origin)
 
         this._dispatchComponent(name, 'unbind', component, context);
     }
-    
+
     /**
      * Refresh the DOM modiules or a string module
      *
@@ -7336,9 +7333,8 @@ if (!window.location.origin)
 
     // Load into container and invoke
     FrontBx.singleton('Dom', Dom);
-
+    
 })();
-
 (function()
 {
     const [find_all, each, closest, is_empty] = FrontBx.import(['find_all','each','closest','is_empty']).from('_');
@@ -7476,14 +7472,13 @@ if (!window.location.origin)
     {
         throw new Error('[unbind] method must be implemented.');
     }
-    
+
     // Register
     FrontBx.set('Component', [Component]);
 
 })();
 
-
-// Lazyload
+// lazyload
 (function()
 {
     /**
@@ -7770,526 +7765,513 @@ if (!window.location.origin)
 
     if (!window.FrontBx)
     {
-        // Invoke and start loading images
-        const lazy = new LazyLoad();
-
-        // Listen for FrontBx:ready and register into dom
-        // Will no be invoked unless dom().refresh() is called
-        const AddModule = function()
+        window.addEventListener('DOMContentLoaded', () =>
         {
+            // Invoke and start loading images
+            const lazy = new LazyLoad();
+
+            // Listen for FrontBx:ready and register into dom
+            // Will not be invoked unless dom().refresh() is called
             FrontBx.dom().register('LazyLoad', lazy, false);
-
-            window.removeEventListener('FrontBx:ready', AddModule);
-        }
-
-        window.addEventListener('FrontBx:ready', AddModule);
+        })
     }
     
 })();
 
-// Vendors
+// vendors
 (function()
-{   
-    /* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
-    * @license MIT */
-  var NProgress = {};
+{
+    /* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress * @license MIT */
+        var NProgress = {};
 
-  NProgress.version = '0.2.0';
+        NProgress.version = '0.2.0';
 
-  var Settings = NProgress.settings = {
-    minimum: 0.08,
-    easing: 'linear',
-    positionUsing: '',
-    speed: 200,
-    trickle: true,
-    trickleSpeed: 200,
-    showSpinner: true,
-    barSelector: '[role="bar"]',
-    spinnerSelector: '[role="spinner"]',
-    parent: 'body',
-    template: '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
-  };
+        var Settings = NProgress.settings = {
+            minimum: 0.08,
+            easing: 'linear',
+            positionUsing: '',
+            speed: 200,
+            trickle: true,
+            trickleSpeed: 200,
+            showSpinner: true,
+            barSelector: '[role="bar"]',
+            spinnerSelector: '[role="spinner"]',
+            parent: 'body',
+            template: '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
+        };
 
-  /**
-   * Updates configuration.
-   *
-   *     NProgress.configure({
-   *       minimum: 0.1
-   *     });
-   */
-  NProgress.configure = function(options) {
-    var key, value;
-    for (key in options) {
-      value = options[key];
-      if (value !== undefined && options.hasOwnProperty(key)) Settings[key] = value;
-    }
+    /**
+    * Updates configuration.
+    *
+    *     NProgress.configure({
+    *       minimum: 0.1
+    *     });
+    */
+        NProgress.configure = function(options) {
+            var key, value;
+            for (key in options) {
+                value = options[key];
+                if (value !== undefined && options.hasOwnProperty(key)) Settings[key] = value;
+            }
 
-    return this;
-  };
+            return this;
+        };
 
-  /**
-   * Last number.
-   */
+    /**
+    * Last number.
+    */
 
-  NProgress.status = null;
+        NProgress.status = null;
 
-  /**
-   * Sets the progress bar status, where `n` is a number from `0.0` to `1.0`.
-   *
-   *     NProgress.set(0.4);
-   *     NProgress.set(1.0);
-   */
+    /**
+    * Sets the progress bar status, where `n` is a number from `0.0` to `1.0`.
+    *
+    *     NProgress.set(0.4);
+    *     NProgress.set(1.0);
+    */
 
-  NProgress.set = function(n) {
-    var started = NProgress.isStarted();
+        NProgress.set = function(n) {
+            var started = NProgress.isStarted();
 
-    n = clamp(n, Settings.minimum, 1);
-    NProgress.status = (n === 1 ? null : n);
+            n = clamp(n, Settings.minimum, 1);
+            NProgress.status = (n === 1 ? null : n);
 
-    var progress = NProgress.render(!started),
-        bar      = progress.querySelector(Settings.barSelector),
-        speed    = Settings.speed,
-        ease     = Settings.easing;
+            var progress = NProgress.render(!started),
+            bar      = progress.querySelector(Settings.barSelector),
+            speed    = Settings.speed,
+            ease     = Settings.easing;
 
     progress.offsetWidth; /* Repaint */
 
-    queue(function(next) {
-      // Set positionUsing if it hasn't already been set
-      if (Settings.positionUsing === '') Settings.positionUsing = NProgress.getPositioningCSS();
+            queue(function(next) {
+    // Set positionUsing if it hasn't already been set
+                if (Settings.positionUsing === '') Settings.positionUsing = NProgress.getPositioningCSS();
 
-      // Add transition
-      css(bar, barPositionCSS(n, speed, ease));
+    // Add transition
+                css(bar, barPositionCSS(n, speed, ease));
 
-      if (n === 1) {
-        // Fade out
-        css(progress, {
-          transition: 'none',
-          opacity: 1
-        });
-        progress.offsetWidth; /* Repaint */
+                if (n === 1) {
+      // Fade out
+                  css(progress, {
+                    transition: 'none',
+                    opacity: 1
+                });
+      progress.offsetWidth; /* Repaint */
 
-        setTimeout(function() {
-          css(progress, {
-            transition: 'all ' + speed + 'ms linear',
-            opacity: 0
+                  setTimeout(function() {
+                    css(progress, {
+                      transition: 'all ' + speed + 'ms linear',
+                      opacity: 0
+                  });
+                    setTimeout(function() {
+                      NProgress.remove();
+                      next();
+                  }, speed);
+                }, speed);
+              } else {
+                  setTimeout(next, speed);
+              }
           });
-          setTimeout(function() {
-            NProgress.remove();
-            next();
-          }, speed);
-        }, speed);
-      } else {
-        setTimeout(next, speed);
-      }
-    });
 
-    return this;
-  };
+            return this;
+        };
 
-  NProgress.isStarted = function() {
-    return typeof NProgress.status === 'number';
-  };
+        NProgress.isStarted = function() {
+            return typeof NProgress.status === 'number';
+        };
 
-  /**
-   * Shows the progress bar.
-   * This is the same as setting the status to 0%, except that it doesn't go backwards.
-   *
-   *     NProgress.start();
-   *
-   */
-  NProgress.start = function() {
-    if (!NProgress.status) NProgress.set(0);
+    /**
+    * Shows the progress bar.
+    * This is the same as setting the status to 0%, except that it doesn't go backwards.
+    *
+    *     NProgress.start();
+    *
+    */
+        NProgress.start = function() {
+            if (!NProgress.status) NProgress.set(0);
 
-    var work = function() {
-      setTimeout(function() {
-        if (!NProgress.status) return;
-        NProgress.trickle();
-        work();
-      }, Settings.trickleSpeed);
+            var work = function() {
+                setTimeout(function() {
+                  if (!NProgress.status) return;
+                  NProgress.trickle();
+                  work();
+              }, Settings.trickleSpeed);
+            };
+
+            if (Settings.trickle) work();
+
+            return this;
+        };
+
+    /**
+    * Hides the progress bar.
+    * This is the *sort of* the same as setting the status to 100%, with the
+    * difference being `done()` makes some placebo effect of some realistic motion.
+    *
+    *     NProgress.done();
+    *
+    * If `true` is passed, it will show the progress bar even if its hidden.
+    *
+    *     NProgress.done(true);
+    */
+
+        NProgress.done = function(force) {
+            if (!force && !NProgress.status) return this;
+
+            return NProgress.inc(0.3 + 0.5 * Math.random()).set(1);
+        };
+
+    /**
+    * Increments by a random amount.
+    */
+
+        NProgress.inc = function(amount) {
+            var n = NProgress.status;
+
+            if (!n) {
+                return NProgress.start();
+            } else if(n > 1) {
+                return;
+            } else {
+                if (typeof amount !== 'number') {
+                  if (n >= 0 && n < 0.2) { amount = 0.1; }
+                  else if (n >= 0.2 && n < 0.5) { amount = 0.04; }
+                  else if (n >= 0.5 && n < 0.8) { amount = 0.02; }
+                  else if (n >= 0.8 && n < 0.99) { amount = 0.005; }
+                  else { amount = 0; }
+              }
+
+              n = clamp(n + amount, 0, 0.994);
+              return NProgress.set(n);
+          }
+      };
+
+      NProgress.trickle = function() {
+        return NProgress.inc();
     };
 
-    if (Settings.trickle) work();
+    /**
+    * Waits for all supplied jQuery promises and
+    * increases the progress as the promises resolve.
+    *
+    * @param $promise jQUery Promise
+    */
+    (function() {
+        var initial = 0, current = 0;
 
-    return this;
-  };
+        NProgress.promise = function($promise) {
+            if (!$promise || $promise.state() === "resolved") {
+              return this;
+          }
 
-  /**
-   * Hides the progress bar.
-   * This is the *sort of* the same as setting the status to 100%, with the
-   * difference being `done()` makes some placebo effect of some realistic motion.
-   *
-   *     NProgress.done();
-   *
-   * If `true` is passed, it will show the progress bar even if its hidden.
-   *
-   *     NProgress.done(true);
-   */
+          if (current === 0) {
+              NProgress.start();
+          }
 
-  NProgress.done = function(force) {
-    if (!force && !NProgress.status) return this;
+          initial++;
+          current++;
 
-    return NProgress.inc(0.3 + 0.5 * Math.random()).set(1);
-  };
+          $promise.always(function() {
+              current--;
+              if (current === 0) {
+                  initial = 0;
+                  NProgress.done();
+              } else {
+                  NProgress.set((initial - current) / initial);
+              }
+          });
 
-  /**
-   * Increments by a random amount.
-   */
+          return this;
+      };
 
-  NProgress.inc = function(amount) {
-    var n = NProgress.status;
+    })();
 
-    if (!n) {
-      return NProgress.start();
-    } else if(n > 1) {
-      return;
-    } else {
-      if (typeof amount !== 'number') {
-        if (n >= 0 && n < 0.2) { amount = 0.1; }
-        else if (n >= 0.2 && n < 0.5) { amount = 0.04; }
-        else if (n >= 0.5 && n < 0.8) { amount = 0.02; }
-        else if (n >= 0.8 && n < 0.99) { amount = 0.005; }
-        else { amount = 0; }
-      }
+    /**
+    * (Internal) renders the progress bar markup based on the `template`
+    * setting.
+    */
 
-      n = clamp(n + amount, 0, 0.994);
-      return NProgress.set(n);
-    }
-  };
+    NProgress.render = function(fromStart) {
+        if (NProgress.isRendered()) return document.getElementById('nprogress');
 
-  NProgress.trickle = function() {
-    return NProgress.inc();
-  };
+        addClass(document.documentElement, 'nprogress-busy');
 
-  /**
-   * Waits for all supplied jQuery promises and
-   * increases the progress as the promises resolve.
-   *
-   * @param $promise jQUery Promise
-   */
-  (function() {
-    var initial = 0, current = 0;
-
-    NProgress.promise = function($promise) {
-      if (!$promise || $promise.state() === "resolved") {
-        return this;
-      }
-
-      if (current === 0) {
-        NProgress.start();
-      }
-
-      initial++;
-      current++;
-
-      $promise.always(function() {
-        current--;
-        if (current === 0) {
-            initial = 0;
-            NProgress.done();
-        } else {
-            NProgress.set((initial - current) / initial);
-        }
-      });
-
-      return this;
-    };
-
-  })();
-
-  /**
-   * (Internal) renders the progress bar markup based on the `template`
-   * setting.
-   */
-
-  NProgress.render = function(fromStart) {
-    if (NProgress.isRendered()) return document.getElementById('nprogress');
-
-    addClass(document.documentElement, 'nprogress-busy');
-
-    var progress = document.createElement('div');
-    progress.id = 'nprogress';
-    progress.innerHTML = Settings.template;
+        var progress = document.createElement('div');
+        progress.id = 'nprogress';
+        progress.innerHTML = Settings.template;
 
 
 
-    var bar = progress.querySelector(Settings.barSelector),
+        var bar = progress.querySelector(Settings.barSelector),
         perc = fromStart ? '-100' : toBarPerc(NProgress.status || 0),
         parent = isDOM(Settings.parent)
-          ? Settings.parent
-          : document.querySelector(Settings.parent),
+        ? Settings.parent
+        : document.querySelector(Settings.parent),
         spinner
 
-    css(bar, {
-      transition: 'all 0 linear',
-      transform: 'translate3d(' + perc + '%,0,0)'
-    });
+        css(bar, {
+            transition: 'all 0 linear',
+            transform: 'translate3d(' + perc + '%,0,0)'
+        });
 
-    if (!Settings.showSpinner) {
-      spinner = progress.querySelector(Settings.spinnerSelector);
-      spinner && removeElement(spinner);
-    }
+        if (!Settings.showSpinner) {
+            spinner = progress.querySelector(Settings.spinnerSelector);
+            spinner && removeElement(spinner);
+        }
 
-    if (parent != document.body) {
-      addClass(parent, 'nprogress-custom-parent');
-    }
+        if (parent != document.body) {
+            addClass(parent, 'nprogress-custom-parent');
+        }
 
-    parent.appendChild(progress);
-    return progress;
-  };
+        parent.appendChild(progress);
+        return progress;
+    };
 
-  /**
-   * Removes the element. Opposite of render().
-   */
+    /**
+    * Removes the element. Opposite of render().
+    */
 
-  NProgress.remove = function() {
-    removeClass(document.documentElement, 'nprogress-busy');
-    var parent = isDOM(Settings.parent)
-      ? Settings.parent
-      : document.querySelector(Settings.parent)
-    removeClass(parent, 'nprogress-custom-parent')
-    var progress = document.getElementById('nprogress');
-    progress && removeElement(progress);
-  };
+    NProgress.remove = function() {
+        removeClass(document.documentElement, 'nprogress-busy');
+        var parent = isDOM(Settings.parent)
+        ? Settings.parent
+        : document.querySelector(Settings.parent)
+        removeClass(parent, 'nprogress-custom-parent')
+        var progress = document.getElementById('nprogress');
+        progress && removeElement(progress);
+    };
 
-  /**
-   * Checks if the progress bar is rendered.
-   */
+    /**
+    * Checks if the progress bar is rendered.
+    */
 
-  NProgress.isRendered = function() {
-    return !!document.getElementById('nprogress');
-  };
+    NProgress.isRendered = function() {
+        return !!document.getElementById('nprogress');
+    };
 
-  /**
-   * Determine which positioning CSS rule to use.
-   */
+    /**
+    * Determine which positioning CSS rule to use.
+    */
 
-  NProgress.getPositioningCSS = function() {
+    NProgress.getPositioningCSS = function() {
     // Sniff on document.body.style
-    var bodyStyle = document.body.style;
+        var bodyStyle = document.body.style;
 
     // Sniff prefixes
-    var vendorPrefix = ('WebkitTransform' in bodyStyle) ? 'Webkit' :
-                       ('MozTransform' in bodyStyle) ? 'Moz' :
-                       ('msTransform' in bodyStyle) ? 'ms' :
-                       ('OTransform' in bodyStyle) ? 'O' : '';
+        var vendorPrefix = ('WebkitTransform' in bodyStyle) ? 'Webkit' :
+        ('MozTransform' in bodyStyle) ? 'Moz' :
+        ('msTransform' in bodyStyle) ? 'ms' :
+        ('OTransform' in bodyStyle) ? 'O' : '';
 
-    if (vendorPrefix + 'Perspective' in bodyStyle) {
-      // Modern browsers with 3D support, e.g. Webkit, IE10
-      return 'translate3d';
-    } else if (vendorPrefix + 'Transform' in bodyStyle) {
-      // Browsers without 3D support, e.g. IE9
-      return 'translate';
-    } else {
-      // Browsers without translate() support, e.g. IE7-8
-      return 'margin';
-    }
-  };
-
-  /**
-   * Helpers
-   */
-
-  function isDOM (obj) {
-    if (typeof HTMLElement === 'object') {
-      return obj instanceof HTMLElement
-    }
-    return (
-      obj &&
-      typeof obj === 'object' &&
-      obj.nodeType === 1 &&
-      typeof obj.nodeName === 'string'
-    )
-  }
-
-  function clamp(n, min, max) {
-    if (n < min) return min;
-    if (n > max) return max;
-    return n;
-  }
-
-  /**
-   * (Internal) converts a percentage (`0..1`) to a bar translateX
-   * percentage (`-100%..0%`).
-   */
-
-  function toBarPerc(n) {
-    return (-1 + n) * 100;
-  }
-
-
-  /**
-   * (Internal) returns the correct CSS for changing the bar's
-   * position given an n percentage, and speed and ease from Settings
-   */
-
-  function barPositionCSS(n, speed, ease) {
-    var barCSS;
-
-    if (Settings.positionUsing === 'translate3d') {
-      barCSS = { transform: 'translate3d('+toBarPerc(n)+'%,0,0)' };
-    } else if (Settings.positionUsing === 'translate') {
-      barCSS = { transform: 'translate('+toBarPerc(n)+'%,0)' };
-    } else {
-      barCSS = { 'margin-left': toBarPerc(n)+'%' };
-    }
-
-    barCSS.transition = 'all '+speed+'ms '+ease;
-
-    return barCSS;
-  }
-
-  /**
-   * (Internal) Queues a function to be executed.
-   */
-
-  var queue = (function() {
-    var pending = [];
-
-    function next() {
-      var fn = pending.shift();
-      if (fn) {
-        fn(next);
-      }
-    }
-
-    return function(fn) {
-      pending.push(fn);
-      if (pending.length == 1) next();
+        if (vendorPrefix + 'Perspective' in bodyStyle) {
+    // Modern browsers with 3D support, e.g. Webkit, IE10
+            return 'translate3d';
+        } else if (vendorPrefix + 'Transform' in bodyStyle) {
+    // Browsers without 3D support, e.g. IE9
+            return 'translate';
+        } else {
+    // Browsers without translate() support, e.g. IE7-8
+            return 'margin';
+        }
     };
-  })();
 
-  /**
-   * (Internal) Applies css properties to an element, similar to the jQuery
-   * css method.
-   *
-   * While this helper does assist with vendor prefixed property names, it
-   * does not perform any manipulation of values prior to setting styles.
-   */
+    /**
+    * Helpers
+    */
 
-  var css = (function() {
-    var cssPrefixes = [ 'Webkit', 'O', 'Moz', 'ms' ],
+    function isDOM (obj) {
+        if (typeof HTMLElement === 'object') {
+            return obj instanceof HTMLElement
+        }
+        return (
+            obj &&
+            typeof obj === 'object' &&
+            obj.nodeType === 1 &&
+            typeof obj.nodeName === 'string'
+            )
+    }
+
+    function clamp(n, min, max) {
+        if (n < min) return min;
+        if (n > max) return max;
+        return n;
+    }
+
+    /**
+    * (Internal) converts a percentage (`0..1`) to a bar translateX
+    * percentage (`-100%..0%`).
+    */
+
+    function toBarPerc(n) {
+        return (-1 + n) * 100;
+    }
+
+
+    /**
+    * (Internal) returns the correct CSS for changing the bar's
+    * position given an n percentage, and speed and ease from Settings
+    */
+
+    function barPositionCSS(n, speed, ease) {
+        var barCSS;
+
+        if (Settings.positionUsing === 'translate3d') {
+            barCSS = { transform: 'translate3d('+toBarPerc(n)+'%,0,0)' };
+        } else if (Settings.positionUsing === 'translate') {
+            barCSS = { transform: 'translate('+toBarPerc(n)+'%,0)' };
+        } else {
+            barCSS = { 'margin-left': toBarPerc(n)+'%' };
+        }
+
+        barCSS.transition = 'all '+speed+'ms '+ease;
+
+        return barCSS;
+    }
+
+    /**
+    * (Internal) Queues a function to be executed.
+    */
+
+    var queue = (function() {
+        var pending = [];
+
+        function next() {
+            var fn = pending.shift();
+            if (fn) {
+              fn(next);
+          }
+      }
+
+      return function(fn) {
+        pending.push(fn);
+        if (pending.length == 1) next();
+    };
+    })();
+
+    /**
+    * (Internal) Applies css properties to an element, similar to the jQuery
+    * css method.
+    *
+    * While this helper does assist with vendor prefixed property names, it
+    * does not perform any manipulation of values prior to setting styles.
+    */
+
+    var css = (function() {
+        var cssPrefixes = [ 'Webkit', 'O', 'Moz', 'ms' ],
         cssProps    = {};
 
-    function camelCase(string) {
-      return string.replace(/^-ms-/, 'ms-').replace(/-([\da-z])/gi, function(match, letter) {
-        return letter.toUpperCase();
-      });
-    }
+        function camelCase(string) {
+            return string.replace(/^-ms-/, 'ms-').replace(/-([\da-z])/gi, function(match, letter) {
+              return letter.toUpperCase();
+          });
+        }
 
-    function getVendorProp(name) {
-      var style = document.body.style;
-      if (name in style) return name;
+        function getVendorProp(name) {
+            var style = document.body.style;
+            if (name in style) return name;
 
-      var i = cssPrefixes.length,
-          capName = name.charAt(0).toUpperCase() + name.slice(1),
-          vendorName;
-      while (i--) {
-        vendorName = cssPrefixes[i] + capName;
-        if (vendorName in style) return vendorName;
+            var i = cssPrefixes.length,
+            capName = name.charAt(0).toUpperCase() + name.slice(1),
+            vendorName;
+            while (i--) {
+              vendorName = cssPrefixes[i] + capName;
+              if (vendorName in style) return vendorName;
+          }
+
+          return name;
       }
 
-      return name;
-    }
-
-    function getStyleProp(name) {
-      name = camelCase(name);
-      return cssProps[name] || (cssProps[name] = getVendorProp(name));
+      function getStyleProp(name) {
+        name = camelCase(name);
+        return cssProps[name] || (cssProps[name] = getVendorProp(name));
     }
 
     function applyCss(element, prop, value) {
-      prop = getStyleProp(prop);
-      element.style[prop] = value;
+        prop = getStyleProp(prop);
+        element.style[prop] = value;
     }
 
     return function(element, properties) {
-      var args = arguments,
-          prop,
-          value;
+        var args = arguments,
+        prop,
+        value;
 
-      if (args.length == 2) {
-        for (prop in properties) {
-          value = properties[prop];
-          if (value !== undefined && properties.hasOwnProperty(prop)) applyCss(element, prop, value);
+        if (args.length == 2) {
+          for (prop in properties) {
+            value = properties[prop];
+            if (value !== undefined && properties.hasOwnProperty(prop)) applyCss(element, prop, value);
         }
-      } else {
-        applyCss(element, args[1], args[2]);
-      }
+    } else {
+      applyCss(element, args[1], args[2]);
     }
-  })();
+    }
+    })();
 
-  /**
-   * (Internal) Determines if an element or space separated list of class names contains a class name.
-   */
+    /**
+    * (Internal) Determines if an element or space separated list of class names contains a class name.
+    */
 
-  function hasClass(element, name) {
-    var list = typeof element == 'string' ? element : classList(element);
-    return list.indexOf(' ' + name + ' ') >= 0;
-  }
+    function hasClass(element, name) {
+        var list = typeof element == 'string' ? element : classList(element);
+        return list.indexOf(' ' + name + ' ') >= 0;
+    }
 
-  /**
-   * (Internal) Adds a class to an element.
-   */
+    /**
+    * (Internal) Adds a class to an element.
+    */
 
-  function addClass(element, name) {
-    var oldList = classList(element),
+    function addClass(element, name) {
+        var oldList = classList(element),
         newList = oldList + name;
 
-    if (hasClass(oldList, name)) return;
+        if (hasClass(oldList, name)) return;
 
     // Trim the opening space.
-    element.className = newList.substring(1);
-  }
+        element.className = newList.substring(1);
+    }
 
-  /**
-   * (Internal) Removes a class from an element.
-   */
+    /**
+    * (Internal) Removes a class from an element.
+    */
 
-  function removeClass(element, name) {
-    var oldList = classList(element),
+    function removeClass(element, name) {
+        var oldList = classList(element),
         newList;
 
-    if (!hasClass(element, name)) return;
+        if (!hasClass(element, name)) return;
 
     // Replace the class name.
-    newList = oldList.replace(' ' + name + ' ', ' ');
+        newList = oldList.replace(' ' + name + ' ', ' ');
 
     // Trim the opening and closing spaces.
-    element.className = newList.substring(1, newList.length - 1);
-  }
+        element.className = newList.substring(1, newList.length - 1);
+    }
 
-  /**
-   * (Internal) Gets a space separated list of the class names on the element.
-   * The list is wrapped with a single space on each end to facilitate finding
-   * matches within the list.
-   */
+    /**
+    * (Internal) Gets a space separated list of the class names on the element.
+    * The list is wrapped with a single space on each end to facilitate finding
+    * matches within the list.
+    */
 
-  function classList(element) {
-    return (' ' + (element && element.className || '') + ' ').replace(/\s+/gi, ' ');
-  }
+    function classList(element) {
+        return (' ' + (element && element.className || '') + ' ').replace(/\s+/gi, ' ');
+    }
 
-  /**
-   * (Internal) Removes an element from the DOM.
-   */
+    /**
+    * (Internal) Removes an element from the DOM.
+    */
 
-  function removeElement(element) {
-    element && element.parentNode && element.parentNode.removeChild(element);
-  }
-
-    var _NProgress = NProgress;
-
-    window.NProgress = null;
+    function removeElement(element) {
+        element && element.parentNode && element.parentNode.removeChild(element);
+    }
 
     // Load into container 
-    FrontBx.singleton('NProgress', _NProgress);
+    FrontBx.singleton('NProgress', NProgress);
 
 })();
 
-
-// Utility
-/**
- * Ajax
- *
-*/
+// utility
+// utility
 (function()
 {
     /**
@@ -8811,9 +8793,7 @@ if (!window.location.origin)
     }
 
     FrontBx.set('Ajax', Ajax);
-
 })();
-
 (function()
 {
     /**
@@ -8874,9 +8854,6 @@ if (!window.location.origin)
         // Reset variables
         this._reset();
 
-        // We are now loading
-        _requesting = true;
-
         // Merge options with defaults
         options = typeof options === 'undefined' ? { ...DEFAULT_OPTIONS } : { ...DEFAULT_OPTIONS, ...options };
 
@@ -8908,27 +8885,27 @@ if (!window.location.origin)
 
         FrontBx.NProgress().start();
 
-        this.success((html) =>
+        this.success((response) =>
         {            
-            this._handleSuccess(html.trim(), options);
+            this._handleSuccess(response.trim(), options);
 
-            if (_success) this._makeCallback(_success, html);
+            if (_success) this._makeCallback(_success, this._xhr, [response]);
         })
-        .error((html) =>
+        .error((response) =>
         {
             trigger_event(window, 'FrontBx:Pjax:error', { options });
 
-            if (_error) this._makeCallback(_error, html);
+            if (_error) this._makeCallback(_error, this._xhr, [response]);
         })
-        .abort((html) =>
+        .abort((response) =>
         {
             rigger_event(window, 'FrontBx:Pjax:abort', { options });
 
-            if (_abort) this._makeCallback(_abort, html);
+            if (_abort) this._makeCallback(_abort, this, [response, false]);
         })
         .complete((response, successfull) =>
         {
-            if (_complete) this._makeCallback(_complete, response);
+            if (_complete) this._makeCallback(_complete, this._xhr, [response, successfull]);
 
             this._reset();
 
@@ -8959,7 +8936,7 @@ if (!window.location.origin)
         responseDoc         = this._removeScripts(responseDoc);
 
         // Move scripts to head incase we're replacing body
-        each(currScripts, (i, script) => { if (script.node.parentNode.nodeName.toLowerCase() !== 'head') find('head').appendChild(script.node); });
+        //each(currScripts, (i, script) => { if (script.node.parentNode.nodeName.toLowerCase() !== 'head') find('head').appendChild(script.node); });
 
         // Default to document bodys
         let targetEl        = document.body;
@@ -9211,26 +9188,26 @@ if (!window.location.origin)
     FrontBx.singleton('Pjax', extend(FrontBx.Ajax().constructor, Pjax));
 
 })();
-
 (function()
 {
     /**
+     * 
      * @var {Helper} obj
      */
     const [find, each, _for, is_array, is_object, in_array, is_undefined, is_callable, is_htmlElement, in_dom, is_empty, animate, add_class, remove_class, width, height, inline_style, rendered_style, css, is_array_last, dom_element] = FrontBx.import(['find','each','for','is_array', 'is_object', 'in_array','is_undefined','is_callable','is_htmlElement','in_dom','is_empty','animate', 'add_class','remove_class', 'width', 'height', 'inline_style', 'rendered_style', 'css', 'is_array_last','dom_element']).from('_');
 
     /**
-     * Wrappers that need "position:relative" to hide overflow.
-     * 
-     * @var {array}
-     */
+    * Wrappers that need "position:relative" to hide overflow.
+    * 
+    * @var {array}
+    */
     const STATIC_POSITIONS = ['static', 'unset', 'initial'];
 
     /**
      * Default options.
      * 
      * @var {array}
-     */
+    */
     const DEFAULT_OPTIONS =
     {
         count: 1,
@@ -9243,346 +9220,335 @@ if (!window.location.origin)
     };
 
     /**
-     * Class variants.
-     * 
-     * @var {array}
-     */
+    * Class variants.
+    * 
+    * @var {array}
+    */
     const CLASS_VARIANTS = ['block', 'text', 'btn', 'input', 'circle', 'wave', 'rounded', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
     /**
-     * Class variants.
-     * 
-     * @var {array}
-     */
+    * Class variants.
+    * 
+    * @var {array}
+    */
     const WRAPPER_VARIANTS = ['text-block', 'block-h1', 'block-h2', 'block-h3', 'block-h4', 'block-h5', 'block-h6'];
 
     /**
-     * Skeleton utility
-     *
-     * The Notification class is a utility class used to
-     * display a notification.
-     */
-    class Skeleton
+    * Skeleton.
+    *
+    * @param  {DOMElement}   DOMElement Target node
+    * @param  {object|array} options
+    * @return {this}
+    */
+    const Skeleton = function(DOMElement, options)
     {
-        /**
-         * Module constructor
-         *
-         * @param  {DOMElement}   DOMElement Target node
-         * @param  {object|array} options
-         * @return {this}
-         */
-        constructor(DOMElement, options)
+    this._DOMElement = DOMElement;
+
+    this._nodes = [];
+
+    this._isMulti = is_array(options);
+
+    if (is_empty(options)) return this;
+
+    if (is_array(options))
+    {
+        each(options, function(i, optionSet)
         {
-            this._DOMElement = DOMElement;
-            
-            this._nodes = [];
+            optionSet = {...DEFAULT_OPTIONS, ...optionSet};
 
-            this._isMulti = is_array(options);
+            this._build(optionSet);
 
-            if (is_empty(options)) return this;
+        }, this);
+    }
+    else
+    {
+        options = {...DEFAULT_OPTIONS, ...options};
 
-            if (is_array(options))
-            {
-                each(options, function(i, optionSet)
-                {
-                    optionSet = {...DEFAULT_OPTIONS, ...optionSet};
+        this._build(options);
+    }
+    }
 
-                    this._build(optionSet);
-
-                }, this);
-            }
-            else
-            {
-                options = {...DEFAULT_OPTIONS, ...options};
-
-                this._build(options);
-            }
-
-            return this;
-        }
-
-        /**
-         * Gracefully individual content
-         * 
-         * @param  {DOMElement|String} content
-         * @param  {function|null}     callback
-         * @access {public}
-         */
-        load(content, callback, wrapper)
+    /**
+     * Gracefully individual content
+     * 
+     * @param  {DOMElement|String} content
+     * @param  {function|null}     callback
+     * @access {public}
+     */
+    Skeleton.prototype.load = function(content, callback, wrapper)
+    {
+        if (is_object(content))
         {
-            if (is_object(content))
+            each(content, (selector, node) => 
             {
-                each(content, (selector, node) => 
-                {
-                    let cb = is_array_last(node, content) ? callback : null;
+                let cb = is_array_last(node, content) ? callback : null;
 
-                    this.load(node, cb, find(selector, this._DOMElement));
-
-                }, this);
-
-                return;
-            }
-
-            wrapper = !wrapper ? this._DOMElement : wrapper;
-            const isHTML  = is_htmlElement(content);
-            
-            // Cache wrapper height and width and so we can transition content without changing layout
-            const h           = height(wrapper);
-            const w           = width(wrapper);
-            const position    = rendered_style(wrapper, 'position');
-            const InlOverflow = inline_style(wrapper, 'overflow') || false;
-            const InlPosition = inline_style(wrapper, 'overflow') || false;
-            const InlHeight   = inline_style(wrapper, 'height') || false;
-            const InlWidth    = inline_style(wrapper, 'width') || false;
-            const InlStyles   = { overflow: InlOverflow, position: InlPosition, height: InlHeight, width: InlWidth };
-            const newStyles   = { overflow: 'hidden', height: `${h}px`, width: `${w}px` };
-            if (in_array(position, STATIC_POSITIONS)) newStyles.position = 'relative';
-
-            // Prep content for inserting
-            var isFragment = false;
-            var oldContnet;
-
-            if (isHTML)
-            {
-                add_class(content, 'swapping-content-wrapper');
-            }
-            else
-            {
-                let div    = dom_element({tag: 'div', class: 'swapping-content-wrapper'}, null, content);
-                isFragment = div.children.length > 1;
-                if (isFragment) div.className += ' fragment';
-                oldContnet = content;
-                content    = div;
-            }
-
-            const _this = this;
-
-            const complete = function()
-            {
-                // Make optional user callback
-                if (is_callable(callback))
-                {
-                    callback();
-                }
-
-                // If we wrapped 'content' we need to remove the outer '.swapping-content-wrapper'
-                if (!isHTML)
-                {
-                    if (isFragment)
-                    {
-                        wrapper.innerHTML = '';
-
-                        dom_element(null, wrapper, oldContnet);
-                    }
-                    else
-                    {
-                        wrapper.replaceChild(content.children[0], content);
-                    }
-                }
-                else
-                {
-                    remove_class(content, 'swapping-content-wrapper');
-                }
-
-                // Remove skeletons
-                each(_this._nodes, function(i, node)
-                {
-                    if (in_dom(node)) node.parentNode.removeChild(node);                    
-                });
-
-                // Set inline styles back to original
-                css(wrapper, InlStyles);
-
-                // Remove wrapper classes
-                remove_class(wrapper, 'skeleton-swapping-content');
-            }
-
-            // Fix dimensions, overflow and positioning while transition.
-            css(wrapper, newStyles);
-
-            // Add wrapper class to position content swap while transitioning
-            add_class(wrapper, 'skeleton-swapping-content');
-
-            // Finally append content
-            wrapper.appendChild(content);
-
-            each(this._nodes, function(i, node)
-            {
-                animate(node, { property : 'opacity', to : 0, duration: 500 });
-            });
-
-            animate(content, { property : 'opacity', from: '0', to : '1', duration: 750, callback: complete});
-        }
-
-        /**
-         * Remove and destroy
-         *
-         * @params {function} callback (optional)
-         * @params {boolean}  destroy  (optional default true)
-         * @access {private}
-         */
-        fade_out(callback, destroy)
-        {
-            destroy = is_undefined(destroy) ? true : destroy;
-            
-            let _this = this;
-
-            const complete = function()
-            {
-                if (destroy)
-                {
-                    _this.destroy();
-                }
-
-                if (is_callable(callback))
-                {
-                    callback();
-                }
-            }
-
-            let madeCallback = false;
-
-            each(this._nodes, function(i, node)
-            {
-                let _callback = madeCallback ? undefined : complete;
-
-                animate(node, { property : 'opacity', to : 0, duration: 500, callback: complete});
-
-                madeCallback = true;
-            });
-        }
-
-        /**
-         * Remove and destroy
-         *
-         * @params {_node} node
-         * @access {private}
-         */
-        destroy()
-        {
-            each(this._nodes, function(i, node)
-            {
-                node.parentNode.removeChild(node);
-            });
-
-            this._nodes = [];
-        }
-
-        /**
-         * Remove a notification
-         *
-         * @params {_node} node
-         * @access {private}
-         */
-        _build(options)
-        {
-            let wrapper    = null;
-            let skeleton   = document.createElement('div');
-            let variants   = options.variant.split(' ').map((x) => x.trim().toLowerCase()).filter((x) => x !== '');
-            let DOMElement = options.selector ? find(options.selector, this._DOMElement) : this._DOMElement;
-            let width      = options.width;
-            let height     = options.height;
-            let classes    = ['skeleton'];
-
-            each(variants, function(i, variant)
-            {
-                if (in_array(variant, CLASS_VARIANTS))
-                {
-                    classes.push(`skeleton-${variant}`);
-                }
-                else if (in_array(variant, WRAPPER_VARIANTS))
-                {
-                    classes = ['skeleton'];
-
-                    if (!wrapper)
-                    {
-                        wrapper = document.createElement('div');
-                        wrapper.className = options.lines > 1 ? 'skeleton-text-block skeleton-lines' : 'skeleton-text-block' ;
-                    }
-
-                    if (variant !== 'text-block')
-                    {
-                        wrapper.className += ` skeleton-text-${variant}`;
-                    }
-                }
-            });
-
-            skeleton.className = classes.join(' ');
-
-            let skeletons = [skeleton];
-
-            if (options.count > 1 || options.lines > 1)
-            {
-                let count = Math.max(options.count, options.lines);
-
-                _for(count -1, (i) => skeletons.push(skeleton.cloneNode(true)));
-            }
-
-            each(skeletons, function(i, _skeleton)
-            {
-                this._setDimensions(_skeleton, width, height, wrapper, options.aspectratio, options.lines > 1);
-
-                if (wrapper)
-                {
-                    wrapper.appendChild(_skeleton);
-                }
-                else
-                {
-                    DOMElement.appendChild(_skeleton);
-                }
+                this.load(node, cb, find(selector, this._DOMElement));
 
             }, this);
 
-            if (wrapper)
-            {                
-                DOMElement.appendChild(wrapper);
+            return;
+        }
 
-                this._nodes.push(wrapper);
+        wrapper = !wrapper ? this._DOMElement : wrapper;
+        const isHTML  = is_htmlElement(content);
+        
+        // Cache wrapper height and width and so we can transition content without changing layout
+        const h           = height(wrapper);
+        const w           = width(wrapper);
+        const position    = rendered_style(wrapper, 'position');
+        const InlOverflow = inline_style(wrapper, 'overflow') || false;
+        const InlPosition = inline_style(wrapper, 'overflow') || false;
+        const InlHeight   = inline_style(wrapper, 'height') || false;
+        const InlWidth    = inline_style(wrapper, 'width') || false;
+        const InlStyles   = { overflow: InlOverflow, position: InlPosition, height: InlHeight, width: InlWidth };
+        const newStyles   = { overflow: 'hidden', height: `${h}px`, width: `${w}px` };
+        if (in_array(position, STATIC_POSITIONS)) newStyles.position = 'relative';
+
+        // Prep content for inserting
+        var isFragment = false;
+        var oldContnet;
+
+        if (isHTML)
+        {
+            add_class(content, 'swapping-content-wrapper');
+        }
+        else
+        {
+            let div    = dom_element({tag: 'div', class: 'swapping-content-wrapper'}, null, content);
+            isFragment = div.children.length > 1;
+            if (isFragment) div.className += ' fragment';
+            oldContnet = content;
+            content    = div;
+        }
+
+        const _this = this;
+
+        const complete = function()
+        {
+            // Make optional user callback
+            if (is_callable(callback))
+            {
+                callback();
+            }
+
+            // If we wrapped 'content' we need to remove the outer '.swapping-content-wrapper'
+            if (!isHTML)
+            {
+                if (isFragment)
+                {
+                    wrapper.innerHTML = '';
+
+                    dom_element(null, wrapper, oldContnet);
+                }
+                else
+                {
+                    wrapper.replaceChild(content.children[0], content);
+                }
             }
             else
             {
-                each(skeletons, (i, skel) => this._nodes.push(skel), this);
+                remove_class(content, 'swapping-content-wrapper');
+            }
+
+            // Remove skeletons
+            each(_this._nodes, function(i, node)
+            {
+                if (in_dom(node)) node.parentNode.removeChild(node);                    
+            });
+
+            // Set inline styles back to original
+            css(wrapper, InlStyles);
+
+            // Remove wrapper classes
+            remove_class(wrapper, 'skeleton-swapping-content');
+        }
+
+        // Fix dimensions, overflow and positioning while transition.
+        css(wrapper, newStyles);
+
+        // Add wrapper class to position content swap while transitioning
+        add_class(wrapper, 'skeleton-swapping-content');
+
+        // Finally append content
+        wrapper.appendChild(content);
+
+        each(this._nodes, function(i, node)
+        {
+            animate(node, { property : 'opacity', to : 0, duration: 500 });
+        });
+
+        animate(content, { property : 'opacity', from: '0', to : '1', duration: 750, callback: complete});
+    }
+
+    /**
+     * Remove and destroy
+     *
+     * @params {function} callback (optional)
+     * @params {boolean}  destroy  (optional default true)
+     * @access {private}
+     */
+    Skeleton.prototype.fade_out = function(callback, destroy)
+    {
+        destroy = is_undefined(destroy) ? true : destroy;
+        
+        let _this = this;
+
+        const complete = function()
+        {
+            if (destroy)
+            {
+                _this.destroy();
+            }
+
+            if (is_callable(callback))
+            {
+                callback();
             }
         }
 
-        /**
-         * Remove and destroy
-         *
-         * @params {callback} node
-         * @access {private}
-         */
-        _setDimensions(skeleton, width, height, wrapper, aspectRatio, isLines)
+        let madeCallback = false;
+
+        each(this._nodes, function(i, node)
         {
-            // Text blocks get random width;
+            let _callback = madeCallback ? undefined : complete;
+
+            animate(node, { property : 'opacity', to : 0, duration: 500, callback: complete});
+
+            madeCallback = true;
+        });
+    }
+
+    /**
+     * Remove and destroy
+     *
+     * @params {_node} node
+     * @access {private}
+     */
+    Skeleton.prototype.destroy = function()
+    {
+        each(this._nodes, function(i, node)
+        {
+            node.parentNode.removeChild(node);
+        });
+
+        this._nodes = [];
+    }
+
+    /**
+     * Remove a notification
+     *
+     * @params {_node} node
+     * @access {private}
+     */
+    Skeleton.prototype._build = function(options)
+    {
+        let wrapper    = null;
+        let skeleton   = document.createElement('div');
+        let variants   = options.variant.split(' ').map((x) => x.trim().toLowerCase()).filter((x) => x !== '');
+        let DOMElement = options.selector ? find(options.selector, this._DOMElement) : this._DOMElement;
+        let width      = options.width;
+        let height     = options.height;
+        let classes    = ['skeleton'];
+
+        each(variants, function(i, variant)
+        {
+            if (in_array(variant, CLASS_VARIANTS))
+            {
+                classes.push(`skeleton-${variant}`);
+            }
+            else if (in_array(variant, WRAPPER_VARIANTS))
+            {
+                classes = ['skeleton'];
+
+                if (!wrapper)
+                {
+                    wrapper = document.createElement('div');
+                    wrapper.className = options.lines > 1 ? 'skeleton-text-block skeleton-lines' : 'skeleton-text-block' ;
+                }
+
+                if (variant !== 'text-block')
+                {
+                    wrapper.className += ` skeleton-text-${variant}`;
+                }
+            }
+        });
+
+        skeleton.className = classes.join(' ');
+
+        let skeletons = [skeleton];
+
+        if (options.count > 1 || options.lines > 1)
+        {
+            let count = Math.max(options.count, options.lines);
+
+            _for(count -1, (i) => skeletons.push(skeleton.cloneNode(true)));
+        }
+
+        each(skeletons, function(i, _skeleton)
+        {
+            this._setDimensions(_skeleton, width, height, wrapper, options.aspectratio, options.lines > 1);
+
             if (wrapper)
             {
-                let min = isLines ? 70 : 15;
-                let max = isLines ? 95 : 85;
-                let w   = Math.floor(Math.random() * (max - min + 1) + min);
-
-                skeleton.style.width = `${w}%`;
-
-                return;
+                wrapper.appendChild(_skeleton);
             }
-
-            if (aspectRatio !== '')
+            else
             {
-                skeleton.style.width  = '100%';
-                skeleton.style.height = 'auto';
-                skeleton.style.aspectRatio = aspectRatio;
-
-                return;
+                DOMElement.appendChild(_skeleton);
             }
 
-            if (width)
-            {
-                skeleton.style.width = width;
-            }
+        }, this);
 
-            if (height)
-            {
-                skeleton.style.height = height;
-            }
+        if (wrapper)
+        {                
+            DOMElement.appendChild(wrapper);
+
+            this._nodes.push(wrapper);
+        }
+        else
+        {
+            each(skeletons, (i, skel) => this._nodes.push(skel), this);
+        }
+    }
+
+    /**
+     * Remove and destroy
+     *
+     * @params {callback} node
+     * @access {private}
+     */
+    Skeleton.prototype._setDimensions = function(skeleton, width, height, wrapper, aspectRatio, isLines)
+    {
+        // Text blocks get random width;
+        if (wrapper)
+        {
+            let min = isLines ? 70 : 15;
+            let max = isLines ? 95 : 85;
+            let w   = Math.floor(Math.random() * (max - min + 1) + min);
+
+            skeleton.style.width = `${w}%`;
+
+            return;
+        }
+
+        if (aspectRatio !== '')
+        {
+            skeleton.style.width  = '100%';
+            skeleton.style.height = 'auto';
+            skeleton.style.aspectRatio = aspectRatio;
+
+            return;
+        }
+
+        if (width)
+        {
+            skeleton.style.width = width;
+        }
+
+        if (height)
+        {
+            skeleton.style.height = height;
         }
     }
 
@@ -9590,329 +9556,326 @@ if (!window.location.origin)
     FrontBx.set('Skeleton', Skeleton);
 
 })();
-
 (function()
 {
-
+    /**
+     * TinyGesture.js
+     *
+     * This service uses passive listeners, so you can't call event.preventDefault()
+     * on any of the events.
+     *
+     * Adapted from https://gist.github.com/SleepWalker/da5636b1abcbaff48c4d
+     * and https://github.com/uxitten/xwiper
+     * plus a bunch more of my own code.
+     */
     class TinyGesture {
-    constructor(element, options) {
-        this.element = element;
-        this.touch1 = null;
-        this.touch2 = null;
-        this.touchStartX = null;
-        this.touchStartY = null;
-        this.touchEndX = null;
-        this.touchEndY = null;
-        this.touchMove1 = null;
-        this.touchMove2 = null;
-        this.touchMoveX = null;
-        this.touchMoveY = null;
-        this.velocityX = null;
-        this.velocityY = null;
-        this.longPressTimer = null;
-        this.doubleTapTimer = null;
-        this.doubleTapWaiting = false;
-        this.thresholdX = 0;
-        this.thresholdY = 0;
-        this.disregardVelocityThresholdX = 0;
-        this.disregardVelocityThresholdY = 0;
-        this.swipingHorizontal = false;
-        this.swipingVertical = false;
-        this.swipingDirection = null;
-        this.swipedHorizontal = false;
-        this.swipedVertical = false;
-        this.originalDistance = null;
-        this.newDistance = null;
-        this.scale = null;
-        this.originalAngle = null;
-        this.newAngle = null;
-        this.rotation = null;
-        this.handlers = {
-            panstart: [],
-            panmove: [],
-            panend: [],
-            swipeleft: [],
-            swiperight: [],
-            swipeup: [],
-            swipedown: [],
-            tap: [],
-            doubletap: [],
-            longpress: [],
-            pinch: [],
-            pinchend: [],
-            rotate: [],
-            rotateend: [],
-        };
-        this._onTouchStart = this.onTouchStart.bind(this);
-        this._onTouchMove = this.onTouchMove.bind(this);
-        this._onTouchEnd = this.onTouchEnd.bind(this);
-        this.opts = Object.assign({}, TinyGesture.defaults, options);
-        this.element.addEventListener('touchstart', this._onTouchStart, passiveIfSupported);
-        this.element.addEventListener('touchmove', this._onTouchMove, passiveIfSupported);
-        this.element.addEventListener('touchend', this._onTouchEnd, passiveIfSupported);
-        if (this.opts.mouseSupport && !('ontouchstart' in window)) {
-            this.element.addEventListener('mousedown', this._onTouchStart, passiveIfSupported);
-            document.addEventListener('mousemove', this._onTouchMove, passiveIfSupported);
-            document.addEventListener('mouseup', this._onTouchEnd, passiveIfSupported);
-        }
-    }
-    destroy() {
-        var _a, _b;
-        this.element.removeEventListener('touchstart', this._onTouchStart);
-        this.element.removeEventListener('touchmove', this._onTouchMove);
-        this.element.removeEventListener('touchend', this._onTouchEnd);
-        this.element.removeEventListener('mousedown', this._onTouchStart);
-        document.removeEventListener('mousemove', this._onTouchMove);
-        document.removeEventListener('mouseup', this._onTouchEnd);
-        clearTimeout((_a = this.longPressTimer) !== null && _a !== void 0 ? _a : undefined);
-        clearTimeout((_b = this.doubleTapTimer) !== null && _b !== void 0 ? _b : undefined);
-    }
-    on(type, fn) {
-        if (this.handlers[type]) {
-            this.handlers[type].push(fn);
-            return {
-                type,
-                fn,
-                cancel: () => this.off(type, fn),
-            };
-        }
-    }
-    off(type, fn) {
-        if (this.handlers[type]) {
-            const idx = this.handlers[type].indexOf(fn);
-            if (idx !== -1) {
-                this.handlers[type].splice(idx, 1);
-            }
-        }
-    }
-    fire(type, event) {
-        for (let i = 0; i < this.handlers[type].length; i++) {
-            this.handlers[type][i](event);
-        }
-    }
-    onTouchStart(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1;
-        let didTouch1 = false;
-        let didTouch2 = false;
-        if (event.type !== 'mousedown') {
-            if (!this.touch1) {
-                this.touch1 = event.changedTouches[0];
-                didTouch1 = true;
-            }
-            if (((didTouch1 && event.changedTouches.length > 1) || !didTouch1) && !this.touch2) {
-                this.touch2 =
-                    [...event.changedTouches].find((touch) => { var _a; return touch.identifier !== ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); }) ||
-                        null;
-                this.originalDistance = Math.sqrt(Math.pow(((_b = (_a = this.touch2) === null || _a === void 0 ? void 0 : _a.screenX) !== null && _b !== void 0 ? _b : 0) - ((_f = (_d = (_c = this.touchMove1) === null || _c === void 0 ? void 0 : _c.screenX) !== null && _d !== void 0 ? _d : (_e = this.touch1) === null || _e === void 0 ? void 0 : _e.screenX) !== null && _f !== void 0 ? _f : 0), 2) +
-                    Math.pow(((_h = (_g = this.touch2) === null || _g === void 0 ? void 0 : _g.screenY) !== null && _h !== void 0 ? _h : 0) - ((_m = (_k = (_j = this.touchMove1) === null || _j === void 0 ? void 0 : _j.screenY) !== null && _k !== void 0 ? _k : (_l = this.touch1) === null || _l === void 0 ? void 0 : _l.screenY) !== null && _m !== void 0 ? _m : 0), 2));
-                this.originalAngle =
-                    Math.atan2(((_p = (_o = this.touch2) === null || _o === void 0 ? void 0 : _o.screenY) !== null && _p !== void 0 ? _p : 0) - ((_t = (_r = (_q = this.touchMove1) === null || _q === void 0 ? void 0 : _q.screenY) !== null && _r !== void 0 ? _r : (_s = this.touch1) === null || _s === void 0 ? void 0 : _s.screenY) !== null && _t !== void 0 ? _t : 0), ((_v = (_u = this.touch2) === null || _u === void 0 ? void 0 : _u.screenX) !== null && _v !== void 0 ? _v : 0) - ((_z = (_x = (_w = this.touchMove1) === null || _w === void 0 ? void 0 : _w.screenX) !== null && _x !== void 0 ? _x : (_y = this.touch1) === null || _y === void 0 ? void 0 : _y.screenX) !== null && _z !== void 0 ? _z : 0)) /
-                        (Math.PI / 180);
-                return;
-            }
-            if (!didTouch1 && !didTouch2) {
-                return;
-            }
-        }
-        if (didTouch1 || event.type === 'mousedown') {
-            this.thresholdX = this.opts.threshold('x', this);
-            this.thresholdY = this.opts.threshold('y', this);
-            this.disregardVelocityThresholdX = this.opts.disregardVelocityThreshold('x', this);
-            this.disregardVelocityThresholdY = this.opts.disregardVelocityThreshold('y', this);
-            this.touchStartX = event.type === 'mousedown' ? event.screenX : ((_0 = this.touch1) === null || _0 === void 0 ? void 0 : _0.screenX) || 0;
-            this.touchStartY = event.type === 'mousedown' ? event.screenY : ((_1 = this.touch1) === null || _1 === void 0 ? void 0 : _1.screenY) || 0;
-            this.touchMoveX = null;
-            this.touchMoveY = null;
+        constructor(element, options) {
+            this.element = element;
+            this.touch1 = null;
+            this.touch2 = null;
+            this.touchStartX = null;
+            this.touchStartY = null;
             this.touchEndX = null;
             this.touchEndY = null;
+            this.touchMove1 = null;
+            this.touchMove2 = null;
+            this.touchMoveX = null;
+            this.touchMoveY = null;
+            this.velocityX = null;
+            this.velocityY = null;
+            this.longPressTimer = null;
+            this.doubleTapTimer = null;
+            this.doubleTapWaiting = false;
+            this.thresholdX = 0;
+            this.thresholdY = 0;
+            this.disregardVelocityThresholdX = 0;
+            this.disregardVelocityThresholdY = 0;
+            this.swipingHorizontal = false;
+            this.swipingVertical = false;
             this.swipingDirection = null;
-            this.longPressTimer = setTimeout(() => this.fire('longpress', event), this.opts.longPressTime);
-            this.scale = 1;
-            this.rotation = 0;
-            this.fire('panstart', event);
-        }
-    }
-    onTouchMove(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-        if (event.type === 'mousemove' && (!this.touchStartX || this.touchEndX !== null)) {
-            return;
-        }
-        let touch1 = undefined;
-        let touch2 = undefined;
-        if (event.type !== 'mousemove') {
-            touch1 = [...event.changedTouches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); });
-            this.touchMove1 = touch1 || this.touchMove1;
-            touch2 = [...event.changedTouches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch2) === null || _a === void 0 ? void 0 : _a.identifier); });
-            this.touchMove2 = touch2 || this.touchMove2;
-        }
-        if (event.type === 'mousemove' || touch1) {
-            const touchMoveX = (event.type === 'mousemove' ? event.screenX : (_a = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenX) !== null && _a !== void 0 ? _a : 0) - ((_b = this.touchStartX) !== null && _b !== void 0 ? _b : 0);
-            this.velocityX = touchMoveX - ((_c = this.touchMoveX) !== null && _c !== void 0 ? _c : 0);
-            this.touchMoveX = touchMoveX;
-            const touchMoveY = (event.type === 'mousemove' ? event.screenY : (_d = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenY) !== null && _d !== void 0 ? _d : 0) - ((_e = this.touchStartY) !== null && _e !== void 0 ? _e : 0);
-            this.velocityY = touchMoveY - ((_f = this.touchMoveY) !== null && _f !== void 0 ? _f : 0);
-            this.touchMoveY = touchMoveY;
-            const absTouchMoveX = Math.abs(this.touchMoveX);
-            const absTouchMoveY = Math.abs(this.touchMoveY);
-            this.swipingHorizontal = absTouchMoveX > this.thresholdX;
-            this.swipingVertical = absTouchMoveY > this.thresholdY;
-            this.swipingDirection =
-                absTouchMoveX > absTouchMoveY
-                    ? this.swipingHorizontal
-                        ? 'horizontal'
-                        : 'pre-horizontal'
-                    : this.swipingVertical
-                        ? 'vertical'
-                        : 'pre-vertical';
-            if (Math.max(absTouchMoveX, absTouchMoveY) > this.opts.pressThreshold) {
-                clearTimeout((_g = this.longPressTimer) !== null && _g !== void 0 ? _g : undefined);
-            }
-            this.fire('panmove', event);
-        }
-        if (event.type !== 'mousemove' && this.touchMove1 != null && this.touchMove2 != null) {
-            this.newDistance = Math.sqrt(Math.pow(this.touchMove2.screenX - this.touchMove1.screenX, 2) +
-                Math.pow(this.touchMove2.screenY - this.touchMove1.screenY, 2));
-            this.scale = this.newDistance / ((_h = this.originalDistance) !== null && _h !== void 0 ? _h : 0);
-            this.fire('pinch', event);
-            this.newAngle =
-                Math.atan2(((_j = this.touchMove2.screenY) !== null && _j !== void 0 ? _j : 0) - ((_k = this.touchMove1.screenY) !== null && _k !== void 0 ? _k : 0), ((_l = this.touchMove2.screenX) !== null && _l !== void 0 ? _l : 0) - ((_m = this.touchMove1.screenX) !== null && _m !== void 0 ? _m : 0)) /
-                    (Math.PI / 180);
-            this.rotation = this.newAngle - ((_o = this.originalAngle) !== null && _o !== void 0 ? _o : 0);
-            this.fire('rotate', event);
-        }
-    }
-    onTouchEnd(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-        let touch1 = undefined;
-        if (event.type !== 'mouseup') {
-            touch1 = [...event.changedTouches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); });
-            if (![...event.touches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); })) {
-                this.touch1 = null;
-                this.touchMove1 = null;
-            }
-            if (![...event.touches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch2) === null || _a === void 0 ? void 0 : _a.identifier); })) {
-                this.touch2 = null;
-                this.touchMove2 = null;
-            }
-        }
-        if (event.type === 'mouseup' && (!this.touchStartX || this.touchEndX !== null)) {
-            return;
-        }
-        if (event.type === 'mouseup' || touch1) {
-            this.touchEndX = event.type === 'mouseup' ? event.screenX : (_a = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenX) !== null && _a !== void 0 ? _a : 0;
-            this.touchEndY = event.type === 'mouseup' ? event.screenY : (_b = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenY) !== null && _b !== void 0 ? _b : 0;
-            this.fire('panend', event);
-            clearTimeout((_c = this.longPressTimer) !== null && _c !== void 0 ? _c : undefined);
-            const x = this.touchEndX - ((_d = this.touchStartX) !== null && _d !== void 0 ? _d : 0);
-            const absX = Math.abs(x);
-            const y = this.touchEndY - ((_e = this.touchStartY) !== null && _e !== void 0 ? _e : 0);
-            const absY = Math.abs(y);
-            const distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-            const absDistance = Math.abs(distance);
-            const diagonal = absY / absX;
-            if (absX > this.thresholdX ||
-                absY > this.thresholdY ||
-                (this.opts.diagonalSwipes && (absDistance > this.thresholdX || absDistance > this.thresholdY))) {
-                this.swipedHorizontal = absX > this.thresholdX || (this.opts.diagonalSwipes && absDistance > this.thresholdX);
-                this.swipedVertical = absY > this.thresholdY || (this.opts.diagonalSwipes && absDistance > this.thresholdY);
-                if (!this.opts.diagonalSwipes ||
-                    diagonal < Math.tan(((45 - this.opts.diagonalLimit) * Math.PI) / 180) ||
-                    diagonal > Math.tan(((45 + this.opts.diagonalLimit) * Math.PI) / 180)) {
-                    if (absX >= absY) {
-                        this.swipedVertical = false;
-                    }
-                    if (absY > absX) {
-                        this.swipedHorizontal = false;
-                    }
-                }
-                if (this.swipedHorizontal) {
-                    if (x < 0) {
-                        if (((_f = this.velocityX) !== null && _f !== void 0 ? _f : 0) < -this.opts.velocityThreshold || distance < -this.disregardVelocityThresholdX) {
-                            this.fire('swipeleft', event);
-                        }
-                    }
-                    else {
-                        if (((_g = this.velocityX) !== null && _g !== void 0 ? _g : 0) > this.opts.velocityThreshold || distance > this.disregardVelocityThresholdX) {
-                            this.fire('swiperight', event);
-                        }
-                    }
-                }
-                if (this.swipedVertical) {
-                    if (y < 0) {
-                        if (((_h = this.velocityY) !== null && _h !== void 0 ? _h : 0) < -this.opts.velocityThreshold || distance < -this.disregardVelocityThresholdY) {
-                            this.fire('swipeup', event);
-                        }
-                    }
-                    else {
-                        if (((_j = this.velocityY) !== null && _j !== void 0 ? _j : 0) > this.opts.velocityThreshold || distance > this.disregardVelocityThresholdY) {
-                            this.fire('swipedown', event);
-                        }
-                    }
-                }
-            }
-            else if (absX < this.opts.pressThreshold && absY < this.opts.pressThreshold) {
-                if (this.doubleTapWaiting) {
-                    this.doubleTapWaiting = false;
-                    clearTimeout((_k = this.doubleTapTimer) !== null && _k !== void 0 ? _k : undefined);
-                    this.fire('doubletap', event);
-                }
-                else {
-                    this.doubleTapWaiting = true;
-                    this.doubleTapTimer = setTimeout(() => (this.doubleTapWaiting = false), this.opts.doubleTapTime);
-                    this.fire('tap', event);
-                }
-            }
-        }
-        if (!this.touch1 && !this.touch2) {
-            this.fire('pinchend', event);
-            this.fire('rotateend', event);
+            this.swipedHorizontal = false;
+            this.swipedVertical = false;
             this.originalDistance = null;
             this.newDistance = null;
             this.scale = null;
             this.originalAngle = null;
             this.newAngle = null;
             this.rotation = null;
+            this.handlers = {
+                panstart: [],
+                panmove: [],
+                panend: [],
+                swipeleft: [],
+                swiperight: [],
+                swipeup: [],
+                swipedown: [],
+                tap: [],
+                doubletap: [],
+                longpress: [],
+                pinch: [],
+                pinchend: [],
+                rotate: [],
+                rotateend: [],
+            };
+            this._onTouchStart = this.onTouchStart.bind(this);
+            this._onTouchMove = this.onTouchMove.bind(this);
+            this._onTouchEnd = this.onTouchEnd.bind(this);
+            this.opts = Object.assign({}, TinyGesture.defaults, options);
+            this.element.addEventListener('touchstart', this._onTouchStart, passiveIfSupported);
+            this.element.addEventListener('touchmove', this._onTouchMove, passiveIfSupported);
+            this.element.addEventListener('touchend', this._onTouchEnd, passiveIfSupported);
+            if (this.opts.mouseSupport && !('ontouchstart' in window)) {
+                this.element.addEventListener('mousedown', this._onTouchStart, passiveIfSupported);
+                document.addEventListener('mousemove', this._onTouchMove, passiveIfSupported);
+                document.addEventListener('mouseup', this._onTouchEnd, passiveIfSupported);
+            }
+        }
+        destroy() {
+            var _a, _b;
+            this.element.removeEventListener('touchstart', this._onTouchStart);
+            this.element.removeEventListener('touchmove', this._onTouchMove);
+            this.element.removeEventListener('touchend', this._onTouchEnd);
+            this.element.removeEventListener('mousedown', this._onTouchStart);
+            document.removeEventListener('mousemove', this._onTouchMove);
+            document.removeEventListener('mouseup', this._onTouchEnd);
+            clearTimeout((_a = this.longPressTimer) !== null && _a !== void 0 ? _a : undefined);
+            clearTimeout((_b = this.doubleTapTimer) !== null && _b !== void 0 ? _b : undefined);
+        }
+        on(type, fn) {
+            if (this.handlers[type]) {
+                this.handlers[type].push(fn);
+                return {
+                    type,
+                    fn,
+                    cancel: () => this.off(type, fn),
+                };
+            }
+        }
+        off(type, fn) {
+            if (this.handlers[type]) {
+                const idx = this.handlers[type].indexOf(fn);
+                if (idx !== -1) {
+                    this.handlers[type].splice(idx, 1);
+                }
+            }
+        }
+        fire(type, event) {
+            for (let i = 0; i < this.handlers[type].length; i++) {
+                this.handlers[type][i](event);
+            }
+        }
+        onTouchStart(event) {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1;
+            let didTouch1 = false;
+            let didTouch2 = false;
+            if (event.type !== 'mousedown') {
+                if (!this.touch1) {
+                    this.touch1 = event.changedTouches[0];
+                    didTouch1 = true;
+                }
+                if (((didTouch1 && event.changedTouches.length > 1) || !didTouch1) && !this.touch2) {
+                    this.touch2 =
+                        [...event.changedTouches].find((touch) => { var _a; return touch.identifier !== ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); }) ||
+                            null;
+                    this.originalDistance = Math.sqrt(Math.pow(((_b = (_a = this.touch2) === null || _a === void 0 ? void 0 : _a.screenX) !== null && _b !== void 0 ? _b : 0) - ((_f = (_d = (_c = this.touchMove1) === null || _c === void 0 ? void 0 : _c.screenX) !== null && _d !== void 0 ? _d : (_e = this.touch1) === null || _e === void 0 ? void 0 : _e.screenX) !== null && _f !== void 0 ? _f : 0), 2) +
+                        Math.pow(((_h = (_g = this.touch2) === null || _g === void 0 ? void 0 : _g.screenY) !== null && _h !== void 0 ? _h : 0) - ((_m = (_k = (_j = this.touchMove1) === null || _j === void 0 ? void 0 : _j.screenY) !== null && _k !== void 0 ? _k : (_l = this.touch1) === null || _l === void 0 ? void 0 : _l.screenY) !== null && _m !== void 0 ? _m : 0), 2));
+                    this.originalAngle =
+                        Math.atan2(((_p = (_o = this.touch2) === null || _o === void 0 ? void 0 : _o.screenY) !== null && _p !== void 0 ? _p : 0) - ((_t = (_r = (_q = this.touchMove1) === null || _q === void 0 ? void 0 : _q.screenY) !== null && _r !== void 0 ? _r : (_s = this.touch1) === null || _s === void 0 ? void 0 : _s.screenY) !== null && _t !== void 0 ? _t : 0), ((_v = (_u = this.touch2) === null || _u === void 0 ? void 0 : _u.screenX) !== null && _v !== void 0 ? _v : 0) - ((_z = (_x = (_w = this.touchMove1) === null || _w === void 0 ? void 0 : _w.screenX) !== null && _x !== void 0 ? _x : (_y = this.touch1) === null || _y === void 0 ? void 0 : _y.screenX) !== null && _z !== void 0 ? _z : 0)) /
+                            (Math.PI / 180);
+                    return;
+                }
+                if (!didTouch1 && !didTouch2) {
+                    return;
+                }
+            }
+            if (didTouch1 || event.type === 'mousedown') {
+                this.thresholdX = this.opts.threshold('x', this);
+                this.thresholdY = this.opts.threshold('y', this);
+                this.disregardVelocityThresholdX = this.opts.disregardVelocityThreshold('x', this);
+                this.disregardVelocityThresholdY = this.opts.disregardVelocityThreshold('y', this);
+                this.touchStartX = event.type === 'mousedown' ? event.screenX : ((_0 = this.touch1) === null || _0 === void 0 ? void 0 : _0.screenX) || 0;
+                this.touchStartY = event.type === 'mousedown' ? event.screenY : ((_1 = this.touch1) === null || _1 === void 0 ? void 0 : _1.screenY) || 0;
+                this.touchMoveX = null;
+                this.touchMoveY = null;
+                this.touchEndX = null;
+                this.touchEndY = null;
+                this.swipingDirection = null;
+                this.longPressTimer = setTimeout(() => this.fire('longpress', event), this.opts.longPressTime);
+                this.scale = 1;
+                this.rotation = 0;
+                this.fire('panstart', event);
+            }
+        }
+        onTouchMove(event) {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+            if (event.type === 'mousemove' && (!this.touchStartX || this.touchEndX !== null)) {
+                return;
+            }
+            let touch1 = undefined;
+            let touch2 = undefined;
+            if (event.type !== 'mousemove') {
+                touch1 = [...event.changedTouches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); });
+                this.touchMove1 = touch1 || this.touchMove1;
+                touch2 = [...event.changedTouches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch2) === null || _a === void 0 ? void 0 : _a.identifier); });
+                this.touchMove2 = touch2 || this.touchMove2;
+            }
+            if (event.type === 'mousemove' || touch1) {
+                const touchMoveX = (event.type === 'mousemove' ? event.screenX : (_a = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenX) !== null && _a !== void 0 ? _a : 0) - ((_b = this.touchStartX) !== null && _b !== void 0 ? _b : 0);
+                this.velocityX = touchMoveX - ((_c = this.touchMoveX) !== null && _c !== void 0 ? _c : 0);
+                this.touchMoveX = touchMoveX;
+                const touchMoveY = (event.type === 'mousemove' ? event.screenY : (_d = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenY) !== null && _d !== void 0 ? _d : 0) - ((_e = this.touchStartY) !== null && _e !== void 0 ? _e : 0);
+                this.velocityY = touchMoveY - ((_f = this.touchMoveY) !== null && _f !== void 0 ? _f : 0);
+                this.touchMoveY = touchMoveY;
+                const absTouchMoveX = Math.abs(this.touchMoveX);
+                const absTouchMoveY = Math.abs(this.touchMoveY);
+                this.swipingHorizontal = absTouchMoveX > this.thresholdX;
+                this.swipingVertical = absTouchMoveY > this.thresholdY;
+                this.swipingDirection =
+                    absTouchMoveX > absTouchMoveY
+                        ? this.swipingHorizontal
+                            ? 'horizontal'
+                            : 'pre-horizontal'
+                        : this.swipingVertical
+                            ? 'vertical'
+                            : 'pre-vertical';
+                if (Math.max(absTouchMoveX, absTouchMoveY) > this.opts.pressThreshold) {
+                    clearTimeout((_g = this.longPressTimer) !== null && _g !== void 0 ? _g : undefined);
+                }
+                this.fire('panmove', event);
+            }
+            if (event.type !== 'mousemove' && this.touchMove1 != null && this.touchMove2 != null) {
+                this.newDistance = Math.sqrt(Math.pow(this.touchMove2.screenX - this.touchMove1.screenX, 2) +
+                    Math.pow(this.touchMove2.screenY - this.touchMove1.screenY, 2));
+                this.scale = this.newDistance / ((_h = this.originalDistance) !== null && _h !== void 0 ? _h : 0);
+                this.fire('pinch', event);
+                this.newAngle =
+                    Math.atan2(((_j = this.touchMove2.screenY) !== null && _j !== void 0 ? _j : 0) - ((_k = this.touchMove1.screenY) !== null && _k !== void 0 ? _k : 0), ((_l = this.touchMove2.screenX) !== null && _l !== void 0 ? _l : 0) - ((_m = this.touchMove1.screenX) !== null && _m !== void 0 ? _m : 0)) /
+                        (Math.PI / 180);
+                this.rotation = this.newAngle - ((_o = this.originalAngle) !== null && _o !== void 0 ? _o : 0);
+                this.fire('rotate', event);
+            }
+        }
+        onTouchEnd(event) {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+            let touch1 = undefined;
+            if (event.type !== 'mouseup') {
+                touch1 = [...event.changedTouches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); });
+                if (![...event.touches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch1) === null || _a === void 0 ? void 0 : _a.identifier); })) {
+                    this.touch1 = null;
+                    this.touchMove1 = null;
+                }
+                if (![...event.touches].find((touch) => { var _a; return touch.identifier === ((_a = this.touch2) === null || _a === void 0 ? void 0 : _a.identifier); })) {
+                    this.touch2 = null;
+                    this.touchMove2 = null;
+                }
+            }
+            if (event.type === 'mouseup' && (!this.touchStartX || this.touchEndX !== null)) {
+                return;
+            }
+            if (event.type === 'mouseup' || touch1) {
+                this.touchEndX = event.type === 'mouseup' ? event.screenX : (_a = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenX) !== null && _a !== void 0 ? _a : 0;
+                this.touchEndY = event.type === 'mouseup' ? event.screenY : (_b = touch1 === null || touch1 === void 0 ? void 0 : touch1.screenY) !== null && _b !== void 0 ? _b : 0;
+                this.fire('panend', event);
+                clearTimeout((_c = this.longPressTimer) !== null && _c !== void 0 ? _c : undefined);
+                const x = this.touchEndX - ((_d = this.touchStartX) !== null && _d !== void 0 ? _d : 0);
+                const absX = Math.abs(x);
+                const y = this.touchEndY - ((_e = this.touchStartY) !== null && _e !== void 0 ? _e : 0);
+                const absY = Math.abs(y);
+                const distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+                const absDistance = Math.abs(distance);
+                const diagonal = absY / absX;
+                if (absX > this.thresholdX ||
+                    absY > this.thresholdY ||
+                    (this.opts.diagonalSwipes && (absDistance > this.thresholdX || absDistance > this.thresholdY))) {
+                    this.swipedHorizontal = absX > this.thresholdX || (this.opts.diagonalSwipes && absDistance > this.thresholdX);
+                    this.swipedVertical = absY > this.thresholdY || (this.opts.diagonalSwipes && absDistance > this.thresholdY);
+                    if (!this.opts.diagonalSwipes ||
+                        diagonal < Math.tan(((45 - this.opts.diagonalLimit) * Math.PI) / 180) ||
+                        diagonal > Math.tan(((45 + this.opts.diagonalLimit) * Math.PI) / 180)) {
+                        if (absX >= absY) {
+                            this.swipedVertical = false;
+                        }
+                        if (absY > absX) {
+                            this.swipedHorizontal = false;
+                        }
+                    }
+                    if (this.swipedHorizontal) {
+                        if (x < 0) {
+                            if (((_f = this.velocityX) !== null && _f !== void 0 ? _f : 0) < -this.opts.velocityThreshold || distance < -this.disregardVelocityThresholdX) {
+                                this.fire('swipeleft', event);
+                            }
+                        }
+                        else {
+                            if (((_g = this.velocityX) !== null && _g !== void 0 ? _g : 0) > this.opts.velocityThreshold || distance > this.disregardVelocityThresholdX) {
+                                this.fire('swiperight', event);
+                            }
+                        }
+                    }
+                    if (this.swipedVertical) {
+                        if (y < 0) {
+                            if (((_h = this.velocityY) !== null && _h !== void 0 ? _h : 0) < -this.opts.velocityThreshold || distance < -this.disregardVelocityThresholdY) {
+                                this.fire('swipeup', event);
+                            }
+                        }
+                        else {
+                            if (((_j = this.velocityY) !== null && _j !== void 0 ? _j : 0) > this.opts.velocityThreshold || distance > this.disregardVelocityThresholdY) {
+                                this.fire('swipedown', event);
+                            }
+                        }
+                    }
+                }
+                else if (absX < this.opts.pressThreshold && absY < this.opts.pressThreshold) {
+                    if (this.doubleTapWaiting) {
+                        this.doubleTapWaiting = false;
+                        clearTimeout((_k = this.doubleTapTimer) !== null && _k !== void 0 ? _k : undefined);
+                        this.fire('doubletap', event);
+                    }
+                    else {
+                        this.doubleTapWaiting = true;
+                        this.doubleTapTimer = setTimeout(() => (this.doubleTapWaiting = false), this.opts.doubleTapTime);
+                        this.fire('tap', event);
+                    }
+                }
+            }
+            if (!this.touch1 && !this.touch2) {
+                this.fire('pinchend', event);
+                this.fire('rotateend', event);
+                this.originalDistance = null;
+                this.newDistance = null;
+                this.scale = null;
+                this.originalAngle = null;
+                this.newAngle = null;
+                this.rotation = null;
+            }
         }
     }
-}
-TinyGesture.defaults = {
-    threshold: (type, _self) => Math.max(25, Math.floor(0.15 *
-        (type === 'x'
-            ? window.innerWidth || document.body.clientWidth
-            : window.innerHeight || document.body.clientHeight))),
-    velocityThreshold: 10,
-    disregardVelocityThreshold: (type, self) => Math.floor(0.5 * (type === 'x' ? self.element.clientWidth : self.element.clientHeight)),
-    pressThreshold: 8,
-    diagonalSwipes: false,
-    diagonalLimit: 15,
-    longPressTime: 500,
-    doubleTapTime: 300,
-    mouseSupport: true,
-};
- 
-let passiveIfSupported = false;
-try {
-    window.addEventListener('test', null, Object.defineProperty({}, 'passive',{
-        get: function () {
-            passiveIfSupported = { passive: true };
-        },
-    }));
-}
-catch (err) { }
+    TinyGesture.defaults = {
+        threshold: (type, _self) => Math.max(25, Math.floor(0.15 *
+            (type === 'x'
+                ? window.innerWidth || document.body.clientWidth
+                : window.innerHeight || document.body.clientHeight))),
+        velocityThreshold: 10,
+        disregardVelocityThreshold: (type, self) => Math.floor(0.5 * (type === 'x' ? self.element.clientWidth : self.element.clientHeight)),
+        pressThreshold: 8,
+        diagonalSwipes: false,
+        diagonalLimit: 15,
+        longPressTime: 500,
+        doubleTapTime: 300,
+        mouseSupport: true,
+    };
+    let passiveIfSupported = false;
+    try {
+        window.addEventListener('test', null, Object.defineProperty({}, 'passive', {
+            get: function () {
+                passiveIfSupported = { passive: true };
+            },
+        }));
+    }
+    catch (err) { }
 
-FrontBx.set('TinyGesture', TinyGesture);
-   
+    FrontBx.set('TinyGesture', TinyGesture);
 
 })();
-
-
-/**
- * drawer
- *
- * The drawer class is a utility class used to
- * display a drawer.
- *
- */
 (function()
 {
     /**
@@ -9920,7 +9883,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      * 
      * @var {Function}
      */
-    const [find, find_all, each, dom_element, add_class, toggle_class, on, off, has_class, remove_class, remove_from_dom, css, height, preapend, scroll_pos, animate_css, rendered_style] = FrontBx.import(['find','find_all','each','dom_element','add_class','toggle_class','on','off','has_class','remove_class','remove_from_dom', 'css', 'height', 'preapend', 'scroll_pos', 'animate_css', 'rendered_style']).from('_');
+    const [find, find_all, each, dom_element, add_class, toggle_class, on, off, has_class, remove_class, remove_from_dom, css, height, width, preapend, scroll_pos, animate_css, rendered_style] = FrontBx.import(['find','find_all','each','dom_element','add_class','toggle_class','on','off','has_class','remove_class','remove_from_dom', 'css', 'height', 'width', 'preapend', 'scroll_pos', 'animate_css', 'rendered_style']).from('_');
 
     /**
      * Default options
@@ -9953,6 +9916,9 @@ FrontBx.set('TinyGesture', TinyGesture);
         // Adapt body body
         persistent: false,
 
+        // Responsive
+        responsive: false,
+
         // Push body instead of changing width
         pushbody: false,
 
@@ -9967,9 +9933,6 @@ FrontBx.set('TinyGesture', TinyGesture);
         
         // Additional classes to apply to wrapper
         classes: '',
-
-        // Animate mounting
-        //animateOnMount
 
         // State callbacks
         callbackBuilt:    () => { },
@@ -10057,6 +10020,9 @@ FrontBx.set('TinyGesture', TinyGesture);
         // Do we have an overlay
         this._hasOverlay = !this._options.persistent || (this._options.persistent && this._options.persistentOverlay);
 
+        // Cache resize throttle
+        this._resizeThrottle = throttle(() => this.resize(), 100);
+
         // Build the drawer
         this._build();
 
@@ -10114,6 +10080,27 @@ FrontBx.set('TinyGesture', TinyGesture);
     }
 
     /**
+     * Window resize handler
+     *
+     * @access {public}
+     */
+    Drawer.prototype.resize = function()
+    {
+        if (this._animating) return;
+
+        let x = width(window);
+
+        if (x < 768 && this.opened())
+        {
+            this.close();
+        }
+        else if (x > 768 && this.closed())
+        {
+            this.open();
+        }
+    }
+
+    /**
      * Destroy drawer.
      *
      * @access {public}
@@ -10128,6 +10115,11 @@ FrontBx.set('TinyGesture', TinyGesture);
 
         // Unwrap body
         if (this._options.persistent) this._unwrapBody();
+
+        if (this._options.responsive && this._options.persistent) 
+        {
+            off(window, 'resize', this._resizeThrottle, this);
+        }
 
         if (WRAPPED_DRAWERS <= 0)
         {
@@ -10224,8 +10216,8 @@ FrontBx.set('TinyGesture', TinyGesture);
 
         if (!peekable)
         {
-            let x = (direction === 'left' || direction === 'right') ? (direction === 'left' ? '-105%' : '105%') : '0px';
-            let y = (direction === 'top' || direction === 'bottom') ? (direction === 'top' ? '-105%' : '105%') : '0px';
+            let x = (direction === 'left' || direction === 'right') ? (direction === 'left' ? '-100%' : '100%') : '0px';
+            let y = (direction === 'top' || direction === 'bottom') ? (direction === 'top' ? '-100%' : '100%') : '0px';
             let tofrom = `translate3d(${x}, ${y}, 0px)`;
 
             state === 'expanded' ? to = tofrom : from = tofrom;
@@ -10265,7 +10257,8 @@ FrontBx.set('TinyGesture', TinyGesture);
         let duration  = this._options.animationTime;
         let easing    = this._options.easing;
         let property  = 'margin';
-        let n = e =s = w = '0px';
+        let n, e, s, w;
+        n = e = s = w = '0px';
 
         if (direction === 'left')   w = state === 'collapsed' ? this._drawerSize  : (peekable ? this._peekableSize : '0px');
         if (direction === 'right')  e = state === 'collapsed' ? this._drawerSize  : (peekable ? this._peekableSize : '0px');
@@ -10280,7 +10273,8 @@ FrontBx.set('TinyGesture', TinyGesture);
 
             if (state === 'collapsed')
             {
-                let x = y = '0px';
+                let x, y;
+                x = y = '0px';
                 if (e !== '0px') x = `-${e}`;
                 if (w !== '0px') x = w;
                 if (n !== '0px') y = n;
@@ -10321,7 +10315,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     {
         let container = dom_element({tag: 'div', class: `js-drawer-container drawer-container drawer-${this._options.direction} ${this._options.persistent ? 'persistent' : ''} ${this._options.peekable ? 'peekable' : null } overlay-${this._options.overlay} ${this._options.classes}`});
         let overlay   = dom_element({tag: 'div', class: 'js-drawer-overlay drawer-overlay'}, !this._hasOverlay ? null : container);
-        let drawer    = dom_element({tag: 'div', class: 'js-drawer-wrap drawer-wrap'}, container, 
+        let drawer    = dom_element({tag: 'aside', class: 'js-drawer-wrap drawer-wrap'}, container, 
             dom_element({tag: 'div', class: 'drawer-dialog js-drawer-dialog' }, null, this._options.content )
         );
 
@@ -10354,8 +10348,8 @@ FrontBx.set('TinyGesture', TinyGesture);
 
         this._containerWrap.offsetHeight;
 
-        this._peekableSize = this._options.peekableSize || rendered_style(this._containerWrap, '--hb-drawer-size-peekable');
-        this._drawerSize   = this._options.drawerSize || rendered_style(this._containerWrap, '--hb-drawer-width');
+        this._peekableSize = this._options.peekableSize || rendered_style(this._containerWrap, '--fbx-drawer-size-peekable');
+        this._drawerSize   = this._options.drawerSize || rendered_style(this._containerWrap, '--fbx-drawer-width');
 
         if (this._options.persistent) this._wrapBody();
 
@@ -10456,7 +10450,17 @@ FrontBx.set('TinyGesture', TinyGesture);
      */
     Drawer.prototype._bindListeners = function()
     {
-        if (!this._options.fromHTML) FrontBx.dom().refresh(this._containerWrap);
+        if (!this._options.fromHTML) 
+        {
+            let context = this._options.persistent ? this._drawer : this._containerWrap;
+            
+            FrontBx.dom().refresh(context);
+        }
+
+        if (this._options.responsive && this._options.persistent) 
+        {
+            on(window, 'resize', this._resizeThrottle, this);
+        }
 
         on(this._overlay, 'click', this._closeValidate, this);
 
@@ -10483,14 +10487,6 @@ FrontBx.set('TinyGesture', TinyGesture);
     FrontBx.set('Drawer', Drawer);
 
 })();
-
-/**
- * Modal
- *
- * The Modal class is a utility class used to
- * display a modal.
- *
- */
 (function()
 {
     /**
@@ -10607,14 +10603,6 @@ FrontBx.set('TinyGesture', TinyGesture);
     FrontBx.set('Frontdrop', extend(Drawer, Frontdrop));
 
 })();
-
-/**
- * Modal
- *
- * The Modal class is a utility class used to
- * display a modal.
- *
- */
 (function()
 {
     /**
@@ -10652,16 +10640,7 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into container 
     FrontBx.set('Backdrop', extend(Drawer, Backdrop));
-
 })();
-
-/**
- * Modal
- *
- * The Modal class is a utility class used to
- * display a Modal.
- *
- */
 (function()
 {
     /**
@@ -10979,7 +10958,6 @@ FrontBx.set('TinyGesture', TinyGesture);
     FrontBx.set('Modal', Modal);
 
 })();
-
 (function()
 {
     /**
@@ -11090,8 +11068,8 @@ FrontBx.set('TinyGesture', TinyGesture);
      * @access {private}
      */
     Notification.prototype._build = function()
-    {
-        options = this._options;
+    {        
+        let options = this._options;
 
         this._animateInClass = this._animateIn();
 
@@ -11196,7 +11174,6 @@ FrontBx.set('TinyGesture', TinyGesture);
     FrontBx.set('Notification', Notification);
 
 })();
-
 (function()
 {
     /**
@@ -11205,7 +11182,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      * @var {Function}
      */
     const [find, in_dom, normalize_url, is_string, coordinates, animate] = FrontBx.import(['find','in_dom','normalize_url','is_string','coordinates','animate']).from('_');
-    
+
     /**
      * Default options
      * 
@@ -11249,8 +11226,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.set('SmoothScroll', SmoothScroll);
 
-}());
-
+})();
 (function()
 {
     /**
@@ -11414,7 +11390,7 @@ FrontBx.set('TinyGesture', TinyGesture);
 
         return { seperators, regexp, prefix, suffix, raw, len };
     }
-    
+
     /**
      * Custom format function.
      *
@@ -11505,15 +11481,15 @@ FrontBx.set('TinyGesture', TinyGesture);
     // SET IN IOC
     FrontBx.set('InputMasker', InputMasker);
 
-}());
-
-
+})();
 (function()
 {
     /**
-     * @var {Helper} obj
+     * Helper functions
+     * 
+     * @var {Function}
      */
-    const Helper = FrontBx._();
+    const [find_all, add_class, attr, bool, closest, each, form_inputs, form_values, in_dom, input_value, is_callable, is_empty, remove_class] = FrontBx.import(['find_all','add_class','attr','bool','closest','each','form_inputs','form_values','in_dom','input_value','is_callable','is_empty','remove_class']).from('_');
 
     /**
      * Validator functions
@@ -11617,224 +11593,206 @@ FrontBx.set('TinyGesture', TinyGesture);
      * also apply and classes to display form results and input errors.
      *
      */
-    class FormValidator
+    const FormValidator = function(form)
     {
-        /**
-         * Module constructor
-         *
-         * @class
-         * @param  {DOMElement} form
-         * @access {public}
-         * @return {this}
-         */
-        constructor(form)
+        // Save inputs
+        this._DOMElementForm = form;
+        this._DOMElementsFormFields = find_all('.form-field', form);
+        this._inputs = form_inputs(form);
+
+        // Defaults
+        this._rulesIndex = [];
+        this._invalids   = [];
+        this._formObj    = {};
+
+        // Initialize
+        this._indexValidations();
+    }
+
+    /**
+     *  Is the form valid?
+     *
+     * @access {public}
+     * @return {boolean}
+     */
+    FormValidator.prototype.isValid = function()
+    {
+        return this._validateForm();
+    }
+
+    /**
+     * Show invalid inputs
+     *
+     * @access {public}
+     */
+    FormValidator.prototype.showInvalid = function()
+    {
+        this._clearForm();
+
+        each(this._invalids, function(i, input)
         {
-            // Save inputs
-            this._DOMElementForm = form;
-            this._DOMElementsFormFields = Helper.$All('.form-field', form);
-            this._inputs = Helper.form_inputs(form);
+            var fieldWrap = closest(input, '.form-field');
 
-            // Defaults
-            this._rulesIndex = [];
-            this._invalids   = [];
-            this._formObj    = {};
+            if (in_dom(fieldWrap)) add_class(fieldWrap, 'danger');
+        });
+    }
 
-            // Initialize
-            this._indexValidations();
+    /**
+     * Remove errored inputs
+     *
+     * @access {public}
+     */
+    FormValidator.prototype.clearInvalid = function()
+    {
+        this._clearForm();
+    }
 
-            return this;
-        }
+    /**
+     * Show form result
+     *
+     * @access {public}
+     */
+    FormValidator.prototype.showResult = function(result)
+    {
+        this._clearForm();
 
-        // PUBLIC ACCESS
+        add_class(this._DOMElementForm, result);
+    }
 
-        /**
-         *  Is the form valid?
-         *
-         * @access {public}
-         * @return {boolean}
-         */
-        isValid()
+    /**
+     * Append a key/pair and return form obj
+     *
+     * @access {public}
+     * @return {obj}
+     */
+    FormValidator.prototype.append = function(key, value)
+    {
+        this._formObj[key] = value;
+
+        let form = this.form();
+
+        return {...form, ...this._formObj};
+    };
+
+    /**
+     * Get the form object
+     *
+     * @access {public}
+     * @return {obj}
+     */
+    FormValidator.prototype.form = function()
+    {
+        return form_values(this._DOMElementForm);
+    }
+
+    /**
+     * Index form inputs by name and rules
+     *
+     * @access {public}
+     */
+    FormValidator.prototype._indexValidations = function()
+    {
+        each(this._inputs, function(i, input)
         {
-            return this._validateForm();
-        }
+            // No name
+            if (!input.name) return;
 
-        /**
-         * Show invalid inputs
-         *
-         * @access {public}
-         */
-        showInvalid()
-        {
-            this._clearForm();
-
-            Helper.each(this._invalids, function(i, input)
+            this._rulesIndex.push(
             {
-                var fieldWrap = Helper.closest(input, '.form-field');
-
-                if (Helper.in_dom(fieldWrap)) Helper.add_class(fieldWrap, 'danger');
+                node:       input,
+                required:   bool(attr(input, 'data-js-required')),
+                minlength:  attr(input, 'data-js-min-length'),
+                maxlength:  attr(input, 'data-js-max-length'),
+                validation: this._validationFunc(attr(input, 'data-js-validation')),
+                valid:      true,
             });
-        }
 
-        /**
-         * Remove errored inputs
-         *
-         * @access {public}
-         */
-        clearInvalid()
+        }, this);
+    }
+
+    /**
+     * Index form inputs by name and rules
+     *
+     * @access {public}
+     */
+    FormValidator.prototype._validationFunc = function(name)
+    {
+        if (!name) return;
+
+        let key = name.replaceAll('-', '').toLowerCase();
+
+        if (!VALIDATORS[key]) throw new error(`Unsupported input validation [${name}].`)
+
+        return VALIDATORS[key];
+    }
+
+    /**
+     * Validate the form inputs
+     *
+     * @access {private}
+     * @return {boolean}
+     */
+    FormValidator.prototype._validateForm = function()
+    {
+        this._invalids = [];
+        this._isValid  = true;
+
+        each(this._rulesIndex, function(i, ruleset)
         {
-            this._clearForm();
-        }
+            let input = ruleset.node;
+            let value = input_value(ruleset.node);
 
-        /**
-         * Show form result
-         *
-         * @access {public}
-         */
-        showResult(result)
-        {
-            this._clearForm();
-
-            Helper.add_class(this._DOMElementForm, result);
-        }
-
-        /**
-         * Append a key/pair and return form obj
-         *
-         * @access {public}
-         * @return {obj}
-         */
-        append(key, value)
-        {
-            this._formObj[key] = value;
-
-            let form = this.form();
-
-            return {...form, ...this._formObj};
-        };
-
-        /**
-         * Get the form object
-         *
-         * @access {public}
-         * @return {obj}
-         */
-        form()
-        {
-            return Helper.form_values(this._DOMElementForm);
-        }
-
-        // PRIVATE FUNCTIONS
-
-        /**
-         * Index form inputs by name and rules
-         *
-         * @access {public}
-         */
-        _indexValidations()
-        {
-            Helper.each(this._inputs, function(i, input)
+            // Skip radios, they don't have any validation
+            if (input.type === 'radio') return;
+            
+            if (ruleset.required && is_empty(value))
             {
-                // No name
-                if (!input.name) return;
-
-                this._rulesIndex.push(
-                {
-                    node:       input,
-                    required:   Helper.bool(Helper.attr(input, 'data-js-required')),
-                    minlength:  Helper.attr(input, 'data-js-min-length'),
-                    maxlength:  Helper.attr(input, 'data-js-max-length'),
-                    validation: this._validationFunc(Helper.attr(input, 'data-js-validation')),
-                    valid:      true,
-                });
-
-            }, this);
-        }
-
-        /**
-         * Index form inputs by name and rules
-         *
-         * @access {public}
-         */
-        _validationFunc(name)
-        {
-            if (!name) return;
-
-            let key = name.replaceAll('-', '').toLowerCase();
-
-            if (!VALIDATORS[key]) throw new error(`Unsupported input validation [${name}].`)
-
-            return VALIDATORS[key];
-        }
-
-        /**
-         * Validate the form inputs
-         *
-         * @access {private}
-         * @return {boolean}
-         */
-        _validateForm()
-        {
-            this._invalids = [];
-            this._isValid  = true;
-
-            Helper.each(this._rulesIndex, function(i, ruleset)
+                this._devalidate(input);
+            }
+            else if (ruleset.minlength && !VALIDATORS.minlength.call(null, value, ruleset.minlength))
             {
-                let input = ruleset.node;
-                let value = Helper.input_value(ruleset.node);
+                this._devalidate(input);
+            }
+            else if (ruleset.maxlength && !VALIDATORS.maxlength.call(null, value, ruleset.maxlength))
+            {
+                this._devalidate(input);
+            }
+            else if (is_callable(ruleset.validation) && !ruleset.validation.call(null, value))
+            {
+                this._devalidate(input);
+            }
 
-                // Skip radios, they don't have any validation
-                if (input.type === 'radio') return;
-                
-                if (ruleset.required && Helper.is_empty(value))
-                {
-                    this._devalidate(input);
-                }
-                else if (ruleset.minlength && !VALIDATORS.minlength.call(null, value, ruleset.minlength))
-                {
-                    this._devalidate(input);
-                }
-                else if (ruleset.maxlength && !VALIDATORS.maxlength.call(null, value, ruleset.maxlength))
-                {
-                    this._devalidate(input);
-                }
-                else if (Helper.is_callable(ruleset.validation) && !ruleset.validation.call(null, value))
-                {
-                    this._devalidate(input);
-                }
+        }, this);
 
-            }, this);
+        return this._isValid;
+    }
 
-            return this._isValid;
-        }
+    /**
+     * Mark an input as not valid (internally)
+     *
+     * @access {private}
+     * @return {obj}
+     */
+    FormValidator.prototype._devalidate = function(node)
+    {
+        this._isValid = false;
 
-        /**
-         * Mark an input as not valid (internally)
-         *
-         * @access {private}
-         * @return {obj}
-         */
-        _devalidate(node)
-        {
-            this._isValid = false;
+        this._invalids.push(node);
+    }
 
-            this._invalids.push(node);
-        }
+    /**
+     * Clear form result and input errors
+     *
+     * @access {private}
+     * @return {obj}
+     */
+    FormValidator.prototype._clearForm = function()
+    {
+        // Remove the form result
+        remove_class(this._DOMElementForm, ['info', 'success', 'warning', 'danger']);
 
-        /**
-         * Clear form result and input errors
-         *
-         * @access {private}
-         * @return {obj}
-         */
-        _clearForm()
-        {
-            // Remove the form result
-            Helper.remove_class(this._DOMElementForm, ['info', 'success', 'warning', 'danger']);
-
-            // Make all input elements 'valid' - i.e hide the error msg and styles.
-            Helper.remove_class(this._DOMElementsFormFields, ['info', 'success', 'warning', 'danger']);
-        }
-        
+        // Make all input elements 'valid' - i.e hide the error msg and styles.
+        remove_class(this._DOMElementsFormFields, ['info', 'success', 'warning', 'danger']);
     }
 
     // Load into container
@@ -11842,8 +11800,7 @@ FrontBx.set('TinyGesture', TinyGesture);
 
 })();
 
-
-// DOM Components
+// dom components
 (function()
 {
     /**
@@ -11909,7 +11866,7 @@ FrontBx.set('TinyGesture', TinyGesture);
         velocityThreshold: 3,
         
     };
-    
+
     /**
      * Slider.
      *
@@ -12830,7 +12787,7 @@ FrontBx.set('TinyGesture', TinyGesture);
 
         this.toSlide(index, true, true);
     }
-    
+
     /**
      * Update index from previous / next.
      *
@@ -13011,7 +12968,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      * @var {Function}
      */
     const [attr, each, map, extend, dom_element, json_decode] = FrontBx.import(['attr', 'each', 'map', 'extend', 'dom_element', 'json_decode']).from('_');
-    
+
     /**
      * Slider instances.
      * 
@@ -13030,7 +12987,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     {
         this.super('.js-slider');
     }
-    
+
     /**
      * @inheritdoc
      * 
@@ -13074,9 +13031,7 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('Slider', extend(Component, Slider));
-
 })();
-
 (function()
 {
     /**
@@ -13085,7 +13040,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      * @var {Function}
      */
     const [in_dom, coordinates] = FrontBx.import(['in_dom','coordinates']).from('_');
-    
+
     /**
      * Popover Handler
      *
@@ -13198,8 +13153,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Set into container for private use
     FrontBx.set('PopHandler', PopHandler);
 
-}());
-
+})();
 (function()
 {
     /**
@@ -13591,8 +13545,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.set('Chip', createChip);
 
-}());
-
+})();
 (function()
 {
     /**
@@ -13620,7 +13573,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     {
         this.super('.js-chips-input');
     }
-   
+
     /**
      * Init a chips input
      *
@@ -13799,8 +13752,110 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.dom().register('ChipInputs', extend(Component, ChipInputs));
 
-}());
+})();
+(function()
+{
+    /**
+     * Component base
+     * 
+     * @var {class}
+     */
+    const [Component] = FrontBx.get('Component');
 
+    /**
+     * Helper functions
+     * 
+     * @var {Function}
+     */
+    const [find, add_class, on, closest, has_class, remove_class, off, attr, css, dom_element, extend] = FrontBx.import(['find','add_class','on','closest','has_class','remove_class','off','attr','css','dom_element','extend']).from('_');
+
+    /**
+     * Dropdown Buttons
+     *
+     * @author    {Joe J. Howard}
+     * @copyright {Joe J. Howard}
+     * @license   {https://raw.githubusercontent.comfrontbx/uimaster/LICENSE}
+     */
+    const Menu = function()
+    {
+        this.super('.js-select-menu > *:not(.menu-divider):not(.menu-header), .js-check-menu > *:not(.menu-divider):not(.menu-header), .js-active-menu > *:not(.menu-divider):not(.menu-header)');
+    }
+
+    /**
+     * @inheritdoc
+     * 
+     */
+    Menu.prototype.bind = function(node)
+    {
+        on(node, 'click', this._clickHandler, this);
+    }
+
+     /**
+     * @inheritdoc
+     * 
+     */
+    Menu.prototype.unbind = function(node)
+    {
+        off(node, 'click', this._clickHandler, this);
+    }
+
+    /**
+     * Click event handler
+     *
+     * @param  {event|null} e JavaScript Click event
+     * @access {private}
+     */
+    Menu.prototype._clickHandler = function(e, item)
+    {
+        // Nothing to do
+        if (has_class(item, 'selected') || has_class(item, 'active') || has_class(item, 'checked')) return;
+
+        // Menu and class
+        let menu        = closest(item, '.js-select-menu') || closest(item, '.js-check-menu') || closest(item, '.js-active-menu');
+        let activeClass = has_class(menu, 'js-select-menu') ? 'selected' : (has_class(menu, 'js-check-menu') ? 'checked' : 'active');
+        let selected    = find(`> .${activeClass}`, menu);
+        let isCheck     = activeClass === 'checked';
+        let content     = item.innerText.trim();
+            
+        if (selected) remove_class(selected, activeClass);
+        
+        add_class(item, activeClass);
+
+        if (isCheck)
+        {
+            if (selected)
+            {
+                let selectedCheck = find('.item-right .fa.fa-check', selected);
+
+                if (selectedCheck) css(selectedCheck.parentNode, 'display', 'none');
+            }
+            
+            let check = find('.item-right .fa', item);
+
+            if (!check)
+            {
+                let itemContent = find('.item-body', item);
+
+                if (!itemContent)
+                {
+                    item.innerText = '';
+
+                    dom_element({tag: 'span', class: 'item-body'}, item, content);
+                }
+
+                dom_element({tag: 'span', class: 'item-right'}, item, dom_element({tag: 'span', class: 'fa fa-check'}));
+            }
+            else
+            {
+                attr(check.parentNode, 'style', false);
+            }
+        }
+    }
+
+    // Load into FrontBx DOM core
+    FrontBx.dom().register('Menu', extend(Component, Menu));
+
+})();
 (function()
 {
     /**
@@ -13894,8 +13949,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.dom().register('ChipSuggestions', extend(Component, ChipSuggestions));
 
-}());
-
+})();
 (function()
 {
     /**
@@ -13977,8 +14031,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.dom().register('ChoiceChips', extend(Component, ChoiceChips));
 
-}());
-
+})();
 (function()
 {
     /**
@@ -14045,8 +14098,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.dom().register('FilterChips', extend(Component, FilterChips));
 
-}());
-
+})();
 (function()
 {
     /**
@@ -14161,34 +14213,27 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('Modal', extend(Component, Modal));
-
-}());
-
+})();
 (function()
 {
-    /**
-     * Component base
-     * 
-     * @var {class}
-     */
     const [Component] = FrontBx.get('Component');
-   
+
     /**
      * Helper functions
      * 
      * @var {Function}
      */
-    const [find, each, is_undefined, attr, on, off, to_camel_case, extend] = FrontBx.import(['find','each','is_undefined','attr','on','off','to_camel_case','extend']).from('_');
+    const [find, each, is_undefined, attr, on, off, to_camel_case, add_class, remove_class, extend] = FrontBx.import(['find','each','is_undefined','attr','on','off','to_camel_case','add_class','remove_class','extend']).from('_');
 
     /**
      * Available data attributes.
      * 
      * @var {Array}
      */
-    const DATA_ATTRIBUTES = ['content','overlay','persistent','peekable','swipeable','classes','state','easing','animation-time'];
+    const DATA_ATTRIBUTES = ['content','direction','overlay','persistent','peekable','swipeable','classes','state','easing','animation-time','responsive'];
 
-       /**
-     * Toggle active on lists
+    /**
+     * Drawer
      *
      * @author    {Joe J. Howard}
      * @copyright {Joe J. Howard}
@@ -14207,7 +14252,13 @@ FrontBx.set('TinyGesture', TinyGesture);
      */
     Drawer.prototype.bind = function(node)
     {            
-        let options = { fromHTML: true, state: 'collapsed' };
+        let options = 
+        { 
+            fromHTML: true,
+            state: 'collapsed',
+            callbackClose: () => remove_class(node, 'active'),
+            callbackOpen: () => add_class(node, 'active'),
+        };
 
         let elem;
 
@@ -14279,9 +14330,8 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('Drawer', extend(Component, Drawer));
-
-}());
-
+    
+})();
 (function()
 {
     /**
@@ -14296,7 +14346,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      * 
      * @var {Function}
      */
-    const [find, each, is_undefined, attr, on, off, to_camel_case, extend] = FrontBx.import(['find','each','is_undefined','attr','on','off','to_camel_case','extend']).from('_');
+    const [find, each, is_undefined, attr, on, off, to_camel_case, add_class, remove_class, extend] = FrontBx.import(['find','each','is_undefined','attr','on','off','to_camel_case','add_class','remove_class','extend']).from('_');
 
     /**
      * Available data attributes.
@@ -14325,7 +14375,13 @@ FrontBx.set('TinyGesture', TinyGesture);
      */
     Frontdrop.prototype.bind = function(node)
     {            
-        let options = { fromHTML: true, state: 'collapsed' };
+        let options = 
+        { 
+            fromHTML: true,
+            state: 'collapsed',
+            callbackClose: () => remove_class(node, 'active'),
+            callbackOpen: () => add_class(node, 'active'),
+        };
 
         let elem;
 
@@ -14397,9 +14453,8 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('Frontdrop', extend(Component, Frontdrop));
-
-}());
-
+    
+})();
 (function()
 {
     /**
@@ -14414,14 +14469,14 @@ FrontBx.set('TinyGesture', TinyGesture);
      * 
      * @var {Function}
      */
-    const [find, each, is_undefined, attr, on, off, to_camel_case, extend] = FrontBx.import(['find','each','is_undefined','attr','on','off','to_camel_case','extend']).from('_');
+    const [find, each, is_undefined, attr, on, off, to_camel_case, add_class, remove_class, extend] = FrontBx.import(['find','each','is_undefined','attr','on','off','to_camel_case','add_class','remove_class','extend']).from('_');
 
     /**
      * Available data attributes.
      * 
      * @var {Array}
      */
-    const DATA_ATTRIBUTES = ['title','content','classes','pushbody','swipeable','state','easing','animation-time'];
+    const DATA_ATTRIBUTES = ['title','content','direction','classes','pushbody','swipeable','state','easing','animation-time','responsive'];
 
     /**
      * Toggle active on lists
@@ -14443,7 +14498,13 @@ FrontBx.set('TinyGesture', TinyGesture);
      */
     Backdrop.prototype.bind = function(node)
     {            
-        let options = { fromHTML: true, state: 'collapsed' };
+        let options = 
+        { 
+            fromHTML: true,
+            state: 'collapsed',
+            callbackClose: () => remove_class(node, 'active'),
+            callbackOpen: () => add_class(node, 'active'),
+        };
 
         let elem;
 
@@ -14508,15 +14569,14 @@ FrontBx.set('TinyGesture', TinyGesture);
     Backdrop.prototype._toggle = function(e, trigger)
     { 
         let backdrop = this.drawers.get(trigger);
-
+        
         backdrop.closed() ? backdrop.open() : backdrop.close();
     }
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('Backdrop', extend(Component, Backdrop));
 
-}());
-
+})();
 (function()
 {
     /**
@@ -14600,8 +14660,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.dom().register('Notification', extend(Component, Notification));
 
-}());
-
+})();
 (function()
 {
     /**
@@ -14610,7 +14669,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      * @var {class}
      */
     const [Component] = FrontBx.get('Component');
-    
+
     /**
      * Helper functions
      * 
@@ -14685,8 +14744,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.dom().register('PjaxLinks', extend(Component, PjaxLinks));
 
-}());
-
+})();
 (function()
 {
     /**
@@ -14777,9 +14835,7 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('Collapse', extend(Component, Collapse));
-
-}());
-
+})();
 (function()
 {
     /**
@@ -14867,9 +14923,7 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('List', extend(Component, List));
-
-}());
-
+})();
 (function()
 {
     /**
@@ -14884,7 +14938,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      * 
      * @var {Function}
      */
-    const [$, $All, each, map, add_class, add_event_listener, closest, has_class, is_string, hide_aria, remove_class, remove_event_listener, show_aria, attr, css, dom_element, extend] = FrontBx.import(['$','$All','each','map','add_class','add_event_listener','closest','has_class','is_string','hide_aria','remove_class','remove_event_listener','show_aria','attr','css','dom_element','extend']).from('_');
+    const [find, find_all, map, add_class, on, closest, has_class, is_string, hide_aria, remove_class, off, show_aria, attr, css, dom_element, extend] = FrontBx.import(['find','find_all','map','add_class','on','closest','has_class','is_string','hide_aria','remove_class','off','show_aria','attr','css','dom_element','extend']).from('_');
 
     /**
      * Dropdown Buttons
@@ -14895,7 +14949,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      */
     const Dropdown = function()
     {
-        this.super('.js-drop-trigger, .js-select-menu + .drop-menu .menu > *:not(.menu-divider):not(.menu-header), .js-menu-check > *:not(.menu-divider):not(.menu-header)');
+        this.super('.js-drop-trigger, .drop-container .js-select-menu > *:not(.menu-divider):not(.menu-header), .drop-container .js-check-menu > *:not(.menu-divider):not(.menu-header), .drop-container .js-active-menu > *:not(.menu-divider):not(.menu-header)');
 
         this.defaultProps =
         {
@@ -14912,7 +14966,7 @@ FrontBx.set('TinyGesture', TinyGesture);
 
         this.boundWindow  = false;
     }
- 
+
     /**
      * @inheritdoc
      * 
@@ -14921,16 +14975,16 @@ FrontBx.set('TinyGesture', TinyGesture);
     {
         if (has_class(node, 'js-drop-trigger'))
         {
-            add_event_listener(node, 'click', this._clickHandler, this);
+            on(node, 'click', this._clickHandler, this);
         }
         else
         {
-            add_event_listener(node, 'click', this._selectHandler, this);
+            on(node, 'click', this._selectHandler, this);
         }
 
         if (!this.boundWindow)
         {
-            add_event_listener(window, 'click', this._windowClick, this);
+            on(window, 'click', this._windowClick, this);
 
             this.boundWindow = true;
         }
@@ -14944,16 +14998,16 @@ FrontBx.set('TinyGesture', TinyGesture);
     {
         if (has_class(node, 'js-drop-trigger'))
         {
-            remove_event_listener(node, 'click', this._clickHandler, this);
+            off(node, 'click', this._clickHandler, this);
         }
         else
         {
-            remove_event_listener(node, 'click', this._selectHandler, this);
+            off(node, 'click', this._selectHandler, this);
         }
 
         if (this.boundWindow)
         {
-            remove_event_listener(window, 'click', this._windowClick, this);
+            off(window, 'click', this._windowClick, this);
 
             this.boundWindow = false;
         }
@@ -14969,7 +15023,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     {
         e = e || window.event;
 
-        var active = $('.js-drop-trigger.drop-active');
+        var active = find('.js-drop-trigger.drop-active');
 
         if (active) this._hideDrop(active);
 
@@ -14988,7 +15042,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      */
     Dropdown.prototype._hideDrop = function(button)
     {
-        var drop = $('.js-drop-menu', button.parentNode);
+        var drop = find('.js-drop-menu', button.parentNode);
         
         remove_class(button, ['active', 'drop-active']);
         
@@ -15007,7 +15061,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      */
     Dropdown.prototype._showDrop = function(button)
     {
-        var drop = $('.js-drop-menu', button.parentNode);
+        var drop = find('.js-drop-menu', button.parentNode);
         
         add_class(button, ['active', 'drop-active']);
         
@@ -15033,7 +15087,7 @@ FrontBx.set('TinyGesture', TinyGesture);
             return;
         }
 
-        var active = $('.js-drop-trigger.drop-active');
+        var active = find('.js-drop-trigger.drop-active');
 
         if (active) this._hideDrop(active);
     }
@@ -15046,55 +15100,17 @@ FrontBx.set('TinyGesture', TinyGesture);
      */
     Dropdown.prototype._selectHandler = function(e, item)
     {
-        e = e || window.event;
-
-        if (has_class(item, 'selected')) return;
-
-        let wrapper  = closest(item, '.drop-container');
-        let trigger  = $('.js-drop-trigger', wrapper);
-        let isCheck  = $('.js-menu-check', wrapper) || false;
-        let selected = $('.menu > .selected', wrapper);
-        let content  = item.innerText.trim();
-        let value    = attr(item, 'data-value') || content;
-        let input    = $('input', wrapper);
+        let wrapper    = closest(item, '.drop-container');
+        let menu       = find('.js-select-menu, .js-check-menu, .js-active-menu', wrapper);
+        let trigger    = find('.js-drop-trigger', wrapper);
+        let selectable = has_class(trigger, 'js-drop-selectable');
+        let content    = item.innerText.trim();
+        let value      = attr(item, 'data-value') || content;
+        let input      = find('> input', wrapper);
 
         if (input) attr(input, 'value', value);
 
-        if (selected) remove_class(selected, 'selected');
-
-        add_class(item, 'selected');
-
-        if (has_class(trigger, 'js-select-menu')) trigger.innerText = content;
-
-        if (isCheck)
-        {
-            if (selected)
-            {
-                let selectedCheck = $('.item-right .fa.fa-check', selected);
-
-                if (selectedCheck) css(selectedCheck.parentNode, 'display', 'none');
-            }
-            
-            let check = $('.item-right .fa', item);
-
-            if (!check)
-            {
-                let itemContent = $('.item-body', item);
-
-                if (!itemContent)
-                {
-                    item.innerText = '';
-
-                    dom_element({tag: 'span', class: 'item-body'}, item, content);
-                }
-
-                dom_element({tag: 'span', class: 'item-right'}, item, dom_element({tag: 'span', class: 'fa fa-check'}));
-            }
-            else
-            {
-                attr(check.parentNode, 'style', false);
-            }
-        }
+        if (selectable) trigger.innerText = content;
     }
 
     /**
@@ -15109,7 +15125,7 @@ FrontBx.set('TinyGesture', TinyGesture);
             props.checkable ? dom_element({tag: 'input', type: 'hidden', name: props.input, value: props.selected || ''}) : null,
 
             // button / anchor
-            dom_element({tag: props.anchorTag, type: props.anchorTag === 'button' ? 'button' : null, class: `${props.anchorTag === 'button' ? 'btn btn-dropdown' : 'btn-dropdown'} js-drop-trigger ${props.anchorClass} ${props.selectable ? 'js-select-menu' : '' }`}, null,
+            dom_element({tag: props.anchorTag, type: props.anchorTag === 'button' ? 'button' : null, role: props.anchorTag === 'button' ? 'button' : null, class: `${props.anchorTag === 'button' ? 'btn btn-dropdown' : 'btn-dropdown'} js-drop-trigger ${props.anchorClass} ${props.selectable ? 'js-select-menu' : '' }`}, null,
                 [
                     props.anchorText,
                     props.caret ? dom_element({tag: 'span', class: `caret-${props.caret}`}) : null,
@@ -15137,7 +15153,6 @@ FrontBx.set('TinyGesture', TinyGesture);
     FrontBx.dom().register('Dropdown', extend(Component, Dropdown));
 
 })();
-
 (function()
 {
     /**
@@ -15212,7 +15227,6 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('TabNav', extend(Component, TabNav));
-
 })();
 (function()
 {
@@ -15288,8 +15302,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.dom().register('InputMasks', InputMasks);
 
-}());
-
+})();
 (function()
 {
     /**
@@ -15370,7 +15383,6 @@ FrontBx.set('TinyGesture', TinyGesture);
     FrontBx.dom().register('MessageClosers', extend(Component, MessageClosers));
 
 })();
-
 (function()
 {
     /**
@@ -15379,7 +15391,7 @@ FrontBx.set('TinyGesture', TinyGesture);
      * @var {class}
      */
     const [Component] = FrontBx.get('Component');
-    
+
     /**
      * Helper functions
      * 
@@ -15484,8 +15496,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.dom().register('WayPoints', extend(Component, WayPoints));
 
-}());
-
+})();
 (function()
 {
     /**
@@ -15662,124 +15673,7 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('Inputs', extend(Component, Inputs));
-
 })();
-
-(function()
-{
-    /**
-     * Component base
-     * 
-     * @var {class}
-     */
-    const [Component] = FrontBx.get('Component');
-
-    /**
-     * Helper functions
-     * 
-     * @var {Function}
-     */
-    const [$, add_event_listener, css, parse_url, remove_event_listener, rendered_style, extend] = FrontBx.import(['$','add_event_listener','css','parse_url','remove_event_listener','rendered_style','extend']).from('_');
-
-    /**
-     * Image zoom hover
-     * 
-     */
-    const ImageZoom = function()
-    {
-        this.super('.js-img-hover-zoom')
-    }
-
-    /**
-     * Bind DOM listeners
-     *
-     * @access {public}
-     */
-    ImageZoom.prototype.bind = function(node)
-    {
-        css(node, 'background-image', 'url(' + node.dataset.zoomSrc + ')');
-
-        add_event_listener(node, 'mousemove', this._onHover);
-
-        $('img', node).alt = '';
-
-        $('img', node).title = '';
-    }
-
-    /**
-     * Unbind DOM listeners
-     *
-     * @access {public}
-     */
-    ImageZoom.prototype.unbind = function(node)
-    {
-        remove_event_listener(node, 'mousemove', this._onHover);
-    }
-
-    /**
-     * On hover event
-     *
-     * @param  {e} event|null "mousemove" event
-     * @access {private}
-     */
-    ImageZoom.prototype._onHover = function(e)
-    {
-        e = e || window.event;
-
-        if (!e || !e.currentTarget)
-        {
-            return false;
-        }
-
-        var _wrapper = e.currentTarget;
-        var _zoomSrc = parse_url(rendered_style(_wrapper, 'background-image').replace('url(', '').replace(')', ''));
-        var _dataZoomSrc = parse_url(_wrapper.dataset.zoomSrc);
-
-        if (_zoomSrc.path !== _dataZoomSrc.path)
-        {
-            css(_wrapper, 'background-image', 'url(' + _wrapper.dataset.zoomSrc + ')');
-        }
-
-        var offsetX = 0;
-        var offsetY = 0;
-        if (e.offsetX)
-        {
-            offsetX = e.offsetX;
-        }
-        else if (e.touches && e.touches[0] && e.touches[0].pageX)
-        {
-            offsetX = e.touches[0].pageX;
-        }
-        else
-        {
-            return false;
-        }
-
-        if (e.offsetY)
-        {
-            offsetY = e.offsetY;
-        }
-        else if (e.touches && e.touches[0] && e.touches[0].pageY)
-        {
-            offsetY = e.touches[0].pageY;
-        }
-        else
-        {
-            return false;
-        }
-
-        x = offsetX / _wrapper.offsetWidth * 100;
-        y = offsetY / _wrapper.offsetHeight * 100;
-
-
-        css(_wrapper, 'background-position', x + '% ' + y + '%');
-    }
-
-    // Register as DOM Module and invoke
-    FrontBx.dom().register('ImageZoom', extend(Component, ImageZoom));
-
-}());
-
 (function()
 {
     /**
@@ -15840,7 +15734,7 @@ FrontBx.set('TinyGesture', TinyGesture);
         '.card-media',
         '.js-ripple'
     ];
-    
+
     /**
      * Ripple click animation
      *
@@ -15852,7 +15746,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     {
         this.super(SELECTORS.join(','));
     }
-    
+
     /**
      * @inheritdoc
      * 
@@ -16026,7 +15920,6 @@ FrontBx.set('TinyGesture', TinyGesture);
     FrontBx.dom().register('Ripple', extend(Component, Ripple));
 
 })();
-
 (function()
 {
     /**
@@ -16119,8 +16012,7 @@ FrontBx.set('TinyGesture', TinyGesture);
     // Load into FrontBx DOM core
     FrontBx.dom().register('Table', extend(Component, Table));
 
-}());
-
+})();
 (function()
 {
     /**
@@ -16211,12 +16103,10 @@ FrontBx.set('TinyGesture', TinyGesture);
 
     // Load into FrontBx DOM core
     FrontBx.dom().register('Image', extend(Component, Image));
+    
+})();
 
-}());
-
-
-
-// Boot FrontBx
+// boot frontbx
 /**
  * Boot and initialize FrontBx core
  *
@@ -16226,6 +16116,6 @@ FrontBx.set('TinyGesture', TinyGesture);
  */
 (function()
 {
-    FrontBx.boot();
-})();
+	FrontBx.boot();
 
+})();

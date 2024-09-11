@@ -19,7 +19,8 @@
     justify-content: space-between;
     position: relative;
     
-    .msg-icon .fa
+    .msg-icon .fa,
+    .msg-icon .fa-brands
     {
        color: var(--fbx-msg-icon-color);
        position: relative;
@@ -47,7 +48,7 @@
     {
         text-align: center;
         padding: 0 var(--fbx-msg-spacer-x);
-        .fa
+        .fa, .fa-brands
         {
             display: inline-block;
             font-size: var(--fbx-msg-icon-font-size);
@@ -108,7 +109,7 @@
         --fbx-msg-spacer-x: #{_minusPercent($msg-spacer-x, 10)};
         --fbx-msg-font-size: #{_minusPercent($msg-font-size, 5)};
         
-        .fa
+        .fa, .fa-brands
         {
             display: inline-block;
             font-size: 16px;

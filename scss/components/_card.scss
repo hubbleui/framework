@@ -339,6 +339,10 @@
 	{
 		overflow-y: auto;
 	}
+	.form-field
+	{
+		--fbx-input-bg: var(--fbx-card-bg);
+	}
 }
 
 @include media-breakpoint-up(md)
@@ -404,9 +408,4 @@
 			border-bottom-right-radius: var(--fbx-card-border-radius);
 		}
 	}
-	.form-field
-	{
-		--fbx-input-bg: var(--fbx-card-bg);
-	}
-	
 }

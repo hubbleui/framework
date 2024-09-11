@@ -5,20 +5,17 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Documentation | FrontBx UI</title>
         <meta name="description" content="">
-        <script src="../../../dist/js/frontbx.lazyload.js"></script>
-        <link rel="stylesheet" href="../../../dist/css/lazyload.css">
+        <script src="../../../dist/js/frontbx-lazyload.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../../../dist/css/frontbx-icons.css">
-        <link rel="stylesheet" href="../../../dist/css/frontbx.css">
-        <link rel="stylesheet" href="../../../dist/css/docs.css">
+        <link rel="stylesheet" href="../../../dist/css/frontbx.bundle.min.css">
+        <link rel="stylesheet" href="../../../dist/css/docs.min.css">
     </head>
     <body>
         <div class="flex-row-fluid align-cols-center pole-md">
             <button class="btn js-trigger-fd">Open</button>
         </div>
-        
-        <script src="../../../dist/js/frontbx.bundle.js"></script>
-        <script src="../../../dist/js/docs.js"></script>
+        <script src="../../../dist/js/frontbx.bundle.min.js"></script>
+        <script src="../../../dist/js/frontbx-docs.min.js"></script>
         <script type="text/javascript">
             const SKELETONS = 
             [
@@ -34,7 +31,6 @@
                 callbackBuilt: (container, drawer, overlay) => FrontBx.Skeleton(FrontBx._().find('.card-block .container-fluid', container), SKELETONS),
             });
             document.querySelector('.js-trigger-fd').addEventListener('click', () => frontdrop.closed() ? frontdrop.open() : frontdrop.close());
-            
         </script>
     </body>
 </html>

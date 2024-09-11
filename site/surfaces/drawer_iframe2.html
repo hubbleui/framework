@@ -5,20 +5,18 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Documentation | FrontBx UI</title>
         <meta name="description" content="">
-        <script src="../../../dist/js/frontbx.lazyload.js"></script>
-        <link rel="stylesheet" href="../../../dist/css/lazyload.css">
+        <script src="../../../dist/js/frontbx-lazyload.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../../../dist/css/frontbx-icons.css">
-        <link rel="stylesheet" href="../../../dist/css/frontbx.css">
-        <link rel="stylesheet" href="../../../dist/css/docs.css">
+        <link rel="stylesheet" href="../../../dist/css/frontbx.bundle.min.css">
+        <link rel="stylesheet" href="../../../dist/css/docs.min.css">
         <style type="text/css">
             :root
             {
-                --hb-body-bg: var(--hb-white);
+                --fbx-body-bg: var(--fbx-white);
             }
             .drawer-container
             {
-                --hb-drawer-width: 170px;
+                --fbx-drawer-width: 170px;
             }
         </style>
     </head>
@@ -44,30 +42,26 @@
                 <div class="skeleton" style="width: 91%;"></div>
             </div>
         </div>
-        <script src="../../../dist/js/frontbx.bundle.js"></script>
-        <script src="../../../dist/js/docs.js"></script>
+        <script src="../../../dist/js/frontbx.bundle.min.js"></script>
+        <script src="../../../dist/js/frontbx-docs.min.js"></script>
         <script type="text/javascript">
-    
-            let btns = FrontBx._().find_all('.js-dw-trigger');
 
             let drawer;
 
-            FrontBx._().on(btns, 'click', (e, btn) => 
-            {          
+            FrontBx.DocsDemo('.js-dw-trigger', (e, btn) => 
+            {
                 let direction = btn.innerText.toLowerCase().trim();
 
                 if (drawer)
                 {
                     if (drawer.direction() === direction)
                     {
-                        if (drawer.state() === 'expanded')
+                        if (drawer.opened())
                         {
                             return drawer.close();
                         }
-                        else
-                        {
-                            return drawer.open();
-                        }
+                        
+                        return drawer.open();
                     }
 
                     drawer.destroy();
@@ -78,20 +72,20 @@
                     persistent: true,
                     direction: direction,
                     content: `
-                        <div class="gutter-xs pole-sm">
-                            <div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"></div>
-                            <div class="skeleton-text-block skeleton-lines">
-                                <div class="skeleton" style="width: 71%;"></div>
-                                <div class="skeleton" style="width: 81%;"></div>
-                            </div>
-                            <div class="skeleton-text-block skeleton-lines">
-                                <div class="skeleton" style="width: 81%;"></div>
-                                <div class="skeleton" style="width: 84%;"></div>
-                                <div class="skeleton" style="width: 91%;"></div>
-                            </div>
-                        </div>`
-            
+                    <div class="gutter-xs pole-sm">
+                        <div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"></div>
+                        <div class="skeleton-text-block skeleton-lines">
+                            <div class="skeleton" style="width: 71%;"></div>
+                            <div class="skeleton" style="width: 81%;"></div>
+                        </div>
+                        <div class="skeleton-text-block skeleton-lines">
+                            <div class="skeleton" style="width: 81%;"></div>
+                            <div class="skeleton" style="width: 84%;"></div>
+                            <div class="skeleton" style="width: 91%;"></div>
+                        </div>
+                    </div>`
                 });
+
             });
         </script>
 

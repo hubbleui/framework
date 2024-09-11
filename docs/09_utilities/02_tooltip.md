@@ -85,9 +85,9 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
          <style scoped>
             .tooltipped-custom
             {
-                --hb-tooltip-bg: var(--hb-color-hotpink);
-                --hb-tooltip-font-size: 13px;
-                --hb-tooltip-font-weight: 600;
+                --fbx-tooltip-bg: var(--fbx-color-hotpink);
+                --fbx-tooltip-font-size: 13px;
+                --fbx-tooltip-font-weight: 600;
             }
         </style>
         <button class="btn tooltipped tooltipped-n tooltipped-custom" data-tooltip="Hello World!">
@@ -99,8 +99,8 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 ```css
 .tooltipped
 {
-    --hb-tooltip-bg: var(--hb-color-hotpink);
-    --hb-tooltip-font-size: 13px;
+    --fbx-tooltip-bg: var(--fbx-color-hotpink);
+    --fbx-tooltip-font-size: 13px;
 }
 ```
 
@@ -108,12 +108,12 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 `src/scss/_config.scss`
 ```
 ```sass
-$tooltip-bg:                    var(--hb-gray-900) !default;
-$tooltip-color:                 var(--hb-white) !default;
+$tooltip-bg:                    var(--fbx-gray-900) !default;
+$tooltip-color:                 var(--fbx-white) !default;
 $tooltip-font-size:             11px !default;
 $tooltip-font-weight:           $text-light !default;
 $tooltip-line-height:           20px !default;
-$tooltip-radius:                var(--hb-border-radius) !default;
+$tooltip-radius:                var(--fbx-border-radius) !default;
 $tooltip-pad-y:                 2px !default;
 $tooltip-pad-x:                 8px !default;
 $tooltop-target-space:          5px !default;
@@ -126,16 +126,16 @@ src/scss/components/_tooltip.scss
 ```css
 .tooltipped
 {
-    --hb-tooltip-bg: var(--hb-gray-900);
-    --hb-tooltip-color: var(--hb-white);
-    --hb-tooltip-font-size: 11px;
-    --hb-tooltip-font-weight: 300;
-    --hb-tooltip-line-height: 20px;
-    --hb-tooltip-radius: var(--hb-border-radius);
-    --hb-tooltip-pad-y: 2px;
-    --hb-tooltip-pad-x: 8px;
-    --hb-tooltop-target-space: 5px;
-    --hb-tooltop-target-space-neg: -5px;
+    --fbx-tooltip-bg: var(--fbx-gray-900);
+    --fbx-tooltip-color: var(--fbx-white);
+    --fbx-tooltip-font-size: 11px;
+    --fbx-tooltip-font-weight: 300;
+    --fbx-tooltip-line-height: 20px;
+    --fbx-tooltip-radius: var(--fbx-border-radius);
+    --fbx-tooltip-pad-y: 2px;
+    --fbx-tooltip-pad-x: 8px;
+    --fbx-tooltop-target-space: 5px;
+    --fbx-tooltop-target-space-neg: -5px;
     position: relative;
     overflow: visible !important;
 }

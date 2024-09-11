@@ -11,12 +11,12 @@ Learn how to use FrontBx's included `npm` scripts to compile source code, and mo
 
 FrontBx uses `npm` scripts for its build system. The `package.json` file includes convenient methods for working with the framework, including compiling code, building documentation and more.
 
-To use the build system and run the documentation locally, you'll need a copy of FrontBx's source files and Node. Follow these steps and you should be ready to rock:
+To use the build system and run the documentation locally, you'll need a copy of FrontBx's source files and `Node`. Follow the steps below to get started:
 
-*	Download and install Node.js, which we use to manage our dependencies.
-*	Either download FrontBx's sources or fork FrontBx's repository.
-*	Navigate to the root /FrontBx directory and run `npm install` to install our local dependencies listed in `package.json`.
-*	When completed, you'll be able to run the various commands provided from the command line.
+1.	Download and install [Node.js](https://nodejs.org/en).
+2.	Either download [FrontBx's sources](../download/index,html) or fork [FrontBx's git repository](https://github.com/frontbx/ui).
+3.	Navigate to the root directory and run `npm install` to install local dependencies listed in `package.json`.
+4.	When completed, you'll be able to run the various commands provided from the command line.
 
 ---
 
@@ -51,7 +51,7 @@ FrontBx uses [Sass](https://sass-lang.com/) for compiling Sass source files into
 @import '~frontbx/scss/variables';
 ```
 
-Alternatively, you may use FrontBx's ready-to-use CSS by simply adding this line to your project's entry point:
+Alternatively, you can use FrontBx's ready-to-use CSS by simply adding this line to your project's entry point:
 
 ```JavaScript
 import 'frontbx/dist/css/frontbx.bundle.min.css';
@@ -61,10 +61,11 @@ import 'frontbx/dist/css/frontbx.bundle.min.css';
 
 ### JavaScript
 
-Import FrontBx's JavaScript by adding this line to your app’s entry point (usually index.js or app.js):
+Import FrontBx's JavaScript by adding this line to your app’s entry point (usually `index.js` or `app.js`):
 
-// You can specify which plugins you need
-import { FrontBx, Toast, Popover } from 'bootstrap';
+```JavaScript
+import FrontBx from 'frontbx';
+```
 
-// You can specify which plugins you need
-import { Tooltip, Toast, Popover } from 'bootstrap';
+> FrontBx does not currently offer importing components individually, however this is roadmapped for future releases.
+

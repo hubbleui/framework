@@ -163,14 +163,14 @@ $lazyload-falback-bg:           #d0d4d9;
 ```css
 .lazyload
 {
-    --hb-lazyload-start-opacity: 0.6;
-    --hb-lazyload-end-opacity: 1;
-    --hb-lazyload-start-blur: 5px;
-    --hb-lazyload-end-blur: 0px;
-    --hb-lazyload-start-grayscale: 1;
-    --hb-lazyload-end-grayscale: 0;
-    --hb-lazyload-transition: opacity 1s cubic-bezier(0.4, 0.0, 0.2, 1), filter 1s cubic-bezier(0.4, 0.0, 0.2, 1);
-    --hb-lazyload-falback-bg: #d0d4d9;
+    --fbx-lazyload-start-opacity: 0.6;
+    --fbx-lazyload-end-opacity: 1;
+    --fbx-lazyload-start-blur: 5px;
+    --fbx-lazyload-end-blur: 0px;
+    --fbx-lazyload-start-grayscale: 1;
+    --fbx-lazyload-end-grayscale: 0;
+    --fbx-lazyload-transition: opacity 1s cubic-bezier(0.4, 0.0, 0.2, 1), filter 1s cubic-bezier(0.4, 0.0, 0.2, 1);
+    --fbx-lazyload-falback-bg: #d0d4d9;
 
 }
 ```

@@ -23,17 +23,17 @@ FrontBx's color system is built using a combination of both CSS variables, Sass 
 
 | Swatch                                        | CSS Variable            | Sass Variable       | Description                                                |
 |:---------------------------------------------:|-------------------------|---------------------|------------------------------------------------------------|
-| <div class="docs-swatch bg-body-bg"></div>    | `--hb-body-bg`          | `$body-bg`          | Body background color.                                     |
-| <div class="docs-swatch bg-body-color"></div> | `--hb-body-color`       | `$body-color`       | Body `color`                                               |
-| <div class="docs-swatch bg-white"></div>      | `--hb-white`            | `$white`            | Global `white` definition.                                 |
-| <div class="docs-swatch bg-black"></div>      | `--hb-black`            | `$black`            | Global `black` definition.                                 |
-| <div class="docs-swatch bg-gray"></div>       | `--hb-gray`             | `$gray`             | Global `gray` definition.                                  |
-| <div class="docs-swatch bg-primary"></div>    | `--hb-theme-primary`    | `$theme-primary`    | Global `theme-primary` definition.                         |
-| <div class="docs-swatch bg-secondary"></div>  | `--hb-theme-secondary`  | `$theme-secondary`  | Global `theme-secondary` definition.                       |
-| <div class="docs-swatch bg-success"></div>    | `--hb-theme-success`    | `$theme-success`    | Global `theme-success` definition.                         |
-| <div class="docs-swatch bg-info"></div>       | `--hb-theme-info`       | `$theme-info`       | Global `theme-info` definition.                            |
-| <div class="docs-swatch bg-warning"></div>    | `--hb-theme-warning`    | `$theme-warning`    | Global `theme-warning` definition.                         |
-| <div class="docs-swatch bg-danger"></div>     | `--hb-theme-danger`     | `$theme-danger`     | Global `theme-danger` definition.                          |
+| <div class="docs-swatch bg-body-bg"></div>    | `--fbx-body-bg`          | `$body-bg`          | Body background color.                                     |
+| <div class="docs-swatch bg-body-color"></div> | `--fbx-body-color`       | `$body-color`       | Body `color`                                               |
+| <div class="docs-swatch bg-white"></div>      | `--fbx-white`            | `$white`            | Global `white` definition.                                 |
+| <div class="docs-swatch bg-black"></div>      | `--fbx-black`            | `$black`            | Global `black` definition.                                 |
+| <div class="docs-swatch bg-gray"></div>       | `--fbx-gray`             | `$gray`             | Global `gray` definition.                                  |
+| <div class="docs-swatch bg-primary"></div>    | `--fbx-theme-primary`    | `$theme-primary`    | Global `theme-primary` definition.                         |
+| <div class="docs-swatch bg-secondary"></div>  | `--fbx-theme-secondary`  | `$theme-secondary`  | Global `theme-secondary` definition.                       |
+| <div class="docs-swatch bg-success"></div>    | `--fbx-theme-success`    | `$theme-success`    | Global `theme-success` definition.                         |
+| <div class="docs-swatch bg-info"></div>       | `--fbx-theme-info`       | `$theme-info`       | Global `theme-info` definition.                            |
+| <div class="docs-swatch bg-warning"></div>    | `--fbx-theme-warning`    | `$theme-warning`    | Global `theme-warning` definition.                         |
+| <div class="docs-swatch bg-danger"></div>     | `--fbx-theme-danger`     | `$theme-danger`     | Global `theme-danger` definition.                          |
 
 #### Usage<a id='theme-usage'></a>
 
@@ -66,19 +66,19 @@ If using any of the theme colors pre compilation, using the Sass variable will o
 
 ### Grays
 
-Grays are available via CSS variables `--hb-gray-[num]` ranging from `100` through `900`. The table below outlines the core color palette used by FrontBx:
+Grays are available via CSS variables `--fbx-gray-[num]` ranging from `100` through `900`. The table below outlines the core color palette used by FrontBx:
 
 | Swatch                                      | CSS Variable    |
 |:-------------------------------------------:|-----------------|
-| <div class="docs-swatch bg-gray-100"></div> | `--hb-gray-100` |
-| <div class="docs-swatch bg-gray-200"></div> | `--hb-gray-200` |
-| <div class="docs-swatch bg-gray-300"></div> | `--hb-gray-300` |
-| <div class="docs-swatch bg-gray-400"></div> | `--hb-gray-400` |
-| <div class="docs-swatch bg-gray-500"></div> | `--hb-gray-500` |
-| <div class="docs-swatch bg-gray-600"></div> | `--hb-gray-600` |
-| <div class="docs-swatch bg-gray-700"></div> | `--hb-gray-700` |
-| <div class="docs-swatch bg-gray-800"></div> | `--hb-gray-800` |
-| <div class="docs-swatch bg-gray-900"></div> | `--hb-gray-900` |
+| <div class="docs-swatch bg-gray-100"></div> | `--fbx-gray-100` |
+| <div class="docs-swatch bg-gray-200"></div> | `--fbx-gray-200` |
+| <div class="docs-swatch bg-gray-300"></div> | `--fbx-gray-300` |
+| <div class="docs-swatch bg-gray-400"></div> | `--fbx-gray-400` |
+| <div class="docs-swatch bg-gray-500"></div> | `--fbx-gray-500` |
+| <div class="docs-swatch bg-gray-600"></div> | `--fbx-gray-600` |
+| <div class="docs-swatch bg-gray-700"></div> | `--fbx-gray-700` |
+| <div class="docs-swatch bg-gray-800"></div> | `--fbx-gray-800` |
+| <div class="docs-swatch bg-gray-900"></div> | `--fbx-gray-900` |
 
 
 #### Usage<a id='gray-usage'></a>
@@ -107,36 +107,36 @@ FrontBx comes with a palette of colors via both CSS ans Sass variables for chang
 
 | Swatch                                                                           | CSS Variable              | Sass Variable   |
 |:--------------------------------------------------------------------------------:|---------------------------|-----------------|
-| <div class="docs-swatch" style="background: var(--hb-color-teal)"></div>         | `--hb-color-teal`         | `$teal`         |
-| <div class="docs-swatch" style="background: var(--hb-color-turquoise)"></div>    | `--hb-color-turquoise`    | `$turquoise`    |
-| <div class="docs-swatch" style="background: var(--hb-color-greensea)"></div>     | `--hb-color-greensea`     | `$greensea`     |
-| <div class="docs-swatch" style="background: var(--hb-color-emerland)"></div>     | `--hb-color-emerland`     | `$emerland`     |
-| <div class="docs-swatch" style="background: var(--hb-color-nephritis)"></div>    | `--hb-color-nephritis`    | `$nephritis`    |
-| <div class="docs-swatch" style="background: var(--hb-color-babyblue)"></div>     | `--hb-color-babyblue`     | `$babyblue`     |
-| <div class="docs-swatch" style="background: var(--hb-color-peterrive)"></div>    | `--hb-color-peterrive`    | `$peterrive`    |
-| <div class="docs-swatch" style="background: var(--hb-color-belizehol)"></div>    | `--hb-color-belizehol`    | `$belizehol`    |
-| <div class="docs-swatch" style="background: var(--hb-color-amethyst)"></div>     | `--hb-color-amethyst`     | `$amethyst`     |
-| <div class="docs-swatch" style="background: var(--hb-color-wisteria)"></div>     | `--hb-color-wisteria`     | `$wisteria`     |
-| <div class="docs-swatch" style="background: var(--hb-color-wetasphalt)"></div>   | `--hb-color-wetasphalt`   | `$wetasphalt`   |
-| <div class="docs-swatch" style="background: var(--hb-color-midnightblue)"></div> | `--hb-color-midnightblue` | `$midnightblue` |
-| <div class="docs-swatch" style="background: var(--hb-color-sunflower)"></div>    | `--hb-color-sunflower`    | `$sunflower`    |
-| <div class="docs-swatch" style="background: var(--hb-color-orange)"></div>       | `--hb-color-orange`       | `$orange`       |
-| <div class="docs-swatch" style="background: var(--hb-color-carrot)"></div>       | `--hb-color-carrot`       | `$carrot`       |
-| <div class="docs-swatch" style="background: var(--hb-color-salmon)"></div>       | `--hb-color-salmon`       | `$salmon`       |
-| <div class="docs-swatch" style="background: var(--hb-color-pumpkin)"></div>      | `--hb-color-pumpkin`      | `$pumpkin`      |
-| <div class="docs-swatch" style="background: var(--hb-color-alizarin)"></div>     | `--hb-color-alizarin`     | `$alizarin`     |
-| <div class="docs-swatch" style="background: var(--hb-color-pomegranate)"></div>  | `--hb-color-pomegranate`  | `$pomegranate`  |
-| <div class="docs-swatch" style="background: var(--hb-color-clouds)"></div>       | `--hb-color-clouds`       | `$clouds`       |
-| <div class="docs-swatch" style="background: var(--hb-color-silver)"></div>       | `--hb-color-silver`       | `$silver`       |
-| <div class="docs-swatch" style="background: var(--hb-color-concrete)"></div>     | `--hb-color-concrete`     | `$concrete`     |
-| <div class="docs-swatch" style="background: var(--hb-color-asbestos)"></div>     | `--hb-color-asbestos`     | `$asbestos`     |
-| <div class="docs-swatch" style="background: var(--hb-color-neongreen)"></div>    | `--hb-color-neongreen`    | `$neongreen`    |
-| <div class="docs-swatch" style="background: var(--hb-color-skyblue)"></div>      | `--hb-color-skyblue`      | `$skyblue`      |
-| <div class="docs-swatch" style="background: var(--hb-color-beetroot)"></div>     | `--hb-color-beetroot`     | `$beetroot`     |
-| <div class="docs-swatch" style="background: var(--hb-color-hotpink)"></div>      | `--hb-color-hotpink`      | `$hotpink`      |
-| <div class="docs-swatch" style="background: var(--hb-color-pineapple)"></div>    | `--hb-color-pineapple`    | `$pineapple`    |
-| <div class="docs-swatch" style="background: var(--hb-color-coralred)"></div>     | `--hb-color-coralred`     | `$coralred`     |
-| <div class="docs-swatch" style="background: var(--hb-color-ash)"></div>          | `--hb-color-ash`          | `$ash`          |
+| <div class="docs-swatch" style="background: var(--fbx-color-teal)"></div>         | `--fbx-color-teal`         | `$teal`         |
+| <div class="docs-swatch" style="background: var(--fbx-color-turquoise)"></div>    | `--fbx-color-turquoise`    | `$turquoise`    |
+| <div class="docs-swatch" style="background: var(--fbx-color-greensea)"></div>     | `--fbx-color-greensea`     | `$greensea`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-emerland)"></div>     | `--fbx-color-emerland`     | `$emerland`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-nephritis)"></div>    | `--fbx-color-nephritis`    | `$nephritis`    |
+| <div class="docs-swatch" style="background: var(--fbx-color-babyblue)"></div>     | `--fbx-color-babyblue`     | `$babyblue`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-peterrive)"></div>    | `--fbx-color-peterrive`    | `$peterrive`    |
+| <div class="docs-swatch" style="background: var(--fbx-color-belizehol)"></div>    | `--fbx-color-belizehol`    | `$belizehol`    |
+| <div class="docs-swatch" style="background: var(--fbx-color-amethyst)"></div>     | `--fbx-color-amethyst`     | `$amethyst`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-wisteria)"></div>     | `--fbx-color-wisteria`     | `$wisteria`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-wetasphalt)"></div>   | `--fbx-color-wetasphalt`   | `$wetasphalt`   |
+| <div class="docs-swatch" style="background: var(--fbx-color-midnightblue)"></div> | `--fbx-color-midnightblue` | `$midnightblue` |
+| <div class="docs-swatch" style="background: var(--fbx-color-sunflower)"></div>    | `--fbx-color-sunflower`    | `$sunflower`    |
+| <div class="docs-swatch" style="background: var(--fbx-color-orange)"></div>       | `--fbx-color-orange`       | `$orange`       |
+| <div class="docs-swatch" style="background: var(--fbx-color-carrot)"></div>       | `--fbx-color-carrot`       | `$carrot`       |
+| <div class="docs-swatch" style="background: var(--fbx-color-salmon)"></div>       | `--fbx-color-salmon`       | `$salmon`       |
+| <div class="docs-swatch" style="background: var(--fbx-color-pumpkin)"></div>      | `--fbx-color-pumpkin`      | `$pumpkin`      |
+| <div class="docs-swatch" style="background: var(--fbx-color-alizarin)"></div>     | `--fbx-color-alizarin`     | `$alizarin`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-pomegranate)"></div>  | `--fbx-color-pomegranate`  | `$pomegranate`  |
+| <div class="docs-swatch" style="background: var(--fbx-color-clouds)"></div>       | `--fbx-color-clouds`       | `$clouds`       |
+| <div class="docs-swatch" style="background: var(--fbx-color-silver)"></div>       | `--fbx-color-silver`       | `$silver`       |
+| <div class="docs-swatch" style="background: var(--fbx-color-concrete)"></div>     | `--fbx-color-concrete`     | `$concrete`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-asbestos)"></div>     | `--fbx-color-asbestos`     | `$asbestos`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-neongreen)"></div>    | `--fbx-color-neongreen`    | `$neongreen`    |
+| <div class="docs-swatch" style="background: var(--fbx-color-skyblue)"></div>      | `--fbx-color-skyblue`      | `$skyblue`      |
+| <div class="docs-swatch" style="background: var(--fbx-color-beetroot)"></div>     | `--fbx-color-beetroot`     | `$beetroot`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-hotpink)"></div>      | `--fbx-color-hotpink`      | `$hotpink`      |
+| <div class="docs-swatch" style="background: var(--fbx-color-pineapple)"></div>    | `--fbx-color-pineapple`    | `$pineapple`    |
+| <div class="docs-swatch" style="background: var(--fbx-color-coralred)"></div>     | `--fbx-color-coralred`     | `$coralred`     |
+| <div class="docs-swatch" style="background: var(--fbx-color-ash)"></div>          | `--fbx-color-ash`          | `$ash`          |
 
 
 #### Usage<a id='theme-usage'></a>
@@ -158,8 +158,8 @@ Alternatively, you can change a theme by simply changing the CSS variable on `:r
 ```css
 :root
 {
-	--hb-theme-primary: var(--hb-color-emerland);
-	--hb-theme-primary-rgb: var(--hb-color-emerland-rgb);
+	--fbx-theme-primary: var(--fbx-color-emerland);
+	--fbx-theme-primary-rgb: var(--fbx-color-emerland-rgb);
 }
 ```
 
@@ -168,15 +168,15 @@ FrontBx uses a Sass function for gradients on theme colors to style the odd comp
 ```css
 :root
 {
-	--hb-theme-primary-100: #ffeaf7;
-	--hb-theme-primary-200: #ffd5ee;
-	--hb-theme-primary-300: #ff97d5;
-	--hb-theme-primary-400: #ff77c8;
-	--hb-theme-primary-500: #f22ca2;
-	--hb-theme-primary-600: #cc2588;
-	--hb-theme-primary-700: #bf2380;
-	--hb-theme-primary-800: #b32077;
-	--hb-theme-primary-900: #991c66;
+	--fbx-theme-primary-100: #ffeaf7;
+	--fbx-theme-primary-200: #ffd5ee;
+	--fbx-theme-primary-300: #ff97d5;
+	--fbx-theme-primary-400: #ff77c8;
+	--fbx-theme-primary-500: #f22ca2;
+	--fbx-theme-primary-600: #cc2588;
+	--fbx-theme-primary-700: #bf2380;
+	--fbx-theme-primary-800: #b32077;
+	--fbx-theme-primary-900: #991c66;
 }
 ```
 
@@ -192,12 +192,12 @@ FrontBx defines the following variables for use in a theme. Note that theme colo
 
 ```scss
 // Contexts
-$theme-primary:                 var(--hb-color-hotpink)     !default;
-$theme-secondary:               var(--hb-color-salmon)      !default;
-$theme-success:                 var(--hb-color-emerland)    !default;
-$theme-info:                    var(--hb-color-skyblue)     !default;
-$theme-warning:                 var(--hb-color-sunflower)   !default;
-$theme-danger:                  var(--hb-color-coralred)    !default;
+$theme-primary:                 var(--fbx-color-hotpink)     !default;
+$theme-secondary:               var(--fbx-color-salmon)      !default;
+$theme-success:                 var(--fbx-color-emerland)    !default;
+$theme-info:                    var(--fbx-color-skyblue)     !default;
+$theme-warning:                 var(--fbx-color-sunflower)   !default;
+$theme-danger:                  var(--fbx-color-coralred)    !default;
 ```
 
 ```scss

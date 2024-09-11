@@ -701,12 +701,12 @@ Table uses local CSS variables on `.table` along with Sass variables for enhance
         <style scoped>
             .custom-table
             {
-                --hb-table-bg: var(--hb-black);
-                --hb-table-color: var(--hb-white);
-                --hb-table-bg-hover: var(--hb-gray-900);
-                --hb-table-border-color: var(--hb-gray-900);
-                --hb-table-head-bg: var(--hb-gray-900);
-                --hb-table-head-color: var(--hb-white);
+                --fbx-table-bg: var(--fbx-black);
+                --fbx-table-color: var(--fbx-white);
+                --fbx-table-bg-hover: var(--fbx-gray-900);
+                --fbx-table-border-color: var(--fbx-gray-900);
+                --fbx-table-head-bg: var(--fbx-gray-900);
+                --fbx-table-head-color: var(--fbx-white);
             }
         </style>
         <table class="table custom-table">
@@ -757,12 +757,12 @@ Table uses local CSS variables on `.table` along with Sass variables for enhance
 ```css
 .custom-table
 {
-    --hb-table-bg: var(--hb-black);
-    --hb-table-color: var(--hb-white);
-    --hb-table-bg-hover: var(--hb-gray-900);
-    --hb-table-border-color: var(--hb-gray-900);
-    --hb-table-head-bg: var(--hb-gray-900);
-    --hb-table-head-color: var(--hb-white);
+    --fbx-table-bg: var(--fbx-black);
+    --fbx-table-color: var(--fbx-white);
+    --fbx-table-bg-hover: var(--fbx-gray-900);
+    --fbx-table-border-color: var(--fbx-gray-900);
+    --fbx-table-head-bg: var(--fbx-gray-900);
+    --fbx-table-head-color: var(--fbx-white);
 }
 ```
 
@@ -779,13 +779,13 @@ $table-bg-alternate:            rgba(0, 0, 0, 0.08) !default;
 $table-color:                   inherit !default;
 $table-cell-pad-y:              1.2rem !default;
 $table-cell-pad-x:              1.8rem !default;
-$table-border-color:            var(--hb-gray-200) !default;
-$table-head-bg:                 var(--hb-gray-200) !default;
-$table-head-color:              var(--hb-gray-900) !default;
+$table-border-color:            var(--fbx-gray-200) !default;
+$table-head-bg:                 var(--fbx-gray-200) !default;
+$table-head-color:              var(--fbx-gray-900) !default;
 $table-head-weight:             $text-bold !default;
-$table-caption-color:           var(--hb-gray) !default;
-$table-selected-color:          var(--hb-white) !default;
-$table-selected-bg:             var(--hb-theme-info) !default;
+$table-caption-color:           var(--fbx-gray) !default;
+$table-selected-color:          var(--fbx-white) !default;
+$table-selected-bg:             var(--fbx-theme-info) !default;
 ```
 
 ```file-path
@@ -793,20 +793,20 @@ src/scss/components/table.scss
 ```
 ```css
 .table {
-    --hb-table-font-size: 1.3rem;
-    --hb-table-bg: transparent;
-    --hb-table-color: inherit;
-    --hb-table-bg-hover: rgba(0, 0, 0, 0.08);
-    --hb-table-cell-pad-y: 1.2rem;
-    --hb-table-cell-pad-x: 1.8rem;
-    --hb-table-border-color: var(--hb-gray-200);
-    --hb-table-head-bg: var(--hb-gray-200);
-    --hb-table-head-color: var(--hb-gray-900);
-    --hb-table-head-weight: 500;
-    --hb-table-caption-color: var(--hb-gray);
-    --hb-table-bg-alternate: rgba(0, 0, 0, 0.08);
-    --hb-table-selected-color: var(--hb-white);
-    --hb-table-selected-bg: var(--hb-theme-info);
+    --fbx-table-font-size: 1.3rem;
+    --fbx-table-bg: transparent;
+    --fbx-table-color: inherit;
+    --fbx-table-bg-hover: rgba(0, 0, 0, 0.08);
+    --fbx-table-cell-pad-y: 1.2rem;
+    --fbx-table-cell-pad-x: 1.8rem;
+    --fbx-table-border-color: var(--fbx-gray-200);
+    --fbx-table-head-bg: var(--fbx-gray-200);
+    --fbx-table-head-color: var(--fbx-gray-900);
+    --fbx-table-head-weight: 500;
+    --fbx-table-caption-color: var(--fbx-gray);
+    --fbx-table-bg-alternate: rgba(0, 0, 0, 0.08);
+    --fbx-table-selected-color: var(--fbx-white);
+    --fbx-table-selected-bg: var(--fbx-theme-info);
 }
 ```
 

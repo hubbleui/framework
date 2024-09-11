@@ -181,12 +181,14 @@
 
 		.close-btn
 		{
-			visibility: hidden;
+			opacity: 1;
+			transition: opacity .225s ease-out;
 		}
 	}
-	&.expanded .drawer-header .close-btn
+	&.closed .drawer-header .close-btn
 	{
-		visibility: visible;
+		visibility: hidden;
+		opacity: 0;
 	}
 
 	// Hide disabled

@@ -257,19 +257,114 @@ Menu items come with a handful of convenient states to help with different use-c
 
 ### Selected Menu
 
-Add the `.js-select-menu` modifier to `.js-drop-trigger` to modify the menu behavior. The library will replace the anchor element `innerText` with the text of a selected menu item.
+Dropdown offers three different options for selectable menus.
 
-You may also nest a hidden `input` inside the `.drop-container` to store the input value of the selected menu item. If items have a `data-value` attribute the input will be updated to this attribute rather than the text.
+1. `.js-select-menu` - Add this modifier class to the `.menu` to toggle the `.selected` class on items when clicked.
+2. `.js-check-menu` - Add this modifier class to the `.menu` to toggle the `.checked` class on items when clicked.
+3. `.js-active-menu` - Add this modifier class to the `.menu` to toggle the `.active` class on items when clicked.
 
-> Add the `.js-menu-check` modifier to `.menu` and FrontBx will automatically include a checkmark on the selected item.
+Note that when using the `.js-menu-check` modifier, FrontBx will automatically include a checkmark on the checked item.
 
 <div class="code-content-example">
-    <div class="flex-row-fluid align-cols-center">
+    <div class="flex-row-fluid align-cols-center col-gaps-xs">
+        <div class="drop-container">
+            <button type="button" class="btn btn-dropdown js-drop-trigger">.js-select-menu</button>
+            <div class="drop-menu js-drop-menu">
+                <ul class="menu js-select-menu">
+                    <li>Option  1</li>
+                    <li>Option  2</li>
+                    <li>Option  3</li>
+                    <li>Option  4</li>
+                    <li>Option  5</li>
+                    <li>Option  6</li>
+                </ul>
+            </div>
+        </div>
+        <div class="drop-container">
+            <button type="button" class="btn btn-dropdown js-drop-trigger">.js-check-menu</button>
+            <div class="drop-menu js-drop-menu">
+                <ul class="menu js-check-menu">
+                    <li>Option  1</li>
+                    <li>Option  2</li>
+                    <li>Option  3</li>
+                    <li>Option  4</li>
+                    <li>Option  5</li>
+                    <li>Option  6</li>
+                </ul>
+            </div>
+        </div>
+        <div class="drop-container">
+            <button type="button" class="btn btn-dropdown js-drop-trigger">.js-active-menu</button>
+            <div class="drop-menu js-drop-menu">
+                <ul class="menu js-active-menu">
+                    <li>Option  1</li>
+                    <li>Option  2</li>
+                    <li>Option  3</li>
+                    <li>Option  4</li>
+                    <li>Option  5</li>
+                    <li>Option  6</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+```html
+<div class="drop-container">
+    <input type="hidden" name="menu" value="">
+    <button type="button" class="btn btn-dropdown js-drop-trigger">.js-select-menu</button>
+    <div class="drop-menu js-drop-menu">
+        <ul class="menu js-select-menu">
+            <li>Option  1</li>
+            <li>Option  2</li>
+            <li>Option  3</li>
+            <li>Option  4</li>
+            <li>Option  5</li>
+            <li>Option  6</li>
+        </ul>
+    </div>
+</div>
+```
+
+Additionally, adding the `js-drop-selectable` modifier to the anchor element will replace the anchor element `innerText` with the text of a selected menu item.
+
+You may also nest a hidden `input` inside the `.drop-container` to store the input value of the selected menu item. If items have a `data-value` attribute - the input value will be updated to this attribute rather than the text of the menu item.
+
+<div class="code-content-example">
+    <div class="flex-row-fluid align-cols-center col-gaps-xs">
         <div class="drop-container">
             <input type="hidden" name="menu" value="">
-            <button type="button" class="btn btn-dropdown js-drop-trigger js-select-menu">Select an option....</button>
+            <button type="button" class="btn btn-dropdown js-drop-trigger js-drop-selectable">.js-select-menu</button>
             <div class="drop-menu js-drop-menu">
-                <ul class="menu js-menu-check">
+                <ul class="menu js-select-menu">
+                    <li data-value="1">Option  1</li>
+                    <li data-value="2">Option  2</li>
+                    <li data-value="3">Option  3</li>
+                    <li data-value="4">Option  4</li>
+                    <li data-value="5">Option  5</li>
+                    <li data-value="6">Option  6</li>
+                </ul>
+            </div>
+        </div>
+        <div class="drop-container">
+            <input type="hidden" name="menu" value="">
+            <button type="button" class="btn btn-dropdown js-drop-trigger js-drop-selectable">.js-check-menu</button>
+            <div class="drop-menu js-drop-menu">
+                <ul class="menu js-check-menu">
+                    <li data-value="1">Option  1</li>
+                    <li data-value="2">Option  2</li>
+                    <li data-value="3">Option  3</li>
+                    <li data-value="4">Option  4</li>
+                    <li data-value="5">Option  5</li>
+                    <li data-value="6">Option  6</li>
+                </ul>
+            </div>
+        </div>
+        <div class="drop-container">
+            <input type="hidden" name="menu" value="">
+            <button type="button" class="btn btn-dropdown js-drop-trigger js-drop-selectable">.js-active-menu</button>
+            <div class="drop-menu js-drop-menu">
+                <ul class="menu js-active-menu">
                     <li data-value="1">Option  1</li>
                     <li data-value="2">Option  2</li>
                     <li data-value="3">Option  3</li>
@@ -285,9 +380,9 @@ You may also nest a hidden `input` inside the `.drop-container` to store the inp
 ```html
 <div class="drop-container">
     <input type="hidden" name="menu" value="">
-    <button type="button" class="btn btn-dropdown js-drop-trigger js-select-menu">Select an option....</button>
+    <button type="button" class="btn btn-dropdown js-drop-trigger js-drop-selectable">.js-select-menu</button>
     <div class="drop-menu js-drop-menu">
-        <ul class="menu js-menu-check">
+        <ul class="menu js-select-menu">
             <li data-value="1">Option  1</li>
             <li data-value="2">Option  2</li>
             <li data-value="3">Option  3</li>
@@ -469,7 +564,7 @@ Dropdown height is sized via `max-height` on `.menu`. This value can be overidde
 
 ```css
 .drop-container {
-    --hb-dropdown-height: 300px;
+    --fbx-dropdown-height: 300px;
 }
 ```
 
@@ -478,7 +573,7 @@ Dropdown width is sized via `min-width` on `.menu`. This value can be overidden 
 
 ```css
 .drop-container {
-    --hb-dropdown-width: 160px;
+    --fbx-dropdown-width: 160px;
 }
 ```
 
@@ -612,18 +707,18 @@ Dropdown uses local CSS variables on `.drop-container` and `.menu` along with Sa
         <style scoped>
             .custom-drop
             {
-                --hb-dropdown-bg: var(--hb-black);
+                --fbx-dropdown-bg: var(--fbx-black);
             }
             .custom-drop .menu
             {
-                --hb-menu-color: var(--hb-white);
-                --hb-menu-item-color-hover: var(--hb-white);
-                --hb-menu-item-color-active: var(--hb-theme-primary);
-                --hb-menu-item-color-selected: var(--hb-theme-primary);
-                --hb-menu-item-bg-hover: var(--hb-gray-900);
-                --hb-menu-item-bg-active: var(--hb-gray-900);
-                --hb-menu-item-bg-selected: var(--hb-gray-900);
-                --hb-menu-divider-color: var(--hb-gray-600);
+                --fbx-menu-color: var(--fbx-white);
+                --fbx-menu-item-color-hover: var(--fbx-white);
+                --fbx-menu-item-color-active: var(--fbx-theme-primary);
+                --fbx-menu-item-color-selected: var(--fbx-theme-primary);
+                --fbx-menu-item-bg-hover: var(--fbx-gray-900);
+                --fbx-menu-item-bg-active: var(--fbx-gray-900);
+                --fbx-menu-item-bg-selected: var(--fbx-gray-900);
+                --fbx-menu-divider-color: var(--fbx-gray-600);
             }
         </style>
         <div class="drop-container custom-drop">
@@ -669,18 +764,18 @@ Dropdown uses local CSS variables on `.drop-container` and `.menu` along with Sa
 ```css
 .custom-drop
 {
-    --hb-dropdown-bg: var(--hb-black);
+    --fbx-dropdown-bg: var(--fbx-black);
 }
 .custom-drop .menu
 {
-    --hb-menu-color: var(--hb-white);
-    --hb-menu-item-color-hover: var(--hb-white);
-    --hb-menu-item-color-active: var(--hb-theme-primary);
-    --hb-menu-item-color-selected: var(--hb-theme-primary);
-    --hb-menu-item-bg-hover: var(--hb-gray-900);
-    --hb-menu-item-bg-active: var(--hb-gray-900);
-    --hb-menu-item-bg-selected: var(--hb-gray-900);
-    --hb-menu-divider-color: var(--hb-gray-600);
+    --fbx-menu-color: var(--fbx-white);
+    --fbx-menu-item-color-hover: var(--fbx-white);
+    --fbx-menu-item-color-active: var(--fbx-theme-primary);
+    --fbx-menu-item-color-selected: var(--fbx-theme-primary);
+    --fbx-menu-item-bg-hover: var(--fbx-gray-900);
+    --fbx-menu-item-bg-active: var(--fbx-gray-900);
+    --fbx-menu-item-bg-selected: var(--fbx-gray-900);
+    --fbx-menu-divider-color: var(--fbx-gray-600);
 }
 ```
 
@@ -691,26 +786,26 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 ```
 ```sass
 // Dropdown
-$dropdown-border-radius:        var(--hb-border-radius) !default;
+$dropdown-border-radius:        var(--fbx-border-radius) !default;
 $dropdown-width:                160px !default;
 $dropdown-height:               300px !default;
 $dropdown-shadow-level:         2 !default;
-$dropdown-bg:                   var(--hb-white) !default;
+$dropdown-bg:                   var(--fbx-white) !default;
 
 // Menu
-$menu-bg:                       var(--hb-white) !default;
-$menu-color:                    var(--hb-gray-700) !default;
+$menu-bg:                       var(--fbx-white) !default;
+$menu-color:                    var(--fbx-gray-700) !default;
 $menu-font-size:                1.3rem !default;
 $menu-item-bg:                  transparent !default;
-$menu-item-color-hover:         var(--hb-gray-700) !default;
-$menu-item-color-active:        var(--hb-gray-700) !default;
-$menu-item-color-selected:      var(--hb-white) !default;
-$menu-item-bg-hover:            var(--hb-gray-200) !default;
-$menu-item-bg-active:           var(--hb-theme-info-100) !default;
-$menu-item-bg-selected:         var(--hb-theme-info) !default;
+$menu-item-color-hover:         var(--fbx-gray-700) !default;
+$menu-item-color-active:        var(--fbx-gray-700) !default;
+$menu-item-color-selected:      var(--fbx-white) !default;
+$menu-item-bg-hover:            var(--fbx-gray-200) !default;
+$menu-item-bg-active:           var(--fbx-theme-info-100) !default;
+$menu-item-bg-selected:         var(--fbx-theme-info) !default;
 $menu-item-pad-y:               10px !default;
 $menu-item-pad-x:               12px !default;
-$menu-divider-color:            var(--hb-gray-200) !default;
+$menu-divider-color:            var(--fbx-gray-200) !default;
 $menu-divider-space:            5px;
 ```
 
@@ -719,10 +814,10 @@ src/scss/components/dropdown.scss
 ```
 ```css
 .drop-container {
-  --hb-dropdown-border-radius: var(--hb-border-radius);
-  --hb-dropdown-width: 160px;
-  --hb-dropdown-height: 300px;
-  --hb-dropdown-bg: var(--hb-white);
+  --fbx-dropdown-border-radius: var(--fbx-border-radius);
+  --fbx-dropdown-width: 160px;
+  --fbx-dropdown-height: 300px;
+  --fbx-dropdown-bg: var(--fbx-white);
 }
 ```
 
@@ -731,20 +826,20 @@ src/scss/components/menu.scss
 ```
 ```css
 .menu {
-    --hb-menu-bg: var(--hb-white);
-    --hb-menu-color: var(--hb-gray-700);
-    --hb-menu-font-size: 1.3rem;
-    --hb-menu-item-color-hover: var(--hb-gray-700);
-    --hb-menu-item-color-active: var(--hb-gray-700);
-    --hb-menu-item-color-selected: var(--hb-white);
-    --hb-menu-item-bg: transparent;
-    --hb-menu-item-bg-hover: var(--hb-gray-200);
-    --hb-menu-item-bg-active: var(--hb-theme-info-100);
-    --hb-menu-item-bg-selected: var(--hb-theme-info);
-    --hb-menu-item-pad-y: 10px;
-    --hb-menu-item-pad-x: 12px;
-    --hb-menu-divider-color: var(--hb-gray-200);
-    --hb-menu-divider-space: 5px;
+    --fbx-menu-bg: var(--fbx-white);
+    --fbx-menu-color: var(--fbx-gray-700);
+    --fbx-menu-font-size: 1.3rem;
+    --fbx-menu-item-color-hover: var(--fbx-gray-700);
+    --fbx-menu-item-color-active: var(--fbx-gray-700);
+    --fbx-menu-item-color-selected: var(--fbx-white);
+    --fbx-menu-item-bg: transparent;
+    --fbx-menu-item-bg-hover: var(--fbx-gray-200);
+    --fbx-menu-item-bg-active: var(--fbx-theme-info-100);
+    --fbx-menu-item-bg-selected: var(--fbx-theme-info);
+    --fbx-menu-item-pad-y: 10px;
+    --fbx-menu-item-pad-x: 12px;
+    --fbx-menu-divider-color: var(--fbx-gray-200);
+    --fbx-menu-divider-space: 5px;
 }
 ```
 

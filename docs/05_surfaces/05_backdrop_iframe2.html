@@ -5,16 +5,14 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Documentation | FrontBx UI</title>
         <meta name="description" content="">
-        <script src="{{ASSET_PATH}}dist/js/frontbx.lazyload.js"></script>
-        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/lazyload.css">
+        <script src="{{ASSET_PATH}}dist/js/frontbx-lazyload.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/frontbx-icons.css">
-        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/frontbx.css">
-        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/docs.css">
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/frontbx.bundle.min.css">
+        <link rel="stylesheet" href="{{ASSET_PATH}}dist/css/docs.min.css">
         <style type="text/css">
             .backdrop.drawer-container
             {
-                --hb-drawer-width: 70vw;
+                --fbx-drawer-width: 70vw;
             }
             body,html
             {
@@ -28,14 +26,15 @@
                 <p class="text-center">Swipe left or <br> right to open/close</p>
             </div>
         </div>
-        <script src="{{ASSET_PATH}}dist/js/frontbx.bundle.js"></script>
-        <script src="{{ASSET_PATH}}dist/js/docs.js"></script>
+        <script src="{{ASSET_PATH}}dist/js/frontbx.bundle.min.js"></script>
+        <script src="{{ASSET_PATH}}dist/js/frontbx-docs.min.js"></script>
         <script type="text/javascript">
             const drawer = FrontBx.Backdrop(
             {
-                swipeable:       true,
-                state:           'collapsed',
-                content          : `
+                swipeable: true,
+                pushbody: true,
+                state: 'collapsed',
+                content: `
                 <div class="gutter-xs">
                     <div class="skeleton skeleton-circle skeleton-wave" style="width: 40px; height: 40px;"></div>
                     <div class="skeleton-text-block skeleton-lines">

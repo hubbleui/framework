@@ -884,25 +884,25 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 `src/scss/_config.scss`
 ```
 ```sass
-$card-bg:                       var(--hb-white) !default;
-$card-bg-focus:                 var(--hb-white) !default;
-$card-color:                    var(--hb-gray-900) !default;
-$card-title-color:              var(--hb-body-color) !default;
+$card-bg:                       var(--fbx-white) !default;
+$card-bg-focus:                 var(--fbx-white) !default;
+$card-color:                    var(--fbx-gray-900) !default;
+$card-title-color:              var(--fbx-body-color) !default;
 $card-line-height:              1.8 !default;
-$card-border-radius:            var(--hb-border-radius) !default;
+$card-border-radius:            var(--fbx-border-radius) !default;
 $card-border-width:             0 !default;
-$card-border-color:             var(--hb-gray-300) !default;
-$card-box-shadow:               var(--hb-raised-level-two) !default;
-$card-box-shadow-hover:         var(--hb-raised-level-two) !default;
+$card-border-color:             var(--fbx-gray-300) !default;
+$card-box-shadow:               var(--fbx-raised-level-two) !default;
+$card-box-shadow-hover:         var(--fbx-raised-level-two) !default;
 $card-spacer-y:                 1.2rem !default;
 $card-spacer-x:                 1.6rem !default;
-$card-divider-color:            var(--hb-gray-300) !default;
+$card-divider-color:            var(--fbx-gray-300) !default;
 $card-divider-size:             1px !default;
 $card-divier-space:             1rem !default;
 $card-actions-spacer-y:         2rem !default;
 $card-actions-spacer-x:         0.5rem !default;
 $card-media-padding:            0 !default;
-$card-media-bg:                 var(--hb-gray-100) !default;
+$card-media-bg:                 var(--fbx-gray-100) !default;
 $card-landscape-img-sm:         80px !default;
 $card-landscape-img-md:         150px !default;
 $card-landscape-img-lg:         300px !default;
@@ -914,27 +914,27 @@ src/scss/components/_card.scss
 ```sass
 .card
 {
-    --hb-card-bg:               #{$card-bg};
-    --hb-card-bg-focus:         #{$card-bg-focus};
-    --hb-card-color:            #{$card-color};
-    --hb-card-title-color:      #{$card-title-color};
-    --hb-card-line-height:      #{$card-line-height};
-    --hb-card-border-radius:    #{$card-border-radius};
-    --hb-card-border-width:     #{$card-border-width};
-    --hb-card-border-color:     #{$card-border-color};
-    --hb-card-box-shadow:       #{$card-box-shadow};
-    --hb-card-box-shadow-hover: #{$card-box-shadow-hover};
-    --hb-card-spacer-y:         #{$card-spacer-y};
-    --hb-card-spacer-x:         #{$card-spacer-x};
-    --hb-card-divider-color:    #{$card-divider-color};
-    --hb-card-divider-size:     #{$card-divider-size};
-    --hb-card-divier-space:     #{$card-divier-space};
-    --hb-card-actions-spacer-y: #{$card-actions-spacer-y};
-    --hb-card-actions-spacer-x: #{$card-actions-spacer-x};
-    --hb-card-media-padding:    #{$card-media-padding};
-    --hb-card-media-bg:         #{$card-media-bg};
-    --hb-card-landscape-sm:     #{$card-landscape-img-sm};
-    --hb-card-landscape-md:     #{$card-landscape-img-md};
-    --hb-card-landscape-lg:     #{$card-landscape-img-lg};
+    --fbx-card-bg:               #{$card-bg};
+    --fbx-card-bg-focus:         #{$card-bg-focus};
+    --fbx-card-color:            #{$card-color};
+    --fbx-card-title-color:      #{$card-title-color};
+    --fbx-card-line-height:      #{$card-line-height};
+    --fbx-card-border-radius:    #{$card-border-radius};
+    --fbx-card-border-width:     #{$card-border-width};
+    --fbx-card-border-color:     #{$card-border-color};
+    --fbx-card-box-shadow:       #{$card-box-shadow};
+    --fbx-card-box-shadow-hover: #{$card-box-shadow-hover};
+    --fbx-card-spacer-y:         #{$card-spacer-y};
+    --fbx-card-spacer-x:         #{$card-spacer-x};
+    --fbx-card-divider-color:    #{$card-divider-color};
+    --fbx-card-divider-size:     #{$card-divider-size};
+    --fbx-card-divier-space:     #{$card-divier-space};
+    --fbx-card-actions-spacer-y: #{$card-actions-spacer-y};
+    --fbx-card-actions-spacer-x: #{$card-actions-spacer-x};
+    --fbx-card-media-padding:    #{$card-media-padding};
+    --fbx-card-media-bg:         #{$card-media-bg};
+    --fbx-card-landscape-sm:     #{$card-landscape-img-sm};
+    --fbx-card-landscape-md:     #{$card-landscape-img-md};
+    --fbx-card-landscape-lg:     #{$card-landscape-img-lg};
 }
 ```

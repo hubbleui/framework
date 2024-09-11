@@ -310,25 +310,25 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 `src/scss/_config.scss`
 ```
 ```scss
-$notif-bg:                      var(--hb-black) !default;
-$notif-color:                   var(--hb-white) !default;
+$notif-bg:                      var(--fbx-black) !default;
+$notif-color:                   var(--fbx-white) !default;
 $notif-font-size:               1.2rem !default;
 $notif-spacer-y:                2rem !default;
 $notif-spacer-x:                2rem !default;
-$notif-border-radius:           var(--hb-border-radius) !default;
+$notif-border-radius:           var(--fbx-border-radius) !default;
 $notif-shadow:                  3 !default;
 ```
 
 ```scss
 .notification-wrap
 {
-    --hb-notification-max-width: #{$notification-max-width};
-    --hb-notification-bg: #{$notification-bg};
-    --hb-notification-color: #{$notification-color};
+    --fbx-notification-max-width: #{$notification-max-width};
+    --fbx-notification-bg: #{$notification-bg};
+    --fbx-notification-color: #{$notification-color};
 }
 .notification-wrap .msg
 {
-    --hb-msg-bg: var(--hb-notification-bg);
-    --hb-msg-color: var(--hb-notification-color);
+    --fbx-msg-bg: var(--fbx-notification-bg);
+    --fbx-msg-color: var(--fbx-notification-color);
 }
 ```

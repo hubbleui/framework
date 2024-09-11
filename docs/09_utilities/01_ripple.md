@@ -64,7 +64,7 @@ Ripple's default color is the current color of the element being clicked (aka th
 	<style scoped>
 		.custom-ripple .ripple
 		{
-    		--hb-ripple-color: rgba(0, 0, 255, 0.3);
+    		--fbx-ripple-color: rgba(0, 0, 255, 0.3);
 		}
 	</style>
 	<div class="flex-row-fluid align-cols-center">
@@ -75,6 +75,6 @@ Ripple's default color is the current color of the element being clicked (aka th
 ```css
 .ripple
 {
-	--hb-ripple-color: rgba(0, 0, 255, 0.3);
+	--fbx-ripple-color: rgba(0, 0, 255, 0.3);
 }
 ```

@@ -71,9 +71,9 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 `src/scss/_config.scss`
 ```
 ```sass
-$paper-bg:                      var(--hb-white) !default;
-$paper-radius:                  var(--hb-border-radius) !default;
-$paper-flat-border:             var(--hb-gray-300) !default;
+$paper-bg:                      var(--fbx-white) !default;
+$paper-radius:                  var(--fbx-border-radius) !default;
+$paper-flat-border:             var(--fbx-gray-300) !default;
 ```
 
 ```file-path
@@ -82,9 +82,9 @@ src/scss/components/_paper.scss
 ```sass
 .paper
 {
-    --hb-paper-bg: var(--hb-white);
-    --hb-paper-radius: var(--hb-border-radius);
-    --hb-paper-border-color: var(--hb-gray-300);
+    --fbx-paper-bg: var(--fbx-white);
+    --fbx-paper-radius: var(--fbx-border-radius);
+    --fbx-paper-border-color: var(--fbx-gray-300);
 }
     
 ```

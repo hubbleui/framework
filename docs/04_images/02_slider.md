@@ -4,8 +4,6 @@ FrontBx's Slider component can be used to cycle through content such as images, 
 
 ---
 
-How it works
-
 *   [How it works](#how-it-works)
 *   [Markup](#markup)
 *   [Options](#options)
@@ -176,12 +174,12 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 ```
 ```sass
 $slider-bg:                     transparent !default;
-$slider-dots-color:             var(--hb-white) !default;
-$slider-dots-color-active:      var(--hb-theme-primary) !default;
+$slider-dots-color:             var(--fbx-white) !default;
+$slider-dots-color-active:      var(--fbx-theme-primary) !default;
 $slider-dots-size:              3px !default;
 $slider-nav-btn-size:           25px !default;
-$slider-nav-btn-color:          var(--hb-white) !default;
-$slider-nav-btn-color-hover:    var(--hb-theme-primary) !default;
+$slider-nav-btn-color:          var(--fbx-white) !default;
+$slider-nav-btn-color-hover:    var(--fbx-theme-primary) !default;
 $slider-slides-gap:             20px;
 $slider-slide-width:            66%;
 ```
@@ -191,14 +189,14 @@ src/scss/components/slider.scss
 ```
 ```css
 .slider {
-    --hb-slider-bg: transparent;
-    --hb-slider-dots-color: var(--hb-white);
-    --hb-slider-dots-color-active: var(--hb-theme-primary);
-    --hb-slider-dots-size: 3px;
-    --hb-slider-nav-btn-size: 25px;
-    --hb-slider-nav-btn-color: var(--hb-white);
-    --hb-slider-nav-btn-color-hover: var(--hb-theme-primary);
-    --hb-slider-slides-gap: 20px;
-    --hb-slider-slide-width: 66%;
+    --fbx-slider-bg: transparent;
+    --fbx-slider-dots-color: var(--fbx-white);
+    --fbx-slider-dots-color-active: var(--fbx-theme-primary);
+    --fbx-slider-dots-size: 3px;
+    --fbx-slider-nav-btn-size: 25px;
+    --fbx-slider-nav-btn-color: var(--fbx-white);
+    --fbx-slider-nav-btn-color-hover: var(--fbx-theme-primary);
+    --fbx-slider-slides-gap: 20px;
+    --fbx-slider-slide-width: 66%;
 }
 ```

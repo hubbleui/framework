@@ -2,7 +2,7 @@
 {
     @if $curr-grid != null
     {
-        .container-,
+        .container,
         .container-fluid
         {
             --fbx-container-pad-l: var(--fbx-container-gutter-#{$curr-grid});
@@ -10,7 +10,7 @@
         }
         .container
         {
-            --fbx-container-max-width: var(--fbx-breakpoint-#{$curr-grid});
+            --fbx-container-width: var(--fbx-breakpoint-#{$curr-grid});
         }
     }
     @else

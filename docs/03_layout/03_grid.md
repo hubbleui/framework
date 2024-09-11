@@ -72,11 +72,11 @@ src/scss/_config.scss
 ```css
 :root
 {
-    --hb-breakpoint-xs: 0;
-    --hb-breakpoint-sm: 576px;
-    --hb-breakpoint-md: 768px;
-    --hb-breakpoint-lg: 992px;
-    --hb-breakpoint-xl: 1200px;
+    --fbx-breakpoint-xs: 0;
+    --fbx-breakpoint-sm: 576px;
+    --fbx-breakpoint-md: 768px;
+    --fbx-breakpoint-lg: 992px;
+    --fbx-breakpoint-xl: 1200px;
 }
 ```
 
@@ -452,19 +452,19 @@ src/scss/grid/_base.scss
 /* Row */
 .row
 {
-    --hb-row-width: 100%;
-    width: var(--hb-row-width);
+    --fbx-row-width: 100%;
+    width: var(--fbx-row-width);
 }
 
 /* Columns */
 .col
 {
-    --hb-col-width: 0;
-    --hb-col-push: initial;
-    --hb-col-pull: initial;
-    --hb-gutter-l: initial;
-    --hb-gutter-r: initial;
-    --hb-pole-n: initial;
-    --hb-pole-s: initial;
+    --fbx-col-width: 0;
+    --fbx-col-push: initial;
+    --fbx-col-pull: initial;
+    --fbx-gutter-l: initial;
+    --fbx-gutter-r: initial;
+    --fbx-pole-n: initial;
+    --fbx-pole-s: initial;
 }
 ```

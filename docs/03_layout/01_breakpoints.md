@@ -110,10 +110,10 @@ $breakpoints:
 ```css
 :root
 {
-    --hb-breakpoint-xs: 0;
-    --hb-breakpoint-sm: 576px;
-    --hb-breakpoint-md: 768px;
-    --hb-breakpoint-lg: 992px;
-    --hb-breakpoint-xl: 1200px;
+    --fbx-breakpoint-xs: 0;
+    --fbx-breakpoint-sm: 576px;
+    --fbx-breakpoint-md: 768px;
+    --fbx-breakpoint-lg: 992px;
+    --fbx-breakpoint-xl: 1200px;
 }
 ```

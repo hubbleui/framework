@@ -1,12 +1,12 @@
 # Introduction
 
-* * *
+---
 
 *   [Welcome](#)
 *   [How does it work?](#)
 *   [How to read this documentation](#)
 
-* * *
+---
 
 Welcome
 -------

@@ -82,43 +82,53 @@ Below is a simple example using a tab navigation to load content:
 <div class="code-content-example">
     <ul class="tab-nav js-tab-nav">
         <li>
-            <a href="/docs/javascript/pjax/tab-1.html" class="active js-pjax-link" data-tab="panel-1" data-pjax-target="tab-1">Tab 1</a>
+            <a href="../pjax_tabs_iframe1.html" class="active js-pjax-link" data-tab="panel-1" data-pjax-target="tab-1">Tab 1</a>
         </li>
         <li>
-            <a href="/docs/javascript/pjax/tab-2.html" class="js-pjax-link" data-tab="panel-2" data-pjax-target="tab-2">Tab 2</a>
+            <a href="../pjax_tabs_iframe2.html" class="js-pjax-link" data-tab="panel-2" data-pjax-target="tab-2">Tab 2</a>
         </li>
         <li>
-            <a href="/docs/javascript/pjax/tab-3.html" class="js-pjax-link" data-tab="panel-3" data-pjax-target="tab-3">Tab 3</a>
+            <a href="../pjax_tabs_iframe3.html" class="js-pjax-link" data-tab="panel-3" data-pjax-target="tab-3">Tab 3</a>
         </li>
     </ul>
-    <div class="tab-panels-wrap js-tab-panels-wrap">
+    <div class="tab-panels js-tab-panels">
         <div class="tab-panel active" data-tab-panel="panel-1" id="tab-1">
-            <h3>Panel 1</h3>
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. </p>
+            <div class="pad-20">
+                <h4>Panel 1</h4>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+            </div>
         </div>
-        <div class="tab-panel" data-tab-panel="panel-2" id="tab-2"> </div>
-        <div class="tab-panel" data-tab-panel="panel-3" id="tab-3"> </div>
+        <div class="tab-panel" data-tab-panel="panel-2" id="tab-2">
+        </div>
+        <div class="tab-panel" data-tab-panel="panel-3" id="tab-3">
+        </div>
     </div>
 </div>
 
 ```html
 <ul class="tab-nav js-tab-nav">
-        <li>
-            <a href="/docs/javascript/pjax/tab-1.html" class="active js-pjax-link" data-tab="panel-1" data-pjax-target="tab-1">Tab 1</a>
-        </li>
-        <li>
-            <a href="/docs/javascript/pjax/tab-2.html" class="js-pjax-link" data-tab="panel-2" data-pjax-target="tab-2">Tab 2</a>
-        </li>
-        <li>
-            <a href="/docs/javascript/pjax/tab-3.html" class="js-pjax-link" data-tab="panel-3" data-pjax-target="tab-3">Tab 3</a>
-        </li>
-    </ul>
-    <div class="tab-panels-wrap js-tab-panels-wrap">
-        <div class="tab-panel active" data-tab-panel="panel-1" id="tab-1"></div>
-        <div class="tab-panel" data-tab-panel="panel-2" id="tab-2"> </div>
-        <div class="tab-panel" data-tab-panel="panel-3" id="tab-3"> </div>
+    <li>
+        <a href="/tab-1" class="active js-pjax-link" data-tab="panel-1" data-pjax-target="tab-1">Tab 1</a>
+    </li>
+    <li>
+        <a href="/tab-2" class="js-pjax-link" data-tab="panel-2" data-pjax-target="tab-2">Tab 2</a>
+    </li>
+    <li>
+        <a href="/tab-3" class="js-pjax-link" data-tab="panel-3" data-pjax-target="tab-3">Tab 3</a>
+    </li>
+</ul>
+<div class="tab-panels js-tab-panels">
+    <div class="tab-panel active" data-tab-panel="panel-1" id="tab-1">
+        <div class="pad-20">
+            <h4>Panel 1</h4>
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+        </div>
     </div>
-
+    <div class="tab-panel" data-tab-panel="panel-2" id="tab-2">
+    </div>
+    <div class="tab-panel" data-tab-panel="panel-3" id="tab-3">
+    </div>
+</div>
 ```
 
 ---

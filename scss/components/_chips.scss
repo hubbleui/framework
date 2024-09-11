@@ -27,7 +27,8 @@
 	        max-width: 30px;
 	        transition: max-width .5s ease;
 	    }
-	    > .fa:first-child
+	    > .fa:first-child,
+        > .fa-brands:first-child
 	    {
 	        display: none !important;
 	    }

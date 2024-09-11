@@ -159,8 +159,8 @@ The example below shows a simple example of a modal that slides in from the bott
 ```css
 .modal-wrap.custom-modal
 {
-    --hb-modal-transform-off: translate3d(0, 100%, 0);
-    --hb-modal-transition: opacity .125s ease, transform .225s ease;
+    --fbx-modal-transform-off: translate3d(0, 100%, 0);
+    --fbx-modal-transition: opacity .125s ease, transform .225s ease;
     align-items: flex-end;
     padding-bottom: 50px;
 }
@@ -181,9 +181,9 @@ let modal = FrontBx.Modal({
 <style>
     .modal-wrap.custom-modal
     {
-        --hb-modal-transform-off: translate3d(0, 100%, 0);
-        --hb-modal-transition: opacity .125s ease, transform .225s ease;
-        --hb-modal-max-width: 450px;
+        --fbx-modal-transform-off: translate3d(0, 100%, 0);
+        --fbx-modal-transition: opacity .125s ease, transform .225s ease;
+        --fbx-modal-max-width: 450px;
         align-items: flex-end;
         padding-bottom: 30px;
     }
@@ -394,17 +394,17 @@ $modal-overlay-transition:      opacity .225s ease-out !default;
 ```scss
 .modal-wrap
 {
-    --hb-modal-title-size: #{$modal-title-size};
-    --hb-modal-transition: #{$modal-transition};
-    --hb-modal-max-width: #{$modal-max-width};
-    --hb-modal-max-height: #{$modal-max-height};
-    --hb-modal-transform-on: #{$modal-transform-on};
-    --hb-modal-transform-off: #{$modal-transform-off};
+    --fbx-modal-title-size: #{$modal-title-size};
+    --fbx-modal-transition: #{$modal-transition};
+    --fbx-modal-max-width: #{$modal-max-width};
+    --fbx-modal-max-height: #{$modal-max-height};
+    --fbx-modal-transform-on: #{$modal-transform-on};
+    --fbx-modal-transform-off: #{$modal-transform-off};
 }
 .modal-overlay
 {
-    --hb-modal-overlay-bg: #{$modal-overlay-bg};
-    --hb-modal-overlay-bg-dark: #{$modal-overlay-bg-dark};
-    --hb-modal-overlay-transition: #{$modal-overlay-transition};
+    --fbx-modal-overlay-bg: #{$modal-overlay-bg};
+    --fbx-modal-overlay-bg-dark: #{$modal-overlay-bg-dark};
+    --fbx-modal-overlay-transition: #{$modal-overlay-transition};
 }
 ```

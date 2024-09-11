@@ -275,17 +275,17 @@ $frontdrop-overlay-bg-dark:      rgba(0, 0, 0, 0.5) !default;
 .drawer-container.frontdrop.drawer-bottom
 {
     // Drawer
-    --hb-drawer-bg: #{$drawer-bg};
-    --hb-drawer-width: var(--hb-frontdrop-height);
-    --hb-drawer-size-peekable: #{$frontdrop-peekable-height};
+    --fbx-drawer-bg: #{$drawer-bg};
+    --fbx-drawer-width: var(--fbx-frontdrop-height);
+    --fbx-drawer-size-peekable: #{$frontdrop-peekable-height};
 
     // Overlay
-    --hb-drawer-overlay-bg: #{$frontdrop-overlay-bg};
-    --hb-drawer-overlay-bg-dark: #{$frontdrop-overlay-bg-dark};
+    --fbx-drawer-overlay-bg: #{$frontdrop-overlay-bg};
+    --fbx-drawer-overlay-bg-dark: #{$frontdrop-overlay-bg-dark};
 
     // Frontdrop
-    --hb-frontdrop-height: #{$frontdrop-height};
-    --hb-frontdrop-radius: #{$frontdrop-radius};
+    --fbx-frontdrop-height: #{$frontdrop-height};
+    --fbx-frontdrop-radius: #{$frontdrop-radius};
 }
 ```
 

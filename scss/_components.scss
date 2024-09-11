@@ -4,6 +4,9 @@
 /*  --------------------------- components/ripple.scss -----------------------------  */
 @import 'components/ripple';
 
+/*  --------------------------- components/navbar.scss -----------------------------  */
+@import 'components/navbar';
+
 /* ---------------------------- components/avatar.scss ------------------------------ */
 @import 'components/avatar';
 
@@ -61,11 +64,8 @@
 /* ---------------------------- components/tooltip.scss ----------------------------- */
 @import 'components/tooltip';
 
-/* ---------------------------- components/heightToggles.scss ----------------------- */
-@import 'components/heightToggles';
-
-/* ---------------------------- components/scrollbars.scss -------------------------- */
-@import 'components/scrollbars';
+/* ---------------------------- components/collapse.scss ---------------------------- */
+@import 'components/collapse';
 
 /* ---------------------------- components/status.scss ------------------------------ */
 @import 'components/status';
@@ -94,8 +94,3 @@
 /* ---------------------------- components/nprogress.scss --------------------------- */
 @import 'components/nprogress';
 
-/* ---------------------------- components/photoswipe.scss -------------------------- */
-@import 'components/photoswipe';
-
-/* ---------------------------- components/flickity.scss ---------------------------- */
-@import 'components/flickity';

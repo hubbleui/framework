@@ -559,15 +559,15 @@ List uses local CSS variables on `.list` along with Sass variables for enhanced 
         <style scoped>
             .custom-list
             {
-                --hb-list-bg: var(--hb-black);
-                --hb-list-color: var(--hb-white);
-                --hb-list-item-color-hover: var(--hb-white);
-                --hb-list-item-color-active: var(--hb-theme-primary);
-                --hb-list-item-color-selected: var(--hb-theme-primary);
-                --hb-list-item-bg-hover: var(--hb-gray-900);
-                --hb-list-item-bg-active: var(--hb-gray-900);
-                --hb-list-item-bg-selected: var(--hb-gray-900);
-                --hb-list-divider-color: var(--hb-gray-600);
+                --fbx-list-bg: var(--fbx-black);
+                --fbx-list-color: var(--fbx-white);
+                --fbx-list-item-color-hover: var(--fbx-white);
+                --fbx-list-item-color-active: var(--fbx-theme-primary);
+                --fbx-list-item-color-selected: var(--fbx-theme-primary);
+                --fbx-list-item-bg-hover: var(--fbx-gray-900);
+                --fbx-list-item-bg-active: var(--fbx-gray-900);
+                --fbx-list-item-bg-selected: var(--fbx-gray-900);
+                --fbx-list-divider-color: var(--fbx-gray-600);
             }
         </style>
         <ul class="list custom-list col-12 col-md-8 col-lg-5"> 
@@ -608,15 +608,15 @@ List uses local CSS variables on `.list` along with Sass variables for enhanced 
 ```css
 .custom-list
 {
-    --hb-list-bg: var(--hb-black);
-    --hb-list-color: var(--hb-white);
-    --hb-list-item-color-hover: var(--hb-white);
-    --hb-list-item-color-active: var(--hb-theme-primary);
-    --hb-list-item-color-selected: var(--hb-theme-primary);
-    --hb-list-item-bg-hover: var(--hb-gray-900);
-    --hb-list-item-bg-active: var(--hb-gray-900);
-    --hb-list-item-bg-selected: var(--hb-gray-900);
-    --hb-list-divider-color: var(--hb-gray-600);
+    --fbx-list-bg: var(--fbx-black);
+    --fbx-list-color: var(--fbx-white);
+    --fbx-list-item-color-hover: var(--fbx-white);
+    --fbx-list-item-color-active: var(--fbx-theme-primary);
+    --fbx-list-item-color-selected: var(--fbx-theme-primary);
+    --fbx-list-item-bg-hover: var(--fbx-gray-900);
+    --fbx-list-item-bg-active: var(--fbx-gray-900);
+    --fbx-list-item-bg-selected: var(--fbx-gray-900);
+    --fbx-list-divider-color: var(--fbx-gray-600);
 }
 ```
 
@@ -626,19 +626,19 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 `src/scss/_config.scss`
 ```
 ```sass
-$list-bg:                       var(--hb-white) !default;
-$list-color:                    var(--hb-gray-700) !default;
+$list-bg:                       var(--fbx-white) !default;
+$list-color:                    var(--fbx-gray-700) !default;
 $list-font-size:                1.3rem !default;
 $list-item-bg:                  transparent !default;
-$list-item-color-hover:         var(--hb-gray-700) !default;
-$list-item-color-active:        var(--hb-gray-700) !default;
-$list-item-color-selected:      var(--hb-white) !default;
-$list-item-bg-hover:            var(--hb-gray-200) !default;
-$list-item-bg-active:           var(--hb-theme-info-100) !default;
-$list-item-bg-selected:         var(--hb-theme-info) !default;
+$list-item-color-hover:         var(--fbx-gray-700) !default;
+$list-item-color-active:        var(--fbx-gray-700) !default;
+$list-item-color-selected:      var(--fbx-white) !default;
+$list-item-bg-hover:            var(--fbx-gray-200) !default;
+$list-item-bg-active:           var(--fbx-theme-info-100) !default;
+$list-item-bg-selected:         var(--fbx-theme-info) !default;
 $list-item-pad-y:               10px !default;
 $list-item-pad-x:               12px !default;
-$list-divider-color:            var(--hb-gray-200) !default;
+$list-divider-color:            var(--fbx-gray-200) !default;
 $list-divider-space:            5px;
 ```
 
@@ -647,20 +647,20 @@ src/scss/components/list.scss
 ```
 ```css
 .list {
-    --hb-list-bg: var(--hb-white);
-    --hb-list-color: var(--hb-gray-700);
-    --hb-list-font-size: 1.3rem;
-    --hb-list-item-color-hover: var(--hb-gray-700);
-    --hb-list-item-color-active: var(--hb-gray-700);
-    --hb-list-item-color-selected: var(--hb-white);
-    --hb-list-item-bg: transparent;
-    --hb-list-item-bg-hover: var(--hb-gray-200);
-    --hb-list-item-bg-active: var(--hb-theme-info-100);
-    --hb-list-item-bg-selected: var(--hb-theme-info);
-    --hb-list-item-pad-y: 10px;
-    --hb-list-item-pad-x: 12px;
-    --hb-list-divider-color: var(--hb-gray-200);
-    --hb-list-divider-space: 5px;
+    --fbx-list-bg: var(--fbx-white);
+    --fbx-list-color: var(--fbx-gray-700);
+    --fbx-list-font-size: 1.3rem;
+    --fbx-list-item-color-hover: var(--fbx-gray-700);
+    --fbx-list-item-color-active: var(--fbx-gray-700);
+    --fbx-list-item-color-selected: var(--fbx-white);
+    --fbx-list-item-bg: transparent;
+    --fbx-list-item-bg-hover: var(--fbx-gray-200);
+    --fbx-list-item-bg-active: var(--fbx-theme-info-100);
+    --fbx-list-item-bg-selected: var(--fbx-theme-info);
+    --fbx-list-item-pad-y: 10px;
+    --fbx-list-item-pad-x: 12px;
+    --fbx-list-divider-color: var(--fbx-gray-200);
+    --fbx-list-divider-space: 5px;
 }
 ```
 

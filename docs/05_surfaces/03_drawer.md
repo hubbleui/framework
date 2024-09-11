@@ -162,10 +162,10 @@ The `close` method will animate and close the drawer:
 drawer.close();
 ```
 
-The `direction` method returns the drawer state which will be either `collapsed` or `expanded`:
+The `direction` method returns the drawer state which will be either `left`, `right`, `top` or `bottom`:
 
 ```javascript
-if (drawer.state() === 'collapsed')
+if (drawer.direction() === 'left')
 {
 
 }
@@ -295,7 +295,7 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 `src/scss/_config.scss`
 ```
 ```sass
-$drawer-bg:                     var(--hb-white) !default;
+$drawer-bg:                     var(--fbx-white) !default;
 $drawer-width:                  230px !default;
 $drawer-size-peekable:          80px !default;
 $drawer-overlay-bg:             rgba(255, 255, 255, 0.8) !default;
@@ -309,13 +309,13 @@ $drawer-overlay-bg-dark:        rgba(0, 0, 0, 0.5) !default;
 .drawer-container
 {
     // Variables
-    --hb-drawer-bg: #{$drawer-bg};
-    --hb-drawer-width: #{$drawer-width};
-    --hb-drawer-size-peekable: #{$drawer-size-peekable};
+    --fbx-drawer-bg: #{$drawer-bg};
+    --fbx-drawer-width: #{$drawer-width};
+    --fbx-drawer-size-peekable: #{$drawer-size-peekable};
 
     // Overlay
-    --hb-drawer-overlay-bg: #{$drawer-overlay-bg};
-    --hb-drawer-overlay-bg-dark: #{$drawer-overlay-bg-dark};
+    --fbx-drawer-overlay-bg: #{$drawer-overlay-bg};
+    --fbx-drawer-overlay-bg-dark: #{$drawer-overlay-bg-dark};
 }
 ```
 

@@ -10,10 +10,10 @@
         {
             display: none;
         }
-        .xs              { display: block; }
-        .xs-inline       { display: inline; }
-        .xs-inline-block { display: inline-block; }
-        .xs-flex         { display: flex; }
+        .xs              { display: block !important }
+        .xs-inline       { display: inline !important }
+        .xs-inline-block { display: inline-block !important }
+        .xs-flex         { display: flex !important }
     }
 
     @if $prev-grid != null
@@ -24,16 +24,16 @@
         .#{$prev-grid}-inline-block,
         .#{$prev-grid}-inline
         {
-            display: none;
+            display: none !important;
         }   
     }
 
     @if $curr-grid != null
     {
         /* Show current breakpoint */
-        .#{$curr-grid}              { display: block; }
-        .#{$curr-grid}-inline       { display: inline; }
-        .#{$curr-grid}-inline-block { display: inline-block; }
-        .#{$curr-grid}-flex         { display: flex; }
+        .#{$curr-grid}              { display: block !important }
+        .#{$curr-grid}-inline       { display: inline !important }
+        .#{$curr-grid}-inline-block { display: inline-block !important }
+        .#{$curr-grid}-flex         { display: flex !important }
     }
 }

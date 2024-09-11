@@ -122,10 +122,10 @@ src/scss/grid/_base.scss
 .container,
 .container-fluid
 {
-    --hb-container-width: 100%;
-    --hb-container-max-width: 100%;
-    --hb-container-pad-l: 0;
-    --hb-container-pad-r: 0;
+    --fbx-container-width: 100%;
+    --fbx-container-max-width: 100%;
+    --fbx-container-pad-l: 0;
+    --fbx-container-pad-r: 0;
 }
 ```
 
@@ -135,11 +135,11 @@ src/scss/grid/_base.scss
 :root
 {
     /* Container gutters */
-    --hb-container-gutter-xxs: 0.5rem;
-    --hb-container-gutter-xs: 1rem;
-    --hb-container-gutter-sm: 3rem;
-    --hb-container-gutter-md: 3rem;
-    --hb-container-gutter-lg: 3rem;
-    --hb-container-gutter-xl: 3rem;
+    --fbx-container-gutter-xxs: 0.5rem;
+    --fbx-container-gutter-xs: 1rem;
+    --fbx-container-gutter-sm: 3rem;
+    --fbx-container-gutter-md: 3rem;
+    --fbx-container-gutter-lg: 3rem;
+    --fbx-container-gutter-xl: 3rem;
 }
 ```

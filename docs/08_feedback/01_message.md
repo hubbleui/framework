@@ -246,13 +246,13 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 src/scss/components/_message.scss
 ```
 ```sass
---hb-msg-bg: #{$msg-bg};
---hb-msg-color: #{$msg-color};
---hb-msg-icon-color: #{$msg-icon-color};
---hb-msg-spacer-y: #{$msg-spacer-y};
---hb-msg-spacer-x: #{$msg-spacer-x};
---hb-msg-border-radius: #{$msg-border-radius};
---hb-msg-font-size: #{$msg-font-size};
+--fbx-msg-bg: #{$msg-bg};
+--fbx-msg-color: #{$msg-color};
+--fbx-msg-icon-color: #{$msg-icon-color};
+--fbx-msg-spacer-y: #{$msg-spacer-y};
+--fbx-msg-spacer-x: #{$msg-spacer-x};
+--fbx-msg-border-radius: #{$msg-border-radius};
+--fbx-msg-font-size: #{$msg-font-size};
 ```
 
 <br>
@@ -261,11 +261,11 @@ src/scss/components/_message.scss
 src/scss/_config.scss
 ```
 ```sass
-$msg-bg:                        var(--hb-black) !default;
-$msg-color:                     var(--hb-white) !default;
-$msg-icon-color:                var(--hb-theme-primary) !default;
+$msg-bg:                        var(--fbx-black) !default;
+$msg-color:                     var(--fbx-white) !default;
+$msg-icon-color:                var(--fbx-theme-primary) !default;
 $msg-spacer-y:                  3rem !default;
 $msg-spacer-x:                  2rem !default;
 $msg-font-size:                 1.4rem !default;
-$msg-border-radius:             var(--hb-border-radius) !default;
+$msg-border-radius:             var(--fbx-border-radius) !default;
 ```

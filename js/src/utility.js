@@ -1,0 +1,13 @@
+// utility
+import './utility/ajax.js';
+import './utility/pjax.js';
+import './utility/skeleton.js';
+import './utility/gestures.js';
+import './utility/drawer.js';
+import './utility/frontdrop.js';
+import './utility/backdrop.js';
+import './utility/modal.js';
+import './utility/notification.js';
+import './utility/smooth-scroll.js';
+import './utility/input-mask.js';
+import './utility/form-validator.js';

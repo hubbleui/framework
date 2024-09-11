@@ -443,41 +443,41 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 src/scss/styles/buttons/_base.scss
 ```
 ```sass
---hb-btn-block: inline-block;
---hb-btn-margin: 0;
---hb-btn-font-weight: normal;
---hb-btn-text-align: center;
---hb-btn-position: relative;
---hb-btn-overflow: hidden;
---hb-btn-border: none;
---hb-btn-width: auto;
---hb-btn-border-radius: #{$border-radius};
---hb-btn-font-size: #{$btn-font-size};
---hb-btn-line-height: #{$btn-font-size};
---hb-btn-bg-color: #{$btn-base-bg};
---hb-btn-color: #{$btn-base-color};
---hb-btn-font-weight: #{$btn-font-weight};
---hb-btn-text-transform: #{$btn-text-transform};
---hb-btn-white-space: nowrap;
---hb-btn-vertical-align: middle;
---hb-btn-cursor: pointer;
---hb-btn-text-decoration: none;
---hb-btn-transition: none;
---hb-btn-padding-y: #{$btn-pad-y};
---hb-btn-padding-x: #{$btn-pad-x};
---hb-btn-letter-spacing: 0.5px;
---hb-btn-loader-color: var(--hb-btn-color);
---hb-btn-icon-color: inherit;
---hb-btn-box-shadow: none;
---hb-btn-transition: none;
+--fbx-btn-block: inline-block;
+--fbx-btn-margin: 0;
+--fbx-btn-font-weight: normal;
+--fbx-btn-text-align: center;
+--fbx-btn-position: relative;
+--fbx-btn-overflow: hidden;
+--fbx-btn-border: none;
+--fbx-btn-width: auto;
+--fbx-btn-border-radius: #{$border-radius};
+--fbx-btn-font-size: #{$btn-font-size};
+--fbx-btn-line-height: #{$btn-font-size};
+--fbx-btn-bg-color: #{$btn-base-bg};
+--fbx-btn-color: #{$btn-base-color};
+--fbx-btn-font-weight: #{$btn-font-weight};
+--fbx-btn-text-transform: #{$btn-text-transform};
+--fbx-btn-white-space: nowrap;
+--fbx-btn-vertical-align: middle;
+--fbx-btn-cursor: pointer;
+--fbx-btn-text-decoration: none;
+--fbx-btn-transition: none;
+--fbx-btn-padding-y: #{$btn-pad-y};
+--fbx-btn-padding-x: #{$btn-pad-x};
+--fbx-btn-letter-spacing: 0.5px;
+--fbx-btn-loader-color: var(--fbx-btn-color);
+--fbx-btn-icon-color: inherit;
+--fbx-btn-box-shadow: none;
+--fbx-btn-transition: none;
 
 // Hover
---hb-btn-color-hover: #{$btn-base-color-hover};
---hb-btn-bg-color-hover: #{$btn-base-bg-hover};
+--fbx-btn-color-hover: #{$btn-base-color-hover};
+--fbx-btn-bg-color-hover: #{$btn-base-bg-hover};
 
 // Active
---hb-btn-color-active: #{$btn-base-color-active};
---hb-btn-bg-color-active: #{$btn-base-bg-active};
+--fbx-btn-color-active: #{$btn-base-color-active};
+--fbx-btn-bg-color-active: #{$btn-base-bg-active};
 ```
 
 <br>
@@ -494,16 +494,16 @@ $btn-font-size:                 1.4rem !default;
 $btn-font-weight:               $text-bold !default;
 
 // Base
-$btn-base-bg:                   var(--hb-gray-200);
-$btn-base-color:                var(--hb-gray-700);
+$btn-base-bg:                   var(--fbx-gray-200);
+$btn-base-color:                var(--fbx-gray-700);
 
 // Hover
-$btn-base-bg-hover:             var(--hb-gray-300);
-$btn-base-color-hover:          var(--hb-gray-700);
+$btn-base-bg-hover:             var(--fbx-gray-300);
+$btn-base-color-hover:          var(--fbx-gray-700);
 
 // Active
-$btn-base-bg-active:            var(--hb-gray-400);
-$btn-base-color-active:         var(--hb-gray-700);
+$btn-base-bg-active:            var(--fbx-gray-400);
+$btn-base-color-active:         var(--fbx-gray-700);
 
 $btn-xs-pad-x:                  _minusPercent($btn-pad-x, 30) !default;
 $btn-xs-pad-y:                  _minusPercent($btn-pad-y, 30) !default;
@@ -523,5 +523,5 @@ $btn-icon-font-size:            1.6rem !default;
 $btn-icon-line-height:          1.4rem !default;
 $btn-icon-vertical-align:       text-top !default;
 
-$btn-group-radius:              var(--hb-border-radius) !default;
+$btn-group-radius:              var(--fbx-border-radius) !default;
 ```

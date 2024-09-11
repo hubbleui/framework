@@ -19,10 +19,10 @@
     "bugs": {
         "url": "https://github.com/frontbx/ui/issues"
     },
-    "main": "dist/js/frontbx.js",
-    "module": "dist/js/frontbx.esm.js",
-    "sass": "scss/frontbx.scss",
-    "style": "dist/css/frontbx.css",
+    "main": "dist/js/frontbx.bundle.js",
+    "module": "dist/js/bootstrap.esm.js",
+    "sass": "scss/frontbx.bundle.scss",
+    "style": "dist/css/frontbx.bundle.css",
     "scripts": {
         "start": "npm-run-all --parallel watch docs-serve",
         "dist": "npm-run-all --aggregate-output --parallel css js docs",
@@ -32,10 +32,10 @@
         "css-minify": "postcss dist/css/**/*.css !dist/css/**/*.min.css --use postcss-minify --dir dist/css/ --ext .min.css",
         "js": "npm-run-all js-compile js-minify",
         "js-compile": "npm-run-all --aggregate-output --parallel js-compile-*",
-        "js-compile-standalone": "import js/frontbx.js > dist/js/frontbx.js",
-        "js-compile-lazyload": "import js/frontbx-lazyload.js > dist/js/frontbx-lazyload.js",
-        "js-compile-bundle": "import js/frontbx.umd.js > dist/js/frontbx.bundle.js",
-        "js-compile-esm": "import js/frontbx.esm.js > dist/js/frontbx.esm.js",
+        "js-compile-standalone": "node build/import.mjs js/frontbx.js > dist/js/frontbx.js",
+        "js-compile-bundle": "node build/import.mjs js/frontbx.umd.js > dist/js/frontbx.bundle.js",
+        "js-compile-lazyload": "node build/import.mjs js/frontbx-lazyload.js > dist/js/frontbx-lazyload.js",
+        "js-compile-esm": "node build/import.mjs js/frontbx.esm.js > dist/js/frontbx.esm.js",
         "js-minify": "npm-run-all --aggregate-output --parallel js-minify-*",
         "js-minify-standalone": "terser --compress passes=2 --mangle --comments \"/^!/\" --source-map \"url=frontbx.min.js.map,includeSources\" --output dist/js/frontbx.min.js -- dist/js/frontbx.js",
         "js-minify-bundle": "terser --compress passes=2 --mangle --comments \"/^!/\" --source-map \"url=frontbx.bundle.min.js.map,includeSources\" --output dist/js/frontbx.bundle.min.js -- dist/js/frontbx.bundle.js",
@@ -49,7 +49,7 @@
         "watch": "npm-run-all --parallel watch-*",
         "watch-css-main": "nodemon --watch scss/ --ext scss --exec \"npm-run-all css-compile css-prefix css-minify\"",
         "watch-js-main": "nodemon --watch js/ --ext js --exec \"npm-run-all js-compile js-minify\"",
-        "watch-js-docs": "nodemon --watch docs/ --ext md --exec \"npm run docs-build\""
+        "watch-js-docs": "nodemon --watch docs/ --ext md, html --exec \"npm run docs-build\""
     },
     "files": [
         "dist/{css,js}/*.{css,js,map}",
@@ -63,7 +63,7 @@
         "console-tasks": "^0.1.9",
         "html-linter": "^1.1.1",
         "http-server": "^14.1.1",
-        "import": "^0.0.6",
+        "node build/import.mjs": "^0.0.6",
         "nodemon": "^3.1.4",
         "npm-run-all": "^4.1.5",
         "postcss": "^8.4.41",

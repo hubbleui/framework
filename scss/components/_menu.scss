@@ -2,16 +2,22 @@
 {
     --fbx-menu-bg: #{$menu-bg};
     --fbx-menu-color: #{$menu-color};
+    --fbx-menu-container-padding: #{$menu-container-padding};
+    --fbx-menu-radius: #{$menu-radius};
     --fbx-menu-font-size: #{$menu-font-size};
+    --fbx-menu-font-weight: #{$menu-font-weight};
     --fbx-menu-item-color-hover: #{$menu-item-color-hover};
     --fbx-menu-item-color-active: #{$menu-item-color-active};
+    --fbx-menu-item-color-checked: #{$menu-item-color-checked};
     --fbx-menu-item-color-selected: #{$menu-item-color-selected};
     --fbx-menu-item-bg: #{$menu-item-bg};
     --fbx-menu-item-bg-hover: #{$menu-item-bg-hover};
+    --fbx-menu-item-bg-checked: #{$menu-item-bg-checked};
     --fbx-menu-item-bg-active: #{$menu-item-bg-active};
     --fbx-menu-item-bg-selected: #{$menu-item-bg-selected};
     --fbx-menu-item-pad-y: #{$menu-item-pad-y};
     --fbx-menu-item-pad-x: #{$menu-item-pad-x};
+    --fbx-menu-item-v-space: #{$menu-item-v-space};
     --fbx-menu-divider-color: #{$menu-divider-color};
     --fbx-menu-divider-space: #{$menu-divider-space};
 
@@ -20,20 +26,35 @@
     margin: 0;
     background-color: var(--fbx-menu-bg);
     color: var(--fbx-menu-color);
-    padding: var(--fbx-menu-item-pad-y) 0px;
+    padding: var(--fbx-menu-container-padding);
     font-size: var(--fbx-menu-font-size);
+    font-weight: var(--fbx-menu-font-weight);
 
+    // Links
+    > li > a
+    {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        column-gap: var(--fbx-menu-item-pad-x);
+    }
+    
     > *
     {
         margin: 0;
         padding: var(--fbx-menu-item-pad-y) var(--fbx-menu-item-pad-x);
         background-color: var(--fbx-menu-item-bg);
         column-gap: var(--fbx-menu-item-pad-x);
+        border-radius: var(--fbx-menu-radius);
+        margin-bottom: var(--fbx-menu-item-v-space);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: space-between;
         position: relative;
+        
         .item-left,
         .item-right
         {
@@ -66,12 +87,21 @@
             background-color: var(--fbx-menu-item-bg-selected);
             color: var(--fbx-menu-item-color-selected);
         }
+        &.checked
+        {
+            background-color: var(--fbx-menu-item-bg-checked);
+            color: var(--fbx-menu-item-color-checked);
+        }
         &.disabled,&.disabled:hover
         {
             background-color: var(--fbx-menu-item-bg);
             color: var(--fbx-menu-color);
             opacity: 0.5;
             cursor: not-allowed;
+        }
+        &:last-child
+        {
+            margin-bottom: 0;
         }
     }
 
@@ -94,14 +124,16 @@
     .menu-header
     {
         font-weight: $text-bold;
-        padding: 0px var(--fbx-menu-item-pad-x) var(--fbx-menu-item-pad-y) var(--fbx-menu-item-pad-x);
+        padding: var(--fbx-menu-item-pad-y) var(--fbx-menu-item-pad-x);
         border-bottom: 1px solid var(--fbx-menu-divider-color);
+        border-radius: 0;
     }
     .menu-divider
     {
         padding: var(--fbx-menu-divider-space) 0 0 0;
         margin: 0 0 var(--fbx-menu-divider-space) 0;
         border-bottom: 1px solid var(--fbx-menu-divider-color);
+        border-radius: 0;
     }
     .menu-header:hover,
     .menu-divider:hover
@@ -114,9 +146,8 @@
     &.menu-dense
     {
         --fbx-menu-font-size: #{_minusPercent($menu-font-size, 5)};
-        --fbx-menu-item-pad-y: #{_minusPercent($menu-item-pad-y, 60)};
+        --fbx-menu-item-pad-y: #{_minusPercent($menu-item-pad-y, 50)};
         --fbx-menu-item-pad-x: #{_minusPercent($menu-item-pad-x, 20)};
         --fbx-menu-divider-space: #{_minusPercent($menu-divider-space, 40)};
     }
-
 }

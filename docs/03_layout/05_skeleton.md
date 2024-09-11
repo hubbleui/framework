@@ -775,7 +775,7 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 ```sass
 $skeleton-bg-1:                 rgba(0, 0, 0, 0.2) !default;
 $skeleton-bg-2:                 rgba(0, 0, 0, 0.4) !default;
-$skeleton-text-radius:          var(--hb-border-radius) !default;
+$skeleton-text-radius:          var(--fbx-border-radius) !default;
 ```
 
 <br>
@@ -784,22 +784,22 @@ $skeleton-text-radius:          var(--hb-border-radius) !default;
 src/scss/components/_skeleton.scss
 ```
 ```sass
---hb-skeleton-bg-1: #{$skeleton-bg-1};
---hb-skeleton-bg-2: #{$skeleton-bg-2};
---hb-bg-animation: #{1s ease-in-out infinite normal none running skeleton-pulse};
---hb-skeleton-width: 100%;
---hb-skeleton-height: 100%;
---hb-skeleton-radius: 0;
---hb-skeleton-margin: 0;
---hb-skeleton-display: inline-block;
+--fbx-skeleton-bg-1: #{$skeleton-bg-1};
+--fbx-skeleton-bg-2: #{$skeleton-bg-2};
+--fbx-bg-animation: #{1s ease-in-out infinite normal none running skeleton-pulse};
+--fbx-skeleton-width: 100%;
+--fbx-skeleton-height: 100%;
+--fbx-skeleton-radius: 0;
+--fbx-skeleton-margin: 0;
+--fbx-skeleton-display: inline-block;
 
-display: var(--hb-skeleton-display);
-width: var(--hb-skeleton-width);
-height: var(--hb-skeleton-height);
-border-radius: var(--hb-skeleton-radius);
-animation: var(--hb-bg-animation);
-background: var(--hb-skeleton-bg-1);
-margin: var(--hb-skeleton-margin);
+display: var(--fbx-skeleton-display);
+width: var(--fbx-skeleton-width);
+height: var(--fbx-skeleton-height);
+border-radius: var(--fbx-skeleton-radius);
+animation: var(--fbx-bg-animation);
+background: var(--fbx-skeleton-bg-1);
+margin: var(--fbx-skeleton-margin);
 ```
 
 The example below shows customization using CSS Variables:
@@ -808,8 +808,8 @@ The example below shows customization using CSS Variables:
     <style scoped>
         .skeleton-custom
         {
-            --hb-skeleton-bg-1: var(--hb-theme-primary-300);
-            --hb-skeleton-bg-2: var(--hb-theme-primary-600);
+            --fbx-skeleton-bg-1: var(--fbx-theme-primary-300);
+            --fbx-skeleton-bg-2: var(--fbx-theme-primary-600);
         }
     </style>
     <div class="row pole-xs pole-s">
@@ -824,7 +824,7 @@ The example below shows customization using CSS Variables:
 ```css
 .skeleton
 {
-    --hb-skeleton-bg-1: var(--hb-theme-primary-300);
-    --hb-skeleton-bg-2: var(--hb-theme-primary-600);
+    --fbx-skeleton-bg-1: var(--fbx-theme-primary-300);
+    --fbx-skeleton-bg-2: var(--fbx-theme-primary-600);
 }
 ```

@@ -1,7 +1,7 @@
 .form-field
 {
 	// Icons
-	> .fa
+	> .fa, > .fa-brands
 	{
 		position: absolute;
     	top: 50%;
@@ -12,23 +12,31 @@
 	// Left icon
 	> .fa + input,
 	> .fa + select,
-	> .fa + textarea
+	> .fa + textarea,
+	> .fa-brands + input,
+	> .fa-brands + select,
+	> .fa-brands + textarea
 	{
 		padding-left: calc(var(--fbx-input-pad-x) * 2.5) !important;
 	}
-	> .fa:first-child
+	> .fa:first-child,
+	> .fa-brands:first-child
 	{
 		left: var(--fbx-input-pad-x);
 	}
 	> .fa + input + label,
 	> .fa + input + label,
-	> .fa + input + label
+	> .fa + input + label,
+	> .fa-brands + input + label,
+	> .fa-brands + input + label,
+	> .fa-brands + input + label
 	{
 		left: calc(var(--fbx-input-pad-x) * 2.3) !important;
 	}
 
 	// Right
-	> .fa:last-child
+	> .fa:last-child,
+	> .fa-brands:last-child
 	{
 		left: initial;
 		right: var(--fbx-input-pad-x);

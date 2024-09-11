@@ -240,11 +240,11 @@ Switches use local CSS variables on `.switch` for enhanced component customizati
 src/scss/styles/forms/_switch.scss
 ```
 ```sass
---hb-switch-size :#{$switch-size};
---hb-switch-track-color-off :#{$switch-track-color-off};
---hb-switch-track-color-on :#{$switch-track-color-on};
---hb-switch-knob-color-off :#{$switch-knob-color-off};
---hb-switch-knob-color-on :#{$switch-knob-color-on};
+--fbx-switch-size :#{$switch-size};
+--fbx-switch-track-color-off :#{$switch-track-color-off};
+--fbx-switch-track-color-on :#{$switch-track-color-on};
+--fbx-switch-knob-color-off :#{$switch-knob-color-off};
+--fbx-switch-knob-color-on :#{$switch-knob-color-on};
 ```
 
 <br>
@@ -255,9 +255,9 @@ src/scss/_config.scss
 ```
 ```sass
 $switch-size:                   2rem !default;
-$switch-track-color-off:        var(--hb-gray-300) !default;
-$switch-track-color-on:         var(--hb-gray-300) !default;
-$switch-knob-color-off:         var(--hb-white) !default;
-$switch-knob-color-on:          var(--hb-gray) !default;
+$switch-track-color-off:        var(--fbx-gray-300) !default;
+$switch-track-color-on:         var(--fbx-gray-300) !default;
+$switch-knob-color-off:         var(--fbx-white) !default;
+$switch-knob-color-on:          var(--fbx-gray) !default;
 ```
 

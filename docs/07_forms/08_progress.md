@@ -83,10 +83,10 @@ Progress bars use local CSS variables on `.progress-bar` for enhanced component 
 src/scss/styles/forms/_progress.scss
 ```
 ```sass
---hb-progress-size: #{$progress-size};
---hb-progress-radius: #{$progress-radius};
---hb-progress-bg: #{$progress-bg};
---hb-progress-color: #{$progress-color};
+--fbx-progress-size: #{$progress-size};
+--fbx-progress-radius: #{$progress-radius};
+--fbx-progress-bg: #{$progress-bg};
+--fbx-progress-color: #{$progress-color};
 ```
 
 <br>
@@ -99,9 +99,9 @@ src/scss/_config.scss
 ```
 ```sass
 $progress-size:                 1rem !default;
-$progress-radius:               var(--hb-border-radius) !default;
-$progress-bg:                   var(--hb-gray-200) !default;
-$progress-color:                var(--hb-gray) !default;
+$progress-radius:               var(--fbx-border-radius) !default;
+$progress-bg:                   var(--fbx-gray-200) !default;
+$progress-color:                var(--fbx-gray) !default;
 $progress-gradient:             linear-gradient(to right,  #b0e2fe 0%,#b0b2fb 100%);
 ```
 

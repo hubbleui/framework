@@ -284,19 +284,15 @@
 
     if (!window.FrontBx)
     {
-        // Invoke and start loading images
-        const lazy = new LazyLoad();
-
-        // Listen for FrontBx:ready and register into dom
-        // Will no be invoked unless dom().refresh() is called
-        const AddModule = function()
+        window.addEventListener('DOMContentLoaded', () =>
         {
+            // Invoke and start loading images
+            const lazy = new LazyLoad();
+
+            // Listen for FrontBx:ready and register into dom
+            // Will not be invoked unless dom().refresh() is called
             FrontBx.dom().register('LazyLoad', lazy, false);
-
-            window.removeEventListener('FrontBx:ready', AddModule);
-        }
-
-        window.addEventListener('FrontBx:ready', AddModule);
+        })
     }
     
 })();

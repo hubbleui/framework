@@ -114,6 +114,75 @@ Prism.languages.scss=Prism.languages.extend("css",{comment:{pattern:/(^|[^\\])(?
 }());
 
 /**
+ * Responsive drawer.
+ *
+ */
+(function()
+{
+	const [Component]   = FrontBx.get('Component');
+	const [find, width, on, off, trigger_event, extend] = FrontBx.import(['find', 'width', 'on', 'off', 'trigger_event', 'extend']).from('_');
+	
+    var WINDOW_LISTENING = false;
+
+    const DocDrawer = function()
+    {
+        this.container = find('.docs-drawer');
+    	this.drawer    = find('.docs-drawer .js-drawer-wrap');
+    	this.main      = find('.main-container');
+    	this.inMain    = false;
+
+        this.super('.docs-drawer');
+
+        trigger_event(window, 'resize');
+    }
+
+    DocDrawer.prototype.resize = function()
+    {
+    	return throttle(() =>
+    	{
+    		let x = width(window);
+
+	        if (x < 768 && this.inMain)
+	        {
+	            this.container.appendChild(this.drawer);
+
+	            this.inMain = false;
+	        }
+	        else if (x > 768 && !this.inMain)
+	        {
+	        	this.main.appendChild(this.drawer);
+
+	          	this.inMain = true;
+	        }
+
+    	}, 100);
+    }
+
+    DocDrawer.prototype.bind = function(node)
+    {
+       	if (!WINDOW_LISTENING)
+        {
+        	on(window, 'resize', this.resize(), this);
+
+        	WINDOW_LISTENING = true;	
+        }
+    }
+
+    DocDrawer.prototype.unbind = function(node)
+    {
+    	if (WINDOW_LISTENING)
+        {
+        	off(window, 'resize', this.resize(), this);
+
+        	WINDOW_LISTENING = false;	
+        }
+    }
+
+    FrontBx.dom().register('DocDrawer', extend(Component, DocDrawer), true);
+
+}());
+
+/**
  * DEMOS
  *
  */

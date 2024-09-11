@@ -97,7 +97,7 @@ const DocsBuilder = function()
         this._writeDirRecursive(dest);
 
         // Create HTML and write
-        FS.writeFileSync(dest, this._genDocsPage(src, dest), {encoding: 'utf8', flag: 'a+'}); 
+        FS.writeFileSync(dest, this._genDocsPage(src, dest), {encoding: 'utf8', flag: 'a+'});
     });
 }
 
@@ -275,7 +275,7 @@ DocsBuilder.prototype._genDocsPage = function(src, dest)
 
     let html = this._MDtoHTMLFile(src);
 
-    return this.PAGE_TEMPLATE.replace('{{DOCS_MENU}}', menu).replace('{{ARTICLEBODY}}', html).replaceAll('{{ASSET_PATH}}', this._getAssetsPath(src)).replaceAll('DOLLAR_SIGN', '$');
+    return this.PAGE_TEMPLATE.replaceAll('{{DOCS_MENU}}', menu).replace('{{ARTICLEBODY}}', html).replaceAll('{{ASSET_PATH}}', this._getAssetsPath(src)).replaceAll('DOLLAR_SIGN', '$');
 }
 
 /**
@@ -311,7 +311,7 @@ DocsBuilder.prototype._genHTMLDocsMenu = function(menu, currFile, dir, tabIndex)
 
     if (isRoot)
     {
-        HTML += '<ul class="doc-menu js-docs-menu">';
+        HTML += '<ul class="doc-menu menu">';
     }
 
     each(menu, (i, item) =>
@@ -320,12 +320,13 @@ DocsBuilder.prototype._genHTMLDocsMenu = function(menu, currFile, dir, tabIndex)
         {
             if (!item.includes('iframe'))
             {
-                let active = filepath.includes(item) ? 'class="active"' : '';
+                let _name  = filepath.split('/'); _name.pop(); _name = _name.pop();
+                let active = _name === item ? 'active' : '';
                 let name   = item.toLowerCase().replaceAll(' ', '-');
                 let slug   = `${dir}/${name}/index.html`;
                 let back   = this._relativeLinkBack(slug, currFile.toLowerCase().split(DOCS_DEST_DIR.toLowerCase()).pop());
 
-                HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li class="menu-item"><a ${active} href="${back}${slug}">${item}</a></li>`;
+                HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li class="menu-item ${active}"><a href="${back}${slug}">${item}</a></li>`;
             }
         }
         else
@@ -337,13 +338,14 @@ DocsBuilder.prototype._genHTMLDocsMenu = function(menu, currFile, dir, tabIndex)
             let height = active ? 'style="height:auto"' : '';
             let slug   = `${dir}/${id}`;
 
-            HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li class="menu-item menu-item-title js-collapse ${active}" data-collapse-target="menu-${id}">`;
-                    HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}<div>${name}</div>`;
-                    HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}<span class="icon glyph-icon glyph-icon-chevron-down"></span>`;
+            HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li class="menu-item-title js-collapse ${active}" data-collapse-target="menu-${id}">`;
+                    HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}<span class="item-left"><span class="fa fa-chevron-right"></span></span>`;
+                    HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}<span class="item-body">${name}</span>`;
+
             HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}</li>`;
 
-            HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li ${height} id="menu-${id}" class="menu-item menu-item-submenu">`;
-                HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}<ul>`;
+            HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}<li ${height} id="menu-${id}" class="menu-item-submenu">`;
+                HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}<ul class="menu menu-dense">`;
                     HTML += this._genHTMLDocsMenu(items, currFile, slug, tabIndex + 2)
                 HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex + 1)}</ul>`;
             HTML += `${LB_CHRAR}${TAB_CHAR.repeat(tabIndex)}</li>`;

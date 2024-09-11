@@ -240,9 +240,9 @@ Customization via Sass can be made in the `src/scss/_config.scss` file in FrontB
 src/scss/styles/forms/_radio.scss
 ```
 ```sass
---hb-radio-size: #{$radio-size};
---hb-radio-color: #{$radio-color};
---hb-radio-label-color: #{$radio-label-color};
+--fbx-radio-size: #{$radio-size};
+--fbx-radio-color: #{$radio-color};
+--fbx-radio-label-color: #{$radio-label-color};
 ```
 
 <br>
@@ -252,7 +252,7 @@ src/scss/_config.scss
 ```
 ```sass
 $radio-size:                    2rem !default;
-$radio-color:                   var(--hb-gray) !default;
-$radio-label-color:             var(--hb-gray) !default;
+$radio-color:                   var(--fbx-gray) !default;
+$radio-label-color:             var(--fbx-gray) !default;
 ```
 

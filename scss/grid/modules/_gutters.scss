@@ -22,6 +22,14 @@
         --fbx-gutter-l: auto;
         --fbx-gutter-r: auto;
     }
+    .#{$Aname}-r
+    {
+        --fbx-gutter-r: auto;
+    }
+    .#{$Aname}-l
+    {
+        --fbx-gutter-l: auto;
+    }
     .#{$Rname}
     {
         --fbx-gutter-l: 0px;
